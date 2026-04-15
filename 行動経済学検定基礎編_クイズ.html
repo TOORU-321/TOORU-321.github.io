@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行動経済学 基礎クイズ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+      min-height: 100vh;
+    }
+
+    /* ===== ヘッダー ===== */
+    header {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      color: white;
+      padding: 20px 24px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; }
+    header p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+
+    /* ===== コンテナ ===== */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    /* ===== スタート画面 ===== */
+    #start-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    #start-screen h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a365d;
+      margin-bottom: 12px;
+    }
+    #start-screen p {
+      color: #4a5568;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .level-selector {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .level-btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .level-btn.lv1 { background: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
+    .level-btn.lv2 { background: #fefcbf; color: #744210; border-color: #faf089; }
+    .level-btn.lv3 { background: #fff5f5; color: #c53030; border-color: #fed7d7; }
+    .level-btn.all { background: #f0fff4; color: #276749; border-color: #9ae6b4; }
+    .level-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .level-btn.selected { border-width: 3px; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+    .start-button {
+      background: linear-gradient(135deg, #2b6cb0, #1a365d);
+      color: white;
+      border: none;
+      padding: 16px 48px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(43,108,176,0.4);
+    }
+    .start-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(43,108,176,0.5); }
+    .start-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ===== 進捗バー ===== */
+    .progress-bar-wrap {
+      background: #e2e8f0;
+      border-radius: 50px;
+      height: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, #2b6cb0, #63b3ed);
+      border-radius: 50px;
+      transition: width 0.4s ease;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #718096;
+      margin-bottom: 6px;
+    }
+
+    /* ===== 問題カード ===== */
+    .question-card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .q-number { font-size: 0.85rem; color: #718096; font-weight: 600; }
+    .difficulty-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .diff-1 { background: #ebf8ff; color: #2b6cb0; }
+    .diff-2 { background: #fefcbf; color: #744210; }
+    .diff-3 { background: #fff5f5; color: #c53030; }
+
+    .topic-tag {
+      font-size: 0.75rem;
+      background: #e9ecef;
+      color: #495057;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      display: inline-block;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    /* ===== 選択肢 ===== */
+    .choices { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      background: #f8fafc;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      transition: all 0.15s;
+      color: #2d3748;
+    }
+    .choice-btn:hover:not(:disabled) {
+      border-color: #90cdf4;
+      background: #ebf8ff;
+      transform: translateX(3px);
+    }
+    .choice-btn .label {
+      background: #e2e8f0;
+      color: #4a5568;
+      font-weight: 700;
+      font-size: 0.85rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .choice-btn.correct {
+      border-color: #48bb78;
+      background: #f0fff4;
+    }
+    .choice-btn.correct .label { background: #48bb78; color: white; }
+    .choice-btn.wrong {
+      border-color: #fc8181;
+      background: #fff5f5;
+    }
+    .choice-btn.wrong .label { background: #fc8181; color: white; }
+    .choice-btn:disabled { cursor: default; }
+
+    /* ===== 解説 ===== */
+    .explanation {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      display: none;
+    }
+    .explanation.correct-exp {
+      background: #f0fff4;
+      border-left: 4px solid #48bb78;
+      color: #22543d;
+    }
+    .explanation.wrong-exp {
+      background: #fff5f5;
+      border-left: 4px solid #fc8181;
+      color: #742a2a;
+    }
+    .explanation .exp-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== ナビゲーション ===== */
+    .nav-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #2b6cb0, #1a365d);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(43,108,176,0.3);
+      display: none;
+    }
+    .nav-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(43,108,176,0.4); }
+
+    /* ===== 結果画面 ===== */
+    #result-screen { display: none; text-align: center; }
+    .result-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .score-circle {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .score-circle .score-num {
+      font-size: 2.6rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .score-s { background: linear-gradient(135deg, #ffd700, #f6ad55); color: #744210; }
+    .score-a { background: linear-gradient(135deg, #90cdf4, #2b6cb0); color: white; }
+    .score-b { background: linear-gradient(135deg, #9ae6b4, #276749); color: white; }
+    .score-c { background: linear-gradient(135deg, #fc8181, #c53030); color: white; }
+
+    .result-message {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 8px;
+    }
+    .result-sub { font-size: 0.9rem; color: #718096; margin-bottom: 24px; }
+
+    .result-stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: #f7fafc;
+      border-radius: 10px;
+      padding: 12px 20px;
+      text-align: center;
+      min-width: 90px;
+    }
+    .stat-num { font-size: 1.5rem; font-weight: 800; color: #2b6cb0; }
+    .stat-label { font-size: 0.75rem; color: #718096; margin-top: 2px; }
+
+    /* ===== 間違い復習 ===== */
+    .review-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+    .review-section h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #c53030;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #fed7d7;
+    }
+    .review-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-q { font-size: 0.9rem; font-weight: 600; color: #2d3748; margin-bottom: 8px; }
+    .review-your-ans {
+      font-size: 0.82rem;
+      color: #c53030;
+      margin-bottom: 4px;
+    }
+    .review-correct-ans {
+      font-size: 0.82rem;
+      color: #276749;
+      margin-bottom: 8px;
+    }
+    .review-exp {
+      font-size: 0.85rem;
+      color: #4a5568;
+      line-height: 1.7;
+      background: #f7fafc;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .retry-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+    .retry-btn {
+      padding: 13px 28px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .retry-btn.primary {
+      background: linear-gradient(135deg, #2b6cb0, #1a365d);
+      color: white;
+      box-shadow: 0 3px 10px rgba(43,108,176,0.3);
+    }
+    .retry-btn.secondary {
+      background: #e2e8f0;
+      color: #4a5568;
+    }
+    .retry-btn:hover { transform: translateY(-2px); }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.2rem; }
+      .question-card { padding: 20px 16px; }
+      .choice-btn { font-size: 0.88rem; }
+      .score-circle { width: 110px; height: 110px; }
+      .score-circle .score-num { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🧠 行動経済学 基礎クイズ</h1>
+  <p>行動経済学の基礎を問題で確認しよう</p>
+</header>
+
+<div class="container">
+
+  <!-- スタート画面 -->
+  <div id="start-screen">
+    <h2>クイズに挑戦！</h2>
+    <p>行動経済学の基礎コースの内容から出題します。<br>難易度を選んでスタートしましょう。</p>
+
+    <div style="background:white;border-radius:14px;padding:20px 24px;margin-bottom:28px;text-align:left;box-shadow:0 2px 12px rgba(0,0,0,0.07);">
+      <p style="font-weight:700;color:#1a365d;margin-bottom:12px;font-size:0.95rem;">📊 難易度の説明</p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:0.88rem;line-height:1.6;">
+        <div><span style="background:#ebf8ff;color:#2b6cb0;padding:2px 10px;border-radius:20px;font-weight:700;margin-right:8px;">⭐ Level 1</span>基本概念の理解を問う問題</div>
+        <div><span style="background:#fefcbf;color:#744210;padding:2px 10px;border-radius:20px;font-weight:700;margin-right:8px;">⭐⭐ Level 2</span>概念の応用・場面への当てはめ</div>
+        <div><span style="background:#fff5f5;color:#c53030;padding:2px 10px;border-radius:20px;font-weight:700;margin-right:8px;">⭐⭐⭐ Level 3</span>メカニズムの深い理解・複合問題</div>
+      </div>
+    </div>
+
+    <p style="font-size:0.9rem;color:#4a5568;margin-bottom:14px;font-weight:600;">出題する難易度を選択（複数選択可）</p>
+    <div class="level-selector">
+      <button class="level-btn lv1" onclick="toggleLevel(1, this)">⭐ Level 1<br><small>基礎</small></button>
+      <button class="level-btn lv2" onclick="toggleLevel(2, this)">⭐⭐ Level 2<br><small>応用</small></button>
+      <button class="level-btn lv3" onclick="toggleLevel(3, this)">⭐⭐⭐ Level 3<br><small>発展</small></button>
+      <button class="level-btn all selected" onclick="toggleLevel('all', this)">🎲 全レベル</button>
+    </div>
+
+    <button class="start-button" onclick="startQuiz()" id="start-btn">クイズをスタート →</button>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="quiz-screen" style="display:none;">
+    <div class="progress-label">
+      <span id="progress-text">問題 1 / 10</span>
+      <span id="score-text">正解: 0</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-meta">
+        <span class="q-number" id="q-number">Q1</span>
+        <span class="difficulty-badge" id="diff-badge">Level 1</span>
+      </div>
+      <span class="topic-tag" id="topic-tag">テーマ</span>
+      <p class="question-text" id="question-text">問題文</p>
+      <div class="choices" id="choices"></div>
+      <div class="explanation" id="explanation"></div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn" id="next-btn" onclick="nextQuestion()">次の問題 →</button>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="result-screen">
+    <div class="result-card">
+      <div class="score-circle" id="score-circle">
+        <span class="score-num" id="score-num">0</span>
+        <span>/ <span id="total-num">10</span></span>
+      </div>
+      <p class="result-message" id="result-message">結果</p>
+      <p class="result-sub" id="result-sub"></p>
+      <div class="result-stats">
+        <div class="stat-item">
+          <div class="stat-num" id="stat-correct">0</div>
+          <div class="stat-label">正解</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-wrong" style="color:#fc8181;">0</div>
+          <div class="stat-label">不正解</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="stat-rate">0%</div>
+          <div class="stat-label">正答率</div>
+        </div>
+      </div>
+      <div class="retry-buttons">
+        <button class="retry-btn primary" onclick="retryQuiz()">🔄 もう一度挑戦</button>
+        <button class="retry-btn secondary" onclick="goToStart()">🏠 トップへ戻る</button>
+      </div>
+    </div>
+
+    <div id="wrong-review" class="review-section" style="display:none;">
+      <h3>❌ 間違えた問題の復習</h3>
+      <div id="wrong-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// 問題データベース（10問サンプル / 全3難易度）
+// ============================================================
+const ALL_QUESTIONS = [
+  // ===== Level 1（基礎） =====
+  {
+    id: 1,
+    level: 1,
+    topic: "一貫性のバイアス",
+    question: "「一貫性のバイアス」の主なメカニズムとして、最も正しいものはどれか？",
+    choices: [
+      "他人と同じ行動をとることで安心感を得ようとする心理",
+      "自分の過去の発言・思考・行動と矛盾しないように行動しようとする心理",
+      "新しい情報をすべて積極的に取り入れようとする心理",
+      "権威ある人物の意見を無批判に受け入れる心理"
+    ],
+    answer: 1,
+    explanation: "一貫性のバイアスとは、人が心の中に二つ以上の矛盾することが共存するとストレス（認知的不協和）を感じ、それを避けるために自分の過去の発言・思考・行動と一致するように行動しようとする傾向です。このため、客観的に見て正しい判断よりも「過去との一貫性」を優先してしまいます。"
+  },
+  {
+    id: 2,
+    level: 1,
+    topic: "アンカリング効果",
+    question: "「アンカリング効果」を最もよく説明しているものはどれか？",
+    choices: [
+      "過去の成功体験から将来も同じ結果になると予測する傾向",
+      "最初に提示された数字や情報が、その後の判断に影響を与え続ける傾向",
+      "権威ある専門家の意見に引きずられて判断する傾向",
+      "損失を利益よりも2倍程度大きく感じる傾向"
+    ],
+    answer: 1,
+    explanation: "アンカリング効果とは、最初に目にした数字や情報（アンカー）が頭の中に基準として刻み込まれ、その後の判断に大きく影響してしまう認知バイアスです。例えば交渉の場で、最初に提示された金額がアンカーとなり、その後の交渉はその金額を中心に展開されやすくなります。"
+  },
+  {
+    id: 3,
+    level: 1,
+    topic: "ハロー効果",
+    question: "「ハロー効果」の説明として正しいものはどれか？",
+    choices: [
+      "高価なものほど品質が高いと判断する傾向",
+      "ある人の一つの優れた特性から、他の特性も優れていると評価する傾向",
+      "有名人が使っている商品を良いものだと判断する傾向",
+      "自分に有利な情報だけを集めて判断する傾向"
+    ],
+    answer: 1,
+    explanation: "ハロー効果とは、人や物のある一面（光り輝く側面＝ハロー）に引きずられて、他の特性も過大または過小に評価してしまう認知バイアスです。例えば「仕事ができる人は人格も優れている」「美しい人は性格も良い」などの判断がこれにあたります。"
+  },
+  {
+    id: 4,
+    level: 1,
+    topic: "損失回避",
+    question: "プロスペクト理論における「損失回避」の特性として正しいものはどれか？",
+    choices: [
+      "利益と損失は心理的に同程度のインパクトを持つ",
+      "利益の方が損失よりも心理的インパクトが大きい",
+      "損失から得られる心理的な痛みは、同額の利益による喜びの約2倍強い",
+      "損失と利益のインパクトは個人差が大きく一概には言えない"
+    ],
+    answer: 2,
+    explanation: "プロスペクト理論（カーネマン&トヴェルスキー）によれば、人は同じ金額であっても「損失」の痛みを「利益」の喜びの約2倍以上強く感じます。例えば1万円を得る喜びよりも、1万円を失う痛みの方がはるかに強い。これが「損失回避」の本質です。"
+  },
+  // ===== Level 2（応用） =====
+  {
+    id: 5,
+    level: 2,
+    topic: "サンクコスト",
+    question: "Aさんは3年前に高額なゴルフ会員権を購入したが、ゴルフは嫌いで一度も行っていない。「お金を無駄にしたくない」という気持ちから会員権を使い続けようとしている。このAさんの行動を説明するバイアスはどれか？",
+    choices: [
+      "アンカリング効果：購入時の価格が判断を縛っている",
+      "サンクコストのバイアス：すでに回収できないコストに縛られている",
+      "現在バイアス：目先の損失を避けようとしている",
+      "一貫性のバイアス：過去の決断と一致した行動をとっている"
+    ],
+    answer: 1,
+    explanation: "サンクコスト（埋没費用）とは、すでに支払ってしまって取り戻せないコストのことです。合理的な判断では「過去のコストは無視し、今後の利益とコストのみで判断する」べきですが、人はサンクコストに縛られてしまいます。「もったいない」という感覚がまさにサンクコストのバイアスの表れです。"
+  },
+  {
+    id: 6,
+    level: 2,
+    topic: "フォールスコンセンサス効果",
+    question: "「フォールスコンセンサス効果」を最もよく表しているのはどの場面か？",
+    choices: [
+      "SNSで多くの人がシェアしている情報を正しいと判断する",
+      "自分が好きな音楽は、きっと他の人も好きだろうと思い込む",
+      "集団の意見に反論できず、自分の意見を変えてしまう",
+      "有名人が推薦する商品だから良いものだと判断する"
+    ],
+    answer: 1,
+    explanation: "フォールスコンセンサス効果とは、自分の意見や行動・嗜好が、実際よりも多くの人に共有されていると思い込む傾向です。「みんな私と同じように考えているはずだ」という錯覚であり、マーケティングや対人関係で見逃しやすい重要なバイアスです。"
+  },
+  {
+    id: 7,
+    level: 2,
+    topic: "現在バイアス",
+    question: "「現在バイアス」が最も強く現れやすい状況はどれか？",
+    choices: [
+      "10年後の老後資金について計画を立てている時",
+      "来年の海外旅行の行き先を選んでいる時",
+      "ダイエット中に目の前においしいケーキが出てきた瞬間",
+      "過去の経済危機の原因を分析している時"
+    ],
+    answer: 2,
+    explanation: "現在バイアスとは、遠い将来については理性的・合理的に判断できるのに、目の前のこと（現在）については目先の利益を強く優先してしまう傾向です。ダイエットの継続は遠い将来の視点では正しいと分かっていても、目の前のケーキへの欲求に負けてしまうのが典型例です。"
+  },
+  {
+    id: 8,
+    level: 2,
+    topic: "返報性の原理",
+    question: "「返報性の原理」を活用したマーケティング手法として最も適切なものはどれか？",
+    choices: [
+      "商品の価格を高く設定して品質の高さをアピールする",
+      "無料サンプルや試供品を配ることで購買意欲を高める",
+      "選択肢を3つに絞ることで意思決定を楽にする",
+      "期間限定の締め切りを設定して購買を促す"
+    ],
+    answer: 1,
+    explanation: "返報性の原理とは、人から何かをしてもらったら「お返しをしなければ」と感じる心理です。無料サンプルや試供品を配布することで、受け取った側は「何かお返しをしなければ」という気持ちになり、購買につながりやすくなります。スーパーの試食コーナーなどが典型例です。"
+  },
+  // ===== Level 3（発展） =====
+  {
+    id: 9,
+    level: 3,
+    topic: "一貫性のバイアス（発展）",
+    question: "一貫性のバイアスが「他のバイアスを増幅させる」と言われる理由として最も正しいのはどれか？",
+    choices: [
+      "一貫性のバイアスは他のバイアスよりも時間的に後に発生するから",
+      "他のバイアスによって形成された信念や思い込みに対し、さらに一貫性を保とうとする働きが重なるから",
+      "一貫性のバイアスは意識的・意図的なものだから制御できないため",
+      "他のすべてのバイアスは一貫性のバイアスから派生して発生するから"
+    ],
+    answer: 1,
+    explanation: "例えば「確証バイアス」によって偏った情報収集をして強固な信念が形成されると、今度は一貫性のバイアスがその信念をさらに守ろうとします。「その信念を変えること＝過去の自分との不一貫」となり、正しい情報が入ってきても信念を修正できなくなります。このように複数のバイアスが連鎖・増幅する点が、一貫性のバイアスの特に厄介な特徴です。"
+  },
+  {
+    id: 10,
+    level: 3,
+    topic: "プロスペクト理論・フレーミング効果",
+    question: "同じ手術について「成功率90%」と「死亡率10%」という2通りの説明をされたとき、多くの人が「成功率90%」の説明を聞いた方が手術を選びやすいのはなぜか。最も適切な説明はどれか？",
+    choices: [
+      "「成功率90%」の方が言葉として理解しやすいから",
+      "フレーミング効果により、同じ情報でも「利益（成功）」として提示されると心理的な受け取り方が変わるから",
+      "「死亡率10%」と聞くとアンカリング効果で10という数字が残るから",
+      "現在バイアスにより、ネガティブな情報は無意識に無視されやすいから"
+    ],
+    answer: 1,
+    explanation: "これはフレーミング効果の典型例です。プロスペクト理論の損失回避の特性から、「死亡率10%」という損失フレームで提示されると、心理的な痛みが強く感じられます。一方、「成功率90%」という利益フレームでは同じ確率でも受け取り方が全く異なります。情報の「内容」ではなく「提示の仕方（フレーム）」が意思決定に大きく影響することを示しています。"
+  }
+];
+
+// ============================================================
+// アプリ状態管理
+// ============================================================
+let selectedLevels = ['all'];
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let wrongAnswers = [];
+let userAnswers = [];
+
+function toggleLevel(level, btn) {
+  if (level === 'all') {
+    selectedLevels = ['all'];
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  } else {
+    const allBtn = document.querySelector('.level-btn.all');
+    allBtn.classList.remove('selected');
+    if (selectedLevels.includes('all')) {
+      selectedLevels = [];
+    }
+    if (selectedLevels.includes(level)) {
+      selectedLevels = selectedLevels.filter(l => l !== level);
+      btn.classList.remove('selected');
+    } else {
+      selectedLevels.push(level);
+      btn.classList.add('selected');
+    }
+    if (selectedLevels.length === 0) {
+      selectedLevels = ['all'];
+      allBtn.classList.add('selected');
+    }
+  }
+}
+
+function startQuiz() {
+  let filtered;
+  if (selectedLevels.includes('all')) {
+    filtered = [...ALL_QUESTIONS];
+  } else {
+    filtered = ALL_QUESTIONS.filter(q => selectedLevels.includes(q.level));
+  }
+  // シャッフル
+  currentQuestions = filtered.sort(() => Math.random() - 0.5);
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  wrongAnswers = [];
+  userAnswers = [];
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('result-screen').style.display = 'none';
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+
+  // 進捗
+  document.getElementById('progress-text').textContent = `問題 ${currentIndex + 1} / ${total}`;
+  document.getElementById('score-text').textContent = `正解: ${score}`;
+  document.getElementById('progress-bar').style.width = `${(currentIndex / total) * 100}%`;
+
+  // 問題情報
+  document.getElementById('q-number').textContent = `Q${currentIndex + 1}`;
+  document.getElementById('topic-tag').textContent = `📌 ${q.topic}`;
+  document.getElementById('question-text').textContent = q.question;
+
+  // 難易度バッジ
+  const diffBadge = document.getElementById('diff-badge');
+  const diffLabels = { 1: '⭐ Level 1', 2: '⭐⭐ Level 2', 3: '⭐⭐⭐ Level 3' };
+  const diffClasses = { 1: 'diff-1', 2: 'diff-2', 3: 'diff-3' };
+  diffBadge.textContent = diffLabels[q.level];
+  diffBadge.className = 'difficulty-badge ' + diffClasses[q.level];
+
+  // 選択肢
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  q.choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="label">${labels[i]}</span><span>${choice}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    choicesEl.appendChild(btn);
+  });
+
+  // 解説リセット
+  const expEl = document.getElementById('explanation');
+  expEl.style.display = 'none';
+  expEl.innerHTML = '';
+  expEl.className = 'explanation';
+
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(selectedIndex) {
+  if (answered) return;
+  answered = true;
+
+  const q = currentQuestions[currentIndex];
+  const choiceBtns = document.querySelectorAll('.choice-btn');
+  const labels = ['A', 'B', 'C', 'D'];
+  const isCorrect = selectedIndex === q.answer;
+
+  choiceBtns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.answer) {
+      btn.classList.add('correct');
+      btn.querySelector('.label').textContent = '✓';
+    } else if (i === selectedIndex && !isCorrect) {
+      btn.classList.add('wrong');
+      btn.querySelector('.label').textContent = '✗';
+    }
+  });
+
+  // 解説表示
+  const expEl = document.getElementById('explanation');
+  if (isCorrect) {
+    score++;
+    expEl.className = 'explanation correct-exp';
+    expEl.innerHTML = `<div class="exp-title">✅ 正解！</div>${q.explanation}`;
+  } else {
+    expEl.className = 'explanation wrong-exp';
+    expEl.innerHTML = `<div class="exp-title">❌ 不正解。正解は「${labels[q.answer]}」です</div>${q.explanation}`;
+    wrongAnswers.push({
+      question: q.question,
+      yourAnswer: q.choices[selectedIndex],
+      correctAnswer: q.choices[q.answer],
+      explanation: q.explanation
+    });
+  }
+  expEl.style.display = 'block';
+
+  document.getElementById('score-text').textContent = `正解: ${score}`;
+
+  // 次へボタン表示
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'block';
+  if (currentIndex >= currentQuestions.length - 1) {
+    nextBtn.textContent = '結果を見る 🎉';
+  } else {
+    nextBtn.textContent = '次の問題 →';
+  }
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const total = currentQuestions.length;
+  const rate = Math.round((score / total) * 100);
+
+  // スコア
+  document.getElementById('score-num').textContent = score;
+  document.getElementById('total-num').textContent = total;
+  document.getElementById('stat-correct').textContent = score;
+  document.getElementById('stat-wrong').textContent = total - score;
+  document.getElementById('stat-rate').textContent = `${rate}%`;
+
+  // スコアサークルの色
+  const circle = document.getElementById('score-circle');
+  circle.className = 'score-circle';
+  if (rate >= 90) circle.classList.add('score-s');
+  else if (rate >= 70) circle.classList.add('score-a');
+  else if (rate >= 50) circle.classList.add('score-b');
+  else circle.classList.add('score-c');
+
+  // メッセージ
+  const messages = [
+    [90, '🏆 素晴らしい！行動経済学マスター！', '高難度問題にも対応できるレベルです。'],
+    [70, '👏 よくできました！', '基本をしっかり理解しています。応用問題も挑戦してみましょう。'],
+    [50, '📚 もう少しです！', '基礎の確認をしながら再挑戦しましょう。'],
+    [0, '💪 まだまだこれから！', '解説をしっかり読んで、もう一度挑戦してみましょう。']
+  ];
+  for (const [threshold, msg, sub] of messages) {
+    if (rate >= threshold) {
+      document.getElementById('result-message').textContent = msg;
+      document.getElementById('result-sub').textContent = sub;
+      break;
+    }
+  }
+
+  // 間違い復習
+  if (wrongAnswers.length > 0) {
+    document.getElementById('wrong-review').style.display = 'block';
+    const list = document.getElementById('wrong-list');
+    list.innerHTML = '';
+    wrongAnswers.forEach((w, i) => {
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      item.innerHTML = `
+        <div class="review-q">Q. ${w.question}</div>
+        <div class="review-your-ans">❌ あなたの回答：${w.yourAnswer}</div>
+        <div class="review-correct-ans">✅ 正解：${w.correctAnswer}</div>
+        <div class="review-exp">${w.explanation}</div>
+      `;
+      list.appendChild(item);
+    });
+  } else {
+    document.getElementById('wrong-review').style.display = 'none';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryQuiz() {
+  startQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToStart() {
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
