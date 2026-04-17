@@ -440,7 +440,7 @@
         <p>Degree行動経済アナリスト：とーる</p>
       </div>
     </div>
-    <div class="header-badge">基礎コース｜V2.1</div>
+    <div class="header-badge">基礎コース｜V2.2</div>
   </div>
 </header>
 <div class="container">
@@ -497,7 +497,7 @@
     <div class="start-card" style="padding:18px 22px;">
       <div class="timer-toggle-row">
         <label class="toggle-switch">
-          <input type="checkbox" id="timer-toggle">
+          <input type="checkbox" id="timer-toggle" checked>
           <span class="toggle-slider"></span>
         </label>
         <label for="timer-toggle" style="font-size:0.88rem; color:var(--text-mid); cursor:pointer;">⏱ タイマーモード（1問30秒）</label>
@@ -786,6 +786,7 @@ let streak=0, maxStreak=0;
 let timerEnabled=false, timerInterval=null, timerLeft=30;
 let challengeIndices=null;
 let currentCorrectIdx=0, currentShuffledChoices=[];
+let totalTimeSec=0, qStartTime=0;
 
 // ─── URL CHALLENGE PARAM ─────────────────────────────────────
 (function(){
@@ -831,7 +832,7 @@ function startQuiz(){
     pool=pool.sort(()=>Math.random()-.5);
     qs=pool.slice(0,Math.min(selCnt,pool.length));
   }
-  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;
+  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
   show('quiz');render();
 }
 
@@ -862,6 +863,7 @@ function render(){
   ex.style.display='none';ex.className='explanation';
   document.getElementById('next-btn').style.display='none';
   ans=false;
+  qStartTime=Date.now();
   updateStreakDisplay();
   if(timerEnabled) startTimer();
   else stopTimer();
@@ -898,6 +900,7 @@ function updateTimerUI(){
   disp.className='timer-display'+(timerLeft<=8?' warning':'');
 }
 function timeUp(){
+  totalTimeSec+=30;
   ans=true;
   const q=qs[idx];
   document.querySelectorAll('.choice').forEach((b,i)=>{
@@ -919,6 +922,7 @@ function timeUp(){
 // ─── PICK ANSWER ─────────────────────────────────────────────
 function pick(sel){
   if(ans)return;ans=true;
+  totalTimeSec+=timerEnabled?(30-timerLeft):Math.round((Date.now()-qStartTime)/1000);
   stopTimer();
   const q=qs[idx];
   const btns=document.querySelectorAll('.choice');
@@ -996,12 +1000,11 @@ function showResult(){
   document.getElementById('result-msg').textContent=m[rank][0];
   document.getElementById('result-sub').textContent=m[rank][1];
 
-  // Streak info
-  if(maxStreak>=3){
-    const si=document.getElementById('result-streak-info');
-    si.style.display='block';
-    si.textContent='🔥 最大連続正解：'+maxStreak+'問';
-  }
+  // Streak info & time
+  const si=document.getElementById('result-streak-info');
+  si.style.display='block';
+  const timeStr=timerEnabled?formatTime(totalTimeSec):'タイマーOFF';
+  si.innerHTML=(maxStreak>=3?'🔥 最大連続正解：'+maxStreak+'問　':'')+'⏱ 所要時間：'+timeStr;
 
   // Weak bias analysis
   const topicWrong={};
@@ -1068,6 +1071,10 @@ function retry(){idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;show('quiz'
 function goStart(){stopTimer();show('start');loadTopRanking();window.scrollTo({top:0,behavior:'smooth'});}
 function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
 
+function formatTime(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return m>0?m+'分'+String(s).padStart(2,'0')+'秒':s+'秒';
+}
 function escHtml(s){
   if(typeof s!=='string') return s;
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1105,10 +1112,11 @@ async function loadTopRanking(){
     const medals=['🥇','🥈','🥉'];
     const rows=ranked.map((r,i)=>{
       const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num">'+(i+1)+'</span>';
-      return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td></tr>`;
+      const tDisp=r.time!=null?formatTime(r.time):'OFF';
+      return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
     }).join('');
     body.innerHTML=`<table class="ranking-table">
-      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th></tr></thead>
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
   }catch(e){
@@ -1126,9 +1134,10 @@ async function submitRanking(){
   const total=qs.length,rate=Math.round(sc/total*100);
   const lvLabel=selLv.includes('all')?'全レベルMIX':selLv.map(l=>'Level '+l).join('+');
   try{
+    const timeVal=timerEnabled?totalTimeSec:null;
     const ref=await db.collection('rankings').add({
       nickname:nick,score:sc,total:total,rate:rate,level:lvLabel,
-      questions:total,timestamp:firebase.firestore.FieldValue.serverTimestamp()
+      questions:total,time:timeVal,timestamp:firebase.firestore.FieldValue.serverTimestamp()
     });
     currentEntry=ref.id;
     btn.textContent='✅ 登録完了！';
@@ -1183,16 +1192,18 @@ function renderRanking(all){
   const rows=ranked.map((r,i)=>{
     const isMe=currentEntry&&r.id===currentEntry;
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num rank-'+(i+1)+'">'+(i+1)+'</span>';
+    const tDisp=r.time!=null?formatTime(r.time):'OFF';
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
       <td>${escHtml(r.nickname)}${isMe?' <span style="font-size:0.7rem;color:var(--accent);font-weight:800;">← YOU</span>':''}</td>
       <td>${r.score}/${r.total}</td>
       <td>${r.rate}%</td>
+      <td>${tDisp}</td>
     </tr>`;
   }).join('');
   document.getElementById('ranking-body').innerHTML=`
     <table class="ranking-table">
-      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th></tr></thead>
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
