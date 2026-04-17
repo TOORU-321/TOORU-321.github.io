@@ -440,7 +440,7 @@
         <p>Degree行動経済アナリスト：とーる</p>
       </div>
     </div>
-    <div class="header-badge">基礎コース</div>
+    <div class="header-badge">基礎コース｜V2.1</div>
   </div>
 </header>
 <div class="container">
@@ -512,6 +512,13 @@
       </p>
     </div>
     <button class="start-button" onclick="startQuiz()">スタート →</button>
+
+    <!-- トップ画面ランキング -->
+    <div class="ranking-card" style="margin-top:20px;">
+      <h3>🏆 ランキング</h3>
+      <div class="ranking-filter" id="top-ranking-filter"></div>
+      <div id="top-ranking-body"><p class="ranking-loading">読み込み中...</p></div>
+    </div>
   </div>
 
   <!-- QUIZ SCREEN -->
@@ -1058,7 +1065,7 @@ function shareChallenge(){
 
 // ─── NAV ──────────────────────────────────────────────────────
 function retry(){idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;show('quiz');render();}
-function goStart(){stopTimer();show('start');window.scrollTo({top:0,behavior:'smooth'});}
+function goStart(){stopTimer();show('start');loadTopRanking();window.scrollTo({top:0,behavior:'smooth'});}
 function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
 
 function escHtml(s){
@@ -1078,6 +1085,38 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let currentEntry=null, rankingFilter='all';
+
+// トップ画面ランキング（ページ読み込み時に自動表示）
+async function loadTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  if(!body)return;
+  body.innerHTML='<p class="ranking-loading">読み込み中...</p>';
+  try{
+    const snap=await db.collection('rankings').orderBy('rate','desc').limit(20).get();
+    const all=[];
+    snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
+    if(!all.length){
+      body.innerHTML='<p class="ranking-loading">まだ登録者がいません。最初に挑戦してみましょう！</p>';
+      return;
+    }
+    const seen=new Map();
+    all.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
+    const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
+    const medals=['🥇','🥈','🥉'];
+    const rows=ranked.map((r,i)=>{
+      const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num">'+(i+1)+'</span>';
+      return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td></tr>`;
+    }).join('');
+    body.innerHTML=`<table class="ranking-table">
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }catch(e){
+    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。</p>';
+  }
+}
+// ページ読み込み時に実行
+window.addEventListener('load', loadTopRanking);
 
 async function submitRanking(){
   const nick=document.getElementById('nickname-input').value.trim();
