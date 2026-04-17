@@ -352,6 +352,14 @@
       cursor: pointer; transition: all .2s; white-space:nowrap;
     }
     .btn-challenge:hover { background: #2563eb; }
+    .btn-threads {
+      background: #101010; color: white;
+      border: none; padding: 14px 18px;
+      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: all .2s; white-space:nowrap;
+      display:flex; align-items:center; gap:6px;
+    }
+    .btn-threads:hover { background: #333; }
 
     /* RANKING */
     .nickname-card {
@@ -567,6 +575,7 @@
       <button class="btn-secondary" onclick="goStart()">🏠 トップへ</button>
       <button class="btn-primary" onclick="retry()">🔄 もう一度</button>
       <button class="btn-x" onclick="shareX()">𝕏 シェア</button>
+      <button class="btn-threads" onclick="shareThreads()">🧵 Threads</button>
       <button class="btn-challenge" onclick="shareChallenge()">📨 挑戦状</button>
     </div>
 
@@ -1060,6 +1069,12 @@ function shareX(){
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
   const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
   window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
+}
+function shareThreads(){
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\nあなたは何問正解できる？👇\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  window.open('https://www.threads.net/intent/post?text='+encodeURIComponent(text),'_blank');
 }
 function shareChallenge(){
   const indices=qs.map(q=>Q.indexOf(q)).filter(i=>i>=0);
