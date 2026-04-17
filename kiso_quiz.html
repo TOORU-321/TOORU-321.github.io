@@ -393,6 +393,11 @@
     .ranking-table tr.me td:first-child { border-radius: 6px 0 0 6px; }
     .ranking-table tr.me td:last-child { border-radius: 0 6px 6px 0; color: #92400e; }
     .rank-num { font-weight: 800; color: var(--text-mid); font-size: 0.85rem; }
+    .rank-badge { font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 6px; }
+    .rank-badge.S { background: rgba(245,158,11,0.15); color: #92400e; }
+    .rank-badge.A { background: #eff6ff; color: #1d4ed8; }
+    .rank-badge.B { background: #ecfdf5; color: #065f46; }
+    .rank-badge.C { background: #fef2f2; color: #991b1b; }
     .rank-1 { color: #f59e0b; }
     .rank-2 { color: #94a3b8; }
     .rank-3 { color: #b45309; }
@@ -1111,12 +1116,13 @@ async function loadTopRanking(){
     const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
     const medals=['🥇','🥈','🥉'];
     const rows=ranked.map((r,i)=>{
-      const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num">'+(i+1)+'</span>';
+      const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+      const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
       const tDisp=r.time!=null?formatTime(r.time):'OFF';
-      return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
+      return `<tr><td>${rankDisp}</td><td><span class="rank-badge ${gr}">${gr}</span></td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
     }).join('');
     body.innerHTML=`<table class="ranking-table">
-      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+      <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
   }catch(e){
@@ -1191,10 +1197,12 @@ function renderRanking(all){
   const medals=['🥇','🥈','🥉'];
   const rows=ranked.map((r,i)=>{
     const isMe=currentEntry&&r.id===currentEntry;
-    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num rank-'+(i+1)+'">'+(i+1)+'</span>';
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
     const tDisp=r.time!=null?formatTime(r.time):'OFF';
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
+      <td><span class="rank-badge ${gr}">${gr}</span></td>
       <td>${escHtml(r.nickname)}${isMe?' <span style="font-size:0.7rem;color:var(--accent);font-weight:800;">← YOU</span>':''}</td>
       <td>${r.score}/${r.total}</td>
       <td>${r.rate}%</td>
@@ -1203,7 +1211,7 @@ function renderRanking(all){
   }).join('');
   document.getElementById('ranking-body').innerHTML=`
     <table class="ranking-table">
-      <thead><tr><th>順位</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+      <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
