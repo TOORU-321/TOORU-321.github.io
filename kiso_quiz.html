@@ -778,6 +778,7 @@ let selLv=['all'], selCnt=10, qs=[], idx=0, sc=0, ans=false, wrongs=[];
 let streak=0, maxStreak=0;
 let timerEnabled=false, timerInterval=null, timerLeft=30;
 let challengeIndices=null;
+let currentCorrectIdx=0, currentShuffledChoices=[];
 
 // ─── URL CHALLENGE PARAM ─────────────────────────────────────
 (function(){
@@ -837,12 +838,16 @@ function render(){
   de.textContent=['','⭐ Lv.1','⭐⭐ Lv.2','⭐⭐⭐ Lv.3'][q.lv];
   de.className='diff-chip diff-'+q.lv;
   document.getElementById('q-text').textContent=q.q;
+  // 選択肢をシャッフルして正解位置を更新
+  const shuffleIdx=[0,1,2,3].sort(()=>Math.random()-0.5);
+  currentShuffledChoices=shuffleIdx.map(i=>q.c[i]);
+  currentCorrectIdx=shuffleIdx.indexOf(q.a);
   const ce=document.getElementById('choices');
   ce.innerHTML='';
   ['A','B','C','D'].forEach((k,i)=>{
     const b=document.createElement('button');
     b.className='choice';
-    b.innerHTML='<span class="choice-key">'+k+'</span><span>'+escHtml(q.c[i])+'</span>';
+    b.innerHTML='<span class="choice-key">'+k+'</span><span>'+escHtml(currentShuffledChoices[i])+'</span>';
     b.onclick=()=>pick(i);
     ce.appendChild(b);
   });
@@ -890,15 +895,15 @@ function timeUp(){
   const q=qs[idx];
   document.querySelectorAll('.choice').forEach((b,i)=>{
     b.disabled=true;
-    if(i===q.a)b.classList.add('correct');
+    if(i===currentCorrectIdx)b.classList.add('correct');
   });
   streak=0;updateStreakDisplay();
   const ex=document.getElementById('explanation');
   const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">📺 関連講座を見る（${q.t}）</a>`:'';
   ex.className='explanation wrong';
-  ex.innerHTML=`<span class="exp-label">⏰ 時間切れ。正解は「${'ABCD'[q.a]}」</span>${escHtml(q.e)}${ytLink}`;
+  ex.innerHTML=`<span class="exp-label">⏰ 時間切れ。正解は「${'ABCD'[currentCorrectIdx]}」</span>${escHtml(q.e)}${ytLink}`;
   ex.style.display='block';
-  wrongs.push({q:q.q,your:'（時間切れ）',correct:q.c[q.a],exp:q.e,topic:q.t});
+  wrongs.push({q:q.q,your:'（時間切れ）',correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
   const nb=document.getElementById('next-btn');
   nb.style.display='block';
   nb.textContent=idx>=qs.length-1?'結果を見る 🎉':'次の問題 →';
@@ -910,10 +915,10 @@ function pick(sel){
   stopTimer();
   const q=qs[idx];
   const btns=document.querySelectorAll('.choice');
-  const ok=q.a===sel;
+  const ok=currentCorrectIdx===sel;
   btns.forEach((b,i)=>{
     b.disabled=true;
-    if(i===q.a)b.classList.add('correct');
+    if(i===currentCorrectIdx)b.classList.add('correct');
     else if(i===sel&&!ok)b.classList.add('wrong');
   });
   const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">📺 関連講座を見る（${q.t}）</a>`:'';
@@ -927,8 +932,8 @@ function pick(sel){
   } else {
     streak=0;
     ex.className='explanation wrong';
-    ex.innerHTML=`<span class="exp-label">❌ 不正解。正解は「${'ABCD'[q.a]}」</span>${escHtml(q.e)}${ytLink}`;
-    wrongs.push({q:q.q,your:q.c[sel],correct:q.c[q.a],exp:q.e,topic:q.t});
+    ex.innerHTML=`<span class="exp-label">❌ 不正解。正解は「${'ABCD'[currentCorrectIdx]}」</span>${escHtml(q.e)}${ytLink}`;
+    wrongs.push({q:q.q,your:currentShuffledChoices[sel],correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
   }
   ex.style.display='block';
   document.getElementById('score-pill').textContent='✓ '+sc;
@@ -1038,7 +1043,7 @@ function showResult(){
 function shareX(){
   const tot=qs.length, rate=Math.round(sc/tot*100);
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
-  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\n#行動経済学 #知識クイズ\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
   window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
 }
 function shareChallenge(){
