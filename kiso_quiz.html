@@ -1137,7 +1137,7 @@ function renderRanking(all){
   const medals=['🥇','🥈','🥉'];
   const rows=ranked.map((r,i)=>{
     const isMe=currentEntry&&r.id===currentEntry;
-    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num rank-'+(i+1)+'">''+(i+1)+'</span>';
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':'<span class="rank-num rank-'+(i+1)+'">'+(i+1)+'</span>';
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
       <td>${escHtml(r.nickname)}${isMe?' <span style="font-size:0.7rem;color:var(--accent);font-weight:800;">← YOU</span>':''}</td>
