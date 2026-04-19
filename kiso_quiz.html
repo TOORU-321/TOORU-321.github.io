@@ -3,626 +3,1619 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>行動経済学基礎コース 知識クイズ</title>
+  <meta name="theme-color" content="#0b0f14">
+  <title>行動経済学基礎コース 知識クイズ — 100問で学び直すバイアスの基礎</title>
+  <meta name="description" content="日本営業科学協会「行動経済学基礎コース」の内容に即した100問の知識クイズ。45以上の認知バイアスを、例題と詳細な解説で学び直せます。">
+  <meta property="og:title" content="行動経済学基礎コース 知識クイズ">
+  <meta property="og:description" content="45以上の認知バイアスを、100問の例題と解説で学び直す。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://columns.l-mine.com/kiso_quiz.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://columns.l-mine.com/kiso_quiz.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0f14'/><rect x='4.5' y='4.5' width='23' height='23' rx='4' fill='none' stroke='%23c9a96a' stroke-width='0.6' opacity='0.35'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,Times New Roman,serif' font-size='20' font-weight='800' fill='%23c9a96a' letter-spacing='-0.5'>B</text><rect x='10' y='25' width='12' height='1.4' fill='%23c9a96a' opacity='0.85'/><circle cx='23' cy='25.7' r='0.9' fill='%23c9a96a'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230b0f14'/><rect x='25' y='25' width='130' height='130' rx='22' fill='none' stroke='%23c9a96a' stroke-width='3' opacity='0.4'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='110' font-weight='800' fill='%23c9a96a' letter-spacing='-3'>B</text><rect x='56' y='140' width='68' height='8' fill='%23c9a96a' opacity='0.85'/></svg>">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Playfair+Display:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --navy: #0f172a;
-      --navy-mid: #1e293b;
-      --navy-light: #334155;
-      --accent: #f59e0b;
-      --accent-light: #fcd34d;
-      --blue: #3b82f6;
-      --blue-light: #93c5fd;
-      --green: #10b981;
-      --red: #ef4444;
-      --surface: #ffffff;
-      --surface-2: #f8fafc;
-      --border: #e2e8f0;
-      --text: #0f172a;
-      --text-mid: #475569;
-      --text-light: #94a3b8;
-      --radius: 14px;
-      --shadow: 0 4px 24px rgba(15,23,42,0.10);
-      --shadow-sm: 0 2px 8px rgba(15,23,42,0.07);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
-      background: var(--surface-2);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    header {
-      background: var(--navy);
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-    }
-    .header-inner {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-logo { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-    .logo-text h1 { font-size: 1rem; font-weight: 700; }
-    .logo-text p { font-size: 0.68rem; color: var(--text-light); margin-top: 1px; line-height: 1.4; }
-    .header-badge {
-      background: rgba(245,158,11,0.15);
-      border: 1px solid rgba(245,158,11,0.3);
-      color: var(--accent-light);
-      font-size: 0.72rem; font-weight: 600;
-      padding: 4px 10px; border-radius: 20px;
-    }
-    .container { max-width: 760px; margin: 0 auto; padding: 28px 16px 80px; }
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Dark Editorial
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --ink:            #0b0f14;
+  --ink-surface:    #121821;
+  --ink-elev:       #1a212c;
+  --ink-deep:       #080b10;
+  --paper:          #f4efe3;
 
-    /* START */
-    #start-screen { animation: fadeIn .4s ease; }
-    .start-hero {
-      background: var(--navy);
-      border-radius: 20px;
-      padding: 40px 32px;
-      text-align: center;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .start-hero::before {
-      content: '';
-      position: absolute; top: -40px; right: -40px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .start-hero h2 { font-size: 1.7rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-    .start-hero p { color: var(--text-light); font-size: 0.9rem; }
-    .hero-stats { display: flex; justify-content: center; gap: 28px; margin-top: 24px; }
-    .hero-stat { text-align: center; }
-    .hero-stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
-    .hero-stat-label { font-size: 0.72rem; color: var(--text-light); margin-top: 4px; }
-    .start-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border);
-      margin-bottom: 14px;
-    }
-    .start-card h3 {
-      font-size: 0.75rem; font-weight: 700;
-      color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.1em;
-      margin-bottom: 14px;
-    }
-    .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .level-card {
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all .2s;
-      background: var(--surface-2);
-      text-align: left;
-      position: relative;
-    }
-    .level-card:hover { border-color: var(--accent); background: #fffbeb; }
-    .level-card.selected { border-color: var(--accent); background: #fffbeb; box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
-    .level-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-    .level-label { font-size: 0.92rem; font-weight: 700; }
-    .level-count { font-size: 0.7rem; background: rgba(15,23,42,0.06); padding: 2px 8px; border-radius: 20px; color: var(--text-mid); font-weight: 600; }
-    .level-card.selected .level-count { background: rgba(245,158,11,0.15); color: #92400e; }
-    .level-desc { font-size: 0.76rem; color: var(--text-mid); }
-    .level-card-all { grid-column: span 2; background: var(--navy); border-color: var(--navy-light); }
-    .level-card-all .level-label { color: white; }
-    .level-card-all .level-desc { color: var(--text-light); }
-    .level-card-all .level-count { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
-    .level-card-all:hover { background: var(--navy-mid); border-color: var(--accent); }
-    .level-card-all.selected { border-color: var(--accent); background: var(--navy-mid); box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
-    .check-icon {
-      position: absolute; top: 10px; right: 10px;
-      width: 18px; height: 18px;
-      background: var(--accent); border-radius: 50%;
-      display: none; align-items: center; justify-content: center;
-      font-size: 10px; color: white; font-weight: 800;
-    }
-    .level-card.selected .check-icon { display: flex; }
-    .q-count-row { display: flex; gap: 8px; }
-    .q-count-btn {
-      flex: 1; padding: 11px 8px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      background: var(--surface-2); cursor: pointer;
-      font-size: 0.9rem; font-weight: 700; color: var(--text-mid);
-      transition: all .2s; text-align: center;
-    }
-    .q-count-btn:hover { border-color: var(--accent); color: var(--navy); }
-    .q-count-btn.selected { border-color: var(--accent); background: #fffbeb; color: var(--navy); box-shadow: 0 0 0 3px rgba(245,158,11,0.1); }
-    .q-count-btn small { display: block; font-size: 0.62rem; font-weight: 400; color: var(--text-light); margin-top: 2px; }
-    .start-button {
-      width: 100%;
-      background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
-      color: var(--navy); border: none;
-      padding: 16px; border-radius: 12px;
-      font-size: 1rem; font-weight: 800;
-      cursor: pointer; transition: all .2s;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.35);
-    }
-    .start-button:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(245,158,11,0.45); }
+  /* Hairlines */
+  --hairline:       rgba(236, 231, 221, 0.08);
+  --hairline-2:     rgba(236, 231, 221, 0.14);
+  --hairline-gold:  rgba(201, 169, 106, 0.30);
 
-    /* TIMER */
-    .timer-toggle-row { display:flex; align-items:center; gap:10px; margin-bottom:0; }
-    .timer-toggle-row label { font-size:0.85rem; color:var(--text-mid); cursor:pointer; user-select:none; }
-    .toggle-switch { position:relative; width:40px; height:22px; }
-    .toggle-switch input { opacity:0; width:0; height:0; }
-    .toggle-slider {
-      position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
-      background:#cbd5e1; border-radius:22px; transition:.3s;
-    }
-    .toggle-slider:before {
-      position:absolute; content:""; height:16px; width:16px;
-      left:3px; bottom:3px; background:white;
-      border-radius:50%; transition:.3s;
-    }
-    input:checked + .toggle-slider { background:var(--accent); }
-    input:checked + .toggle-slider:before { transform:translateX(18px); }
-    .timer-bar-wrap { margin-bottom:8px; height:4px; background:var(--border); border-radius:99px; overflow:hidden; }
-    .timer-bar { height:100%; background:var(--accent); border-radius:99px; transition:width 1s linear; }
-    .timer-bar.warning { background:var(--red); }
-    .timer-display { font-size:0.8rem; font-weight:700; color:var(--text-mid); text-align:right; margin-bottom:4px; }
-    .timer-display.warning { color:var(--red); }
+  /* Text */
+  --text-1:         #ece7dd;
+  --text-2:         #a8a396;
+  --text-3:         #74716a;
+  --text-4:         #4a4740;
+  --text-ink:       #0e131a;
 
-    /* STREAK */
-    .streak-pill {
-      background: linear-gradient(135deg,#f59e0b,#f97316);
-      color:var(--navy); font-size:0.75rem; font-weight:800;
-      padding:4px 11px; border-radius:99px; white-space:nowrap;
-      animation:pulsePill .5s ease;
-    }
-    @keyframes pulsePill { 0%{transform:scale(1)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
-    .streak-popup {
-      position:fixed; top:80px; left:50%; transform:translateX(-50%) scale(0);
-      background:linear-gradient(135deg,#f59e0b,#f97316);
-      color:white; font-size:1.1rem; font-weight:800;
-      padding:14px 28px; border-radius:16px;
-      box-shadow:0 8px 32px rgba(245,158,11,0.5);
-      z-index:999; transition:transform .3s cubic-bezier(.175,.885,.32,1.275);
-      text-align:center; pointer-events:none;
-    }
-    .streak-popup.show { transform:translateX(-50%) scale(1); }
+  /* Accent — burnished gold */
+  --gold:           #c9a96a;
+  --gold-hover:     #d7ba7c;
+  --gold-soft:      rgba(201, 169, 106, 0.10);
+  --gold-softer:    rgba(201, 169, 106, 0.04);
 
-    /* QUIZ */
-    #quiz-screen { display: none; animation: fadeIn .35s ease; }
-    .quiz-topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap:wrap; }
-    .q-counter { font-size: 0.78rem; font-weight: 700; color: var(--text-mid); white-space: nowrap; }
-    .progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; min-width:60px; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #f97316); border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
-    .score-pill { background: var(--navy); color: var(--accent); font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 99px; white-space: nowrap; }
-    .q-card { background: var(--surface); border-radius: 18px; padding: 28px 24px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 14px; }
-    .q-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-    .topic-chip { font-size: 0.72rem; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-mid); padding: 4px 10px; border-radius: 99px; }
-    .diff-chip { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; margin-left: auto; }
-    .diff-1 { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .diff-2 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
-    .diff-3 { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
-    .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.75; }
-    .choices { display: flex; flex-direction: column; gap: 8px; margin-top: 22px; }
-    .choice {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 13px 16px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      background: var(--surface-2); cursor: pointer;
-      text-align: left; font-size: 0.92rem; line-height: 1.6;
-      transition: all .15s; color: var(--text); width: 100%;
-    }
-    .choice:hover:not(:disabled) { border-color: var(--blue-light); background: #eff6ff; transform: translateX(4px); }
-    .choice-key {
-      width: 28px; height: 28px; border-radius: 8px;
-      background: var(--border); color: var(--text-mid);
-      font-size: 0.78rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .choice.correct { border-color: var(--green); background: #ecfdf5; }
-    .choice.correct .choice-key { background: var(--green); color: white; }
-    .choice.wrong { border-color: var(--red); background: #fef2f2; }
-    .choice.wrong .choice-key { background: var(--red); color: white; }
-    .choice:disabled { cursor: default; transform: none; }
-    .explanation {
-      display: none; margin-top: 14px; padding: 16px 18px;
-      border-radius: 12px; font-size: 0.875rem; line-height: 1.75;
-      animation: fadeIn .3s ease;
-    }
-    .explanation.correct { background: #ecfdf5; border-left: 3px solid var(--green); color: #064e3b; }
-    .explanation.wrong { background: #fef2f2; border-left: 3px solid var(--red); color: #7f1d1d; }
-    .exp-label { font-weight: 800; font-size: 0.8rem; margin-bottom: 6px; display: block; }
-    .yt-link { display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:0.78rem; font-weight:700; color:#ef4444; text-decoration:none; background:#fef2f2; border:1px solid #fecdd3; padding:5px 12px; border-radius:99px; }
-    .yt-link:hover { background:#fee2e2; }
-    .next-wrap { display: flex; justify-content: flex-end; margin-top: 14px; }
-    .next-btn {
-      display: none; background: var(--navy); color: white;
-      border: none; padding: 12px 28px; border-radius: 10px;
-      font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all .2s;
-    }
-    .next-btn:hover { background: var(--navy-light); transform: translateX(3px); }
+  /* Level + State (subdued saturation) */
+  --lv1:            #8ca1cc;
+  --lv2:            #c9a96a;
+  --lv3:            #b16b53;
+  --success:        #7fa084;
+  --success-soft:   rgba(127, 160, 132, 0.12);
+  --error:          #b16b53;
+  --error-soft:     rgba(177, 107, 83, 0.12);
 
-    /* RESULT */
-    #result-screen { display: none; animation: fadeIn .4s ease; }
-    .result-hero {
-      background: var(--navy); border-radius: 20px;
-      padding: 36px 24px; text-align: center; margin-bottom: 14px;
-      position: relative; overflow: hidden;
-    }
-    .result-hero::before {
-      content:'';
-      position:absolute; top:-40px; right:-40px;
-      width:200px; height:200px;
-      background:radial-gradient(circle,rgba(245,158,11,0.12) 0%,transparent 70%);
-      border-radius:50%;
-    }
-    .rank-display {
-      font-size: 5rem; font-weight: 900; line-height:1;
-      margin-bottom: 6px;
-    }
-    .rank-display.S { color: var(--accent); text-shadow: 0 0 30px rgba(245,158,11,0.6); }
-    .rank-display.A { color: var(--blue-light); text-shadow: 0 0 30px rgba(93,156,246,0.6); }
-    .rank-display.B { color: #6ee7b7; text-shadow: 0 0 30px rgba(16,185,129,0.5); }
-    .rank-display.C { color: #fca5a5; text-shadow: 0 0 30px rgba(239,68,68,0.5); }
-    .score-display {
-      font-size: 3.2rem; font-weight: 900; color: white; line-height:1; margin-bottom: 4px;
-    }
-    .score-display .denom { font-size:1.4rem; font-weight:600; color:var(--text-light); }
-    .result-msg { font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 6px; margin-top:10px; }
-    .result-sub { font-size: 0.83rem; color: var(--text-light); }
-    .result-stats { display: flex; justify-content: center; gap: 24px; margin-top: 20px; }
-    .r-stat { text-align: center; }
-    .r-stat-num { font-size: 1.5rem; font-weight: 800; color: white; }
-    .r-stat-num.green { color: #6ee7b7; }
-    .r-stat-num.red { color: #fca5a5; }
-    .r-stat-label { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
-    .result-streak-info { font-size:0.78rem; color:var(--accent-light); margin-top:8px; }
+  /* Type */
+  --font-display: 'Shippori Mincho B1', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Noto Sans JP', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, ui-monospace, monospace;
 
-    /* WEAK BIAS */
-    .weak-card {
-      background:var(--surface); border-radius:var(--radius);
-      padding:20px; box-shadow:var(--shadow-sm); border:1px solid var(--border);
-      margin-bottom:14px;
-    }
-    .weak-card h3 { font-size:0.78rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
-    .weak-item { display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); }
-    .weak-item:last-child { border-bottom:none; }
-    .weak-topic { font-size:0.85rem; font-weight:600; flex:1; }
-    .weak-count { font-size:0.8rem; color:var(--red); font-weight:700; white-space:nowrap; }
-    .weak-bar { flex:2; height:6px; background:var(--border); border-radius:99px; overflow:hidden; }
-    .weak-bar-fill { height:100%; background:var(--red); border-radius:99px; }
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
 
-    .review-card {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
-    }
-    .review-card h3 { font-size: 0.78rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
-    .review-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .review-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .review-q { font-size: 0.87rem; font-weight: 600; margin-bottom: 8px; }
-    .review-ans-wrong { font-size: 0.77rem; color: var(--red); margin-bottom: 3px; }
-    .review-ans-correct { font-size: 0.77rem; color: var(--green); margin-bottom: 10px; }
-    .review-exp { font-size: 0.82rem; color: var(--text-mid); line-height: 1.7; background: var(--surface-2); padding: 10px 12px; border-radius: 8px; }
-    .review-yt { display:inline-flex; align-items:center; gap:5px; margin-top:8px; font-size:0.76rem; font-weight:700; color:#ef4444; text-decoration:none; background:#fef2f2; border:1px solid #fecdd3; padding:4px 10px; border-radius:99px; }
-    .review-yt:hover { background:#fee2e2; }
+  /* Elevation (no glow) */
+  --shadow-card:   0 1px 0 rgba(255,255,255,0.03) inset, 0 4px 16px rgba(0,0,0,0.24);
+  --shadow-hero:   0 1px 0 rgba(255,255,255,0.04) inset, 0 10px 40px rgba(0,0,0,0.32);
 
-    .result-actions { display: flex; gap: 10px; margin-top: 4px; margin-bottom: 14px; flex-wrap:wrap; }
-    .btn-primary {
-      flex: 1; background: linear-gradient(135deg, var(--accent), #f97316);
-      color: var(--navy); border: none; padding: 14px; border-radius: 12px;
-      font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all .2s;
-      box-shadow: 0 3px 12px rgba(245,158,11,0.3); min-width:140px;
-    }
-    .btn-primary:hover { transform: translateY(-2px); }
-    .btn-secondary {
-      background: var(--surface); color: var(--text-mid);
-      border: 1.5px solid var(--border); padding: 14px 18px;
-      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; white-space:nowrap;
-    }
-    .btn-secondary:hover { border-color: var(--navy-light); color: var(--text); }
-    .btn-x {
-      background: #000; color: white;
-      border: none; padding: 14px 18px;
-      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; white-space:nowrap;
-      display:flex; align-items:center; gap:6px;
-    }
-    .btn-x:hover { background: #333; }
-    .btn-challenge {
-      background: var(--blue); color: white;
-      border: none; padding: 14px 18px;
-      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; white-space:nowrap;
-    }
-    .btn-challenge:hover { background: #2563eb; }
-    .btn-threads {
-      background: #101010; color: white;
-      border: none; padding: 14px 18px;
-      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; white-space:nowrap;
-      display:flex; align-items:center; gap:6px;
-    }
-    .btn-threads:hover { background: #333; }
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
 
-    /* RANKING */
-    .nickname-card {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 22px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
-      margin-top: 14px; animation: fadeIn .4s ease;
-    }
-    .nickname-card h3 { font-size: 0.8rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
-    .nickname-row { display: flex; gap: 8px; }
-    .nickname-input {
-      flex: 1; padding: 12px 14px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      font-size: 0.95rem; color: var(--text);
-      transition: border-color .2s; outline: none;
-      font-family: inherit;
-    }
-    .nickname-input:focus { border-color: var(--accent); }
-    .nickname-submit {
-      background: var(--accent); color: var(--navy);
-      border: none; padding: 12px 20px; border-radius: 10px;
-      font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all .2s;
-      white-space: nowrap;
-    }
-    .nickname-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
-    .nickname-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .ranking-card {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 22px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
-      margin-top: 14px;
-    }
-    .ranking-card h3 { font-size: 0.8rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
-    .ranking-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .ranking-table th { text-align: left; font-size: 0.7rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.07em; padding: 0 8px 10px; border-bottom: 2px solid var(--border); }
-    .ranking-table th:last-child { text-align: right; }
-    .ranking-table td { padding: 10px 8px; border-bottom: 1px solid var(--border); color: var(--text-mid); vertical-align: middle; }
-    .ranking-table td:last-child { text-align: right; font-weight: 700; }
-    .ranking-table tr:last-child td { border-bottom: none; }
-    .ranking-table tr.me td { color: var(--navy); font-weight: 700; background: #fffbeb; }
-    .ranking-table tr.me td:first-child { border-radius: 6px 0 0 6px; }
-    .ranking-table tr.me td:last-child { border-radius: 0 6px 6px 0; color: #92400e; }
-    .rank-num { font-weight: 800; color: var(--text-mid); font-size: 0.85rem; }
-    .rank-badge { font-size: 0.72rem; font-weight: 800; padding: 2px 7px; border-radius: 6px; }
-    .rank-badge.S { background: rgba(245,158,11,0.15); color: #92400e; }
-    .rank-badge.A { background: #eff6ff; color: #1d4ed8; }
-    .rank-badge.B { background: #ecfdf5; color: #065f46; }
-    .rank-badge.C { background: #fef2f2; color: #991b1b; }
-    .rank-1 { color: #f59e0b; }
-    .rank-2 { color: #94a3b8; }
-    .rank-3 { color: #b45309; }
-    .rank-medal { font-size: 1rem; }
-    .ranking-loading { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.85rem; }
-    .ranking-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-    .rf-btn { padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 99px; font-size: 0.72rem; font-weight: 700; color: var(--text-mid); background: var(--surface-2); cursor: pointer; transition: all .15s; }
-    .rf-btn:hover { border-color: var(--accent); }
-    .rf-btn.active { border-color: var(--accent); background: #fffbeb; color: #92400e; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* FOOTER */
-    .site-footer {
-      margin-top: 48px; padding: 20px 16px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
-    .site-footer a { color: var(--text-mid); text-decoration: none; font-size: 0.8rem; font-weight: 600; }
-    .site-footer a:hover { color: var(--navy); }
-    .site-footer p { font-size:0.72rem; color:var(--text-light); margin-top:4px; }
+html { -webkit-text-size-adjust: 100%; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 480px) {
-      .level-grid { grid-template-columns: 1fr; }
-      .level-card-all { grid-column: span 1; }
-      .start-hero { padding: 28px 20px; }
-      .start-hero h2 { font-size: 1.4rem; }
-      .q-text { font-size: 0.97rem; }
-      .choice { font-size: 0.86rem; }
-      .q-count-row { flex-wrap: wrap; }
-      .q-count-btn { min-width: calc(50% - 4px); }
-      .result-actions { flex-direction:column; }
-      .rank-display { font-size:3.5rem; }
-      .score-display { font-size:2.4rem; }
-    }
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text-1);
+  min-height: 100vh;
+  line-height: 1.75;
+  font-weight: 400;
+  font-size: 16px;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--gold); color: var(--text-ink); }
+
+a { color: inherit; }
+
+button { font-family: inherit; color: inherit; }
+
+/* ══════════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11, 15, 20, 0.92);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--hairline);
+}
+.header-inner {
+  max-width: 760px; margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand-mark {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+  background: var(--gold-softer);
+}
+.brand-text { display: flex; flex-direction: column; min-width: 0; }
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brand-sub {
+  font-size: 0.6875rem; color: var(--text-3);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.header-meta {
+  font-size: 0.6875rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-left: 14px;
+  border-left: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════════════════════════ */
+.container {
+  max-width: 720px; margin: 0 auto;
+  padding: 40px 20px 100px;
+}
+
+/* Utility: hairline rule */
+.hairline-rule {
+  height: 1px; background: var(--hairline);
+  margin: 24px 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ══════════════════════════════════════════════════════════════ */
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--hairline);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   START SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#start-screen { animation: fadeUp .5s var(--ease-standard); }
+
+.hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 56px 40px 48px;
+  text-align: center;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at top, var(--gold-softer) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.hero-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5.2vw, 2.625rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  margin-bottom: 16px;
+}
+.hero-lede {
+  position: relative;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  max-width: 520px;
+  margin: 0 auto;
+  font-weight: 500;
+}
+.hero-stats {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 36px;
+}
+.hero-stat { text-align: center; }
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.75rem; font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.hero-rule {
+  width: 1px; height: 32px;
+  background: var(--hairline);
+}
+
+/* Challenge banner */
+#challenge-banner {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline-gold);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.chal-label {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.chal-text {
+  font-size: 0.875rem; color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* Section card */
+.section-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Level grid */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.level-card {
+  position: relative;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+}
+.level-card:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.level-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.level-card-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 10px;
+}
+.level-label {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-1);
+}
+.level-card.selected .level-label { color: var(--gold); }
+.level-count {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-body);
+}
+.level-card.selected .level-count {
+  color: var(--gold);
+  border-color: var(--hairline-gold);
+}
+.level-desc {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  line-height: 1.6;
+  font-weight: 500;
+}
+.level-card-all { grid-column: span 2; }
+.check-icon {
+  position: absolute; top: 12px; right: 12px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: none;
+  color: var(--text-ink);
+}
+.check-icon svg {
+  width: 12px; height: 12px;
+  display: block; margin: 2px auto;
+}
+.level-card.selected .check-icon { display: block; }
+
+/* Question count buttons */
+.q-count-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.q-count-btn {
+  flex: 1; min-width: 70px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard);
+  font-family: inherit;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+}
+.qc-num {
+  font-family: var(--font-display);
+  font-size: 1.125rem; font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.qc-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.q-count-btn:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.q-count-btn.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.q-count-btn.selected .qc-num { color: var(--gold); }
+.q-count-btn.selected .qc-label { color: var(--gold); }
+
+/* Timer toggle */
+.timer-toggle-row {
+  display: flex; align-items: center; gap: 16px;
+}
+.toggle-switch {
+  position: relative; width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: 22px;
+  transition: background var(--duration-base) var(--ease-standard),
+              border-color var(--duration-base) var(--ease-standard);
+}
+.toggle-slider::before {
+  position: absolute; content: '';
+  height: 14px; width: 14px;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+  background: var(--text-2);
+  border-radius: 50%;
+  transition: transform var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+input:checked + .toggle-slider {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+input:checked + .toggle-slider::before {
+  transform: translateY(-50%) translateX(18px);
+  background: var(--text-ink);
+}
+.toggle-text { display: flex; flex-direction: column; }
+.toggle-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+}
+.toggle-sub {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* Disclaimer */
+.disclaimer {
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--hairline-gold);
+  background: var(--gold-softer);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+.disclaimer-label {
+  font-size: 0.625rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.disclaimer p {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  line-height: 1.8;
+  font-weight: 500;
+}
+.disclaimer strong {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+/* Start button */
+.start-button {
+  width: 100%;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 18px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  transition: background var(--duration-base) var(--ease-standard);
+  margin-top: 8px;
+}
+.start-button:hover { background: var(--gold-hover); }
+.start-arrow {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#quiz-screen { display: none; animation: fadeUp .32s var(--ease-standard); }
+
+.quiz-topbar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.q-counter {
+  font-family: var(--font-display);
+  font-size: 0.9375rem; font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1; min-width: 80px;
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width .6s var(--ease-standard);
+}
+.score-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.score-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.score-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Streak */
+.streak-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  animation: pulseQuiet .3s var(--ease-standard);
+}
+.streak-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.streak-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes pulseQuiet {
+  0% { transform: scale(0.96); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.streak-popup {
+  position: fixed; top: 84px; left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-gold);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hero);
+  z-index: 999;
+  transition: transform var(--duration-base) var(--ease-standard),
+              opacity var(--duration-base) var(--ease-standard);
+  opacity: 0; pointer-events: none;
+  letter-spacing: 0.04em;
+}
+.streak-popup.show {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* Timer */
+.timer-bar-wrap {
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+  margin-bottom: 12px;
+}
+.timer-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width 1s linear;
+}
+.timer-bar.warning { background: var(--error); }
+.timer-display {
+  font-family: var(--font-display);
+  font-size: 0.8125rem; font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.timer-display.warning { color: var(--error); }
+
+/* Question card */
+.q-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 32px 32px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.q-card-top {
+  display: flex; align-items: center;
+  margin-bottom: 20px;
+}
+.diff-chip {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+}
+.diff-1 {
+  color: var(--lv1);
+  background: rgba(140, 161, 204, 0.08);
+  border: 1px solid rgba(140, 161, 204, 0.22);
+}
+.diff-2 {
+  color: var(--lv2);
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+}
+.diff-3 {
+  color: var(--lv3);
+  background: rgba(177, 107, 83, 0.08);
+  border: 1px solid rgba(177, 107, 83, 0.22);
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.85;
+  color: var(--text-1);
+  letter-spacing: 0.005em;
+}
+
+/* Choices */
+.choices {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 24px;
+}
+.choice {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  width: 100%;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.choice:hover:not(:disabled) {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.choice-key {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-2);
+  background: var(--ink-elev);
+  margin-top: 1px;
+}
+.choice.correct {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.choice.correct .choice-key {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-ink);
+}
+.choice.wrong {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.choice.wrong .choice-key {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--text-1);
+}
+.choice:disabled { cursor: default; opacity: 0.95; }
+
+/* Explanation */
+.explanation {
+  display: none;
+  margin-top: 18px;
+  padding: 18px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  animation: fadeUp .3s var(--ease-standard);
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+.explanation.correct {
+  background: var(--success-soft);
+  border-left-color: var(--success);
+  color: var(--text-1);
+}
+.explanation.wrong {
+  background: var(--error-soft);
+  border-left-color: var(--error);
+  color: var(--text-1);
+}
+.exp-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.explanation.correct .exp-label { color: var(--success); }
+.explanation.wrong .exp-label { color: var(--error); }
+.yt-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.yt-link::before {
+  content: '';
+  width: 12px; height: 12px;
+  background: var(--gold);
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+}
+.yt-link:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Next button */
+.next-wrap {
+  display: flex; justify-content: flex-end;
+  margin-top: 16px;
+}
+.next-btn {
+  display: none;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.next-btn:hover { background: var(--gold-hover); }
+
+/* ══════════════════════════════════════════════════════════════
+   RESULT SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#result-screen { display: none; animation: fadeUp .4s var(--ease-standard); }
+
+.result-hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 48px 40px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.rank-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rank-display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-display.S { color: var(--gold); }
+.rank-display.A { color: var(--lv1); }
+.rank-display.B { color: var(--success); }
+.rank-display.C { color: var(--error); }
+
+.score-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 7vw, 3.25rem);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.score-display .denom {
+  font-size: 0.45em;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.result-msg {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 18px 0 6px;
+  letter-spacing: -0.005em;
+}
+.result-sub {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.75;
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.result-streak-info {
+  margin-top: 16px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.rsi-chip {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-right: 6px;
+}
+.result-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+}
+.stat-rule {
+  width: 1px; height: 40px;
+  background: var(--hairline);
+}
+.r-stat { text-align: center; }
+.r-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.r-stat-num.green { color: var(--success); }
+.r-stat-num.red   { color: var(--error); }
+.r-stat-num.white { color: var(--text-1); }
+.r-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* Weak bias */
+.weak-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.weak-item {
+  display: flex; align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.weak-item:last-child { border-bottom: none; padding-bottom: 0; }
+.weak-item:first-child { padding-top: 0; }
+.weak-topic {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  font-family: var(--font-display);
+}
+.weak-bar {
+  flex: 1.5;
+  max-width: 180px;
+  height: 4px;
+  background: var(--hairline);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.weak-bar-fill {
+  height: 100%;
+  background: var(--error);
+  border-radius: 99px;
+}
+.weak-count {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--error);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Review */
+.review-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.review-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.review-item:last-child { border-bottom: none; padding-bottom: 0; }
+.review-item:first-child { padding-top: 0; }
+.review-q {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--text-1);
+  margin-bottom: 14px;
+}
+.review-q::before {
+  content: 'Q. ';
+  color: var(--gold);
+  font-weight: 700;
+}
+.review-ans-wrong, .review-ans-correct {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-bottom: 4px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.review-ans-wrong { color: var(--error); }
+.review-ans-correct { color: var(--success); margin-bottom: 12px; }
+.review-ans-label {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  min-width: 80px;
+}
+.review-exp {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.85;
+  background: var(--ink-elev);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+}
+.review-yt {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.review-yt:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Result actions */
+.result-actions {
+  display: flex; gap: 10px;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  flex: 1; min-width: 160px;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.btn-primary:hover { background: var(--gold-hover); }
+.btn-secondary {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.btn-secondary:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.btn-social {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  white-space: nowrap;
+}
+.btn-social:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Nickname card */
+.nickname-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-slow) var(--ease-standard);
+}
+.nickname-card.registered { border-color: var(--success); }
+.nickname-row {
+  display: flex; gap: 8px;
+}
+.nickname-input {
+  flex: 1;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+.nickname-input:focus { border-color: var(--gold); }
+.nickname-input::placeholder { color: var(--text-4); }
+.nickname-submit {
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.nickname-submit:hover:not(:disabled) { background: var(--gold-hover); }
+.nickname-submit:disabled {
+  background: var(--ink-elev);
+  color: var(--text-3);
+  border-color: var(--hairline);
+  cursor: not-allowed;
+}
+.nickname-note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* Ranking */
+.ranking-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.ranking-filter {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.rf-btn {
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.rf-btn:hover { border-color: var(--hairline-gold); color: var(--gold); }
+.rf-btn.active {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ranking-table th {
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.ranking-table th:last-child { text-align: right; }
+.ranking-table td {
+  padding: 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--hairline);
+  font-variant-numeric: tabular-nums;
+}
+.ranking-table td:last-child { text-align: right; font-weight: 700; color: var(--text-1); }
+.ranking-table tr:last-child td { border-bottom: none; }
+.ranking-table tr.me td {
+  color: var(--text-1);
+  background: var(--gold-softer);
+}
+.rank-medal { font-size: 1rem; }
+.rank-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-3);
+}
+.rank-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.06em;
+}
+.rank-badge.S { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--hairline-gold); }
+.rank-badge.A { background: rgba(140, 161, 204, 0.10); color: var(--lv1); border: 1px solid rgba(140, 161, 204, 0.25); }
+.rank-badge.B { background: var(--success-soft); color: var(--success); border: 1px solid rgba(127, 160, 132, 0.25); }
+.rank-badge.C { background: var(--error-soft); color: var(--error); border: 1px solid rgba(177, 107, 83, 0.25); }
+.me-tag {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.16em;
+  padding-left: 8px;
+}
+.ranking-loading {
+  text-align: center;
+  padding: 28px 0;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+.site-footer {
+  margin-top: 64px;
+  padding: 32px 20px;
+  border-top: 1px solid var(--hairline);
+  text-align: center;
+}
+.site-footer a {
+  font-family: var(--font-display);
+  color: var(--text-1);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: color var(--duration-base) var(--ease-standard);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.site-footer a:hover {
+  color: var(--gold);
+  border-bottom-color: var(--hairline-gold);
+}
+.site-footer p {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+.footer-version {
+  display: inline-block;
+  margin-top: 16px !important;
+  padding: 4px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display) !important;
+  font-size: 0.6875rem !important;
+  font-weight: 600 !important;
+  color: var(--text-3) !important;
+  letter-spacing: 0.14em !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOTION
+   ══════════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   A11Y: FOCUS
+   ══════════════════════════════════════════════════════════════ */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+button, a, input, [tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .header-meta { display: none; }
+  .brand-title { font-size: 0.875rem; }
+  .brand-sub { display: none; }
+  .container { padding: 28px 16px 96px; }
+  .hero { padding: 40px 24px 36px; border-radius: var(--radius-lg); }
+  .hero-stats { gap: 18px; }
+  .hero-rule { height: 24px; }
+  .section-card { padding: 20px 20px; }
+  .q-card { padding: 24px 22px 22px; }
+  .result-hero { padding: 36px 22px 32px; border-radius: var(--radius-lg); }
+  .result-stats { gap: 16px; padding-top: 20px; margin-top: 24px; }
+  .stat-rule { height: 32px; }
+  .review-card, .weak-card, .nickname-card, .ranking-card { padding: 20px 20px; }
+  .result-actions { flex-direction: column; gap: 8px; }
+  .btn-primary, .btn-secondary, .btn-social { min-width: 0; }
+  .ranking-table { font-size: 0.8125rem; }
+  .ranking-table th, .ranking-table td { padding-left: 8px; padding-right: 8px; }
+}
+@media (max-width: 480px) {
+  .level-grid { grid-template-columns: 1fr; }
+  .level-card-all { grid-column: span 1; }
+  .hero-title { font-size: 1.625rem; }
+  .hero-lede { font-size: 0.875rem; }
+  .q-text { font-size: 1.0625rem; }
+  .choice { font-size: 0.875rem; padding: 14px 16px; }
+  .q-count-row { flex-wrap: wrap; }
+  .q-count-btn { min-width: calc(50% - 4px); }
+  .rank-display { font-size: 3rem; }
+  .score-display { font-size: 2.25rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
   </style>
 </head>
 <body>
-<div id="streak-popup" class="streak-popup"></div>
-<header>
+<div id="streak-popup" class="streak-popup" aria-live="polite"></div>
+
+<header class="site-header">
   <div class="header-inner">
-    <div class="header-logo">
-      <div class="logo-icon">🧠</div>
-      <div class="logo-text">
-        <h1>行動経済学基礎コース 知識クイズ</h1>
-        <p>Degree行動経済アナリスト：とーる</p>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">B</div>
+      <div class="brand-text">
+        <div class="brand-title">行動経済学基礎コース 知識クイズ</div>
+        <div class="brand-sub">100問で学び直すバイアスの基礎</div>
       </div>
     </div>
-    <div class="header-badge">基礎コース｜V2.2</div>
+    <div class="header-meta">Vol.III · 2026</div>
   </div>
 </header>
-<div class="container">
-  <!-- START SCREEN -->
-  <div id="start-screen">
-    <div class="start-hero">
-      <h2>知識を試そう</h2>
-      <p>行動経済学基礎コースの内容から出題。<br>バイアスの理解度をチェックしましょう。</p>
+
+<main class="container">
+
+  <!-- ═══════════════════ START SCREEN ═══════════════════ -->
+  <section id="start-screen" aria-labelledby="hero-title">
+    <div class="hero">
+      <div class="hero-eyebrow">Behavioral Economics — Foundation</div>
+      <h1 id="hero-title" class="hero-title">バイアスを知り、<br>判断を磨く。</h1>
+      <p class="hero-lede">日本営業科学協会「行動経済学基礎コース」の内容に即して、<br>45以上の認知バイアスを100問の例題と解説で学び直す。</p>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-num">100</div><div class="hero-stat-label">総問題数</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">難易度</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">4択</div><div class="hero-stat-label">形式</div></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">100</div>
+          <div class="hero-stat-label">Questions</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">03</div>
+          <div class="hero-stat-label">Levels</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">04</div>
+          <div class="hero-stat-label">Choices</div>
+        </div>
       </div>
     </div>
-    <!-- CHALLENGE BANNER -->
-    <div id="challenge-banner" style="display:none; background:linear-gradient(135deg,var(--blue),#6366f1); border-radius:14px; padding:16px 20px; margin-bottom:14px; color:white; text-align:center;">
-      <div style="font-size:1.1rem; font-weight:800; margin-bottom:4px;">🎯 挑戦状が届いています！</div>
-      <div style="font-size:0.82rem; opacity:0.85;">友達と同じ問題セットで対決しよう</div>
+
+    <div id="challenge-banner" style="display:none;" role="status">
+      <div class="chal-label">Challenge Invitation</div>
+      <div class="chal-text">挑戦状が届いています。同じ問題セットで対決できます。</div>
     </div>
-    <div class="start-card">
-      <h3>難易度を選択</h3>
+
+    <section class="section-card">
+      <div class="section-label">01 — Level</div>
       <div class="level-grid">
-        <div class="level-card" id="lv1-card" onclick="toggleLevel(1)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐ Level 1</span><span class="level-count">35問</span></div>
+        <button type="button" class="level-card" id="lv1-card" onclick="toggleLevel(1)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 1</span>
+            <span class="level-count">35問</span>
+          </div>
           <p class="level-desc">基本用語・定義の理解</p>
-        </div>
-        <div class="level-card" id="lv2-card" onclick="toggleLevel(2)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐⭐ Level 2</span><span class="level-count">40問</span></div>
+        </button>
+        <button type="button" class="level-card" id="lv2-card" onclick="toggleLevel(2)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 2</span>
+            <span class="level-count">40問</span>
+          </div>
           <p class="level-desc">場面への当てはめ・応用</p>
-        </div>
-        <div class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">🎲 全レベルMIX</span><span class="level-count">100問</span></div>
-          <p class="level-desc">すべての難易度からランダム出題</p>
-        </div>
-        <div class="level-card" id="lv3-card" onclick="toggleLevel(3)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐⭐⭐ Level 3</span><span class="level-count">25問</span></div>
+        </button>
+        <button type="button" class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')" aria-pressed="true">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">All Levels</span>
+            <span class="level-count">100問</span>
+          </div>
+          <p class="level-desc">全難易度からランダム出題</p>
+        </button>
+        <button type="button" class="level-card" id="lv3-card" onclick="toggleLevel(3)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 3</span>
+            <span class="level-count">25問</span>
+          </div>
           <p class="level-desc">深い理解・複合問題</p>
-        </div>
+        </button>
       </div>
-    </div>
-    <div class="start-card">
-      <h3>出題数を選択</h3>
+    </section>
+
+    <section class="section-card">
+      <div class="section-label">02 — Question Count</div>
       <div class="q-count-row">
-        <button class="q-count-btn" onclick="selectCount(5,this)">5問<small>さくっと</small></button>
-        <button class="q-count-btn selected" onclick="selectCount(10,this)">10問<small>標準</small></button>
-        <button class="q-count-btn" onclick="selectCount(20,this)">20問<small>本格的</small></button>
-        <button class="q-count-btn" onclick="selectCount(999,this)">全問<small>完全制覇</small></button>
+        <button type="button" class="q-count-btn" onclick="selectCount(5,this)">
+          <span class="qc-num">5</span><span class="qc-label">Short</span>
+        </button>
+        <button type="button" class="q-count-btn selected" onclick="selectCount(10,this)">
+          <span class="qc-num">10</span><span class="qc-label">Standard</span>
+        </button>
+        <button type="button" class="q-count-btn" onclick="selectCount(20,this)">
+          <span class="qc-num">20</span><span class="qc-label">Deep Dive</span>
+        </button>
+        <button type="button" class="q-count-btn" onclick="selectCount(999,this)">
+          <span class="qc-num">All</span><span class="qc-label">Full Set</span>
+        </button>
       </div>
-    </div>
-    <div class="start-card" style="padding:18px 22px;">
+    </section>
+
+    <section class="section-card">
       <div class="timer-toggle-row">
         <label class="toggle-switch">
           <input type="checkbox" id="timer-toggle" checked>
-          <span class="toggle-slider"></span>
+          <span class="toggle-slider" aria-hidden="true"></span>
         </label>
-        <label for="timer-toggle" style="font-size:0.88rem; color:var(--text-mid); cursor:pointer;">⏱ タイマーモード（1問30秒）</label>
+        <div class="toggle-text">
+          <label for="timer-toggle" class="toggle-title">制限時間モード</label>
+          <div class="toggle-sub">1問あたり30秒で回答</div>
+        </div>
       </div>
-    </div>
-    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;">
-      <span style="font-size:1.1rem;flex-shrink:0;">⚠️</span>
-      <p style="font-size:0.76rem;color:#64748b;line-height:1.7;margin:0;">
-        本クイズは日本営業科学協会の承諾を得て作成・一般公開しております。<br>
-        <strong style="color:#475569;">行動経済学基礎コースの学習補助を目的とした練習問題です。</strong>協会主宰の検定・資格試験とは関係ありません。<br>
-        検定や問題に関するお問い合わせにはお答えいたしません。
-      </p>
-    </div>
-    <button class="start-button" onclick="startQuiz()">スタート →</button>
+    </section>
 
-    <!-- トップ画面ランキング -->
-    <div class="ranking-card" style="margin-top:20px;">
-      <h3>🏆 ランキング</h3>
+    <div class="disclaimer" role="note">
+      <div class="disclaimer-label">Note</div>
+      <p>本クイズは日本営業科学協会の承諾を得て作成・一般公開しております。<strong>行動経済学基礎コースの学習補助を目的とした練習問題です。</strong>協会主宰の検定・資格試験とは関係ありません。検定や問題に関するお問い合わせにはお答えいたしかねます。</p>
+    </div>
+
+    <button type="button" class="start-button" onclick="startQuiz()">
+      <span>演習を始める</span>
+      <svg class="start-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <section class="ranking-card" style="margin-top:32px;">
+      <div class="section-label">03 — Ranking</div>
       <div class="ranking-filter" id="top-ranking-filter"></div>
-      <div id="top-ranking-body"><p class="ranking-loading">読み込み中...</p></div>
-    </div>
-  </div>
+      <div id="top-ranking-body"><p class="ranking-loading">Loading…</p></div>
+    </section>
+  </section>
 
-  <!-- QUIZ SCREEN -->
-  <div id="quiz-screen">
-    <div id="timer-bar-wrap" class="timer-bar-wrap" style="display:none;">
+  <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
+  <section id="quiz-screen" aria-labelledby="q-text">
+    <div id="timer-bar-wrap" class="timer-bar-wrap" style="display:none;" aria-hidden="true">
       <div class="timer-bar" id="timer-bar" style="width:100%"></div>
     </div>
     <div class="quiz-topbar">
-      <span class="q-counter" id="q-counter">1 / 10</span>
-      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-      <div class="score-pill" id="score-pill">✓ 0</div>
+      <span class="q-counter" id="q-counter">01 / 10</span>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <div class="score-pill" id="score-pill">
+        <span class="score-pill-label">Score</span><span class="score-pill-num">0</span>
+      </div>
       <div id="streak-display" style="display:none;"></div>
       <div id="timer-display" class="timer-display" style="display:none;"></div>
     </div>
-    <div class="q-card">
+    <article class="q-card">
       <div class="q-card-top">
         <span class="diff-chip" id="q-diff"></span>
       </div>
       <p class="q-text" id="q-text"></p>
       <div class="choices" id="choices"></div>
       <div class="explanation" id="explanation"></div>
+    </article>
+    <div class="next-wrap">
+      <button type="button" class="next-btn" id="next-btn" onclick="nextQ()"></button>
     </div>
-    <div class="next-wrap"><button class="next-btn" id="next-btn" onclick="nextQ()"></button></div>
-  </div>
+  </section>
 
-  <!-- RESULT SCREEN -->
-  <div id="result-screen">
-    <div class="result-hero">
-      <div class="rank-display" id="rank-display">S</div>
+  <!-- ═══════════════════ RESULT SCREEN ═══════════════════ -->
+  <section id="result-screen" aria-labelledby="rank-display">
+    <article class="result-hero">
+      <div class="rank-eyebrow">Result</div>
+      <div class="rank-display" id="rank-display">RANK</div>
       <div class="score-display" id="score-display">0<span class="denom"> / 10</span></div>
       <p class="result-msg" id="result-msg"></p>
       <p class="result-sub" id="result-sub"></p>
       <div id="result-streak-info" class="result-streak-info" style="display:none;"></div>
       <div class="result-stats">
-        <div class="r-stat"><div class="r-stat-num green" id="r-correct">0</div><div class="r-stat-label">正解</div></div>
-        <div class="r-stat"><div class="r-stat-num red" id="r-wrong">0</div><div class="r-stat-label">不正解</div></div>
-        <div class="r-stat"><div class="r-stat-num" id="r-rate">0%</div><div class="r-stat-label">正答率</div></div>
+        <div class="r-stat">
+          <div class="r-stat-num green" id="r-correct">0</div>
+          <div class="r-stat-label">正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num red" id="r-wrong">0</div>
+          <div class="r-stat-label">不正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num white" id="r-rate">0%</div>
+          <div class="r-stat-label">正答率</div>
+        </div>
       </div>
-    </div>
+    </article>
+
     <div class="result-actions">
-      <button class="btn-secondary" onclick="goStart()">🏠 トップへ</button>
-      <button class="btn-primary" onclick="retry()">🔄 もう一度</button>
-      <button class="btn-x" onclick="shareX()">𝕏 シェア</button>
-      <button class="btn-threads" onclick="shareThreads()">🧵 Threads</button>
-      <button class="btn-challenge" onclick="shareChallenge()">📨 挑戦状</button>
+      <button type="button" class="btn-secondary" onclick="goStart()">トップへ戻る</button>
+      <button type="button" class="btn-primary" onclick="retry()">もう一度挑戦する</button>
+      <button type="button" class="btn-social" onclick="shareX()">𝕏 でシェア</button>
+      <button type="button" class="btn-social" onclick="shareThreads()">Threads でシェア</button>
+      <button type="button" class="btn-social" onclick="shareChallenge()">同じ問題を友人に送る</button>
     </div>
 
-    <!-- 苦手バイアス分析 -->
-    <div id="weak-section" class="weak-card" style="display:none; margin-bottom:14px;">
-      <h3>📊 苦手バイアス分析</h3>
+    <div id="weak-section" class="weak-card" style="display:none;">
+      <div class="section-label">Analysis — 苦手分野</div>
       <div id="weak-list"></div>
     </div>
 
-    <!-- 間違えた問題の復習 -->
-    <div id="wrong-section" class="review-card" style="display:none; margin-top:14px;">
-      <h3>❌ 間違えた問題の復習</h3>
+    <div id="wrong-section" class="review-card" style="display:none;">
+      <div class="section-label">Review — 間違えた問題</div>
       <div id="wrong-list"></div>
     </div>
 
-    <!-- ニックネーム登録 -->
     <div id="nickname-card" class="nickname-card" style="display:none;">
-      <h3>🏆 スコアを登録してランキングに参加</h3>
+      <div class="section-label">Record — ランキングに記録（任意）</div>
       <div class="nickname-row">
-        <input class="nickname-input" id="nickname-input" type="text" placeholder="ニックネームを入力（例：とーる）" maxlength="20">
-        <button class="nickname-submit" id="nickname-submit" onclick="submitRanking()">登録</button>
+        <input class="nickname-input" id="nickname-input" type="text" placeholder="例：とーる" maxlength="20" aria-label="ニックネーム">
+        <button type="button" class="nickname-submit" id="nickname-submit" onclick="submitRanking()">記録する</button>
       </div>
-      <p style="font-size:0.72rem;color:var(--text-light);margin-top:8px;">※ニックネームは公開されます。個人情報は入力しないでください。</p>
+      <p class="nickname-note">※ ニックネームは公開されます。個人情報は入力しないでください。</p>
     </div>
 
-    <!-- ランキング -->
     <div id="ranking-card" class="ranking-card" style="display:none;">
-      <h3>🏆 ランキング</h3>
+      <div class="section-label">Ranking</div>
       <div class="ranking-filter" id="ranking-filter"></div>
-      <div id="ranking-body"><p class="ranking-loading">読み込み中...</p></div>
+      <div id="ranking-body"><p class="ranking-loading">Loading…</p></div>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 
-<!-- FOOTER -->
 <footer class="site-footer">
-  <a href="https://x.com/LMeta321" target="_blank" rel="noopener">🐈 とーる＠猫好きの行動経済アナリスト</a>
+  <a href="https://x.com/LMeta321" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a>
   <p>行動経済学の発信・講座コンテンツ制作</p>
+  <p class="footer-version">バージョン3.0</p>
 </footer>
 
 <script>
 const Q = [
-
   // ============================================================
   // ⭐ LEVEL 1（35問）基本用語・定義の理解
   // ============================================================
-
   // --- 既存12問 ---
   {lv:1,t:"一貫性のバイアス",q:"「一貫性のバイアス」の核心にある心理として最も正しいのはどれか？",c:["他人の意見に合わせようとする傾向","自分の過去の発言・思考・行動と矛盾しないよう行動しようとする心理","新しい情報を積極的に取り入れようとする傾向","感情に基づいて意思決定する傾向"],a:1,e:"一貫性のバイアスとは、自分の中に矛盾（認知的不協和）が生じるとストレスを感じ、それを避けるために過去の自分と「一貫した」行動をとろうとする心理です。合理的な判断よりも「過去との一致」が優先されてしまいます。"},
   {lv:1,t:"アンカリング効果",q:"「アンカリング効果」を最もよく説明しているものはどれか？",c:["過去の成功体験から将来も同じ結果になると予測する傾向","最初に提示された数字や情報が、その後の判断の基準になってしまう傾向","権威ある専門家の意見に引きずられて判断する傾向","損失を利益よりも強く感じる傾向"],a:1,e:"アンカリング効果では、最初に目にした数字（アンカー）が頭に刻み込まれ、その後の判断に強く影響します。交渉で最初に高い金額を提示するとそれが基準になり、最終的な合意額が高くなりやすいのがその例です。"},
@@ -636,7 +1629,6 @@ const Q = [
   {lv:1,t:"確証バイアス",q:"「確証バイアス」の説明として正しいのはどれか？",c:["確実な情報だけを信頼する傾向","自分の既存の信念・仮説を支持する情報だけを集め、反する情報を無視する傾向","専門家の確認を経た情報のみを判断基準にする傾向","多数の人が確認した情報を正しいと見なす傾向"],a:1,e:"確証バイアスとは、自分がすでに持っている考えや仮説を「確認」しようとして、それを支持する証拠ばかりを集め、反証となる情報を無視したり曲解したりする傾向です。一貫性のバイアスと相互に強化し合う関係にあります。"},
   {lv:1,t:"社会的証明",q:"「社会的証明」として最も正しい説明はどれか？",c:["法的に認められた行動のみが正しいという考え方","多くの人が行っていることや選んでいるものを、正しい・良いと判断する傾向","社会的地位の高い人物の意見を優先する傾向","データや統計的証拠がある場合のみ判断する傾向"],a:1,e:"社会的証明とは「みんながそうしているから正しい・良い」と判断する心理です。「〇〇万人が利用」「お客様の声」「行列のできる店」などはすべて社会的証明を活用したものです。不確実な状況ほどこのバイアスが強く働きます。"},
   {lv:1,t:"ピア効果",q:"「ピア効果」とは何か？",c:["専門家（ピア）の評価が意思決定に与える影響","同じグループ・同僚の存在や行動が個人のパフォーマンスや意思決定に影響を与える現象","仲間からのプレッシャーで自分の意見を変える傾向","同調圧力によって行動が制限される現象"],a:1,e:"ピア効果とは、仲間・同僚・同じグループの人たちの存在や行動が、個人の行動・パフォーマンス・学習効果などに影響を及ぼす現象です。「一緒に勉強する友達がいると頑張れる」や「優秀な同僚がいると自分も伸びる」などがその例です。"},
-
   // --- 新規23問 Level 1 ---
   {lv:1,t:"後悔回避バイアス",q:"「後悔回避バイアス」の説明として最も正しいのはどれか？",c:["過去の失敗を忘れようとする心理的防衛機制","将来に後悔するかもしれないという恐れから、行動を起こせなくなったり現状を維持しようとする傾向","悪い結果が出た時に他者のせいにする傾向","失敗した体験を繰り返し思い出す傾向"],a:1,e:"後悔回避バイアスとは、「もし〇〇したら後悔するかもしれない」という先読みの感情が判断に影響を与え、リスクを取る行動や変化を避けてしまう傾向です。特に、現状を変える行動（作為）から生じる後悔の方が、何もしない（不作為）後悔より強く感じられます。"},
   {lv:1,t:"現状維持バイアス",q:"「現状維持バイアス」の説明として正しいのはどれか？",c:["現在の状況が最良だと論理的に判断する傾向","変化によって生じる損失や不安を回避するため、現状を変えないことを好む傾向","過去の成功を繰り返そうとする傾向","情報が不足しているときに判断を保留する傾向"],a:1,e:"現状維持バイアスとは、たとえ変化が客観的に有益であっても、「今のままでいたい」という心理が働き、変化を避ける傾向です。損失回避と密接に関連しており、「変えることで何かを失うかもしれない」という恐れが根底にあります。"},
@@ -661,11 +1653,9 @@ const Q = [
   {lv:1,t:"ツァイガルニク効果",q:"「ツァイガルニク効果」の説明として正しいのはどれか？",c:["完了した課題は達成感とともに長期記憶に残りやすい効果","完了した課題より未完了・中断された課題の方が記憶に残りやすい現象","締め切りが近いほど集中力が高まる現象","繰り返し中断されることで課題への動機づけが低下する効果"],a:1,e:"ツァイガルニク効果とは、完成した課題はすぐ忘れるが、途中で中断・未完了のままの課題は頭に引っかかり続けやすい現象です。ドラマの「続きは次回」やゲームの「もう少しで次のレベル」などはこの効果を意図的に活用したものです。"},
   {lv:1,t:"エンドウドプログレス効果",q:"「エンドウドプログレス効果（前進効果）」の説明として正しいのはどれか？",c:["ゴールに近づくほど達成への動機が下がる現象","目標への進捗が与えられると（最初からスタートが与えられると）、完了に向けてより努力するようになる傾向","中間目標の達成が最終目標への動機を低下させる効果","進捗の見える化が逆にプレッシャーになる現象"],a:1,e:"エンドウドプログレス効果とは、最初から「2ポイント分のスタンプが押してある10個スタンプのカード」を渡すと、「0から始まる8個スタンプのカード」よりも完了率が高くなる現象です。「すでに始まっている」という感覚がゴールへの動機を高めます。"},
   {lv:1,t:"確実性効果",q:"「確実性効果」の説明として最も正しいのはどれか？",c:["確実な情報だけを判断材料にする合理的思考","確率が100%の確実な結果を、期待値が高くても不確実な選択肢より過大に好む傾向","リスクがゼロの選択肢を客観的に評価する能力","確認された事実のみで判断するというルール"],a:1,e:"確実性効果とは、同程度の期待値であっても「確実に得られる」という100%の保証に対して、人が過大な価値を置く傾向です。「100%で1万円もらえる」と「80%で1万5千円もらえる」（期待値1.2万円）なら、多くの人は前者を選びます。"},
-
   // ============================================================
   // ⭐⭐ LEVEL 2（40問）場面への当てはめ・応用
   // ============================================================
-
   // --- 既存12問 ---
   {lv:2,t:"サンクコスト",q:"Aさんは3年前に高額なゴルフ会員権を購入したが一度も行っていない。「もったいない」という気持ちから無理に行こうとしている。このAさんの行動を説明するバイアスはどれか？",c:["アンカリング効果：購入時の価格が判断を縛っている","一貫性のバイアス：過去の決断と一致した行動をとろうとしている","サンクコストのバイアス：回収できないコストに縛られている","損失回避：会員権を無駄にすることを損失と感じている"],a:2,e:"これはサンクコストのバイアスの典型例です。すでに支払った会員費は回収できません。合理的には「今後ゴルフが楽しめるか」だけで判断すべきですが、「もったいない」という感覚（サンクコストへの固執）が非合理な行動を引き起こしています。"},
   {lv:2,t:"現在バイアス",q:"現在バイアスが最も強く現れやすい状況はどれか？",c:["10年後の退職資金について計画を立てている時","来年の海外旅行の行き先を選んでいる時","ダイエット中に目の前においしいケーキが出てきた瞬間","歴史的な経済危機の原因を分析している時"],a:2,e:"現在バイアスは「今この瞬間」に直面した時に最も強く発動します。ダイエットの継続は遠い将来の健康につながると理性では理解していても、「今すぐ食べたい」という欲求に負けてしまうのが現在バイアスの最も顕著な例です。"},
@@ -679,7 +1669,6 @@ const Q = [
   {lv:2,t:"ピア効果",q:"同じ部署に高い成果を出すAさんが転入してきたら、周囲のメンバーも自然と生産性が上がった。これを説明するのはどれか？",c:["ハロー効果：Aさんの優れた評判が周囲に影響した","社会的証明：Aさんの行動が正しい働き方の証拠になった","ピア効果：優秀な仲間の存在が周囲のパフォーマンスを向上させた","返報性の原理：Aさんへのお返しとして努力した"],a:2,e:"ピア効果とは、同じグループ・職場の仲間の存在や行動が個人のパフォーマンスに影響を与える現象です。優秀な同僚が来ることで「自分も頑張らなければ」という意識が高まったり、自然と仕事の質が上がったりします。"},
   {lv:2,t:"確証バイアス",q:"「景気が悪化する」と予測した後、景気悪化を示す記事ばかりに注目し、好調を示す記事を見落としていた。このバイアスはどれか？",c:["現在バイアス：今の状況を重視している","アンカリング効果：最初の予測が基準になっている","確証バイアス：自分の仮説を支持する情報だけに注目している","損失回避：損失に関する情報を過大評価している"],a:2,e:"確証バイアスとは、自分の既存の信念や仮説を「確認」しようとして、それを支持する情報だけを集め、反する情報を無視または曲解する傾向です。「景気悪化」という仮説を持てば、それを支持するニュースだけが目に入るようになっています。"},
   {lv:2,t:"プロスペクト理論",q:"「10%で10万円を得る」より「確実に1万円を得る」を選ぶ人が多い一方、「10%で10万円を失う」には賭けても「確実に1万円を失う」を避ける人が多い。この違いを説明するのはどれか？",c:["現在バイアス：確実なものを目先で重視している","プロスペクト理論：利益局面はリスク回避、損失局面はリスク追求になる傾向がある","損失回避：損失を避けようとしている","アンカリング効果：提示された金額が判断に影響している"],a:1,e:"プロスペクト理論の重要な発見です。利益が出る局面では「確実な少額の利益」を好む（リスク回避）のに対し、損失が出る局面では「不確実でも損失ゼロの可能性」を求めて賭けに出る（リスク追求）傾向があります。これを「反射効果」と呼びます。"},
-
   // --- 新規28問 Level 2 ---
   {lv:2,t:"後悔回避バイアス",q:"Bさんは長年使ってきた保険プランを、より安く条件の良いプランに変えようか迷っている。「もし変えて何かあったら後悔する」と思い、結局変えなかった。これはどのバイアスか？",c:["サンクコスト：今まで払い続けた保険料への固執","後悔回避バイアス：変化による後悔を避けるために現状維持を選んだ","確証バイアス：現プランを支持する情報だけを集めている","損失回避：新プランで損をするのを恐れている"],a:1,e:"後悔回避バイアスにより、Bさんは「変えた結果、何かあったら後悔する」という先取りの感情が判断を支配しています。特に「変えた」という行動（作為）から生じる後悔の方が、「変えなかった」（不作為）後悔より強く感じられるため、現状維持を選びやすくなります。"},
   {lv:2,t:"現状維持バイアス",q:"携帯電話会社を変えると月3,000円節約できると分かっていても、面倒で変えずにいる。このような行動を最もよく説明するのはどれか？",c:["サンクコスト：今の会社に払ってきた料金への固執","アンカリング効果：現在の料金が基準値になっている","現状維持バイアス：変化に伴う心理的コストを避けている","希少性効果：今のプランが特別だと感じている"],a:2,e:"現状維持バイアスにより、たとえ客観的に見て変えた方が得であっても、「手続きが面倒」「何かトラブルがあったら」という変化のコスト（心理的・実際的）が過大に感じられ、現状を維持してしまいます。"},
@@ -709,11 +1698,9 @@ const Q = [
   {lv:2,t:"一貫性のバイアス",q:"SNSで「〇〇を支持します」と投稿した後、実際にはその候補者に疑問を感じ始めたにもかかわらず、投票先を変えられなかった。このバイアスはどれか？",c:["確証バイアス：候補者を支持する情報だけを集めている","一貫性のバイアス：公の場での宣言が行動を縛った","社会的証明：フォロワーがいるので変えにくい","フォールスコンセンサス効果：支持者が多いと思い込んでいる"],a:1,e:"公の場（SNS）での宣言は一貫性のバイアスを強く引き起こします。「支持します」と公言した後に意見を変えることは「過去の自分と矛盾する」と感じるため、たとえ内心では疑問を感じていても行動を変えることが難しくなります。"},
   {lv:2,t:"社会的証明",q:"ECサイトで「レビュー数4.2点（1,250件）」の商品と「レビュー数4.8点（12件）」の商品なら、多くの人はどちらを選びやすいか、そしてその理由はどれか？",c:["4.8点（12件）：評価が高い方を選ぶのが合理的","4.2点（1,250件）：社会的証明として多くの人の評価が信頼の根拠になる","同じ：どちらも参考にしない","4.8点（12件）：最高評価に近い方が良い商品に決まっている"],a:1,e:"社会的証明により、「1,250人が評価した4.2点」は「12人の4.8点」より信頼性が高く感じられます。不確実な状況（自分では品質が判断しにくい商品）ほど、多くの人の行動・評価を参考にする傾向があります。"},
   {lv:2,t:"ナッジ",q:"社員食堂で健康的な食事を増やしてもらうため、野菜料理を目線の高さに並べ、揚げ物を少し取りにくい位置に移動した。この取り組みはどの概念を活用しているか？",c:["強制：食堂の選択肢を変えることで特定の行動を強いる","ナッジ：選択の自由を守りながら、環境設計で望ましい行動を促す","メンタルアカウンティング：食費という別財布を意識させる","ピア効果：他の社員の選択を参考にさせる"],a:1,e:"これはナッジの代表的な活用例です。強制せず、罰則もなく、「野菜料理を取りやすい場所に置く」という環境設計だけで自然と健康的な選択が増えます。カフェテリアを設計した人を「チョイスアーキテクト（選択設計者）」と呼びます。"},
-
   // ============================================================
   // ⭐⭐⭐ LEVEL 3（25問）深い理解・複合問題
   // ============================================================
-
   // --- 既存6問 ---
   {lv:3,t:"一貫性×確証バイアス",q:"一貫性のバイアスが「他のバイアスを増幅させる」と言われる最大の理由はどれか？",c:["一貫性のバイアスは他のバイアスよりも時間的に後に生じるから","他のバイアスで形成された信念に対し、さらに一貫性を保とうとする作用が加わるから","意識的・意図的な行動だから自分でコントロールできないため","全てのバイアスは一貫性のバイアスの派生として生じるから"],a:1,e:"例えば確証バイアスによって偏った情報収集が起き強固な信念が形成されると、今度は一貫性のバイアスがその信念を守ろうとします。正しい情報が入っても「信念を変える＝過去の自分と矛盾」となり修正できなくなります。こうして複数のバイアスが連鎖・増幅します。"},
   {lv:3,t:"フレーミング×プロスペクト理論",q:"「成功率90%の手術」と「死亡率10%の手術」は同じ内容だが、前者を選ぶ人が多い。この現象を最も正確に説明するのはどれか？",c:["アンカリング効果：90という大きな数字が判断を引き上げている","フレーミング効果：同じ情報でも「利益（成功）」として提示されると心理的受容度が変わる","社会的証明：成功率90%は多数が支持していると感じるから","損失回避：死亡という言葉が強い感情反応を引き起こすから"],a:1,e:"プロスペクト理論の損失回避から、「死亡率10%」という損失フレームは心理的痛みが大きく感じられます。一方「成功率90%」は利益フレームのため受け入れやすい。これがフレーミング効果で、情報の内容ではなく「提示の仕方」が意思決定を左右します。"},
@@ -721,7 +1708,6 @@ const Q = [
   {lv:3,t:"損失回避×サンクコスト",q:"損失回避バイアスとサンクコストのバイアスの「共通するメカニズム」として最も正確なのはどれか？",c:["どちらも将来の利益を過大評価する点","どちらも損失・コストに対して感情的に強く反応する点","どちらも他者の意見に影響を受けやすい点","どちらも情報不足によって引き起こされる点"],a:1,e:"損失回避は「損失の痛みが利益の喜びより強い」、サンクコストのバイアスは「すでに失った（使った）コストへの過剰な執着」という点で、どちらも損失・コストに対する強い感情的反応が非合理な意思決定を引き起こします。損失に対する感情的過敏さが共通の核です。"},
   {lv:3,t:"現在バイアス×ナッジ",q:"現在バイアスを踏まえた最も効果的な行動変容の介入策はどれか？",c:["将来のリスクについて詳細なデータを提供し、合理的判断を促す","望ましい行動の実行コストを下げ、今すぐ始められる仕組みを作る（例：自動積立、デフォルト加入）","将来のベネフィットを金銭的インセンティブで強化する","合理的判断ができる人だけを選んで施策を提供する"],a:1,e:"現在バイアスがある人は、将来の利益をいくら説明しても「今」動くことが難しい。だから最も有効なのは「今すぐ自動的に始まる」仕組みを作ることです。年金の自動加入（オプトアウト方式）や自動積立設定などは、現在バイアスを前提にした最もよく機能するナッジです。"},
   {lv:3,t:"複合バイアス",q:"新事業の責任者が、プロジェクトが順調でないにもかかわらず撤退を決断できずにいる。複数のバイアスが絡んでいるとすれば、最も可能性が高い組み合わせはどれか？",c:["ピア効果 × 社会的証明","サンクコスト × 一貫性のバイアス × 損失回避","確証バイアス × ハロー効果","現在バイアス × フォールスコンセンサス効果"],a:1,e:"①サンクコスト：すでに費やした時間・お金への固執で撤退できない。②一貫性のバイアス：「やり遂げる」と公言した自分と矛盾したくない。③損失回避：撤退して損失を確定させることへの心理的苦痛。この3つが複合的に絡み合い、合理的な撤退判断を妨げています。"},
-
   // --- 新規19問 Level 3 ---
   {lv:3,t:"後悔回避×現状維持",q:"「後悔回避バイアス」と「現状維持バイアス」が同時に働く状況として最も適切な説明はどれか？",c:["2つのバイアスは相反するため同時には起きない","どちらも「変化を避けよう」という方向に働くため、現状維持をさらに強く引き起こす場合がある","現状維持バイアスは後悔回避の結果として生じる従属的なバイアスである","後悔回避は行動を促し、現状維持は行動を抑制するため相殺される"],a:1,e:"後悔回避（「変えて後悔したくない」）と現状維持バイアス（「変化のリスクを避けたい」）は、どちらも「現状を変えない」方向に力を与えます。2つが重なると、客観的に見て変化すべき状況でも「動かない」という判断が非常に強く固定されます。"},
   {lv:3,t:"利用可能性×確証バイアス",q:"「利用可能性バイアス」と「確証バイアス」が組み合わさると、どのような問題が生じやすいか？",c:["情報収集の速度が上がり、判断が早くなりすぎる","思い出しやすい（印象的な）情報を集め続けることで、偏った世界観が自己強化されやすくなる","統計的思考が完全に失われ、直感だけで判断するようになる","バイアスが相殺されて合理的判断に近づく"],a:1,e:"利用可能性バイアスにより「印象的な・思い出しやすい情報」を重視し、確証バイアスにより「自分の信念を支持する情報だけを集める」という2つが組み合わさると、「印象的でかつ自分の信念を支持する情報だけで世界観を構築する」という強い偏りが生まれます。"},
@@ -741,9 +1727,7 @@ const Q = [
   {lv:3,t:"複合バイアス・マーケティング",q:"高級ブランドが「限定100個・著名デザイナー監修・SNSで話題沸騰中」と宣伝する場合、活用されているバイアスの組み合わせとして最も正確なのはどれか？",c:["希少性効果・ピア効果・返報性の原理","希少性効果・権威バイアス・社会的証明","アンカリング効果・確証バイアス・現在バイアス","ハロー効果・後知恵バイアス・同調バイアス"],a:1,e:"「限定100個」→希少性効果（手に入れにくいものの価値が上がる）、「著名デザイナー監修」→権威バイアス（専門家・権威への服従）、「SNSで話題沸騰中」→社会的証明（多くの人が注目・購買している）の3つが組み合わさっています。この組み合わせは高級品・限定品マーケティングで非常によく使われます。"},
   {lv:3,t:"同調バイアス×フォールスコンセンサス",q:"「同調バイアス」と「フォールスコンセンサス効果」の「方向性の違い」として最も正確な説明はどれか？",c:["2つは全く同じ現象で名前が違うだけである","同調バイアスは『周囲に合わせて自分を変える』方向、フォールスコンセンサス効果は『自分に合わせて周囲も同じだと思い込む』方向で、逆方向に働く","同調バイアスは意識的な行動、フォールスコンセンサス効果は無意識の認知歪みである","フォールスコンセンサス効果は同調バイアスが進行した結果として生じる"],a:1,e:"方向性が逆です。同調バイアスは「周囲の考え・行動に自分を合わせる（自分→周囲へ）」働きで、フォールスコンセンサス効果は「自分の考えを周囲も持っているはずだと思い込む（自分←→周囲へ投影）」働きです。前者は他者への適応、後者は他者への過剰な同一視です。"},
   {lv:3,t:"行動経済学の応用・総合",q:"行動経済学の知見を政策・ビジネスに活用する際の注意点として、最も妥当な記述はどれか？",c:["行動経済学のバイアスを利用すれば、すべての場面で消費者・市民を望ましい方向に誘導できる","ナッジなどの行動経済学的介入は、設計者の意図・倫理・透明性が問われるため、『誰の利益のためか』を常に問うことが重要である","人間のバイアスは教育によって完全に取り除くことができる","行動経済学は経済合理性を否定するため、従来の経済学とは共存できない"],a:1,e:"行動経済学の知見は強力ですが、使い方次第で消費者を搾取する「ダークナッジ」にもなりえます。オプトアウトを見えにくくする設計、焦りを煽る偽の希少性表示などはその例です。行動経済学を倫理的・透明性を持って活用するためには、常に「誰のための設計か」を問うことが重要です。"}
-
 ];
-
 const TOPIC_LINKS = {
   "一貫性のバイアス": "https://youtu.be/KwZu4dVmQP8?si=WJZXNDXhJuR6uWzj",
   "アンカリング効果": "https://youtu.be/_EKcXfVfgEI?si=BWObb8od423XDrqY",
@@ -793,7 +1777,6 @@ const TOPIC_LINKS = {
   "ツァイガルニク効果": "https://youtu.be/zoegcvBnOmw?si=vMtjKRsaenBylJkl",
   "エンドウドプログレス効果": "https://youtu.be/iwalLuqmJ20?si=JjdjVch5pD4Iu_Av"
 };
-
 // ─── STATE ──────────────────────────────────────────────────
 let selLv=['all'], selCnt=10, qs=[], idx=0, sc=0, ans=false, wrongs=[];
 let streak=0, maxStreak=0;
@@ -801,7 +1784,6 @@ let timerEnabled=false, timerInterval=null, timerLeft=30;
 let challengeIndices=null;
 let currentCorrectIdx=0, currentShuffledChoices=[];
 let totalTimeSec=0, qStartTime=0;
-
 // ─── URL CHALLENGE PARAM ─────────────────────────────────────
 (function(){
   const p = new URLSearchParams(location.search);
@@ -813,7 +1795,6 @@ let totalTimeSec=0, qStartTime=0;
     }catch(e){}
   }
 })();
-
 // ─── LEVEL / COUNT SELECT ─────────────────────────────────────
 function toggleLevel(lv){
   if(lv==='all'){
@@ -834,7 +1815,6 @@ function selectCount(n,btn){
   document.querySelectorAll('.q-count-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
 }
-
 // ─── START ────────────────────────────────────────────────────
 function startQuiz(){
   timerEnabled = document.getElementById('timer-toggle').checked;
@@ -849,15 +1829,14 @@ function startQuiz(){
   idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
   show('quiz');render();
 }
-
 // ─── RENDER QUESTION ──────────────────────────────────────────
 function render(){
   const q=qs[idx],tot=qs.length;
-  document.getElementById('q-counter').textContent=(idx+1)+' / '+tot;
+  document.getElementById('q-counter').textContent=String(idx+1).padStart(2,'0')+' / '+String(tot).padStart(2,'0');
   document.getElementById('prog-fill').style.width=(idx/tot*100)+'%';
-  document.getElementById('score-pill').textContent='✓ '+sc;
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
   const de=document.getElementById('q-diff');
-  de.textContent=['','⭐ Lv.1','⭐⭐ Lv.2','⭐⭐⭐ Lv.3'][q.lv];
+  de.textContent=['','Level 1','Level 2','Level 3'][q.lv];
   de.className='diff-chip diff-'+q.lv;
   document.getElementById('q-text').textContent=q.q;
   // 選択肢をシャッフルして正解位置を更新
@@ -882,7 +1861,6 @@ function render(){
   if(timerEnabled) startTimer();
   else stopTimer();
 }
-
 // ─── TIMER ────────────────────────────────────────────────────
 function startTimer(){
   stopTimer();
@@ -910,7 +1888,7 @@ function updateTimerUI(){
   const disp=document.getElementById('timer-display');
   bar.style.width=pct+'%';
   bar.className='timer-bar'+(timerLeft<=8?' warning':'');
-  disp.textContent='⏱ '+timerLeft+'秒';
+  disp.textContent=timerLeft+'s';
   disp.className='timer-display'+(timerLeft<=8?' warning':'');
 }
 function timeUp(){
@@ -923,16 +1901,15 @@ function timeUp(){
   });
   streak=0;updateStreakDisplay();
   const ex=document.getElementById('explanation');
-  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">📺 関連講座を見る（${q.t}）</a>`:'';
+  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">関連講座：${q.t}</a>`:'';
   ex.className='explanation wrong';
-  ex.innerHTML=`<span class="exp-label">⏰ 時間切れ。正解は「${'ABCD'[currentCorrectIdx]}」</span>${escHtml(q.e)}${ytLink}`;
+  ex.innerHTML=`<span class="exp-label">時間切れ ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
   ex.style.display='block';
   wrongs.push({q:q.q,your:'（時間切れ）',correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
   const nb=document.getElementById('next-btn');
   nb.style.display='block';
-  nb.textContent=idx>=qs.length-1?'結果を見る 🎉':'次の問題 →';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
 }
-
 // ─── PICK ANSWER ─────────────────────────────────────────────
 function pick(sel){
   if(ans)return;ans=true;
@@ -946,40 +1923,39 @@ function pick(sel){
     if(i===currentCorrectIdx)b.classList.add('correct');
     else if(i===sel&&!ok)b.classList.add('wrong');
   });
-  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">📺 関連講座を見る（${q.t}）</a>`:'';
+  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">関連講座：${q.t}</a>`:'';
   const ex=document.getElementById('explanation');
   if(ok){
     sc++;
     streak++;if(streak>maxStreak)maxStreak=streak;
     checkStreakPopup();
     ex.className='explanation correct';
-    ex.innerHTML='<span class="exp-label">✅ 正解！</span>'+escHtml(q.e);
+    ex.innerHTML='<span class="exp-label">正解</span>'+escHtml(q.e);
   } else {
     streak=0;
     ex.className='explanation wrong';
-    ex.innerHTML=`<span class="exp-label">❌ 不正解。正解は「${'ABCD'[currentCorrectIdx]}」</span>${escHtml(q.e)}${ytLink}`;
+    ex.innerHTML=`<span class="exp-label">不正解 ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
     wrongs.push({q:q.q,your:currentShuffledChoices[sel],correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
   }
   ex.style.display='block';
-  document.getElementById('score-pill').textContent='✓ '+sc;
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
   updateStreakDisplay();
   const nb=document.getElementById('next-btn');
   nb.style.display='block';
-  nb.textContent=idx>=qs.length-1?'結果を見る 🎉':'次の問題 →';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
 }
-
 // ─── STREAK ──────────────────────────────────────────────────
 function updateStreakDisplay(){
   const sd=document.getElementById('streak-display');
   if(streak>=2){
     sd.style.display='block';
-    sd.innerHTML=`<span class="streak-pill">🔥 ${streak}連続正解！</span>`;
+    sd.innerHTML=`<span class="streak-pill"><span class="streak-pill-label">Streak</span><span class="streak-pill-num">${streak}</span></span>`;
   } else {
     sd.style.display='none';
   }
 }
 function checkStreakPopup(){
-  const msgs={3:'🔥 3連続正解！',5:'⚡ 5連続！すごい！',10:'🏆 10連続！完璧！'};
+  const msgs={3:'Run of 3',5:'Run of 5',10:'Perfect Run'};
   if(msgs[streak]){
     const pop=document.getElementById('streak-popup');
     pop.textContent=msgs[streak];
@@ -987,39 +1963,33 @@ function checkStreakPopup(){
     setTimeout(()=>pop.classList.remove('show'),2000);
   }
 }
-
 // ─── NEXT / RESULT ─────────────────────────────────────────────
 function nextQ(){
   idx++;
   if(idx>=qs.length) showResult();
   else{render();window.scrollTo({top:0,behavior:'smooth'});}
 }
-
 function showResult(){
   stopTimer();
   show('result');
   const tot=qs.length, rate=Math.round(sc/tot*100);
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
-
   // Large rank & score display
   const rd=document.getElementById('rank-display');
-  rd.textContent='RANK '+rank;
+  rd.textContent='RANK '+rank; rd.setAttribute('data-rank', rank);
   rd.className='rank-display '+rank;
   document.getElementById('score-display').innerHTML=sc+'<span class="denom"> / '+tot+'</span>';
-
   document.getElementById('r-correct').textContent=sc;
   document.getElementById('r-wrong').textContent=tot-sc;
   document.getElementById('r-rate').textContent=rate+'%';
-  const m={S:['🏆 完璧です！','行動経済学マスターの称号を授与します。'],A:['👏 素晴らしい！','基礎をしっかり理解しています。'],B:['📚 もう少しです！','復習して再挑戦しましょう。'],C:['💪 ここから！','解説をよく読んで再チャレンジを。']};
+  const m={S:['達成。','90%以上の正答率です。応用レベルへ進む準備が整いました。'],A:['良好。','基礎はおおむね押さえられています。取りこぼしを復習してください。'],B:['要復習。','解説を読み返し、再挑戦を推奨します。'],C:['再学習を。','該当するトピックの講座で基礎を確認してから再挑戦してください。']};
   document.getElementById('result-msg').textContent=m[rank][0];
   document.getElementById('result-sub').textContent=m[rank][1];
-
   // Streak info & time
   const si=document.getElementById('result-streak-info');
   si.style.display='block';
   const timeStr=timerEnabled?formatTime(totalTimeSec):'タイマーOFF';
-  si.innerHTML=(maxStreak>=3?'🔥 最大連続正解：'+maxStreak+'問　':'')+'⏱ 所要時間：'+timeStr;
-
+  si.innerHTML=(maxStreak>=3?'<span class="rsi-chip">Max streak</span>'+maxStreak+'問　':'')+'<span class="rsi-chip">Time</span>'+timeStr;
   // Weak bias analysis
   const topicWrong={};
   wrongs.forEach(w=>{
@@ -1038,23 +2008,21 @@ function showResult(){
         <span class="weak-count">${n}問ミス</span>
       </div>`).join('');
   } else ws.style.display='none';
-
   // Wrong review with YouTube links
   const wrongSec=document.getElementById('wrong-section');
   if(wrongs.length){
     wrongSec.style.display='block';
     document.getElementById('wrong-list').innerHTML=wrongs.map(w=>{
       const ytUrl=TOPIC_LINKS[w.topic];
-      const ytBtn=ytUrl?`<a class="review-yt" href="${ytUrl}" target="_blank" rel="noopener">📺 関連講座（${escHtml(w.topic)}）を見る</a>`:'';
+      const ytBtn=ytUrl?`<a class="review-yt" href="${ytUrl}" target="_blank" rel="noopener">関連講座：${escHtml(w.topic)}</a>`:'';
       return `<div class="review-item">
         <div class="review-q">Q. ${escHtml(w.q)}</div>
-        <div class="review-ans-wrong">❌ あなたの回答：${escHtml(w.your)}</div>
-        <div class="review-ans-correct">✅ 正解：${escHtml(w.correct)}</div>
+        <div class="review-ans-wrong"><span class="review-ans-label">Your answer</span>${escHtml(w.your)}</div>
+        <div class="review-ans-correct"><span class="review-ans-label">Correct</span>${escHtml(w.correct)}</div>
         <div class="review-exp">${escHtml(w.exp)}${ytBtn}</div>
       </div>`;
     }).join('');
   } else wrongSec.style.display='none';
-
   document.getElementById('nickname-card').style.display='block';
   document.getElementById('nickname-input').value='';
   document.getElementById('nickname-submit').disabled=false;
@@ -1062,44 +2030,40 @@ function showResult(){
   loadRanking();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
 // ─── SHARE ──────────────────────────────────────────────────
 function shareX(){
   const tot=qs.length, rate=Math.round(sc/tot*100);
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
-  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
   window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
 }
 function shareThreads(){
   const tot=qs.length, rate=Math.round(sc/tot*100);
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
-  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank} | ${sc}/${tot}問正解（${rate}%）\n🔥 最大${maxStreak}連続正解\n\nあなたは何問正解できる？👇\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\nあなたも挑戦してみませんか。\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
   window.open('https://www.threads.net/intent/post?text='+encodeURIComponent(text),'_blank');
 }
 function shareChallenge(){
   const indices=qs.map(q=>Q.indexOf(q)).filter(i=>i>=0);
   const url=location.origin+location.pathname+'?challenge='+indices.join(',');
   if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>alert('URLをコピーしました！友達に送ってみましょう🎯'));
+    navigator.clipboard.writeText(url).then(()=>alert('URLをコピーしました。友人に送ってください。'));
   } else {
-    prompt('このURLをコピーして友達に送ろう！',url);
+    prompt('このURLをコピーして友人に送ってください。',url);
   }
 }
-
 // ─── NAV ──────────────────────────────────────────────────────
 function retry(){idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;show('quiz');render();}
 function goStart(){stopTimer();show('start');loadTopRanking();window.scrollTo({top:0,behavior:'smooth'});}
 function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
-
 function formatTime(sec){
   const m=Math.floor(sec/60), s=sec%60;
-  return m>0?m+'分'+String(s).padStart(2,'0')+'秒':s+'秒';
+  return m>0?m+'m '+String(s).padStart(2,'0')+'s':s+'s';
 }
 function escHtml(s){
   if(typeof s!=='string') return s;
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
 // ─── Firebase ──────────────────────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCMaWDoe-jI46fS4REGWVVFEt5PdmOm3Fo",
@@ -1112,21 +2076,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let currentEntry=null, rankingFilter='all';
-
 // トップ画面ランキング（ページ読み込み時に自動表示・フィルター付き）
 let topRankingAll=[], topRankingFilter='全レベルMIX';
-
 async function loadTopRanking(){
   const body=document.getElementById('top-ranking-body');
   const filterDiv=document.getElementById('top-ranking-filter');
   if(!body)return;
-  body.innerHTML='<p class="ranking-loading">読み込み中...</p>';
+  body.innerHTML='<p class="ranking-loading">Loading…</p>';
   try{
     const snap=await db.collection('rankings').orderBy('rate','desc').limit(100).get();
     topRankingAll=[];
     snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
     if(!topRankingAll.length){
-      body.innerHTML='<p class="ranking-loading">まだ登録者がいません。最初に挑戦してみましょう！</p>';
+      body.innerHTML='<p class="ranking-loading">記録がまだありません。最初の挑戦者になりませんか。</p>';
       return;
     }
     // フィルターボタン生成（全体は除外、levelのみ）
@@ -1148,15 +2110,14 @@ async function loadTopRanking(){
     });
     renderTopRanking();
   }catch(e){
-    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。</p>';
+    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。時間をおいて再度お試しください。</p>';
   }
 }
-
 function renderTopRanking(){
   const body=document.getElementById('top-ranking-body');
   const filtered=topRankingAll.filter(r=>r.level===topRankingFilter);
   if(!filtered.length){
-    body.innerHTML='<p class="ranking-loading">このカテゴリーはまだ登録者がいません。</p>';
+    body.innerHTML='<p class="ranking-loading">このカテゴリーの記録はまだありません。</p>';
     return;
   }
   const seen=new Map();
@@ -1176,12 +2137,11 @@ function renderTopRanking(){
 }
 // ページ読み込み時に実行
 window.addEventListener('load', loadTopRanking);
-
 async function submitRanking(){
   const nick=document.getElementById('nickname-input').value.trim();
-  if(!nick){alert('ニックネームを入力してください');return;}
+  if(!nick){alert('ニックネームを入力してください。');return;}
   const btn=document.getElementById('nickname-submit');
-  btn.disabled=true;btn.textContent='登録中...';
+  btn.disabled=true;btn.textContent='記録中…';
   const total=qs.length,rate=Math.round(sc/total*100);
   const lvLabel=selLv.includes('all')?'全レベルMIX':selLv.map(l=>'Level '+l).join('+');
   try{
@@ -1191,18 +2151,17 @@ async function submitRanking(){
       questions:total,time:timeVal,timestamp:firebase.firestore.FieldValue.serverTimestamp()
     });
     currentEntry=ref.id;
-    btn.textContent='✅ 登録完了！';
-    document.getElementById('nickname-card').style.backgroundColor='#ecfdf5';
+    btn.textContent='記録しました';
+    document.getElementById('nickname-card').classList.add('registered');
     loadRanking();
   }catch(e){
     btn.disabled=false;btn.textContent='登録';
-    alert('登録に失敗しました。もう一度お試しください。');
+    alert('記録に失敗しました。もう一度お試しください。');
   }
 }
-
 async function loadRanking(){
   const body=document.getElementById('ranking-body');
-  body.innerHTML='<p class="ranking-loading">読み込み中...</p>';
+  body.innerHTML='<p class="ranking-loading">Loading…</p>';
   try{
     const snap=await db.collection('rankings').orderBy('rate','desc').limit(50).get();
     const all=[];
@@ -1223,20 +2182,18 @@ async function loadRanking(){
     body.innerHTML='<p class="ranking-loading">ランキングの読み込みに失敗しました。<br><small>'+e.message+'</small></p>';
   }
 }
-
 function updateFilterBtns(active){
   document.querySelectorAll('.rf-btn').forEach(b=>{
     b.classList.toggle('active',b.textContent===active||(active==='すべて'&&b.textContent==='すべて'));
   });
 }
-
 function renderRanking(all){
   const filtered=rankingFilter==='all'?all:all.filter(r=>r.level===rankingFilter);
   const seen=new Map();
   filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
   const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,20);
   if(!ranked.length){
-    document.getElementById('ranking-body').innerHTML='<p class="ranking-loading">まだ登録者がいません。最初に登録してみましょう！</p>';
+    document.getElementById('ranking-body').innerHTML='<p class="ranking-loading">まだ登録者がいません。記録を残してください。</p>';
     return;
   }
   const medals=['🥇','🥈','🥉'];
@@ -1248,7 +2205,7 @@ function renderRanking(all){
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
       <td><span class="rank-badge ${gr}">${gr}</span></td>
-      <td>${escHtml(r.nickname)}${isMe?' <span style="font-size:0.7rem;color:var(--accent);font-weight:800;">← YOU</span>':''}</td>
+      <td>${escHtml(r.nickname)}${isMe?' <span class="me-tag">YOU</span>':''}</td>
       <td>${r.score}/${r.total}</td>
       <td>${r.rate}%</td>
       <td>${tDisp}</td>
