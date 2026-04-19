@@ -1113,36 +1113,66 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let currentEntry=null, rankingFilter='all';
 
-// トップ画面ランキング（ページ読み込み時に自動表示）
+// トップ画面ランキング（ページ読み込み時に自動表示・フィルター付き）
+let topRankingAll=[], topRankingFilter='全レベルMIX';
+
 async function loadTopRanking(){
   const body=document.getElementById('top-ranking-body');
+  const filterDiv=document.getElementById('top-ranking-filter');
   if(!body)return;
   body.innerHTML='<p class="ranking-loading">読み込み中...</p>';
   try{
-    const snap=await db.collection('rankings').orderBy('rate','desc').limit(20).get();
-    const all=[];
-    snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
-    if(!all.length){
+    const snap=await db.collection('rankings').orderBy('rate','desc').limit(100).get();
+    topRankingAll=[];
+    snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
+    if(!topRankingAll.length){
       body.innerHTML='<p class="ranking-loading">まだ登録者がいません。最初に挑戦してみましょう！</p>';
       return;
     }
-    const seen=new Map();
-    all.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
-    const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
-    const medals=['🥇','🥈','🥉'];
-    const rows=ranked.map((r,i)=>{
-      const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
-      const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
-      const tDisp=r.time!=null?formatTime(r.time):'OFF';
-      return `<tr><td>${rankDisp}</td><td><span class="rank-badge ${gr}">${gr}</span></td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
-    }).join('');
-    body.innerHTML=`<table class="ranking-table">
-      <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+    // フィルターボタン生成（全体は除外、levelのみ）
+    const levels=[...new Set(topRankingAll.map(r=>r.level))].sort();
+    // デフォルトを最初のlevelに
+    if(!levels.includes(topRankingFilter)) topRankingFilter=levels[0];
+    filterDiv.innerHTML='';
+    levels.forEach(lv=>{
+      const b=document.createElement('button');
+      b.className='rf-btn'+(topRankingFilter===lv?' active':'');
+      b.textContent=lv;
+      b.onclick=()=>{
+        topRankingFilter=lv;
+        document.querySelectorAll('#top-ranking-filter .rf-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderTopRanking();
+      };
+      filterDiv.appendChild(b);
+    });
+    renderTopRanking();
   }catch(e){
     body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。</p>';
   }
+}
+
+function renderTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  const filtered=topRankingAll.filter(r=>r.level===topRankingFilter);
+  if(!filtered.length){
+    body.innerHTML='<p class="ranking-loading">このカテゴリーはまだ登録者がいません。</p>';
+    return;
+  }
+  const seen=new Map();
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
+  const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
+  const medals=['🥇','🥈','🥉'];
+  const rows=ranked.map((r,i)=>{
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
+    const tDisp=r.time!=null?formatTime(r.time):'OFF';
+    return `<tr><td>${rankDisp}</td><td><span class="rank-badge ${gr}">${gr}</span></td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
+  }).join('');
+  body.innerHTML=`<table class="ranking-table">
+    <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 // ページ読み込み時に実行
 window.addEventListener('load', loadTopRanking);
