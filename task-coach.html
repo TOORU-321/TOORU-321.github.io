@@ -170,6 +170,55 @@ body::before{
 .banner.show{display:flex}
 .banner-fresh{background:linear-gradient(100deg,#FFF5F8,#F6EEFF); color:#7C3AED; border-color:#E9D5FF}
 .banner-streak{background:linear-gradient(100deg,#FFF1F3,#FFE4E9); color:#BE185D; border-color:#FBCFE8}
+.banner-backup{background:linear-gradient(100deg,#FFFBEB,#FFF5F8); color:#92400E; border-color:#FDE68A; cursor:pointer}
+.banner-backup:hover{filter:brightness(.98)}
+
+/* Settings button in header */
+.settings-btn{
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(255,255,255,.7);
+  border:1.5px solid var(--bdr);
+  color:var(--text-2); font-size:16px;
+  cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .25s;
+  flex-shrink:0;
+}
+.settings-btn:hover{color:var(--rose-deep); border-color:var(--rose); transform:rotate(60deg)}
+
+/* Settings modal buttons */
+.settings-intro{
+  font-size:12px; color:var(--text-2); line-height:1.7;
+  margin-bottom:14px; padding:12px 14px;
+  background:linear-gradient(135deg,#FFFAFC,#F6EEFF);
+  border-radius:12px; border:1px solid var(--bdr);
+}
+.settings-intro b{color:var(--rose-deep)}
+.backup-status{
+  font-size:12px; color:var(--text-2); padding:10px 13px;
+  background:linear-gradient(135deg,#F0FDF4,#ECFDF5);
+  border-radius:10px; margin-bottom:14px; border:1px solid #A7F3D0;
+  line-height:1.6;
+}
+.backup-status b{color:#065F46}
+.backup-status.warn{background:linear-gradient(135deg,#FFFBEB,#FFF5F8); border-color:#FDE68A; color:#92400E}
+.backup-status.warn b{color:#92400E}
+.setting-btn{
+  width:100%; padding:13px 16px; margin-bottom:9px;
+  border:1.5px solid var(--bdr); border-radius:12px;
+  background:var(--card); color:var(--text);
+  font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; gap:11px;
+  transition:all .15s; text-align:left;
+}
+.setting-btn:hover{border-color:var(--rose); background:#FFF9FB; color:var(--rose-deep)}
+.setting-btn .sb-ico{font-size:18px; flex-shrink:0}
+.setting-btn .sb-main{flex:1; min-width:0}
+.setting-btn .sb-ttl{font-size:13.5px; font-weight:800}
+.setting-btn .sb-sub{font-size:10.5px; color:var(--text-2); font-weight:500; margin-top:2px; letter-spacing:0}
+.setting-btn.danger{color:#991B1B}
+.setting-btn.danger:hover{background:#FEF2F2; border-color:#FCA5A5; color:#991B1B}
+.setting-btn.danger .sb-sub{color:#C27171}
 .banner-emoji{font-size:20px; flex-shrink:0}
 .banner-text{flex:1; line-height:1.55}
 .banner-text b{font-weight:800}
@@ -712,6 +761,7 @@ body::before{
       <div class="hdr-date" id="hdate"></div>
     </div>
     <div class="hdr-right">
+      <button class="settings-btn" id="settings-btn" aria-label="設定・バックアップ" title="設定・バックアップ">⚙</button>
       <div class="streak-badge" id="streak-badge" title="連続達成日数">🔥 <span id="streak-num">0</span>日</div>
       <div class="pt-box" onclick="document.getElementById('task-list').scrollIntoView({behavior:'smooth'})">
         <div class="pt-num" id="pt-num">0</div>
@@ -734,6 +784,12 @@ body::before{
   <div class="banner banner-fresh" id="banner-fresh">
     <span class="banner-emoji">🌿</span>
     <div class="banner-text" id="banner-fresh-text"></div>
+  </div>
+
+  <!-- BE: Loss Aversion — バックアップ促し（7日以上未バックアップ） -->
+  <div class="banner banner-backup" id="banner-backup" onclick="openSettings()">
+    <span class="banner-emoji">💾</span>
+    <div class="banner-text" id="banner-backup-text"></div>
   </div>
 
   <!-- BE: Loss Aversion — ストリーク維持警告 -->
@@ -926,6 +982,49 @@ body::before{
 
     <button type="button" class="sub-btn" id="f-sub">✿ 追加する</button>
     <input type="hidden" id="f-eid">
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="ov" id="settings-ov">
+  <div class="modal">
+    <div class="mh">
+      <span class="mttl">⚙ 設定・バックアップ</span>
+      <button class="mx" id="settings-close">✕</button>
+    </div>
+
+    <div class="settings-intro">
+      タスクはこの端末のブラウザ内（<b>localStorage</b>）に自動保存されています。<br>
+      端末の故障・ブラウザ再インストール・キャッシュ全削除に備えて、<b>定期的にエクスポート</b>しておくと安心です。
+    </div>
+
+    <div class="backup-status" id="backup-status"></div>
+
+    <button type="button" class="setting-btn" id="btn-export">
+      <span class="sb-ico">📤</span>
+      <div class="sb-main">
+        <div class="sb-ttl">エクスポート（バックアップ）</div>
+        <div class="sb-sub">すべてのタスクをJSONファイルで書き出し</div>
+      </div>
+    </button>
+
+    <button type="button" class="setting-btn" id="btn-import">
+      <span class="sb-ico">📥</span>
+      <div class="sb-main">
+        <div class="sb-ttl">インポート（復元）</div>
+        <div class="sb-sub">JSONファイルから読み込み。現在のデータは置き換わります</div>
+      </div>
+    </button>
+
+    <button type="button" class="setting-btn danger" id="btn-reset">
+      <span class="sb-ico">🗑</span>
+      <div class="sb-main">
+        <div class="sb-ttl">全データを削除</div>
+        <div class="sb-sub">元に戻せません。実行前にエクスポート推奨</div>
+      </div>
+    </button>
+
+    <input type="file" id="import-file" accept=".json,application/json" style="display:none">
   </div>
 </div>
 
@@ -1181,6 +1280,18 @@ function renderBanners(){
     wEl.classList.add('show');
     document.getElementById('streak-days').textContent = streak;
   } else { wEl.classList.remove('show'); }
+
+  // BE: Backup reminder — 7日以上バックアップなし & タスク10件以上
+  const bEl = document.getElementById('banner-backup');
+  const daysSince = daysSinceBackup();
+  const totalTasks = D.tasks.length;
+  if(totalTasks>=10 && (daysSince===null || daysSince>=7)){
+    bEl.classList.add('show');
+    const msg = daysSince===null
+      ? `<b>${totalTasks}件のタスク</b>を大切にするために、一度エクスポート（バックアップ）しておきませんか？ <u>タップで設定を開く</u>`
+      : `前回のバックアップから<b>${daysSince}日</b>経過しました。端末トラブルで失う前にエクスポートを。 <u>タップで設定を開く</u>`;
+    document.getElementById('banner-backup-text').innerHTML = msg;
+  } else { bEl.classList.remove('show'); }
 }
 
 function renderFocusCard(){
@@ -1588,6 +1699,102 @@ function launchConfetti(){
 }
 
 // ============================================================
+// BACKUP / EXPORT / IMPORT / RESET
+// ============================================================
+function daysSinceBackup(){
+  if(!D.lastBackupAt) return null;
+  const diff = Math.floor((Date.now() - new Date(D.lastBackupAt).getTime()) / 86400000);
+  return Math.max(0, diff);
+}
+
+function openSettings(){
+  // Update backup status display
+  const stEl = document.getElementById('backup-status');
+  const days = daysSinceBackup();
+  const total = D.tasks.length;
+  const done  = D.tasks.filter(t=>t.done).length;
+  if(days===null){
+    stEl.className = 'backup-status warn';
+    stEl.innerHTML = `📦 現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
+      <b>まだ一度もバックアップされていません。</b>最初のエクスポートを推奨します。`;
+  } else {
+    const safe = days <= 6;
+    stEl.className = 'backup-status' + (safe?'':' warn');
+    const note = safe
+      ? 'バックアップは最新です。'
+      : '少し時間が空いています。再エクスポートを推奨します。';
+    stEl.innerHTML = `📦 現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
+      前回バックアップ：<b>${days===0?'今日':days+'日前'}</b>。${note}`;
+  }
+  document.getElementById('settings-ov').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settings-ov').classList.remove('open'); }
+
+function exportData(){
+  try{
+    const payload = {
+      _meta: { app:'Bloom TaskCoach', version:'v5', exportedAt:new Date().toISOString() },
+      data: D,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const n = new Date();
+    const ymd = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
+    const hm  = `${String(n.getHours()).padStart(2,'0')}${String(n.getMinutes()).padStart(2,'0')}`;
+    a.download = `bloom-taskcoach-backup-${ymd}-${hm}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    D.lastBackupAt = new Date().toISOString();
+    save();
+    showToast('✿ バックアップファイルを書き出しました');
+    render();
+    // Refresh settings modal status if open
+    if(document.getElementById('settings-ov').classList.contains('open')) openSettings();
+  } catch(e){
+    showToast('⚠️ エクスポートに失敗しました');
+    console.error(e);
+  }
+}
+
+function importData(file){
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const raw = JSON.parse(e.target.result);
+      // 2つの形式に対応：① エクスポート形式 {data:...}、② 直接 D
+      const cand = (raw && raw.data && Array.isArray(raw.data.tasks)) ? raw.data
+                 : (raw && Array.isArray(raw.tasks)) ? raw
+                 : null;
+      if(!cand){ showToast('⚠️ 正しいバックアップファイルではありません'); return; }
+      const tCount = cand.tasks.length;
+      if(!confirm(`${tCount}件のタスクを読み込みます。\n\n現在のデータは上書きされます。よろしいですか？\n（心配なら先に「エクスポート」を押してバックアップを取ってください）`)){
+        return;
+      }
+      D = Object.assign(defData(), cand);
+      save(); render();
+      showToast(`✿ ${tCount}件のタスクを復元しました`);
+      closeSettings();
+    } catch(err){
+      showToast('⚠️ ファイルが読み込めませんでした');
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll(){
+  // BE: 二段階確認＋エクスポート推奨で後悔回避
+  if(!confirm('⚠️ すべてのタスクと履歴を削除します。\n\n本当によろしいですか？\n（この操作は取り消せません）')) return;
+  if(!confirm('最終確認：本当に全データを削除してよろしいですか？\n\n先に「エクスポート」を押していない場合、データは完全に失われます。')) return;
+  D = defData();
+  save(); render(); closeSettings();
+  showToast('🗑 全データを削除しました');
+}
+
+// ============================================================
 // EVENTS
 // ============================================================
 document.getElementById('fab').addEventListener('click', openAdd);
@@ -1633,11 +1840,26 @@ document.getElementById('ms-ov').addEventListener('click', e=>{
   if(e.target===document.getElementById('ms-ov')) closeMilestone();
 });
 document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){ closeModal(); closeMilestone(); }
+  if(e.key==='Escape'){ closeModal(); closeMilestone(); closeSettings(); }
   if(e.key==='Enter' && document.getElementById('ov').classList.contains('open')){
     if(!['TEXTAREA','SELECT'].includes(document.activeElement.tagName)) submitForm();
   }
 });
+
+// Settings / Backup
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('settings-close').addEventListener('click', closeSettings);
+document.getElementById('settings-ov').addEventListener('click', e=>{
+  if(e.target===document.getElementById('settings-ov')) closeSettings();
+});
+document.getElementById('btn-export').addEventListener('click', exportData);
+document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('import-file').click());
+document.getElementById('import-file').addEventListener('change', e=>{
+  const f = e.target.files && e.target.files[0];
+  importData(f);
+  e.target.value = ''; // allow re-selecting same file
+});
+document.getElementById('btn-reset').addEventListener('click', resetAll);
 
 // ============================================================
 // MIGRATION — 旧キー(tc_v4)からデータ移行（1回のみ）
