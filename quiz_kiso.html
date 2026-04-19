@@ -3,399 +3,1605 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>行動経済学 基礎クイズ</title>
+  <meta name="theme-color" content="#0b0f14">
+  <title>行動経済学基礎コース 知識クイズ — 100問で学び直すバイアスの基礎</title>
+  <meta name="description" content="日本営業科学協会「行動経済学基礎コース」の内容に即した100問の知識クイズ。45以上の認知バイアスを、例題と詳細な解説で学び直せます。">
+  <meta property="og:title" content="行動経済学基礎コース 知識クイズ">
+  <meta property="og:description" content="45以上の認知バイアスを、100問の例題と解説で学び直す。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://columns.l-mine.com/kiso_quiz.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://columns.l-mine.com/kiso_quiz.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230b0f14'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='18' font-weight='700' fill='%23c9a96a'>B</text></svg>">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Playfair+Display:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --navy: #0f172a;
-      --navy-mid: #1e293b;
-      --navy-light: #334155;
-      --accent: #f59e0b;
-      --accent-light: #fcd34d;
-      --blue: #3b82f6;
-      --blue-light: #93c5fd;
-      --green: #10b981;
-      --red: #ef4444;
-      --surface: #ffffff;
-      --surface-2: #f8fafc;
-      --border: #e2e8f0;
-      --text: #0f172a;
-      --text-mid: #475569;
-      --text-light: #94a3b8;
-      --radius: 14px;
-      --shadow: 0 4px 24px rgba(15,23,42,0.10);
-      --shadow-sm: 0 2px 8px rgba(15,23,42,0.07);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
-      background: var(--surface-2);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-    header {
-      background: var(--navy);
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-    }
-    .header-inner {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-logo { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--accent), #f97316);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-    .logo-text h1 { font-size: 1rem; font-weight: 700; }
-    .logo-text p { font-size: 0.72rem; color: var(--text-light); margin-top: 1px; }
-    .header-badge {
-      background: rgba(245,158,11,0.15);
-      border: 1px solid rgba(245,158,11,0.3);
-      color: var(--accent-light);
-      font-size: 0.72rem; font-weight: 600;
-      padding: 4px 10px; border-radius: 20px;
-    }
-    .container { max-width: 760px; margin: 0 auto; padding: 28px 16px 80px; }
+/* ══════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Dark Editorial
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --ink:            #0b0f14;
+  --ink-surface:    #121821;
+  --ink-elev:       #1a212c;
+  --ink-deep:       #080b10;
+  --paper:          #f4efe3;
 
-    /* START */
-    #start-screen { animation: fadeIn .4s ease; }
-    .start-hero {
-      background: var(--navy);
-      border-radius: 20px;
-      padding: 40px 32px;
-      text-align: center;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .start-hero::before {
-      content: '';
-      position: absolute; top: -40px; right: -40px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .start-hero h2 { font-size: 1.7rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-    .start-hero p { color: var(--text-light); font-size: 0.9rem; }
-    .hero-stats { display: flex; justify-content: center; gap: 28px; margin-top: 24px; }
-    .hero-stat { text-align: center; }
-    .hero-stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
-    .hero-stat-label { font-size: 0.72rem; color: var(--text-light); margin-top: 4px; }
+  /* Hairlines */
+  --hairline:       rgba(236, 231, 221, 0.08);
+  --hairline-2:     rgba(236, 231, 221, 0.14);
+  --hairline-gold:  rgba(201, 169, 106, 0.30);
 
-    .start-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 22px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border);
-      margin-bottom: 14px;
-    }
-    .start-card h3 {
-      font-size: 0.75rem; font-weight: 700;
-      color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.1em;
-      margin-bottom: 14px;
-    }
-    .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .level-card {
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: all .2s;
-      background: var(--surface-2);
-      text-align: left;
-      position: relative;
-    }
-    .level-card:hover { border-color: var(--accent); background: #fffbeb; }
-    .level-card.selected { border-color: var(--accent); background: #fffbeb; box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
-    .level-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
-    .level-label { font-size: 0.92rem; font-weight: 700; }
-    .level-count { font-size: 0.7rem; background: rgba(15,23,42,0.06); padding: 2px 8px; border-radius: 20px; color: var(--text-mid); font-weight: 600; }
-    .level-card.selected .level-count { background: rgba(245,158,11,0.15); color: #92400e; }
-    .level-desc { font-size: 0.76rem; color: var(--text-mid); }
-    .level-card-all { grid-column: span 2; background: var(--navy); border-color: var(--navy-light); }
-    .level-card-all .level-label { color: white; }
-    .level-card-all .level-desc { color: var(--text-light); }
-    .level-card-all .level-count { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
-    .level-card-all:hover { background: var(--navy-mid); border-color: var(--accent); }
-    .level-card-all.selected { border-color: var(--accent); background: var(--navy-mid); box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
-    .check-icon {
-      position: absolute; top: 10px; right: 10px;
-      width: 18px; height: 18px;
-      background: var(--accent); border-radius: 50%;
-      display: none; align-items: center; justify-content: center;
-      font-size: 10px; color: white; font-weight: 800;
-    }
-    .level-card.selected .check-icon { display: flex; }
-    .q-count-row { display: flex; gap: 8px; }
-    .q-count-btn {
-      flex: 1; padding: 11px 8px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      background: var(--surface-2); cursor: pointer;
-      font-size: 0.9rem; font-weight: 700; color: var(--text-mid);
-      transition: all .2s; text-align: center;
-    }
-    .q-count-btn:hover { border-color: var(--accent); color: var(--navy); }
-    .q-count-btn.selected { border-color: var(--accent); background: #fffbeb; color: var(--navy); box-shadow: 0 0 0 3px rgba(245,158,11,0.1); }
-    .q-count-btn small { display: block; font-size: 0.62rem; font-weight: 400; color: var(--text-light); margin-top: 2px; }
-    .start-button {
-      width: 100%;
-      background: linear-gradient(135deg, var(--accent) 0%, #f97316 100%);
-      color: var(--navy); border: none;
-      padding: 16px; border-radius: 12px;
-      font-size: 1rem; font-weight: 800;
-      cursor: pointer; transition: all .2s;
-      box-shadow: 0 4px 16px rgba(245,158,11,0.35);
-    }
-    .start-button:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(245,158,11,0.45); }
+  /* Text */
+  --text-1:         #ece7dd;
+  --text-2:         #a8a396;
+  --text-3:         #74716a;
+  --text-4:         #4a4740;
+  --text-ink:       #0e131a;
 
-    /* QUIZ */
-    #quiz-screen { display: none; animation: fadeIn .35s ease; }
-    .quiz-topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-    .q-counter { font-size: 0.78rem; font-weight: 700; color: var(--text-mid); white-space: nowrap; }
-    .progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #f97316); border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); }
-    .score-pill { background: var(--navy); color: var(--accent); font-size: 0.78rem; font-weight: 800; padding: 4px 12px; border-radius: 99px; white-space: nowrap; }
-    .q-card { background: var(--surface); border-radius: 18px; padding: 28px 24px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 14px; }
-    .q-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
-    .topic-chip { font-size: 0.72rem; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-mid); padding: 4px 10px; border-radius: 99px; }
-    .diff-chip { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 99px; margin-left: auto; }
-    .diff-1 { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-    .diff-2 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
-    .diff-3 { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
-    .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.75; }
-    .choices { display: flex; flex-direction: column; gap: 8px; margin-top: 22px; }
-    .choice {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 13px 16px;
-      border: 1.5px solid var(--border); border-radius: 10px;
-      background: var(--surface-2); cursor: pointer;
-      text-align: left; font-size: 0.92rem; line-height: 1.6;
-      transition: all .15s; color: var(--text); width: 100%;
-    }
-    .choice:hover:not(:disabled) { border-color: var(--blue-light); background: #eff6ff; transform: translateX(4px); }
-    .choice-key {
-      width: 28px; height: 28px; border-radius: 8px;
-      background: var(--border); color: var(--text-mid);
-      font-size: 0.78rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .choice.correct { border-color: var(--green); background: #ecfdf5; }
-    .choice.correct .choice-key { background: var(--green); color: white; }
-    .choice.wrong { border-color: var(--red); background: #fef2f2; }
-    .choice.wrong .choice-key { background: var(--red); color: white; }
-    .choice:disabled { cursor: default; transform: none; }
-    .explanation {
-      display: none; margin-top: 14px; padding: 16px 18px;
-      border-radius: 12px; font-size: 0.875rem; line-height: 1.75;
-      animation: fadeIn .3s ease;
-    }
-    .explanation.correct { background: #ecfdf5; border-left: 3px solid var(--green); color: #064e3b; }
-    .explanation.wrong { background: #fef2f2; border-left: 3px solid var(--red); color: #7f1d1d; }
-    .exp-label { font-weight: 800; font-size: 0.8rem; margin-bottom: 6px; display: block; }
-    .next-wrap { display: flex; justify-content: flex-end; margin-top: 14px; }
-    .next-btn {
-      display: none; background: var(--navy); color: white;
-      border: none; padding: 12px 28px; border-radius: 10px;
-      font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all .2s;
-    }
-    .next-btn:hover { background: var(--navy-light); transform: translateX(3px); }
+  /* Accent — burnished gold */
+  --gold:           #c9a96a;
+  --gold-hover:     #d7ba7c;
+  --gold-soft:      rgba(201, 169, 106, 0.10);
+  --gold-softer:    rgba(201, 169, 106, 0.04);
 
-    /* RESULT */
-    #result-screen { display: none; animation: fadeIn .4s ease; }
-    .result-hero {
-      background: var(--navy); border-radius: 20px;
-      padding: 36px 24px; text-align: center; margin-bottom: 14px;
-      position: relative; overflow: hidden;
-    }
-    .score-ring {
-      width: 120px; height: 120px; border-radius: 50%;
-      margin: 0 auto 20px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      border: 4px solid; position: relative;
-    }
-    .score-ring.S { border-color: var(--accent); background: rgba(245,158,11,0.12); }
-    .score-ring.A { border-color: var(--blue); background: rgba(59,130,246,0.12); }
-    .score-ring.B { border-color: var(--green); background: rgba(16,185,129,0.12); }
-    .score-ring.C { border-color: var(--red); background: rgba(239,68,68,0.12); }
-    .score-big { font-size: 2.4rem; font-weight: 900; color: white; line-height: 1; }
-    .score-denom { font-size: 0.8rem; color: var(--text-light); }
-    .score-rank {
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
-      position: absolute; top: -11px;
-      background: var(--navy); padding: 2px 10px; border-radius: 99px;
-    }
-    .score-rank.S { color: var(--accent); border: 1.5px solid var(--accent); }
-    .score-rank.A { color: var(--blue-light); border: 1.5px solid var(--blue); }
-    .score-rank.B { color: #6ee7b7; border: 1.5px solid var(--green); }
-    .score-rank.C { color: #fca5a5; border: 1.5px solid var(--red); }
-    .result-msg { font-size: 1.2rem; font-weight: 800; color: white; margin-bottom: 6px; }
-    .result-sub { font-size: 0.83rem; color: var(--text-light); }
-    .result-stats { display: flex; justify-content: center; gap: 24px; margin-top: 24px; }
-    .r-stat { text-align: center; }
-    .r-stat-num { font-size: 1.5rem; font-weight: 800; color: white; }
-    .r-stat-num.green { color: #6ee7b7; }
-    .r-stat-num.red { color: #fca5a5; }
-    .r-stat-label { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
-    .review-card {
-      background: var(--surface); border-radius: var(--radius);
-      padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border);
-    }
-    .review-card h3 { font-size: 0.78rem; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
-    .review-item { padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .review-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .review-q { font-size: 0.87rem; font-weight: 600; margin-bottom: 8px; }
-    .review-ans-wrong { font-size: 0.77rem; color: var(--red); margin-bottom: 3px; }
-    .review-ans-correct { font-size: 0.77rem; color: var(--green); margin-bottom: 10px; }
-    .review-exp { font-size: 0.82rem; color: var(--text-mid); line-height: 1.7; background: var(--surface-2); padding: 10px 12px; border-radius: 8px; }
-    .result-actions { display: flex; gap: 10px; margin-top: 4px; margin-bottom: 14px; }
-    .btn-primary {
-      flex: 1; background: linear-gradient(135deg, var(--accent), #f97316);
-      color: var(--navy); border: none; padding: 14px; border-radius: 12px;
-      font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: all .2s;
-      box-shadow: 0 3px 12px rgba(245,158,11,0.3);
-    }
-    .btn-primary:hover { transform: translateY(-2px); }
-    .btn-secondary {
-      background: var(--surface); color: var(--text-mid);
-      border: 1.5px solid var(--border); padding: 14px 20px;
-      border-radius: 12px; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; transition: all .2s;
-    }
-    .btn-secondary:hover { border-color: var(--navy-light); color: var(--text); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 480px) {
-      .level-grid { grid-template-columns: 1fr; }
-      .level-card-all { grid-column: span 1; }
-      .start-hero { padding: 28px 20px; }
-      .start-hero h2 { font-size: 1.4rem; }
-      .q-text { font-size: 0.97rem; }
-      .choice { font-size: 0.86rem; }
-      .q-count-row { flex-wrap: wrap; }
-      .q-count-btn { min-width: calc(50% - 4px); }
-    }
+  /* Level + State (subdued saturation) */
+  --lv1:            #8ca1cc;
+  --lv2:            #c9a96a;
+  --lv3:            #b16b53;
+  --success:        #7fa084;
+  --success-soft:   rgba(127, 160, 132, 0.12);
+  --error:          #b16b53;
+  --error-soft:     rgba(177, 107, 83, 0.12);
+
+  /* Type */
+  --font-display: 'Shippori Mincho B1', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Noto Sans JP', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, ui-monospace, monospace;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  /* Elevation (no glow) */
+  --shadow-card:   0 1px 0 rgba(255,255,255,0.03) inset, 0 4px 16px rgba(0,0,0,0.24);
+  --shadow-hero:   0 1px 0 rgba(255,255,255,0.04) inset, 0 10px 40px rgba(0,0,0,0.32);
+
+  /* Motion */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text-1);
+  min-height: 100vh;
+  line-height: 1.75;
+  font-weight: 400;
+  font-size: 16px;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--gold); color: var(--text-ink); }
+
+a { color: inherit; }
+
+button { font-family: inherit; color: inherit; }
+
+/* ══════════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11, 15, 20, 0.92);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--hairline);
+}
+.header-inner {
+  max-width: 760px; margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand-mark {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+  background: var(--gold-softer);
+}
+.brand-text { display: flex; flex-direction: column; min-width: 0; }
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brand-sub {
+  font-size: 0.6875rem; color: var(--text-3);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.header-meta {
+  font-size: 0.6875rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-left: 14px;
+  border-left: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════════════════════════ */
+.container {
+  max-width: 720px; margin: 0 auto;
+  padding: 40px 20px 100px;
+}
+
+/* Utility: hairline rule */
+.hairline-rule {
+  height: 1px; background: var(--hairline);
+  margin: 24px 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ══════════════════════════════════════════════════════════════ */
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--hairline);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   START SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#start-screen { animation: fadeUp .5s var(--ease-standard); }
+
+.hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 56px 40px 48px;
+  text-align: center;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at top, var(--gold-softer) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.hero-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5.2vw, 2.625rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  margin-bottom: 16px;
+}
+.hero-lede {
+  position: relative;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  max-width: 520px;
+  margin: 0 auto;
+  font-weight: 500;
+}
+.hero-stats {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 36px;
+}
+.hero-stat { text-align: center; }
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.75rem; font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.hero-rule {
+  width: 1px; height: 32px;
+  background: var(--hairline);
+}
+
+/* Challenge banner */
+#challenge-banner {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline-gold);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.chal-label {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.chal-text {
+  font-size: 0.875rem; color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* Section card */
+.section-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Level grid */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.level-card {
+  position: relative;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+}
+.level-card:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.level-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.level-card-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 10px;
+}
+.level-label {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-1);
+}
+.level-card.selected .level-label { color: var(--gold); }
+.level-count {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-body);
+}
+.level-card.selected .level-count {
+  color: var(--gold);
+  border-color: var(--hairline-gold);
+}
+.level-desc {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  line-height: 1.6;
+  font-weight: 500;
+}
+.level-card-all { grid-column: span 2; }
+.check-icon {
+  position: absolute; top: 12px; right: 12px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: none;
+  color: var(--text-ink);
+}
+.check-icon svg {
+  width: 12px; height: 12px;
+  display: block; margin: 2px auto;
+}
+.level-card.selected .check-icon { display: block; }
+
+/* Question count buttons */
+.q-count-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.q-count-btn {
+  flex: 1; min-width: 70px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard);
+  font-family: inherit;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+}
+.qc-num {
+  font-family: var(--font-display);
+  font-size: 1.125rem; font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.qc-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.q-count-btn:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.q-count-btn.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.q-count-btn.selected .qc-num { color: var(--gold); }
+.q-count-btn.selected .qc-label { color: var(--gold); }
+
+/* Timer toggle */
+.timer-toggle-row {
+  display: flex; align-items: center; gap: 16px;
+}
+.toggle-switch {
+  position: relative; width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: 22px;
+  transition: background var(--duration-base) var(--ease-standard),
+              border-color var(--duration-base) var(--ease-standard);
+}
+.toggle-slider::before {
+  position: absolute; content: '';
+  height: 14px; width: 14px;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+  background: var(--text-2);
+  border-radius: 50%;
+  transition: transform var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+input:checked + .toggle-slider {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+input:checked + .toggle-slider::before {
+  transform: translateY(-50%) translateX(18px);
+  background: var(--text-ink);
+}
+.toggle-text { display: flex; flex-direction: column; }
+.toggle-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+}
+.toggle-sub {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* Disclaimer */
+.disclaimer {
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--hairline-gold);
+  background: var(--gold-softer);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+.disclaimer-label {
+  font-size: 0.625rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.disclaimer p {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  line-height: 1.8;
+  font-weight: 500;
+}
+.disclaimer strong {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+/* Start button */
+.start-button {
+  width: 100%;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 18px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  transition: background var(--duration-base) var(--ease-standard);
+  margin-top: 8px;
+}
+.start-button:hover { background: var(--gold-hover); }
+.start-arrow {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#quiz-screen { display: none; animation: fadeUp .32s var(--ease-standard); }
+
+.quiz-topbar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.q-counter {
+  font-family: var(--font-display);
+  font-size: 0.9375rem; font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1; min-width: 80px;
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width .6s var(--ease-standard);
+}
+.score-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.score-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.score-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Streak */
+.streak-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  animation: pulseQuiet .3s var(--ease-standard);
+}
+.streak-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.streak-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes pulseQuiet {
+  0% { transform: scale(0.96); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.streak-popup {
+  position: fixed; top: 84px; left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-gold);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hero);
+  z-index: 999;
+  transition: transform var(--duration-base) var(--ease-standard),
+              opacity var(--duration-base) var(--ease-standard);
+  opacity: 0; pointer-events: none;
+  letter-spacing: 0.04em;
+}
+.streak-popup.show {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* Timer */
+.timer-bar-wrap {
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+  margin-bottom: 12px;
+}
+.timer-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width 1s linear;
+}
+.timer-bar.warning { background: var(--error); }
+.timer-display {
+  font-family: var(--font-display);
+  font-size: 0.8125rem; font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.timer-display.warning { color: var(--error); }
+
+/* Question card */
+.q-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 32px 32px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.q-card-top {
+  display: flex; align-items: center;
+  margin-bottom: 20px;
+}
+.diff-chip {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+}
+.diff-1 {
+  color: var(--lv1);
+  background: rgba(140, 161, 204, 0.08);
+  border: 1px solid rgba(140, 161, 204, 0.22);
+}
+.diff-2 {
+  color: var(--lv2);
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+}
+.diff-3 {
+  color: var(--lv3);
+  background: rgba(177, 107, 83, 0.08);
+  border: 1px solid rgba(177, 107, 83, 0.22);
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.85;
+  color: var(--text-1);
+  letter-spacing: 0.005em;
+}
+
+/* Choices */
+.choices {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 24px;
+}
+.choice {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  width: 100%;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.choice:hover:not(:disabled) {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.choice-key {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-2);
+  background: var(--ink-elev);
+  margin-top: 1px;
+}
+.choice.correct {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.choice.correct .choice-key {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-ink);
+}
+.choice.wrong {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.choice.wrong .choice-key {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--text-1);
+}
+.choice:disabled { cursor: default; opacity: 0.95; }
+
+/* Explanation */
+.explanation {
+  display: none;
+  margin-top: 18px;
+  padding: 18px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  animation: fadeUp .3s var(--ease-standard);
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+.explanation.correct {
+  background: var(--success-soft);
+  border-left-color: var(--success);
+  color: var(--text-1);
+}
+.explanation.wrong {
+  background: var(--error-soft);
+  border-left-color: var(--error);
+  color: var(--text-1);
+}
+.exp-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.explanation.correct .exp-label { color: var(--success); }
+.explanation.wrong .exp-label { color: var(--error); }
+.yt-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.yt-link::before {
+  content: '';
+  width: 12px; height: 12px;
+  background: var(--gold);
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+}
+.yt-link:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Next button */
+.next-wrap {
+  display: flex; justify-content: flex-end;
+  margin-top: 16px;
+}
+.next-btn {
+  display: none;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.next-btn:hover { background: var(--gold-hover); }
+
+/* ══════════════════════════════════════════════════════════════
+   RESULT SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#result-screen { display: none; animation: fadeUp .4s var(--ease-standard); }
+
+.result-hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 48px 40px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.rank-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rank-display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-display.S { color: var(--gold); }
+.rank-display.A { color: var(--lv1); }
+.rank-display.B { color: var(--success); }
+.rank-display.C { color: var(--error); }
+
+.score-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 7vw, 3.25rem);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.score-display .denom {
+  font-size: 0.45em;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.result-msg {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 18px 0 6px;
+  letter-spacing: -0.005em;
+}
+.result-sub {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.75;
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.result-streak-info {
+  margin-top: 16px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.rsi-chip {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-right: 6px;
+}
+.result-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+}
+.stat-rule {
+  width: 1px; height: 40px;
+  background: var(--hairline);
+}
+.r-stat { text-align: center; }
+.r-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.r-stat-num.green { color: var(--success); }
+.r-stat-num.red   { color: var(--error); }
+.r-stat-num.white { color: var(--text-1); }
+.r-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* Weak bias */
+.weak-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.weak-item {
+  display: flex; align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.weak-item:last-child { border-bottom: none; padding-bottom: 0; }
+.weak-item:first-child { padding-top: 0; }
+.weak-topic {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  font-family: var(--font-display);
+}
+.weak-bar {
+  flex: 1.5;
+  max-width: 180px;
+  height: 4px;
+  background: var(--hairline);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.weak-bar-fill {
+  height: 100%;
+  background: var(--error);
+  border-radius: 99px;
+}
+.weak-count {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--error);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Review */
+.review-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.review-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.review-item:last-child { border-bottom: none; padding-bottom: 0; }
+.review-item:first-child { padding-top: 0; }
+.review-q {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--text-1);
+  margin-bottom: 14px;
+}
+.review-q::before {
+  content: 'Q. ';
+  color: var(--gold);
+  font-weight: 700;
+}
+.review-ans-wrong, .review-ans-correct {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-bottom: 4px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.review-ans-wrong { color: var(--error); }
+.review-ans-correct { color: var(--success); margin-bottom: 12px; }
+.review-ans-label {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  min-width: 80px;
+}
+.review-exp {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.85;
+  background: var(--ink-elev);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+}
+.review-yt {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.review-yt:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Result actions */
+.result-actions {
+  display: flex; gap: 10px;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  flex: 1; min-width: 160px;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.btn-primary:hover { background: var(--gold-hover); }
+.btn-secondary {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.btn-secondary:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.btn-social {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  white-space: nowrap;
+}
+.btn-social:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Nickname card */
+.nickname-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-slow) var(--ease-standard);
+}
+.nickname-card.registered { border-color: var(--success); }
+.nickname-row {
+  display: flex; gap: 8px;
+}
+.nickname-input {
+  flex: 1;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+.nickname-input:focus { border-color: var(--gold); }
+.nickname-input::placeholder { color: var(--text-4); }
+.nickname-submit {
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.nickname-submit:hover:not(:disabled) { background: var(--gold-hover); }
+.nickname-submit:disabled {
+  background: var(--ink-elev);
+  color: var(--text-3);
+  border-color: var(--hairline);
+  cursor: not-allowed;
+}
+.nickname-note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* Ranking */
+.ranking-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.ranking-filter {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.rf-btn {
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.rf-btn:hover { border-color: var(--hairline-gold); color: var(--gold); }
+.rf-btn.active {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ranking-table th {
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.ranking-table th:last-child { text-align: right; }
+.ranking-table td {
+  padding: 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--hairline);
+  font-variant-numeric: tabular-nums;
+}
+.ranking-table td:last-child { text-align: right; font-weight: 700; color: var(--text-1); }
+.ranking-table tr:last-child td { border-bottom: none; }
+.ranking-table tr.me td {
+  color: var(--text-1);
+  background: var(--gold-softer);
+}
+.rank-medal { font-size: 1rem; }
+.rank-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-3);
+}
+.rank-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.06em;
+}
+.rank-badge.S { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--hairline-gold); }
+.rank-badge.A { background: rgba(140, 161, 204, 0.10); color: var(--lv1); border: 1px solid rgba(140, 161, 204, 0.25); }
+.rank-badge.B { background: var(--success-soft); color: var(--success); border: 1px solid rgba(127, 160, 132, 0.25); }
+.rank-badge.C { background: var(--error-soft); color: var(--error); border: 1px solid rgba(177, 107, 83, 0.25); }
+.me-tag {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.16em;
+  padding-left: 8px;
+}
+.ranking-loading {
+  text-align: center;
+  padding: 28px 0;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+.site-footer {
+  margin-top: 64px;
+  padding: 32px 20px;
+  border-top: 1px solid var(--hairline);
+  text-align: center;
+}
+.site-footer a {
+  font-family: var(--font-display);
+  color: var(--text-1);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: color var(--duration-base) var(--ease-standard);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.site-footer a:hover {
+  color: var(--gold);
+  border-bottom-color: var(--hairline-gold);
+}
+.site-footer p {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOTION
+   ══════════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   A11Y: FOCUS
+   ══════════════════════════════════════════════════════════════ */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+button, a, input, [tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .header-meta { display: none; }
+  .brand-title { font-size: 0.875rem; }
+  .brand-sub { display: none; }
+  .container { padding: 28px 16px 96px; }
+  .hero { padding: 40px 24px 36px; border-radius: var(--radius-lg); }
+  .hero-stats { gap: 18px; }
+  .hero-rule { height: 24px; }
+  .section-card { padding: 20px 20px; }
+  .q-card { padding: 24px 22px 22px; }
+  .result-hero { padding: 36px 22px 32px; border-radius: var(--radius-lg); }
+  .result-stats { gap: 16px; padding-top: 20px; margin-top: 24px; }
+  .stat-rule { height: 32px; }
+  .review-card, .weak-card, .nickname-card, .ranking-card { padding: 20px 20px; }
+  .result-actions { flex-direction: column; gap: 8px; }
+  .btn-primary, .btn-secondary, .btn-social { min-width: 0; }
+  .ranking-table { font-size: 0.8125rem; }
+  .ranking-table th, .ranking-table td { padding-left: 8px; padding-right: 8px; }
+}
+@media (max-width: 480px) {
+  .level-grid { grid-template-columns: 1fr; }
+  .level-card-all { grid-column: span 1; }
+  .hero-title { font-size: 1.625rem; }
+  .hero-lede { font-size: 0.875rem; }
+  .q-text { font-size: 1.0625rem; }
+  .choice { font-size: 0.875rem; padding: 14px 16px; }
+  .q-count-row { flex-wrap: wrap; }
+  .q-count-btn { min-width: calc(50% - 4px); }
+  .rank-display { font-size: 3rem; }
+  .score-display { font-size: 2.25rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
   </style>
 </head>
 <body>
-<header>
+<div id="streak-popup" class="streak-popup" aria-live="polite"></div>
+
+<header class="site-header">
   <div class="header-inner">
-    <div class="header-logo">
-      <div class="logo-icon">🧠</div>
-      <div class="logo-text">
-        <h1>行動経済学 基礎クイズ</h1>
-        <p>Behavioral Economics Quiz</p>
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">B</div>
+      <div class="brand-text">
+        <div class="brand-title">行動経済学基礎コース 知識クイズ</div>
+        <div class="brand-sub">100問で学び直すバイアスの基礎</div>
       </div>
     </div>
-    <div class="header-badge">基礎コース</div>
+    <div class="header-meta">Vol.III · 2026</div>
   </div>
 </header>
-<div class="container">
-  <div id="start-screen">
-    <div class="start-hero">
-      <h2>知識を試そう</h2>
-      <p>行動経済学の基礎コース内容から出題。<br>バイアスの理解度をチェックしましょう。</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="hero-stat-num">30</div><div class="hero-stat-label">総問題数</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">難易度</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">4択</div><div class="hero-stat-label">形式</div></div>
-      </div>
-    </div>
-    <div class="start-card">
-      <h3>難易度を選択</h3>
-      <div class="level-grid">
-        <div class="level-card" id="lv1-card" onclick="toggleLevel(1)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐ Level 1</span><span class="level-count">12問</span></div>
-          <p class="level-desc">基本用語・定義の理解</p>
-        </div>
-        <div class="level-card" id="lv2-card" onclick="toggleLevel(2)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐⭐ Level 2</span><span class="level-count">12問</span></div>
-          <p class="level-desc">場面への当てはめ・応用</p>
-        </div>
-        <div class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">🎲 全レベルMIX</span><span class="level-count">30問</span></div>
-          <p class="level-desc">すべての難易度からランダム出題</p>
-        </div>
-        <div class="level-card" id="lv3-card" onclick="toggleLevel(3)">
-          <div class="check-icon">✓</div>
-          <div class="level-card-head"><span class="level-label">⭐⭐⭐ Level 3</span><span class="level-count">6問</span></div>
-          <p class="level-desc">深い理解・複合問題</p>
-        </div>
-      </div>
-    </div>
-    <div class="start-card">
-      <h3>出題数を選択</h3>
-      <div class="q-count-row">
-        <button class="q-count-btn" onclick="selectCount(5,this)">5問<small>さくっと</small></button>
-        <button class="q-count-btn selected" onclick="selectCount(10,this)">10問<small>標準</small></button>
-        <button class="q-count-btn" onclick="selectCount(20,this)">20問<small>本格的</small></button>
-        <button class="q-count-btn" onclick="selectCount(999,this)">全問<small>完全制覇</small></button>
-      </div>
-    </div>
-    <button class="start-button" onclick="startQuiz()">スタート →</button>
-  </div>
 
-  <div id="quiz-screen">
-    <div class="quiz-topbar">
-      <span class="q-counter" id="q-counter">1 / 10</span>
-      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
-      <div class="score-pill" id="score-pill">✓ 0</div>
+<main class="container">
+
+  <!-- ═══════════════════ START SCREEN ═══════════════════ -->
+  <section id="start-screen" aria-labelledby="hero-title">
+    <div class="hero">
+      <div class="hero-eyebrow">Behavioral Economics — Foundation</div>
+      <h1 id="hero-title" class="hero-title">バイアスを知り、<br>判断を磨く。</h1>
+      <p class="hero-lede">日本営業科学協会「行動経済学基礎コース」の内容に即して、<br>45以上の認知バイアスを100問の例題と解説で学び直す。</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">100</div>
+          <div class="hero-stat-label">Questions</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">03</div>
+          <div class="hero-stat-label">Levels</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">04</div>
+          <div class="hero-stat-label">Choices</div>
+        </div>
+      </div>
     </div>
-    <div class="q-card">
+
+    <div id="challenge-banner" style="display:none;" role="status">
+      <div class="chal-label">Challenge Invitation</div>
+      <div class="chal-text">挑戦状が届いています。同じ問題セットで対決できます。</div>
+    </div>
+
+    <section class="section-card">
+      <div class="section-label">01 — Level</div>
+      <div class="level-grid">
+        <button type="button" class="level-card" id="lv1-card" onclick="toggleLevel(1)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 1</span>
+            <span class="level-count">35問</span>
+          </div>
+          <p class="level-desc">基本用語・定義の理解</p>
+        </button>
+        <button type="button" class="level-card" id="lv2-card" onclick="toggleLevel(2)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 2</span>
+            <span class="level-count">40問</span>
+          </div>
+          <p class="level-desc">場面への当てはめ・応用</p>
+        </button>
+        <button type="button" class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')" aria-pressed="true">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">All Levels</span>
+            <span class="level-count">100問</span>
+          </div>
+          <p class="level-desc">全難易度からランダム出題</p>
+        </button>
+        <button type="button" class="level-card" id="lv3-card" onclick="toggleLevel(3)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label">Level 3</span>
+            <span class="level-count">25問</span>
+          </div>
+          <p class="level-desc">深い理解・複合問題</p>
+        </button>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <div class="section-label">02 — Question Count</div>
+      <div class="q-count-row">
+        <button type="button" class="q-count-btn" onclick="selectCount(5,this)">
+          <span class="qc-num">5</span><span class="qc-label">Short</span>
+        </button>
+        <button type="button" class="q-count-btn selected" onclick="selectCount(10,this)">
+          <span class="qc-num">10</span><span class="qc-label">Standard</span>
+        </button>
+        <button type="button" class="q-count-btn" onclick="selectCount(20,this)">
+          <span class="qc-num">20</span><span class="qc-label">Deep Dive</span>
+        </button>
+        <button type="button" class="q-count-btn" onclick="selectCount(999,this)">
+          <span class="qc-num">All</span><span class="qc-label">Full Set</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <div class="timer-toggle-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="timer-toggle" checked>
+          <span class="toggle-slider" aria-hidden="true"></span>
+        </label>
+        <div class="toggle-text">
+          <label for="timer-toggle" class="toggle-title">制限時間モード</label>
+          <div class="toggle-sub">1問あたり30秒で回答</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="disclaimer" role="note">
+      <div class="disclaimer-label">Note</div>
+      <p>本クイズは日本営業科学協会の承諾を得て作成・一般公開しております。<strong>行動経済学基礎コースの学習補助を目的とした練習問題です。</strong>協会主宰の検定・資格試験とは関係ありません。検定や問題に関するお問い合わせにはお答えいたしかねます。</p>
+    </div>
+
+    <button type="button" class="start-button" onclick="startQuiz()">
+      <span>演習を始める</span>
+      <svg class="start-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    <section class="ranking-card" style="margin-top:32px;">
+      <div class="section-label">03 — Ranking</div>
+      <div class="ranking-filter" id="top-ranking-filter"></div>
+      <div id="top-ranking-body"><p class="ranking-loading">Loading…</p></div>
+    </section>
+  </section>
+
+  <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
+  <section id="quiz-screen" aria-labelledby="q-text">
+    <div id="timer-bar-wrap" class="timer-bar-wrap" style="display:none;" aria-hidden="true">
+      <div class="timer-bar" id="timer-bar" style="width:100%"></div>
+    </div>
+    <div class="quiz-topbar">
+      <span class="q-counter" id="q-counter">01 / 10</span>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <div class="score-pill" id="score-pill">
+        <span class="score-pill-label">Score</span><span class="score-pill-num">0</span>
+      </div>
+      <div id="streak-display" style="display:none;"></div>
+      <div id="timer-display" class="timer-display" style="display:none;"></div>
+    </div>
+    <article class="q-card">
       <div class="q-card-top">
-        <span class="topic-chip" id="q-topic"></span>
         <span class="diff-chip" id="q-diff"></span>
       </div>
       <p class="q-text" id="q-text"></p>
       <div class="choices" id="choices"></div>
       <div class="explanation" id="explanation"></div>
+    </article>
+    <div class="next-wrap">
+      <button type="button" class="next-btn" id="next-btn" onclick="nextQ()"></button>
     </div>
-    <div class="next-wrap"><button class="next-btn" id="next-btn" onclick="nextQ()"></button></div>
-  </div>
+  </section>
 
-  <div id="result-screen">
-    <div class="result-hero">
-      <div class="score-ring" id="score-ring">
-        <span class="score-rank" id="score-rank"></span>
-        <span class="score-big" id="score-big">0</span>
-        <span class="score-denom">/ <span id="score-denom">10</span></span>
-      </div>
+  <!-- ═══════════════════ RESULT SCREEN ═══════════════════ -->
+  <section id="result-screen" aria-labelledby="rank-display">
+    <article class="result-hero">
+      <div class="rank-eyebrow">Result</div>
+      <div class="rank-display" id="rank-display">RANK</div>
+      <div class="score-display" id="score-display">0<span class="denom"> / 10</span></div>
       <p class="result-msg" id="result-msg"></p>
       <p class="result-sub" id="result-sub"></p>
+      <div id="result-streak-info" class="result-streak-info" style="display:none;"></div>
       <div class="result-stats">
-        <div class="r-stat"><div class="r-stat-num green" id="r-correct">0</div><div class="r-stat-label">正解</div></div>
-        <div class="r-stat"><div class="r-stat-num red" id="r-wrong">0</div><div class="r-stat-label">不正解</div></div>
-        <div class="r-stat"><div class="r-stat-num" id="r-rate">0%</div><div class="r-stat-label">正答率</div></div>
+        <div class="r-stat">
+          <div class="r-stat-num green" id="r-correct">0</div>
+          <div class="r-stat-label">正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num red" id="r-wrong">0</div>
+          <div class="r-stat-label">不正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num white" id="r-rate">0%</div>
+          <div class="r-stat-label">正答率</div>
+        </div>
       </div>
-    </div>
+    </article>
+
     <div class="result-actions">
-      <button class="btn-secondary" onclick="goStart()">🏠 トップへ</button>
-      <button class="btn-primary" onclick="retry()">🔄 もう一度挑戦</button>
+      <button type="button" class="btn-secondary" onclick="goStart()">トップへ戻る</button>
+      <button type="button" class="btn-primary" onclick="retry()">もう一度挑戦する</button>
+      <button type="button" class="btn-social" onclick="shareX()">𝕏 でシェア</button>
+      <button type="button" class="btn-social" onclick="shareThreads()">Threads でシェア</button>
+      <button type="button" class="btn-social" onclick="shareChallenge()">同じ問題を友人に送る</button>
     </div>
+
+    <div id="weak-section" class="weak-card" style="display:none;">
+      <div class="section-label">Analysis — 苦手分野</div>
+      <div id="weak-list"></div>
+    </div>
+
     <div id="wrong-section" class="review-card" style="display:none;">
-      <h3>❌ 間違えた問題の復習</h3>
+      <div class="section-label">Review — 間違えた問題</div>
       <div id="wrong-list"></div>
     </div>
-  </div>
-</div>
+
+    <div id="nickname-card" class="nickname-card" style="display:none;">
+      <div class="section-label">Record — ランキングに記録（任意）</div>
+      <div class="nickname-row">
+        <input class="nickname-input" id="nickname-input" type="text" placeholder="例：とーる" maxlength="20" aria-label="ニックネーム">
+        <button type="button" class="nickname-submit" id="nickname-submit" onclick="submitRanking()">記録する</button>
+      </div>
+      <p class="nickname-note">※ ニックネームは公開されます。個人情報は入力しないでください。</p>
+    </div>
+
+    <div id="ranking-card" class="ranking-card" style="display:none;">
+      <div class="section-label">Ranking</div>
+      <div class="ranking-filter" id="ranking-filter"></div>
+      <div id="ranking-body"><p class="ranking-loading">Loading…</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <a href="https://x.com/LMeta321" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a>
+  <p>行動経済学の発信・講座コンテンツ制作</p>
+</footer>
 
 <script>
 const Q = [
+  // ============================================================
+  // ⭐ LEVEL 1（35問）基本用語・定義の理解
+  // ============================================================
+  // --- 既存12問 ---
   {lv:1,t:"一貫性のバイアス",q:"「一貫性のバイアス」の核心にある心理として最も正しいのはどれか？",c:["他人の意見に合わせようとする傾向","自分の過去の発言・思考・行動と矛盾しないよう行動しようとする心理","新しい情報を積極的に取り入れようとする傾向","感情に基づいて意思決定する傾向"],a:1,e:"一貫性のバイアスとは、自分の中に矛盾（認知的不協和）が生じるとストレスを感じ、それを避けるために過去の自分と「一貫した」行動をとろうとする心理です。合理的な判断よりも「過去との一致」が優先されてしまいます。"},
   {lv:1,t:"アンカリング効果",q:"「アンカリング効果」を最もよく説明しているものはどれか？",c:["過去の成功体験から将来も同じ結果になると予測する傾向","最初に提示された数字や情報が、その後の判断の基準になってしまう傾向","権威ある専門家の意見に引きずられて判断する傾向","損失を利益よりも強く感じる傾向"],a:1,e:"アンカリング効果では、最初に目にした数字（アンカー）が頭に刻み込まれ、その後の判断に強く影響します。交渉で最初に高い金額を提示するとそれが基準になり、最終的な合意額が高くなりやすいのがその例です。"},
   {lv:1,t:"損失回避",q:"プロスペクト理論における「損失回避」として正しい記述はどれか？",c:["利益と損失は心理的に同程度のインパクトを持つ","利益の方が損失より心理的インパクトが大きい","損失の心理的な痛みは同額の利益の喜びの約2倍強い","損失と利益のインパクトは個人差で異なる"],a:2,e:"カーネマンとトヴェルスキーのプロスペクト理論によれば、同額であっても損失の痛みは利益の喜びの約2倍強く感じられます。「1万円を失う痛み」は「1万円を得る喜び」よりも大きい、というのがその本質です。"},
@@ -408,7 +1614,34 @@ const Q = [
   {lv:1,t:"確証バイアス",q:"「確証バイアス」の説明として正しいのはどれか？",c:["確実な情報だけを信頼する傾向","自分の既存の信念・仮説を支持する情報だけを集め、反する情報を無視する傾向","専門家の確認を経た情報のみを判断基準にする傾向","多数の人が確認した情報を正しいと見なす傾向"],a:1,e:"確証バイアスとは、自分がすでに持っている考えや仮説を「確認」しようとして、それを支持する証拠ばかりを集め、反証となる情報を無視したり曲解したりする傾向です。一貫性のバイアスと相互に強化し合う関係にあります。"},
   {lv:1,t:"社会的証明",q:"「社会的証明」として最も正しい説明はどれか？",c:["法的に認められた行動のみが正しいという考え方","多くの人が行っていることや選んでいるものを、正しい・良いと判断する傾向","社会的地位の高い人物の意見を優先する傾向","データや統計的証拠がある場合のみ判断する傾向"],a:1,e:"社会的証明とは「みんながそうしているから正しい・良い」と判断する心理です。「〇〇万人が利用」「お客様の声」「行列のできる店」などはすべて社会的証明を活用したものです。不確実な状況ほどこのバイアスが強く働きます。"},
   {lv:1,t:"ピア効果",q:"「ピア効果」とは何か？",c:["専門家（ピア）の評価が意思決定に与える影響","同じグループ・同僚の存在や行動が個人のパフォーマンスや意思決定に影響を与える現象","仲間からのプレッシャーで自分の意見を変える傾向","同調圧力によって行動が制限される現象"],a:1,e:"ピア効果とは、仲間・同僚・同じグループの人たちの存在や行動が、個人の行動・パフォーマンス・学習効果などに影響を及ぼす現象です。「一緒に勉強する友達がいると頑張れる」や「優秀な同僚がいると自分も伸びる」などがその例です。"},
-
+  // --- 新規23問 Level 1 ---
+  {lv:1,t:"後悔回避バイアス",q:"「後悔回避バイアス」の説明として最も正しいのはどれか？",c:["過去の失敗を忘れようとする心理的防衛機制","将来に後悔するかもしれないという恐れから、行動を起こせなくなったり現状を維持しようとする傾向","悪い結果が出た時に他者のせいにする傾向","失敗した体験を繰り返し思い出す傾向"],a:1,e:"後悔回避バイアスとは、「もし〇〇したら後悔するかもしれない」という先読みの感情が判断に影響を与え、リスクを取る行動や変化を避けてしまう傾向です。特に、現状を変える行動（作為）から生じる後悔の方が、何もしない（不作為）後悔より強く感じられます。"},
+  {lv:1,t:"現状維持バイアス",q:"「現状維持バイアス」の説明として正しいのはどれか？",c:["現在の状況が最良だと論理的に判断する傾向","変化によって生じる損失や不安を回避するため、現状を変えないことを好む傾向","過去の成功を繰り返そうとする傾向","情報が不足しているときに判断を保留する傾向"],a:1,e:"現状維持バイアスとは、たとえ変化が客観的に有益であっても、「今のままでいたい」という心理が働き、変化を避ける傾向です。損失回避と密接に関連しており、「変えることで何かを失うかもしれない」という恐れが根底にあります。"},
+  {lv:1,t:"少数の法則",q:"「少数の法則」として最も正しい説明はどれか？",c:["少数派の意見が最終的に多数派を動かすという法則","少ないサンプル数から得られた結果を、大きな集団にも当てはまると過大に信頼してしまう傾向","統計上は少数の外れ値が全体に影響するという原理","少数の意思決定者が大きな影響力を持つという傾向"],a:1,e:"少数の法則とは、サンプルサイズが小さい場合でも、そこから得られた結果が全体の真実を正確に反映していると思い込む傾向です。「3人に聞いたら全員がAと答えた＝みんなAと思っている」という思い込みが典型例です。"},
+  {lv:1,t:"基準率無視",q:"「基準率無視」の説明として正しいのはどれか？",c:["判断基準が明確でない場合に生じる意思決定の誤り","個別の情報（具体的な事例）に引きずられ、統計的な基礎確率（基準率）を無視して判断する傾向","数値よりも感情を優先して判断する傾向","情報の信頼性を確認せずに受け入れる傾向"],a:1,e:"基準率無視とは、統計的に「そもそも何%の確率で起きるか」（基準率）を考慮せず、目の前の具体的な情報や生き生きとした事例に引きずられて判断する傾向です。例えば、珍しい病気の検査で陽性が出ても、基準率が低ければ実際には陰性である可能性が高いことを見落とします。"},
+  {lv:1,t:"後知恵バイアス",q:"「後知恵バイアス」の説明として最も正しいのはどれか？",c:["過去の失敗を現在の知識で分析する合理的思考","結果が分かった後で「そうなると思っていた」「予測できた」と感じる傾向","過去の記憶が時間とともに美化される現象","後から振り返ることで判断精度が上がる効果"],a:1,e:"後知恵バイアスとは、結果が出た後に「最初からそうなると分かっていた」と感じる錯覚です。これにより自分の予測能力を過大評価し、過去の判断から適切な学びを得られなくなります。「あの時こうすればよかった」という後悔を強める原因にもなります。"},
+  {lv:1,t:"ピークエンドの法則",q:"「ピークエンドの法則」の説明として最も正しいのはどれか？",c:["経験の平均値と合計時間が記憶と評価を決める","経験全体のうち、最も強烈だった瞬間（ピーク）と終わり（エンド）が、その経験全体の評価を決める","最初の印象と最後の印象だけが記憶に残る","良い体験が多いほど全体評価が高まる"],a:1,e:"ピークエンドの法則とは、ある体験の記憶と評価は、経験の平均や合計ではなく、感情が最も高まった瞬間（ピーク）と終わり（エンド）の感情によって決まるというカーネマンの発見です。不快な医療処置でも終わりを緩やかにすると全体評価が改善されます。"},
+  {lv:1,t:"バーナム効果",q:"「バーナム効果（フォアラー効果）」の説明として正しいのはどれか？",c:["有名人の言葉を自分への助言と思い込む傾向","誰にでも当てはまるような曖昧な記述を、自分だけに当てはまる正確な洞察だと感じる傾向","自分の長所を過大評価する傾向","集団の特性を個人に当てはめる傾向"],a:1,e:"バーナム効果とは、「あなたは表面上は社交的に見えるが、内心は不安を感じることもある」のような誰にでも当てはまる曖昧な表現を「自分のことをズバリ言い当てている」と感じる傾向です。占いや血液型診断が信じられる主な理由の一つです。"},
+  {lv:1,t:"利用可能性バイアス",q:"「利用可能性バイアス」の説明として最も正しいのはどれか？",c:["利用できる情報量が多いほど判断精度が上がる効果","記憶に呼び起こしやすい（利用可能な）事例ほど、頻度が高く重要だと過大評価する傾向","専門家の意見よりも自身の経験を優先する傾向","コストの低い選択肢を過大評価する傾向"],a:1,e:"利用可能性バイアスとは、「思い出しやすいこと＝よく起きること」と判断してしまう傾向です。飛行機事故はニュースで大きく報道されるため記憶に残りやすく、統計的には安全な乗り物なのに危険だと感じてしまうのが典型例です。"},
+  {lv:1,t:"ステレオタイプのバイアス",q:"「ステレオタイプのバイアス」の説明として最も適切なのはどれか？",c:["多数派の意見に無意識に合わせてしまう傾向","特定の集団に対する固定化された先入観・偏見に基づいて、個人を判断してしまう傾向","自分の属するグループを優遇する傾向","専門用語を使って権威を示す傾向"],a:1,e:"ステレオタイプのバイアスとは、「〇〇人はこういう人だ」「〇〇職種の人はこういう性格だ」という固定化されたイメージで個人を判断してしまう傾向です。採用選考や日常的なコミュニケーションにおいて公平な判断を妨げます。"},
+  {lv:1,t:"コントロール幻想",q:"「コントロール幻想」の説明として正しいのはどれか？",c:["自分にコントロールできることを過小評価する傾向","実際にはランダムな出来事を自分がコントロールできると信じる傾向","他者の行動を自分の意図で変えられると思う傾向","結果の原因が自分にあると思い込む傾向"],a:1,e:"コントロール幻想とは、実際には偶然や確率によって決まる出来事を、自分の行動や意思が影響していると思い込む傾向です。サイコロを振る時に「集中すれば大きい目が出せる」と感じたり、宝くじを自分で選んだ番号の方が「当たりやすい」と感じるのがその例です。"},
+  {lv:1,t:"自信過剰のバイアス",q:"「自信過剰のバイアス（オーバーコンフィデンス）」として最も正しい説明はどれか？",c:["根拠のない自信が成功を生み出す心理メカニズム","自分の能力・知識・判断の正確さを実際より高く見積もる傾向","挑戦的な目標設定が動機づけを高める効果","困難な課題に向き合う際の心理的準備状態"],a:1,e:"自信過剰のバイアスとは、自分のスキル・知識・予測精度などを客観的な水準より高く評価してしまう傾向です。「自分の運転技術は平均より上だ」と思う人が実際には多数派であることや、株式投資家が「自分は市場平均を超えられる」と過信することなどが例として挙げられます。"},
+  {lv:1,t:"自己奉仕バイアス",q:"「自己奉仕バイアス（自己高揚バイアス）」の説明として正しいのはどれか？",c:["自己利益を最大化する行動が合理的だという考え方","成功は自分の能力のおかげ、失敗は外部要因のせいだと帰属する傾向","自分への批判を過敏に受け取る傾向","自分の行動を正当化するために情報を歪める傾向"],a:1,e:"自己奉仕バイアスとは、うまくいった時は「自分の努力・能力のおかげ」、うまくいかなかった時は「運が悪かった・環境のせい」と帰属させる傾向です。これにより自尊心は守られますが、失敗から適切な学びを得ることが難しくなります。"},
+  {lv:1,t:"権威バイアス",q:"「権威バイアス」の説明として最も正しいのはどれか？",c:["法律や規則を権威として無条件に従う傾向","専門家・肩書き・地位などの権威を持つ人の意見や指示を、内容を吟味せずに従いやすい傾向","多数派の意見を正しいと見なす傾向","有名ブランドの商品ほど高品質だと判断する傾向"],a:1,e:"権威バイアスとは、医師・教授・上司などの肩書きや権威を持つ人物の意見・判断を、内容を批判的に検討せずに受け入れてしまう傾向です。ミルグラムの実験でも示されたように、権威への服従は時に大きな問題を引き起こします。"},
+  {lv:1,t:"コントラスト効果",q:"「コントラスト効果（対比効果）」の説明として正しいのはどれか？",c:["同じ色でも周囲の色によって見え方が変わる視覚現象のこと","直前に比較したものとの差によって、対象の評価が実際より高くも低くも感じられる傾向","高価な商品の隣に安価な商品を並べると売れなくなる現象","複数の選択肢を比較することで意思決定が難しくなる現象"],a:1,e:"コントラスト効果とは、評価の基準が直前の比較対象によって変わる現象です。不動産業者が最初に割高な物件を見せてから本命物件を見せると、後者が割安に感じられます。松竹梅メニューで「竹」が売れやすいのも、「梅（安い）」と「松（高い）」との対比が影響しています。"},
+  {lv:1,t:"同調バイアス",q:"「同調バイアス」の説明として最も正しいのはどれか？",c:["集団での意思決定が個人より合理的になる傾向","集団の圧力や周囲の意見に合わせるために、自分の考えや行動を変えてしまう傾向","権威ある人物の意見に無批判に従う傾向","自分と似た意見の人とだけ交流しようとする傾向"],a:1,e:"同調バイアスとは、実際には自分の判断と異なる場合でも、周囲の人に合わせて行動・発言を変えてしまう傾向です。アッシュの同調実験では、明らかに間違った答えでも周囲が同調していると約75%の人が少なくとも一度は間違った答えを選びました。"},
+  {lv:1,t:"希少性効果",q:"「希少性効果」の説明として正しいのはどれか？",c:["珍しいものは品質が高いという客観的な法則","入手困難・数量限定・期間限定などの希少性がある物は、より価値が高いと感じられる心理","希少な情報ほど信頼できるという判断傾向","少数派の意見ほど独自の価値があると評価する傾向"],a:1,e:"希少性効果とは、「残りわずか」「限定100個」「今だけ」などの希少性を示す情報が、その商品・機会の魅力を高め、購買・行動意欲を増大させる現象です。供給が少ないものは需要が増す経済原理に加え、「手に入れられないかもしれない」という損失回避の心理も働きます。"},
+  {lv:1,t:"メンタルアカウンティング",q:"「メンタルアカウンティング（心理的会計）」の説明として正しいのはどれか？",c:["家計を複数の口座に分けて管理する合理的な方法","お金を心の中で「用途別の財布」に仕分けし、それぞれの財布ごとに異なるルールで扱う傾向","将来の支出を現在価値に換算して管理する手法","収入の種類によって消費スタイルを変える合理的行動"],a:1,e:"メンタルアカウンティングとは、お金を「給料」「ボーナス」「ギャンブルで勝った金」などに心理的に分類し、同じ価値のお金でも使い方や大切さが異なってしまう傾向です。ボーナスを「臨時収入だから少し贅沢してもいい」と感じるのが典型例で、客観的には全て同じ価値のお金です。"},
+  {lv:1,t:"心理的リアクタンス",q:"「心理的リアクタンス」の説明として最も正しいのはどれか？",c:["心理的なストレスに対して体が反応する生理現象","自由や選択肢が制限されると、その制限に反発して制限されたものを強く望む心理","禁止されたことをすると罪悪感を感じる心理","規則に従うことで安心感を得る傾向"],a:1,e:"心理的リアクタンスとは、行動や選択の自由が脅かされると「自由を取り戻したい」という動機が生まれ、むしろ禁止されたことへの欲求が高まる現象です。「立入禁止」の場所に入りたくなったり、「見てはいけない」と言われると見たくなる「カリギュラ効果」もこれに当たります。"},
+  {lv:1,t:"選択のパラドックス",q:"「選択のパラドックス（選択過多）」の説明として正しいのはどれか？",c:["選択肢が多いほど、より満足度の高い選択ができるという原理","選択肢が増えすぎると、かえって選べなくなったり選択後の満足度が下がったりする現象","選択の機会が少ないほど後悔が増えるという逆説","選択肢の数と意思決定の速度は比例するという法則"],a:1,e:"選択のパラドックスとは、Barry Schwartzが提唱した概念で、選択肢が多すぎると「もっと良い選択があったのでは」という機会損失の後悔が生じやすくなり、満足度が下がる現象です。ジャム実験（24種類より6種類の方が売れた）がよく知られた例です。"},
+  {lv:1,t:"ザイアンス効果",q:"「ザイアンス効果（単純接触効果）」の説明として正しいのはどれか？",c:["接触頻度が多いほど商品の欠点が見えにくくなる効果","人や物・情報に接触する回数が増えるほど、親しみや好意が増す傾向","同じ情報を繰り返し見ることで記憶に定着する学習効果","頻繁に目にする広告ほど購買意欲が高まるというマーケティング理論"],a:1,e:"ザイアンス効果（単純接触効果）とは、同じ人・物・情報に何度も接触するだけで、それに対する好意や評価が高まる現象です。広告が繰り返し流れる理由の一つです。初対面では気にならなかった人が、会うたびに好きになっていく現象もこれに当たります。"},
+  {lv:1,t:"ツァイガルニク効果",q:"「ツァイガルニク効果」の説明として正しいのはどれか？",c:["完了した課題は達成感とともに長期記憶に残りやすい効果","完了した課題より未完了・中断された課題の方が記憶に残りやすい現象","締め切りが近いほど集中力が高まる現象","繰り返し中断されることで課題への動機づけが低下する効果"],a:1,e:"ツァイガルニク効果とは、完成した課題はすぐ忘れるが、途中で中断・未完了のままの課題は頭に引っかかり続けやすい現象です。ドラマの「続きは次回」やゲームの「もう少しで次のレベル」などはこの効果を意図的に活用したものです。"},
+  {lv:1,t:"エンドウドプログレス効果",q:"「エンドウドプログレス効果（前進効果）」の説明として正しいのはどれか？",c:["ゴールに近づくほど達成への動機が下がる現象","目標への進捗が与えられると（最初からスタートが与えられると）、完了に向けてより努力するようになる傾向","中間目標の達成が最終目標への動機を低下させる効果","進捗の見える化が逆にプレッシャーになる現象"],a:1,e:"エンドウドプログレス効果とは、最初から「2ポイント分のスタンプが押してある10個スタンプのカード」を渡すと、「0から始まる8個スタンプのカード」よりも完了率が高くなる現象です。「すでに始まっている」という感覚がゴールへの動機を高めます。"},
+  {lv:1,t:"確実性効果",q:"「確実性効果」の説明として最も正しいのはどれか？",c:["確実な情報だけを判断材料にする合理的思考","確率が100%の確実な結果を、期待値が高くても不確実な選択肢より過大に好む傾向","リスクがゼロの選択肢を客観的に評価する能力","確認された事実のみで判断するというルール"],a:1,e:"確実性効果とは、同程度の期待値であっても「確実に得られる」という100%の保証に対して、人が過大な価値を置く傾向です。「100%で1万円もらえる」と「80%で1万5千円もらえる」（期待値1.2万円）なら、多くの人は前者を選びます。"},
+  // ============================================================
+  // ⭐⭐ LEVEL 2（40問）場面への当てはめ・応用
+  // ============================================================
+  // --- 既存12問 ---
   {lv:2,t:"サンクコスト",q:"Aさんは3年前に高額なゴルフ会員権を購入したが一度も行っていない。「もったいない」という気持ちから無理に行こうとしている。このAさんの行動を説明するバイアスはどれか？",c:["アンカリング効果：購入時の価格が判断を縛っている","一貫性のバイアス：過去の決断と一致した行動をとろうとしている","サンクコストのバイアス：回収できないコストに縛られている","損失回避：会員権を無駄にすることを損失と感じている"],a:2,e:"これはサンクコストのバイアスの典型例です。すでに支払った会員費は回収できません。合理的には「今後ゴルフが楽しめるか」だけで判断すべきですが、「もったいない」という感覚（サンクコストへの固執）が非合理な行動を引き起こしています。"},
   {lv:2,t:"現在バイアス",q:"現在バイアスが最も強く現れやすい状況はどれか？",c:["10年後の退職資金について計画を立てている時","来年の海外旅行の行き先を選んでいる時","ダイエット中に目の前においしいケーキが出てきた瞬間","歴史的な経済危機の原因を分析している時"],a:2,e:"現在バイアスは「今この瞬間」に直面した時に最も強く発動します。ダイエットの継続は遠い将来の健康につながると理性では理解していても、「今すぐ食べたい」という欲求に負けてしまうのが現在バイアスの最も顕著な例です。"},
   {lv:2,t:"返報性の原理",q:"「返報性の原理」を活用したマーケティング手法として最も適切なのはどれか？",c:["商品の価格を高く設定して品質の高さをアピールする","選択肢を3つに絞ることで意思決定を楽にする","無料サンプルや試供品を配布して購買意欲を高める","期間限定の締め切りを設定して購買を促す"],a:2,e:"返報性の原理を活用すれば、無料サンプルや試供品を受け取った消費者は「何かお返しをしなければ」という気持ちになり、購買につながりやすくなります。スーパーの試食コーナーや無料お試し期間の提供などが典型例です。"},
@@ -421,17 +1654,133 @@ const Q = [
   {lv:2,t:"ピア効果",q:"同じ部署に高い成果を出すAさんが転入してきたら、周囲のメンバーも自然と生産性が上がった。これを説明するのはどれか？",c:["ハロー効果：Aさんの優れた評判が周囲に影響した","社会的証明：Aさんの行動が正しい働き方の証拠になった","ピア効果：優秀な仲間の存在が周囲のパフォーマンスを向上させた","返報性の原理：Aさんへのお返しとして努力した"],a:2,e:"ピア効果とは、同じグループ・職場の仲間の存在や行動が個人のパフォーマンスに影響を与える現象です。優秀な同僚が来ることで「自分も頑張らなければ」という意識が高まったり、自然と仕事の質が上がったりします。"},
   {lv:2,t:"確証バイアス",q:"「景気が悪化する」と予測した後、景気悪化を示す記事ばかりに注目し、好調を示す記事を見落としていた。このバイアスはどれか？",c:["現在バイアス：今の状況を重視している","アンカリング効果：最初の予測が基準になっている","確証バイアス：自分の仮説を支持する情報だけに注目している","損失回避：損失に関する情報を過大評価している"],a:2,e:"確証バイアスとは、自分の既存の信念や仮説を「確認」しようとして、それを支持する情報だけを集め、反する情報を無視または曲解する傾向です。「景気悪化」という仮説を持てば、それを支持するニュースだけが目に入るようになっています。"},
   {lv:2,t:"プロスペクト理論",q:"「10%で10万円を得る」より「確実に1万円を得る」を選ぶ人が多い一方、「10%で10万円を失う」には賭けても「確実に1万円を失う」を避ける人が多い。この違いを説明するのはどれか？",c:["現在バイアス：確実なものを目先で重視している","プロスペクト理論：利益局面はリスク回避、損失局面はリスク追求になる傾向がある","損失回避：損失を避けようとしている","アンカリング効果：提示された金額が判断に影響している"],a:1,e:"プロスペクト理論の重要な発見です。利益が出る局面では「確実な少額の利益」を好む（リスク回避）のに対し、損失が出る局面では「不確実でも損失ゼロの可能性」を求めて賭けに出る（リスク追求）傾向があります。これを「反射効果」と呼びます。"},
-
+  // --- 新規28問 Level 2 ---
+  {lv:2,t:"後悔回避バイアス",q:"Bさんは長年使ってきた保険プランを、より安く条件の良いプランに変えようか迷っている。「もし変えて何かあったら後悔する」と思い、結局変えなかった。これはどのバイアスか？",c:["サンクコスト：今まで払い続けた保険料への固執","後悔回避バイアス：変化による後悔を避けるために現状維持を選んだ","確証バイアス：現プランを支持する情報だけを集めている","損失回避：新プランで損をするのを恐れている"],a:1,e:"後悔回避バイアスにより、Bさんは「変えた結果、何かあったら後悔する」という先取りの感情が判断を支配しています。特に「変えた」という行動（作為）から生じる後悔の方が、「変えなかった」（不作為）後悔より強く感じられるため、現状維持を選びやすくなります。"},
+  {lv:2,t:"現状維持バイアス",q:"携帯電話会社を変えると月3,000円節約できると分かっていても、面倒で変えずにいる。このような行動を最もよく説明するのはどれか？",c:["サンクコスト：今の会社に払ってきた料金への固執","アンカリング効果：現在の料金が基準値になっている","現状維持バイアス：変化に伴う心理的コストを避けている","希少性効果：今のプランが特別だと感じている"],a:2,e:"現状維持バイアスにより、たとえ客観的に見て変えた方が得であっても、「手続きが面倒」「何かトラブルがあったら」という変化のコスト（心理的・実際的）が過大に感じられ、現状を維持してしまいます。"},
+  {lv:2,t:"少数の法則",q:"コインを5回投げたら全て表が出た。「次は裏が出やすいはずだ」と判断した。この思考のどこに問題があるか？",c:["コインの表裏は50%の確率で独立しているので、過去の結果は次の結果に影響しない（少数の法則の誤り）","5回は統計的に十分なサンプルなので正しい判断である","コインが偏っている可能性を無視しているからである","感情的な判断をしているから誤りである"],a:0,e:"少数の法則の誤りです。コインの表裏は毎回独立した50%の確率であり、過去の5回の結果は次の投げに影響しません。しかし少ないサンプルから「法則」を見出そうとする人間の傾向により、「そろそろ裏が出るはず」（ギャンブラーの誤謬）という誤った判断をしてしまいます。"},
+  {lv:2,t:"基準率無視",q:"ある病気の検査で陽性が出た。その病気の有病率は0.1%（1000人に1人）で、検査の精度は95%（陽性的中率含む）だという。陽性と出た場合、実際に病気である可能性として最も近いのはどれか（直感的判断として）？",c:["多くの人が「95%程度」と答えるが、実際の確率はベイズ定理で計算するとずっと低い","検査が95%正確なので95%の確率で病気である","陽性なら必ず病気と考えるのが正しい","有病率が低いので陽性でも病気の可能性は5%以下である"],a:0,e:"これは基準率無視の典型例です。有病率が0.1%という基準率を考慮せず、「検査精度95%＝自分も95%病気」と思い込みがちです。実際にはベイズ定理で計算すると、1000人検査した場合に病気の人1人と偽陽性約50人で、陽性者の実際の病気率は約2%程度にとどまります。"},
+  {lv:2,t:"後知恵バイアス",q:"会社が新商品の発売前に失敗を予測できたと感じているが、実際に発売前に予測をしていた記録はない。このような思考のバイアスはどれか？",c:["確証バイアス：失敗を示す証拠だけを集めていた","後知恵バイアス：結果が分かってから「分かっていた」と感じている","自己奉仕バイアス：失敗を他者のせいにしている","現状維持バイアス：変化を避けていた結果の合理化"],a:1,e:"後知恵バイアスにより「最初からそうなると思っていた」という感覚が生まれています。このバイアスは意思決定の振り返りを妨げ、「なぜ失敗したのか」「どうすれば防げたか」という本質的な学びを阻害します。"},
+  {lv:2,t:"ピークエンドの法則",q:"旅行中に一度大雨で最悪な日があったが、最終日は晴れて最高だった。旅行全体を振り返ると「楽しかった」と感じた。これを説明するのはどれか？",c:["確証バイアス：良い記憶だけを集めている","ピークエンドの法則：最もよかった瞬間（最終日）が記憶の評価を左右した","現状維持バイアス：旅行を楽しかったと評価することで選択を正当化している","損失回避：雨の日の不快感を過小評価している"],a:1,e:"ピークエンドの法則により、旅行中に雨の日があってもトータルの評価は「終わりの良い体験」に引きずられます。最終日が素晴らしかったため、全体の記憶・評価がポジティブになりました。テーマパークが閉園直前に花火を打ち上げるのもこの法則を活用したものです。"},
+  {lv:2,t:"バーナム効果",q:"占い師に「あなたは人前では明るく振る舞うが、内心では孤独を感じることがある」と言われ、「私のことをよく分かっている」と感じた。これはどのバイアスか？",c:["ハロー効果：占い師が自信に満ちた態度をとっていたため","バーナム効果：誰にでも当てはまる曖昧な記述を自分だけへの洞察と感じた","社会的証明：多くの人が占いを信じているから","権威バイアス：占い師を専門家と見なした"],a:1,e:"この占い師の言葉は「外面と内面のギャップ」という、実際にほとんどの人に当てはまる曖昧な記述です。バーナム効果により、これを「自分だけへの特別な洞察」と感じてしまいます。血液型・星座・心理テストが多くの人を引きつける理由の一つです。"},
+  {lv:2,t:"利用可能性バイアス",q:"飛行機事故のニュースを見た翌日、出張の交通手段を新幹線に変更した。このような判断を説明するのはどれか？",c:["後悔回避バイアス：飛行機事故で後悔したくない","利用可能性バイアス：鮮明に思い出せる事故の記憶が飛行機のリスクを過大評価させた","リスク回避：正確なリスク計算に基づいた合理的判断","確証バイアス：飛行機の危険性を示す情報だけに注目している"],a:1,e:"飛行機事故のニュースは印象的で記憶に残りやすいため（利用可能性が高い）、統計的なリスクよりも「危険だ」と感じやすくなります。実際、飛行機は自動車より安全ですが、事故のニュースが頭に残っているため過大に危険視してしまいます。"},
+  {lv:2,t:"権威バイアス",q:"医師が「この薬を飲めば必ず良くなります」と言ったので、副作用の説明を聞かずに処方を承諾した。これはどのバイアスか？",c:["社会的証明：多くの患者が同じ薬を使っているから","ハロー効果：医師という職業への全体的な信頼","権威バイアス：医師という権威への服従が批判的思考を抑制した","確証バイアス：薬が効くと信じたい気持ちが判断を歪めた"],a:2,e:"権威バイアスにより、医師という権威ある立場の人物の言葉に、批判的な検討を加えずに従ってしまっています。権威に従うこと自体が悪いのではなく、内容を吟味せずに盲目的に従うことが問題です。インフォームドコンセントが重要視される理由の一つです。"},
+  {lv:2,t:"コントラスト効果",q:"不動産業者が最初に予算オーバーの物件を複数見せた後、本命の物件を見せた。客は「これは割安で良い物件だ」と感じた。これはどの効果か？",c:["アンカリング効果：最初の高額な価格が基準になった","コントラスト効果：高額物件との対比で本命物件が相対的に安く感じられた","損失回避：高い物件を選ばないことで損失を避けようとした","フレーミング効果：物件の提示方法が評価を変えた"],a:1,e:"コントラスト効果を意図的に活用した販売手法です。最初に割高な物件を見せることで比較基準が上がり、本命物件が「お得」に見えます。松竹梅の価格設定も同様で、「梅」と「松」を対比させることで「竹」の価値を高く感じさせます。"},
+  {lv:2,t:"同調バイアス",q:"会議でAさんは反対意見を持っていたが、他の全員が賛成していたため、自分の意見を言えずに賛成票を投じた。これはどのバイアスか？",c:["フォールスコンセンサス効果：みんなの意見が正しいと思い込んだ","同調バイアス：集団の圧力で自分の意見を変えた","権威バイアス：上司が賛成しているので従った","一貫性のバイアス：過去に賛成した経緯があった"],a:1,e:"同調バイアスにより、たとえ自分の判断と異なっていても、周囲に合わせることで心理的な安心感を得ようとします。これは集団思考（グループシンク）につながり、組織の意思決定の質を低下させる原因になります。"},
+  {lv:2,t:"希少性効果",q:"「残り3点」「本日限り」という表示を見て、それほど欲しくなかった商品を購入した。この行動を説明するのはどれか？",c:["現在バイアス：今すぐ買わないと後悔するかもしれない","希少性効果：希少性の表示が商品の価値と緊急性を高め購買を促した","損失回避：買わないことを損失と感じた","フレーミング効果：表示の仕方が判断を変えた"],a:1,e:"希少性効果により「手に入れられなくなるかもしれない」という感覚が商品の価値を高め、「今すぐ買わなければ」という衝動購買につながっています。オンラインショッピングの「在庫わずか」表示や「本日限り」のセールはこの効果を活用したものです。"},
+  {lv:2,t:"メンタルアカウンティング",q:"給料から貯金するとなかなかできないが、臨時収入（ボーナスや宝くじ）は気軽に使えてしまう。これはどのバイアスか？",c:["現在バイアス：目の前の臨時収入を優先している","メンタルアカウンティング：お金を心の中で別の「財布」に仕分けし、異なるルールで扱っている","サンクコスト：苦労して稼いだ給料を大切にする心理","損失回避：給料を使うと損した気分になる"],a:1,e:"メンタルアカウンティングにより、同じ価値のお金でも「出所」によって扱いが変わります。給料は「労働の対価として大切なお金」、ボーナスは「臨時の余分なお金」という別の心理的財布で管理されているため、同じ額でも使い勝手が異なって感じられます。"},
+  {lv:2,t:"心理的リアクタンス",q:"マーケティング担当者が「このキャンペーンは○○日まで限定！」と強調しすぎたところ、かえって購買率が下がった。この現象を説明するのはどれか？",c:["希少性効果の逆作用：限定と言われると特別感がなくなる","心理的リアクタンス：強い制限・強制感が反発を生み自由を守ろうとした","確証バイアス：消費者が商品の欠点を探し始めた","フレーミング効果：ネガティブな言葉が含まれていたため"],a:1,e:"過度な「今すぐ買え」というプレッシャーが心理的リアクタンスを引き起こし、「自分の選択の自由を侵されている」と感じた消費者が反発して購買を避けた可能性があります。強制感の強いセールスは逆効果になることがあります。"},
+  {lv:2,t:"選択のパラドックス",q:"スーパーで24種類のジャムを試食できるコーナーと、6種類のジャムのコーナーを設けた。どちらの方が実際の購買率が高かったか？",c:["24種類：選択肢が多いほど買いたくなるから","6種類：選択肢が少ないほど購買率が高くなった","同じ：種類の数は購買率に影響しない","24種類：多様性を求める消費者心理が働くから"],a:1,e:"これは有名な「ジャム実験」（Iyengar & Lepper, 2000）の結果です。24種類では足が止まる人は多いが実際の購買は少なく、6種類の方が購買率が10倍高かった。選択肢が多すぎると「完璧な選択をしなければ」というプレッシャーと選択疲れで意思決定が困難になります。"},
+  {lv:2,t:"ザイアンス効果",q:"特に意識していなかったのに、同じ広告を繰り返し目にしているうちにその商品が気になるようになった。これはどの効果か？",c:["権威バイアス：有名人が宣伝しているから","社会的証明：多くの人が使っているように見えるから","ザイアンス効果：繰り返し接触することで好意度が自然に上がった","確証バイアス：広告を信じたいという気持ちが働いた"],a:2,e:"ザイアンス効果（単純接触効果）により、特別な説得や論理なしに、繰り返し目にするだけで商品への好意が高まっています。テレビCMや交通広告が繰り返し同じ内容を流す理由の一つです。"},
+  {lv:2,t:"自信過剰のバイアス",q:"個人投資家Aさんは「自分は株の選択が得意だ」と思い、分散投資より個別株集中投資を続けている。しかし実際のリターンは市場平均を下回っている。このAさんの行動を説明するのはどれか？",c:["確証バイアス：自分の投資判断を支持する情報だけを見ている","自信過剰のバイアス：自分の判断能力を過大評価している","損失回避：損失確定を避けている","一貫性のバイアス：過去の投資スタイルを変えられない"],a:1,e:"自信過剰のバイアスにより、多くの個人投資家は「自分は市場平均より優れた選択ができる」と思い込みがちです。しかし統計的には、個人投資家の大多数は長期で市場平均を下回ります。自己の能力の過信が、適切なリスク管理（分散投資）を妨げています。"},
+  {lv:2,t:"自己奉仕バイアス",q:"試験で良い成績をとったAさんは「自分の努力のおかげ」と感じ、悪い成績だったBさんは「テストが難しすぎた」と感じた。この2人に共通するバイアスはどれか？",c:["後知恵バイアス：結果を見てから原因を説明している","自己奉仕バイアス：成功は自分のおかげ、失敗は外部要因に帰属する傾向","確証バイアス：自分の能力への信念を支持する情報を集めている","フォールスコンセンサス効果：自分の感じ方が標準だと思い込んでいる"],a:1,e:"Aさんの「良い結果＝自分の能力」もBさんの「悪い結果＝外部要因」も、どちらも自己奉仕バイアスです。成功を自分の功績に帰属し、失敗を環境や運のせいにすることで自尊心を守ろうとしますが、これが適切な自己評価と成長を妨げます。"},
+  {lv:2,t:"コントロール幻想",q:"宝くじ売り場で「自分でくじを選んだ方が当たりやすい気がする」と思い、店員に渡してもらうより自分で選んだ。これはどのバイアスか？",c:["確証バイアス：当たったことがある経験を過大評価している","コントロール幻想：ランダムな結果を自分がコントロールできると思い込んでいる","現在バイアス：今すぐ当たりたいという欲求","希少性効果：自分が選んだくじを特別だと感じている"],a:1,e:"コントロール幻想により「自分で選んだ方が当たりやすい」と感じています。宝くじの当選は完全にランダムであり、自分で選ぶかどうかは確率に影響しません。しかし「自分が関与した」という感覚が、コントロール感（幻想）を生み出します。"},
+  {lv:2,t:"ステレオタイプのバイアス",q:"履歴書に「文系出身」と書かれていたため、採用担当者は「論理的思考は弱いだろう」と判断した。これはどのバイアスか？",c:["ハロー効果：学歴という一面から全体を判断している","ステレオタイプのバイアス：「文系＝論理的思考が弱い」という固定観念で個人を判断した","確証バイアス：文系の弱点を示す情報だけを見ている","フォールスコンセンサス効果：自分も文系に同じ印象を持っていると思っている"],a:1,e:"ステレオタイプのバイアスにより、「文系」という属性から個人の能力を判断しています。個人の実際の能力とは無関係に、集団への固定観念を適用してしまっています。採用において多様性を阻害し、優秀な人材を見落とす原因になります。"},
+  {lv:2,t:"ツァイガルニク効果",q:"動画配信サービスのドラマが「続きは次回！」で終わった後、気になって仕事中もそのことが頭から離れなかった。これはどの効果を活用しているか？",c:["希少性効果：次回の配信が待ち遠しくなる","ツァイガルニク効果：未完了・中断された状態が記憶に残り続ける","ピークエンドの法則：強烈な終わり方が記憶に残る","現在バイアス：今すぐ続きを見たいという衝動"],a:1,e:"ツァイガルニク効果を意図的に活用した演出です。話が完結せず「未完了の状態」にすることで、視聴者の頭にドラマが残り続けます。次のエピソードを見たい動機が高まり、継続視聴につながります。連続ドラマのクリフハンガー（引き延ばし）演出はこの効果の典型的な活用例です。"},
+  {lv:2,t:"エンドウドプログレス効果",q:"スタンプカードで「10個集めると1杯無料」のカードを渡す場合、最初から2個スタンプが押されたカード（残り8個）と空のカード（10個集める）を比べた。どちらの方が最終的な完了率が高いか？",c:["空のカード：ゼロからスタートの方が達成感が大きい","最初から2個押されたカード：すでに始まっているという感覚がゴールへの動機を高める","同じ：必要なスタンプ数が同じなので差はない","空のカード：公平感があるため信頼を得やすい"],a:1,e:"エンドウドプログレス効果により、最初から「進んでいる」感覚があるとゴールへの動機が強くなります。研究では、2個スタンプが最初から押してある8個集めるカードの方が、0個スタートの10個カードより完了率が大幅に高くなりました。"},
+  {lv:2,t:"確実性効果",q:"「100%の確率で5万円もらえる」と「50%の確率で12万円もらえる」（期待値6万円）が提示された。多くの人が選ぶのはどちらか、そしてその理由はどれか？",c:["50%で12万円：期待値が高いから合理的","100%で5万円：確実性効果により、確実な利得を過大に評価するから","両方同じ：個人差があるため一般化できない","50%で12万円：リスクを取ることへの快感があるから"],a:1,e:"確実性効果により、期待値が低くても「確実に手に入る」ことへの心理的価値が高く感じられます。5万円確実と6万円期待値を比較すると、多くの人は確実な5万円を選びます。これがプロスペクト理論における「利益局面でのリスク回避」の具体例です。"},
+  {lv:2,t:"損失回避",q:"「手術の成功率は90%です」と「手術で死亡する確率は10%です」は同じ意味だが、前者の方が手術を承諾する率が高い。この現象を最もよく説明するのはどれか？",c:["社会的証明：成功率が高いから多くの人が選んでいる","フレーミング効果と損失回避：「死亡10%」という損失フレームが心理的苦痛をより強く引き起こす","確証バイアス：手術を受けたい気持ちが良い情報に注目させる","アンカリング効果：90%という高い数字が基準になる"],a:1,e:"損失回避とフレーミング効果が組み合わさっています。「死亡率10%」は「損失（死）」として提示されるため、心理的苦痛が大きく感じられます。「成功率90%」は同じ確率でも「利益（成功）」フレームで提示されるため受け入れやすい。同じ情報でも「提示の仕方」が意思決定を変えます。"},
+  {lv:2,t:"アンカリング効果",q:"給与交渉の場面で、先に希望額を高めに提示した方が最終的な合意額が高くなりやすい理由はどれか？",c:["高い金額を提示することで相手を威圧できるから","最初に提示した数字がアンカーとなり、その後の交渉全体の基準値になるから","相手が諦めて要求を受け入れるから","自信があるように見えるから信頼されるため"],a:1,e:"アンカリング効果により、交渉の最初に提示された数字が「基準点（アンカー）」となります。相手はそのアンカーから離れた調整をしますが、調整量は限られているため、高いアンカーを設定した方が最終合意額が高くなりやすい。交渉・営業・価格設定において広く活用される原理です。"},
+  {lv:2,t:"一貫性のバイアス",q:"SNSで「〇〇を支持します」と投稿した後、実際にはその候補者に疑問を感じ始めたにもかかわらず、投票先を変えられなかった。このバイアスはどれか？",c:["確証バイアス：候補者を支持する情報だけを集めている","一貫性のバイアス：公の場での宣言が行動を縛った","社会的証明：フォロワーがいるので変えにくい","フォールスコンセンサス効果：支持者が多いと思い込んでいる"],a:1,e:"公の場（SNS）での宣言は一貫性のバイアスを強く引き起こします。「支持します」と公言した後に意見を変えることは「過去の自分と矛盾する」と感じるため、たとえ内心では疑問を感じていても行動を変えることが難しくなります。"},
+  {lv:2,t:"社会的証明",q:"ECサイトで「レビュー数4.2点（1,250件）」の商品と「レビュー数4.8点（12件）」の商品なら、多くの人はどちらを選びやすいか、そしてその理由はどれか？",c:["4.8点（12件）：評価が高い方を選ぶのが合理的","4.2点（1,250件）：社会的証明として多くの人の評価が信頼の根拠になる","同じ：どちらも参考にしない","4.8点（12件）：最高評価に近い方が良い商品に決まっている"],a:1,e:"社会的証明により、「1,250人が評価した4.2点」は「12人の4.8点」より信頼性が高く感じられます。不確実な状況（自分では品質が判断しにくい商品）ほど、多くの人の行動・評価を参考にする傾向があります。"},
+  {lv:2,t:"ナッジ",q:"社員食堂で健康的な食事を増やしてもらうため、野菜料理を目線の高さに並べ、揚げ物を少し取りにくい位置に移動した。この取り組みはどの概念を活用しているか？",c:["強制：食堂の選択肢を変えることで特定の行動を強いる","ナッジ：選択の自由を守りながら、環境設計で望ましい行動を促す","メンタルアカウンティング：食費という別財布を意識させる","ピア効果：他の社員の選択を参考にさせる"],a:1,e:"これはナッジの代表的な活用例です。強制せず、罰則もなく、「野菜料理を取りやすい場所に置く」という環境設計だけで自然と健康的な選択が増えます。カフェテリアを設計した人を「チョイスアーキテクト（選択設計者）」と呼びます。"},
+  // ============================================================
+  // ⭐⭐⭐ LEVEL 3（25問）深い理解・複合問題
+  // ============================================================
+  // --- 既存6問 ---
   {lv:3,t:"一貫性×確証バイアス",q:"一貫性のバイアスが「他のバイアスを増幅させる」と言われる最大の理由はどれか？",c:["一貫性のバイアスは他のバイアスよりも時間的に後に生じるから","他のバイアスで形成された信念に対し、さらに一貫性を保とうとする作用が加わるから","意識的・意図的な行動だから自分でコントロールできないため","全てのバイアスは一貫性のバイアスの派生として生じるから"],a:1,e:"例えば確証バイアスによって偏った情報収集が起き強固な信念が形成されると、今度は一貫性のバイアスがその信念を守ろうとします。正しい情報が入っても「信念を変える＝過去の自分と矛盾」となり修正できなくなります。こうして複数のバイアスが連鎖・増幅します。"},
   {lv:3,t:"フレーミング×プロスペクト理論",q:"「成功率90%の手術」と「死亡率10%の手術」は同じ内容だが、前者を選ぶ人が多い。この現象を最も正確に説明するのはどれか？",c:["アンカリング効果：90という大きな数字が判断を引き上げている","フレーミング効果：同じ情報でも「利益（成功）」として提示されると心理的受容度が変わる","社会的証明：成功率90%は多数が支持していると感じるから","損失回避：死亡という言葉が強い感情反応を引き起こすから"],a:1,e:"プロスペクト理論の損失回避から、「死亡率10%」という損失フレームは心理的痛みが大きく感じられます。一方「成功率90%」は利益フレームのため受け入れやすい。これがフレーミング効果で、情報の内容ではなく「提示の仕方」が意思決定を左右します。"},
   {lv:3,t:"ナッジ設計",q:"行動経済学を活用した「ナッジ」の設計原則として最も正確なのはどれか？",c:["罰則を設けることで正しい行動を強制する","金銭的インセンティブを提供して望ましい行動を促す","選択の自由を守りながら、デフォルト設定などで望ましい行動をとりやすくする","正しい情報を十分に提供して合理的判断を促す"],a:2,e:"ナッジとは強制や金銭的インセンティブに頼らず、選択肢の提示方法や環境設計（デフォルト設定・配置など）を工夫することで、人が自然と望ましい行動を選びやすくする仕組みです。オプトアウト方式の年金自動加入や、健康食品を目線の高さに置くなどが例として挙げられます。"},
   {lv:3,t:"損失回避×サンクコスト",q:"損失回避バイアスとサンクコストのバイアスの「共通するメカニズム」として最も正確なのはどれか？",c:["どちらも将来の利益を過大評価する点","どちらも損失・コストに対して感情的に強く反応する点","どちらも他者の意見に影響を受けやすい点","どちらも情報不足によって引き起こされる点"],a:1,e:"損失回避は「損失の痛みが利益の喜びより強い」、サンクコストのバイアスは「すでに失った（使った）コストへの過剰な執着」という点で、どちらも損失・コストに対する強い感情的反応が非合理な意思決定を引き起こします。損失に対する感情的過敏さが共通の核です。"},
   {lv:3,t:"現在バイアス×ナッジ",q:"現在バイアスを踏まえた最も効果的な行動変容の介入策はどれか？",c:["将来のリスクについて詳細なデータを提供し、合理的判断を促す","望ましい行動の実行コストを下げ、今すぐ始められる仕組みを作る（例：自動積立、デフォルト加入）","将来のベネフィットを金銭的インセンティブで強化する","合理的判断ができる人だけを選んで施策を提供する"],a:1,e:"現在バイアスがある人は、将来の利益をいくら説明しても「今」動くことが難しい。だから最も有効なのは「今すぐ自動的に始まる」仕組みを作ることです。年金の自動加入（オプトアウト方式）や自動積立設定などは、現在バイアスを前提にした最もよく機能するナッジです。"},
-  {lv:3,t:"複合バイアス",q:"新事業の責任者が、プロジェクトが順調でないにもかかわらず撤退を決断できずにいる。複数のバイアスが絡んでいるとすれば、最も可能性が高い組み合わせはどれか？",c:["ピア効果 × 社会的証明","サンクコスト × 一貫性のバイアス × 損失回避","確証バイアス × ハロー効果","現在バイアス × フォールスコンセンサス効果"],a:1,e:"①サンクコスト：すでに費やした時間・お金への固執で撤退できない。②一貫性のバイアス：「やり遂げる」と公言した自分と矛盾したくない。③損失回避：撤退して損失を確定させることへの心理的苦痛。この3つが複合的に絡み合い、合理的な撤退判断を妨げています。"}
+  {lv:3,t:"複合バイアス",q:"新事業の責任者が、プロジェクトが順調でないにもかかわらず撤退を決断できずにいる。複数のバイアスが絡んでいるとすれば、最も可能性が高い組み合わせはどれか？",c:["ピア効果 × 社会的証明","サンクコスト × 一貫性のバイアス × 損失回避","確証バイアス × ハロー効果","現在バイアス × フォールスコンセンサス効果"],a:1,e:"①サンクコスト：すでに費やした時間・お金への固執で撤退できない。②一貫性のバイアス：「やり遂げる」と公言した自分と矛盾したくない。③損失回避：撤退して損失を確定させることへの心理的苦痛。この3つが複合的に絡み合い、合理的な撤退判断を妨げています。"},
+  // --- 新規19問 Level 3 ---
+  {lv:3,t:"後悔回避×現状維持",q:"「後悔回避バイアス」と「現状維持バイアス」が同時に働く状況として最も適切な説明はどれか？",c:["2つのバイアスは相反するため同時には起きない","どちらも「変化を避けよう」という方向に働くため、現状維持をさらに強く引き起こす場合がある","現状維持バイアスは後悔回避の結果として生じる従属的なバイアスである","後悔回避は行動を促し、現状維持は行動を抑制するため相殺される"],a:1,e:"後悔回避（「変えて後悔したくない」）と現状維持バイアス（「変化のリスクを避けたい」）は、どちらも「現状を変えない」方向に力を与えます。2つが重なると、客観的に見て変化すべき状況でも「動かない」という判断が非常に強く固定されます。"},
+  {lv:3,t:"利用可能性×確証バイアス",q:"「利用可能性バイアス」と「確証バイアス」が組み合わさると、どのような問題が生じやすいか？",c:["情報収集の速度が上がり、判断が早くなりすぎる","思い出しやすい（印象的な）情報を集め続けることで、偏った世界観が自己強化されやすくなる","統計的思考が完全に失われ、直感だけで判断するようになる","バイアスが相殺されて合理的判断に近づく"],a:1,e:"利用可能性バイアスにより「印象的な・思い出しやすい情報」を重視し、確証バイアスにより「自分の信念を支持する情報だけを集める」という2つが組み合わさると、「印象的でかつ自分の信念を支持する情報だけで世界観を構築する」という強い偏りが生まれます。"},
+  {lv:3,t:"権威×社会的証明",q:"「権威バイアス」と「社会的証明」が組み合わさった最も強力な説得状況はどれか？",c:["身内の知人が強く勧めている","専門家が推薦し、かつ多くの人が利用しているという情報を同時に提示する","限定品として高価格で販売する","テレビで繰り返し広告を流す"],a:1,e:"「専門家（権威）が推薦している」＋「多くの人が使っている（社会的証明）」という組み合わせは、判断に迷う人に最も強い影響を与えます。「〇〇万人が利用している医師推薦サプリ」などはこの組み合わせを意図的に活用しています。2つの信頼要因が重なると説得力は掛け算的に増します。"},
+  {lv:3,t:"メンタルアカウンティング×サンクコスト",q:"「メンタルアカウンティング」と「サンクコスト」の関係として最も正確なのはどれか？",c:["どちらもお金の合理的な管理方法を説明する概念である","メンタルアカウンティングによって「この財布のお金はすでに使った分だから回収しなければ」という感覚がサンクコストへの固執を強化する場合がある","サンクコストはメンタルアカウンティングとは無関係に生じる","メンタルアカウンティングはサンクコストを軽減する効果がある"],a:1,e:"例えば「旅行費用として確保した予算財布」という心理的仕分けがあると、旅行中に天気が悪くても「払ったお金（サンクコスト）を無駄にしたくない」という気持ちが強まります。メンタルアカウンティングによる「財布の分離」がサンクコストへの固執を強化する場合があります。"},
+  {lv:3,t:"心理的リアクタンス×ナッジ",q:"ナッジの設計において「心理的リアクタンス」を引き起こさないために最も重要な原則はどれか？",c:["より強い強制力を持たせることでリアクタンスを上回る","選択の自由を明示的に保証しながら、望ましい行動を「デフォルト」にする","個人の判断力を下げるように設計する","情報を与えすぎず、行動だけを誘導する"],a:1,e:"心理的リアクタンスは「自由が脅かされている」と感じると発動します。ナッジが有効なのは、強制ではなく「選ばない自由もある」ことを守りながら、デフォルト設定や環境設計で望ましい行動を取りやすくするからです。「あなたはいつでも変更できます」という自由の保証がリアクタンスを防ぎます。"},
+  {lv:3,t:"後知恵バイアス×確証バイアス",q:"「後知恵バイアス」と「確証バイアス」が組み合わさった時に最も起きやすい問題はどれか？",c:["意思決定が速くなりすぎて慎重さを失う","失敗を「最初から分かっていた」と感じ（後知恵）、それを支持する記憶だけを集める（確証）ことで、過去の判断プロセスを歪んで学習する","両バイアスが打ち消し合い中立な評価が生まれる","過去の成功体験への過剰な依存が生じる"],a:1,e:"後知恵バイアスにより「あれは失敗するとわかっていた」と感じ、確証バイアスによりその感覚を支持する記憶・情報だけを集めます。結果として、実際の意思決定プロセス（当時何を考え何を知っていたか）が歪んで記憶され、真の意味での失敗からの学習ができなくなります。"},
+  {lv:3,t:"ピークエンドの法則×サービス設計",q:"顧客体験（カスタマーエクスペリエンス）の設計において、ピークエンドの法則から導かれる最も重要な示唆はどれか？",c:["全ての接点で高品質なサービスを均一に提供することが最重要","体験全体の時間を短くすれば顧客満足度が上がる","感情が最も高まる場面（ピーク）と最後の接点（エンド）を特に重点設計することで、全体の記憶・評価が大きく改善する","コストをかけるなら最初の接点（ファーストインプレッション）に集中すべき"],a:2,e:"ピークエンドの法則から、顧客体験の全接点を均一に高めるより、「最も感情が動く場面」と「最後の体験」を特に重点設計する方が費用対効果が高いと言えます。クレームを丁寧に解決した後の方が不満がなかった場合より満足度が高い（サービスリカバリーの逆説）もこの法則で説明できます。"},
+  {lv:3,t:"自信過剰×損失回避",q:"「自信過剰のバイアス」と「損失回避」が同時に働く場合、最も起きやすい問題のある行動はどれか？",c:["リスクを正確に評価して慎重な判断ができる","自信過剰で大きなリスクを取るが、損失が出始めると損失回避で撤退できなくなる","リスクを避けすぎて利益機会を逃す","自信があるため損失にも冷静に対処できる"],a:1,e:"投資や新規事業でよく見られる危険なパターンです。自信過剰により「自分は成功できる」とリスクを過小評価して大きな賭けに出ます。しかし損失が出始めると損失回避が働き「損失を確定させたくない」と撤退できなくなります。小さな損失で止められずに大きな損失につながります。"},
+  {lv:3,t:"選択のパラドックス×現在バイアス",q:"「選択のパラドックス」と「現在バイアス」が組み合わさった状況として最もよく見られるのはどれか？",c:["選択肢が多いと全部を比較したくなり、結果的に最も良い選択ができる","選択肢が多すぎて選べない（選択のパラドックス）状態で、「今考えるのが面倒」（現在バイアス）が重なり、長期的に重要な意思決定が先送りされ続ける","選択肢が多い時ほど直感的に最善の選択ができる","現在バイアスは選択のパラドックスを軽減する効果がある"],a:1,e:"例えば確定拠出年金（iDeCo）の商品選択が面倒で加入しない（選択の多さによる迷い＋今考えたくない現在バイアス）という典型的な問題があります。重要でも複雑な意思決定ほど、この2つのバイアスが組み合わさって先送りが深刻になります。"},
+  {lv:3,t:"ザイアンス効果×返報性",q:"マーケティングにおいて「ザイアンス効果」と「返報性の原理」を組み合わせた戦略として最も効果的なのはどれか？",c:["高価格・高品質の商品を一度だけ強く宣伝する","繰り返し情報を提供（ザイアンス効果で好意形成）しながら、役立つ情報や小さな価値を無料提供（返報性）することで関係性を構築する","一度だけ豪華なプレゼントを贈り、後は連絡しない","SNSで話題を一気に拡散させる"],a:1,e:"コンテンツマーケティングはこの組み合わせの典型です。定期的に役立つ情報を無料で提供することで（返報性の原理）、接触回数が増えて親近感が上がり（ザイアンス効果）、信頼関係が構築されます。この積み重ねが購買や推薦につながります。"},
+  {lv:3,t:"検定形式・妥当なものを選べ",q:"行動経済学における「プロスペクト理論」に関する記述として、妥当だといえるものを選べ。",c:["プロスペクト理論によれば、人は利益と損失を客観的に同等に評価する","プロスペクト理論は、人が参照点（基準点）からの変化として利益・損失を評価し、損失を利益より強く感じるという理論である","プロスペクト理論によれば、不確実な状況では常にリスク回避の行動をとる","プロスペクト理論は伝統的な期待効用理論を支持する理論として提唱された"],a:1,e:"プロスペクト理論（カーネマン＆トヴェルスキー）の核心は、①参照点からの変化として利益・損失を評価し、②損失の心理的インパクトが利益の約2倍大きく、③利益局面ではリスク回避、損失局面ではリスク追求という非対称性があるという点です。期待効用理論への反証として提唱されました。"},
+  {lv:3,t:"検定形式・妥当なものを選べ",q:"行動経済学における「ナッジ」に関する記述として、妥当だといえるものを選べ。",c:["ナッジは金銭的ペナルティを使って行動変容を促す手法である","ナッジは選択肢を制限することで望ましい行動を強制する手法である","ナッジとは、選択の自由を保ちながら、選択肢の提示方法や環境設計によって人々が望ましい行動を選びやすくなるよう後押しする手法である","ナッジは合理的な人間を前提として設計される行動変容の枠組みである"],a:2,e:"ナッジの定義は「選択の自由を保ちながら、行動を特定の方向に誘導すること」です。強制・罰則・金銭インセンティブは使いません。ナッジはむしろ「人間は非合理に行動する」という行動経済学の知見を前提に設計されます。セイラーとサンスティーンが提唱した概念です。"},
+  {lv:3,t:"検定形式・妥当でないものを選べ",q:"行動経済学における各種バイアスに関する記述のうち、妥当でないものはどれか。",c:["アンカリング効果とは、最初に提示された情報が後の判断の基準になる現象である","確証バイアスとは、自分の信念を支持する情報を集め反する情報を無視する傾向である","損失回避とは、同額の損失が利益より強く感じられる心理的傾向のことである","社会的証明とは、権威ある専門家の意見を優先して従う傾向のことである"],a:3,e:"「社会的証明」は「多くの人が行っているから正しい・良い」と判断する傾向であり、権威ある専門家への服従は「権威バイアス」が正しい用語です。選択肢Dは「権威バイアス」の説明を「社会的証明」として誤って記述しています。A・B・Cはそれぞれ正しい説明です。"},
+  {lv:3,t:"検定形式・妥当でないものを選べ",q:"「現在バイアス」に関する記述のうち、妥当でないものはどれか。",c:["現在バイアスとは、将来の利益より目先の利益を強く好む傾向である","現在バイアスは、ダイエットや禁煙など習慣変容が難しい理由の一つである","現在バイアスを踏まえたナッジとして、オプトアウト方式の自動積立が有効である","現在バイアスが強い人は、将来についても合理的に判断できないため、長期計画そのものを立てられない"],a:3,e:"現在バイアスの特徴は「遠い将来については理性的に計画できる」のに、「近い将来や今この瞬間には目先の快楽を優先する」という非一貫性です。選択肢Dは「長期計画自体が立てられない」と述べていますが、現在バイアスのある人でも遠い将来の計画を立てること自体はできます。問題は計画を実行する段になって目先の欲求に負けてしまうことです。"},
+  {lv:3,t:"エンドウドプログレス×ゴール設定",q:"エンドウドプログレス効果を活用したゴール設定の工夫として最も効果的なのはどれか？",c:["目標を高く設定し、達成が難しいほど動機が高まる","最初から「少し進んでいる状態」を演出することで完了への動機を高める（例：スタンプカードの初期スタンプ）","中間目標は設けず、最終ゴールだけを明示する","進捗の見える化は逆にプレッシャーになるため避けるべきだ"],a:1,e:"エンドウドプログレス効果から、「すでに始まっている」「すでに一部達成している」という感覚がゴールへの継続的な動機を高めます。ポイントカードの初期ボーナスポイント、新入社員研修の最初のステップを「簡単に達成できる」ように設計するなど、現実のゴール設計に広く応用できます。"},
+  {lv:3,t:"複合バイアス・マーケティング",q:"高級ブランドが「限定100個・著名デザイナー監修・SNSで話題沸騰中」と宣伝する場合、活用されているバイアスの組み合わせとして最も正確なのはどれか？",c:["希少性効果・ピア効果・返報性の原理","希少性効果・権威バイアス・社会的証明","アンカリング効果・確証バイアス・現在バイアス","ハロー効果・後知恵バイアス・同調バイアス"],a:1,e:"「限定100個」→希少性効果（手に入れにくいものの価値が上がる）、「著名デザイナー監修」→権威バイアス（専門家・権威への服従）、「SNSで話題沸騰中」→社会的証明（多くの人が注目・購買している）の3つが組み合わさっています。この組み合わせは高級品・限定品マーケティングで非常によく使われます。"},
+  {lv:3,t:"同調バイアス×フォールスコンセンサス",q:"「同調バイアス」と「フォールスコンセンサス効果」の「方向性の違い」として最も正確な説明はどれか？",c:["2つは全く同じ現象で名前が違うだけである","同調バイアスは『周囲に合わせて自分を変える』方向、フォールスコンセンサス効果は『自分に合わせて周囲も同じだと思い込む』方向で、逆方向に働く","同調バイアスは意識的な行動、フォールスコンセンサス効果は無意識の認知歪みである","フォールスコンセンサス効果は同調バイアスが進行した結果として生じる"],a:1,e:"方向性が逆です。同調バイアスは「周囲の考え・行動に自分を合わせる（自分→周囲へ）」働きで、フォールスコンセンサス効果は「自分の考えを周囲も持っているはずだと思い込む（自分←→周囲へ投影）」働きです。前者は他者への適応、後者は他者への過剰な同一視です。"},
+  {lv:3,t:"行動経済学の応用・総合",q:"行動経済学の知見を政策・ビジネスに活用する際の注意点として、最も妥当な記述はどれか？",c:["行動経済学のバイアスを利用すれば、すべての場面で消費者・市民を望ましい方向に誘導できる","ナッジなどの行動経済学的介入は、設計者の意図・倫理・透明性が問われるため、『誰の利益のためか』を常に問うことが重要である","人間のバイアスは教育によって完全に取り除くことができる","行動経済学は経済合理性を否定するため、従来の経済学とは共存できない"],a:1,e:"行動経済学の知見は強力ですが、使い方次第で消費者を搾取する「ダークナッジ」にもなりえます。オプトアウトを見えにくくする設計、焦りを煽る偽の希少性表示などはその例です。行動経済学を倫理的・透明性を持って活用するためには、常に「誰のための設計か」を問うことが重要です。"}
 ];
-
+const TOPIC_LINKS = {
+  "一貫性のバイアス": "https://youtu.be/KwZu4dVmQP8?si=WJZXNDXhJuR6uWzj",
+  "アンカリング効果": "https://youtu.be/_EKcXfVfgEI?si=BWObb8od423XDrqY",
+  "サンクコスト": "https://youtu.be/-w82wu1alvQ?si=vrIFSIt-5pXKdIDB",
+  "後悔回避バイアス": "https://youtu.be/0WZUt_KO2s8?si=Bi_ii178tEtMQNj8",
+  "プロスペクト理論": "https://youtu.be/phV_OklMSJU?si=FYv28GPP0Pf6KX2x",
+  "確実性効果": "https://youtu.be/onoOW-51BJA?si=a3WW-n2Nty1Q5fd9",
+  "現状維持バイアス": "https://youtu.be/Hf6Aqs80Dcc?si=X4I0dHoUALJibyLZ",
+  "少数の法則": "https://youtu.be/G6pGEOA-HW4?si=USVc2fSKdcMkIfO_",
+  "基準率無視": "https://youtu.be/A62SbAYydRU?si=S_1E1FIgXx0g9jnV",
+  "後知恵バイアス": "https://youtu.be/79TLPvR6ddk?si=Mze8P3FGMMrTFg6Q",
+  "現在バイアス": "https://youtu.be/hfcZIkQ79xE?si=Ul4xPKrM7gtWI8mW",
+  "ピークエンドの法則": "https://youtu.be/eTrUCRkTsMs?si=k4b4wSsjs9fw4NyN",
+  "共変関係の錯誤": "https://youtu.be/ZW45WZZG0BI?si=m73fyX3pRzou_pt2",
+  "連言錯誤": "https://youtu.be/pQkmAxcKnFU?si=sNDMx_xNNZxde7_-",
+  "回帰効果のバイアス": "https://youtu.be/9Hcf29kf784?si=PP248vl0l7l15om9",
+  "共時性のバイアス": "https://youtu.be/yg7gkZFVM48?si=B4LQer7YpYtSxTm_",
+  "相関関係のバイアス": "https://youtu.be/-T2GloiYpRk?si=nXSjEQrKy6GB1tIf",
+  "バーナム効果": "https://youtu.be/6qTpEnrDag0?si=Gz1Vm7oWQqkmy4tk",
+  "フォールスコンセンサス効果": "https://youtu.be/lAg8tQl1ego?si=c_veCpPD-K0sx70P",
+  "利用可能性バイアス": "https://youtu.be/_zfcNLqV77g?si=EkHDhztCmDcbx4rW",
+  "ステレオタイプのバイアス": "https://youtu.be/PBM2lQUGF3Q?si=SQgSgXRg04fZBGX1",
+  "コントロール幻想": "https://youtu.be/SLj8Ui4kAYQ?si=a_9GSKsD6p8iHd3z",
+  "リスク受容度のバイアス": "https://youtu.be/IrkETZmDq78?si=ledwheOD9k6tkD7t",
+  "自信過剰のバイアス": "https://youtu.be/2R_FRsIqqYA?si=KDi3SLFy3QQppbAM",
+  "自己奉仕バイアス": "https://youtu.be/7dZEkxsbuqg?si=2YzSDlcvQHpkgxKk",
+  "返報性の原理": "https://youtu.be/C_FCuxgIBTk?si=jKYf5w6PmfAOPu_y",
+  "利他性バイアス": "https://youtu.be/smMdUvuZY-k?si=di7FEP77zswgTJwY",
+  "ハロー効果": "https://youtu.be/LuLHAmN0-_0?si=cvhpZO6LqlIXIZO0",
+  "権威バイアス": "https://youtu.be/du9-SaVHx0w?si=zsgWvo-gaUZs8Uil",
+  "コントラスト効果": "https://youtu.be/lLuq1Cx72a0?si=9pC_52iKYmM5EvVw",
+  "同調バイアス": "https://youtu.be/n8GWUtCyeCM?si=j2nBLHp6CQjoSwv-",
+  "フリーライダー効果": "https://youtu.be/HZvtv4hHakE?si=VYJpUUWUd5Mppd7I",
+  "ピア効果": "https://youtu.be/CqaBYuinYe0?si=3yqlPrfATakEgr7N",
+  "希少性効果": "https://youtu.be/0aDIib5jk5c?si=ekufFZkdGGcxzXug",
+  "吊り橋効果": "https://youtu.be/ERMn1udB9fs?si=UOiiXx37WJUoY5rp",
+  "チアリーダー効果": "https://youtu.be/bmMRaWC1rFE?si=PJx1oTpXDfkh3z76",
+  "フレーミング効果": "https://youtu.be/LyryeJ7r00Q?si=chBCrGz8QqE20UBY",
+  "メンタルアカウンティング": "https://youtu.be/w21MMYlX7LA?si=Ofo58jknewph9Ox9",
+  "プラセボ効果": "https://youtu.be/Tysd6VxEWzo?si=Od8B0ncBz3mTT7Sg",
+  "心理的リアクタンス": "https://youtu.be/ubCHVNInATg?si=PAN7aB8bdXB1He9J",
+  "選択のパラドックス": "https://youtu.be/IcgxSK6Yvhs?si=BqVwoZDlDlFcUr62",
+  "社会規範と市場規範の不整合": "https://youtu.be/d3Gp3X1Wpqo?si=28c6YZ4B23Dgtflu",
+  "意思決定バイアスの助長要因": "https://youtu.be/wkjXIHEkRTw?si=wa5lAWk0IqGcJchx",
+  "意思決定バイアスの軽減方法": "https://youtu.be/6cIIXP7iT_8?si=YyV0e_IjD5CpdZFw",
+  "ザイアンス効果": "https://youtu.be/He3zQY9XY2s?si=KuhliOZigcoSlxsH",
+  "ツァイガルニク効果": "https://youtu.be/zoegcvBnOmw?si=vMtjKRsaenBylJkl",
+  "エンドウドプログレス効果": "https://youtu.be/iwalLuqmJ20?si=JjdjVch5pD4Iu_Av"
+};
+// ─── STATE ──────────────────────────────────────────────────
 let selLv=['all'], selCnt=10, qs=[], idx=0, sc=0, ans=false, wrongs=[];
-
+let streak=0, maxStreak=0;
+let timerEnabled=false, timerInterval=null, timerLeft=30;
+let challengeIndices=null;
+let currentCorrectIdx=0, currentShuffledChoices=[];
+let totalTimeSec=0, qStartTime=0;
+// ─── URL CHALLENGE PARAM ─────────────────────────────────────
+(function(){
+  const p = new URLSearchParams(location.search);
+  const c = p.get('challenge');
+  if(c){
+    try{
+      const arr = c.split(',').map(Number).filter(n=>n>=0&&n<Q.length);
+      if(arr.length>0){ challengeIndices=arr; document.getElementById('challenge-banner').style.display='block'; }
+    }catch(e){}
+  }
+})();
+// ─── LEVEL / COUNT SELECT ─────────────────────────────────────
 function toggleLevel(lv){
   if(lv==='all'){
     selLv=['all'];
@@ -451,29 +1800,40 @@ function selectCount(n,btn){
   document.querySelectorAll('.q-count-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
 }
+// ─── START ────────────────────────────────────────────────────
 function startQuiz(){
-  let pool=selLv.includes('all')?[...Q]:Q.filter(q=>selLv.includes(q.lv));
-  pool=pool.sort(()=>Math.random()-.5);
-  qs=pool.slice(0,Math.min(selCnt,pool.length));
-  idx=0;sc=0;wrongs=[];ans=false;
+  timerEnabled = document.getElementById('timer-toggle').checked;
+  if(challengeIndices){
+    qs = challengeIndices.map(i=>Q[i]);
+    challengeIndices=null;
+  } else {
+    let pool=selLv.includes('all')?[...Q]:Q.filter(q=>selLv.includes(q.lv));
+    pool=pool.sort(()=>Math.random()-.5);
+    qs=pool.slice(0,Math.min(selCnt,pool.length));
+  }
+  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
   show('quiz');render();
 }
+// ─── RENDER QUESTION ──────────────────────────────────────────
 function render(){
   const q=qs[idx],tot=qs.length;
-  document.getElementById('q-counter').textContent=(idx+1)+' / '+tot;
+  document.getElementById('q-counter').textContent=String(idx+1).padStart(2,'0')+' / '+String(tot).padStart(2,'0');
   document.getElementById('prog-fill').style.width=(idx/tot*100)+'%';
-  document.getElementById('score-pill').textContent='✓ '+sc;
-  document.getElementById('q-topic').textContent=q.t;
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
   const de=document.getElementById('q-diff');
-  de.textContent=['','⭐ Lv.1','⭐⭐ Lv.2','⭐⭐⭐ Lv.3'][q.lv];
+  de.textContent=['','Level 1','Level 2','Level 3'][q.lv];
   de.className='diff-chip diff-'+q.lv;
   document.getElementById('q-text').textContent=q.q;
+  // 選択肢をシャッフルして正解位置を更新
+  const shuffleIdx=[0,1,2,3].sort(()=>Math.random()-0.5);
+  currentShuffledChoices=shuffleIdx.map(i=>q.c[i]);
+  currentCorrectIdx=shuffleIdx.indexOf(q.a);
   const ce=document.getElementById('choices');
   ce.innerHTML='';
   ['A','B','C','D'].forEach((k,i)=>{
     const b=document.createElement('button');
     b.className='choice';
-    b.innerHTML='<span class="choice-key">'+k+'</span><span>'+q.c[i]+'</span>';
+    b.innerHTML='<span class="choice-key">'+k+'</span><span>'+escHtml(currentShuffledChoices[i])+'</span>';
     b.onclick=()=>pick(i);
     ce.appendChild(b);
   });
@@ -481,56 +1841,367 @@ function render(){
   ex.style.display='none';ex.className='explanation';
   document.getElementById('next-btn').style.display='none';
   ans=false;
+  qStartTime=Date.now();
+  updateStreakDisplay();
+  if(timerEnabled) startTimer();
+  else stopTimer();
 }
-function pick(sel){
-  if(ans)return;ans=true;
+// ─── TIMER ────────────────────────────────────────────────────
+function startTimer(){
+  stopTimer();
+  timerLeft=30;
+  document.getElementById('timer-bar-wrap').style.display='block';
+  document.getElementById('timer-display').style.display='block';
+  updateTimerUI();
+  timerInterval=setInterval(()=>{
+    timerLeft--;
+    updateTimerUI();
+    if(timerLeft<=0){
+      stopTimer();
+      if(!ans) timeUp();
+    }
+  },1000);
+}
+function stopTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  document.getElementById('timer-bar-wrap').style.display='none';
+  document.getElementById('timer-display').style.display='none';
+}
+function updateTimerUI(){
+  const pct=timerLeft/30*100;
+  const bar=document.getElementById('timer-bar');
+  const disp=document.getElementById('timer-display');
+  bar.style.width=pct+'%';
+  bar.className='timer-bar'+(timerLeft<=8?' warning':'');
+  disp.textContent=timerLeft+'s';
+  disp.className='timer-display'+(timerLeft<=8?' warning':'');
+}
+function timeUp(){
+  totalTimeSec+=30;
+  ans=true;
   const q=qs[idx];
-  const btns=document.querySelectorAll('.choice');
-  const ok=q.a===sel;
-  btns.forEach((b,i)=>{
+  document.querySelectorAll('.choice').forEach((b,i)=>{
     b.disabled=true;
-    if(i===q.a)b.classList.add('correct');
-    else if(i===sel&&!ok)b.classList.add('wrong');
+    if(i===currentCorrectIdx)b.classList.add('correct');
   });
+  streak=0;updateStreakDisplay();
   const ex=document.getElementById('explanation');
-  if(ok){sc++;ex.className='explanation correct';ex.innerHTML='<span class="exp-label">✅ 正解！</span>'+q.e;}
-  else{ex.className='explanation wrong';ex.innerHTML='<span class="exp-label">❌ 不正解。正解は「'+'ABCD'[q.a]+'」</span>'+q.e;wrongs.push({q:q.q,your:q.c[sel],correct:q.c[q.a],exp:q.e});}
+  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">関連講座：${q.t}</a>`:'';
+  ex.className='explanation wrong';
+  ex.innerHTML=`<span class="exp-label">時間切れ ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
   ex.style.display='block';
-  document.getElementById('score-pill').textContent='✓ '+sc;
+  wrongs.push({q:q.q,your:'（時間切れ）',correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
   const nb=document.getElementById('next-btn');
   nb.style.display='block';
-  nb.textContent=idx>=qs.length-1?'結果を見る 🎉':'次の問題 →';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
 }
+// ─── PICK ANSWER ─────────────────────────────────────────────
+function pick(sel){
+  if(ans)return;ans=true;
+  totalTimeSec+=timerEnabled?(30-timerLeft):Math.round((Date.now()-qStartTime)/1000);
+  stopTimer();
+  const q=qs[idx];
+  const btns=document.querySelectorAll('.choice');
+  const ok=currentCorrectIdx===sel;
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===currentCorrectIdx)b.classList.add('correct');
+    else if(i===sel&&!ok)b.classList.add('wrong');
+  });
+  const ytLink=TOPIC_LINKS[q.t]?`<br><a class="yt-link" href="${TOPIC_LINKS[q.t]}" target="_blank" rel="noopener">関連講座：${q.t}</a>`:'';
+  const ex=document.getElementById('explanation');
+  if(ok){
+    sc++;
+    streak++;if(streak>maxStreak)maxStreak=streak;
+    checkStreakPopup();
+    ex.className='explanation correct';
+    ex.innerHTML='<span class="exp-label">正解</span>'+escHtml(q.e);
+  } else {
+    streak=0;
+    ex.className='explanation wrong';
+    ex.innerHTML=`<span class="exp-label">不正解 ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
+    wrongs.push({q:q.q,your:currentShuffledChoices[sel],correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t});
+  }
+  ex.style.display='block';
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
+  updateStreakDisplay();
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
+}
+// ─── STREAK ──────────────────────────────────────────────────
+function updateStreakDisplay(){
+  const sd=document.getElementById('streak-display');
+  if(streak>=2){
+    sd.style.display='block';
+    sd.innerHTML=`<span class="streak-pill"><span class="streak-pill-label">Streak</span><span class="streak-pill-num">${streak}</span></span>`;
+  } else {
+    sd.style.display='none';
+  }
+}
+function checkStreakPopup(){
+  const msgs={3:'Run of 3',5:'Run of 5',10:'Perfect Run'};
+  if(msgs[streak]){
+    const pop=document.getElementById('streak-popup');
+    pop.textContent=msgs[streak];
+    pop.classList.add('show');
+    setTimeout(()=>pop.classList.remove('show'),2000);
+  }
+}
+// ─── NEXT / RESULT ─────────────────────────────────────────────
 function nextQ(){
   idx++;
-  if(idx>=qs.length)showResult();
+  if(idx>=qs.length) showResult();
   else{render();window.scrollTo({top:0,behavior:'smooth'});}
 }
 function showResult(){
+  stopTimer();
   show('result');
-  const tot=qs.length,rate=Math.round(sc/tot*100);
+  const tot=qs.length, rate=Math.round(sc/tot*100);
   const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
-  document.getElementById('score-big').textContent=sc;
-  document.getElementById('score-denom').textContent=tot;
+  // Large rank & score display
+  const rd=document.getElementById('rank-display');
+  rd.textContent='RANK '+rank; rd.setAttribute('data-rank', rank);
+  rd.className='rank-display '+rank;
+  document.getElementById('score-display').innerHTML=sc+'<span class="denom"> / '+tot+'</span>';
   document.getElementById('r-correct').textContent=sc;
   document.getElementById('r-wrong').textContent=tot-sc;
   document.getElementById('r-rate').textContent=rate+'%';
-  document.getElementById('score-ring').className='score-ring '+rank;
-  const re=document.getElementById('score-rank');
-  re.textContent='RANK '+rank;re.className='score-rank '+rank;
-  const m={S:['🏆 完璧です！','行動経済学マスターの称号を授与します。'],A:['👏 素晴らしい！','基礎をしっかり理解しています。'],B:['📚 もう少しです！','復習して再挑戦しましょう。'],C:['💪 ここから！','解説をよく読んで再チャレンジを。']};
+  const m={S:['達成。','90%以上の正答率です。応用レベルへ進む準備が整いました。'],A:['良好。','基礎はおおむね押さえられています。取りこぼしを復習してください。'],B:['要復習。','解説を読み返し、再挑戦を推奨します。'],C:['再学習を。','該当するトピックの講座で基礎を確認してから再挑戦してください。']};
   document.getElementById('result-msg').textContent=m[rank][0];
   document.getElementById('result-sub').textContent=m[rank][1];
-  const ws=document.getElementById('wrong-section');
-  if(wrongs.length){
+  // Streak info & time
+  const si=document.getElementById('result-streak-info');
+  si.style.display='block';
+  const timeStr=timerEnabled?formatTime(totalTimeSec):'タイマーOFF';
+  si.innerHTML=(maxStreak>=3?'<span class="rsi-chip">Max streak</span>'+maxStreak+'問　':'')+'<span class="rsi-chip">Time</span>'+timeStr;
+  // Weak bias analysis
+  const topicWrong={};
+  wrongs.forEach(w=>{
+    if(!topicWrong[w.topic]) topicWrong[w.topic]=0;
+    topicWrong[w.topic]++;
+  });
+  const weakTopics=Object.entries(topicWrong).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const ws=document.getElementById('weak-section');
+  if(weakTopics.length){
+    const maxW=weakTopics[0][1];
     ws.style.display='block';
-    document.getElementById('wrong-list').innerHTML=wrongs.map(w=>'<div class="review-item"><div class="review-q">Q. '+w.q+'</div><div class="review-ans-wrong">❌ '+w.your+'</div><div class="review-ans-correct">✅ '+w.correct+'</div><div class="review-exp">'+w.exp+'</div></div>').join('');
+    document.getElementById('weak-list').innerHTML=weakTopics.map(([t,n])=>`
+      <div class="weak-item">
+        <span class="weak-topic">${escHtml(t)}</span>
+        <div class="weak-bar"><div class="weak-bar-fill" style="width:${n/maxW*100}%"></div></div>
+        <span class="weak-count">${n}問ミス</span>
+      </div>`).join('');
   } else ws.style.display='none';
+  // Wrong review with YouTube links
+  const wrongSec=document.getElementById('wrong-section');
+  if(wrongs.length){
+    wrongSec.style.display='block';
+    document.getElementById('wrong-list').innerHTML=wrongs.map(w=>{
+      const ytUrl=TOPIC_LINKS[w.topic];
+      const ytBtn=ytUrl?`<a class="review-yt" href="${ytUrl}" target="_blank" rel="noopener">関連講座：${escHtml(w.topic)}</a>`:'';
+      return `<div class="review-item">
+        <div class="review-q">Q. ${escHtml(w.q)}</div>
+        <div class="review-ans-wrong"><span class="review-ans-label">Your answer</span>${escHtml(w.your)}</div>
+        <div class="review-ans-correct"><span class="review-ans-label">Correct</span>${escHtml(w.correct)}</div>
+        <div class="review-exp">${escHtml(w.exp)}${ytBtn}</div>
+      </div>`;
+    }).join('');
+  } else wrongSec.style.display='none';
+  document.getElementById('nickname-card').style.display='block';
+  document.getElementById('nickname-input').value='';
+  document.getElementById('nickname-submit').disabled=false;
+  document.getElementById('ranking-card').style.display='block';
+  loadRanking();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function retry(){startQuiz();}
-function goStart(){show('start');window.scrollTo({top:0,behavior:'smooth'});}
+// ─── SHARE ──────────────────────────────────────────────────
+function shareX(){
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
+}
+function shareThreads(){
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  const text=`行動経済学基礎コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\nあなたも挑戦してみませんか。\n#行動経済学基礎コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/kiso_quiz.html`;
+  window.open('https://www.threads.net/intent/post?text='+encodeURIComponent(text),'_blank');
+}
+function shareChallenge(){
+  const indices=qs.map(q=>Q.indexOf(q)).filter(i=>i>=0);
+  const url=location.origin+location.pathname+'?challenge='+indices.join(',');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>alert('URLをコピーしました。友人に送ってください。'));
+  } else {
+    prompt('このURLをコピーして友人に送ってください。',url);
+  }
+}
+// ─── NAV ──────────────────────────────────────────────────────
+function retry(){idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;show('quiz');render();}
+function goStart(){stopTimer();show('start');loadTopRanking();window.scrollTo({top:0,behavior:'smooth'});}
 function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
+function formatTime(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return m>0?m+'m '+String(s).padStart(2,'0')+'s':s+'s';
+}
+function escHtml(s){
+  if(typeof s!=='string') return s;
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// ─── Firebase ──────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCMaWDoe-jI46fS4REGWVVFEt5PdmOm3Fo",
+  authDomain: "behavioral-economics-quiz-kiso.firebaseapp.com",
+  projectId: "behavioral-economics-quiz-kiso",
+  storageBucket: "behavioral-economics-quiz-kiso.firebasestorage.app",
+  messagingSenderId: "174262139361",
+  appId: "1:174262139361:web:1fa68f41aa6283d43e3aa0"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+let currentEntry=null, rankingFilter='all';
+// トップ画面ランキング（ページ読み込み時に自動表示・フィルター付き）
+let topRankingAll=[], topRankingFilter='全レベルMIX';
+async function loadTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  const filterDiv=document.getElementById('top-ranking-filter');
+  if(!body)return;
+  body.innerHTML='<p class="ranking-loading">Loading…</p>';
+  try{
+    const snap=await db.collection('rankings').orderBy('rate','desc').limit(100).get();
+    topRankingAll=[];
+    snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
+    if(!topRankingAll.length){
+      body.innerHTML='<p class="ranking-loading">記録がまだありません。最初の挑戦者になりませんか。</p>';
+      return;
+    }
+    // フィルターボタン生成（全体は除外、levelのみ）
+    const levels=[...new Set(topRankingAll.map(r=>r.level))].sort();
+    // デフォルトを最初のlevelに
+    if(!levels.includes(topRankingFilter)) topRankingFilter=levels[0];
+    filterDiv.innerHTML='';
+    levels.forEach(lv=>{
+      const b=document.createElement('button');
+      b.className='rf-btn'+(topRankingFilter===lv?' active':'');
+      b.textContent=lv;
+      b.onclick=()=>{
+        topRankingFilter=lv;
+        document.querySelectorAll('#top-ranking-filter .rf-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderTopRanking();
+      };
+      filterDiv.appendChild(b);
+    });
+    renderTopRanking();
+  }catch(e){
+    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。時間をおいて再度お試しください。</p>';
+  }
+}
+function renderTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  const filtered=topRankingAll.filter(r=>r.level===topRankingFilter);
+  if(!filtered.length){
+    body.innerHTML='<p class="ranking-loading">このカテゴリーの記録はまだありません。</p>';
+    return;
+  }
+  const seen=new Map();
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
+  const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
+  const medals=['🥇','🥈','🥉'];
+  const rows=ranked.map((r,i)=>{
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
+    const tDisp=r.time!=null?formatTime(r.time):'OFF';
+    return `<tr><td>${rankDisp}</td><td><span class="rank-badge ${gr}">${gr}</span></td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
+  }).join('');
+  body.innerHTML=`<table class="ranking-table">
+    <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+// ページ読み込み時に実行
+window.addEventListener('load', loadTopRanking);
+async function submitRanking(){
+  const nick=document.getElementById('nickname-input').value.trim();
+  if(!nick){alert('ニックネームを入力してください。');return;}
+  const btn=document.getElementById('nickname-submit');
+  btn.disabled=true;btn.textContent='記録中…';
+  const total=qs.length,rate=Math.round(sc/total*100);
+  const lvLabel=selLv.includes('all')?'全レベルMIX':selLv.map(l=>'Level '+l).join('+');
+  try{
+    const timeVal=timerEnabled?totalTimeSec:null;
+    const ref=await db.collection('rankings').add({
+      nickname:nick,score:sc,total:total,rate:rate,level:lvLabel,
+      questions:total,time:timeVal,timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    currentEntry=ref.id;
+    btn.textContent='記録しました';
+    document.getElementById('nickname-card').classList.add('registered');
+    loadRanking();
+  }catch(e){
+    btn.disabled=false;btn.textContent='登録';
+    alert('記録に失敗しました。もう一度お試しください。');
+  }
+}
+async function loadRanking(){
+  const body=document.getElementById('ranking-body');
+  body.innerHTML='<p class="ranking-loading">Loading…</p>';
+  try{
+    const snap=await db.collection('rankings').orderBy('rate','desc').limit(50).get();
+    const all=[];
+    snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
+    const levels=[...new Set(all.map(r=>r.level))].sort();
+    const filterDiv=document.getElementById('ranking-filter');
+    filterDiv.innerHTML='';
+    ['すべて',...levels].forEach(lv=>{
+      const b=document.createElement('button');
+      b.className='rf-btn'+(rankingFilter===(lv==='すべて'?'all':lv)?' active':'');
+      b.textContent=lv;
+      b.onclick=()=>{rankingFilter=lv==='すべて'?'all':lv;renderRanking(all);updateFilterBtns(lv);};
+      filterDiv.appendChild(b);
+    });
+    renderRanking(all);
+  }catch(e){
+    console.error('Ranking load error:', e);
+    body.innerHTML='<p class="ranking-loading">ランキングの読み込みに失敗しました。<br><small>'+e.message+'</small></p>';
+  }
+}
+function updateFilterBtns(active){
+  document.querySelectorAll('.rf-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent===active||(active==='すべて'&&b.textContent==='すべて'));
+  });
+}
+function renderRanking(all){
+  const filtered=rankingFilter==='all'?all:all.filter(r=>r.level===rankingFilter);
+  const seen=new Map();
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
+  const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,20);
+  if(!ranked.length){
+    document.getElementById('ranking-body').innerHTML='<p class="ranking-loading">まだ登録者がいません。記録を残してください。</p>';
+    return;
+  }
+  const medals=['🥇','🥈','🥉'];
+  const rows=ranked.map((r,i)=>{
+    const isMe=currentEntry&&r.id===currentEntry;
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
+    const tDisp=r.time!=null?formatTime(r.time):'OFF';
+    return `<tr class="${isMe?'me':''}">
+      <td>${rankDisp}</td>
+      <td><span class="rank-badge ${gr}">${gr}</span></td>
+      <td>${escHtml(r.nickname)}${isMe?' <span class="me-tag">YOU</span>':''}</td>
+      <td>${r.score}/${r.total}</td>
+      <td>${r.rate}%</td>
+      <td>${tDisp}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ranking-body').innerHTML=`
+    <table class="ranking-table">
+      <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
 </script>
 </body>
 </html>
