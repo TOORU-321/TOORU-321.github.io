@@ -3,748 +3,1056 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Bloom ✿ タスクコーチ — 優雅に、賢く、続く</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+<title>Bloom — 静かな集中のための、タスクコーチ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%237A8C7A' stroke-width='4'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   🌸 BLOOM — Design Tokens（ローズ × ラベンダー × クリーム）
+   BLOOM — Japandi Quiet Luxe（静謐・余白・一本線）
+   Palette: shell / ivory / ink / sage (single accent)
+   Typography: Noto Serif JP (display) + Noto Sans JP (body) + Inter (num)
    ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  /* Brand */
-  --rose:#EC4899;         /* primary */
-  --rose-soft:#F9A8D4;
-  --rose-deep:#BE185D;
-  --lav:#A78BFA;          /* secondary */
-  --lav-soft:#C4B5FD;
-  --lav-deep:#7C3AED;
-  --peach:#FDBA74;
-  --mint:#86EFAC;
-  --gold:#F5D568;
-
-  /* Neutrals — 温かいクリーム基調 */
-  --bg:#FDF6F3;
-  --bg-2:#FBEEE6;
+  /* Surfaces — 和紙の階調 */
+  --shell:#F5F1EC;        /* page */
+  --ivory:#FBF8F3;        /* soft surface */
   --card:#FFFFFF;
-  --card-2:#FFF9F7;
-  --text:#3F2A3E;
-  --text-2:#8A7287;
-  --text-3:#B5A0B0;
-  --bdr:#F3E4E4;
-  --bdr-strong:#E9D3D5;
+  --card-2:#FAF7F1;
 
-  /* Quadrants — 柔らかく、けれど識別可能 */
-  --q1:#F87171;  --q1bg:#FEECEC;  --q1-ink:#991B1B;
-  --q2:#F59E0B;  --q2bg:#FFF4E0;  --q2-ink:#92400E;
-  --q3:#60A5FA;  --q3bg:#E7F1FF;  --q3-ink:#1E3A8A;
-  --q4:#C4B5FD;  --q4bg:#F4EFFF;  --q4-ink:#5B21B6;
+  /* Ink */
+  --ink:#2F2D2B;
+  --ink-2:#4A4846;
+  --muted:#7D786F;
+  --whisper:#B8B0A8;
 
-  /* Impact levels */
-  --il5:#DB2777; --il5bg:#FCE7F3;
-  --il4:#F97316; --il4bg:#FFEDD5;
-  --il3:#F59E0B; --il3bg:#FEF3C7;
-  --il2:#10B981; --il2bg:#D1FAE5;
-  --il1:#94A3B8; --il1bg:#F1F5F9;
+  /* Lines — hairline only */
+  --line:#E6DFD6;
+  --line-2:#D9D0C4;
 
-  /* Effects */
-  --shadow-sm:0 1px 2px rgba(236,72,153,.06), 0 1px 3px rgba(124,58,237,.04);
-  --shadow:0 4px 14px rgba(236,72,153,.08), 0 2px 6px rgba(124,58,237,.05);
-  --shadow-lg:0 20px 48px rgba(236,72,153,.16), 0 6px 18px rgba(124,58,237,.10);
-  --grad-brand:linear-gradient(135deg,#FBC2EB 0%,#A78BFA 55%,#7C3AED 100%);
-  --grad-focus:linear-gradient(135deg,#FDA4AF 0%,#F472B6 45%,#A78BFA 100%);
-  --grad-warm:linear-gradient(135deg,#FECACA 0%,#FBCFE8 100%);
-  --grad-calm:linear-gradient(135deg,#E0E7FF 0%,#FCE7F3 100%);
+  /* Accent — single (sage). 使うのはアクセント1色のみ */
+  --greige:#C9BDAF;
+  --sage:#7A8C7A;
+  --sage-deep:#5F7261;
+  --sage-soft:#E4E9E2;
+
+  /* Quadrants — 土のトーン（muted earth） */
+  --q1:#B86A5C; --q1bg:#F3E8E3; --q1-ink:#6E3F35;
+  --q2:#A68D5A; --q2bg:#F2EDDE; --q2-ink:#6A5938;
+  --q3:#7E8C9A; --q3bg:#E8ECEF; --q3-ink:#4D5862;
+  --q4:#A8A4A0; --q4bg:#EDEBE7; --q4-ink:#65625E;
+
+  /* Impact levels — 同系のトーン統一 */
+  --il5:#A84E3F; --il5bg:#F1E4DF;
+  --il4:#B87A3E; --il4bg:#F2E8DB;
+  --il3:#8A7A5A; --il3bg:#EFEADE;
+  --il2:#6E8170; --il2bg:#E3E8E3;
+  --il1:#A8A49F; --il1bg:#ECEAE6;
+
+  /* Shadow — ただ一層、ほぼ視えない程度 */
+  --shadow-xs:0 1px 0 rgba(47,45,43,.04);
+  --shadow:0 1px 2px rgba(47,45,43,.04), 0 8px 24px rgba(47,45,43,.05);
+  --shadow-lg:0 2px 4px rgba(47,45,43,.05), 0 18px 40px rgba(47,45,43,.08);
 }
 
 html,body{min-height:100%}
 body{
   font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic UI',sans-serif;
-  color:var(--text);
-  background:
-    radial-gradient(1100px 600px at 110% -10%, #FFE3F1 0%, transparent 60%),
-    radial-gradient(900px 600px at -10% 10%, #EADCFF 0%, transparent 55%),
-    linear-gradient(180deg,#FDF6F3 0%, #FBEEE6 100%);
-  background-attachment:fixed;
-  padding-bottom:120px;
+  font-weight:400;
+  color:var(--ink);
+  background:var(--shell);
+  padding-bottom:130px;
   -webkit-tap-highlight-color:transparent;
   -webkit-font-smoothing:antialiased;
-  letter-spacing:.01em;
+  letter-spacing:.015em;
+  line-height:1.65;
 }
 
-/* Optional floral corner whisper */
-body::before{
-  content:"";
-  position:fixed; right:-40px; bottom:-40px; width:260px; height:260px;
-  background:radial-gradient(closest-side, rgba(236,72,153,.10), transparent 70%);
-  pointer-events:none; z-index:0;
+/* 数字は常に Inter、tabular-nums で揃える */
+.num, .tabular{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  letter-spacing:-.01em;
 }
+
+/* Serif display */
+.serif{font-family:'Noto Serif JP','Shippori Mincho B1',serif}
 
 /* ============================================================
    HEADER
    ============================================================ */
 .hdr{
-  background:rgba(255,255,255,.78);
-  backdrop-filter:saturate(160%) blur(14px);
-  -webkit-backdrop-filter:saturate(160%) blur(14px);
-  box-shadow:0 1px 0 rgba(236,72,153,.08);
+  background:var(--shell);
+  border-bottom:1px solid var(--line);
   position:sticky; top:0; z-index:100;
   padding-top:env(safe-area-inset-top);
 }
-.hdr-inner{max-width:780px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; gap:12px}
+.hdr-inner{
+  max-width:820px; margin:0 auto;
+  padding:22px 24px 14px;
+  display:flex; align-items:center; gap:16px;
+}
 .hdr-left{flex:1; min-width:0}
-.hdr-brand{display:flex; align-items:center; gap:8px}
-.hdr-logo{
-  width:28px; height:28px; border-radius:50%;
-  background:var(--grad-brand);
-  box-shadow:0 4px 10px rgba(167,139,250,.35);
-  display:flex; align-items:center; justify-content:center; color:#fff; font-size:15px;
+.hdr-brand{display:flex; align-items:baseline; gap:10px}
+.hdr-mark{
+  font-family:'Noto Serif JP',serif; font-weight:500;
+  font-size:14px; color:var(--sage-deep);
+  letter-spacing:.28em; text-transform:uppercase;
+  padding:3px 0; border-top:1px solid var(--sage);
+  display:inline-block;
 }
 .hdr h1{
-  font-family:'Shippori Mincho B1', serif;
-  font-size:19px; font-weight:700; letter-spacing:.04em;
-  background:var(--grad-brand); -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-family:'Noto Serif JP',serif;
+  font-size:26px; font-weight:500; letter-spacing:.04em;
+  color:var(--ink);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  line-height:1.2;
 }
-.hdr-sub{font-family:'Playfair Display',serif; font-style:italic; font-size:11px; color:var(--text-2); margin-left:36px; margin-top:-2px}
-.hdr-date{font-size:11px; color:var(--text-2); margin-left:36px; margin-top:1px; display:flex; align-items:center; gap:6px}
+.hdr-sub{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:12px; color:var(--muted);
+  margin-top:4px; letter-spacing:.04em;
+}
+.hdr-date{
+  font-size:11.5px; color:var(--muted);
+  margin-top:3px; letter-spacing:.08em;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+}
 
-.hdr-right{display:flex; align-items:center; gap:10px; flex-shrink:0}
+.hdr-right{display:flex; align-items:center; gap:12px; flex-shrink:0}
+
 .pt-box{text-align:right; cursor:pointer; line-height:1}
 .pt-num{
-  font-family:'Playfair Display',serif; font-style:italic;
-  font-size:24px; font-weight:700;
-  background:var(--grad-brand); -webkit-background-clip:text; background-clip:text; color:transparent;
+  font-family:'Noto Serif JP',serif;
+  font-size:30px; font-weight:500;
+  color:var(--ink); letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
 }
-.pt-lbl{font-size:10px; color:var(--text-2); margin-top:2px; letter-spacing:.04em}
+.pt-lbl{
+  font-size:10px; color:var(--muted);
+  margin-top:4px; letter-spacing:.24em; text-transform:uppercase;
+}
 
-/* streak */
+/* streak — 丸い枠のみ、動きなし */
 .streak-badge{
-  display:inline-flex; align-items:center; gap:5px;
-  background:linear-gradient(135deg,#FFF1F3,#FFE4E9);
-  color:var(--rose-deep);
-  border:1.5px solid #FBCFE8;
-  border-radius:999px; padding:5px 11px;
-  font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; min-height:32px;
-  box-shadow:0 2px 6px rgba(236,72,153,.12);
+  display:inline-flex; align-items:center; gap:7px;
+  background:transparent;
+  color:var(--ink-2);
+  border:1px solid var(--line-2);
+  border-radius:999px; padding:6px 13px;
+  font-size:11.5px; font-weight:500; cursor:pointer; white-space:nowrap; min-height:32px;
+  letter-spacing:.08em;
+  transition:border-color .2s, color .2s;
 }
-.streak-badge.hot{
-  background:linear-gradient(135deg,#FFE0E7,#FFC7D0);
-  animation:pulse 2.4s infinite;
+.streak-badge::before{
+  content:""; display:inline-block;
+  width:6px; height:6px; border-radius:50%;
+  background:var(--whisper);
 }
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(236,72,153,.35)}
-  50%{box-shadow:0 0 0 8px rgba(236,72,153,0)}
-}
+.streak-badge.hot{color:var(--sage-deep); border-color:var(--sage)}
+.streak-badge.hot::before{background:var(--sage)}
+.streak-badge .num{font-weight:600}
 
-.prog-wrap{max-width:780px; margin:0 auto; padding:6px 18px 12px}
-.prog-row{display:flex; justify-content:space-between; font-size:10px; color:var(--text-2); margin-bottom:4px; letter-spacing:.04em}
-.prog-bar{height:7px; background:#F7E4E9; border-radius:999px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(190,24,93,.08)}
-.prog-fill{
-  height:100%; border-radius:999px;
-  background:linear-gradient(90deg,#F472B6 0%,#C084FC 50%,#A78BFA 100%);
-  background-size:200% 100%;
-  transition:width .7s cubic-bezier(.2,.8,.2,1);
-  animation:shimmer 3.5s linear infinite;
+/* Settings button — thin ring, no fill */
+.settings-btn{
+  width:36px; height:36px; border-radius:50%;
+  background:transparent;
+  border:1px solid var(--line-2);
+  color:var(--muted); font-size:14px;
+  cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;
+  transition:color .2s, border-color .2s;
+  flex-shrink:0;
+  letter-spacing:0;
 }
-@keyframes shimmer{
-  0%{background-position:0% 0}
-  100%{background-position:200% 0}
+.settings-btn:hover{color:var(--sage-deep); border-color:var(--sage)}
+
+/* progress bar — 細く、静かに */
+.prog-wrap{max-width:820px; margin:0 auto; padding:4px 24px 20px}
+.prog-row{
+  display:flex; justify-content:space-between;
+  font-size:10.5px; color:var(--muted);
+  margin-bottom:8px; letter-spacing:.12em;
+  text-transform:uppercase; font-family:'Inter','Noto Sans JP',sans-serif;
+}
+.prog-row b{color:var(--ink); font-weight:600}
+.prog-bar{height:1px; background:var(--line); position:relative; overflow:hidden}
+.prog-fill{
+  position:absolute; inset:0 auto 0 0;
+  height:100%; background:var(--sage);
+  transition:width .9s cubic-bezier(.2,.8,.2,1);
 }
 
 /* ============================================================
    MAIN
    ============================================================ */
-.main{max-width:780px; margin:0 auto; padding:16px 16px 20px; position:relative; z-index:1}
+.main{max-width:820px; margin:0 auto; padding:28px 24px 20px}
 
-/* Fresh start banner & streak warning */
+/* Banners — hairline with left accent bar */
 .banner{
-  display:none; align-items:center; gap:10px;
-  padding:10px 14px; border-radius:14px;
-  font-size:12.5px; font-weight:600; margin-bottom:12px;
-  border:1.5px solid transparent;
-  box-shadow:var(--shadow-sm);
+  display:none; align-items:flex-start; gap:14px;
+  padding:14px 18px; border-radius:2px;
+  font-size:13px; font-weight:400; margin-bottom:14px;
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-left:2px solid var(--whisper);
+  line-height:1.7;
+  color:var(--ink-2);
 }
 .banner.show{display:flex}
-.banner-fresh{background:linear-gradient(100deg,#FFF5F8,#F6EEFF); color:#7C3AED; border-color:#E9D5FF}
-.banner-streak{background:linear-gradient(100deg,#FFF1F3,#FFE4E9); color:#BE185D; border-color:#FBCFE8}
-.banner-backup{background:linear-gradient(100deg,#FFFBEB,#FFF5F8); color:#92400E; border-color:#FDE68A; cursor:pointer}
-.banner-backup:hover{filter:brightness(.98)}
-
-/* Settings button in header */
-.settings-btn{
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(255,255,255,.7);
-  border:1.5px solid var(--bdr);
-  color:var(--text-2); font-size:16px;
-  cursor:pointer; font-family:inherit;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .25s;
-  flex-shrink:0;
+.banner-fresh{border-left-color:var(--sage)}
+.banner-streak{border-left-color:var(--q1)}
+.banner-backup{border-left-color:var(--q2); cursor:pointer}
+.banner-backup:hover{background:#F7F2E9}
+.banner-mark{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:10.5px; color:var(--muted);
+  letter-spacing:.2em; text-transform:uppercase;
+  flex-shrink:0; padding-top:2px; min-width:70px;
 }
-.settings-btn:hover{color:var(--rose-deep); border-color:var(--rose); transform:rotate(60deg)}
-
-/* Settings modal buttons */
-.settings-intro{
-  font-size:12px; color:var(--text-2); line-height:1.7;
-  margin-bottom:14px; padding:12px 14px;
-  background:linear-gradient(135deg,#FFFAFC,#F6EEFF);
-  border-radius:12px; border:1px solid var(--bdr);
-}
-.settings-intro b{color:var(--rose-deep)}
-.backup-status{
-  font-size:12px; color:var(--text-2); padding:10px 13px;
-  background:linear-gradient(135deg,#F0FDF4,#ECFDF5);
-  border-radius:10px; margin-bottom:14px; border:1px solid #A7F3D0;
-  line-height:1.6;
-}
-.backup-status b{color:#065F46}
-.backup-status.warn{background:linear-gradient(135deg,#FFFBEB,#FFF5F8); border-color:#FDE68A; color:#92400E}
-.backup-status.warn b{color:#92400E}
-.setting-btn{
-  width:100%; padding:13px 16px; margin-bottom:9px;
-  border:1.5px solid var(--bdr); border-radius:12px;
-  background:var(--card); color:var(--text);
-  font-size:13.5px; font-weight:700; cursor:pointer; font-family:inherit;
-  display:flex; align-items:center; gap:11px;
-  transition:all .15s; text-align:left;
-}
-.setting-btn:hover{border-color:var(--rose); background:#FFF9FB; color:var(--rose-deep)}
-.setting-btn .sb-ico{font-size:18px; flex-shrink:0}
-.setting-btn .sb-main{flex:1; min-width:0}
-.setting-btn .sb-ttl{font-size:13.5px; font-weight:800}
-.setting-btn .sb-sub{font-size:10.5px; color:var(--text-2); font-weight:500; margin-top:2px; letter-spacing:0}
-.setting-btn.danger{color:#991B1B}
-.setting-btn.danger:hover{background:#FEF2F2; border-color:#FCA5A5; color:#991B1B}
-.setting-btn.danger .sb-sub{color:#C27171}
-.banner-emoji{font-size:20px; flex-shrink:0}
-.banner-text{flex:1; line-height:1.55}
-.banner-text b{font-weight:800}
+.banner-text{flex:1; line-height:1.75}
+.banner-text b{font-weight:600; color:var(--ink)}
 
 /* ============================================================
-   FOCUS CARD（今やるべき1件・強調）
+   FOCUS CARD — the hero, but quiet
    ============================================================ */
 .focus-card{
-  position:relative; overflow:hidden;
-  background:var(--grad-focus);
-  border-radius:22px; padding:22px 22px 20px; margin-bottom:20px;
-  color:#fff; box-shadow:var(--shadow-lg);
+  position:relative;
+  background:var(--ivory);
+  border:1px solid var(--line);
+  border-top:3px solid var(--sage);
+  padding:30px 32px 28px; margin-bottom:32px;
+  box-shadow:var(--shadow);
 }
-.focus-card::before{
-  content:""; position:absolute; right:-40px; top:-40px; width:180px; height:180px;
-  background:radial-gradient(closest-side, rgba(255,255,255,.28), transparent 70%);
-  border-radius:50%; pointer-events:none;
-}
-.focus-card::after{
-  content:"✿"; position:absolute; right:18px; bottom:12px;
-  font-size:52px; color:rgba(255,255,255,.14); font-family:serif;
-  pointer-events:none;
-}
-.focus-card.empty{background:linear-gradient(135deg,#C4B5FD,#A78BFA)}
+.focus-card.empty{border-top-color:var(--whisper)}
 
-.focus-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; position:relative; z-index:1}
+.focus-top{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
 .focus-badge{
-  font-size:11px; font-weight:800; letter-spacing:.08em;
-  background:rgba(255,255,255,.22); backdrop-filter:blur(6px);
-  padding:5px 12px; border-radius:999px;
-  border:1px solid rgba(255,255,255,.28);
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:11px; font-weight:500;
+  color:var(--sage-deep);
+  letter-spacing:.28em; text-transform:uppercase;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--sage);
 }
 .focus-skip{
-  font-size:12px; color:#fff; font-family:inherit;
-  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.35);
-  padding:6px 12px; border-radius:999px; cursor:pointer;
-  transition:background .15s, transform .15s;
+  font-size:11.5px; color:var(--muted); font-family:inherit;
+  background:transparent; border:1px solid var(--line-2);
+  padding:6px 14px; border-radius:999px; cursor:pointer;
+  letter-spacing:.08em;
+  transition:color .2s, border-color .2s;
 }
-.focus-skip:hover{background:rgba(255,255,255,.28)}
-.focus-skip:active{transform:scale(.96)}
+.focus-skip:hover{color:var(--ink); border-color:var(--ink-2)}
 
 .focus-title{
-  font-family:'Shippori Mincho B1', serif;
-  font-size:20px; font-weight:700; line-height:1.4; margin-bottom:12px;
-  position:relative; z-index:1; text-shadow:0 1px 2px rgba(0,0,0,.08);
-}
-.focus-tags{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; position:relative; z-index:1}
-.focus-tag{
-  font-size:11px; background:rgba(255,255,255,.22); padding:4px 10px; border-radius:999px;
-  font-weight:600; border:1px solid rgba(255,255,255,.25);
-}
-.focus-reason{
-  font-size:12px; background:rgba(255,255,255,.18); padding:10px 13px; border-radius:12px;
-  margin-bottom:14px; line-height:1.6; position:relative; z-index:1;
-  border:1px solid rgba(255,255,255,.25);
+  font-family:'Noto Serif JP',serif;
+  font-size:24px; font-weight:500; line-height:1.5;
+  margin-bottom:18px; color:var(--ink);
+  letter-spacing:.01em;
 }
 
-/* If-Then chip (実行意図) */
+.focus-tags{
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-bottom:18px;
+}
+.focus-tag{
+  font-size:10.5px;
+  background:transparent; color:var(--ink-2);
+  padding:4px 11px; border-radius:999px;
+  border:1px solid var(--line-2);
+  font-weight:500; letter-spacing:.06em;
+}
+
+.focus-reason{
+  font-size:13px; color:var(--ink-2);
+  padding:14px 18px; margin-bottom:18px;
+  line-height:1.85;
+  background:transparent;
+  border-left:1px solid var(--line-2);
+  font-family:'Noto Serif JP',serif;
+}
+
+/* If-Then chip */
 .focus-ifthen{
-  display:none; flex-direction:column; gap:4px;
-  background:rgba(255,255,255,.14); padding:9px 12px; border-radius:12px;
-  margin-bottom:14px; font-size:11.5px; line-height:1.55; position:relative; z-index:1;
-  border:1px solid rgba(255,255,255,.22);
+  display:none; flex-direction:column; gap:7px;
+  background:var(--card-2); padding:14px 18px; margin-bottom:18px;
+  font-size:12.5px; line-height:1.7;
+  color:var(--ink-2);
+  border:1px solid var(--line);
+  border-radius:2px;
 }
 .focus-ifthen.show{display:flex}
-.focus-ifthen b{font-weight:700; letter-spacing:.02em}
+.focus-ifthen .label{
+  font-family:'Noto Serif JP',serif;
+  font-size:10.5px; font-style:italic;
+  color:var(--muted); letter-spacing:.2em;
+  text-transform:uppercase;
+  margin-bottom:2px;
+}
+.focus-ifthen b{font-weight:600; color:var(--ink)}
+.focus-ifthen .row{display:flex; gap:12px; align-items:baseline}
+.focus-ifthen .row-k{
+  font-size:10.5px; color:var(--muted);
+  min-width:54px; letter-spacing:.12em;
+}
 
-.focus-actions{display:flex; gap:9px; position:relative; z-index:1}
+.focus-actions{display:flex; gap:12px}
 .btn-5min, .btn-start{
-  flex:1; padding:12px; border-radius:14px; cursor:pointer; font-family:inherit;
-  font-weight:800; font-size:13.5px; transition:transform .12s, box-shadow .15s, opacity .15s;
+  padding:13px 20px; border-radius:2px; cursor:pointer; font-family:inherit;
+  font-weight:500; font-size:13px; letter-spacing:.08em;
+  transition:background .18s, color .18s, border-color .18s;
 }
 .btn-5min{
-  background:rgba(255,255,255,.18); color:#fff;
-  border:1.5px solid rgba(255,255,255,.45);
+  flex:1;
+  background:transparent; color:var(--ink-2);
+  border:1px solid var(--line-2);
 }
-.btn-5min:hover{background:rgba(255,255,255,.28)}
+.btn-5min:hover{color:var(--ink); border-color:var(--ink)}
 .btn-start{
-  flex:1.45; background:#fff; color:var(--rose-deep); border:none;
-  box-shadow:0 8px 22px rgba(190,24,93,.25);
+  flex:1.35;
+  background:var(--ink); color:var(--shell);
+  border:1px solid var(--ink);
 }
-.btn-start:hover{transform:translateY(-1px)}
-.btn-start:active, .btn-5min:active{transform:translateY(0) scale(.98)}
+.btn-start:hover{background:var(--sage-deep); border-color:var(--sage-deep)}
+.btn-start:active, .btn-5min:active{transform:translateY(1px)}
 
 .focus-timer{
-  display:none; align-items:center; gap:10px; margin-top:12px;
-  background:rgba(255,255,255,.16); padding:10px 13px; border-radius:12px;
-  border:1px solid rgba(255,255,255,.28); position:relative; z-index:1;
+  display:none; align-items:center; gap:14px;
+  margin-top:18px; padding:14px 18px;
+  background:var(--card-2);
+  border:1px solid var(--line);
 }
 .focus-timer.show{display:flex}
-.timer-num{font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; min-width:60px; letter-spacing:.04em}
-.btn-done{padding:8px 18px; background:linear-gradient(135deg,#34D399,#10B981); border:none; color:#fff; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; font-family:inherit}
-.btn-stop{padding:8px 14px; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); color:#fff; border-radius:10px; font-size:13px; cursor:pointer; font-family:inherit}
+.focus-timer .tlabel{
+  font-size:10.5px; color:var(--muted);
+  letter-spacing:.2em; text-transform:uppercase;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+}
+.timer-num{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:22px; font-weight:500;
+  font-variant-numeric:tabular-nums; min-width:72px;
+  color:var(--ink); letter-spacing:-.01em;
+}
+.btn-done{
+  padding:8px 18px; background:var(--sage); border:1px solid var(--sage);
+  color:#fff; font-size:12px; font-weight:500; cursor:pointer;
+  font-family:inherit; letter-spacing:.08em; border-radius:2px;
+}
+.btn-done:hover{background:var(--sage-deep); border-color:var(--sage-deep)}
+.btn-stop{
+  padding:8px 14px; background:transparent; border:1px solid var(--line-2);
+  color:var(--muted); font-size:12px; cursor:pointer;
+  font-family:inherit; letter-spacing:.08em; border-radius:2px;
+}
+.btn-stop:hover{color:var(--ink); border-color:var(--ink-2)}
 
 /* ============================================================
    FILTER
    ============================================================ */
 .filter-bar{
-  display:flex; gap:7px; margin-bottom:14px;
-  overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px;
+  display:flex; gap:0; margin-bottom:24px;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
   scrollbar-width:none;
 }
 .filter-bar::-webkit-scrollbar{display:none}
 .fbtn{
-  padding:7px 15px; border-radius:999px;
-  border:1.5px solid var(--bdr);
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(8px);
-  font-size:12px; font-weight:600; color:var(--text-2);
-  cursor:pointer; font-family:inherit; white-space:nowrap; flex-shrink:0; min-height:34px;
-  transition:all .15s;
+  padding:10px 18px; border:none; background:transparent;
+  border-bottom:1px solid transparent;
+  margin-bottom:-1px;
+  font-size:12.5px; font-weight:500; color:var(--muted);
+  cursor:pointer; font-family:inherit; white-space:nowrap; flex-shrink:0;
+  letter-spacing:.04em;
+  transition:color .2s, border-color .2s;
+  display:inline-flex; align-items:center; gap:8px;
 }
-.fbtn:hover{border-color:var(--rose); color:var(--rose-deep)}
-.fbtn.on{
-  background:var(--grad-brand);
-  color:#fff; border-color:transparent;
-  box-shadow:0 4px 12px rgba(167,139,250,.35);
+.fbtn::before{
+  content:""; display:inline-block;
+  width:6px; height:6px; border-radius:50%;
+  background:var(--line-2);
 }
+.fbtn[data-f="1"]::before{background:var(--q1)}
+.fbtn[data-f="2"]::before{background:var(--q2)}
+.fbtn[data-f="3"]::before{background:var(--q3)}
+.fbtn[data-f="4"]::before{background:var(--q4)}
+.fbtn[data-f="all"]::before{display:none}
+.fbtn:hover{color:var(--ink)}
+.fbtn.on{color:var(--ink); border-bottom-color:var(--ink)}
 
 /* ============================================================
    QUADRANT SECTIONS
    ============================================================ */
-.q-sec{margin-bottom:18px}
+.q-sec{margin-bottom:30px}
 .q-head{
-  display:flex; align-items:center; gap:10px;
-  padding:10px 14px; border-radius:14px; margin-bottom:10px;
-  background:rgba(255,255,255,.7); backdrop-filter:blur(8px);
-  border:1px solid var(--bdr);
+  display:flex; align-items:baseline; gap:12px;
+  padding:8px 0 12px;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--line);
 }
-.q1 .q-head{border-left:5px solid var(--q1); background:linear-gradient(90deg,var(--q1bg),rgba(255,255,255,.7))}
-.q2 .q-head{border-left:5px solid var(--q2); background:linear-gradient(90deg,var(--q2bg),rgba(255,255,255,.7))}
-.q3 .q-head{border-left:5px solid var(--q3); background:linear-gradient(90deg,var(--q3bg),rgba(255,255,255,.7))}
-.q4 .q-head{border-left:5px solid var(--q4); background:linear-gradient(90deg,var(--q4bg),rgba(255,255,255,.7))}
-.q-head-ttl{font-family:'Shippori Mincho B1', serif; font-size:14px; font-weight:700; letter-spacing:.04em}
-.q-head-cnt{font-size:11px; color:var(--text-2); margin-left:auto; font-weight:500}
+.q-head-dot{
+  width:8px; height:8px; border-radius:50%; flex-shrink:0;
+}
+.q1 .q-head-dot{background:var(--q1)}
+.q2 .q-head-dot{background:var(--q2)}
+.q3 .q-head-dot{background:var(--q3)}
+.q4 .q-head-dot{background:var(--q4)}
+.q-head-ttl{
+  font-family:'Noto Serif JP',serif;
+  font-size:16px; font-weight:500; letter-spacing:.04em;
+  color:var(--ink);
+}
+.q-head-sub{
+  font-size:10.5px; color:var(--muted);
+  letter-spacing:.12em; margin-left:2px;
+}
+.q-head-cnt{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; color:var(--muted);
+  margin-left:auto; font-weight:500;
+  font-variant-numeric:tabular-nums; letter-spacing:.06em;
+}
 
 /* ============================================================
    TASK CARD
    ============================================================ */
 .tc{
   background:var(--card);
-  border-radius:16px;
-  border:1px solid var(--bdr);
-  margin-bottom:8px;
-  transition:box-shadow .2s, transform .12s, border-color .2s;
-  box-shadow:var(--shadow-sm);
+  border:1px solid var(--line);
+  margin-bottom:-1px;
+  transition:background .15s, border-color .15s;
 }
-.tc:hover{box-shadow:var(--shadow); border-color:var(--bdr-strong); transform:translateY(-1px)}
-.tc.done{opacity:.48; background:var(--card-2)}
+.tc:first-of-type{}
+.tc:hover{background:var(--card-2); border-color:var(--line-2); position:relative; z-index:1}
+.tc.done{opacity:.45; background:var(--ivory)}
 .tc.active-task{
-  border-color:var(--rose);
-  box-shadow:0 0 0 3px rgba(236,72,153,.14), var(--shadow);
+  border-color:var(--sage);
+  box-shadow:inset 3px 0 0 var(--sage);
+  position:relative; z-index:2;
 }
-.tc-main{display:flex; align-items:center; gap:9px; padding:12px 13px}
+
+.tc-main{display:flex; align-items:center; gap:12px; padding:14px 18px}
+
 .tc-num{
-  min-width:24px; height:24px; border-radius:50%;
-  font-size:10.5px; font-weight:800; color:#fff;
+  min-width:22px; height:22px;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; font-weight:600;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  letter-spacing:0;
-  box-shadow:0 2px 5px rgba(0,0,0,.08);
+  letter-spacing:0; color:var(--muted);
+  font-variant-numeric:tabular-nums;
 }
-.q1 .tc-num{background:linear-gradient(135deg,#FB7185,#F87171)}
-.q2 .tc-num{background:linear-gradient(135deg,#FBBF24,#F59E0B)}
-.q3 .tc-num{background:linear-gradient(135deg,#93C5FD,#60A5FA)}
-.q4 .tc-num{background:linear-gradient(135deg,#DDD6FE,#C4B5FD)}
+.tc-num::after{
+  content:"."; color:var(--muted); margin-left:1px;
+}
 
 .tc-chk{
-  width:44px; height:44px; border-radius:50%;
-  border:2px solid #E9D3D5; cursor:pointer; flex-shrink:0;
+  width:22px; height:22px; border-radius:50%;
+  border:1px solid var(--line-2); background:var(--card);
+  cursor:pointer; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
   transition:all .18s; user-select:none;
-  font-size:14px; font-weight:800;
-  margin:-10px -4px -10px -10px;
+  font-size:12px; font-weight:500;
+  color:transparent;
+  padding-top:1px;
 }
-.tc-chk:hover{border-color:#34D399; background:#F0FDF4}
+.tc-chk:hover{border-color:var(--sage); background:var(--sage-soft)}
 .tc-chk.on{
-  background:linear-gradient(135deg,#34D399,#10B981);
-  border-color:#10B981; color:#fff;
-  transform:scale(1.05);
+  background:var(--sage); border-color:var(--sage); color:#fff;
 }
 
-.tc-body{flex:1; min-width:0; cursor:pointer}
-.tc-ttl{font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text)}
-.done .tc-ttl{text-decoration:line-through; color:var(--text-2)}
-.tc-tags{display:flex; gap:5px; margin-top:4px; flex-wrap:wrap}
-.tag{font-size:10px; padding:2.5px 8px; border-radius:999px; font-weight:600; white-space:nowrap}
+.tc-body{flex:1; min-width:0; cursor:pointer; padding:2px 0}
+.tc-ttl{
+  font-size:14px; font-weight:500;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  color:var(--ink); letter-spacing:.01em;
+}
+.done .tc-ttl{text-decoration:line-through; color:var(--muted)}
+.tc-tags{display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; align-items:center}
+.tag{
+  font-size:10.5px; padding:1px 0; border-radius:0;
+  font-weight:400; white-space:nowrap;
+  color:var(--muted); letter-spacing:.04em;
+  background:transparent;
+}
+.tag::before{
+  content:""; display:inline-block; width:4px; height:4px; border-radius:50%;
+  background:currentColor; opacity:.4;
+  vertical-align:middle; margin-right:6px; margin-bottom:2px;
+}
+.tag:first-child::before{display:none}
+.tag:first-child{padding-left:0}
 
-.tag-client{background:#F3E8FF; color:#7E22CE}
-.tag-internal{background:#DBEAFE; color:#1D4ED8}
-.tag-growth{background:#DCFCE7; color:#166534}
-.tag-other{background:#F1F5F9; color:#475569}
-.tag-time{background:#E0F2FE; color:#0369A1}
-.tag-dead{background:#FEE2E2; color:#991B1B; font-weight:700}
-.tag-dead-ok{background:#FEF3C7; color:#B45309; font-weight:700}
-.tag-plan{background:#FCE7F3; color:#BE185D}
-.tag-reward{background:#FEF3C7; color:#92400E}
+.tag-client{color:var(--q2-ink)}
+.tag-internal{color:var(--q3-ink)}
+.tag-growth{color:var(--il2)}
+.tag-other{color:var(--muted)}
+.tag-time{color:var(--q3-ink)}
+.tag-dead{color:var(--q1); font-weight:600}
+.tag-dead-ok{color:var(--q2-ink); font-weight:500}
+.tag-plan{color:var(--sage-deep)}
+.tag-reward{color:var(--il4)}
 
-/* impact level tags */
-.il5{background:var(--il5bg); color:var(--il5); font-weight:800}
-.il4{background:var(--il4bg); color:var(--il4); font-weight:800}
-.il3{background:var(--il3bg); color:var(--il3); font-weight:700}
-.il2{background:var(--il2bg); color:var(--il2); font-weight:700}
-.il1{background:var(--il1bg); color:var(--il1)}
+/* impact level tags — 左にミニバー */
+.il5, .il4, .il3, .il2, .il1{
+  padding:1px 0 1px 10px; position:relative;
+  font-weight:500; letter-spacing:.04em;
+}
+.il5::before, .il4::before, .il3::before, .il2::before, .il1::before{
+  content:""; display:inline-block;
+  position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:3px; height:10px; border-radius:0;
+  opacity:1; margin:0;
+}
+.il5{color:var(--il5)}   .il5::before{background:var(--il5)}
+.il4{color:var(--il4)}   .il4::before{background:var(--il4)}
+.il3{color:var(--il3)}   .il3::before{background:var(--il3)}
+.il2{color:var(--il2)}   .il2::before{background:var(--il2)}
+.il1{color:var(--muted)} .il1::before{background:var(--whisper)}
 
-.tc-btns{display:flex; gap:2px; flex-shrink:0}
+.tc-btns{display:flex; gap:2px; flex-shrink:0; opacity:.4; transition:opacity .2s}
+.tc:hover .tc-btns{opacity:1}
 .ibt{
-  width:36px; height:36px; border:none; background:none; cursor:pointer;
-  border-radius:10px; font-size:14px;
+  width:30px; height:30px; border:none; background:transparent; cursor:pointer;
+  border-radius:2px; font-size:12px; color:var(--muted);
   display:flex; align-items:center; justify-content:center;
-  transition:background .12s; font-family:inherit;
+  transition:background .15s, color .15s; font-family:inherit;
 }
-.ibt:hover{background:#FDF2F8}
-.ibt.del:hover{background:#FEE2E2}
+.ibt:hover{background:var(--ivory); color:var(--ink)}
+.ibt.del:hover{background:var(--q1bg); color:var(--q1)}
 
 .tc-det{
-  display:none; padding:8px 14px 13px 50px;
-  font-size:12px; color:var(--text-2);
-  border-top:1px dashed var(--bdr); line-height:1.75;
-  background:linear-gradient(180deg,rgba(253,246,243,.5),transparent);
+  display:none; padding:8px 24px 18px 54px;
+  font-size:12.5px; color:var(--ink-2);
+  border-top:1px dashed var(--line);
+  line-height:1.85;
+  background:var(--card-2);
 }
 .tc-det.open{display:block}
-.det-row{display:flex; gap:8px; align-items:flex-start; margin-bottom:4px}
+.det-row{display:flex; gap:10px; align-items:flex-start; margin-bottom:4px}
 .det-row:last-child{margin-bottom:0}
-.det-ico{width:22px; flex-shrink:0; text-align:center}
-.det-advice{font-weight:700; color:var(--rose-deep); margin-bottom:4px; font-family:'Shippori Mincho B1',serif}
+.det-ico{
+  width:24px; flex-shrink:0;
+  font-size:10.5px; color:var(--muted);
+  letter-spacing:.08em; text-transform:uppercase;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  padding-top:3px;
+}
+.det-advice{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-weight:500; color:var(--sage-deep);
+  margin-bottom:10px; font-size:13px;
+  padding-bottom:8px; border-bottom:1px solid var(--line);
+}
+.det-row b{font-weight:600; color:var(--ink)}
 
 /* Empty state */
 .empty{
-  text-align:center; padding:30px 20px;
-  color:var(--text-2); font-size:13px;
-  background:rgba(255,255,255,.7);
-  border-radius:16px; border:1px dashed var(--bdr);
+  text-align:center; padding:44px 24px;
+  color:var(--muted); font-size:13px;
+  background:var(--ivory);
+  border:1px solid var(--line);
+  letter-spacing:.02em;
 }
-.empty-e{font-size:28px; margin-bottom:6px; display:block}
-.empty-q{font-family:'Shippori Mincho B1',serif; font-size:13px; color:var(--text); margin-top:8px; font-style:italic}
+.empty-mark{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:12px; color:var(--sage-deep);
+  letter-spacing:.28em; text-transform:uppercase;
+  padding:0 14px; display:inline-block;
+  border-top:1px solid var(--sage); padding-top:6px;
+  margin-bottom:14px;
+}
+.empty-q{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:13px; color:var(--ink-2);
+  margin-top:14px; line-height:1.7;
+}
 
-/* Done section toggle */
+/* Done section */
 .done-tog{
-  display:flex; align-items:center; gap:8px; cursor:pointer;
-  color:var(--text-2); font-size:12px; margin-top:16px; margin-bottom:10px;
-  padding:10px 14px;
-  background:rgba(255,255,255,.7); border-radius:12px; border:1px solid var(--bdr);
-  font-weight:600; font-family:inherit; width:100%; text-align:left;
-  transition:all .15s;
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  color:var(--muted); font-size:12px; margin:28px 0 10px;
+  padding:12px 0;
+  background:transparent; border:none;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  font-weight:500; font-family:inherit; width:100%; text-align:left;
+  letter-spacing:.06em;
+  transition:color .15s;
 }
-.done-tog:hover{border-color:var(--rose); color:var(--rose-deep); background:#FFF}
+.done-tog:hover{color:var(--ink)}
+.done-tog .caret{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10px; color:var(--muted);
+}
+
+/* compare chip — 今週 vs 先週 */
+.compare-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:2px 0 2px 10px; border-radius:0;
+  font-size:11px; font-weight:500;
+  color:var(--sage-deep); letter-spacing:.04em;
+  border-left:2px solid var(--sage);
+  background:transparent;
+  margin-left:10px;
+}
+.compare-chip.down{color:var(--q1); border-left-color:var(--q1)}
+.compare-chip.same{color:var(--muted); border-left-color:var(--whisper)}
+
+.week-row{
+  display:flex; justify-content:flex-end; align-items:baseline;
+  gap:8px; margin-bottom:12px;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.06em; padding-bottom:6px;
+}
+.week-row b{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  color:var(--ink); font-weight:600;
+  font-variant-numeric:tabular-nums;
+}
 
 /* ============================================================
    FAB
    ============================================================ */
 .fab{
   position:fixed;
-  bottom:max(26px,env(safe-area-inset-bottom,26px)); right:20px;
-  width:60px; height:60px; border-radius:50%;
-  background:var(--grad-brand); color:#fff; border:none;
-  font-size:28px; cursor:pointer;
-  box-shadow:0 10px 28px rgba(167,139,250,.55), 0 4px 10px rgba(236,72,153,.3);
+  bottom:max(28px,env(safe-area-inset-bottom,28px)); right:24px;
+  width:56px; height:56px; border-radius:50%;
+  background:var(--ink); color:var(--shell); border:none;
+  font-size:20px; cursor:pointer;
+  font-weight:300;
+  box-shadow:var(--shadow-lg);
   display:flex; align-items:center; justify-content:center; z-index:200;
-  transition:transform .15s, box-shadow .2s;
-  font-family:inherit;
+  transition:background .2s, transform .15s;
+  font-family:'Noto Serif JP',serif;
 }
-.fab:hover{transform:translateY(-2px) rotate(90deg); box-shadow:0 14px 34px rgba(167,139,250,.65)}
-.fab:active{transform:scale(.94) rotate(90deg)}
+.fab:hover{background:var(--sage-deep); transform:translateY(-1px)}
+.fab:active{transform:scale(.96)}
 
 /* ============================================================
    MODAL
    ============================================================ */
 .ov{
   display:none; position:fixed; inset:0;
-  background:rgba(63,42,62,.48); backdrop-filter:blur(4px);
+  background:rgba(47,45,43,.42);
   z-index:300; justify-content:flex-end; align-items:flex-end;
 }
 .ov.open{display:flex}
-@media(min-width:600px){ .ov{align-items:center; justify-content:center} }
+@media(min-width:640px){ .ov{align-items:center; justify-content:center} }
 
 .modal{
   background:var(--card);
-  width:100%; max-width:580px;
-  border-radius:24px 24px 0 0;
-  padding:24px 20px max(40px,env(safe-area-inset-bottom,40px));
+  width:100%; max-width:620px;
+  border-radius:0;
+  padding:32px 28px max(44px,env(safe-area-inset-bottom,44px));
   max-height:94vh; overflow-y:auto;
-  animation:up .28s cubic-bezier(.2,.9,.2,1);
+  animation:up .32s cubic-bezier(.2,.9,.2,1);
   -webkit-overflow-scrolling:touch;
-  box-shadow:0 -20px 60px rgba(63,42,62,.2);
+  box-shadow:var(--shadow-lg);
+  border-top:3px solid var(--sage);
 }
-@media(min-width:600px){ .modal{border-radius:24px; padding:28px} }
-@keyframes up{from{transform:translateY(40px); opacity:0} to{transform:translateY(0); opacity:1}}
+@media(min-width:640px){ .modal{padding:40px 40px 36px} }
+@keyframes up{from{transform:translateY(28px); opacity:0} to{transform:translateY(0); opacity:1}}
 
-.mh{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px}
-.mttl{font-family:'Shippori Mincho B1',serif; font-size:17px; font-weight:800; letter-spacing:.02em}
+.mh{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:26px; padding-bottom:16px;
+  border-bottom:1px solid var(--line);
+}
+.mttl{
+  font-family:'Noto Serif JP',serif;
+  font-size:18px; font-weight:500; letter-spacing:.04em;
+  color:var(--ink);
+}
+.mttl-mark{
+  display:block;
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:10.5px; font-weight:400;
+  color:var(--sage-deep); letter-spacing:.28em;
+  text-transform:uppercase; margin-bottom:4px;
+}
 .mx{
-  font-size:18px; background:#F9F2F4; border:none; cursor:pointer;
-  color:var(--text-2); width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center; border-radius:10px;
-  font-family:inherit;
+  font-size:18px; background:transparent; border:1px solid var(--line-2); cursor:pointer;
+  color:var(--muted); width:34px; height:34px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%; font-family:inherit;
+  transition:color .15s, border-color .15s;
 }
-.mx:hover{background:#FCE7F3; color:var(--rose-deep)}
-
-.fg{margin-bottom:16px}
-.fl{
-  display:block; font-size:11px; font-weight:700; margin-bottom:6px;
-  color:var(--text-2); text-transform:uppercase; letter-spacing:.06em;
-}
-.fl .req{color:var(--rose)}
-.fl-hint{display:block; font-size:11px; color:var(--text-3); font-weight:500; letter-spacing:0; text-transform:none; margin-top:2px; font-style:italic}
-
-.fi, .fs, .ft{
-  width:100%; padding:10px 13px;
-  border:1.5px solid var(--bdr); border-radius:12px;
-  font-size:14px; color:var(--text); font-family:inherit;
-  outline:none; transition:border-color .15s, box-shadow .15s;
-  background:var(--card);
-}
-.fi:focus, .fs:focus, .ft:focus{
-  border-color:var(--rose);
-  box-shadow:0 0 0 3px rgba(236,72,153,.14);
-}
-.ft{resize:vertical; min-height:60px}
-
-.tg-row{display:flex; gap:8px}
-.tgb{
-  flex:1; padding:9px 8px; border-radius:12px;
-  border:1.5px solid var(--bdr); background:var(--card);
-  font-size:12.5px; font-weight:700; cursor:pointer; text-align:center;
-  transition:all .15s; font-family:inherit; color:var(--text-2);
-}
-.tgb:hover{border-color:var(--rose); color:var(--rose-deep)}
-.tgb.on.imp{background:linear-gradient(135deg,#F87171,#EF4444); color:#fff; border-color:transparent}
-.tgb.on.urg{background:linear-gradient(135deg,#60A5FA,#3B82F6); color:#fff; border-color:transparent}
-
-/* impact level selector */
-.il-grid{display:flex; flex-direction:column; gap:6px}
-.il-opt{
-  display:flex; align-items:center; gap:11px; padding:10px 13px;
-  border-radius:12px; border:1.5px solid var(--bdr);
-  cursor:pointer; transition:all .15s; background:var(--card);
-}
-.il-opt:hover{border-color:var(--rose); background:#FFFBFD}
-.il-opt.on{border-width:2px}
-.il-opt[data-lv="5"].on{border-color:var(--il5); background:#FFF5F9}
-.il-opt[data-lv="4"].on{border-color:var(--il4); background:#FFF7ED}
-.il-opt[data-lv="3"].on{border-color:var(--il3); background:#FFFBEB}
-.il-opt[data-lv="2"].on{border-color:var(--il2); background:#F0FDF4}
-.il-opt[data-lv="1"].on{border-color:var(--il1); background:#F8FAFC}
-.il-icon{font-size:20px; flex-shrink:0}
-.il-name{font-size:13px; font-weight:800}
-.il-desc{font-size:11px; color:var(--text-2); margin-top:2px; line-height:1.5}
+.mx:hover{color:var(--ink); border-color:var(--ink-2)}
 
 /* Section header inside modal */
 .mform-section{
-  font-family:'Shippori Mincho B1',serif;
-  font-size:12.5px; font-weight:800; letter-spacing:.05em;
-  color:var(--rose-deep);
-  padding:8px 0 8px; margin-top:6px;
-  border-top:1px dashed var(--bdr);
-  display:flex; align-items:center; gap:6px;
+  font-family:'Noto Serif JP',serif;
+  font-size:13px; font-weight:500; letter-spacing:.08em;
+  color:var(--ink);
+  padding:20px 0 12px; margin-top:14px;
+  border-top:1px solid var(--line);
+  display:flex; align-items:baseline; gap:10px;
 }
 .mform-section:first-of-type{border-top:none; margin-top:0; padding-top:0}
+.mform-section-num{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; font-weight:500;
+  color:var(--muted); letter-spacing:.2em;
+}
 .mform-tip{
-  font-size:10.5px; color:var(--text-3); font-weight:500; font-style:italic;
-  margin-left:auto; letter-spacing:0;
+  font-size:10.5px; color:var(--muted);
+  font-weight:400; font-style:italic;
+  margin-left:auto; letter-spacing:.04em;
+  font-family:'Noto Serif JP',serif;
+}
+
+.fg{margin-bottom:20px}
+.fl{
+  display:block; font-size:11px; font-weight:500;
+  margin-bottom:8px; color:var(--ink-2);
+  letter-spacing:.12em; text-transform:uppercase;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+}
+.fl .req{color:var(--q1); font-weight:600}
+.fl-hint{
+  display:block; font-size:11px; color:var(--muted);
+  font-weight:400; letter-spacing:.02em; text-transform:none;
+  margin-top:4px; font-style:italic;
+  font-family:'Noto Serif JP',serif;
+}
+
+.fi, .fs, .ft{
+  width:100%; padding:11px 14px;
+  border:1px solid var(--line-2);
+  border-radius:2px;
+  font-size:14px; color:var(--ink); font-family:inherit;
+  outline:none; transition:border-color .2s, box-shadow .2s;
+  background:var(--card);
+  letter-spacing:.01em;
+}
+.fi:focus, .fs:focus, .ft:focus{
+  border-color:var(--sage);
+  box-shadow:inset 0 -1px 0 var(--sage);
+}
+.ft{resize:vertical; min-height:70px; line-height:1.7}
+.fs{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237D786F' fill='none' stroke-width='1.3'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center;
+  padding-right:36px;
+}
+
+.tg-row{display:flex; gap:10px}
+.tgb{
+  flex:1; padding:10px 12px;
+  border:1px solid var(--line-2); background:var(--card);
+  font-size:12.5px; font-weight:500; cursor:pointer; text-align:center;
+  transition:all .15s; font-family:inherit; color:var(--muted);
+  letter-spacing:.04em; border-radius:2px;
+}
+.tgb:hover{border-color:var(--ink-2); color:var(--ink)}
+.tgb.on.imp{background:var(--ink); color:var(--shell); border-color:var(--ink)}
+.tgb.on.urg{background:var(--q1); color:#fff; border-color:var(--q1)}
+
+/* impact level selector */
+.il-grid{display:flex; flex-direction:column; gap:0; border:1px solid var(--line-2)}
+.il-opt{
+  display:flex; align-items:center; gap:14px;
+  padding:13px 16px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer; transition:all .15s; background:var(--card);
+}
+.il-opt:last-child{border-bottom:none}
+.il-opt:hover{background:var(--card-2)}
+.il-opt.on{background:var(--ivory)}
+.il-opt[data-lv="5"].on{box-shadow:inset 3px 0 0 var(--il5)}
+.il-opt[data-lv="4"].on{box-shadow:inset 3px 0 0 var(--il4)}
+.il-opt[data-lv="3"].on{box-shadow:inset 3px 0 0 var(--il3)}
+.il-opt[data-lv="2"].on{box-shadow:inset 3px 0 0 var(--il2)}
+.il-opt[data-lv="1"].on{box-shadow:inset 3px 0 0 var(--il1)}
+.il-icon{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:15px; color:var(--muted);
+  flex-shrink:0; min-width:28px;
+  letter-spacing:.04em; text-align:center;
+}
+.il-opt.on .il-icon{color:var(--ink)}
+.il-name{
+  font-size:13px; font-weight:600; letter-spacing:.02em;
+  color:var(--ink);
+}
+.il-desc{
+  font-size:11.5px; color:var(--muted);
+  margin-top:3px; line-height:1.65;
+  letter-spacing:.01em;
 }
 
 .q-prev{
-  padding:12px 14px; border-radius:12px; font-size:12.5px; font-weight:600;
-  margin-bottom:16px; border-left:4px solid transparent; transition:all .2s;
-  background:linear-gradient(180deg,#FFF,#FFF9FB);
+  padding:14px 18px;
+  font-size:12.5px; font-weight:500;
+  margin-bottom:20px;
+  border-left:2px solid var(--line-2);
+  background:transparent;
+  font-family:'Noto Serif JP',serif;
+  line-height:1.7;
+  color:var(--ink-2);
 }
 
 .sub-btn{
-  width:100%; padding:14px; border:none; border-radius:14px;
-  background:var(--grad-brand); color:#fff;
-  font-size:14.5px; font-weight:800; cursor:pointer; font-family:inherit;
-  letter-spacing:.04em;
-  box-shadow:0 8px 22px rgba(167,139,250,.4);
-  transition:transform .12s, box-shadow .2s;
+  width:100%; padding:15px; border:none; border-radius:2px;
+  background:var(--ink); color:var(--shell);
+  font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;
+  letter-spacing:.24em; text-transform:uppercase;
+  transition:background .2s;
+  margin-top:10px;
 }
-.sub-btn:hover{transform:translateY(-1px); box-shadow:0 12px 28px rgba(167,139,250,.55)}
-.sub-btn:active{transform:translateY(0) scale(.99)}
+.sub-btn:hover{background:var(--sage-deep)}
+.sub-btn:active{transform:translateY(1px)}
+
+/* Settings modal */
+.settings-intro{
+  font-size:12.5px; color:var(--ink-2); line-height:1.8;
+  margin-bottom:20px; padding:16px 18px;
+  background:var(--ivory);
+  border:1px solid var(--line);
+}
+.settings-intro b{color:var(--ink); font-weight:600}
+.backup-status{
+  font-size:12.5px; color:var(--ink-2);
+  padding:14px 18px;
+  background:transparent;
+  border:1px solid var(--line);
+  border-left:2px solid var(--sage);
+  margin-bottom:18px;
+  line-height:1.75;
+}
+.backup-status b{color:var(--ink); font-weight:600}
+.backup-status.warn{border-left-color:var(--q2)}
+.setting-btn{
+  width:100%; padding:16px 18px; margin-bottom:10px;
+  border:1px solid var(--line-2); border-radius:2px;
+  background:var(--card); color:var(--ink);
+  font-size:13px; font-weight:500; cursor:pointer; font-family:inherit;
+  display:flex; align-items:center; gap:14px;
+  transition:all .15s; text-align:left;
+  letter-spacing:.02em;
+}
+.setting-btn:hover{border-color:var(--ink-2); background:var(--ivory)}
+.setting-btn .sb-ico{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:13px; flex-shrink:0; color:var(--muted);
+  letter-spacing:.12em; min-width:26px;
+}
+.setting-btn .sb-main{flex:1; min-width:0}
+.setting-btn .sb-ttl{font-size:13.5px; font-weight:600; letter-spacing:.02em}
+.setting-btn .sb-sub{
+  font-size:11px; color:var(--muted);
+  font-weight:400; margin-top:3px; letter-spacing:.02em;
+  font-family:'Noto Serif JP',serif; font-style:italic;
+}
+.setting-btn.danger{color:var(--q1)}
+.setting-btn.danger:hover{background:var(--q1bg); border-color:var(--q1)}
+.setting-btn.danger .sb-ico{color:var(--q1)}
 
 /* ============================================================
    MILESTONE
    ============================================================ */
-.ms-ov{display:none; position:fixed; inset:0; background:rgba(63,42,62,.65); backdrop-filter:blur(6px); z-index:500; align-items:center; justify-content:center; padding:20px}
+.ms-ov{
+  display:none; position:fixed; inset:0;
+  background:rgba(47,45,43,.72);
+  z-index:500; align-items:center; justify-content:center; padding:24px;
+}
 .ms-ov.open{display:flex}
 .ms-card{
-  background:linear-gradient(180deg,#FFFFFF 0%, #FFF9FB 100%);
-  border-radius:28px; padding:34px 26px;
-  max-width:470px; width:100%; text-align:center;
-  animation:pop .32s cubic-bezier(.34,1.56,.64,1);
+  background:var(--card);
+  border-top:3px solid var(--sage);
+  padding:44px 38px 36px;
+  max-width:520px; width:100%; text-align:left;
+  animation:up .4s cubic-bezier(.2,.9,.2,1);
   max-height:92vh; overflow-y:auto;
   box-shadow:var(--shadow-lg);
   position:relative;
 }
-.ms-card::before{
-  content:"";
-  position:absolute; inset:-2px;
-  border-radius:28px; padding:2px;
-  background:var(--grad-brand);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor; mask-composite:exclude;
-  pointer-events:none;
+.ms-emoji{
+  font-family:'Noto Serif JP',serif; font-style:italic;
+  font-size:12px; color:var(--sage-deep);
+  letter-spacing:.32em; text-transform:uppercase;
+  padding-bottom:8px; display:inline-block;
+  border-bottom:1px solid var(--sage); margin-bottom:18px;
 }
-@keyframes pop{from{transform:scale(.72); opacity:0} to{transform:scale(1); opacity:1}}
-.ms-emoji{font-size:64px; display:block; margin-bottom:10px}
-.ms-title{font-family:'Shippori Mincho B1',serif; font-size:24px; font-weight:800; color:var(--rose-deep); margin-bottom:6px; letter-spacing:.02em}
-.ms-sub{font-size:13px; color:var(--text-2); margin-bottom:22px; line-height:1.7}
-.ms-stats{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:18px; text-align:left}
-.ms-stat{background:linear-gradient(135deg,#FFF5F8,#F6EEFF); border-radius:12px; padding:12px 14px; border:1px solid var(--bdr)}
-.ms-stat-n{font-family:'Playfair Display',serif; font-style:italic; font-size:22px; font-weight:800; color:var(--rose-deep)}
-.ms-stat-l{font-size:10px; color:var(--text-2); margin-top:2px; letter-spacing:.04em}
+.ms-title{
+  font-family:'Noto Serif JP',serif;
+  font-size:26px; font-weight:500;
+  color:var(--ink); margin-bottom:10px; letter-spacing:.02em;
+  line-height:1.4;
+}
+.ms-sub{
+  font-size:13px; color:var(--ink-2);
+  margin-bottom:28px; line-height:1.8;
+  font-family:'Noto Serif JP',serif;
+}
+.ms-stats{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  margin-bottom:24px;
+  border:1px solid var(--line);
+}
+.ms-stat{
+  background:var(--ivory);
+  padding:16px 18px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.ms-stat:nth-child(2n){border-right:none}
+.ms-stat:nth-last-child(-n+2){border-bottom:none}
+.ms-stat-n{
+  font-family:'Noto Serif JP',serif;
+  font-size:26px; font-weight:500;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.01em;
+}
+.ms-stat-l{
+  font-size:10px; color:var(--muted);
+  margin-top:4px; letter-spacing:.18em;
+  text-transform:uppercase;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+}
 
-.breakdown{background:linear-gradient(135deg,#FFFAFC,#F6EEFF); border-radius:14px; padding:14px; margin-bottom:18px; text-align:left; border:1px solid var(--bdr)}
-.bk-title{font-size:10px; font-weight:800; color:var(--text-2); margin-bottom:9px; text-transform:uppercase; letter-spacing:.06em}
-.bk-row{display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:11px}
-.bk-label{min-width:95px; font-weight:700}
-.bk-bw{flex:1; height:6px; background:#F3E4E4; border-radius:3px; overflow:hidden}
-.bk-bf{height:100%; border-radius:3px; transition:width .8s ease}
-.bk-cnt{font-size:11px; font-weight:800; color:var(--text-2); min-width:22px; text-align:right; font-variant-numeric:tabular-nums}
+.breakdown{
+  background:var(--ivory);
+  border:1px solid var(--line);
+  padding:18px; margin-bottom:20px; text-align:left;
+}
+.bk-title{
+  font-size:10.5px; font-weight:500;
+  color:var(--muted); margin-bottom:14px;
+  text-transform:uppercase; letter-spacing:.2em;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+}
+.bk-row{
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:9px; font-size:11.5px;
+}
+.bk-label{
+  min-width:88px; font-weight:500;
+  letter-spacing:.02em;
+}
+.bk-bw{flex:1; height:2px; background:var(--line); position:relative; overflow:hidden}
+.bk-bf{height:100%; transition:width .9s ease}
+.bk-cnt{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11.5px; font-weight:600;
+  color:var(--ink); min-width:22px;
+  text-align:right; font-variant-numeric:tabular-nums;
+}
 
 .ms-growth{
-  font-size:12px; color:var(--text); margin-bottom:18px; line-height:1.75;
-  background:linear-gradient(135deg,#FFFAFC,#F6EEFF); border-radius:14px; padding:14px; text-align:left;
-  border:1px solid var(--bdr);
+  font-size:12.5px; color:var(--ink-2);
+  margin-bottom:22px; line-height:1.85;
+  padding:18px; text-align:left;
+  background:var(--card-2);
+  border:1px solid var(--line); border-left:2px solid var(--sage);
 }
-.ms-growth strong{color:var(--rose-deep); font-family:'Shippori Mincho B1',serif}
-.ms-btn{
-  width:100%; padding:14px; border:none; border-radius:14px;
-  background:var(--grad-brand); color:#fff;
-  font-size:14px; font-weight:800; cursor:pointer; font-family:inherit;
-  box-shadow:0 8px 22px rgba(167,139,250,.4);
+.ms-growth strong{
+  display:block; color:var(--ink);
+  font-family:'Noto Serif JP',serif; font-weight:500;
+  font-size:13px; margin-bottom:10px;
+  letter-spacing:.04em;
 }
-.ms-btn:hover{opacity:.92}
+.ms-growth b{color:var(--ink); font-weight:600}
 
-/* confetti */
+.ms-btn{
+  width:100%; padding:15px; border:1px solid var(--ink); border-radius:2px;
+  background:var(--ink); color:var(--shell);
+  font-size:12.5px; font-weight:500; cursor:pointer; font-family:inherit;
+  letter-spacing:.28em; text-transform:uppercase;
+  transition:background .2s;
+}
+.ms-btn:hover{background:var(--sage-deep); border-color:var(--sage-deep)}
+
+/* confetti — 落ち着いた花弁色、枚数控えめ */
 .conf-wrap{position:fixed; inset:0; pointer-events:none; z-index:499; overflow:hidden}
 .conf{
   position:absolute; border-radius:50%;
-  opacity:0; animation:cfall 3s ease forwards;
+  opacity:0; animation:cfall 3.2s ease forwards;
 }
 @keyframes cfall{
   0%{transform:translateY(-10px) rotate(0); opacity:1}
-  100%{transform:translateY(105vh) rotate(900deg); opacity:0}
+  100%{transform:translateY(105vh) rotate(680deg); opacity:0}
 }
 
 /* toast */
 .toast{
   position:fixed;
-  bottom:calc(100px + env(safe-area-inset-bottom,0px));
+  bottom:calc(110px + env(safe-area-inset-bottom,0px));
   left:50%; transform:translateX(-50%);
-  background:rgba(63,42,62,.96); color:#fff;
-  padding:11px 22px; border-radius:999px;
-  font-size:13px; z-index:400;
+  background:var(--ink); color:var(--shell);
+  padding:12px 22px; border-radius:2px;
+  font-size:12.5px; z-index:400;
   opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
   white-space:nowrap; max-width:90vw; text-overflow:ellipsis; overflow:hidden;
-  box-shadow:0 10px 30px rgba(63,42,62,.3);
-  font-weight:600;
+  box-shadow:var(--shadow);
+  font-weight:400; letter-spacing:.04em;
 }
-.toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
-
-/* past-self compare widget */
-.compare-chip{
-  display:inline-flex; align-items:center; gap:5px;
-  padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700;
-  background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0;
-  margin-left:6px;
-}
-.compare-chip.down{background:#FFF1F2; color:#9F1239; border-color:#FECDD3}
-.compare-chip.same{background:#F1F5F9; color:#475569; border-color:#E2E8F0}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-6px)}
 
 /* ============================================================
    MOBILE
    ============================================================ */
 @media (max-width:480px){
-  .hdr-inner{padding:11px 13px; gap:9px}
-  .hdr h1{font-size:16px}
+  .hdr-inner{padding:16px 18px 12px; gap:10px}
+  .hdr h1{font-size:20px}
+  .hdr-mark{font-size:11px; letter-spacing:.2em}
   .hdr-sub{display:none}
-  .hdr-date{font-size:10.5px; margin-left:36px}
-  .streak-badge{font-size:11px; padding:4px 9px}
-  .pt-num{font-size:22px}
-  .pt-lbl{font-size:9px}
-  .prog-wrap{padding:4px 13px 9px}
-  .prog-row{font-size:9.5px}
-  .main{padding:12px 11px}
-  .focus-card{padding:16px; border-radius:18px}
-  .focus-title{font-size:17px; margin-bottom:10px}
-  .focus-badge{font-size:10px; padding:4px 9px}
-  .focus-skip{font-size:11px; padding:5px 11px}
-  .focus-reason{font-size:11.5px; padding:8px 11px; margin-bottom:12px}
-  .focus-ifthen{font-size:11px}
-  .focus-actions{flex-direction:column; gap:8px}
-  .btn-5min, .btn-start{flex:unset; width:100%; padding:13px; font-size:14px}
-  .focus-timer{flex-wrap:wrap; gap:8px; padding:11px 12px}
-  .timer-num{font-size:22px; flex:1; order:1}
-  .focus-timer span:first-child{order:0; font-size:12px; width:100%}
-  .btn-done{order:2; flex:1; padding:10px}
-  .btn-stop{order:3; padding:10px 12px}
-  .fbtn{padding:6px 11px; font-size:11.5px}
-  .tc-main{padding:11px 11px; gap:7px}
-  .tc-ttl{font-size:13px}
-  .tc-det{padding:8px 13px 12px 40px; font-size:11.5px}
-  .tag{font-size:10px; padding:2px 7px}
-  .modal{padding:20px 16px max(30px,env(safe-area-inset-bottom,30px))}
+  .hdr-date{font-size:10.5px}
+  .streak-badge{font-size:10.5px; padding:5px 11px}
+  .pt-num{font-size:26px}
+  .pt-lbl{font-size:9.5px; letter-spacing:.2em}
+  .prog-wrap{padding:2px 18px 14px}
+  .prog-row{font-size:10px}
+  .main{padding:20px 18px}
+  .focus-card{padding:22px 20px 20px}
+  .focus-title{font-size:19px}
+  .focus-badge{font-size:10.5px; letter-spacing:.24em}
+  .focus-reason{font-size:12.5px; padding:11px 14px}
+  .focus-ifthen{font-size:12px; padding:12px 14px}
+  .focus-actions{flex-direction:column; gap:10px}
+  .btn-5min, .btn-start{flex:unset; width:100%; padding:13px; font-size:13px}
+  .focus-timer{flex-wrap:wrap; gap:10px; padding:12px 14px}
+  .timer-num{font-size:20px; flex:1; order:1}
+  .focus-timer .tlabel{order:0; font-size:10px; width:100%}
+  .btn-done{order:2; flex:1; padding:9px}
+  .btn-stop{order:3; padding:9px 12px}
+  .fbtn{padding:9px 13px; font-size:11.5px}
+  .tc-main{padding:12px 14px; gap:10px}
+  .tc-ttl{font-size:13.5px}
+  .tc-det{padding:8px 18px 14px 44px; font-size:12px}
+  .tag{font-size:10px}
+  .modal{padding:26px 20px max(34px,env(safe-area-inset-bottom,34px))}
   .mttl{font-size:16px}
-  .fi, .fs, .ft{font-size:16px} /* iOSのズーム防止 */
-  .il-opt{padding:9px 11px; gap:9px}
-  .il-icon{font-size:17px}
+  .fi, .fs, .ft{font-size:16px} /* iOS zoom防止 */
+  .il-opt{padding:12px 14px; gap:12px}
+  .il-icon{font-size:13px; min-width:24px}
   .il-name{font-size:12.5px}
-  .il-desc{font-size:10.5px}
-  .sub-btn{padding:14px; font-size:15px}
-  .ms-card{padding:26px 16px}
-  .ms-emoji{font-size:52px}
-  .ms-title{font-size:20px}
-  .ms-sub{font-size:12px}
-  .ms-stats{gap:7px}
-  .ms-stat{padding:10px 11px}
-  .ms-stat-n{font-size:20px}
-  .bk-label{min-width:80px; font-size:10.5px}
-  .banner{font-size:12px; padding:9px 12px}
+  .il-desc{font-size:11px}
+  .sub-btn{padding:14px; font-size:12.5px; letter-spacing:.22em}
+  .ms-card{padding:32px 20px 26px}
+  .ms-title{font-size:22px}
+  .ms-sub{font-size:12.5px}
+  .ms-stat{padding:13px 14px}
+  .ms-stat-n{font-size:22px}
+  .bk-label{min-width:74px; font-size:11px}
+  .banner{font-size:12.5px; padding:12px 14px}
+  .banner-mark{min-width:56px; font-size:10px}
 }
 @media (max-width:360px){
-  .hdr h1{font-size:14px}
+  .hdr h1{font-size:17px}
+  .hdr-right{gap:8px}
   .streak-badge{display:none}
-  .focus-title{font-size:16px}
-  .fbtn{padding:5px 9px; font-size:10.5px}
-  .ms-stats{grid-template-columns:1fr 1fr}
+  .focus-title{font-size:17px}
+  .fbtn{padding:8px 10px; font-size:11px}
+  .ms-stats{grid-template-columns:1fr}
+  .ms-stat{border-right:none}
 }
 </style>
 </head>
@@ -754,18 +1062,18 @@ body::before{
   <div class="hdr-inner">
     <div class="hdr-left">
       <div class="hdr-brand">
-        <div class="hdr-logo">✿</div>
-        <h1>Bloom &mdash; タスクコーチ</h1>
+        <span class="hdr-mark">Bloom</span>
+        <h1>タスクコーチ</h1>
       </div>
-      <div class="hdr-sub">be gentle, be bold, be consistent.</div>
+      <div class="hdr-sub">Quiet focus, bold work.</div>
       <div class="hdr-date" id="hdate"></div>
     </div>
     <div class="hdr-right">
       <button class="settings-btn" id="settings-btn" aria-label="設定・バックアップ" title="設定・バックアップ">⚙</button>
-      <div class="streak-badge" id="streak-badge" title="連続達成日数">🔥 <span id="streak-num">0</span>日</div>
+      <div class="streak-badge" id="streak-badge" title="連続達成日数"><span class="num" id="streak-num">0</span> days</div>
       <div class="pt-box" onclick="document.getElementById('task-list').scrollIntoView({behavior:'smooth'})">
         <div class="pt-num" id="pt-num">0</div>
-        <div class="pt-lbl">pt</div>
+        <div class="pt-lbl">completed</div>
       </div>
     </div>
   </div>
@@ -780,53 +1088,53 @@ body::before{
 
 <main class="main">
 
-  <!-- BE: Fresh Start Effect — 月曜・月初・月末の区切り日に表示 -->
+  <!-- BE: Fresh Start Effect -->
   <div class="banner banner-fresh" id="banner-fresh">
-    <span class="banner-emoji">🌿</span>
+    <span class="banner-mark">Fresh start</span>
     <div class="banner-text" id="banner-fresh-text"></div>
   </div>
 
-  <!-- BE: Loss Aversion — バックアップ促し（7日以上未バックアップ） -->
+  <!-- BE: Loss Aversion — バックアップ促し -->
   <div class="banner banner-backup" id="banner-backup" onclick="openSettings()">
-    <span class="banner-emoji">💾</span>
+    <span class="banner-mark">Backup</span>
     <div class="banner-text" id="banner-backup-text"></div>
   </div>
 
   <!-- BE: Loss Aversion — ストリーク維持警告 -->
   <div class="banner banner-streak" id="banner-streak">
-    <span class="banner-emoji">🔥</span>
+    <span class="banner-mark">Streak</span>
     <div class="banner-text">今日タスクを完了しないと、<b><span id="streak-days"></span>日</b>続いた連続達成が途切れてしまいます。まずは<b>5分</b>だけでも動き出しましょう。</div>
   </div>
 
   <!-- Focus Card -->
   <div class="focus-card" id="focus-card">
     <div class="focus-top">
-      <span class="focus-badge" id="focus-badge">🎯 NOW</span>
-      <button class="focus-skip" id="focus-skip">次の候補 →</button>
+      <span class="focus-badge" id="focus-badge">Now</span>
+      <button class="focus-skip" id="focus-skip">次の候補</button>
     </div>
     <div class="focus-title" id="focus-title">タスクを追加してみましょう</div>
     <div class="focus-tags" id="focus-tags"></div>
     <div class="focus-reason" id="focus-reason"></div>
     <div class="focus-ifthen" id="focus-ifthen"></div>
     <div class="focus-actions" id="focus-actions">
-      <button class="btn-5min" id="btn-5min">⏱ まず5分だけ</button>
-      <button class="btn-start" id="btn-start">▶ 本格着手する</button>
+      <button class="btn-5min" id="btn-5min">5分だけ試す</button>
+      <button class="btn-start" id="btn-start">本格着手する</button>
     </div>
     <div class="focus-timer" id="focus-timer">
-      <span style="font-size:13px;opacity:.85">経過時間</span>
+      <span class="tlabel">Elapsed</span>
       <span class="timer-num" id="timer-num">0:00</span>
-      <button class="btn-done" id="btn-timer-done">✓ 完了</button>
-      <button class="btn-stop" id="btn-timer-stop">■ 停止</button>
+      <button class="btn-done" id="btn-timer-done">完了</button>
+      <button class="btn-stop" id="btn-timer-stop">停止</button>
     </div>
   </div>
 
   <!-- Filter -->
   <div class="filter-bar">
     <button class="fbtn on" data-f="all">すべて</button>
-    <button class="fbtn" data-f="1">🔴 今すぐ</button>
-    <button class="fbtn" data-f="2">🟡 計画的に</button>
-    <button class="fbtn" data-f="3">🔵 素早く</button>
-    <button class="fbtn" data-f="4">🟣 後回し</button>
+    <button class="fbtn" data-f="1">今すぐ</button>
+    <button class="fbtn" data-f="2">計画的に</button>
+    <button class="fbtn" data-f="3">素早く</button>
+    <button class="fbtn" data-f="4">後回し</button>
   </div>
 
   <div id="task-list"></div>
@@ -842,11 +1150,18 @@ body::before{
 <div class="ov" id="ov">
   <div class="modal">
     <div class="mh">
-      <span class="mttl" id="mttl">✿ タスクを追加</span>
-      <button class="mx" id="mx">✕</button>
+      <span>
+        <span class="mttl-mark">Bloom</span>
+        <span class="mttl" id="mttl">タスクを追加</span>
+      </span>
+      <button class="mx" id="mx">×</button>
     </div>
 
-    <div class="mform-section">🪷 基本情報<span class="mform-tip">まず大枠を</span></div>
+    <div class="mform-section">
+      <span class="mform-section-num">01</span>
+      <span>基本情報</span>
+      <span class="mform-tip">まず大枠を整える</span>
+    </div>
 
     <div class="fg">
       <label class="fl">タスク名 <span class="req">*</span></label>
@@ -856,10 +1171,10 @@ body::before{
     <div class="fg">
       <label class="fl">タスクの種類</label>
       <select class="fs" id="f-type">
-        <option value="client">💼 クライアントワーク</option>
-        <option value="internal">🏢 社内・自社業務</option>
-        <option value="growth">🌱 自己成長・学習</option>
-        <option value="other">📌 その他・雑務</option>
+        <option value="client">クライアントワーク</option>
+        <option value="internal">社内・自社業務</option>
+        <option value="growth">自己成長・学習</option>
+        <option value="other">その他・雑務</option>
       </select>
     </div>
 
@@ -867,35 +1182,35 @@ body::before{
       <label class="fl">売上・目標へのインパクトレベル <span class="req">*</span></label>
       <div class="il-grid" id="il-grid">
         <div class="il-opt" data-lv="5">
-          <span class="il-icon">⚡</span>
+          <span class="il-icon">V</span>
           <div>
             <div class="il-name" style="color:var(--il5)">Lv.5 直撃</div>
             <div class="il-desc">今すぐ売上・成約・入金に直結（例：クロージング、見積提出、契約書送付）</div>
           </div>
         </div>
         <div class="il-opt" data-lv="4">
-          <span class="il-icon">🎯</span>
+          <span class="il-icon">IV</span>
           <div>
             <div class="il-name" style="color:var(--il4)">Lv.4 直結</div>
             <div class="il-desc">近い将来の売上に直結（例：商談準備、提案書作成、重要なフォロー）</div>
           </div>
         </div>
         <div class="il-opt" data-lv="3">
-          <span class="il-icon">📊</span>
+          <span class="il-icon">III</span>
           <div>
             <div class="il-name" style="color:var(--il3)">Lv.3 貢献</div>
             <div class="il-desc">数ヶ月スパンで売上・目標に貢献（例：関係構築、コンテンツ制作、仕組み化）</div>
           </div>
         </div>
         <div class="il-opt" data-lv="2">
-          <span class="il-icon">🌱</span>
+          <span class="il-icon">II</span>
           <div>
             <div class="il-name" style="color:var(--il2)">Lv.2 間接</div>
             <div class="il-desc">長期的・間接的に影響（例：スキルアップ、読書、業務改善）</div>
           </div>
         </div>
         <div class="il-opt" data-lv="1">
-          <span class="il-icon">✏️</span>
+          <span class="il-icon">I</span>
           <div>
             <div class="il-name" style="color:var(--il1)">Lv.1 低</div>
             <div class="il-desc">売上・目標にほぼ無関係（例：雑務、自己満足、後回しにできる作業）</div>
@@ -907,27 +1222,27 @@ body::before{
     <div class="fg">
       <label class="fl">作業時間の目安</label>
       <select class="fs" id="f-time">
-        <option value="15m">⚡ 〜15分（すぐ終わる）</option>
-        <option value="30m">🕐 〜30分</option>
-        <option value="1h" selected>🕑 〜1時間</option>
-        <option value="2h">🕒 〜2時間</option>
-        <option value="hd">🌅 半日</option>
-        <option value="fd">📅 1日以上</option>
+        <option value="15m">〜15分（すぐ終わる）</option>
+        <option value="30m">〜30分</option>
+        <option value="1h" selected>〜1時間</option>
+        <option value="2h">〜2時間</option>
+        <option value="hd">半日</option>
+        <option value="fd">1日以上</option>
       </select>
     </div>
 
     <div class="fg">
       <label class="fl">重要度</label>
       <div class="tg-row">
-        <button type="button" class="tgb imp" id="imp-y">🔑 重要</button>
-        <button type="button" class="tgb imp" id="imp-n">— 重要でない</button>
+        <button type="button" class="tgb imp" id="imp-y">重要</button>
+        <button type="button" class="tgb imp" id="imp-n">重要でない</button>
       </div>
     </div>
     <div class="fg">
       <label class="fl">緊急度</label>
       <div class="tg-row">
-        <button type="button" class="tgb urg" id="urg-y">🚨 緊急</button>
-        <button type="button" class="tgb urg" id="urg-n">— 緊急でない</button>
+        <button type="button" class="tgb urg" id="urg-y">緊急</button>
+        <button type="button" class="tgb urg" id="urg-n">緊急でない</button>
       </div>
     </div>
     <div class="q-prev" id="q-prev"></div>
@@ -937,30 +1252,38 @@ body::before{
       <input class="fi" id="f-dead" type="date">
     </div>
 
-    <!-- BE: Implementation Intention (Gollwitzer) — WOOP の If-Then -->
-    <div class="mform-section">🗺 実行意図（If–Thenプラン）<span class="mform-tip">Gollwitzer の研究で着手率 2〜3倍</span></div>
+    <!-- BE: Implementation Intention -->
+    <div class="mform-section">
+      <span class="mform-section-num">02</span>
+      <span>実行意図（If–Thenプラン）</span>
+      <span class="mform-tip">Gollwitzer — 着手率 2〜3倍</span>
+    </div>
 
     <div class="fg">
       <label class="fl">① いつ始める？
-        <span class="fl-hint">「もし◯◯になったら」まで具体的に書くと実行率UP</span>
+        <span class="fl-hint">「もし◯◯になったら」まで具体的に書くと実行率が上がります</span>
       </label>
       <input class="fi" id="f-when" type="text" placeholder="例：明日の朝9時、コーヒーを淹れたあと">
     </div>
     <div class="fg">
       <label class="fl">② どこで？
-        <span class="fl-hint">場所を固定すると習慣化しやすい</span>
+        <span class="fl-hint">場所を固定すると習慣化しやすくなります</span>
       </label>
       <input class="fi" id="f-where" type="text" placeholder="例：自宅デスク／近くのカフェ">
     </div>
     <div class="fg">
       <label class="fl">③ 最初の一歩（2分以内で着手できる行動）
-        <span class="fl-hint">小さすぎるくらいが正解。現在志向バイアスを突破する鍵</span>
+        <span class="fl-hint">小さすぎるくらいが正解。現在志向バイアスを突破する鍵です</span>
       </label>
       <input class="fi" id="f-firststep" type="text" placeholder="例：Keynoteを開いて、表紙だけ作る">
     </div>
 
     <!-- BE: Anticipated Regret + Temptation Bundling -->
-    <div class="mform-section">💭 モチベーション設計<span class="mform-tip">任意・強い効果あり</span></div>
+    <div class="mform-section">
+      <span class="mform-section-num">03</span>
+      <span>モチベーション設計</span>
+      <span class="mform-tip">任意・強い効果あり</span>
+    </div>
 
     <div class="fg">
       <label class="fl">後悔プレビュー：やらなかったら何を失う？
@@ -980,7 +1303,7 @@ body::before{
       <textarea class="ft" id="f-memo" placeholder="補足があればどうぞ（空欄でOK）"></textarea>
     </div>
 
-    <button type="button" class="sub-btn" id="f-sub">✿ 追加する</button>
+    <button type="button" class="sub-btn" id="f-sub">追加する</button>
     <input type="hidden" id="f-eid">
   </div>
 </div>
@@ -989,8 +1312,11 @@ body::before{
 <div class="ov" id="settings-ov">
   <div class="modal">
     <div class="mh">
-      <span class="mttl">⚙ 設定・バックアップ</span>
-      <button class="mx" id="settings-close">✕</button>
+      <span>
+        <span class="mttl-mark">Settings</span>
+        <span class="mttl">設定・バックアップ</span>
+      </span>
+      <button class="mx" id="settings-close">×</button>
     </div>
 
     <div class="settings-intro">
@@ -1001,7 +1327,7 @@ body::before{
     <div class="backup-status" id="backup-status"></div>
 
     <button type="button" class="setting-btn" id="btn-export">
-      <span class="sb-ico">📤</span>
+      <span class="sb-ico">Exp</span>
       <div class="sb-main">
         <div class="sb-ttl">エクスポート（バックアップ）</div>
         <div class="sb-sub">すべてのタスクをJSONファイルで書き出し</div>
@@ -1009,7 +1335,7 @@ body::before{
     </button>
 
     <button type="button" class="setting-btn" id="btn-import">
-      <span class="sb-ico">📥</span>
+      <span class="sb-ico">Imp</span>
       <div class="sb-main">
         <div class="sb-ttl">インポート（復元）</div>
         <div class="sb-sub">JSONファイルから読み込み。現在のデータは置き換わります</div>
@@ -1017,7 +1343,7 @@ body::before{
     </button>
 
     <button type="button" class="setting-btn danger" id="btn-reset">
-      <span class="sb-ico">🗑</span>
+      <span class="sb-ico">Del</span>
       <div class="sb-main">
         <div class="sb-ttl">全データを削除</div>
         <div class="sb-sub">元に戻せません。実行前にエクスポート推奨</div>
@@ -1031,13 +1357,13 @@ body::before{
 <!-- Milestone Modal -->
 <div class="ms-ov" id="ms-ov">
   <div class="ms-card">
-    <span class="ms-emoji" id="ms-em">🎉</span>
+    <span class="ms-emoji" id="ms-em">Milestone</span>
     <div class="ms-title" id="ms-ttl"></div>
     <div class="ms-sub" id="ms-sub"></div>
     <div class="ms-stats" id="ms-stats"></div>
     <div class="breakdown" id="ms-bk"></div>
     <div class="ms-growth" id="ms-growth"></div>
-    <button type="button" class="ms-btn" id="ms-close">✿ 続けていこう</button>
+    <button type="button" class="ms-btn" id="ms-close">続けていこう</button>
   </div>
 </div>
 
@@ -1045,12 +1371,12 @@ body::before{
 // ============================================================
 // CONSTANTS
 // ============================================================
-const SK = 'bloom_tc_v5'; // 新キーに変更（旧データ破壊を避ける）
+const SK = 'bloom_tc_japandi_v1'; // 独立キー。task-coach.html (bloom_tc_v5) とは分離。
 const QI = {
-  1:{label:'🔴 今すぐやる',   sub:'重要 & 緊急',      color:'var(--q1)', bg:'var(--q1bg)', adv:'ビジネスの最優先。今すぐ着手すること。'},
-  2:{label:'🟡 計画的に',     sub:'重要 / 緊急でない', color:'var(--q2)', bg:'var(--q2bg)', adv:'成果と成長の源泉。時間をブロックして集中を。'},
-  3:{label:'🔵 素早く片付け', sub:'緊急 / 重要でない', color:'var(--q3)', bg:'var(--q3bg)', adv:'短時間でさっと終わらせる、または任せる。'},
-  4:{label:'🟣 後回しを検討', sub:'どちらでもない',    color:'var(--q4)', bg:'var(--q4bg)', adv:'本当に必要？やらない勇気も選択肢に。'},
+  1:{label:'今すぐやる',   sub:'重要 & 緊急',      color:'var(--q1)', bg:'var(--q1bg)', adv:'ビジネスの最優先。今すぐ着手すること。'},
+  2:{label:'計画的に',     sub:'重要 / 緊急でない', color:'var(--q2)', bg:'var(--q2bg)', adv:'成果と成長の源泉。時間をブロックして集中を。'},
+  3:{label:'素早く片付け', sub:'緊急 / 重要でない', color:'var(--q3)', bg:'var(--q3bg)', adv:'短時間でさっと終わらせる、または任せる。'},
+  4:{label:'後回しを検討', sub:'どちらでもない',    color:'var(--q4)', bg:'var(--q4bg)', adv:'本当に必要？やらない勇気も選択肢に。'},
 };
 const TI = {
   client:  {label:'クライアントワーク', cls:'tag-client',  pri:1},
@@ -1059,23 +1385,23 @@ const TI = {
   other:   {label:'その他',             cls:'tag-other',    pri:4},
 };
 const ILI = {
-  5:{label:'⚡ Lv.5 直撃', cls:'il5'},
-  4:{label:'🎯 Lv.4 直結', cls:'il4'},
-  3:{label:'📊 Lv.3 貢献', cls:'il3'},
-  2:{label:'🌱 Lv.2 間接', cls:'il2'},
-  1:{label:'✏️ Lv.1 低',   cls:'il1'},
+  5:{label:'Lv.5 直撃', cls:'il5'},
+  4:{label:'Lv.4 直結', cls:'il4'},
+  3:{label:'Lv.3 貢献', cls:'il3'},
+  2:{label:'Lv.2 間接', cls:'il2'},
+  1:{label:'Lv.1 低',   cls:'il1'},
 };
 const TL = {'15m':'〜15分','30m':'〜30分','1h':'〜1時間','2h':'〜2時間','hd':'半日','fd':'1日以上'};
 const MILESTONES = [10,25,50,100,150,200,300,500];
 const MS_DATA = {
-  10: ['🌱','10タスク達成','小さな一歩も、積み重ねれば大きな変化に。'],
-  25: ['⭐','25タスク突破','自分との約束を守れている、すごい。'],
-  50: ['🏅','50タスク達成','確実に前進しています。この調子で。'],
-  100:['🏆','100タスク達成','もう周りと差がついてきました。'],
-  150:['💎','150タスク達成','継続は力なり。一流の実行者へ。'],
-  200:['🚀','200タスク超え','本物の実行者です。'],
-  300:['🌟','300タスク達成','圧倒的な積み重ね、見事です。'],
-  500:['👑','500タスク・レジェンド','信じられない継続力。本物のプロ。'],
+  10: ['Milestone I',   '10タスク達成', '小さな一歩も、積み重ねれば大きな変化に。'],
+  25: ['Milestone II',  '25タスク突破', '自分との約束を守れている、見事です。'],
+  50: ['Milestone III', '50タスク達成', '確実に前進しています。この調子で。'],
+  100:['Milestone IV',  '100タスク達成', 'もう周りと差がついてきました。'],
+  150:['Milestone V',   '150タスク達成', '継続は力なり。一流の実行者へ。'],
+  200:['Milestone VI',  '200タスク超え', '本物の実行者です。'],
+  300:['Milestone VII', '300タスク達成', '圧倒的な積み重ね、見事です。'],
+  500:['Legend',        '500タスク・レジェンド', '信じられない継続力。本物のプロ。'],
 };
 
 // ============================================================
@@ -1113,7 +1439,7 @@ function daysAgoStr(n){
 function showToast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
-  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'), 2200);
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'), 2400);
 }
 
 // ============================================================
@@ -1132,7 +1458,6 @@ function scoreTask(t){
   }
   const to = {'15m':4,'30m':3,'1h':2,'2h':1,'hd':0,'fd':-1};
   if(t.q===3) s += (to[t.time]||0)*15;
-  // BE: 実行意図が書かれているタスクをわずかに優先（着手コストが低い）
   if(t.firstStep) s += 30;
   return s;
 }
@@ -1148,21 +1473,20 @@ function getReason(t){
   if(t.q===1) parts.push('重要かつ緊急のQ1タスク');
   else if(t.q===2) parts.push('重要度の高いQ2タスク（最も見返りが大きい領域）');
   const il = t.impactLevel||3;
-  if(il>=5) parts.push('売上を直撃するインパクト ⚡');
-  else if(il>=4) parts.push('売上に直結するインパクト 🎯');
+  if(il>=5) parts.push('売上を直撃するインパクト');
+  else if(il>=4) parts.push('売上に直結するインパクト');
   else if(il>=3) parts.push('目標達成への貢献度が高い');
   const dl = daysLeft(t.deadline);
   if(dl!==null){
-    if(dl<0) parts.push('⚠️ 期限超過中');
+    if(dl<0) parts.push('期限超過中');
     else if(dl===0) parts.push('今日が期限');
     else if(dl===1) parts.push('明日が期限');
     else if(dl<=3) parts.push(`期限まで残り${dl}日`);
   }
-  // BE ナッジ（着手効果・損失回避）
   const nudges = [
     '着手してしまえば、続けられます（作業興奮・Zeigarnik効果）',
     'やらない選択には見えない機会損失が発生します',
-    '未来の自分を「今の自分」が助けてあげる時間',
+    '未来の自分を、今の自分が助けてあげる時間',
     '完了したときの爽快感を思い出してください',
   ];
   if(parts.length<2) parts.push(nudges[Math.floor(Math.random()*nudges.length)]);
@@ -1190,12 +1514,11 @@ function calcStreak(){
 }
 
 // ============================================================
-// BE: Past-self comparison — 今週 vs 先週
+// BE: Past-self comparison
 // ============================================================
 function weekStats(){
-  const now = new Date();
-  const last7 = daysAgoStr(6);   // 今日含め7日
-  const last14 = daysAgoStr(13); // 先週 = 14〜7日前
+  const last7 = daysAgoStr(6);
+  const last14 = daysAgoStr(13);
   const thisWeek = D.tasks.filter(t=> t.done && t.doneAt && t.doneAt.slice(0,10) >= last7).length;
   const lastWeek = D.tasks.filter(t=> t.done && t.doneAt && t.doneAt.slice(0,10) >= last14 && t.doneAt.slice(0,10) < last7).length;
   const delta = thisWeek - lastWeek;
@@ -1203,18 +1526,17 @@ function weekStats(){
 }
 
 // ============================================================
-// BE: Fresh Start Effect — 月曜・1日・月初/月末
+// BE: Fresh Start Effect
 // ============================================================
 function freshStartMessage(){
   const n = new Date();
-  const day = n.getDay();       // 0=Sun .. 6=Sat
+  const day = n.getDay();
   const dt = n.getDate();
   const mL = new Date(n.getFullYear(), n.getMonth()+1, 0).getDate();
-  if(dt===1)         return '<b>🌸 新しい月の始まり。</b>区切りの日は行動のコストが下がります。今月の「最も重要な1件」から始めましょう。';
-  if(day===1)        return '<b>🌿 新しい週が始まりました。</b>月曜の一歩は、週末のあなたを助けます。';
-  if(dt===mL)        return '<b>🌙 月末のふり返り日。</b>「今月やれて良かったこと」を1件でも思い出すと、来月の行動が軽くなります。';
-  // 毎月1日・月初・月曜以外でも、土曜夜は予告
-  if(day===6 && n.getHours()>=18) return '<b>🌅 来週の準備に最適な時間。</b>月曜の「最初の一歩」を今のうちに決めておきましょう。';
+  if(dt===1)         return '<b>新しい月の始まり。</b>区切りの日は行動のコストが下がります。今月の「最も重要な1件」から始めましょう。';
+  if(day===1)        return '<b>新しい週が始まりました。</b>月曜の一歩は、週末のあなたを助けます。';
+  if(dt===mL)        return '<b>月末のふり返り日。</b>「今月やれて良かったこと」を1件でも思い出すと、来月の行動が軽くなります。';
+  if(day===6 && n.getHours()>=18) return '<b>来週の準備に最適な時間。</b>月曜の「最初の一歩」を今のうちに決めておきましょう。';
   return null;
 }
 
@@ -1240,21 +1562,21 @@ function render(){
 
 function renderHeader(){
   const n = new Date();
-  const days=['日','月','火','水','木','金','土'];
-  document.getElementById('hdate').textContent = `${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日（${days[n.getDay()]}）`;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const jd = ['日','月','火','水','木','金','土'];
+  document.getElementById('hdate').textContent = `${n.getFullYear()}. ${String(n.getMonth()+1).padStart(2,'0')}. ${String(n.getDate()).padStart(2,'0')}  ・  ${days[n.getDay()].toUpperCase()} / ${jd[n.getDay()]}曜日`;
   const pts = D.tasks.filter(t=>t.done).length;
   document.getElementById('pt-num').textContent = pts;
   const next = MILESTONES.find(m=>m>pts) || (Math.ceil((pts+1)/100)*100);
   const prev = MILESTONES.slice().reverse().find(m=>m<=pts) || 0;
   const pct  = next>prev ? Math.round((pts-prev)/(next-prev)*100) : 100;
   document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-pct').textContent = `${pts} / ${next}`;
-  // BE: Goal-Gradient Effect — 残り10件以下で表現を変える
+  document.getElementById('prog-pct').innerHTML = `<b>${pts}</b> &nbsp;/&nbsp; ${next}`;
   const remaining = next - pts;
   const lblEl = document.getElementById('prog-lbl');
-  if(remaining<=5 && remaining>0)      lblEl.innerHTML = `✨ あと<b>${remaining}件</b>でマイルストーン！`;
-  else if(remaining<=10 && remaining>0) lblEl.textContent = `次のマイルストーンまで、あと${remaining}件（もうすぐ）`;
-  else                                  lblEl.textContent = `次のマイルストーンまで（あと${remaining}件）`;
+  if(remaining<=5 && remaining>0)       lblEl.innerHTML = `あと<b>${remaining}件</b>でマイルストーン`;
+  else if(remaining<=10 && remaining>0) lblEl.textContent = `次のマイルストーンまで あと${remaining}件`;
+  else                                  lblEl.textContent = `次のマイルストーンまで`;
 
   const streak = calcStreak();
   document.getElementById('streak-num').textContent = streak;
@@ -1263,7 +1585,6 @@ function renderHeader(){
 }
 
 function renderBanners(){
-  // Fresh start
   const fmsg = freshStartMessage();
   const fEl = document.getElementById('banner-fresh');
   if(fmsg){
@@ -1271,7 +1592,6 @@ function renderBanners(){
     document.getElementById('banner-fresh-text').innerHTML = fmsg;
   } else { fEl.classList.remove('show'); }
 
-  // Streak warning
   const streak = calcStreak();
   const today = todayStr();
   const doneTodayAny = D.tasks.some(t=>t.done && t.doneAt && t.doneAt.startsWith(today));
@@ -1281,7 +1601,6 @@ function renderBanners(){
     document.getElementById('streak-days').textContent = streak;
   } else { wEl.classList.remove('show'); }
 
-  // BE: Backup reminder — 7日以上バックアップなし & タスク10件以上
   const bEl = document.getElementById('banner-backup');
   const daysSince = daysSinceBackup();
   const totalTasks = D.tasks.length;
@@ -1299,7 +1618,7 @@ function renderFocusCard(){
   const card = document.getElementById('focus-card');
   if(!rec){
     card.classList.add('empty');
-    document.getElementById('focus-badge').textContent = '✿ 今日はお疲れさま';
+    document.getElementById('focus-badge').textContent = 'Rest';
     document.getElementById('focus-title').textContent = '今のところ、やるべきタスクはありません';
     document.getElementById('focus-tags').innerHTML = '';
     document.getElementById('focus-reason').textContent = '右下の＋ボタンから、次の一歩を設計してみましょう。';
@@ -1312,12 +1631,12 @@ function renderFocusCard(){
   document.getElementById('focus-actions').style.display = 'flex';
 
   const badges = {
-    1:'🔴 今すぐこれを',
-    2:'🟡 次はこれを（最も効く）',
-    3:'🔵 素早く片付けよう',
-    4:'🟣 候補はこれ',
+    1:'Now — 今すぐこれを',
+    2:'Next — 最も効く一手',
+    3:'Quick — 素早く片付け',
+    4:'Later — 候補はこれ',
   };
-  document.getElementById('focus-badge').textContent = badges[rec.q] || '🎯 NOW';
+  document.getElementById('focus-badge').textContent = badges[rec.q] || 'Now';
   document.getElementById('focus-title').textContent = rec.title;
 
   const ti = TI[rec.type] || TI.other;
@@ -1328,18 +1647,17 @@ function renderFocusCard(){
               <span class="focus-tag">${TL[rec.time]||rec.time}</span>`;
   if(rec.deadline){
     const isOvr = dl!==null && dl<0;
-    tags += `<span class="focus-tag">${isOvr?'⚠️':'📅'} ${fmtDate(rec.deadline)}${isOvr?' 超過':''}</span>`;
+    tags += `<span class="focus-tag">${fmtDate(rec.deadline)}${isOvr?' 超過':''}</span>`;
   }
   document.getElementById('focus-tags').innerHTML = tags;
-  document.getElementById('focus-reason').textContent = '💡 ' + getReason(rec);
+  document.getElementById('focus-reason').textContent = getReason(rec);
 
-  // BE: 実行意図の可視化
   const itEl = document.getElementById('focus-ifthen');
   if(rec.firstStep || rec.whenStart || rec.whereStart){
-    let h = '<b>🗺 If–Thenプラン</b>';
-    if(rec.whenStart)  h += `<span>⏰ <b>いつ：</b>${esc(rec.whenStart)}</span>`;
-    if(rec.whereStart) h += `<span>📍 <b>どこで：</b>${esc(rec.whereStart)}</span>`;
-    if(rec.firstStep)  h += `<span>👣 <b>最初の一歩：</b>${esc(rec.firstStep)}</span>`;
+    let h = '<span class="label">If–Then Plan</span>';
+    if(rec.whenStart)  h += `<span class="row"><span class="row-k">いつ</span><span>${esc(rec.whenStart)}</span></span>`;
+    if(rec.whereStart) h += `<span class="row"><span class="row-k">どこで</span><span>${esc(rec.whereStart)}</span></span>`;
+    if(rec.firstStep)  h += `<span class="row"><span class="row-k">最初の一歩</span><span><b>${esc(rec.firstStep)}</b></span></span>`;
     itEl.innerHTML = h;
     itEl.classList.add('show');
   } else {
@@ -1360,13 +1678,12 @@ function renderList(){
   const byQ = {1:[],2:[],3:[],4:[]};
   sorted.forEach((t,i)=>{ t._ord=i+1; byQ[t.q].push(t); });
 
-  // BE: 過去の自分との比較を見出しに添える
   const ws = weekStats();
   let compareHtml = '';
   if(ws.thisWeek + ws.lastWeek > 0){
-    if(ws.delta>0)      compareHtml = `<span class="compare-chip">📈 先週より +${ws.delta}</span>`;
-    else if(ws.delta<0) compareHtml = `<span class="compare-chip down">📉 先週より ${ws.delta}</span>`;
-    else                compareHtml = `<span class="compare-chip same">＝ 先週と同じ</span>`;
+    if(ws.delta>0)      compareHtml = `<span class="compare-chip">先週より +${ws.delta}</span>`;
+    else if(ws.delta<0) compareHtml = `<span class="compare-chip down">先週より ${ws.delta}</span>`;
+    else                compareHtml = `<span class="compare-chip same">先週と同じ</span>`;
   }
 
   let html = '';
@@ -1374,28 +1691,26 @@ function renderList(){
     [1,2,3,4].forEach(q=>{ if(byQ[q].length) html += qSection(q, byQ[q]); });
     if(!sorted.length){
       html = `<div class="empty">
-        <span class="empty-e">🌸</span>
-        すべて片付いています、素晴らしい。
+        <span class="empty-mark">Bloom</span>
+        <div>すべて片付いています、素晴らしい。</div>
         <div class="empty-q">"We are what we repeatedly do."</div>
       </div>`;
     }
   } else {
     const q = parseInt(filter);
     html = byQ[q].length ? qSection(q, byQ[q])
-      : `<div class="empty"><span class="empty-e">✿</span>この区分にタスクはありません</div>`;
+      : `<div class="empty"><span class="empty-mark">Bloom</span><div>この区分にタスクはありません</div></div>`;
   }
 
-  // Compare chip の差し込み（任意）
   if(compareHtml && filter==='all' && sorted.length){
-    html = `<div style="display:flex;justify-content:flex-end;margin-bottom:6px;font-size:11px;color:var(--text-2)">今週の完了：<b style="margin:0 4px;color:var(--text)">${ws.thisWeek}</b>件 ${compareHtml}</div>` + html;
+    html = `<div class="week-row">今週の完了：<b>${ws.thisWeek}</b>件 ${compareHtml}</div>` + html;
   }
   document.getElementById('task-list').innerHTML = html;
 
-  // Done section
   let dh = '';
   if(done.length){
     dh = `<button class="done-tog" onclick="toggleDoneSec()">
-      <span>${showDone?'▼':'▶'}</span> 完了済み（${done.length}件 ・ ${done.length}pt）
+      <span class="caret">${showDone?'▼':'▶'}</span> <span>完了済み（${done.length}件）</span>
     </button>`;
     if(showDone) dh += done.map(t=>cardHtml(t,null)).join('');
   }
@@ -1406,8 +1721,10 @@ function qSection(q,list){
   const qi = QI[q];
   let h = `<div class="q-sec q${q}">
     <div class="q-head">
+      <span class="q-head-dot"></span>
       <span class="q-head-ttl">${qi.label}</span>
-      <span class="q-head-cnt">${qi.sub} ・ ${list.length}件</span>
+      <span class="q-head-sub">${qi.sub}</span>
+      <span class="q-head-cnt">${String(list.length).padStart(2,'0')}</span>
     </div>`;
   list.forEach(t=>{ h += cardHtml(t, t._ord); });
   return h + '</div>';
@@ -1422,30 +1739,29 @@ function cardHtml(t, ord){
   const isActive = t.id === activeTaskId;
 
   const det = [];
-  if(QI[t.q]) det.push(`<div class="det-advice">💡 ${QI[t.q].adv}</div>`);
+  if(QI[t.q]) det.push(`<div class="det-advice">— ${QI[t.q].adv}</div>`);
   if(t.whenStart || t.whereStart || t.firstStep){
-    det.push(`<div class="det-row"><div class="det-ico">🗺</div><div><b>If–Thenプラン</b></div></div>`);
-    if(t.whenStart)  det.push(`<div class="det-row"><div class="det-ico">⏰</div><div>いつ：${esc(t.whenStart)}</div></div>`);
-    if(t.whereStart) det.push(`<div class="det-row"><div class="det-ico">📍</div><div>どこで：${esc(t.whereStart)}</div></div>`);
-    if(t.firstStep)  det.push(`<div class="det-row"><div class="det-ico">👣</div><div>最初の一歩：${esc(t.firstStep)}</div></div>`);
+    det.push(`<div class="det-row"><div class="det-ico">Plan</div><div><b>If–Thenプラン</b></div></div>`);
+    if(t.whenStart)  det.push(`<div class="det-row"><div class="det-ico">When</div><div>${esc(t.whenStart)}</div></div>`);
+    if(t.whereStart) det.push(`<div class="det-row"><div class="det-ico">Where</div><div>${esc(t.whereStart)}</div></div>`);
+    if(t.firstStep)  det.push(`<div class="det-row"><div class="det-ico">Step</div><div><b>${esc(t.firstStep)}</b></div></div>`);
   }
-  if(t.regret)  det.push(`<div class="det-row"><div class="det-ico">⚠️</div><div><b>やらなかった場合：</b>${esc(t.regret)}</div></div>`);
-  if(t.reward)  det.push(`<div class="det-row"><div class="det-ico">🎁</div><div><b>ご褒美：</b>${esc(t.reward)}</div></div>`);
-  if(t.memo)    det.push(`<div class="det-row"><div class="det-ico">📝</div><div>${esc(t.memo)}</div></div>`);
+  if(t.regret)  det.push(`<div class="det-row"><div class="det-ico">Risk</div><div><b>やらなかった場合：</b>${esc(t.regret)}</div></div>`);
+  if(t.reward)  det.push(`<div class="det-row"><div class="det-ico">Rwrd</div><div><b>ご褒美：</b>${esc(t.reward)}</div></div>`);
+  if(t.memo)    det.push(`<div class="det-row"><div class="det-ico">Memo</div><div>${esc(t.memo)}</div></div>`);
   if(t.deadline){
-    const note = dl!==null ? (dl<0 ? ' (超過)' : dl===0 ? '（今日）' : `（残り${dl}日）`) : '';
-    det.push(`<div class="det-row"><div class="det-ico">📅</div><div>期限：${fmtDate(t.deadline)}${note}</div></div>`);
+    const note = dl!==null ? (dl<0 ? '（超過）' : dl===0 ? '（今日）' : `（残り${dl}日）`) : '';
+    det.push(`<div class="det-row"><div class="det-ico">Due</div><div>${fmtDate(t.deadline)}${note}</div></div>`);
   }
   const hasDet = det.length>0;
 
-  // extra inline chips
   const chips = [];
-  if(t.firstStep) chips.push(`<span class="tag tag-plan">🗺 If–Then</span>`);
-  if(t.reward)    chips.push(`<span class="tag tag-reward">🎁 ご褒美</span>`);
+  if(t.firstStep) chips.push(`<span class="tag tag-plan">If–Then</span>`);
+  if(t.reward)    chips.push(`<span class="tag tag-reward">ご褒美</span>`);
 
   return `<div class="tc${t.done?' done':''}${isActive?' active-task':''} q${t.q}" id="tc-${t.id}">
     <div class="tc-main">
-      ${ord!==null ? `<div class="tc-num">${ord}</div>` : ''}
+      ${ord!==null ? `<div class="tc-num">${String(ord).padStart(2,'0')}</div>` : ''}
       <div class="tc-chk${t.done?' on':''}" onclick="chkTask('${t.id}')">${t.done?'✓':''}</div>
       <div class="tc-body" onclick="${hasDet?`det('${t.id}')`:''}" style="${hasDet?'cursor:pointer':''}">
         <div class="tc-ttl">${esc(t.title)}</div>
@@ -1453,13 +1769,13 @@ function cardHtml(t, ord){
           <span class="tag ${ti.cls}">${ti.label}</span>
           <span class="tag ${ili.cls}">${ili.label}</span>
           <span class="tag tag-time">${TL[t.time]||t.time}</span>
-          ${t.deadline ? `<span class="tag ${isOvr?'tag-dead':isSoon?'tag-dead-ok':''}">${isOvr?'⚠️':'📅'}${fmtDate(t.deadline)}</span>` : ''}
+          ${t.deadline ? `<span class="tag ${isOvr?'tag-dead':isSoon?'tag-dead-ok':''}">${fmtDate(t.deadline)}${isOvr?' 超過':''}</span>` : ''}
           ${chips.join('')}
         </div>
       </div>
       <div class="tc-btns">
-        <button class="ibt" onclick="openEdit('${t.id}')" title="編集">✏️</button>
-        <button class="ibt del" onclick="delTask('${t.id}')" title="削除">🗑️</button>
+        <button class="ibt" onclick="openEdit('${t.id}')" title="編集">✎</button>
+        <button class="ibt del" onclick="delTask('${t.id}')" title="削除">×</button>
       </div>
     </div>
     ${hasDet ? `<div class="tc-det" id="det-${t.id}">${det.join('')}</div>` : ''}
@@ -1480,7 +1796,7 @@ function startTimer(taskId, mode5min){
     timerSec++;
     updateTimerDisplay();
     if(mode5min && timerSec===300){
-      showToast('⏱ 5分経ちました。ここまで来たらもう少し続けられます');
+      showToast('5分経ちました。ここまで来たら、もう少し続けられます');
       document.getElementById('focus-actions').style.display = 'flex';
     }
   }, 1000);
@@ -1511,20 +1827,18 @@ function chkTask(id){
     updateStreak();
     D.totalDone = (D.totalDone||0)+1;
     save(); render();
-    // BE: Peak-End rule — ご褒美ペアリング提案
     if(t.reward){
-      showToast(`✿ 完了！ご褒美タイム：${t.reward}`);
+      showToast(`完了 — ご褒美タイム：${t.reward}`);
     } else {
-      showToast('✿ +1pt！よくできました');
+      showToast('完了 — よくできました');
     }
     const pts = D.tasks.filter(x=>x.done).length;
     const ms = MILESTONES.find(m=>m===pts && !D.msShown.includes(m));
     if(ms){ D.msShown.push(ms); save(); setTimeout(()=>showMilestone(ms), 400); }
-    // ランダムボーナス（変動報酬・Skinner）
-    if(Math.random()<0.12) setTimeout(()=>showToast('🎲 ラッキーボーナス！×2ポイント'), 700);
+    if(Math.random()<0.12) setTimeout(()=>showToast('ラッキーボーナス × 2ポイント'), 700);
   } else {
     save(); render();
-    showToast('↩ 未完了に戻しました');
+    showToast('未完了に戻しました');
   }
   if(id===focusSkipId) focusSkipId=null;
 }
@@ -1534,7 +1848,7 @@ function delTask(id){
   D.tasks = D.tasks.filter(x=>x.id!==id);
   if(focusSkipId===id) focusSkipId=null;
   save(); render();
-  showToast('🗑 削除しました');
+  showToast('削除しました');
 }
 function det(id){
   const el = document.getElementById('det-'+id);
@@ -1563,13 +1877,12 @@ function updateQPrev(){
   const qi = QI[q];
   const el = document.getElementById('q-prev');
   el.textContent = `${qi.label} ／ ${qi.adv}`;
-  el.style.background = qi.bg;
   el.style.borderLeftColor = qi.color;
   el.style.color = qi.color;
 }
 function openAdd(){
-  document.getElementById('mttl').textContent = '✿ タスクを追加';
-  document.getElementById('f-sub').textContent = '✿ 追加する';
+  document.getElementById('mttl').textContent = 'タスクを追加';
+  document.getElementById('f-sub').textContent = '追加する';
   document.getElementById('f-eid').value = '';
   ['f-title','f-when','f-where','f-firststep','f-regret','f-reward','f-memo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-type').value='client';
@@ -1583,8 +1896,8 @@ function openAdd(){
 function openEdit(id){
   const t = D.tasks.find(x=>x.id===id);
   if(!t) return;
-  document.getElementById('mttl').textContent = '✿ タスクを編集';
-  document.getElementById('f-sub').textContent = '✿ 更新する';
+  document.getElementById('mttl').textContent = 'タスクを編集';
+  document.getElementById('f-sub').textContent = '更新する';
   document.getElementById('f-eid').value = id;
   document.getElementById('f-title').value = t.title||'';
   document.getElementById('f-type').value = t.type||'client';
@@ -1606,7 +1919,7 @@ function submitForm(){
   const title = document.getElementById('f-title').value.trim();
   if(!title){
     document.getElementById('f-title').focus();
-    showToast('⚠️ タスク名を入力してください'); return;
+    showToast('タスク名を入力してください'); return;
   }
   const eid = document.getElementById('f-eid').value;
   const q = calcQ(fImp, fUrg);
@@ -1626,12 +1939,11 @@ function submitForm(){
   };
   if(eid){
     Object.assign(D.tasks.find(x=>x.id===eid)||{}, data);
-    showToast('✏️ 更新しました');
+    showToast('更新しました');
   } else {
     D.tasks.push({ id:uid(), ...data, done:false, doneAt:null, created:new Date().toISOString() });
-    // BE: 実行意図が書かれていたら褒めてフィードバック
-    if(data.firstStep) showToast('✿ 追加しました。「最初の一歩」を書けたあなたは着手率がUP');
-    else               showToast('✿ タスクを追加しました');
+    if(data.firstStep) showToast('追加しました —「最初の一歩」を書けたあなたは、着手率が上がります');
+    else               showToast('タスクを追加しました');
   }
   focusSkipId=null;
   save(); closeModal(); render();
@@ -1641,7 +1953,7 @@ function submitForm(){
 // MILESTONE
 // ============================================================
 function showMilestone(ms){
-  const [em, ttl, sub] = MS_DATA[ms] || ['🎉','達成','おめでとう'];
+  const [em, ttl, sub] = MS_DATA[ms] || ['Milestone','達成','おめでとう'];
   document.getElementById('ms-em').textContent = em;
   document.getElementById('ms-ttl').textContent = ttl;
   document.getElementById('ms-sub').textContent = sub;
@@ -1652,12 +1964,12 @@ function showMilestone(ms){
   const q1q2 = done.filter(t=>t.q===1||t.q===2).length;
   const il45 = done.filter(t=>(t.impactLevel||3)>=4).length;
   document.getElementById('ms-stats').innerHTML = `
-    <div class="ms-stat"><div class="ms-stat-n">${total}</div><div class="ms-stat-l">完了タスク数</div></div>
-    <div class="ms-stat"><div class="ms-stat-n">${days}</div><div class="ms-stat-l">継続日数</div></div>
-    <div class="ms-stat"><div class="ms-stat-n">${(total/Math.max(days,1)).toFixed(1)}</div><div class="ms-stat-l">1日平均</div></div>
-    <div class="ms-stat"><div class="ms-stat-n">${Math.round(q1q2/Math.max(total,1)*100)}%</div><div class="ms-stat-l">重要タスク率</div></div>`;
+    <div class="ms-stat"><div class="ms-stat-n">${total}</div><div class="ms-stat-l">Completed</div></div>
+    <div class="ms-stat"><div class="ms-stat-n">${days}</div><div class="ms-stat-l">Days</div></div>
+    <div class="ms-stat"><div class="ms-stat-n">${(total/Math.max(days,1)).toFixed(1)}</div><div class="ms-stat-l">Per day</div></div>
+    <div class="ms-stat"><div class="ms-stat-n">${Math.round(q1q2/Math.max(total,1)*100)}%</div><div class="ms-stat-l">Important</div></div>`;
 
-  const colors = {5:'#DB2777',4:'#F97316',3:'#F59E0B',2:'#10B981',1:'#94A3B8'};
+  const colors = {5:'#A84E3F',4:'#B87A3E',3:'#8A7A5A',2:'#6E8170',1:'#A8A49F'};
   const ilRows = [5,4,3,2,1].map(lv=>{
     const cnt = done.filter(t=>(t.impactLevel||3)===lv).length;
     const pct = total?Math.round(cnt/total*100):0;
@@ -1672,12 +1984,12 @@ function showMilestone(ms){
 
   const ilAvg = done.reduce((s,t)=>s+(t.impactLevel||3),0)/Math.max(total,1);
   document.getElementById('ms-growth').innerHTML = `
-    <strong>📈 あなたの成長レポート</strong><br>
+    <strong>成長レポート</strong>
     平均インパクトレベル：<b>${ilAvg.toFixed(1)}</b>
-    （${ilAvg>=4?'高インパクト集中型 ⚡':ilAvg>=3?'バランス型 📊':'低インパクト偏重・要改善'}）<br>
+    （${ilAvg>=4?'高インパクト集中型':ilAvg>=3?'バランス型':'低インパクト偏重・要改善'}）<br>
     売上直撃・直結（Lv4-5）：<b>${il45}件（${Math.round(il45/Math.max(total,1)*100)}%）</b><br>
     ${il45/Math.max(total,1)>=0.3
-      ? '売上に直結する仕事に集中できています。素晴らしい。'
+      ? '売上に直結する仕事に集中できています。見事です。'
       : '売上直結タスクをもう一歩増やすと、成果が一気に加速します。'}`;
 
   document.getElementById('ms-ov').classList.add('open');
@@ -1686,16 +1998,16 @@ function showMilestone(ms){
 function closeMilestone(){ document.getElementById('ms-ov').classList.remove('open'); }
 function launchConfetti(){
   const w = document.getElementById('conf-wrap'); w.innerHTML='';
-  // 女性ウケを意識して花びら風の色味
-  const cls = ['#F472B6','#EC4899','#A78BFA','#FBBF24','#FDA4AF','#FBCFE8','#C4B5FD','#F5D568'];
-  for(let i=0;i<75;i++){
+  // Japandi tones — muted earth & sage
+  const cls = ['#7A8C7A','#C9BDAF','#B8B0A8','#A68D5A','#D4DBD3','#B86A5C'];
+  for(let i=0;i<40;i++){
     const el = document.createElement('div'); el.className='conf';
     const c = cls[Math.floor(Math.random()*cls.length)];
-    const sz = 6+Math.random()*10;
-    el.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${c};border-radius:${Math.random()>.4?'50%':'2px 10px 2px 10px'};animation-delay:${Math.random()*1.2}s;animation-duration:${2.2+Math.random()*1.5}s;box-shadow:0 0 6px ${c}55`;
+    const sz = 5+Math.random()*8;
+    el.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${c};border-radius:${Math.random()>.5?'50%':'1px'};animation-delay:${Math.random()*1.2}s;animation-duration:${2.8+Math.random()*1.5}s;opacity:0`;
     w.appendChild(el);
   }
-  setTimeout(()=>w.innerHTML='', 4500);
+  setTimeout(()=>w.innerHTML='', 5000);
 }
 
 // ============================================================
@@ -1708,14 +2020,13 @@ function daysSinceBackup(){
 }
 
 function openSettings(){
-  // Update backup status display
   const stEl = document.getElementById('backup-status');
   const days = daysSinceBackup();
   const total = D.tasks.length;
   const done  = D.tasks.filter(t=>t.done).length;
   if(days===null){
     stEl.className = 'backup-status warn';
-    stEl.innerHTML = `📦 現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
+    stEl.innerHTML = `現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
       <b>まだ一度もバックアップされていません。</b>最初のエクスポートを推奨します。`;
   } else {
     const safe = days <= 6;
@@ -1723,7 +2034,7 @@ function openSettings(){
     const note = safe
       ? 'バックアップは最新です。'
       : '少し時間が空いています。再エクスポートを推奨します。';
-    stEl.innerHTML = `📦 現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
+    stEl.innerHTML = `現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
       前回バックアップ：<b>${days===0?'今日':days+'日前'}</b>。${note}`;
   }
   document.getElementById('settings-ov').classList.add('open');
@@ -1733,7 +2044,7 @@ function closeSettings(){ document.getElementById('settings-ov').classList.remov
 function exportData(){
   try{
     const payload = {
-      _meta: { app:'Bloom TaskCoach', version:'v5', exportedAt:new Date().toISOString() },
+      _meta: { app:'Bloom TaskCoach (Japandi)', version:'japandi_v1', exportedAt:new Date().toISOString() },
       data: D,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
@@ -1743,17 +2054,16 @@ function exportData(){
     const n = new Date();
     const ymd = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`;
     const hm  = `${String(n.getHours()).padStart(2,'0')}${String(n.getMinutes()).padStart(2,'0')}`;
-    a.download = `bloom-taskcoach-backup-${ymd}-${hm}.json`;
+    a.download = `bloom-taskcoach-japandi-backup-${ymd}-${hm}.json`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
     D.lastBackupAt = new Date().toISOString();
     save();
-    showToast('✿ バックアップファイルを書き出しました');
+    showToast('バックアップファイルを書き出しました');
     render();
-    // Refresh settings modal status if open
     if(document.getElementById('settings-ov').classList.contains('open')) openSettings();
   } catch(e){
-    showToast('⚠️ エクスポートに失敗しました');
+    showToast('エクスポートに失敗しました');
     console.error(e);
   }
 }
@@ -1764,21 +2074,20 @@ function importData(file){
   reader.onload = e => {
     try{
       const raw = JSON.parse(e.target.result);
-      // 2つの形式に対応：① エクスポート形式 {data:...}、② 直接 D
       const cand = (raw && raw.data && Array.isArray(raw.data.tasks)) ? raw.data
                  : (raw && Array.isArray(raw.tasks)) ? raw
                  : null;
-      if(!cand){ showToast('⚠️ 正しいバックアップファイルではありません'); return; }
+      if(!cand){ showToast('正しいバックアップファイルではありません'); return; }
       const tCount = cand.tasks.length;
       if(!confirm(`${tCount}件のタスクを読み込みます。\n\n現在のデータは上書きされます。よろしいですか？\n（心配なら先に「エクスポート」を押してバックアップを取ってください）`)){
         return;
       }
       D = Object.assign(defData(), cand);
       save(); render();
-      showToast(`✿ ${tCount}件のタスクを復元しました`);
+      showToast(`${tCount}件のタスクを復元しました`);
       closeSettings();
     } catch(err){
-      showToast('⚠️ ファイルが読み込めませんでした');
+      showToast('ファイルが読み込めませんでした');
       console.error(err);
     }
   };
@@ -1786,12 +2095,11 @@ function importData(file){
 }
 
 function resetAll(){
-  // BE: 二段階確認＋エクスポート推奨で後悔回避
-  if(!confirm('⚠️ すべてのタスクと履歴を削除します。\n\n本当によろしいですか？\n（この操作は取り消せません）')) return;
+  if(!confirm('すべてのタスクと履歴を削除します。\n\n本当によろしいですか？\n（この操作は取り消せません）')) return;
   if(!confirm('最終確認：本当に全データを削除してよろしいですか？\n\n先に「エクスポート」を押していない場合、データは完全に失われます。')) return;
   D = defData();
   save(); render(); closeSettings();
-  showToast('🗑 全データを削除しました');
+  showToast('全データを削除しました');
 }
 
 // ============================================================
@@ -1824,11 +2132,11 @@ document.getElementById('focus-skip').addEventListener('click', ()=>{
 });
 document.getElementById('btn-5min').addEventListener('click', ()=>{
   const id = document.getElementById('btn-5min').dataset.id;
-  if(id){ startTimer(id, true); showToast('⏱ 5分だけ、動き出しましょう'); }
+  if(id){ startTimer(id, true); showToast('5分だけ、動き出しましょう'); }
 });
 document.getElementById('btn-start').addEventListener('click', ()=>{
   const id = document.getElementById('btn-start').dataset.id;
-  if(id){ startTimer(id, false); showToast('▶ 着手開始、集中して'); }
+  if(id){ startTimer(id, false); showToast('着手開始 — 集中して'); }
 });
 document.getElementById('btn-timer-done').addEventListener('click', ()=>{
   const id = document.getElementById('btn-timer-done').dataset.id || activeTaskId;
@@ -1857,26 +2165,13 @@ document.getElementById('btn-import').addEventListener('click', ()=>document.get
 document.getElementById('import-file').addEventListener('change', e=>{
   const f = e.target.files && e.target.files[0];
   importData(f);
-  e.target.value = ''; // allow re-selecting same file
+  e.target.value = '';
 });
 document.getElementById('btn-reset').addEventListener('click', resetAll);
 
 // ============================================================
-// MIGRATION — 旧キー(tc_v4)からデータ移行（1回のみ）
-// ============================================================
-(function migrate(){
-  if(localStorage.getItem(SK)) return; // すでに新キーあり
-  try{
-    const old = JSON.parse(localStorage.getItem('tc_v4')||'null');
-    if(old && Array.isArray(old.tasks)){
-      D = Object.assign(defData(), old);
-      save();
-    }
-  }catch(e){}
-})();
-
-// ============================================================
-// INIT
+// INIT — Japandi版は独立キーで開始、移行は行わない
+// （既存 task-coach.html のデータは bloom_tc_v5 にそのまま残ります）
 // ============================================================
 render();
 </script>
