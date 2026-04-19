@@ -343,6 +343,186 @@ body{
 .banner-text b{font-weight:700; color:var(--ink)}
 
 /* ============================================================
+   DAILY QUOTE BAND — the epigraph
+   ============================================================ */
+.quote-band{
+  max-width:900px; margin:0 auto;
+  padding:24px 28px 22px;
+  border-bottom:1px solid var(--rule-3);
+  display:flex; gap:20px; align-items:flex-start;
+  background:linear-gradient(180deg, var(--paper) 0%, #ECE5D5 100%);
+  position:relative;
+}
+.quote-band::before{
+  content:''; position:absolute; left:28px; right:28px; top:0;
+  height:1px; background:var(--rule-3);
+}
+.quote-band .qb-mark{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-weight:700;
+  font-size:72px; line-height:.55; color:var(--crimson);
+  flex-shrink:0; margin-top:14px; opacity:.55;
+  font-feature-settings:"liga" 1;
+}
+.quote-band .qb-body{flex:1; min-width:0}
+.quote-band .qb-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:10.5px; font-weight:500; color:var(--gold);
+  letter-spacing:.22em; text-transform:uppercase;
+  margin-bottom:6px;
+}
+.quote-band .qb-text{
+  font-family:'Noto Serif JP','Playfair Display',serif;
+  font-style:italic; font-size:16.5px; line-height:1.65;
+  color:var(--ink); letter-spacing:.01em;
+  font-weight:500;
+}
+.quote-band .qb-meta{
+  margin-top:10px;
+  display:flex; align-items:center; gap:12px;
+  flex-wrap:wrap;
+  font-family:'Playfair Display',serif;
+  font-size:12px; color:var(--muted);
+}
+.quote-band .qb-author{
+  font-style:italic; color:var(--ink-2);
+  font-weight:500; letter-spacing:.03em;
+}
+.quote-band .qb-author::before{
+  content:'— '; color:var(--muted);
+}
+.quote-band .qb-tag{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:9.5px; font-weight:600;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold);
+  padding:2px 8px; border:1px solid var(--rule-2);
+  border-radius:0;
+}
+@media (max-width:620px){
+  .quote-band{padding:18px 18px; gap:12px}
+  .quote-band .qb-mark{font-size:52px; margin-top:10px}
+  .quote-band .qb-text{font-size:14.5px; line-height:1.6}
+  .quote-band .qb-meta{font-size:11px; gap:8px}
+}
+
+/* ============================================================
+   SORT MODE BAR — 3 philosophies of ordering
+   ============================================================ */
+.mode-bar{
+  display:flex; gap:0; margin:0 auto 20px;
+  border-top:1px solid var(--rule-3);
+  border-bottom:1px solid var(--rule-3);
+  background:var(--card);
+  max-width:900px;
+}
+.mode-bar .mb-lbl{
+  padding:10px 16px 10px 4px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.08em; align-self:center;
+  border-right:1px solid var(--rule-3);
+  flex-shrink:0;
+}
+.mb-btn{
+  flex:1; padding:10px 12px;
+  border:none; background:transparent;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; font-weight:600; color:var(--muted);
+  cursor:pointer; white-space:nowrap;
+  letter-spacing:.2em; text-transform:uppercase;
+  border-right:1px solid var(--rule-3);
+  transition:color .2s, background .2s;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  position:relative;
+}
+.mb-btn:last-child{border-right:none}
+.mb-btn .mb-ico{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:12px; font-weight:700; letter-spacing:0;
+  color:var(--whisper); text-transform:none;
+}
+.mb-btn:hover{color:var(--ink); background:var(--card-2)}
+.mb-btn.on{color:var(--ink); background:var(--paper)}
+.mb-btn.on .mb-ico{color:var(--crimson)}
+.mb-btn.on::after{
+  content:''; position:absolute; left:20%; right:20%; bottom:-1px;
+  height:2px; background:var(--crimson);
+}
+@media (max-width:620px){
+  .mode-bar .mb-lbl{display:none}
+  .mb-btn{font-size:10px; padding:10px 8px; letter-spacing:.12em}
+}
+
+/* ============================================================
+   AUTO-INFERENCE PREVIEW — the sub-headline
+   ============================================================ */
+.auto-card{
+  margin:6px 0 18px;
+  padding:14px 16px 14px 18px;
+  background:var(--card);
+  border-left:3px solid var(--gold);
+  border-top:1px solid var(--rule-3);
+  border-bottom:1px solid var(--rule-3);
+  display:flex; align-items:center; gap:14px;
+  flex-wrap:wrap;
+}
+.auto-card .ac-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:10.5px; color:var(--gold);
+  letter-spacing:.22em; text-transform:uppercase;
+  flex-shrink:0;
+}
+.auto-card .ac-body{
+  flex:1; min-width:0;
+  font-family:'Noto Serif JP','Playfair Display',serif;
+  font-size:13.5px; color:var(--ink);
+  line-height:1.55;
+}
+.auto-card .ac-chip{
+  display:inline-block;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; font-weight:600;
+  color:var(--ink); background:var(--paper);
+  border:1px solid var(--rule-2);
+  padding:3px 9px; margin-right:6px; margin-bottom:4px;
+  letter-spacing:.06em;
+}
+.auto-card .ac-chip .roman{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-weight:700; margin-right:5px;
+  color:var(--crimson);
+}
+.auto-card .ac-chip.ac-chip-lv{color:var(--ink-2)}
+.auto-card .ac-chip.ac-chip-time{color:var(--ink-2)}
+.auto-card .ac-chip.ac-chip-dl{color:var(--crimson); border-color:rgba(184,29,36,.4)}
+.auto-card .ac-toggle{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10px; font-weight:600;
+  color:var(--muted); background:transparent;
+  border:1px solid var(--rule-2); padding:5px 12px;
+  letter-spacing:.16em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .2s, color .2s;
+}
+.auto-card .ac-toggle:hover{color:var(--ink); background:var(--card-2)}
+.auto-card .ac-toggle.open{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+
+/* Detail drawer */
+.detail-drawer{display:none}
+.detail-drawer.open{display:block}
+
+/* Auto-locked field (for client type) */
+.auto-lock{position:relative; opacity:.85; pointer-events:none}
+.auto-lock::after{
+  content:'自動'; position:absolute; top:6px; right:8px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:10px; color:var(--gold); letter-spacing:.18em;
+  background:var(--paper); padding:2px 6px;
+  border:1px solid var(--gold);
+}
+
+/* ============================================================
    FOCUS CARD — the cover story
    ============================================================ */
 .focus-card{
@@ -1584,6 +1764,19 @@ body{
   </div>
 </header>
 
+<!-- Daily Quote Band — the epigraph (changes once per day) -->
+<section class="quote-band" id="quote-band">
+  <span class="qb-mark" aria-hidden="true">&ldquo;</span>
+  <div class="qb-body">
+    <div class="qb-kicker">今日の一節 &middot; Epigraph</div>
+    <div class="qb-text" id="qb-text"></div>
+    <div class="qb-meta">
+      <span class="qb-author" id="qb-author"></span>
+      <span class="qb-tag" id="qb-tag"></span>
+    </div>
+  </div>
+</section>
+
 <main class="main">
 
   <!-- BE: Fresh Start Effect -->
@@ -1624,6 +1817,14 @@ body{
       <button class="btn-done" id="btn-timer-done">完了する</button>
       <button class="btn-stop" id="btn-timer-stop">中断</button>
     </div>
+  </div>
+
+  <!-- Sort Mode Switcher -->
+  <div class="mode-bar" id="mode-bar">
+    <span class="mb-lbl">今日の並び順</span>
+    <button class="mb-btn on" data-m="eisen" title="重要×緊急で優先順位を決める"><span class="mb-ico">E</span>アイゼンハワー</button>
+    <button class="mb-btn" data-m="frog" title="一番重いタスクを朝イチに片付ける"><span class="mb-ico">F</span>Frog</button>
+    <button class="mb-btn" data-m="momentum" title="短い勝利を重ねて勢いをつける"><span class="mb-ico">M</span>モメンタム</button>
   </div>
 
   <!-- Filter -->
@@ -1667,7 +1868,7 @@ body{
     <div class="mform-section">
       <span class="mform-section-num">I</span>
       <span>基本情報</span>
-      <span class="mform-tip">まず大枠を整える</span>
+      <span class="mform-tip">3つ入れば、あとは自動で整います</span>
     </div>
 
     <div class="fg">
@@ -1686,77 +1887,94 @@ body{
     </div>
 
     <div class="fg">
-      <label class="fl">売上・目標へのインパクトレベル <span class="req">*</span></label>
-      <div class="il-grid" id="il-grid">
-        <div class="il-opt" data-lv="5">
-          <span class="il-icon">V</span>
-          <div>
-            <div class="il-name" style="color:var(--il5)">Lv.5 直撃</div>
-            <div class="il-desc">今すぐ売上・成約・入金に直結（例：クロージング、見積提出、契約書送付）</div>
-          </div>
-        </div>
-        <div class="il-opt" data-lv="4">
-          <span class="il-icon">IV</span>
-          <div>
-            <div class="il-name" style="color:var(--il4)">Lv.4 直結</div>
-            <div class="il-desc">近い将来の売上に直結（例：商談準備、提案書作成、重要なフォロー）</div>
-          </div>
-        </div>
-        <div class="il-opt" data-lv="3">
-          <span class="il-icon">III</span>
-          <div>
-            <div class="il-name" style="color:var(--il3)">Lv.3 貢献</div>
-            <div class="il-desc">数ヶ月スパンで売上・目標に貢献（例：関係構築、コンテンツ制作、仕組み化）</div>
-          </div>
-        </div>
-        <div class="il-opt" data-lv="2">
-          <span class="il-icon">II</span>
-          <div>
-            <div class="il-name" style="color:var(--il2)">Lv.2 間接</div>
-            <div class="il-desc">長期的・間接的に影響（例：スキルアップ、読書、業務改善）</div>
-          </div>
-        </div>
-        <div class="il-opt" data-lv="1">
-          <span class="il-icon">I</span>
-          <div>
-            <div class="il-name" style="color:var(--il1)">Lv.1 低</div>
-            <div class="il-desc">売上・目標にほぼ無関係（例：雑務、自己満足、後回しにできる作業）</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fg">
-      <label class="fl">作業時間の目安</label>
-      <select class="fs" id="f-time">
-        <option value="15m">〜15分（すぐ終わる）</option>
-        <option value="30m">〜30分</option>
-        <option value="1h" selected>〜1時間</option>
-        <option value="2h">〜2時間</option>
-        <option value="hd">半日</option>
-        <option value="fd">1日以上</option>
-      </select>
-    </div>
-
-    <div class="fg">
-      <label class="fl">重要度</label>
-      <div class="tg-row">
-        <button type="button" class="tgb imp" id="imp-y">重要</button>
-        <button type="button" class="tgb imp" id="imp-n">重要でない</button>
-      </div>
-    </div>
-    <div class="fg">
-      <label class="fl">緊急度</label>
-      <div class="tg-row">
-        <button type="button" class="tgb urg" id="urg-y">緊急</button>
-        <button type="button" class="tgb urg" id="urg-n">緊急でない</button>
-      </div>
-    </div>
-    <div class="q-prev" id="q-prev"></div>
-
-    <div class="fg">
-      <label class="fl">期限（任意）</label>
+      <label class="fl">期限（任意）
+        <span class="fl-hint">期限を入れると、緊急度は日付から自動判定されます</span>
+      </label>
       <input class="fi" id="f-dead" type="date">
+    </div>
+
+    <!-- Auto-Inference Preview -->
+    <div class="auto-card" id="auto-card">
+      <span class="ac-kicker">自動推定</span>
+      <div class="ac-body" id="ac-body">
+        <span class="ac-chip"><span class="roman">II.</span>計画的に</span>
+        <span class="ac-chip ac-chip-lv">Lv.3 貢献</span>
+        <span class="ac-chip ac-chip-time">〜30分</span>
+      </div>
+      <button type="button" class="ac-toggle" id="ac-toggle">詳細を手で調整</button>
+    </div>
+
+    <!-- Collapsible manual-override drawer -->
+    <div class="detail-drawer" id="detail-drawer">
+
+      <div class="fg" id="fg-il">
+        <label class="fl">売上・目標へのインパクトレベル</label>
+        <div class="il-grid" id="il-grid">
+          <div class="il-opt" data-lv="5">
+            <span class="il-icon">V</span>
+            <div>
+              <div class="il-name" style="color:var(--il5)">Lv.5 直撃</div>
+              <div class="il-desc">今すぐ売上・成約・入金に直結（例：クロージング、見積提出、契約書送付）</div>
+            </div>
+          </div>
+          <div class="il-opt" data-lv="4">
+            <span class="il-icon">IV</span>
+            <div>
+              <div class="il-name" style="color:var(--il4)">Lv.4 直結</div>
+              <div class="il-desc">近い将来の売上に直結（例：商談準備、提案書作成、重要なフォロー）</div>
+            </div>
+          </div>
+          <div class="il-opt" data-lv="3">
+            <span class="il-icon">III</span>
+            <div>
+              <div class="il-name" style="color:var(--il3)">Lv.3 貢献</div>
+              <div class="il-desc">数ヶ月スパンで売上・目標に貢献（例：関係構築、コンテンツ制作、仕組み化）</div>
+            </div>
+          </div>
+          <div class="il-opt" data-lv="2">
+            <span class="il-icon">II</span>
+            <div>
+              <div class="il-name" style="color:var(--il2)">Lv.2 間接</div>
+              <div class="il-desc">長期的・間接的に影響（例：スキルアップ、読書、業務改善）</div>
+            </div>
+          </div>
+          <div class="il-opt" data-lv="1">
+            <span class="il-icon">I</span>
+            <div>
+              <div class="il-name" style="color:var(--il1)">Lv.1 低</div>
+              <div class="il-desc">売上・目標にほぼ無関係（例：雑務、自己満足、後回しにできる作業）</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="fl">作業時間の目安</label>
+        <select class="fs" id="f-time">
+          <option value="15m">〜15分（すぐ終わる）</option>
+          <option value="30m">〜30分</option>
+          <option value="1h" selected>〜1時間</option>
+          <option value="2h">〜2時間</option>
+          <option value="hd">半日</option>
+          <option value="fd">1日以上</option>
+        </select>
+      </div>
+
+      <div class="fg" id="fg-imp">
+        <label class="fl">重要度</label>
+        <div class="tg-row">
+          <button type="button" class="tgb imp" id="imp-y">重要</button>
+          <button type="button" class="tgb imp" id="imp-n">重要でない</button>
+        </div>
+      </div>
+      <div class="fg" id="fg-urg">
+        <label class="fl">緊急度</label>
+        <div class="tg-row">
+          <button type="button" class="tgb urg" id="urg-y">緊急</button>
+          <button type="button" class="tgb urg" id="urg-n">緊急でない</button>
+        </div>
+      </div>
+      <div class="q-prev" id="q-prev"></div>
     </div>
 
     <!-- BE: Implementation Intention -->
@@ -1980,9 +2198,137 @@ const MS_DATA = {
 };
 
 // ============================================================
+// DAILY QUOTES — the epigraph corpus
+// ============================================================
+const QUOTES = [
+  // 日本の経営者・起業家
+  { t:'能力を未来進行形でとらえる。今できないことでも、努力すれば必ずできるようになる。', a:'稲盛和夫', g:'経営' },
+  { t:'成功するまで諦めない。だから失敗がない。', a:'松下幸之助', g:'経営' },
+  { t:'やりもしないで、何が分かる。', a:'本田宗一郎', g:'経営' },
+  { t:'夢なき者に理想なし、理想なき者に計画なし、計画なき者に実行なし、実行なき者に成功なし。', a:'吉田松陰', g:'思想' },
+  { t:'志を立てて、以て万事の源と為す。', a:'渋沢栄一', g:'経営' },
+  { t:'挑戦しないことが、もっとも大きなリスクだ。', a:'三木谷浩史', g:'経営' },
+  { t:'一勝九敗。打席に立ち続けた者だけが勝つ。', a:'柳井正', g:'経営' },
+  { t:'登る山を決めれば、道は半分決まったようなものだ。', a:'孫正義', g:'経営' },
+  { t:'人のやらないことをやる。そこに事業の芽がある。', a:'盛田昭夫', g:'経営' },
+  { t:'一日一日を、ていねいに生きる。それが一生を、ていねいに生きることになる。', a:'千利休（伝）', g:'思想' },
+
+  // 海外の経営・マーケティング
+  { t:'時間を管理できない者は、何も管理できない。', a:'ピーター・ドラッカー', g:'経営' },
+  { t:'成果をあげる者は、仕事からではなく時間からスタートする。', a:'ピーター・ドラッカー', g:'経営' },
+  { t:'マーケティングの目的は、販売を不要にすることだ。', a:'ピーター・ドラッカー', g:'マーケ' },
+  { t:'始めることよりも、続けてしまうことのほうが難しい。', a:'セス・ゴーディン', g:'マーケ' },
+  { t:'凡庸を選んではいけない。凡庸は選ばれないからだ。', a:'セス・ゴーディン', g:'マーケ' },
+  { t:'集中とは、やらないことを決めることだ。', a:'スティーブ・ジョブズ', g:'経営' },
+  { t:'世界を変えられると本気で思う者だけが、実際に世界を変える。', a:'スティーブ・ジョブズ', g:'経営' },
+  { t:'完璧を目指すよりも、まず終わらせろ。', a:'マーク・ザッカーバーグ', g:'生産性' },
+  { t:'人はWHYを買う。WHATではない。', a:'サイモン・シネック', g:'マーケ' },
+  { t:'品質は偶然には生まれない。常に、知的努力の結果である。', a:'ジョン・ラスキン', g:'思想' },
+
+  // 行動経済学・生産性
+  { t:'私たちは、同じ金額の利得よりも、損失のほうを約2倍強く感じる。', a:'ダニエル・カーネマン', g:'行動経済' },
+  { t:'速い思考と遅い思考。両者を使い分けられる者が、賢い決断を下す。', a:'ダニエル・カーネマン', g:'行動経済' },
+  { t:'ナッジは、選択の自由を奪わずに、人をより良い選択へと導く。', a:'リチャード・セイラー', g:'行動経済' },
+  { t:'いつ・どこで・どうやるかを決めておけ。実行率は2〜3倍になる。', a:'ピーター・ゴルヴィッツァー', g:'行動経済' },
+  { t:'1%の改善を毎日続ければ、1年で37倍になる。', a:'ジェームズ・クリア', g:'生産性' },
+  { t:'集中力は、21世紀における最も希少な資源だ。', a:'カル・ニューポート', g:'生産性' },
+  { t:'やらないことリストこそ、やることリストよりも価値が高い。', a:'ティム・フェリス', g:'生産性' },
+  { t:'完了は、完璧に勝る。', a:'シェリル・サンドバーグ', g:'生産性' },
+
+  // 思想・文学・芸術
+  { t:'人間の不幸のほとんどは、静かな部屋に一人で座っていられないことから生じる。', a:'パスカル', g:'思想' },
+  { t:'天は人の上に人を造らず、人の下に人を造らず。', a:'福沢諭吉', g:'思想' },
+  { t:'一身独立して、一国独立す。', a:'福沢諭吉', g:'思想' },
+  { t:'注意を向けること——それが私たちの、終わることのない本来の仕事だ。', a:'メアリー・オリヴァー', g:'芸術' },
+  { t:'いそがずに、しかし休まずに。', a:'ゲーテ', g:'思想' },
+  { t:'千里の道も、一歩より始まる。', a:'老子', g:'思想' },
+  { t:'最も大切なことは、最も大切でないことに、引きずられないことだ。', a:'ゲーテ', g:'思想' },
+  { t:'知ることよりも、感じることのほうが、しばしば大切だ。', a:'レイチェル・カーソン', g:'芸術' },
+  { t:'自分の時間を生きよ。他人の人生を生きるには、人生は短すぎる。', a:'スティーブ・ジョブズ', g:'思想' },
+  { t:'小さな規律の積み重ねが、大きな規律を作る。', a:'ジム・ローン', g:'生産性' },
+];
+
+// ============================================================
+// AUTO-INFERENCE — guess quadrant, impact, time from task text
+// ============================================================
+const KW_TIME_15 = /メール|返信|連絡|チャット|スラック|slack|確認|返答|報告|リマインド|ショート|quick/i;
+const KW_TIME_30 = /レビュー|校正|チェック|添削|承認|発注|見積|請求/i;
+const KW_TIME_1H = /会議|ミーティング|mtg|打ち合わせ|面談|商談|1on1|ワンオン|電話会|ヒアリング/i;
+const KW_TIME_2H = /資料作成|スライド|プレゼン|提案書|企画書|レポート|議事録|原稿|構成/i;
+const KW_TIME_HD = /執筆|記事|ブログ|コンテンツ制作|設計|構築|実装|コーディング|リサーチ|調査|研究|分析レポート/i;
+
+const KW_IMP_HI  = /提案|企画|契約|クロージング|戦略|面談|商談|経営|クリティカル|最優先|キーマン/i;
+const KW_URG     = /至急|緊急|急ぎ|急いで|締切|deadline|今日中|明日中|urgent|クレーム|障害|事故|本日/i;
+const KW_Q3      = /メール|返信|連絡|slack|チャット|確認|報告|問い合わせ|経費|精算|書類整理|入力|更新|登録|振込/i;
+
+function inferAttrs({ title, type, deadline }){
+  title = title || '';
+  let impactLevel = 3, imp = false, urg = false, time = '30m';
+  const hi = KW_IMP_HI.test(title);
+
+  // Impact & importance by type
+  if(type === 'client'){
+    imp = true;
+    impactLevel = hi ? 5 : 4;
+  } else if(type === 'growth'){
+    imp = true;
+    impactLevel = 2;
+  } else if(type === 'internal'){
+    impactLevel = hi ? 3 : 2;
+    imp = hi;
+  } else {
+    impactLevel = hi ? 3 : 1;
+    imp = false;
+  }
+
+  // Time by keywords
+  if(KW_TIME_15.test(title)) time = '15m';
+  else if(KW_TIME_30.test(title)) time = '30m';
+  else if(KW_TIME_1H.test(title)) time = '1h';
+  else if(KW_TIME_2H.test(title)) time = '2h';
+  else if(KW_TIME_HD.test(title)) time = 'hd';
+  else time = (type === 'client') ? '1h' : '30m';
+
+  // Urgency — deadline dominates, keywords as backup
+  const dl = daysLeft(deadline);
+  if(dl !== null){
+    if(dl <= 1) urg = true;
+    else if(dl <= 3 && (imp || type === 'client')) urg = true;
+    else urg = false;
+  } else if(KW_URG.test(title)){
+    urg = true;
+  }
+
+  // Q3 override — not-important but urgent-feeling admin
+  if(!imp && KW_Q3.test(title) && dl===null) urg = true;
+
+  return { imp, urg, impactLevel, time, q: calcQ(imp, urg) };
+}
+
+// Deterministic: same quote for the entire day
+function pickDailyQuote(){
+  const n = new Date();
+  const key = n.getFullYear()*10000 + (n.getMonth()+1)*100 + n.getDate();
+  // simple hash
+  let h = key;
+  h = ((h<<5)-h) ^ 0x9E3779B1;
+  h = h & 0x7FFFFFFF;
+  return QUOTES[h % QUOTES.length];
+}
+function renderQuoteBand(){
+  const q = pickDailyQuote();
+  const tEl = document.getElementById('qb-text');
+  const aEl = document.getElementById('qb-author');
+  const gEl = document.getElementById('qb-tag');
+  if(tEl) tEl.textContent = q.t;
+  if(aEl) aEl.textContent = q.a;
+  if(gEl) gEl.textContent = q.g;
+}
+
+// ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen' }; }
 function load(){
   try{ return Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}')); }
   catch(e){ return defData(); }
@@ -2018,12 +2364,38 @@ function showToast(msg){
 }
 
 // ============================================================
-// SCORING / RECOMMENDATION
+// SCORING / RECOMMENDATION — mode-aware
 // ============================================================
-function scoreTask(t){
+const TIME_WEIGHT = {'15m':4,'30m':3,'1h':2,'2h':1,'hd':0,'fd':-1};
+
+function scoreTask(t, mode){
+  mode = mode || (D && D.sortMode) || 'eisen';
+  const dl = daysLeft(t.deadline);
+  const tw = TIME_WEIGHT[t.time] || 0;
+
+  if(mode === 'frog'){
+    // Eat the Frog: heaviest/most impactful task first
+    let s = (t.impactLevel||3) * 200;
+    s += [0, 500, 300, 50, 0][t.q] || 0;
+    s += (3 - tw) * 60; // longer = heavier = higher priority
+    if(dl!==null && dl<=1) s += 150;
+    return s;
+  }
+  if(mode === 'momentum'){
+    // Short wins first to build momentum
+    let s = tw * 120;
+    s += (t.impactLevel||3) * 30;
+    s += [0, 250, 180, 150, 40][t.q] || 0;
+    if(dl!==null){
+      if(dl<0) s += 300;
+      else if(dl===0) s += 180;
+      else if(dl<=3) s += 60;
+    }
+    return s;
+  }
+  // eisen (default): Eisenhower + deadline hybrid
   let s = [0,1000,700,300,50][t.q] || 0;
   s += (t.impactLevel||3) * 90;
-  const dl = daysLeft(t.deadline);
   if(dl!==null){
     if(dl<0) s+=600;
     else if(dl===0) s+=450;
@@ -2031,8 +2403,7 @@ function scoreTask(t){
     else if(dl<=3) s+=100;
     else if(dl<=7) s+=40;
   }
-  const to = {'15m':4,'30m':3,'1h':2,'2h':1,'hd':0,'fd':-1};
-  if(t.q===3) s += (to[t.time]||0)*15;
+  if(t.q===3) s += tw*15;
   if(t.firstStep) s += 30;
   return s;
 }
@@ -2116,12 +2487,13 @@ function freshStartMessage(){
 }
 
 // ============================================================
-// SORT
+// SORT — mode-aware
 // ============================================================
 function sortActive(list){
+  const mode = (D && D.sortMode) || 'eisen';
   return [...list].sort((a,b)=>{
-    if(a.q!==b.q) return a.q-b.q;
-    return scoreTask(b)-scoreTask(a);
+    if(mode === 'eisen' && a.q !== b.q) return a.q - b.q;
+    return scoreTask(b, mode) - scoreTask(a, mode);
   });
 }
 
@@ -2130,9 +2502,17 @@ function sortActive(list){
 // ============================================================
 function render(){
   renderHeader();
+  renderQuoteBand();
+  renderModeBar();
   renderBanners();
   renderFocusCard();
   renderList();
+}
+function renderModeBar(){
+  const mode = D.sortMode || 'eisen';
+  document.querySelectorAll('.mb-btn').forEach(b=>{
+    b.classList.toggle('on', b.dataset.m === mode);
+  });
 }
 
 function renderHeader(){
@@ -2439,6 +2819,9 @@ function toggleDoneSec(){ showDone = !showDone; renderList(); }
 // ============================================================
 // FORM
 // ============================================================
+// Track which fields the user has manually touched — auto-inference stops overwriting these
+let manualFields = new Set();
+
 function syncImp(){
   document.getElementById('imp-y').classList.toggle('on', fImp);
   document.getElementById('imp-n').classList.toggle('on', !fImp);
@@ -2460,6 +2843,88 @@ function updateQPrev(){
   el.style.borderLeftColor = qi.color;
   el.style.color = qi.color;
 }
+
+function updateAutoCard(){
+  const q = calcQ(fImp, fUrg);
+  const qi = QI[q];
+  const ili = ILI[fIL];
+  const timeEl = document.getElementById('f-time');
+  const timeVal = timeEl ? timeEl.value : '30m';
+  const dead = document.getElementById('f-dead').value || null;
+  const dl = daysLeft(dead);
+  let dlChip = '';
+  if(dl !== null){
+    if(dl < 0) dlChip = `<span class="ac-chip ac-chip-dl">期限超過</span>`;
+    else if(dl === 0) dlChip = `<span class="ac-chip ac-chip-dl">今日が期限</span>`;
+    else if(dl === 1) dlChip = `<span class="ac-chip ac-chip-dl">明日が期限</span>`;
+    else if(dl <= 3) dlChip = `<span class="ac-chip ac-chip-dl">あと${dl}日</span>`;
+    else dlChip = `<span class="ac-chip">あと${dl}日</span>`;
+  }
+  const body = document.getElementById('ac-body');
+  if(body){
+    body.innerHTML =
+      `<span class="ac-chip"><span class="roman">${Q_ROMAN[q]}</span>${qi.label}</span>`+
+      `<span class="ac-chip ac-chip-lv">${ili.label}</span>`+
+      `<span class="ac-chip ac-chip-time">${TL[timeVal]||timeVal}</span>`+
+      dlChip;
+  }
+}
+
+// Apply locks for client type — impact & importance are auto-set by rule
+function applyTypeLocks(type){
+  const fgIL  = document.getElementById('fg-il');
+  const fgImp = document.getElementById('fg-imp');
+  if(type === 'client'){
+    if(fgIL)  fgIL.classList.add('auto-lock');
+    if(fgImp) fgImp.classList.add('auto-lock');
+  } else {
+    if(fgIL)  fgIL.classList.remove('auto-lock');
+    if(fgImp) fgImp.classList.remove('auto-lock');
+  }
+}
+
+// Core: recompute auto values from current inputs, applying to fields not manually touched
+function reInfer(){
+  const title = document.getElementById('f-title').value.trim();
+  const type  = document.getElementById('f-type').value;
+  const dead  = document.getElementById('f-dead').value || null;
+
+  applyTypeLocks(type);
+
+  const auto = inferAttrs({ title, type, deadline: dead });
+
+  // client type ALWAYS forces imp & impactLevel (ignore manual overrides)
+  if(type === 'client'){
+    fImp = auto.imp;
+    fIL  = auto.impactLevel;
+    manualFields.delete('imp');
+    manualFields.delete('il');
+  } else {
+    if(!manualFields.has('imp')) fImp = auto.imp;
+    if(!manualFields.has('il'))  fIL  = auto.impactLevel;
+  }
+
+  // If deadline is set, urgency is ALWAYS auto (deadline dominates)
+  if(dead) manualFields.delete('urg');
+  if(!manualFields.has('urg')) fUrg = auto.urg;
+
+  const timeEl = document.getElementById('f-time');
+  if(timeEl && !manualFields.has('time')) timeEl.value = auto.time;
+
+  syncImp(); syncUrg(); syncIL(); updateQPrev(); updateAutoCard();
+}
+function closeDetailDrawer(){
+  const d = document.getElementById('detail-drawer');
+  const t = document.getElementById('ac-toggle');
+  if(d) d.classList.remove('open');
+  if(t){ t.classList.remove('open'); t.textContent = '詳細を手で調整'; }
+}
+function openDetailDrawer(){
+  const d = document.getElementById('detail-drawer');
+  const t = document.getElementById('ac-toggle');
+  if(d) d.classList.add('open');
+  if(t){ t.classList.add('open'); t.textContent = '詳細を閉じる'; }
+}
 function openAdd(){
   document.getElementById('mttl').textContent = 'タスクを追加';
   document.getElementById('f-sub').textContent = '保存する';
@@ -2468,8 +2933,10 @@ function openAdd(){
   document.getElementById('f-type').value='client';
   document.getElementById('f-time').value='1h';
   document.getElementById('f-dead').value='';
-  fImp=true; fUrg=false; fIL=3;
-  syncImp(); syncUrg(); syncIL(); updateQPrev();
+  fImp=true; fUrg=false; fIL=4;
+  manualFields = new Set();
+  closeDetailDrawer();
+  reInfer();
   document.getElementById('ov').classList.add('open');
   setTimeout(()=>document.getElementById('f-title').focus(), 100);
 }
@@ -2490,7 +2957,11 @@ function openEdit(id){
   document.getElementById('f-reward').value = t.reward||'';
   document.getElementById('f-memo').value = t.memo||'';
   fImp=t.imp; fUrg=t.urg; fIL=t.impactLevel||3;
-  syncImp(); syncUrg(); syncIL(); updateQPrev();
+  // On edit, treat all values as "manual" (saved values) so they aren't overwritten
+  manualFields = new Set(['imp','urg','il','time']);
+  applyTypeLocks(t.type||'client');
+  syncImp(); syncUrg(); syncIL(); updateQPrev(); updateAutoCard();
+  openDetailDrawer();
   document.getElementById('ov').classList.add('open');
   setTimeout(()=>document.getElementById('f-title').focus(), 100);
 }
@@ -2923,12 +3394,27 @@ document.getElementById('ov').addEventListener('click', e=>{
   if(e.target===document.getElementById('ov')) closeModal();
 });
 document.getElementById('f-sub').addEventListener('click', submitForm);
-document.getElementById('imp-y').addEventListener('click', ()=>{ fImp=true;  syncImp(); updateQPrev(); });
-document.getElementById('imp-n').addEventListener('click', ()=>{ fImp=false; syncImp(); updateQPrev(); });
-document.getElementById('urg-y').addEventListener('click', ()=>{ fUrg=true;  syncUrg(); updateQPrev(); });
-document.getElementById('urg-n').addEventListener('click', ()=>{ fUrg=false; syncUrg(); updateQPrev(); });
+document.getElementById('imp-y').addEventListener('click', ()=>{ fImp=true;  manualFields.add('imp'); syncImp(); updateQPrev(); updateAutoCard(); });
+document.getElementById('imp-n').addEventListener('click', ()=>{ fImp=false; manualFields.add('imp'); syncImp(); updateQPrev(); updateAutoCard(); });
+document.getElementById('urg-y').addEventListener('click', ()=>{ fUrg=true;  manualFields.add('urg'); syncUrg(); updateQPrev(); updateAutoCard(); });
+document.getElementById('urg-n').addEventListener('click', ()=>{ fUrg=false; manualFields.add('urg'); syncUrg(); updateQPrev(); updateAutoCard(); });
 document.querySelectorAll('.il-opt').forEach(el=>{
-  el.addEventListener('click', ()=>{ fIL=parseInt(el.dataset.lv); syncIL(); });
+  el.addEventListener('click', ()=>{ fIL=parseInt(el.dataset.lv); manualFields.add('il'); syncIL(); updateAutoCard(); });
+});
+document.getElementById('f-time').addEventListener('change', ()=>{ manualFields.add('time'); updateAutoCard(); });
+// Live inference as user types title / changes type / changes deadline
+document.getElementById('f-title').addEventListener('input', ()=>{ reInfer(); });
+document.getElementById('f-type').addEventListener('change', ()=>{
+  // Type change invalidates certain manual markers that were type-specific
+  manualFields.delete('il');
+  manualFields.delete('imp');
+  reInfer();
+});
+document.getElementById('f-dead').addEventListener('change', ()=>{ reInfer(); });
+// Detail drawer toggle
+document.getElementById('ac-toggle').addEventListener('click', ()=>{
+  const d = document.getElementById('detail-drawer');
+  if(d.classList.contains('open')) closeDetailDrawer(); else openDetailDrawer();
 });
 document.querySelectorAll('.fbtn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -2936,6 +3422,24 @@ document.querySelectorAll('.fbtn').forEach(btn=>{
     document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
     btn.classList.add('on');
     renderList();
+  });
+});
+
+// Sort-mode switcher — 3 philosophies
+document.querySelectorAll('.mb-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    D.sortMode = btn.dataset.m;
+    document.querySelectorAll('.mb-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    save();
+    renderFocusCard();
+    renderList();
+    const modeMsg = {
+      eisen:'並び順：アイゼンハワー（Q1→Q2→Q3→Q4）',
+      frog:'並び順：Frog方式（重いものから朝イチで）',
+      momentum:'並び順：モメンタム（短い勝利から）',
+    }[D.sortMode];
+    if(modeMsg) showToast(modeMsg);
   });
 });
 document.getElementById('focus-skip').addEventListener('click', ()=>{
