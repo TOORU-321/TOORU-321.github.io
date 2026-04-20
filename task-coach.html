@@ -185,6 +185,52 @@ body{
   letter-spacing:.02em;
 }
 
+/* ---- Auth pill (login state indicator) ----------------- */
+.hdr-tag .auth-pill{
+  display:inline-flex; align-items:center; gap:7px;
+  margin-top:6px;
+  padding:4px 12px 4px 10px;
+  background:transparent;
+  border:1px solid var(--rule-2);
+  border-radius:99px;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; font-weight:600; letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  cursor:pointer;
+  transition:color .2s, border-color .2s, background .2s;
+}
+.hdr-tag .auth-pill:hover{
+  color:var(--ink); border-color:var(--ink-2);
+}
+.hdr-tag .auth-pill .auth-pill-dot{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--muted);
+  transition:background .2s, box-shadow .2s;
+}
+.hdr-tag .auth-pill.is-in{
+  color:var(--ink); border-color:var(--ink);
+  background:rgba(46,125,63,.05);
+}
+.hdr-tag .auth-pill.is-in:hover{
+  background:rgba(46,125,63,.1);
+}
+.hdr-tag .auth-pill.is-in .auth-pill-dot{
+  background:#2e7d3f;
+  box-shadow:0 0 0 3px rgba(46,125,63,.18);
+}
+.hdr-tag .auth-pill.is-out{
+  color:var(--crimson); border-color:rgba(184,29,36,.4);
+}
+.hdr-tag .auth-pill.is-out:hover{
+  background:rgba(184,29,36,.05); border-color:var(--crimson);
+}
+.hdr-tag .auth-pill.is-out .auth-pill-dot{
+  background:transparent;
+  border:1.5px solid var(--crimson);
+  width:8px; height:8px;
+}
+
 /* ---- Colophon (page foot) ------------------------------ */
 .colophon{
   max-width:900px; margin:40px auto 0;
@@ -547,6 +593,12 @@ body{
   font-family:'Playfair Display',serif; font-style:italic;
   color:var(--crimson); font-size:16px; flex-shrink:0;
   min-width:18px;
+}
+.welcome-bullets .wb-hint{
+  display:block;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--muted);
+  letter-spacing:.04em; margin-top:2px;
 }
 .welcome-hint{
   font-family:'Playfair Display','Noto Serif JP',serif; font-style:italic;
@@ -1752,6 +1804,103 @@ body{
   font-weight:400; letter-spacing:.02em;
 }
 
+/* ============================================================
+   LOCKED REGION — sections visible but gated behind Google sign-in
+   ============================================================ */
+.locked-region{
+  position:relative;
+  transition:filter .25s;
+}
+.locked-region.is-locked{
+  filter:grayscale(.25);
+}
+.locked-region.is-locked > .mform-section,
+.locked-region.is-locked > .fg{
+  opacity:.42;
+  pointer-events:none;
+  user-select:none;
+}
+.locked-region.is-locked input,
+.locked-region.is-locked textarea,
+.locked-region.is-locked select,
+.locked-region.is-locked button{
+  pointer-events:none;
+}
+.lock-overlay{
+  position:absolute;
+  top:0; left:-12px; right:-12px; bottom:0;
+  display:flex; align-items:center; justify-content:center;
+  z-index:3;
+  padding:20px 12px;
+  background:linear-gradient(180deg, rgba(250,247,241,0) 0%, rgba(250,247,241,.55) 22%, rgba(250,247,241,.88) 50%, rgba(250,247,241,.96) 100%);
+  backdrop-filter:blur(1px);
+  pointer-events:auto;
+}
+.lock-overlay[hidden]{display:none}
+.lock-body{
+  background:var(--paper);
+  border:1px solid var(--rule-2);
+  border-left:3px solid var(--crimson);
+  padding:22px 26px 20px;
+  max-width:420px; width:92%;
+  box-shadow:0 10px 30px rgba(30,20,15,.08);
+  text-align:center;
+  font-family:'Noto Serif JP',serif;
+}
+.lock-ico{
+  font-size:22px; line-height:1;
+  color:var(--crimson);
+  margin-bottom:10px;
+  font-family:'Playfair Display',serif;
+}
+.lock-ttl{
+  font-family:'Playfair Display','Noto Serif JP',serif;
+  font-size:19px; font-weight:600;
+  color:var(--ink);
+  letter-spacing:-.005em;
+  margin-bottom:6px;
+}
+.lock-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:10.5px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--crimson);
+  margin-bottom:8px;
+}
+.lock-desc{
+  font-size:13px; color:var(--ink-2);
+  line-height:1.65;
+  margin-bottom:14px;
+  font-family:'Noto Serif JP',serif;
+}
+.lock-desc b{color:var(--ink); font-weight:700}
+.lock-cta{
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px;
+  padding:11px 22px;
+  background:var(--ink); color:var(--paper);
+  border:none; border-radius:0;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:700;
+  letter-spacing:.22em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .2s, transform .1s;
+}
+.lock-cta:hover{background:var(--crimson)}
+.lock-cta:active{transform:translateY(1px)}
+.lock-cta .lc-g{
+  display:inline-block; width:14px; height:14px;
+  background:#fff; border-radius:50%;
+  color:#4285F4; font-family:'Playfair Display',serif; font-weight:700;
+  font-size:11px; line-height:14px; text-align:center;
+}
+@media (max-width:520px){
+  .lock-overlay{left:-6px; right:-6px; padding:12px 6px}
+  .lock-body{padding:18px 18px 16px}
+  .lock-ttl{font-size:17px}
+  .lock-desc{font-size:12.5px}
+  .lock-cta{padding:10px 16px; font-size:10px; letter-spacing:.18em}
+}
+
 .fg{margin-bottom:22px}
 .fl{
   display:block; font-size:10px; font-weight:600;
@@ -2736,6 +2885,8 @@ body{
   .wordmark-sub{font-size:12px}
   .hdr-tag{font-size:9.5px; letter-spacing:.18em}
   .hdr-tag .byline{display:none}
+  .hdr-tag .auth-pill{font-size:9.5px; padding:3px 10px 3px 8px; margin-top:5px; letter-spacing:.14em}
+  .hdr-tag .auth-pill .auth-pill-dot{width:6px; height:6px}
   .streak-badge{padding:5px 10px; min-height:42px}
   .streak-badge .num{font-size:17px}
   .streak-badge .lbl{font-size:7.5px; letter-spacing:.24em}
@@ -2819,6 +2970,10 @@ body{
       <div class="hdr-tag">
         <span class="date" id="hdate"></span>
         <span class="byline">あなたのための、あなたが編む一冊。</span>
+        <button class="auth-pill is-out" id="auth-pill" type="button" aria-label="ログイン状態" title="ログイン状態">
+          <span class="auth-pill-dot" aria-hidden="true"></span>
+          <span class="auth-pill-txt" id="auth-pill-txt">未ログイン</span>
+        </button>
       </div>
     </div>
     <div class="hdr-right">
@@ -3128,56 +3283,75 @@ body{
       <div class="q-prev" id="q-prev"></div>
     </div>
 
-    <!-- BE: Implementation Intention -->
-    <div class="mform-section">
-      <span class="mform-section-num">II</span>
-      <span>実行意図（If–Thenプラン）</span>
-      <span class="mform-tip">Gollwitzer — 着手率 2〜3倍</span>
-    </div>
+    <!-- BE: Implementation Intention — LOCKED behind Google sign-in -->
+    <div class="locked-region" data-lock-key="intention">
+      <div class="lock-overlay" hidden>
+        <div class="lock-body">
+          <div class="lock-kicker">Members only · Chapter II &amp; III</div>
+          <div class="lock-ico">🔒</div>
+          <div class="lock-ttl">ログインで解放</div>
+          <div class="lock-desc">
+            <b>II 実行意図</b> と <b>III モチベーション設計</b> はGoogleログインで解放されます。<br>
+            着手率を<b>2〜3倍</b>に引き上げる設計で、ランキング上位を狙える最大<b>+22pt</b>ぶんのボーナスが開きます。
+          </div>
+          <button class="lock-cta" type="button" data-lock-cta="signin">
+            <span class="lc-g" aria-hidden="true">G</span>
+            Googleでログイン
+          </button>
+        </div>
+      </div>
 
-    <div class="fg">
-      <label class="fl">① いつ始める？<span class="fl-pt">+4 pt</span>
-        <span class="fl-hint">「もし◯◯になったら」まで具体的に書くと実行率が上がります</span>
-      </label>
-      <input class="fi" id="f-when" type="text" placeholder="例：明日の朝9時、コーヒーを淹れたあと">
-    </div>
-    <div class="fg">
-      <label class="fl">② どこで？<span class="fl-pt">+3 pt</span>
-        <span class="fl-hint">場所を固定すると習慣化しやすくなります</span>
-      </label>
-      <input class="fi" id="f-where" type="text" placeholder="例：自宅デスク／近くのカフェ">
-    </div>
-    <div class="fg">
-      <label class="fl">③ 最初の一歩（2分以内で着手できる行動）<span class="fl-pt">+6 pt</span>
-        <span class="fl-hint">小さすぎるくらいが正解。現在志向バイアスを突破する鍵です</span>
-      </label>
-      <input class="fi" id="f-firststep" type="text" placeholder="例：Keynoteを開いて、表紙だけ作る">
-    </div>
+      <div class="mform-section">
+        <span class="mform-section-num">II</span>
+        <span>実行意図（If–Thenプラン）</span>
+        <span class="mform-tip">Gollwitzer — 着手率 2〜3倍</span>
+      </div>
 
-    <!-- BE: Anticipated Regret + Temptation Bundling -->
-    <div class="mform-section">
-      <span class="mform-section-num">III</span>
-      <span>モチベーション設計</span>
-      <span class="mform-tip">任意・書くほどスコアボーナス</span>
-    </div>
+      <div class="fg">
+        <label class="fl">① いつ始める？<span class="fl-pt">+4 pt</span>
+          <span class="fl-hint">「もし◯◯になったら」まで具体的に書くと実行率が上がります</span>
+        </label>
+        <input class="fi" id="f-when" type="text" placeholder="例：明日の朝9時、コーヒーを淹れたあと">
+      </div>
+      <div class="fg">
+        <label class="fl">② どこで？<span class="fl-pt">+3 pt</span>
+          <span class="fl-hint">場所を固定すると習慣化しやすくなります</span>
+        </label>
+        <input class="fi" id="f-where" type="text" placeholder="例：自宅デスク／近くのカフェ">
+      </div>
+      <div class="fg">
+        <label class="fl">③ 最初の一歩（2分以内で着手できる行動）<span class="fl-pt">+6 pt</span>
+          <span class="fl-hint">小さすぎるくらいが正解。現在志向バイアスを突破する鍵です</span>
+        </label>
+        <input class="fi" id="f-firststep" type="text" placeholder="例：Keynoteを開いて、表紙だけ作る">
+      </div>
 
-    <div class="fg">
-      <label class="fl">後悔プレビュー：やらなかったら何を失う？<span class="fl-pt">+4 pt</span>
-        <span class="fl-hint">損失回避バイアスを味方につける</span>
-      </label>
-      <textarea class="ft" id="f-regret" placeholder="例：明日提出できないと、先方の信頼を失い、案件が流れる"></textarea>
-    </div>
-    <div class="fg">
-      <label class="fl">ご褒美ペアリング：完了したら自分に何をあげる？<span class="fl-pt">+3 pt</span>
-        <span class="fl-hint">Temptation Bundling（Milkman）で着手コストを下げる</span>
-      </label>
-      <input class="fi" id="f-reward" type="text" placeholder="例：お気に入りのカフェラテを淹れる／散歩に出る">
-    </div>
+      <!-- BE: Anticipated Regret + Temptation Bundling -->
+      <div class="mform-section">
+        <span class="mform-section-num">III</span>
+        <span>モチベーション設計</span>
+        <span class="mform-tip">任意・書くほどスコアボーナス</span>
+      </div>
 
-    <div class="fg">
-      <label class="fl">メモ（自由記述）<span class="fl-pt">+2 pt</span></label>
-      <textarea class="ft" id="f-memo" placeholder="補足があればどうぞ（空欄でOK）"></textarea>
-    </div>
+      <div class="fg">
+        <label class="fl">後悔プレビュー：やらなかったら何を失う？<span class="fl-pt">+4 pt</span>
+          <span class="fl-hint">損失回避バイアスを味方につける</span>
+        </label>
+        <textarea class="ft" id="f-regret" placeholder="例：明日提出できないと、先方の信頼を失い、案件が流れる"></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">ご褒美ペアリング：完了したら自分に何をあげる？<span class="fl-pt">+3 pt</span>
+          <span class="fl-hint">Temptation Bundling（Milkman）で着手コストを下げる</span>
+        </label>
+        <input class="fi" id="f-reward" type="text" placeholder="例：お気に入りのカフェラテを淹れる／散歩に出る">
+      </div>
+
+      <div class="fg">
+        <label class="fl">メモ（自由記述）<span class="fl-pt">+2 pt</span></label>
+        <textarea class="ft" id="f-memo" placeholder="補足があればどうぞ（空欄でOK）"></textarea>
+      </div>
+    </div><!-- /.locked-region -->
+
 
     <button type="button" class="sub-btn" id="f-sub">保存する</button>
     <input type="hidden" id="f-eid">
@@ -3251,6 +3425,28 @@ body{
       <h4><span class="man-no">06</span>振り返り・バックアップ</h4>
       <p>右上メニューの<b>振り返り</b>で達成の蓄積を可視化できます。<br>データはブラウザ内（localStorage）に保存されるため、<b>設定・バックアップ</b>から定期的にファイル書き出しをしておくと安心です。</p>
     </section>
+    <section class="man-sec">
+      <h4><span class="man-no">07</span>Googleログインで「上位機能」を解放</h4>
+      <p>
+        <b>未ログイン</b>でも基本機能はすべて使えます（①タスク登録、重要度・緊急度、並び順3モード、今日の一手、タイマー、振り返り）。
+        ただし、<b>II 実行意図（If–Thenプラン）</b> と <b>III モチベーション設計</b> の2章は <b>Googleログイン時のみ</b> 設定できます。
+      </p>
+      <p>
+        この2章は<b>着手率を2〜3倍</b>に引き上げる設計で、埋めるほどスコアが伸びます（最大 <b>+22pt</b> ぶんのボーナス）。
+        <b>ランキング上位を目指すなら、ログインは必須</b>です。
+      </p>
+      <div class="man-tip">
+        ヘッダー右上の「<b>●ログイン中／○未ログイン</b>」チップで現在の状態がいつでも確認できます。未ログインなら、ロックされた章の「🔒 ログインで解放」からそのまま開放できます。
+      </div>
+    </section>
+    <section class="man-sec">
+      <h4><span class="man-no">08</span>端末間の同期とプライバシー</h4>
+      <p>
+        Googleログインすると、<b>PC・スマホ・タブレット</b>で記録が同じ「あなた」として集計されます（匿名時は端末ごとに別ユーザー扱い）。
+        ランキング表示や公開範囲は、メニュー「<b>設定・バックアップ</b>」の <b>プライバシー</b> 項目で切り替え可能。
+      </p>
+      <div class="man-tip">収集・公開される情報や免責事項は、ページ下部「<b>ご利用にあたって</b>」でいつでも確認できます。</div>
+    </section>
     <div class="man-foot">
       <button class="welcome-primary" id="manual-ok" type="button">読み終えた</button>
     </div>
@@ -3271,6 +3467,7 @@ body{
         <div class="wb-row"><span class="wb-num">I</span><span><b>タイトル＋種類＋期限</b>だけで追加できます</span></div>
         <div class="wb-row"><span class="wb-num">II</span><span>上部の<b>「今日の一手」</b>にひとまず集中</span></div>
         <div class="wb-row"><span class="wb-num">III</span><span><b>右上のメニュー</b>に振り返り／設定／マニュアル</span></div>
+        <div class="wb-row"><span class="wb-num">IV</span><span><b>Googleログイン</b>で実行意図・モチベーション設計（最大+22pt）を解放<span class="wb-hint">ランキング上位を狙うなら必須</span></span></div>
       </div>
       <div class="welcome-hint">3分で読める使い方ガイドもご用意しています。</div>
     </div>
@@ -4119,6 +4316,31 @@ function signOutCloud(){
     });
 }
 
+// Lock regions — show/hide overlays + disable inputs when not signed in with Google
+function updateLockedRegions(){
+  const isLoggedIn = !!(fbUser && !fbIsAnonymous);
+  document.querySelectorAll('.locked-region').forEach(reg => {
+    const overlay = reg.querySelector('.lock-overlay');
+    if(isLoggedIn){
+      reg.classList.remove('is-locked');
+      if(overlay) overlay.hidden = true;
+      reg.querySelectorAll('input, textarea, select').forEach(el => {
+        el.disabled = false;
+        el.removeAttribute('tabindex');
+        el.removeAttribute('aria-disabled');
+      });
+    } else {
+      reg.classList.add('is-locked');
+      if(overlay) overlay.hidden = false;
+      reg.querySelectorAll('input, textarea, select').forEach(el => {
+        el.disabled = true;
+        el.setAttribute('tabindex', '-1');
+        el.setAttribute('aria-disabled', 'true');
+      });
+    }
+  });
+}
+
 function updateAuthUI(){
   const btn    = document.getElementById('auth-btn');
   const label  = document.getElementById('auth-label');
@@ -4150,6 +4372,26 @@ function updateAuthUI(){
     if(numEl) numEl.textContent = 'IV';
     if(avatar){ avatar.hidden = true; avatar.src = ''; }
   }
+  // Auth pill — always-visible login state indicator
+  const pill    = document.getElementById('auth-pill');
+  const pillTxt = document.getElementById('auth-pill-txt');
+  if(pill && pillTxt){
+    if(fbUser && !fbIsAnonymous){
+      pill.classList.add('is-in');
+      pill.classList.remove('is-out');
+      pillTxt.textContent = 'ログイン中';
+      pill.setAttribute('aria-label', 'ログイン中（クリックで設定）');
+      pill.setAttribute('title', fbUser.displayName || fbUser.email || 'ログイン中');
+    } else {
+      pill.classList.add('is-out');
+      pill.classList.remove('is-in');
+      pillTxt.textContent = '未ログイン';
+      pill.setAttribute('aria-label', '未ログイン（クリックでGoogleログイン）');
+      pill.setAttribute('title', 'クリックでGoogleログイン');
+    }
+  }
+  // Refresh locked regions when auth changes
+  try { updateLockedRegions(); } catch(e){}
   // Also refresh the greeting card on auth state change
   try { renderGreeting(); } catch(e){}
 }
@@ -5765,6 +6007,30 @@ document.getElementById('btn-reset').addEventListener('click', resetAll);
   });
 })();
 
+// Auth pill — always-visible chip in header; logged-out → triggers sign-in, logged-in → opens privacy settings
+(function wireAuthPill(){
+  const pill = document.getElementById('auth-pill');
+  if(!pill) return;
+  pill.addEventListener('click', () => {
+    if(fbUser && !fbIsAnonymous){
+      // Logged in: open settings (privacy lives there); non-destructive
+      if(typeof openSettings === 'function') openSettings();
+    } else {
+      signInWithGoogle();
+    }
+  });
+})();
+
+// Lock CTAs — any button inside a .lock-overlay triggers Google sign-in
+(function wireLockCtas(){
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('.lock-cta');
+    if(!target) return;
+    e.preventDefault();
+    signInWithGoogle();
+  });
+})();
+
 // Recap
 document.getElementById('recap-btn').addEventListener('click', openRecap);
 document.getElementById('recap-close').addEventListener('click', closeRecap);
@@ -6218,6 +6484,8 @@ try { renderMiniLeader(); } catch(e){}
 try { restorePrivacyUI(); } catch(e){}
 // Initial greeting render (will also refresh on auth state changes via updateAuthUI)
 try { renderGreeting(); } catch(e){}
+// Initial lock state — shown as locked until Firebase confirms auth
+try { updateLockedRegions(); } catch(e){}
 // Refresh greeting when nickname is edited — f-nick is the input inside Settings
 (function hookNickForGreeting(){
   const nk = document.getElementById('f-nick');
