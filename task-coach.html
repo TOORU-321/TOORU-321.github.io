@@ -1823,8 +1823,16 @@ body{
 .locked-region.is-locked input,
 .locked-region.is-locked textarea,
 .locked-region.is-locked select,
-.locked-region.is-locked button{
+.locked-region.is-locked > .fg button,
+.locked-region.is-locked > .mform-section button{
   pointer-events:none;
+}
+/* The overlay and its CTA must stay clickable even while locked */
+.locked-region.is-locked > .lock-overlay,
+.locked-region.is-locked > .lock-overlay *{
+  pointer-events:auto;
+  opacity:1;
+  user-select:auto;
 }
 .lock-overlay{
   position:absolute;
