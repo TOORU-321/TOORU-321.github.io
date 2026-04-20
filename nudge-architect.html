@@ -3318,6 +3318,8 @@ const Auth = {
         syncFirebase(sv2);
       });
     } else {
+      // ログイン済み：既存スコアを Firestore に同期（ランキング反映）
+      syncFirebase(sv);
       Hub.show();
     }
   },
