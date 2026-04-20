@@ -4263,6 +4263,51 @@ function fbInit(){
         setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
       }
     });
+
+    // Redirect-flow return: when the user comes back from signInWithRedirect
+    // or linkWithRedirect, getRedirectResult() resolves with the credential.
+    // onAuthStateChanged will have already updated the UI; here we surface
+    // the success toast and handle credential-already-in-use recovery.
+    try {
+      fbAuth.getRedirectResult()
+        .then(result => {
+          if(result && result.user){
+            showToast('Googleアカウントと連携しました');
+            // Force a UI refresh in case onAuthStateChanged hasn't fired yet.
+            try { updateAuthUI(); } catch(e){}
+            scheduleUpload(500);
+            setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
+          }
+        })
+        .catch(err => {
+          if(!err || !err.code) return;
+          if(err.code === 'auth/credential-already-in-use'){
+            if(confirm('このGoogleアカウントはすでに登録されています。\n切り替えますか？\n\n（現在のこの端末の記録はこのまま残りますが、ログインはそちらのGoogleアカウントに切り替わります）')){
+              fbAuth.signInWithCredential(err.credential)
+                .then(() => {
+                  showToast('Googleアカウントと連携しました');
+                  try { updateAuthUI(); } catch(e){}
+                  scheduleUpload(500);
+                })
+                .catch(e => {
+                  console.warn('[fb] signInWithCredential after redirect', e);
+                  showToast('切り替えに失敗しました');
+                });
+            }
+            return;
+          }
+          console.warn('[fb] getRedirectResult error', err);
+          if(err.code === 'auth/network-request-failed'){
+            showToast('ネットワーク接続を確認してください');
+          } else if(err.code === 'auth/unauthorized-domain'){
+            showToast('このサイトではログインが許可されていません（管理者にご連絡ください）');
+          } else if(err.code === 'auth/operation-not-allowed'){
+            showToast('Googleログインが現在利用できません');
+          } else {
+            showToast('ログインできませんでした。少ししてから再度お試しください');
+          }
+        });
+    } catch(e){ console.warn('[fb] getRedirectResult setup', e); }
   }catch(e){
     console.warn('[fb] init error', e);
     fbError = 'init-fail';
@@ -4420,11 +4465,28 @@ function _doGoogleSignInActual(){
     showToast(msg);
   };
 
+  // On desktop PCs, popup flow commonly fails silently due to COOP (Cross-Origin-
+  // Opener-Policy) + third-party cookie blocking — the popup closes but never
+  // hands the credential back to the opener, leaving the page in anonymous
+  // state forever. Fall back to redirect flow for desktop. Mobile browsers
+  // (incl. WebViews) handle popup reliably.
+  const ua = (navigator.userAgent || '').toLowerCase();
+  const isMobileUA = /android|iphone|ipad|ipod|mobile|webview/.test(ua);
+  const useRedirect = !isMobileUA;
+
   if(current && current.isAnonymous){
     // Link: preserve UID and all data
-    current.linkWithPopup(provider).then(onSuccess).catch(onError);
+    if(useRedirect){
+      current.linkWithRedirect(provider).catch(onError);
+    } else {
+      current.linkWithPopup(provider).then(onSuccess).catch(onError);
+    }
   } else {
-    fbAuth.signInWithPopup(provider).then(onSuccess).catch(onError);
+    if(useRedirect){
+      fbAuth.signInWithRedirect(provider).catch(onError);
+    } else {
+      fbAuth.signInWithPopup(provider).then(onSuccess).catch(onError);
+    }
   }
 }
 
