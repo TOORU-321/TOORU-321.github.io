@@ -535,6 +535,76 @@ body{
 }
 .welcome-later:hover{background:var(--card-2); color:var(--ink)}
 
+/* ---- Daily Quote Popup (今日の一節) --------------------- */
+.quote-modal{
+  max-width:560px;
+  border-top:6px solid var(--crimson);
+  background:linear-gradient(180deg, var(--card) 0%, #F4EFE6 100%);
+}
+.qp-quote{
+  display:flex; gap:18px; align-items:flex-start;
+  padding:22px 22px 22px;
+  background:var(--paper);
+  border:1px solid var(--rule-3);
+  border-left:3px solid var(--crimson);
+  margin-bottom:18px;
+  position:relative;
+}
+.qp-mark{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-weight:700;
+  font-size:66px; line-height:.55; color:var(--crimson);
+  flex-shrink:0; margin-top:12px; opacity:.55;
+}
+.qp-text{
+  flex:1; min-width:0;
+  font-family:'Noto Serif JP','Playfair Display',serif;
+  font-style:italic;
+  font-size:17px; line-height:1.75;
+  color:var(--ink); font-weight:500;
+  letter-spacing:.01em;
+}
+.qp-meta{
+  display:flex; align-items:center; gap:12px;
+  flex-wrap:wrap;
+  font-family:'Playfair Display',serif;
+  font-size:12.5px; color:var(--muted);
+  padding:0 4px;
+  margin-bottom:18px;
+}
+.qp-author{
+  font-style:italic; color:var(--ink-2);
+  font-weight:500; letter-spacing:.03em;
+}
+.qp-author::before{content:'— '; color:var(--muted)}
+.qp-tag{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:9.5px; font-weight:600;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold);
+  padding:2px 8px; border:1px solid var(--rule-2);
+}
+.qp-foot{
+  display:flex; justify-content:flex-end;
+  padding-top:16px; border-top:1px solid var(--rule-3);
+}
+.qp-ok{
+  background:var(--ink); color:var(--paper);
+  padding:12px 24px;
+  border:1px solid var(--ink);
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .18s, color .18s, transform .12s;
+}
+.qp-ok:hover{background:var(--crimson); border-color:var(--crimson); transform:translateY(-1px)}
+@media (max-width:620px){
+  .qp-quote{padding:18px 16px; gap:12px}
+  .qp-mark{font-size:52px}
+  .qp-text{font-size:15px; line-height:1.65}
+}
+
 /* ============================================================
    MAIN
    ============================================================ */
@@ -2150,20 +2220,6 @@ body{
   </div>
 </header>
 
-<!-- Daily Quote Band — the epigraph (changes once per day, collapsible) -->
-<section class="quote-band collapsed" id="quote-band" onclick="toggleQuoteBand()" role="button" aria-label="今日の一節を開閉">
-  <span class="qb-mark" aria-hidden="true">&ldquo;</span>
-  <div class="qb-body">
-    <div class="qb-kicker">今日の一節</div>
-    <div class="qb-text" id="qb-text"></div>
-    <div class="qb-meta">
-      <span class="qb-author" id="qb-author"></span>
-      <span class="qb-tag" id="qb-tag"></span>
-    </div>
-  </div>
-  <span class="qb-chev" aria-hidden="true">&#x25BE;</span>
-</section>
-
 <main class="main">
 
   <!-- BE: Fresh Start Effect -->
@@ -2417,6 +2473,30 @@ body{
 
     <button type="button" class="sub-btn" id="f-sub">保存する</button>
     <input type="hidden" id="f-eid">
+  </div>
+</div>
+
+<!-- Daily Quote Popup -->
+<div class="ov" id="quote-ov">
+  <div class="modal quote-modal">
+    <div class="mh">
+      <span>
+        <span class="mttl-mark">Epigraph · 編集部より</span>
+        <span class="mttl">今日の一節</span>
+      </span>
+      <button class="mx" id="quote-close" aria-label="閉じる">×</button>
+    </div>
+    <div class="qp-quote">
+      <span class="qp-mark" aria-hidden="true">&ldquo;</span>
+      <span class="qp-text" id="qp-text"></span>
+    </div>
+    <div class="qp-meta">
+      <span class="qp-author" id="qp-author"></span>
+      <span class="qp-tag" id="qp-tag"></span>
+    </div>
+    <div class="qp-foot">
+      <button class="qp-ok" id="quote-ok" type="button">ありがとう</button>
+    </div>
   </div>
 </div>
 
@@ -2796,35 +2876,12 @@ function pickDailyQuote(){
   h = h & 0x7FFFFFFF;
   return QUOTES[h % QUOTES.length];
 }
-function renderQuoteBand(){
-  const q = pickDailyQuote();
-  const tEl = document.getElementById('qb-text');
-  const aEl = document.getElementById('qb-author');
-  const gEl = document.getElementById('qb-tag');
-  if(tEl) tEl.textContent = q.t;
-  if(aEl) aEl.textContent = q.a;
-  if(gEl) gEl.textContent = q.g;
-  // 開閉状態を復元（その日のうちだけ開いた状態を保持）
-  const band = document.getElementById('quote-band');
-  if(band){
-    const openedToday = D.quoteOpenDay === todayStr();
-    band.classList.toggle('collapsed', !openedToday);
-  }
-}
-function toggleQuoteBand(){
-  const band = document.getElementById('quote-band');
-  if(!band) return;
-  const wasCollapsed = band.classList.contains('collapsed');
-  band.classList.toggle('collapsed', !wasCollapsed);
-  // 展開 → 今日の日付を保存 / 畳む → クリア
-  D.quoteOpenDay = wasCollapsed ? todayStr() : null;
-  save();
-}
+// 引用帯は撤去 → ポップアップ化（openQuotePopup を参照）
 
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteOpenDay:null, manualShownFirst:false }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false }; }
 function load(){
   try{ return Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}')); }
   catch(e){ return defData(); }
@@ -2998,7 +3055,6 @@ function sortActive(list){
 // ============================================================
 function render(){
   renderHeader();
-  renderQuoteBand();
   renderModeBar();
   renderBanners();
   renderFocusCard();
