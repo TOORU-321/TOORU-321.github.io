@@ -666,6 +666,25 @@
   }
   .modal-input:focus { border-color:var(--cyan); }
 
+  .modal-avatar-option {
+    display:none; margin:.2rem 0 1rem;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--border); border-radius:8px;
+    padding:.65rem .85rem;
+  }
+  .avatar-toggle-label {
+    display:flex; align-items:center; gap:.65rem;
+    cursor:pointer; font-size:.82rem; color:var(--muted);
+    user-select:none;
+  }
+  .avatar-toggle-label input[type=checkbox] {
+    width:15px; height:15px; accent-color:var(--cyan); cursor:pointer;
+  }
+  .modal-avatar-preview {
+    width:26px; height:26px; border-radius:50%;
+    object-fit:cover; border:1px solid var(--border); flex-shrink:0;
+  }
+
   /* ─────────────────────────────────────
      HUB SCREEN
   ───────────────────────────────────── */
@@ -693,10 +712,19 @@
   .hub-welcome {
     font-size:.9rem; color:var(--muted); margin-bottom:.2rem;
   }
+  .hub-name-row {
+    display:flex; align-items:center; justify-content:center;
+    gap:.4rem; margin-bottom:1.2rem;
+  }
   .hub-username-display {
     font-size:1.15rem; font-weight:700; color:var(--text);
-    margin-bottom:1.2rem;
   }
+  .hub-name-edit-btn {
+    background:none; border:none; cursor:pointer;
+    font-size:.85rem; opacity:.45; padding:.1rem .3rem;
+    transition:opacity .2s;
+  }
+  .hub-name-edit-btn:hover { opacity:1; }
   .hub-stats-row {
     display:flex; gap:1.5rem; justify-content:center;
     margin-bottom:1.5rem; flex-wrap:wrap;
@@ -933,7 +961,18 @@
   .lb-table tr:last-child td { border-bottom:none; }
   .lb-table tr.lb-me td { background:rgba(0,180,216,.07); }
   .lb-rank { font-family:'Orbitron',sans-serif; font-size:.9rem; font-weight:700; }
-  .lb-name { font-weight:700; }
+  .lb-name { font-weight:700; display:flex; align-items:center; gap:.5rem; }
+  .lb-avatar {
+    width:26px; height:26px; border-radius:50%;
+    object-fit:cover; flex-shrink:0;
+    border:1px solid rgba(0,180,216,.4);
+  }
+  .lb-avatar-initial {
+    width:26px; height:26px; border-radius:50%; flex-shrink:0;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:rgba(0,180,216,.15); border:1px solid rgba(0,180,216,.4);
+    font-size:.7rem; font-weight:700; color:var(--cyan);
+  }
   .lb-you {
     font-family:'Orbitron',sans-serif;
     font-size:.55rem; letter-spacing:.15em;
@@ -1050,15 +1089,22 @@
 <!-- USERNAME MODAL -->
 <div id="modal-username" class="modal-overlay">
   <div class="modal-card">
-    <div class="modal-title">🎯 ようこそ、アーキテクト</div>
+    <div id="modal-username-title" class="modal-title">🎯 ようこそ、アーキテクト</div>
     <p class="modal-sub">
-      ランキングに使用するユーザー名を設定してください。<br>
-      後から変更はできません（最大16文字）。
+      ランキングに表示するユーザー名を設定してください（最大16文字）。<br>
+      Googleアカウント名は使われません。
     </p>
     <input id="modal-username-input" class="modal-input"
            type="text" maxlength="16"
            placeholder="ユーザー名を入力"
            onkeydown="onModalKeydown(event)">
+    <div id="modal-avatar-option" class="modal-avatar-option">
+      <label class="avatar-toggle-label">
+        <input type="checkbox" id="modal-avatar-check">
+        <img id="modal-avatar-preview" class="modal-avatar-preview" src="" alt="">
+        <span>Googleプロフィール画像をランキングに表示する</span>
+      </label>
+    </div>
     <button class="btn btn-primary" onclick="submitUsername()" style="width:100%">
       決定 →
     </button>
@@ -1280,7 +1326,10 @@
   <div class="hub-eyebrow">BEHAVIORAL DESIGN AGENCY · TOKYO DIVISION</div>
   <h1 class="hub-title">NUDGE<br>ARCHITECT</h1>
   <div class="hub-welcome">Welcome,</div>
-  <div id="hub-username-display" class="hub-username-display">アーキテクト</div>
+  <div class="hub-name-row">
+    <div id="hub-username-display" class="hub-username-display">アーキテクト</div>
+    <button class="hub-name-edit-btn" onclick="Hub.editName()" title="名前を変更">✏️</button>
+  </div>
 
   <div class="hub-stats-row">
     <div class="hub-stat">
@@ -3229,10 +3278,9 @@ const Auth = {
     // UID を Google UID に統一
     sv.uid = user.uid;
 
-    // Google の表示名を優先して使用
-    if (user.displayName && !sv.username){
-      sv.username = user.displayName.slice(0, 16);
-    }
+    // Google の表示名は自動セットしない（ユーザーが任意に設定する）
+    // photoURL だけ保存してアバターに使う
+    if (user.photoURL) sv.photoURL = user.photoURL;
 
     // Firestore からデータをロードしてマージ
     if (db){
@@ -3240,8 +3288,10 @@ const Auth = {
         const doc = await db.collection('users').doc(user.uid).get();
         if (doc.exists){
           const data = doc.data();
-          // ユーザー名：Firestore 優先（ただし空なら Google名）
+          // ユーザー名：Firestore 優先（ただし空なら既存ローカル名）
           if (data.username) sv.username = data.username;
+          // アバター設定を復元
+          if (typeof data.showAvatar === 'boolean') sv.showAvatar = data.showAvatar;
           // スコア：より高いスコアを保持
           const remoteScores = data.scores || {};
           const localScores  = sv.scores  || {};
@@ -3259,7 +3309,17 @@ const Auth = {
 
     writeSave(sv);
     Hub.updateAuthUI(user);
-    Hub.show();
+
+    // ユーザー名が未設定の場合は必ずモーダルを表示
+    if (!sv.username){
+      showUsernameModal(() => {
+        const sv2 = loadSave();
+        Hub.show();
+        syncFirebase(sv2);
+      });
+    } else {
+      Hub.show();
+    }
   },
 
   // サインアウト時コールバック
@@ -3334,7 +3394,7 @@ function genUid(){
   return 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 function getDefaultSave(){
-  return { uid: genUid(), username: '', scores: {} };
+  return { uid: genUid(), username: '', scores: {}, showAvatar: false };
 }
 function loadSave(){
   try {
@@ -3409,6 +3469,23 @@ function showUsernameModal(onDone){
   const overlay  = $('modal-username');
   overlay._onDone = onDone || null;
   overlay.classList.add('active');
+
+  // アバターオプションの表示制御（Google ログイン済みかつ photoURL がある場合のみ）
+  const sv       = loadSave();
+  const photoURL = sv.photoURL || Auth.currentUser()?.photoURL || '';
+  const avatarOpt   = $('modal-avatar-option');
+  const avatarCheck = $('modal-avatar-check');
+  const avatarPrev  = $('modal-avatar-preview');
+  if (avatarOpt){
+    if (photoURL){
+      avatarOpt.style.display  = 'block';
+      avatarPrev.src           = photoURL;
+      avatarCheck.checked      = !!sv.showAvatar;   // 現在の設定を反映
+    } else {
+      avatarOpt.style.display  = 'none';
+    }
+  }
+
   setTimeout(() => $('modal-username-input').focus(), 60);
 }
 
@@ -3416,11 +3493,24 @@ function submitUsername(){
   const val = $('modal-username-input').value.trim();
   if (!val){ showToast('ユーザー名を入力してください', true); return; }
   if (val.length > 16){ showToast('16文字以内で入力してください', true); return; }
-  const sv     = loadSave();
-  sv.username  = val;
+  const sv        = loadSave();
+  const isUpdate  = !!sv.username;
+  sv.username     = val;
+  // アバター表示設定を保存（チェックボックスが表示されている場合のみ）
+  const avatarOpt   = $('modal-avatar-option');
+  const avatarCheck = $('modal-avatar-check');
+  if (avatarOpt && avatarOpt.style.display !== 'none' && avatarCheck){
+    sv.showAvatar = avatarCheck.checked;
+  }
   writeSave(sv);
   $('modal-username').classList.remove('active');
-  showToast(`ようこそ、${val}！`);
+  $('modal-username-input').value = '';
+  showToast(isUpdate ? `名前を「${val}」に変更しました` : `ようこそ、${val}！`);
+  // ハブ名前表示を即時更新
+  const el = $('hub-username-display');
+  if (el) el.textContent = val;
+  // Firestore に反映
+  syncFirebase(sv);
   if ($('modal-username')._onDone) $('modal-username')._onDone();
 }
 
@@ -3496,6 +3586,16 @@ const Hub = {
       loginBtn.style.display  = 'flex';
       userInfo.style.display  = 'none';
     }
+  },
+
+  // ユーザー名変更
+  editName(){
+    const sv  = loadSave();
+    const inp = $('modal-username-input');
+    const title = $('modal-username-title');
+    if (inp)   inp.value   = sv.username || '';
+    if (title) title.textContent = sv.username ? '✏️ 名前を変更' : '🎯 ようこそ、アーキテクト';
+    showUsernameModal(null);
   }
 };
 
@@ -3957,11 +4057,15 @@ const Leaderboard = {
       // "YOU" 判定：Google UID 優先、フォールバックでローカル uid
       const myUid = (Auth.currentUser()?.uid) || sv.uid;
       tbody.innerHTML = rows.map((r, i) => {
-        const isMe   = r.uid === myUid;
-        const medal  = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+        const isMe  = r.uid === myUid;
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+        const initial = (r.username || '?')[0].toUpperCase();
+        const avatarHtml = r.photoURL
+          ? `<img class="lb-avatar" src="${escHtml(r.photoURL)}" alt="" referrerpolicy="no-referrer">`
+          : `<span class="lb-avatar-initial">${escHtml(initial)}</span>`;
         return `<tr${isMe ? ' class="lb-me"' : ''}>
           <td><span class="lb-rank">${medal}</span></td>
-          <td class="lb-name">${escHtml(r.username || 'Anonymous')}${isMe ? '<span class="lb-you">YOU</span>' : ''}</td>
+          <td class="lb-name">${avatarHtml}${escHtml(r.username || 'Anonymous')}${isMe ? '<span class="lb-you">YOU</span>' : ''}</td>
           <td class="lb-missions">${r.missionsCompleted || 0}</td>
           <td class="lb-score">${r.totalScore || 0}pt</td>
         </tr>`;
@@ -3985,11 +4089,14 @@ async function syncFirebase(sv){
   const now      = firebase.firestore.FieldValue.serverTimestamp();
 
   try {
-    // ① ランキング用コレクション（既存の leaderboard 互換）
+    // ① ランキング用コレクション（leaderboard 表示用）
+    // photoURL はユーザーが「表示する」を選んだ場合のみ公開
+    const publicPhoto = sv.showAvatar ? (sv.photoURL || '') : '';
     await db.collection('scores').doc(sv.uid).set({
       username:          sv.username,
       totalScore:        total,
       missionsCompleted: ids.length,
+      photoURL:          publicPhoto,
       updatedAt:         now
     }, { merge: true });
 
@@ -3997,6 +4104,8 @@ async function syncFirebase(sv){
     await db.collection('users').doc(sv.uid).set({
       username:  sv.username,
       scores:    scores,
+      photoURL:  sv.photoURL || '',   // ローカル用には保持
+      showAvatar: !!sv.showAvatar,
       updatedAt: now
     }, { merge: true });
 
@@ -4015,7 +4124,7 @@ async function syncFirebase(sv){
     <p><strong>スコア・データについて</strong><br>
     スコアデータはローカルストレージおよびGoogle認証を利用したクラウドに保存されます。ブラウザのデータ削除や端末の変更により、ログインなしの場合はデータが消失することがあります。データの消失・破損について、製作者は責任を負いかねます。</p>
     <p><strong>外部サービス</strong><br>
-    本アプリはGoogle Firebase（認証・データ保存）を利用しています。Googleのプライバシーポリシーが適用されます。Googleログインを利用する場合、表示名・メールアドレスをスコア表示のために使用します。</p>
+    本アプリはGoogle Firebase（認証・データ保存）を利用しています。Googleのプライバシーポリシーが適用されます。Googleログインを利用する場合、プロフィール画像がランキングに表示されます。ランキング上の名前はご自身で設定した任意のユーザー名を使用します。</p>
     <p><strong>免責</strong><br>
     本アプリの利用により生じたいかなる損害についても、製作者は一切の責任を負いません。本アプリは予告なく変更・終了する場合があります。</p>
     <p style="margin-bottom:0">お問い合わせ：<a href="https://x.com/LMeta321" target="_blank" rel="noopener" style="color:var(--cyan)">X（旧Twitter）@LMeta321</a></p>
