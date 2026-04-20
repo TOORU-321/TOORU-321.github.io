@@ -1208,6 +1208,18 @@ input:checked + .toggle-slider::before {
   background: var(--gold-soft);
   color: var(--gold);
 }
+.ranking-note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+.score-denom {
+  color: var(--text-3);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  margin-left: 1px;
+}
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
@@ -2076,25 +2088,26 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-let currentEntry=null, rankingFilter='all';
-// トップ画面ランキング（ページ読み込み時に自動表示・フィルター付き）
-let topRankingAll=[], topRankingFilter='全レベルMIX';
+let currentEntry=null, rankingFilter=null;
+// ランキング方針：各レベル内の「正解数」順（同値は所要時間の短い順）。
+// 正答率で並べると "少ししか挑戦しない人" が上位になり、多く解く挙動が抑制されるため廃止。
+let topRankingAll=[], topRankingFilter=null;
 async function loadTopRanking(){
   const body=document.getElementById('top-ranking-body');
   const filterDiv=document.getElementById('top-ranking-filter');
   if(!body)return;
   body.innerHTML='<p class="ranking-loading">Loading…</p>';
   try{
-    const snap=await db.collection('rankings').orderBy('rate','desc').limit(100).get();
+    // 正解数の降順で広めに取得。レベル分布に偏りがあっても各バケットが代表を持てる深さ。
+    const snap=await db.collection('rankings').orderBy('score','desc').limit(300).get();
     topRankingAll=[];
     snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
     if(!topRankingAll.length){
       body.innerHTML='<p class="ranking-loading">記録がまだありません。最初の挑戦者になりませんか。</p>';
       return;
     }
-    // フィルターボタン生成（全体は除外、levelのみ）
+    // フィルターボタン生成（レベル別ランキング = "全体" は敢えて出さない）
     const levels=[...new Set(topRankingAll.map(r=>r.level))].sort();
-    // デフォルトを最初のlevelに
     if(!levels.includes(topRankingFilter)) topRankingFilter=levels[0];
     filterDiv.innerHTML='';
     levels.forEach(lv=>{
@@ -2121,18 +2134,20 @@ function renderTopRanking(){
     body.innerHTML='<p class="ranking-loading">このカテゴリーの記録はまだありません。</p>';
     return;
   }
+  // 同一ニックネームは「正解数が最大」の記録を採用
   const seen=new Map();
-  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
-  const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,10);
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.score>seen.get(r.nickname).score)seen.set(r.nickname,r);});
+  // 並び順：正解数の降順 → 同値時は所要時間の短い順（未計測は末尾）
+  const ranked=[...seen.values()].sort((a,b)=>b.score-a.score||(a.time==null?Infinity:a.time)-(b.time==null?Infinity:b.time)).slice(0,10);
   const medals=['🥇','🥈','🥉'];
   const rows=ranked.map((r,i)=>{
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
-    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
-    const tDisp=r.time!=null?formatTime(r.time):'OFF';
-    return `<tr><td>${rankDisp}</td><td><span class="rank-badge ${gr}">${gr}</span></td><td>${escHtml(r.nickname)}</td><td>${r.score}/${r.total}</td><td>${r.rate}%</td><td>${tDisp}</td></tr>`;
+    const tDisp=r.time!=null?formatTime(r.time):'—';
+    return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}<span class="score-denom">/${r.total}</span></td><td>${tDisp}</td></tr>`;
   }).join('');
-  body.innerHTML=`<table class="ranking-table">
-    <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+  body.innerHTML=`<p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
+  <table class="ranking-table">
+    <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
@@ -2154,6 +2169,7 @@ async function submitRanking(){
     currentEntry=ref.id;
     btn.textContent='記録しました';
     document.getElementById('nickname-card').classList.add('registered');
+    rankingFilter=lvLabel; // プレイしたレベルのボードを自動選択
     loadRanking();
   }catch(e){
     btn.disabled=false;btn.textContent='登録';
@@ -2164,17 +2180,19 @@ async function loadRanking(){
   const body=document.getElementById('ranking-body');
   body.innerHTML='<p class="ranking-loading">Loading…</p>';
   try{
-    const snap=await db.collection('rankings').orderBy('rate','desc').limit(50).get();
+    const snap=await db.collection('rankings').orderBy('score','desc').limit(300).get();
     const all=[];
     snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
     const levels=[...new Set(all.map(r=>r.level))].sort();
+    // 直前プレイと一致するレベルがあればそれを優先、無ければ先頭
+    if(!levels.includes(rankingFilter)) rankingFilter=levels[0]||null;
     const filterDiv=document.getElementById('ranking-filter');
     filterDiv.innerHTML='';
-    ['すべて',...levels].forEach(lv=>{
+    levels.forEach(lv=>{
       const b=document.createElement('button');
-      b.className='rf-btn'+(rankingFilter===(lv==='すべて'?'all':lv)?' active':'');
+      b.className='rf-btn'+(rankingFilter===lv?' active':'');
       b.textContent=lv;
-      b.onclick=()=>{rankingFilter=lv==='すべて'?'all':lv;renderRanking(all);updateFilterBtns(lv);};
+      b.onclick=()=>{rankingFilter=lv;renderRanking(all);updateFilterBtns(lv);};
       filterDiv.appendChild(b);
     });
     renderRanking(all);
@@ -2184,15 +2202,17 @@ async function loadRanking(){
   }
 }
 function updateFilterBtns(active){
-  document.querySelectorAll('.rf-btn').forEach(b=>{
-    b.classList.toggle('active',b.textContent===active||(active==='すべて'&&b.textContent==='すべて'));
+  document.querySelectorAll('#ranking-filter .rf-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent===active);
   });
 }
 function renderRanking(all){
-  const filtered=rankingFilter==='all'?all:all.filter(r=>r.level===rankingFilter);
+  const filtered=all.filter(r=>r.level===rankingFilter);
+  // 同一ニックネームは「正解数が最大」の記録を採用
   const seen=new Map();
-  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.rate>seen.get(r.nickname).rate)seen.set(r.nickname,r);});
-  const ranked=[...seen.values()].sort((a,b)=>b.rate-a.rate||b.score-a.score).slice(0,20);
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.score>seen.get(r.nickname).score)seen.set(r.nickname,r);});
+  // 並び順：正解数の降順 → 同値時は所要時間の短い順（未計測は末尾）
+  const ranked=[...seen.values()].sort((a,b)=>b.score-a.score||(a.time==null?Infinity:a.time)-(b.time==null?Infinity:b.time)).slice(0,20);
   if(!ranked.length){
     document.getElementById('ranking-body').innerHTML='<p class="ranking-loading">まだ登録者がいません。記録を残してください。</p>';
     return;
@@ -2201,20 +2221,18 @@ function renderRanking(all){
   const rows=ranked.map((r,i)=>{
     const isMe=currentEntry&&r.id===currentEntry;
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
-    const gr=r.rate>=90?'S':r.rate>=70?'A':r.rate>=50?'B':'C';
-    const tDisp=r.time!=null?formatTime(r.time):'OFF';
+    const tDisp=r.time!=null?formatTime(r.time):'—';
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
-      <td><span class="rank-badge ${gr}">${gr}</span></td>
       <td>${escHtml(r.nickname)}${isMe?' <span class="me-tag">YOU</span>':''}</td>
-      <td>${r.score}/${r.total}</td>
-      <td>${r.rate}%</td>
+      <td>${r.score}<span class="score-denom">/${r.total}</span></td>
       <td>${tDisp}</td>
     </tr>`;
   }).join('');
   document.getElementById('ranking-body').innerHTML=`
+    <p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
     <table class="ranking-table">
-      <thead><tr><th>順位</th><th>ランク</th><th>ニックネーム</th><th>スコア</th><th>正答率</th><th>時間</th></tr></thead>
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
