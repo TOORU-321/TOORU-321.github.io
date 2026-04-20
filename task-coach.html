@@ -4241,7 +4241,7 @@ function fbInit(){
 const TOS_VERSION = '2026-04-20';
 function signInWithGoogle(){
   if(!fbAuth){
-    showToast('Firebase が読み込まれていません');
+    showToast('ログインしていません。右上メニュー「Googleでログイン」からサインインできます');
     return;
   }
   // Gate: require ToS acceptance before first Google sign-in
@@ -4287,17 +4287,17 @@ function _doGoogleSignInActual(){
     const code = (err && err.code) || '';
     let msg = 'ログインに失敗しました';
     if(code === 'auth/unauthorized-domain'){
-      msg = 'このサイトのドメインがFirebaseで許可されていません（承認済みドメインに追加してください）';
+      msg = 'このサイトではログインが許可されていません（管理者にご連絡ください）';
     } else if(code === 'auth/operation-not-allowed'){
-      msg = 'Googleプロバイダが有効化されていません（Firebase Console で有効化してください）';
+      msg = 'Googleログインが現在利用できません';
     } else if(code === 'auth/popup-blocked'){
       msg = 'ブラウザがポップアップをブロックしました（許可して再度お試しください）';
     } else if(code === 'auth/network-request-failed'){
       msg = 'ネットワーク接続を確認してください';
     } else if(code === 'auth/configuration-not-found'){
-      msg = 'Firebase設定エラー（Console側の設定を確認してください）';
+      msg = 'ログイン設定に問題があります。少し時間をおいて再度お試しください';
     } else if(code){
-      msg = 'ログイン失敗：' + code;
+      msg = 'ログインできませんでした。少ししてから再度お試しください';
     }
     showToast(msg);
   };
