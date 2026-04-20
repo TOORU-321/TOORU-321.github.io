@@ -216,8 +216,38 @@ body{
   display:inline-block; width:10px; text-align:center;
   color:var(--muted); font-style:normal;
 }
+.colophon .follow-row{
+  display:flex; align-items:center; justify-content:center;
+  gap:10px; margin-top:14px; flex-wrap:wrap;
+}
+.colophon .follow-lbl{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; letter-spacing:.08em; color:var(--muted);
+  text-transform:none;
+}
+.colophon .follow-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px; border:1px solid var(--rule-2);
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:600; letter-spacing:.06em;
+  color:var(--ink-2); text-decoration:none;
+  transition:all .2s ease;
+  text-transform:none;
+}
+.colophon .follow-chip:hover{
+  background:var(--ink); color:var(--paper); border-color:var(--ink);
+}
+.colophon .follow-chip .fc-ico{
+  font-family:'Playfair Display',serif; font-weight:700;
+  font-size:13px; letter-spacing:0;
+}
+.colophon .x-chip:hover{background:#000; border-color:#000; color:#fff}
+.colophon .ig-chip:hover{
+  background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color:#fff; border-color:transparent;
+}
 .colophon .tagline{
-  display:block; margin-top:8px;
+  display:block; margin-top:14px;
   font-family:'Playfair Display',serif; font-style:italic;
   font-size:11px; letter-spacing:.24em; color:var(--muted);
   text-transform:uppercase;
@@ -402,11 +432,21 @@ body{
   font-family:'Playfair Display','Noto Serif JP',serif; font-style:italic;
   font-size:11px; color:var(--muted);
 }
+.mi-avatar{
+  width:28px; height:28px; border-radius:50%;
+  object-fit:cover; margin-left:auto;
+  border:1px solid var(--rule-2);
+}
+.menu-auth{border-top:1px solid var(--rule-2)}
+.menu-auth.is-in .mi-num{
+  color:var(--gold); font-weight:700;
+}
 @media(max-width:620px){
   .menu-drop{min-width:210px; right:-4px}
   .menu-item{padding:12px 14px}
   .mi-label{font-size:12.5px}
   .mi-desc{font-size:10.5px}
+  .mi-avatar{width:24px; height:24px}
 }
 
 /* ---- Manual Modal (使い方マニュアル) -------------------- */
@@ -538,6 +578,147 @@ body{
   transition:background .2s, color .2s;
 }
 .welcome-later:hover{background:var(--card-2); color:var(--ink)}
+
+/* ---- Privacy section inside Settings modal ------------- */
+.privacy-section{
+  margin-top:22px; padding-top:18px;
+  border-top:1px dashed var(--rule-3);
+}
+.privacy-section .ps-ttl{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:14px; letter-spacing:.04em; color:var(--ink);
+  margin-bottom:4px;
+}
+.privacy-section .ps-sub{
+  font-size:11px; color:var(--muted); margin-bottom:14px; line-height:1.6;
+}
+.privacy-section .ps-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 0; border-bottom:1px dotted var(--rule-3);
+  gap:12px;
+}
+.privacy-section .ps-row:last-of-type{border-bottom:none}
+.privacy-section .ps-info .ps-label{
+  display:block; font-size:13px; color:var(--ink-2); line-height:1.4;
+}
+.privacy-section .ps-info .ps-desc{
+  display:block; font-size:10.5px; color:var(--muted);
+  margin-top:3px; line-height:1.4;
+}
+.privacy-section select.ps-select{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; padding:6px 28px 6px 10px;
+  border:1px solid var(--rule-2); background:var(--paper);
+  color:var(--ink); border-radius:2px; cursor:pointer;
+  min-width:160px;
+}
+.privacy-section .ps-toggle{
+  appearance:none; -webkit-appearance:none;
+  width:42px; height:22px;
+  background:var(--rule-2); border-radius:22px;
+  position:relative; cursor:pointer; transition:background .2s ease;
+  border:none; padding:0; flex-shrink:0;
+}
+.privacy-section .ps-toggle::after{
+  content:''; position:absolute; top:2px; left:2px;
+  width:18px; height:18px; background:#fff;
+  border-radius:50%; transition:transform .2s ease;
+  box-shadow:0 1px 3px rgba(0,0,0,.15);
+}
+.privacy-section .ps-toggle:checked{background:var(--crimson)}
+.privacy-section .ps-toggle:checked::after{transform:translateX(20px)}
+.privacy-section .ps-preview{
+  margin-top:12px; padding:10px 12px;
+  background:var(--paper-2); border-left:2px solid var(--gold);
+  font-size:11px; color:var(--ink-2); line-height:1.5;
+}
+.privacy-section .ps-preview b{color:var(--ink)}
+
+/* ---- Terms / Privacy / Disclaimer modal ---------------- */
+.tos-modal{max-width:560px; max-height:86vh; overflow-y:auto}
+.tos-body{
+  padding:10px 4px 6px;
+  font-size:13px; line-height:1.75;
+  color:var(--ink-2);
+}
+.tos-body .tos-lede{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:14px; color:var(--ink); margin:4px 0 14px;
+  padding-bottom:12px; border-bottom:1px dashed var(--rule-3);
+}
+.tos-body h3{
+  font-family:'Noto Serif JP',serif; font-weight:700;
+  font-size:14px; color:var(--ink);
+  margin:20px 0 8px; letter-spacing:.02em;
+  display:flex; align-items:baseline; gap:8px;
+}
+.tos-body h3::before{
+  content:attr(data-num);
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:13px; color:var(--crimson); letter-spacing:.04em;
+}
+.tos-body h3:first-of-type{margin-top:4px}
+.tos-body ul{margin:4px 0 10px 20px; padding:0}
+.tos-body ul li{margin:4px 0}
+.tos-body .tos-block{
+  background:var(--paper-2);
+  padding:10px 14px; margin:10px 0;
+  border-left:2px solid var(--crimson);
+  font-size:12px; line-height:1.7;
+}
+.tos-body .tos-good{color:var(--ink); font-weight:600}
+.tos-body .tos-note{
+  font-size:11px; color:var(--muted); font-style:italic;
+  margin-top:6px; line-height:1.6;
+}
+.tos-body .tos-meta{
+  margin-top:20px; padding-top:12px;
+  border-top:1px dashed var(--rule-3);
+  font-size:10.5px; color:var(--muted); text-align:right;
+}
+.tos-actions{
+  display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;
+  justify-content:flex-end; align-items:center;
+  padding-top:10px; border-top:1px solid var(--rule-3);
+}
+.tos-actions .tos-cancel{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; padding:10px 16px; background:transparent;
+  border:1px solid var(--rule-2); color:var(--ink-2); cursor:pointer;
+  transition:all .2s ease;
+}
+.tos-actions .tos-cancel:hover{background:var(--card-2); color:var(--ink)}
+.tos-actions .tos-primary{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:.06em;
+  padding:10px 20px; background:var(--ink); color:var(--paper);
+  border:1px solid var(--ink); cursor:pointer;
+  transition:all .2s ease;
+}
+.tos-actions .tos-primary:hover{background:var(--crimson); border-color:var(--crimson)}
+.tos-actions .tos-primary:disabled{opacity:.5; cursor:not-allowed}
+.tos-actions .tos-close-only{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; padding:10px 20px; background:var(--ink); color:var(--paper);
+  border:1px solid var(--ink); cursor:pointer;
+  transition:all .2s ease;
+}
+.tos-actions .tos-close-only:hover{background:var(--crimson); border-color:var(--crimson)}
+
+/* Footer terms link */
+.colophon .terms-link-row{
+  margin-top:14px; text-align:center;
+}
+.colophon .terms-link{
+  display:inline-block;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:10.5px; letter-spacing:.04em;
+  color:var(--muted); text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer; background:none; border:none;
+  padding:4px 8px;
+}
+.colophon .terms-link:hover{color:var(--ink-2)}
 
 /* ---- Daily Quote Popup (今日の一節) --------------------- */
 .quote-modal{
@@ -1844,8 +2025,20 @@ body{
   display:flex; flex-direction:column;
 }
 .leader-panel .lp-row{
-  display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center;
+  display:grid; grid-template-columns:36px 32px 1fr auto; gap:12px; align-items:center;
   padding:10px 4px; border-bottom:1px dotted var(--rule-3);
+}
+.leader-panel .lp-av{
+  width:32px; height:32px; border-radius:50%;
+  object-fit:cover;
+  background:var(--paper-2);
+  border:1px solid var(--rule-3);
+  display:inline-flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.leader-panel .lp-av-init{
+  font-family:'Playfair Display',serif; font-weight:700;
+  color:var(--muted); font-size:14px;
 }
 .leader-panel .lp-row:last-child{border-bottom:none}
 .leader-panel .lp-row.me{
@@ -1907,7 +2100,8 @@ body{
 @media(max-width:600px){
   .leader-panel{padding:16px 14px 14px}
   .leader-panel .lp-tab{padding:7px 10px; font-size:11px}
-  .leader-panel .lp-row{grid-template-columns:28px 1fr auto; gap:8px}
+  .leader-panel .lp-row{grid-template-columns:28px 28px 1fr auto; gap:8px}
+  .leader-panel .lp-av{width:28px; height:28px}
   .leader-panel .lp-nm{font-size:13px}
 }
 
@@ -1985,8 +2179,20 @@ body{
   display:flex; flex-direction:column;
 }
 .mini-leader .ml-row{
-  display:grid; grid-template-columns:26px 1fr auto; gap:10px; align-items:center;
+  display:grid; grid-template-columns:26px 24px 1fr auto; gap:8px; align-items:center;
   padding:7px 4px; border-bottom:1px dotted var(--rule-3);
+}
+.mini-leader .ml-av{
+  width:24px; height:24px; border-radius:50%;
+  object-fit:cover;
+  background:var(--paper-2);
+  border:1px solid var(--rule-3);
+  display:inline-flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.mini-leader .ml-av-init{
+  font-family:'Playfair Display',serif; font-weight:700;
+  color:var(--muted); font-size:11px;
 }
 .mini-leader .ml-row:last-child{border-bottom:none}
 .mini-leader .ml-rank{
@@ -2147,7 +2353,8 @@ body{
 .ms-growth b{color:var(--ink); font-weight:700}
 
 .ms-btn{
-  width:100%; padding:17px; border:none; border-radius:0;
+  flex:1;
+  padding:17px; border:none; border-radius:0;
   background:var(--ink); color:var(--paper);
   font-family:'Inter','Noto Sans JP',sans-serif;
   font-size:11px; font-weight:600; cursor:pointer;
@@ -2155,6 +2362,28 @@ body{
   transition:background .2s;
 }
 .ms-btn:hover{background:var(--crimson)}
+.ms-actions{
+  display:flex; gap:8px; margin-top:4px;
+}
+.ms-share{
+  padding:16px 18px; border:1px solid var(--ink); background:transparent;
+  color:var(--ink); cursor:pointer;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  transition:all .2s;
+  display:inline-flex; align-items:center; gap:6px;
+  white-space:nowrap;
+}
+.ms-share:hover{background:var(--ink); color:var(--paper)}
+.ms-share-ico{
+  font-family:'Playfair Display',serif; font-weight:700;
+  font-size:14px; letter-spacing:0;
+}
+@media(max-width:520px){
+  .ms-actions{flex-direction:column}
+  .ms-share{width:100%; justify-content:center}
+}
 
 /* ============================================================
    RECAP MODAL — archive / heatmap / breakdown
@@ -2564,6 +2793,14 @@ body{
               <span class="mi-desc">書き出し／読み込み</span>
             </span>
           </button>
+          <button class="menu-item menu-auth" id="auth-btn" role="menuitem" type="button">
+            <span class="mi-num" id="auth-num">IV</span>
+            <span class="mi-body">
+              <span class="mi-label" id="auth-label">Googleでログイン</span>
+              <span class="mi-desc" id="auth-desc">記録を守る／端末間で同期</span>
+            </span>
+            <img class="mi-avatar" id="auth-avatar" alt="" hidden>
+          </button>
         </div>
       </div>
     </div>
@@ -2666,8 +2903,22 @@ body{
 <footer class="colophon">
   <span class="rule" aria-hidden="true"></span>
   <div class="credit">
-    制作 / <a href="https://www.instagram.com/tooru_lab?igsh=ZWcxcTA2OGJtajE0&amp;utm_source=qr" target="_blank" rel="noopener noreferrer">とーる</a>
-    <span class="sep">｜</span>行動経済アナリスト
+    制作 / <strong>とーる</strong>
+    <span class="sep">｜</span>猫好きの行動経済アナリスト
+  </div>
+  <div class="follow-row">
+    <span class="follow-lbl">著者をフォロー</span>
+    <a class="follow-chip x-chip" href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" aria-label="著者をXでフォロー">
+      <span class="fc-ico" aria-hidden="true">𝕏</span>
+      <span class="fc-h">@LMeta321</span>
+    </a>
+    <a class="follow-chip ig-chip" href="https://www.instagram.com/tooru_lab?igsh=ZWcxcTA2OGJtajE0&amp;utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="著者をInstagramでフォロー">
+      <span class="fc-ico" aria-hidden="true">IG</span>
+      <span class="fc-h">@tooru_lab</span>
+    </a>
+  </div>
+  <div class="terms-link-row">
+    <button type="button" class="terms-link" id="footer-tos-link">ご利用にあたって（プライバシー・免責事項）</button>
   </div>
   <span class="tagline">Bloom &middot; the task coach</span>
 </footer>
@@ -2953,6 +3204,83 @@ body{
   </div>
 </div>
 
+<!-- Terms / Privacy / Disclaimer Modal -->
+<div class="ov" id="tos-ov">
+  <div class="modal tos-modal">
+    <div class="mh">
+      <span>
+        <span class="mttl-mark">Notice · 告知</span>
+        <span class="mttl">ご利用にあたって</span>
+      </span>
+      <button class="mx" id="tos-close" aria-label="閉じる">×</button>
+    </div>
+    <div class="tos-body">
+      <div class="tos-lede">
+        Bloom タスクコーチは、個人制作の実験的なツールです。<br>
+        安心してご利用いただくため、扱う情報・技術的な安全性・免責事項についてお伝えします。
+      </div>
+
+      <h3 data-num="I">収集する情報</h3>
+      <ul>
+        <li>Googleログイン時に、Googleから提供される <b>表示名</b> と <b>プロフィール画像URL</b></li>
+        <li>アプリ内で生成される <b>タスクの完了履歴・スコア・ニックネーム・設定</b></li>
+      </ul>
+      <div class="tos-block">
+        <div class="tos-good">◎ 収集しない情報</div>
+        <ul>
+          <li><b>パスワード</b>：Googleが管理しています。作者（とーる）には一切見えません</li>
+          <li><b>メールアドレス</b>：Firebase認証基盤内にのみ存在し、ランキングDBには保存しません</li>
+        </ul>
+      </div>
+
+      <h3 data-num="II">公開される情報</h3>
+      <ul>
+        <li>ランキングに表示されるもの：<b>表示名</b>（またはニックネーム）、<b>アイコン</b>、スコア、記録</li>
+        <li>これらは <b>設定 → プライバシー設定</b> から非公開に切り替えられます</li>
+        <li>デフォルトは「ニックネーム優先」です。ニックネーム未設定ならGoogle表示名が出ます</li>
+      </ul>
+
+      <h3 data-num="III">技術的な安全性</h3>
+      <ul>
+        <li><b>OAuth 2.0</b>：Googleの公式認証方式を採用。パスワードが本アプリを経由することはありません</li>
+        <li><b>Firebase</b>：Google運営のセキュリティ基盤を使用しています</li>
+        <li><b>HTTPS</b>：通信はすべて暗号化されています</li>
+        <li><b>Firestoreセキュリティルール</b>：ユーザーは自分の記録のみ書き換え可能です</li>
+      </ul>
+      <div class="tos-note">
+        ※ 自作パスワード認証より、Googleログイン経由の方が構造的に安全です。
+      </div>
+
+      <h3 data-num="IV">免責事項</h3>
+      <div class="tos-block">
+        本アプリは個人制作の実験的ツールです。以下の点にご留意のうえご利用ください。
+        <ul>
+          <li>予告なく<b>仕様変更・サービス停止</b>を行う場合があります</li>
+          <li>データの<b>保存・復元・永続性</b>については保証されません</li>
+          <li>本アプリの使用により生じた<b>いかなる損害</b>についても、作者は責任を負いません</li>
+          <li>バグや不具合を含む可能性があります</li>
+          <li>法令により求められる場合を除き、<b>個人情報を第三者に提供することはありません</b></li>
+          <li>本アプリは医療・法務・金融等の助言を提供するものではありません</li>
+        </ul>
+      </div>
+
+      <h3 data-num="V">データの削除・お問い合わせ</h3>
+      <ul>
+        <li>端末内のデータ：<b>設定 → 全データを削除</b> から消去できます</li>
+        <li>クラウド上のデータ（Google連携時）：お問い合わせください</li>
+        <li>連絡先：<a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--crimson);text-decoration:underline">X · @LMeta321</a></li>
+      </ul>
+
+      <div class="tos-meta">
+        制作：とーる（@LMeta321）／ 最終更新：2026-04-20
+      </div>
+    </div>
+    <div class="tos-actions" id="tos-actions">
+      <!-- Buttons injected dynamically depending on mode (view vs accept) -->
+    </div>
+  </div>
+</div>
+
 <!-- Settings Modal -->
 <div class="ov" id="settings-ov">
   <div class="modal">
@@ -2999,6 +3327,44 @@ body{
       <label class="nf-lbl" for="f-nick">ランキング用ニックネーム（任意）</label>
       <span class="nf-hint">将来のランキング連携で使います。空欄のままでも利用に支障はありません。</span>
       <input class="nf-input" id="f-nick" type="text" maxlength="20" placeholder="例：Toru / Bloom Reader">
+    </div>
+
+    <!-- Privacy settings -->
+    <div class="privacy-section">
+      <div class="ps-ttl">プライバシー設定</div>
+      <div class="ps-sub">ランキングに公開する情報を選べます。いつでも変更できます。</div>
+
+      <div class="ps-row">
+        <div class="ps-info">
+          <span class="ps-label">ランキングの表示名</span>
+          <span class="ps-desc">ニックネーム優先 / Google表示名 / 匿名（「読者」）</span>
+        </div>
+        <select class="ps-select" id="ps-name-mode">
+          <option value="nickname">ニックネーム優先</option>
+          <option value="google">Google表示名</option>
+          <option value="anon">匿名（読者）</option>
+        </select>
+      </div>
+
+      <div class="ps-row">
+        <div class="ps-info">
+          <span class="ps-label">プロフィール画像を表示</span>
+          <span class="ps-desc">OFFにすると、イニシャル円が表示されます</span>
+        </div>
+        <input type="checkbox" class="ps-toggle" id="ps-show-avatar">
+      </div>
+
+      <div class="ps-preview" id="ps-preview">
+        現在のランキング表示：<b id="ps-preview-name">—</b>
+      </div>
+
+      <button type="button" class="setting-btn" id="btn-open-tos" style="margin-top:14px;">
+        <span class="sb-ico">§</span>
+        <div class="sb-main">
+          <div class="sb-ttl">ご利用にあたって（プライバシー・免責）</div>
+          <div class="sb-sub">扱う情報・技術的な安全性・免責事項の詳細</div>
+        </div>
+      </button>
     </div>
 
     <input type="file" id="import-file" accept=".json,application/json" style="display:none">
@@ -3159,7 +3525,12 @@ body{
     <div class="ms-stats" id="ms-stats"></div>
     <div class="breakdown" id="ms-bk"></div>
     <div class="ms-growth" id="ms-growth"></div>
-    <button type="button" class="ms-btn" id="ms-close">続ける</button>
+    <div class="ms-actions">
+      <button type="button" class="ms-share" id="ms-share" title="Xでシェア">
+        <span class="ms-share-ico" aria-hidden="true">𝕏</span> Xでシェア
+      </button>
+      <button type="button" class="ms-btn" id="ms-close">続ける</button>
+    </div>
   </div>
 </div>
 
@@ -3324,9 +3695,16 @@ function pickDailyQuote(){
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'' }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'', privacy:{ nameMode:'nickname', showAvatar:true }, tosAcceptedAt:null, tosVersion:null }; }
 function load(){
-  try{ return Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}')); }
+  try{
+    const raw = Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}'));
+    // Privacy migration: ensure privacy object has all keys
+    if(!raw.privacy || typeof raw.privacy !== 'object') raw.privacy = { nameMode:'nickname', showAvatar:true };
+    if(!['nickname','google','anon'].includes(raw.privacy.nameMode)) raw.privacy.nameMode = 'nickname';
+    if(typeof raw.privacy.showAvatar !== 'boolean') raw.privacy.showAvatar = true;
+    return raw;
+  }
   catch(e){ return defData(); }
 }
 function save(){ localStorage.setItem(SK, JSON.stringify(D)); }
@@ -3520,7 +3898,7 @@ const APP_VERSION = 'editorial-v1';
 
 // Firebase state
 let fbApp = null, fbAuth = null, fbDb = null;
-let fbUid = null, fbReady = false, fbError = null;
+let fbUid = null, fbUser = null, fbIsAnonymous = true, fbReady = false, fbError = null;
 let fbUploadTimer = null;
 let rankingCache = { data: {}, at: 0 }; // kind -> [rows]
 const RANKING_TTL = 5 * 60 * 1000; // 5 min
@@ -3530,6 +3908,7 @@ function fbInit(){
   if(typeof firebase === 'undefined'){
     fbError = 'sdk-missing';
     setLpStatus('オフライン');
+    updateAuthUI();
     return;
   }
   try{
@@ -3537,25 +3916,147 @@ function fbInit(){
     fbAuth = firebase.auth();
     fbDb = firebase.firestore();
     setLpStatus('認証中…');
-    fbAuth.signInAnonymously()
-      .then(cred => {
-        fbUid = cred.user.uid;
+
+    // Observe auth state — fires on init, on sign-in, on sign-out
+    fbAuth.onAuthStateChanged(user => {
+      if(user){
+        fbUid = user.uid;
+        fbUser = user;
+        fbIsAnonymous = !!user.isAnonymous;
         fbReady = true;
-        setLpStatus('接続済み');
-        // Kick off first upload to register this user
-        scheduleUpload(800);
-        // Refresh mini leaderboard once auth is ready (delayed slightly so upload lands first)
-        setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 1500);
-      })
-      .catch(err => {
-        console.warn('[fb] auth error', err);
-        fbError = 'auth-fail';
-        setLpStatus('オフライン');
-      });
+        setLpStatus(user.isAnonymous ? '接続済み（匿名）' : '接続済み');
+        // If logged in with Google and nickname blank, auto-adopt displayName
+        if(!user.isAnonymous && !(D.nickname||'').trim() && user.displayName){
+          D.nickname = String(user.displayName).slice(0, 20);
+          save();
+          const nk = document.getElementById('f-nick');
+          if(nk) nk.value = D.nickname;
+        }
+        updateAuthUI();
+        scheduleUpload(500);
+        setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
+      } else {
+        // No user — kick off anonymous sign-in
+        fbReady = false;
+        updateAuthUI();
+        fbAuth.signInAnonymously().catch(err => {
+          console.warn('[fb] anon sign-in error', err);
+          fbError = 'auth-fail';
+          setLpStatus('オフライン');
+          updateAuthUI();
+        });
+      }
+    });
   }catch(e){
     console.warn('[fb] init error', e);
     fbError = 'init-fail';
     setLpStatus('オフライン');
+    updateAuthUI();
+  }
+}
+
+// Google sign-in / link — preserves anonymous UID when possible
+const TOS_VERSION = '2026-04-20';
+function signInWithGoogle(){
+  if(!fbAuth){
+    showToast('Firebase が読み込まれていません');
+    return;
+  }
+  // Gate: require ToS acceptance before first Google sign-in
+  if(!D.tosAcceptedAt || D.tosVersion !== TOS_VERSION){
+    openTosModal('accept');
+    return;
+  }
+  _doGoogleSignInActual();
+}
+function _doGoogleSignInActual(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  const current = fbAuth.currentUser;
+
+  const onSuccess = (result) => {
+    const u = result && result.user;
+    showToast('Googleアカウントと連携しました');
+    // Auto-fill nickname from Google displayName if blank
+    if(u && u.displayName && !(D.nickname||'').trim()){
+      D.nickname = String(u.displayName).slice(0, 20);
+      save();
+      const nk = document.getElementById('f-nick');
+      if(nk) nk.value = D.nickname;
+    }
+    scheduleUpload(300);
+  };
+
+  const onError = (err) => {
+    if(err && err.code === 'auth/popup-closed-by-user') return; // silent
+    if(err && err.code === 'auth/cancelled-popup-request') return;
+    if(err && err.code === 'auth/credential-already-in-use'){
+      // The Google account already belongs to another (earlier) user in our system.
+      // Offer to switch — they will lose current anonymous data unless they export first.
+      if(confirm('このGoogleアカウントはすでに登録されています。\n切り替えますか？\n\n（現在のこの端末の記録はこのまま残りますが、ログインはそちらのGoogleアカウントに切り替わります）')){
+        const cred = err.credential;
+        fbAuth.signInWithCredential(cred).catch(e => {
+          console.warn('[fb] signInWithCredential error', e);
+          showToast('切り替えに失敗しました');
+        });
+      }
+      return;
+    }
+    console.warn('[fb] Google sign-in error', err);
+    showToast('ログインに失敗しました — しばらくしてからお試しください');
+  };
+
+  if(current && current.isAnonymous){
+    // Link: preserve UID and all data
+    current.linkWithPopup(provider).then(onSuccess).catch(onError);
+  } else {
+    fbAuth.signInWithPopup(provider).then(onSuccess).catch(onError);
+  }
+}
+
+function signOutCloud(){
+  if(!fbAuth) return;
+  if(!confirm('ログアウトしますか？\n\n※ ローカルの記録（localStorage）はこの端末に残ります。\n※ ログアウト後は再び「匿名」としてランキングに参加します。')) return;
+  fbAuth.signOut()
+    .then(() => {
+      showToast('ログアウトしました');
+      // onAuthStateChanged fires with null → will auto-sign-in anonymously
+    })
+    .catch(err => {
+      console.warn('[fb] sign-out error', err);
+      showToast('ログアウトに失敗しました');
+    });
+}
+
+function updateAuthUI(){
+  const btn    = document.getElementById('auth-btn');
+  const label  = document.getElementById('auth-label');
+  const desc   = document.getElementById('auth-desc');
+  const avatar = document.getElementById('auth-avatar');
+  const numEl  = document.getElementById('auth-num');
+  if(!btn) return;
+
+  if(fbUser && !fbIsAnonymous){
+    // Signed in with Google
+    btn.classList.add('is-in');
+    if(label) label.textContent = fbUser.displayName || 'ログイン済み';
+    if(desc)  desc.textContent  = fbUser.email || 'ログアウト';
+    if(numEl) numEl.textContent = '✓';
+    if(avatar){
+      if(fbUser.photoURL){
+        avatar.src = fbUser.photoURL;
+        avatar.hidden = false;
+        avatar.alt = (fbUser.displayName || 'User') + ' のアバター';
+      } else {
+        avatar.hidden = true;
+      }
+    }
+  } else {
+    // Anonymous or not yet authed
+    btn.classList.remove('is-in');
+    if(label) label.textContent = 'Googleでログイン';
+    if(desc)  desc.textContent  = '記録を守る／端末間で同期（予定）';
+    if(numEl) numEl.textContent = 'IV';
+    if(avatar){ avatar.hidden = true; avatar.src = ''; }
   }
 }
 function setLpStatus(msg){
@@ -3566,8 +4067,31 @@ function myScorePayload(){
   const today = todayStr();
   const yest = daysAgoStr(1);
   const nick = ((D.nickname||'').trim()).slice(0, 20);
+  // Respect privacy settings: nameMode decides which name fields are public; showAvatar decides photoURL exposure
+  const privacy = (D.privacy && typeof D.privacy === 'object') ? D.privacy : { nameMode:'nickname', showAvatar:true };
+  const mode = ['nickname','google','anon'].includes(privacy.nameMode) ? privacy.nameMode : 'nickname';
+  const showAvatar = privacy.showAvatar !== false;
+  let pubNick = '';
+  let pubDisplay = '';
+  if(mode === 'nickname'){
+    pubNick = nick || '';
+    pubDisplay = '';
+  } else if(mode === 'google'){
+    pubNick = '';
+    pubDisplay = (fbUser && !fbIsAnonymous && fbUser.displayName) ? String(fbUser.displayName).slice(0,40) : '';
+  } else {
+    // anon: nothing public → ranking falls back to "読者"
+    pubNick = '';
+    pubDisplay = '';
+  }
+  const pubPhoto = (showAvatar && fbUser && !fbIsAnonymous && fbUser.photoURL)
+    ? String(fbUser.photoURL) : '';
   return {
-    nickname: nick || '',
+    nickname: pubNick,
+    displayName: pubDisplay,
+    photoURL: pubPhoto,
+    isAnonymous: !!fbIsAnonymous,
+    privacyMode: mode,
     todayScore: D.scoreByDate?.[today] || 0,
     todayDone:  D.doneCountByDate?.[today] || 0,
     yesterdayScore: D.scoreByDate?.[yest] || 0,
@@ -3625,7 +4149,10 @@ function fetchRanking(kind, limit){
         const d = doc.data() || {};
         rows.push({
           uid: doc.id,
-          nickname: d.nickname || '',
+          nickname:    d.nickname    || '',
+          displayName: d.displayName || '',
+          photoURL:    d.photoURL    || '',
+          isAnonymous: d.isAnonymous !== false,
           yesterdayScore: d.yesterdayScore || 0,
           yesterdayDone: d.yesterdayDone || 0,
           personalBest: d.personalBest || 0,
@@ -4018,6 +4545,17 @@ function chkTask(id){
       const prevBest = (D.personalBest - earned);
       if(prevBest > 0 && earned >= 10){
         setTimeout(()=>showToast(`自己ベスト更新 — ${D.personalBest} pt`), 900);
+        // Offer share — open confirm dialog only on significant jumps (>=20pt over prev)
+        if((D.personalBest - prevBest) >= 20){
+          setTimeout(()=>{
+            if(confirm(`自己ベスト更新 🎉 — ${D.personalBest} pt\n\nこの達成を X でシェアしますか？`)){
+              shareToX(
+                `自己ベスト更新しました — ${D.personalBest} pt 🌱\nBloomタスクコーチで集中力を育て中。`,
+                { hashtags: ['Bloomタスクコーチ','自己ベスト','集中'] }
+              );
+            }
+          }, 1800);
+        }
       }
     }
     // Cloud sync — debounce a couple seconds so rapid completions coalesce
@@ -4241,6 +4779,34 @@ function submitForm(){
 }
 
 // ============================================================
+// X (Twitter) share — for milestones / personal bests
+// ============================================================
+const AUTHOR_X = 'LMeta321';   // 著者とーるさんの X アカウント
+function shareToX(text, opts){
+  const hashtags = (opts && opts.hashtags) || ['Bloomタスクコーチ','行動経済学','集中'];
+  const via = (opts && opts.via) || AUTHOR_X;
+  const url = new URL('https://twitter.com/intent/tweet');
+  url.searchParams.set('text', text || '');
+  if(hashtags.length) url.searchParams.set('hashtags', hashtags.join(','));
+  if(via) url.searchParams.set('via', via);
+  // `url` is optional; if the app is hosted, pass origin for link preview
+  if(location && location.origin && !location.origin.startsWith('file://')){
+    url.searchParams.set('url', location.origin + (location.pathname || ''));
+  }
+  window.open(url.toString(), '_blank', 'noopener');
+}
+let _lastShareContext = null; // carry what the milestone/toast is about
+function setShareContext(ctx){ _lastShareContext = ctx; }
+function triggerShare(){
+  const c = _lastShareContext;
+  if(!c){
+    shareToX('Bloomタスクコーチで集中力を育てています。', {});
+    return;
+  }
+  shareToX(c.text, c.opts || {});
+}
+
+// ============================================================
 // MILESTONE
 // ============================================================
 function showMilestone(ms){
@@ -4282,6 +4848,12 @@ function showMilestone(ms){
     ${il45/Math.max(total,1)>=0.3
       ? '売上に直結する仕事に集中できています。見事です。'
       : '売上直結タスクをもう一歩増やすと、成果が一気に加速します。'}`;
+
+  // Set up share context for this milestone
+  setShareContext({
+    text: `${ms}件のタスク達成 🌱\n— Bloomタスクコーチで積み上げ中`,
+    opts: { hashtags: ['Bloomタスクコーチ','集中','行動経済学'] }
+  });
 
   document.getElementById('ms-ov').classList.add('open');
   launchConfetti();
@@ -4526,6 +5098,25 @@ function escNick(n){
   if(!s) return '<span class="lp-nm anon">読者</span>';
   return esc(s);
 }
+// Pick a display name for a ranking row, in priority order: nickname > Google displayName > "読者"
+function rankingName(row){
+  const nick = (row.nickname || '').trim();
+  if(nick) return { text: nick, anon: false };
+  const dn = (row.displayName || '').trim();
+  if(dn) return { text: dn, anon: false };
+  return { text: '読者', anon: true };
+}
+function avatarHtml(row, sizeCls){
+  // sizeCls: 'lp-av' (large) or 'ml-av' (small)
+  if(row.photoURL){
+    const safe = (row.photoURL || '').replace(/"/g,'&quot;');
+    return `<img class="${sizeCls}" src="${safe}" alt="" loading="lazy">`;
+  }
+  // Fallback: an initial circle
+  const nm = rankingName(row).text;
+  const ch = nm ? nm.charAt(0).toUpperCase() : '?';
+  return `<span class="${sizeCls} ${sizeCls}-init">${esc(ch)}</span>`;
+}
 function renderLeaderboardList(rows, kind){
   const listEl = document.getElementById('lp-list');
   const moreEl = document.getElementById('lp-more');
@@ -4552,11 +5143,14 @@ function renderLeaderboardList(rows, kind){
     const rank = i + 1;
     const rkClass = rank<=3 ? ` rk-${rank}` : '';
     const meClass = (r.uid === fbUid) ? ' me' : '';
-    const nm = (r.uid === fbUid && !r.nickname) ? 'あなた' : (r.nickname || '読者');
-    const nmClass = (r.nickname||'').trim() ? '' : ' anon';
+    const nmRes = rankingName(r);
+    const nm = (r.uid === fbUid && nmRes.anon) ? 'あなた' : nmRes.text;
+    const nmClass = nmRes.anon ? ' anon' : '';
     const val = fmtN(rankValueFor(r, kind));
+    const av = avatarHtml(r, 'lp-av');
     return `<div class="lp-row${meClass}">
       <div class="lp-rank${rkClass}">${rank}</div>
+      ${av}
       <div class="lp-nm${nmClass}">${esc(nm)}</div>
       <div class="lp-val">${val}<span class="lp-u">${unit}</span></div>
     </div>`;
@@ -4581,11 +5175,14 @@ function renderLeaderboardList(rows, kind){
     if(fbUid && myIdxInFiltered >= visibleCount){
       const me = filtered[myIdxInFiltered];
       const rank = myIdxInFiltered + 1;
-      const nm = me.nickname || 'あなた';
-      const nmClass = (me.nickname||'').trim() ? '' : ' anon';
+      const nmRes = rankingName(me);
+      const nm = nmRes.anon ? 'あなた' : nmRes.text;
+      const nmClass = nmRes.anon ? ' anon' : '';
       const val = fmtN(rankValueFor(me, kind));
+      const av = avatarHtml(me, 'lp-av');
       meRowEl.innerHTML = `<div class="lp-row me">
         <div class="lp-rank">${rank}</div>
+        ${av}
         <div class="lp-nm${nmClass}">${esc(nm)}</div>
         <div class="lp-val">${val}<span class="lp-u">${unit}</span></div>
       </div>`;
@@ -4654,11 +5251,14 @@ function renderMiniLeaderList(rows){
     const rank = i + 1;
     const rkClass = ` rk-${rank}`;
     const meClass = (r.uid === fbUid) ? ' me' : '';
-    const nm = (r.uid === fbUid && !r.nickname) ? 'あなた' : (r.nickname || '読者');
-    const nmClass = (r.nickname||'').trim() ? '' : ' anon';
+    const nmRes = rankingName(r);
+    const nm = (r.uid === fbUid && nmRes.anon) ? 'あなた' : nmRes.text;
+    const nmClass = nmRes.anon ? ' anon' : '';
     const val = fmtN(rankValueFor(r, miniRankingKind));
+    const av = avatarHtml(r, 'ml-av');
     return `<li class="ml-row${meClass}">
       <div class="ml-rank${rkClass}">${rank}</div>
+      ${av}
       <div class="ml-nm${nmClass}">${esc(nm)}</div>
       <div class="ml-val">${val}<span class="ml-u">${unit}</span></div>
     </li>`;
@@ -4975,6 +5575,10 @@ document.getElementById('btn-timer-done').addEventListener('click', ()=>{
 });
 document.getElementById('btn-timer-stop').addEventListener('click', stopTimer);
 document.getElementById('ms-close').addEventListener('click', closeMilestone);
+(function wireMsShare(){
+  const btn = document.getElementById('ms-share');
+  if(btn) btn.addEventListener('click', triggerShare);
+})();
 document.getElementById('ms-ov').addEventListener('click', e=>{
   if(e.target===document.getElementById('ms-ov')) closeMilestone();
 });
@@ -5052,6 +5656,19 @@ document.getElementById('btn-reset').addEventListener('click', resetAll);
       openRecap();
     });
   }
+})();
+
+// Auth button — toggle between sign-in and sign-out depending on state
+(function wireAuthBtn(){
+  const btn = document.getElementById('auth-btn');
+  if(!btn) return;
+  btn.addEventListener('click', () => {
+    if(fbUser && !fbIsAnonymous){
+      signOutCloud();
+    } else {
+      signInWithGoogle();
+    }
+  });
 })();
 
 // Recap
@@ -5328,6 +5945,128 @@ document.getElementById('quote-ov').addEventListener('click', e=>{
 })();
 
 // ============================================================
+// Terms / Privacy / Disclaimer modal
+// ============================================================
+function openTosModal(mode){
+  // mode: 'view' (no accept needed) or 'accept' (require acceptance for Google sign-in)
+  const ov = document.getElementById('tos-ov');
+  const actions = document.getElementById('tos-actions');
+  if(!ov || !actions) return;
+  actions.innerHTML = '';
+  if(mode === 'accept'){
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'tos-cancel';
+    cancel.textContent = 'キャンセル';
+    cancel.addEventListener('click', closeTosModal);
+    const accept = document.createElement('button');
+    accept.type = 'button';
+    accept.className = 'tos-primary';
+    accept.textContent = '同意してGoogleでログイン';
+    accept.addEventListener('click', () => {
+      D.tosAcceptedAt = new Date().toISOString();
+      D.tosVersion = TOS_VERSION;
+      save();
+      closeTosModal();
+      // Proceed to actual Google sign-in
+      setTimeout(() => { try { _doGoogleSignInActual(); } catch(e){ console.warn(e); } }, 50);
+    });
+    actions.appendChild(cancel);
+    actions.appendChild(accept);
+  } else {
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'tos-close-only';
+    close.textContent = '閉じる';
+    close.addEventListener('click', closeTosModal);
+    actions.appendChild(close);
+  }
+  ov.classList.add('open');
+  // Scroll modal body to top so "I. 収集する情報" is the first thing seen
+  const body = ov.querySelector('.tos-body');
+  if(body) body.scrollTop = 0;
+}
+function closeTosModal(){
+  const ov = document.getElementById('tos-ov');
+  if(ov) ov.classList.remove('open');
+}
+(function wireTos(){
+  const closeBtn = document.getElementById('tos-close');
+  if(closeBtn) closeBtn.addEventListener('click', closeTosModal);
+  const ov = document.getElementById('tos-ov');
+  if(ov){
+    ov.addEventListener('click', e => { if(e.target === ov) closeTosModal(); });
+  }
+  const footerLink = document.getElementById('footer-tos-link');
+  if(footerLink) footerLink.addEventListener('click', () => openTosModal('view'));
+  const settingsLink = document.getElementById('btn-open-tos');
+  if(settingsLink) settingsLink.addEventListener('click', () => openTosModal('view'));
+})();
+
+// ============================================================
+// Privacy settings wiring
+// ============================================================
+function refreshPrivacyPreview(){
+  const el = document.getElementById('ps-preview-name');
+  if(!el) return;
+  const mode = (D.privacy && D.privacy.nameMode) || 'nickname';
+  const nick = ((D.nickname||'').trim()).slice(0, 20);
+  const googleName = (fbUser && !fbIsAnonymous && fbUser.displayName) ? String(fbUser.displayName) : '';
+  let preview = '';
+  if(mode === 'anon'){
+    preview = '読者';
+  } else if(mode === 'google'){
+    preview = googleName || '（Googleログインすると表示されます）';
+  } else {
+    preview = nick || googleName || '読者';
+  }
+  const showAv = (D.privacy && D.privacy.showAvatar !== false);
+  el.innerHTML = esc(preview) + (showAv ? '（アイコンあり）' : '（アイコンなし／イニシャル円）');
+}
+function restorePrivacyUI(){
+  const sel = document.getElementById('ps-name-mode');
+  const chk = document.getElementById('ps-show-avatar');
+  if(sel) sel.value = (D.privacy && D.privacy.nameMode) || 'nickname';
+  if(chk) chk.checked = !(D.privacy && D.privacy.showAvatar === false);
+  refreshPrivacyPreview();
+}
+(function wirePrivacy(){
+  const sel = document.getElementById('ps-name-mode');
+  const chk = document.getElementById('ps-show-avatar');
+  if(sel){
+    sel.addEventListener('change', () => {
+      if(!D.privacy) D.privacy = { nameMode:'nickname', showAvatar:true };
+      D.privacy.nameMode = sel.value;
+      save();
+      refreshPrivacyPreview();
+      scheduleUpload(300);
+      try { renderMiniLeader(); } catch(e){}
+      try { renderRanking && renderRanking(); } catch(e){}
+    });
+  }
+  if(chk){
+    chk.addEventListener('change', () => {
+      if(!D.privacy) D.privacy = { nameMode:'nickname', showAvatar:true };
+      D.privacy.showAvatar = !!chk.checked;
+      save();
+      refreshPrivacyPreview();
+      scheduleUpload(300);
+      try { renderMiniLeader(); } catch(e){}
+      try { renderRanking && renderRanking(); } catch(e){}
+    });
+  }
+})();
+// When the settings modal opens, rehydrate privacy UI
+(function hookSettingsOpenForPrivacy(){
+  const btn = document.getElementById('settings-btn');
+  if(!btn) return;
+  btn.addEventListener('click', () => {
+    // Fire on next tick so modal-open state has settled
+    setTimeout(restorePrivacyUI, 0);
+  });
+})();
+
+// ============================================================
 // INIT — 独立キー、他版とは完全分離
 // ============================================================
 trackOpenDay();
@@ -5337,6 +6076,8 @@ bootstrapIntro();
 try { fbInit(); } catch(e) { console.warn('[fb] init top-level', e); }
 // Show initial "接続中…" state immediately for mini leaderboard on main page
 try { renderMiniLeader(); } catch(e){}
+// Hydrate privacy UI values once DOM is ready (in case modal is never opened)
+try { restorePrivacyUI(); } catch(e){}
 </script>
 </body>
 </html>
