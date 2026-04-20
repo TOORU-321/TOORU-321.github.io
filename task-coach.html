@@ -306,6 +306,38 @@ body{
   transition:width .9s cubic-bezier(.2,.8,.2,1);
 }
 
+/* ---- Slim header on scroll (ミニマスト化) ----------------- */
+.hdr{transition:padding .2s ease, border-bottom-width .2s ease}
+.hdr.hdr-slim{border-bottom:1px solid var(--rule)}
+.hdr.hdr-slim .masthead{display:none}
+.hdr.hdr-slim .hdr-tag{display:none}
+.hdr.hdr-slim .wordmark-sub{display:none}
+.hdr.hdr-slim .hdr-inner{
+  padding:8px 28px; align-items:center; gap:12px;
+}
+.hdr.hdr-slim .wordmark{gap:10px}
+.hdr.hdr-slim .wordmark h1{
+  font-size:22px; letter-spacing:-.005em; line-height:1;
+}
+.hdr.hdr-slim .hdr-right{padding-bottom:0; gap:8px}
+.hdr.hdr-slim .streak-badge{
+  min-height:30px; padding:3px 10px;
+}
+.hdr.hdr-slim .streak-badge .num{font-size:14px}
+.hdr.hdr-slim .streak-badge .lbl{font-size:7px; letter-spacing:.22em; margin-top:1px}
+.hdr.hdr-slim .pt-box{padding-left:10px}
+.hdr.hdr-slim .pt-num{font-size:22px}
+.hdr.hdr-slim .pt-lbl{font-size:7.5px; margin-top:3px; letter-spacing:.22em}
+.hdr.hdr-slim .settings-btn{height:28px; width:40px; font-size:10px}
+.hdr.hdr-slim .prog-wrap{padding:0 28px 3px}
+.hdr.hdr-slim .prog-row{display:none}
+.hdr.hdr-slim .prog-bar{height:1.5px}
+@media (max-width:620px){
+  .hdr.hdr-slim .hdr-inner{padding:6px 16px}
+  .hdr.hdr-slim .wordmark h1{font-size:19px}
+  .hdr.hdr-slim .prog-wrap{padding:0 16px 3px}
+}
+
 /* ============================================================
    MAIN
    ============================================================ */
@@ -404,6 +436,48 @@ body{
   .quote-band .qb-mark{font-size:52px; margin-top:10px}
   .quote-band .qb-text{font-size:14.5px; line-height:1.6}
   .quote-band .qb-meta{font-size:11px; gap:8px}
+}
+
+/* ---- Collapsible quote band (折りたたみ式) ---------------- */
+.quote-band{cursor:pointer; transition:padding .2s ease}
+.quote-band .qb-chev{
+  position:absolute; right:22px; top:50%;
+  transform:translateY(-50%) rotate(180deg);
+  font-size:11px; color:var(--muted);
+  transition:transform .25s ease;
+  flex-shrink:0;
+}
+.quote-band.collapsed .qb-chev{transform:translateY(-50%) rotate(0deg)}
+.quote-band.collapsed{
+  padding:9px 46px 9px 24px;
+  align-items:center; gap:12px;
+  background:var(--paper);
+}
+.quote-band.collapsed::before{display:none}
+.quote-band.collapsed .qb-mark{
+  font-size:24px; line-height:1; margin-top:0;
+  flex-shrink:0; opacity:.5;
+}
+.quote-band.collapsed .qb-body{
+  display:flex; flex-direction:row; align-items:baseline;
+  gap:10px; min-width:0; flex-wrap:nowrap;
+}
+.quote-band.collapsed .qb-kicker{
+  margin-bottom:0; font-size:9px; color:var(--muted);
+  flex-shrink:0; letter-spacing:.18em;
+}
+.quote-band.collapsed .qb-text{
+  font-size:13px; line-height:1.35;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  min-width:0; flex:1;
+  font-style:italic;
+}
+.quote-band.collapsed .qb-meta{display:none}
+@media (max-width:620px){
+  .quote-band.collapsed{padding:8px 40px 8px 16px; gap:8px}
+  .quote-band.collapsed .qb-mark{font-size:20px}
+  .quote-band.collapsed .qb-kicker{display:none}
+  .quote-band.collapsed .qb-text{font-size:12.5px}
 }
 
 /* ============================================================
@@ -1050,6 +1124,93 @@ body{
   transition:background .15s, color .15s;
 }
 .mx:hover{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+
+/* ============================================================
+   EDITOR'S LETTER MODAL — Day-3 nudge
+   ============================================================ */
+.letter-modal{
+  max-width:560px;
+  border-top:6px solid var(--crimson);
+  background:linear-gradient(180deg, var(--card) 0%, #F4EFE6 100%);
+}
+.letter-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--gold);
+  letter-spacing:.26em; text-transform:uppercase;
+  text-align:center; margin:4px 0 18px;
+}
+.letter-quote{
+  display:flex; gap:16px; align-items:flex-start;
+  padding:16px 22px 18px;
+  background:var(--paper);
+  border:1px solid var(--rule-3);
+  border-left:3px solid var(--crimson);
+  margin-bottom:22px;
+  position:relative;
+}
+.letter-quote .lq-mark{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-weight:700;
+  font-size:64px; line-height:.55; color:var(--crimson);
+  flex-shrink:0; margin-top:10px; opacity:.6;
+}
+.letter-quote .lq-text{
+  flex:1; min-width:0;
+  font-family:'Noto Serif JP','Playfair Display',serif;
+  font-size:17.5px; line-height:1.7;
+  color:var(--ink); font-weight:500;
+  letter-spacing:.01em;
+}
+.letter-quote .lq-text em{
+  font-style:normal; font-weight:700;
+  color:var(--crimson);
+  border-bottom:2px solid rgba(184,29,36,.35);
+  padding-bottom:1px;
+}
+.letter-body{
+  font-family:'Noto Serif JP',serif;
+  font-size:13.5px; line-height:1.85;
+  color:var(--ink-2); margin-bottom:24px;
+}
+.letter-body p{margin:0 0 10px}
+.letter-body p:last-child{margin:0}
+.letter-body .letter-sign{
+  font-family:'Playfair Display','Noto Serif JP',serif;
+  font-style:italic;
+  font-size:13px; color:var(--ink);
+  text-align:right; margin-top:14px; letter-spacing:.02em;
+}
+.letter-actions{
+  display:flex; flex-direction:column; gap:10px;
+  padding-top:18px; border-top:1px solid var(--rule-3);
+}
+.letter-cta{
+  display:flex; align-items:center; justify-content:center;
+  padding:14px 18px;
+  background:var(--ink); color:var(--paper);
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer;
+  border:1px solid var(--ink);
+  transition:background .18s, color .18s, transform .12s;
+}
+.letter-cta:hover{background:var(--crimson); border-color:var(--crimson); transform:translateY(-1px)}
+.letter-later{
+  background:transparent; border:1px solid var(--rule-2);
+  color:var(--muted); padding:10px 14px;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .2s, color .2s;
+}
+.letter-later:hover{background:var(--card-2); color:var(--ink)}
+@media (max-width:620px){
+  .letter-quote{padding:14px 16px 16px; gap:10px}
+  .letter-quote .lq-mark{font-size:48px; margin-top:8px}
+  .letter-quote .lq-text{font-size:15.5px}
+}
 
 /* Section header inside modal */
 .mform-section{
@@ -1764,17 +1925,18 @@ body{
   </div>
 </header>
 
-<!-- Daily Quote Band — the epigraph (changes once per day) -->
-<section class="quote-band" id="quote-band">
+<!-- Daily Quote Band — the epigraph (changes once per day, collapsible) -->
+<section class="quote-band collapsed" id="quote-band" onclick="toggleQuoteBand()" role="button" aria-label="今日の一節を開閉">
   <span class="qb-mark" aria-hidden="true">&ldquo;</span>
   <div class="qb-body">
-    <div class="qb-kicker">今日の一節 &middot; Epigraph</div>
+    <div class="qb-kicker">今日の一節</div>
     <div class="qb-text" id="qb-text"></div>
     <div class="qb-meta">
       <span class="qb-author" id="qb-author"></span>
       <span class="qb-tag" id="qb-tag"></span>
     </div>
   </div>
+  <span class="qb-chev" aria-hidden="true">&#x25BE;</span>
 </section>
 
 <main class="main">
@@ -2146,6 +2308,32 @@ body{
   </div>
 </div>
 
+<!-- Editor's Letter Modal — periodic nudge (day 3, then every 5 opened days) -->
+<div class="ov" id="letter-ov">
+  <div class="modal letter-modal">
+    <div class="mh">
+      <span>
+        <span class="mttl-mark">編集部より</span>
+        <span class="mttl">Editor&rsquo;s Letter</span>
+      </span>
+      <button class="mx" id="letter-close" aria-label="閉じる">×</button>
+    </div>
+
+    <div class="letter-kicker" id="letter-kicker"></div>
+    <div class="letter-quote">
+      <span class="lq-mark" aria-hidden="true">&ldquo;</span>
+      <div class="lq-text" id="letter-quote-text"></div>
+    </div>
+
+    <div class="letter-body" id="letter-body"></div>
+
+    <div class="letter-actions">
+      <a class="letter-cta" id="letter-cta" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <button type="button" class="letter-later" id="letter-later">あとで</button>
+    </div>
+  </div>
+</div>
+
 <!-- Milestone Modal -->
 <div class="ms-ov" id="ms-ov">
   <div class="ms-card">
@@ -2323,12 +2511,27 @@ function renderQuoteBand(){
   if(tEl) tEl.textContent = q.t;
   if(aEl) aEl.textContent = q.a;
   if(gEl) gEl.textContent = q.g;
+  // 開閉状態を復元（その日のうちだけ開いた状態を保持）
+  const band = document.getElementById('quote-band');
+  if(band){
+    const openedToday = D.quoteOpenDay === todayStr();
+    band.classList.toggle('collapsed', !openedToday);
+  }
+}
+function toggleQuoteBand(){
+  const band = document.getElementById('quote-band');
+  if(!band) return;
+  const wasCollapsed = band.classList.contains('collapsed');
+  band.classList.toggle('collapsed', !wasCollapsed);
+  // 展開 → 今日の日付を保存 / 畳む → クリア
+  D.quoteOpenDay = wasCollapsed ? todayStr() : null;
+  save();
 }
 
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen' }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteOpenDay:null }; }
 function load(){
   try{ return Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}')); }
   catch(e){ return defData(); }
@@ -3507,9 +3710,126 @@ document.addEventListener('keydown', e=>{
 });
 
 // ============================================================
+// EDITOR'S LETTER — periodic nudge (day 3 → then every 5 open-days)
+// Edit PROMOS below to add, remove, or change the cards.
+// The rotation is deterministic: PROMOS[letterCount % PROMOS.length].
+// ============================================================
+const PROMOS = [
+  // ① Instagram
+  {
+    id:'ig',
+    kicker:'編集部より 第I信',
+    quote:'目標達成までの最短最速は、いかに <em>達成と直結しているタスク</em> をこなすか、です。',
+    body:[
+      '続けてくださって、ありがとうございます。',
+      'このアプリは、あなたの毎日に「直結する一手」を静かに積ませるために作りました。感想・質問・改善要望など、どんな一言でも嬉しいです。気軽にDMをお送りください。',
+    ],
+    sign:'— とーる｜行動経済アナリスト',
+    ctaLabel:'Instagramをフォロー & DM',
+    ctaUrl:'https://www.instagram.com/tooru_lab?igsh=ZWcxcTA2OGJtajE0&utm_source=qr',
+  },
+  // ② Column (l-mine.com)
+  {
+    id:'column',
+    kicker:'編集部より 第II信',
+    quote:'正しいタスクを、正しく積む。その<em>思考の土台</em>を、コラムに書き続けています。',
+    body:[
+      '「なぜ、この仕事をいま、この順でやるのか」——その答えを、行動経済学の視点で言語化しています。',
+      'アプリの外側で、あなたの意思決定を軽くする文章が読めます。気になったテーマから、覗いてみてください。',
+    ],
+    sign:'— とーる｜行動経済アナリスト',
+    ctaLabel:'コラムを読む',
+    ctaUrl:'https://l-mine.com/column',
+  },
+  // ＋ 追加する場合：この配列に新しいオブジェクトを足してください。
+];
+const LETTER_START_DAY = 3;  // 初回は3日目
+const LETTER_INTERVAL  = 5;  // 以降5日おき（3→8→13→18…）
+
+function trackOpenDay(){
+  const today = todayStr();
+  if(!Array.isArray(D.openDates)) D.openDates = [];
+  if(!D.openDates.includes(today)){
+    D.openDates.push(today);
+    save();
+  }
+}
+function currentPromo(){
+  const idx = (D.letterCount || 0) % PROMOS.length;
+  return PROMOS[idx];
+}
+function fillLetter(promo){
+  const body = promo.body.map(p=>`<p>${p}</p>`).join('') +
+               `<p class="letter-sign">${promo.sign}</p>`;
+  document.getElementById('letter-kicker').textContent   = promo.kicker;
+  document.getElementById('letter-quote-text').innerHTML = promo.quote;
+  document.getElementById('letter-body').innerHTML       = body;
+  const cta = document.getElementById('letter-cta');
+  cta.textContent = promo.ctaLabel;
+  cta.setAttribute('href', promo.ctaUrl);
+}
+function openLetter(){
+  fillLetter(currentPromo());
+  document.getElementById('letter-ov').classList.add('open');
+  // 開いた瞬間に「今日はもう出さない」を確定（リロード対策）
+  D.lastLetterDay = todayStr();
+  save();
+}
+function closeLetter(){
+  document.getElementById('letter-ov').classList.remove('open');
+  // 閉じたら次回のために promo を進める（交互ローテーション）
+  D.letterCount = (D.letterCount || 0) + 1;
+  save();
+}
+function isLetterDue(){
+  const days = (D.openDates || []).length;
+  if(days < LETTER_START_DAY) return false;
+  if(D.lastLetterDay === todayStr()) return false; // すでに今日表示済
+  return ((days - LETTER_START_DAY) % LETTER_INTERVAL) === 0;
+}
+function maybeShowLetter(){
+  if(!isLetterDue()) return;
+  // 6秒の遅延でさりげなく登場
+  setTimeout(()=>{ if(isLetterDue()) openLetter(); }, 6000);
+}
+document.getElementById('letter-close').addEventListener('click', closeLetter);
+document.getElementById('letter-later').addEventListener('click', closeLetter);
+document.getElementById('letter-ov').addEventListener('click', e=>{
+  if(e.target===document.getElementById('letter-ov')) closeLetter();
+});
+// CTAクリックでも表示済として記録（次回は別のPROMOSへローテ）
+document.getElementById('letter-cta').addEventListener('click', ()=>{
+  setTimeout(closeLetter, 200);
+});
+
+// ============================================================
+// Slim header on scroll — スクロールでヘッダーをミニマスト化
+// ============================================================
+(function attachSlimHeader(){
+  const hdr = document.querySelector('.hdr');
+  if(!hdr) return;
+  let ticking = false, lastSlim = null;
+  const apply = ()=>{
+    const y = window.scrollY || window.pageYOffset || 0;
+    const slim = y > 36;
+    if(slim !== lastSlim){
+      hdr.classList.toggle('hdr-slim', slim);
+      lastSlim = slim;
+    }
+    ticking = false;
+  };
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ requestAnimationFrame(apply); ticking = true; }
+  }, {passive:true});
+  apply();
+})();
+
+// ============================================================
 // INIT — 独立キー、他版とは完全分離
 // ============================================================
+trackOpenDay();
 render();
+maybeShowLetter();
 </script>
 </body>
 </html>
