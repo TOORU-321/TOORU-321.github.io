@@ -4196,7 +4196,12 @@ function fbInit(){
     return;
   }
   try{
-    fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    // Safe to call multiple times — reuse an existing default app if present
+    if(firebase.apps && firebase.apps.length > 0){
+      fbApp = firebase.app();
+    } else {
+      fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    }
     fbAuth = firebase.auth();
     fbDb = firebase.firestore();
     setLpStatus('認証中…');
@@ -4242,8 +4247,18 @@ function fbInit(){
 // Google sign-in / link — preserves anonymous UID when possible
 const TOS_VERSION = '2026-04-20';
 function signInWithGoogle(){
+  // If Firebase hasn't initialized yet (SDK still loading, or init errored previously),
+  // try to bring it up right now so the click is never a dead-end.
   if(!fbAuth){
-    showToast('ログインしていません。右上メニュー「Googleでログイン」からサインインできます');
+    fbError = null; // allow a fresh attempt
+    try { fbInit(); } catch(e){ console.warn('[fb] retry init', e); }
+  }
+  if(!fbAuth){
+    if(typeof firebase === 'undefined'){
+      showToast('接続エラー：ページを再読み込みしてお試しください');
+    } else {
+      showToast('ログイン機能の準備中です。少し待ってから再度お試しください');
+    }
     return;
   }
   // Gate: require ToS acceptance before first Google sign-in
