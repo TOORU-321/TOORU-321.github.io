@@ -591,21 +591,6 @@
   .toast.error { border-color:var(--red); color:var(--red); }
 
   /* ─────────────────────────────────────
-     ADMIN BANNER
-  ───────────────────────────────────── */
-  #admin-banner {
-    display:none;
-    position:fixed; top:.6rem; right:.8rem;
-    font-family:'Orbitron',sans-serif;
-    font-size:.6rem; letter-spacing:.2em;
-    color:var(--gold);
-    background:rgba(245,197,24,.12);
-    border:1px solid rgba(245,197,24,.4);
-    padding:.3rem .7rem; border-radius:4px;
-    z-index:300; cursor:pointer;
-  }
-
-  /* ─────────────────────────────────────
      USERNAME MODAL
   ───────────────────────────────────── */
   .modal-overlay {
@@ -984,7 +969,6 @@
 <div id="toast" class="toast"></div>
 
 <!-- ADMIN BANNER -->
-<div id="admin-banner"></div>
 
 <!-- USERNAME MODAL -->
 <div id="modal-username" class="modal-overlay">
@@ -1027,6 +1011,7 @@
 <!-- ═══════ BRIEF ═══════ -->
 <div id="screen-brief" class="screen">
   <div class="container">
+    <span class="nav-back-btn" onclick="MissionSelect.show()">← ミッション選択へ</span>
     <div class="top-bar">
       <div id="js-mission-badge" class="mission-badge">MISSION 01</div>
       <div class="prog-track"><div id="js-prog" class="prog-fill" style="width:0%"></div></div>
@@ -1068,6 +1053,7 @@
 <!-- ═══════ BUILD ═══════ -->
 <div id="screen-build" class="screen">
   <div class="container">
+    <span class="nav-back-btn" onclick="G.backToBrief()">← ブリーフィングへ戻る</span>
     <div class="top-bar">
       <div id="js-build-badge" class="mission-badge">MISSION 01</div>
       <div class="prog-track"><div id="js-build-prog" class="prog-fill"></div></div>
@@ -1215,7 +1201,7 @@
 <!-- ═══════ HUB ═══════ -->
 <div id="screen-hub" class="screen">
   <div class="hub-eyebrow">BEHAVIORAL DESIGN AGENCY · TOKYO DIVISION</div>
-  <h1 class="hub-title" onclick="handleTitleClick()">NUDGE<br>ARCHITECT</h1>
+  <h1 class="hub-title">NUDGE<br>ARCHITECT</h1>
   <div class="hub-welcome">Welcome,</div>
   <div id="hub-username-display" class="hub-username-display">アーキテクト</div>
 
@@ -2340,38 +2326,52 @@ if (FIREBASE_CONFIG.apiKey !== 'YOUR_API_KEY') {
 /* ═══════════════════════════════════════
    CONSTANTS
 ═══════════════════════════════════════ */
-const LAUNCH_DATE = new Date('2026-04-20T00:00:00+09:00');
-const INIT_UNLOCK = 10;   // ローンチ時に解放するミッション数
 const STORAGE_KEY = 'nudge_architect_v2';
+
+// 累計スコアによる段階解放
+// score: その閾値に達したら total 件まで解放
+const UNLOCK_STEPS = [
+  { score:    0, total:  6 },   // 初期：ミッション 1-6
+  { score:  300, total:  9 },   // 300pt達成：ミッション 7-9 解放
+  { score:  700, total: 12 },   // 700pt達成：ミッション 10-12 解放
+  { score: 1200, total: 13 },   // 1200pt達成：ミッション 13 解放（最終）
+];
 
 /* ═══════════════════════════════════════
    UNLOCK LOGIC
 ═══════════════════════════════════════ */
-function getDaysElapsed(){
-  return Math.max(0, Math.floor((Date.now() - LAUNCH_DATE.getTime()) / 86400000));
+function getTotalScore(){
+  const sv = loadSave();
+  const scores = sv.scores || {};
+  return Object.values(scores).reduce((s, v) => s + (v.total || 0), 0);
 }
 function getUnlockedCount(){
-  return Math.min(MISSIONS.length, INIT_UNLOCK + getDaysElapsed());
+  const total = getTotalScore();
+  let count = UNLOCK_STEPS[0].total;
+  for (const step of UNLOCK_STEPS){
+    if (total >= step.score) count = step.total;
+  }
+  return Math.min(MISSIONS.length, count);
+}
+function getNextUnlockStep(){
+  const total = getTotalScore();
+  return UNLOCK_STEPS.find(s => s.score > total) || null;
 }
 function isMissionUnlocked(missionId){
   const idx = MISSIONS.findIndex(m => m.id === missionId);
-  const cap = _adminMode ? MISSIONS.length : getUnlockedCount();
-  return idx >= 0 && idx < cap;
+  return idx >= 0 && idx < getUnlockedCount();
 }
 function isNewlyUnlocked(missionId){
-  if (_adminMode) return false;
-  const idx  = MISSIONS.findIndex(m => m.id === missionId);
-  const days = getDaysElapsed();
-  const unlocked = getUnlockedCount();
-  return idx >= INIT_UNLOCK && idx < unlocked && days <= 3;
+  // 未プレイの解放済みミッションを "NEW" とする
+  const sv = loadSave();
+  return isMissionUnlocked(missionId) && !sv.scores[missionId];
 }
-function getUnlockDate(missionId){
+function getUnlockScoreRequired(missionId){
   const idx = MISSIONS.findIndex(m => m.id === missionId);
-  const daysNeeded = Math.max(0, idx - INIT_UNLOCK + 1);
-  if (daysNeeded === 0) return null;
-  const d = new Date(LAUNCH_DATE);
-  d.setDate(d.getDate() + daysNeeded);
-  return d;
+  for (const step of UNLOCK_STEPS){
+    if (idx < step.total) return step.score;
+  }
+  return null;
 }
 
 /* ═══════════════════════════════════════
@@ -2401,11 +2401,8 @@ const APP = {
   currentMissionId: null,
   prediction:       50,
   selectedNudges:   [],
-  titleClickCount:  0,
-  titleClickTimer:  null,
   _lastReveal:      null,
 };
-let _adminMode = false;
 
 /* ═══════════════════════════════════════
    HELPERS
@@ -2449,34 +2446,8 @@ function escHtml(s){
    INIT
 ═══════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  // ensure adminMode is never persisted
-  const sv = loadSave();
   Hub.show();
 });
-
-/* ═══════════════════════════════════════
-   ADMIN MODE  (タイトルを4秒以内に7回クリック)
-═══════════════════════════════════════ */
-function handleTitleClick(){
-  APP.titleClickCount = (APP.titleClickCount || 0) + 1;
-  clearTimeout(APP.titleClickTimer);
-  APP.titleClickTimer = setTimeout(() => { APP.titleClickCount = 0; }, 4000);
-
-  if (APP.titleClickCount >= 7){
-    APP.titleClickCount = 0;
-    _adminMode = !_adminMode;
-    const banner = $('admin-banner');
-    if (_adminMode){
-      banner.style.display = 'block';
-      banner.textContent   = '⚡ ADMIN MODE · ALL MISSIONS UNLOCKED';
-      showToast('🔓 全13ミッション解放！');
-    } else {
-      banner.style.display = 'none';
-      showToast('Admin mode OFF');
-    }
-    Hub.show();
-  }
-}
 
 /* ═══════════════════════════════════════
    USERNAME MODAL
@@ -2513,22 +2484,24 @@ const Hub = {
     const scores  = sv.scores || {};
     const doneIds = Object.keys(scores);
     const total   = doneIds.reduce((s, id) => s + (scores[id]?.total || 0), 0);
-    const unlocked = _adminMode ? MISSIONS.length : getUnlockedCount();
+    const unlocked = getUnlockedCount();
 
     $('hub-username-display').textContent  = sv.username || 'アーキテクト';
     $('hub-stat-completed').textContent    = doneIds.length;
     $('hub-stat-unlocked').textContent     = unlocked;
     $('hub-stat-total-score').textContent  = total;
 
-    // NEW banner — missions that unlocked in the last 3 days and aren't done yet
-    const newMs = MISSIONS.filter((m, i) =>
-      !_adminMode && i >= INIT_UNLOCK && i < getUnlockedCount() &&
-      getDaysElapsed() <= 3 && !scores[m.id]
-    );
+    // 次の解放まであと何pt か表示
     const banner = $('hub-new-banner');
-    if (newMs.length > 0){
+    const nextStep = getNextUnlockStep();
+    if (nextStep){
+      const needed = nextStep.score - total;
+      const newCount = nextStep.total - unlocked;
       banner.style.display = 'flex';
-      banner.innerHTML = `🎉 <span>新ミッション「${newMs[0].title}」が解放されました！</span>`;
+      banner.innerHTML = `🔓 <span>あと <strong>${needed}pt</strong> 獲得で ミッション ${newCount}つ 解放！</span>`;
+    } else if (unlocked >= MISSIONS.length){
+      banner.style.display = 'flex';
+      banner.innerHTML = `🏆 <span>全ミッション解放済み！コンプリートを目指せ。</span>`;
     } else {
       banner.style.display = 'none';
     }
@@ -2547,7 +2520,7 @@ const MissionSelect = {
   show(){
     const sv      = loadSave();
     const scores  = sv.scores || {};
-    const unlocked = _adminMode ? MISSIONS.length : getUnlockedCount();
+    const unlocked = getUnlockedCount();
     const done     = Object.keys(scores).length;
 
     $('ms-prog-unlocked').textContent  = unlocked;
@@ -2583,8 +2556,8 @@ const MissionSelect = {
       }
 
       if (!isUnlocked){
-        const d = getUnlockDate(m.id);
-        const label = d ? `${d.getMonth()+1}/${d.getDate()} 解放` : 'ロック中';
+        const req = getUnlockScoreRequired(m.id);
+        const label = req ? `累計 ${req}pt で解放` : 'ロック中';
         html += `<div class="ms-unlock-date">🔒 ${label}</div>`;
       } else {
         const btn = isDone ? 'もう一度プレイ' : 'START →';
@@ -2669,6 +2642,11 @@ const G = {
     G.updateBudgetUI();
     $('js-build-submit').disabled = true;
     showScreen('build');
+  },
+
+  backToBrief(){
+    APP.selectedNudges = [];
+    G.loadBrief();
   },
 
   renderNudgeGrid(){
@@ -2832,7 +2810,7 @@ const G = {
 
     // ── 次ボタン ───────────────────────────
     const sv2    = loadSave();
-    const unlocked = _adminMode ? MISSIONS.length : getUnlockedCount();
+    const unlocked = getUnlockedCount();
     const nextM  = MISSIONS.find((x, i) => i < unlocked && !sv2.scores[x.id] && x.id !== m.id);
     $('js-next-mission-btn').textContent = nextM ? '次のミッションへ →' : 'ミッション一覧へ →';
 
@@ -2870,7 +2848,7 @@ const G = {
 
   nextMission(){
     const sv      = loadSave();
-    const unlocked = _adminMode ? MISSIONS.length : getUnlockedCount();
+    const unlocked = getUnlockedCount();
     const next    = MISSIONS.find((x, i) => i < unlocked && !sv.scores[x.id] && x.id !== APP.currentMissionId);
     if (next){
       G.startMission(next.id);
