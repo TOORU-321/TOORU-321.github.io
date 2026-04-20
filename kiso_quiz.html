@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0f14">
-  <title>行動経済学基礎コース 知識クイズ — 100問で学び直すバイアスの基礎</title>
+  <meta name="theme-color" content="#faf7ef">
+  <title>行動経済学基礎コース 知識クイズ（Ivory版）— 100問で学び直すバイアスの基礎</title>
   <meta name="description" content="日本営業科学協会「行動経済学基礎コース」の内容に即した100問の知識クイズ。45以上の認知バイアスを、例題と詳細な解説で学び直せます。">
   <meta property="og:title" content="行動経済学基礎コース 知識クイズ">
   <meta property="og:description" content="45以上の認知バイアスを、100問の例題と解説で学び直す。">
@@ -12,8 +12,8 @@
   <meta property="og:url" content="https://columns.l-mine.com/kiso_quiz.html">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://columns.l-mine.com/kiso_quiz.html">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0f14'/><rect x='4.5' y='4.5' width='23' height='23' rx='4' fill='none' stroke='%23c9a96a' stroke-width='0.6' opacity='0.35'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,Times New Roman,serif' font-size='20' font-weight='800' fill='%23c9a96a' letter-spacing='-0.5'>B</text><rect x='10' y='25' width='12' height='1.4' fill='%23c9a96a' opacity='0.85'/><circle cx='23' cy='25.7' r='0.9' fill='%23c9a96a'/></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230b0f14'/><rect x='25' y='25' width='130' height='130' rx='22' fill='none' stroke='%23c9a96a' stroke-width='3' opacity='0.4'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='110' font-weight='800' fill='%23c9a96a' letter-spacing='-3'>B</text><rect x='56' y='140' width='68' height='8' fill='%23c9a96a' opacity='0.85'/></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23faf7ef'/><rect x='4.5' y='4.5' width='23' height='23' rx='4' fill='none' stroke='%238c6f2c' stroke-width='0.6' opacity='0.45'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,Times New Roman,serif' font-size='20' font-weight='800' fill='%231a1612' letter-spacing='-0.5'>B</text><rect x='10' y='25' width='12' height='1.4' fill='%238c6f2c' opacity='0.9'/><circle cx='23' cy='25.7' r='0.9' fill='%238c6f2c'/></svg>"><rect width='32' height='32' rx='7' fill='%230b0f14'/><rect x='4.5' y='4.5' width='23' height='23' rx='4' fill='none' stroke='%23c9a96a' stroke-width='0.6' opacity='0.35'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,Times New Roman,serif' font-size='20' font-weight='800' fill='%23c9a96a' letter-spacing='-0.5'>B</text><rect x='10' y='25' width='12' height='1.4' fill='%23c9a96a' opacity='0.85'/><circle cx='23' cy='25.7' r='0.9' fill='%23c9a96a'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23faf7ef'/><rect x='25' y='25' width='130' height='130' rx='22' fill='none' stroke='%238c6f2c' stroke-width='3' opacity='0.5'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='110' font-weight='800' fill='%231a1612' letter-spacing='-3'>B</text><rect x='56' y='140' width='68' height='8' fill='%238c6f2c' opacity='0.9'/></svg>"><rect width='180' height='180' rx='40' fill='%230b0f14'/><rect x='25' y='25' width='130' height='130' rx='22' fill='none' stroke='%23c9a96a' stroke-width='3' opacity='0.4'/><text x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='110' font-weight='800' fill='%23c9a96a' letter-spacing='-3'>B</text><rect x='56' y='140' width='68' height='8' fill='%23c9a96a' opacity='0.85'/></svg>">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,56 +24,57 @@
    DESIGN TOKENS — Dark Editorial
    ══════════════════════════════════════════════════════════════ */
 :root {
-  /* Surfaces */
-  --ink:            #0b0f14;
-  --ink-surface:    #121821;
-  --ink-elev:       #1a212c;
-  --ink-deep:       #080b10;
-  --paper:          #f4efe3;
+  /* Surfaces — inverted to warm ivory */
+  --ink:            #faf7ef;   /* Page bg (warm ivory) */
+  --ink-surface:    #ffffff;   /* Cards (crisp white for lift) */
+  --ink-elev:       #f4f0e4;   /* Elevated (hover, modal) */
+  --ink-deep:       #f1ecdc;   /* Deepest edge */
+  --paper:          #1a1612;   /* Inverse accent (used sparingly) */
 
-  /* Hairlines */
-  --hairline:       rgba(236, 231, 221, 0.08);
-  --hairline-2:     rgba(236, 231, 221, 0.14);
-  --hairline-gold:  rgba(201, 169, 106, 0.30);
+  /* Hairlines — now dark-on-light */
+  --hairline:       rgba(26, 22, 18, 0.09);
+  --hairline-2:     rgba(26, 22, 18, 0.18);
+  --hairline-gold:  rgba(140, 111, 44, 0.35);
 
-  /* Text */
-  --text-1:         #ece7dd;
-  --text-2:         #a8a396;
-  --text-3:         #74716a;
-  --text-4:         #4a4740;
-  --text-ink:       #0e131a;
+  /* Text — warm near-black scale */
+  --text-1:         #1a1612;   /* Primary body / heading */
+  --text-2:         #555048;   /* Secondary / muted */
+  --text-3:         #857e6f;   /* Tertiary / captions */
+  --text-4:         #b8b0a0;   /* Disabled */
+  --text-ink:       #1a1612;   /* On-accent-button text (dark on gold) */
 
-  /* Accent — burnished gold */
-  --gold:           #c9a96a;
-  --gold-hover:     #d7ba7c;
-  --gold-soft:      rgba(201, 169, 106, 0.10);
-  --gold-softer:    rgba(201, 169, 106, 0.04);
+  /* Accent — burnished gold (darkened for contrast on light bg) */
+  --gold:           #8c6f2c;   /* 5.3:1 on ivory (AA body-ok) */
+  --gold-hover:     #9c7e35;
+  --gold-bright:    #c9a96a;   /* Kept for button backgrounds only */
+  --gold-soft:      rgba(140, 111, 44, 0.09);
+  --gold-softer:    rgba(140, 111, 44, 0.04);
 
-  /* Level + State (subdued saturation) */
-  --lv1:            #8ca1cc;
-  --lv2:            #c9a96a;
-  --lv3:            #b16b53;
-  --success:        #7fa084;
-  --success-soft:   rgba(127, 160, 132, 0.12);
-  --error:          #b16b53;
-  --error-soft:     rgba(177, 107, 83, 0.12);
+  /* Level + State (slightly darkened for light bg legibility) */
+  --lv1:            #445d9c;   /* Dusty blue, darkened */
+  --lv2:            #8c6f2c;   /* Gold (same as accent) */
+  --lv3:            #8b4232;   /* Terracotta, darkened */
+  --success:        #4a7c52;   /* Moss green, darkened */
+  --success-soft:   rgba(74, 124, 82, 0.12);
+  --error:          #8b4232;
+  --error-soft:     rgba(139, 66, 50, 0.10);
 
-  /* Type */
+  /* Type (unchanged from V3) */
   --font-display: 'Shippori Mincho B1', 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body:    'Noto Sans JP', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, ui-monospace, monospace;
 
-  /* Radius */
+  /* Radius (unchanged from V3) */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 20px;
 
-  /* Elevation (no glow) */
-  --shadow-card:   0 1px 0 rgba(255,255,255,0.03) inset, 0 4px 16px rgba(0,0,0,0.24);
-  --shadow-hero:   0 1px 0 rgba(255,255,255,0.04) inset, 0 10px 40px rgba(0,0,0,0.32);
+  /* Elevation — soft shadows that work on ivory */
+  --shadow-card:   0 1px 0 rgba(255,255,255,0.6) inset, 0 2px 10px rgba(60,45,20,0.07);
+  --shadow-hero:   0 1px 0 rgba(255,255,255,0.7) inset, 0 6px 24px rgba(60,45,20,0.10);
 
-  /* Motion */
+  /* Motion (unchanged from V3) */
   --duration-fast: 120ms;
   --duration-base: 200ms;
   --duration-slow: 320ms;
@@ -108,7 +109,7 @@ button { font-family: inherit; color: inherit; }
    ══════════════════════════════════════════════════════════════ */
 .site-header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(11, 15, 20, 0.92);
+  background: rgba(250, 247, 239, 0.88);
   backdrop-filter: blur(14px) saturate(120%);
   -webkit-backdrop-filter: blur(14px) saturate(120%);
   border-bottom: 1px solid var(--hairline);
@@ -1070,7 +1071,7 @@ input:checked + .toggle-slider::before {
 }
 .btn-primary {
   flex: 1; min-width: 160px;
-  background: var(--gold);
+  background: var(--gold-bright);
   color: var(--text-ink);
   border: 1px solid var(--gold);
   padding: 14px 20px;
@@ -1082,7 +1083,7 @@ input:checked + .toggle-slider::before {
   font-family: inherit;
   transition: background var(--duration-base) var(--ease-standard);
 }
-.btn-primary:hover { background: var(--gold-hover); }
+.btn-primary:hover { background: #d7ba7c; }
 .btn-secondary {
   flex: 1; min-width: 140px;
   background: transparent;
