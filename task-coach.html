@@ -1049,6 +1049,71 @@ body{
 }
 
 /* ============================================================
+   GREETING CARD — personal hello ribbon
+   ============================================================ */
+.greeting-card{
+  position:relative;
+  display:flex; align-items:center; gap:14px;
+  padding:14px 20px;
+  margin:0 0 18px;
+  background:linear-gradient(180deg, var(--paper-2) 0%, var(--card) 100%);
+  border-left:3px solid var(--crimson);
+  border-top:1px solid var(--rule-3);
+  border-bottom:1px solid var(--rule-3);
+  font-family:'Noto Serif JP',serif;
+  animation:greetFadeIn .6s ease;
+}
+@keyframes greetFadeIn{
+  from{opacity:0; transform:translateY(-4px);}
+  to{opacity:1; transform:translateY(0);}
+}
+.greeting-card[hidden]{display:none}
+.greeting-avatar{
+  width:40px; height:40px; border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--rule-2);
+  background:var(--paper-2);
+  flex-shrink:0;
+}
+.greeting-avatar-fallback{
+  width:40px; height:40px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--paper-2); color:var(--crimson);
+  border:1px solid var(--rule-2);
+  font-family:'Playfair Display',serif; font-weight:700;
+  font-size:17px; flex-shrink:0;
+}
+.greeting-body{flex:1; min-width:0}
+.greeting-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; letter-spacing:.12em;
+  color:var(--crimson);
+  text-transform:uppercase;
+  display:block; margin-bottom:2px;
+}
+.greeting-text{
+  display:block;
+  font-size:15px; color:var(--ink);
+  line-height:1.45;
+  font-weight:500;
+}
+.greeting-name{
+  font-weight:700; color:var(--ink);
+}
+.greeting-suffix{color:var(--ink-2)}
+.greeting-msg{
+  color:var(--ink-2);
+  font-style:italic;
+  font-family:'Noto Serif JP',serif;
+}
+@media (max-width:640px){
+  .greeting-card{padding:12px 16px; gap:11px; margin-bottom:14px}
+  .greeting-avatar, .greeting-avatar-fallback{width:36px; height:36px; font-size:15px}
+  .greeting-kicker{font-size:10px}
+  .greeting-text{font-size:13.5px}
+}
+
+/* ============================================================
    FOCUS CARD — the cover story
    ============================================================ */
 .focus-card{
@@ -2834,6 +2899,18 @@ body{
     <div class="banner-text">今日タスクを完了しないと、<b><span id="streak-days"></span>日</b>続いた連続達成が途切れてしまいます。まずは<b>5分</b>だけでも動き出しましょう。</div>
   </div>
 
+  <!-- Greeting Card — personal hello ribbon (shown once name is available) -->
+  <div class="greeting-card" id="greeting-card" hidden>
+    <span class="greeting-avatar-fallback" id="greeting-avatar-fb" hidden>·</span>
+    <img class="greeting-avatar" id="greeting-avatar" alt="" hidden>
+    <div class="greeting-body">
+      <span class="greeting-kicker" id="greeting-kicker">Good morning</span>
+      <span class="greeting-text">
+        <span class="greeting-name" id="greeting-name"></span><span class="greeting-suffix">さん、</span><span class="greeting-msg" id="greeting-msg">今日はなにする？</span>
+      </span>
+    </div>
+  </div>
+
   <!-- Focus Card — the cover story -->
   <div class="focus-card" id="focus-card">
     <div class="focus-top">
@@ -4002,7 +4079,22 @@ function _doGoogleSignInActual(){
       return;
     }
     console.warn('[fb] Google sign-in error', err);
-    showToast('ログインに失敗しました — しばらくしてからお試しください');
+    const code = (err && err.code) || '';
+    let msg = 'ログインに失敗しました';
+    if(code === 'auth/unauthorized-domain'){
+      msg = 'このサイトのドメインがFirebaseで許可されていません（承認済みドメインに追加してください）';
+    } else if(code === 'auth/operation-not-allowed'){
+      msg = 'Googleプロバイダが有効化されていません（Firebase Console で有効化してください）';
+    } else if(code === 'auth/popup-blocked'){
+      msg = 'ブラウザがポップアップをブロックしました（許可して再度お試しください）';
+    } else if(code === 'auth/network-request-failed'){
+      msg = 'ネットワーク接続を確認してください';
+    } else if(code === 'auth/configuration-not-found'){
+      msg = 'Firebase設定エラー（Console側の設定を確認してください）';
+    } else if(code){
+      msg = 'ログイン失敗：' + code;
+    }
+    showToast(msg);
   };
 
   if(current && current.isAnonymous){
@@ -4036,10 +4128,10 @@ function updateAuthUI(){
   if(!btn) return;
 
   if(fbUser && !fbIsAnonymous){
-    // Signed in with Google
+    // Signed in with Google — menu item becomes the logout affordance
     btn.classList.add('is-in');
-    if(label) label.textContent = fbUser.displayName || 'ログイン済み';
-    if(desc)  desc.textContent  = fbUser.email || 'ログアウト';
+    if(label) label.textContent = 'ログアウト';
+    if(desc)  desc.textContent  = fbUser.displayName || fbUser.email || 'ログイン中';
     if(numEl) numEl.textContent = '✓';
     if(avatar){
       if(fbUser.photoURL){
@@ -4054,10 +4146,12 @@ function updateAuthUI(){
     // Anonymous or not yet authed
     btn.classList.remove('is-in');
     if(label) label.textContent = 'Googleでログイン';
-    if(desc)  desc.textContent  = '記録を守る／端末間で同期（予定）';
+    if(desc)  desc.textContent  = '記録を守る／端末間で同期';
     if(numEl) numEl.textContent = 'IV';
     if(avatar){ avatar.hidden = true; avatar.src = ''; }
   }
+  // Also refresh the greeting card on auth state change
+  try { renderGreeting(); } catch(e){}
 }
 function setLpStatus(msg){
   const el = document.getElementById('lp-status');
@@ -5945,6 +6039,50 @@ document.getElementById('quote-ov').addEventListener('click', e=>{
 })();
 
 // ============================================================
+// Greeting card — personal hello ribbon
+// ============================================================
+function greetingKicker(){
+  const h = new Date().getHours();
+  if(h >= 5 && h < 11)   return { en:'Good morning',   ja:'今日はなにする？' };
+  if(h >= 11 && h < 17)  return { en:'Good afternoon', ja:'午後もいい一日を' };
+  if(h >= 17 && h < 21)  return { en:'Good evening',   ja:'今日もお疲れさま' };
+  return { en:'Late night edition', ja:'ゆっくりしましょう' };
+}
+function renderGreeting(){
+  const card = document.getElementById('greeting-card');
+  if(!card) return;
+  // Priority: Google displayName → nickname → hide
+  const googleName = (fbUser && !fbIsAnonymous && fbUser.displayName) ? String(fbUser.displayName) : '';
+  const nick = ((D.nickname || '').trim());
+  const name = googleName || nick || '';
+  if(!name){ card.hidden = true; return; }
+
+  const nameEl   = document.getElementById('greeting-name');
+  const msgEl    = document.getElementById('greeting-msg');
+  const kickerEl = document.getElementById('greeting-kicker');
+  const avImg    = document.getElementById('greeting-avatar');
+  const avFb     = document.getElementById('greeting-avatar-fb');
+
+  const g = greetingKicker();
+  if(kickerEl) kickerEl.textContent = g.en;
+  if(msgEl)    msgEl.textContent    = g.ja;
+  if(nameEl)   nameEl.textContent   = name.length > 20 ? name.slice(0,20) + '…' : name;
+
+  // Avatar: Google photo if logged in AND privacy allows avatar display, else initial circle
+  const showAv = !(D.privacy && D.privacy.showAvatar === false);
+  const googlePhoto = (fbUser && !fbIsAnonymous && fbUser.photoURL && showAv) ? String(fbUser.photoURL) : '';
+  if(googlePhoto){
+    if(avImg){ avImg.src = googlePhoto; avImg.hidden = false; avImg.alt = name + ' のアバター'; }
+    if(avFb){ avFb.hidden = true; }
+  } else {
+    const ch = name.charAt(0).toUpperCase();
+    if(avImg){ avImg.hidden = true; avImg.src = ''; }
+    if(avFb){ avFb.hidden = false; avFb.textContent = ch || '·'; }
+  }
+  card.hidden = false;
+}
+
+// ============================================================
 // Terms / Privacy / Disclaimer modal
 // ============================================================
 function openTosModal(mode){
@@ -6078,6 +6216,15 @@ try { fbInit(); } catch(e) { console.warn('[fb] init top-level', e); }
 try { renderMiniLeader(); } catch(e){}
 // Hydrate privacy UI values once DOM is ready (in case modal is never opened)
 try { restorePrivacyUI(); } catch(e){}
+// Initial greeting render (will also refresh on auth state changes via updateAuthUI)
+try { renderGreeting(); } catch(e){}
+// Refresh greeting when nickname is edited — f-nick is the input inside Settings
+(function hookNickForGreeting(){
+  const nk = document.getElementById('f-nick');
+  if(!nk) return;
+  nk.addEventListener('input', () => { try { renderGreeting(); } catch(e){} });
+  nk.addEventListener('change', () => { try { renderGreeting(); } catch(e){} });
+})();
 </script>
 </body>
 </html>
