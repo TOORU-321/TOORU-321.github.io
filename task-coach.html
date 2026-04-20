@@ -12,6 +12,11 @@
 <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+<!-- Google Identity Services (GIS) — used for Google sign-in to bypass the
+     cross-domain 3rd-party-cookie issue that breaks Firebase popup/redirect
+     on PC Chrome. GIS speaks directly to Google's auth infrastructure and
+     returns an ID token we exchange with Firebase via signInWithCredential. -->
+<script async defer src="https://accounts.google.com/gsi/client"></script>
 <style>
 /* ============================================================
    BLOOM — Editorial / Magazine Layout
@@ -4169,6 +4174,11 @@ function addEarnedScore(t){
 // ============================================================
 // FIREBASE — Cloud sync + ranking
 // ============================================================
+// Google Identity Services — OAuth 2.0 Web Client ID (same one Firebase auto-
+// creates for the Google auth provider). Used by the GIS prompt to issue an
+// ID token directly from Google, bypassing Firebase's cross-domain auth handler.
+const GOOGLE_CLIENT_ID = '712992842711-v2fen1i84k6mflcuih05d6atl752eul5.apps.googleusercontent.com';
+
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyBWnaesBp-li6RKMGEU52RnCLsKRnZ9s8Y",
   authDomain: "bloom-task-coach.firebaseapp.com",
@@ -4398,7 +4408,128 @@ function signInWithGoogle(){
   pill.addEventListener('mouseup', cancel);
   pill.addEventListener('mouseleave', cancel);
 })();
+
+// ============================================================
+// Google Identity Services (GIS) — primary sign-in path
+// ============================================================
+// GIS speaks directly to Google on the user's own origin (columns.l-mine.com)
+// and returns an ID token, which we exchange with Firebase via
+// signInWithCredential / linkWithCredential. No cross-domain handler, no
+// 3rd-party-cookie dependency — works reliably on PC Chrome where Firebase's
+// popup/redirect path fails due to COOP + 3rd-party-cookie blocking.
+
+function handleGisCredential(response){
+  if(!response || !response.credential){
+    console.warn('[gis] empty credential response');
+    showToast('Googleログインに失敗しました');
+    return;
+  }
+  if(!fbAuth){
+    showToast('認証サービスが準備できていません。再読み込みをお試しください');
+    return;
+  }
+  const cred = firebase.auth.GoogleAuthProvider.credential(response.credential);
+  const current = fbAuth.currentUser;
+
+  const onSuccess = (result) => {
+    const u = result && result.user;
+    showToast('Googleアカウントと連携しました');
+    if(u){
+      fbUser = u;
+      fbUid = u.uid;
+      fbIsAnonymous = !!u.isAnonymous;
+      fbReady = true;
+      setLpStatus(u.isAnonymous ? '接続済み（匿名）' : '接続済み');
+    }
+    if(u && u.displayName && !(D.nickname||'').trim()){
+      D.nickname = String(u.displayName).slice(0, 20);
+      save();
+      const nk = document.getElementById('f-nick');
+      if(nk) nk.value = D.nickname;
+    }
+    try { updateAuthUI(); } catch(e){ console.warn('[gis] updateAuthUI', e); }
+    setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 300);
+    scheduleUpload(300);
+  };
+
+  const onError = (err) => {
+    if(err && err.code === 'auth/credential-already-in-use'){
+      if(confirm('このGoogleアカウントはすでに登録されています。\n切り替えますか？\n\n（現在のこの端末の記録はこのまま残りますが、ログインはそちらのGoogleアカウントに切り替わります）')){
+        fbAuth.signInWithCredential(err.credential || cred)
+          .then(result => { try { onSuccess(result); } catch(e){} })
+          .catch(e => {
+            console.warn('[gis] signInWithCredential fallback', e);
+            showToast('切り替えに失敗しました');
+          });
+      }
+      return;
+    }
+    console.warn('[gis] sign-in error', err);
+    const code = (err && err.code) || '';
+    let msg = 'ログインに失敗しました';
+    if(code === 'auth/network-request-failed'){
+      msg = 'ネットワーク接続を確認してください';
+    } else if(code === 'auth/unauthorized-domain'){
+      msg = 'このサイトではログインが許可されていません（管理者にご連絡ください）';
+    } else if(code === 'auth/operation-not-allowed'){
+      msg = 'Googleログインが現在利用できません';
+    }
+    showToast(msg);
+  };
+
+  if(current && current.isAnonymous){
+    current.linkWithCredential(cred).then(onSuccess).catch(onError);
+  } else {
+    fbAuth.signInWithCredential(cred).then(onSuccess).catch(onError);
+  }
+}
+
+function _tryGisSignIn(){
+  if(!window.google || !google.accounts || !google.accounts.id){
+    console.warn('[gis] client library not loaded yet');
+    return false;
+  }
+  try {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGisCredential,
+      auto_select: false,
+      cancel_on_tap_outside: false,
+      use_fedcm_for_prompt: true  // Chrome 127+ FedCM — works despite 3rd-party cookie block
+    });
+    google.accounts.id.prompt((notification) => {
+      if(!notification) return;
+      const notDisplayed = notification.isNotDisplayed && notification.isNotDisplayed();
+      const skipped = notification.isSkippedMoment && notification.isSkippedMoment();
+      if(notDisplayed){
+        const reason = notification.getNotDisplayedReason && notification.getNotDisplayedReason();
+        console.warn('[gis] prompt not displayed:', reason);
+        // Fall back to legacy popup/redirect path so user isn't dead-ended
+        showToast('別の方法でログインします…');
+        setTimeout(() => {
+          try { _doGoogleSignInLegacyFallback(); } catch(e){ console.warn(e); }
+        }, 200);
+      } else if(skipped){
+        const reason = notification.getSkippedReason && notification.getSkippedReason();
+        console.warn('[gis] prompt skipped:', reason);
+        // User dismissed — don't nag
+      }
+    });
+    return true;
+  } catch(e){
+    console.warn('[gis] init/prompt failed', e);
+    return false;
+  }
+}
+
 function _doGoogleSignInActual(){
+  // Primary: GIS (bypasses 3rd-party cookie issues on PC)
+  if(_tryGisSignIn()) return;
+  // Fallback: legacy popup/redirect flow
+  _doGoogleSignInLegacyFallback();
+}
+
+function _doGoogleSignInLegacyFallback(){
   const provider = new firebase.auth.GoogleAuthProvider();
   const current = fbAuth.currentUser;
 
