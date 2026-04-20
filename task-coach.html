@@ -8,6 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,700&family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Firebase (compat SDK) — Ranking / Cloud Score Sync -->
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
 <style>
 /* ============================================================
    BLOOM — Editorial / Magazine Layout
@@ -1672,6 +1676,359 @@ body{
 .setting-btn.danger .sb-ico{color:var(--crimson)}
 .setting-btn.danger .sb-ttl{color:var(--crimson)}
 
+/* Settings — ニックネーム入力欄 */
+.nick-field{
+  padding:18px 20px 22px;
+  border-top:1px solid var(--rule-3);
+  background:var(--paper);
+}
+.nick-field .nf-lbl{
+  display:block;
+  font-family:'Playfair Display','Noto Serif JP',serif;
+  font-size:13px; font-weight:600; color:var(--ink);
+  letter-spacing:-.005em;
+  margin-bottom:4px;
+}
+.nick-field .nf-hint{
+  display:block;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11.5px; color:var(--muted);
+  margin-bottom:10px; letter-spacing:.01em;
+}
+.nick-field .nf-input{
+  width:100%; padding:10px 12px;
+  font-family:'Noto Serif JP',serif; font-size:14px;
+  color:var(--ink); background:var(--card);
+  border:1px solid var(--rule-3);
+  border-radius:2px; outline:none;
+  transition:border-color .15s;
+}
+.nick-field .nf-input:focus{border-color:var(--crimson)}
+
+/* 任意項目ラベル内の「+◯pt」ヒント */
+.fl .fl-pt{
+  display:inline-block;
+  margin-left:8px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--gold);
+  letter-spacing:.02em; font-weight:600;
+  vertical-align:baseline;
+}
+
+/* Score panel — 振り返り先頭のスコア板 */
+.score-panel{
+  margin:8px 0 28px;
+  border:1px solid var(--rule);
+  background:var(--card);
+  position:relative;
+}
+.score-panel::before{
+  content:''; position:absolute; inset:0 0 auto 0;
+  height:3px; background:var(--crimson);
+}
+.score-panel .sp-head{
+  padding:14px 18px 10px;
+  border-bottom:1px solid var(--rule-3);
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+}
+.score-panel .sp-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--crimson);
+  letter-spacing:.04em;
+}
+.score-panel .sp-nick{
+  font-family:'Playfair Display','Noto Serif JP',serif;
+  font-size:12.5px; color:var(--ink); font-weight:600;
+  letter-spacing:-.005em;
+}
+.score-panel .sp-nick .sp-nick-ph{color:var(--muted); font-style:italic; font-weight:400}
+.score-panel .sp-grid{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:0;
+}
+.score-panel .sp-cell{
+  padding:16px 14px;
+  border-right:1px solid var(--rule-3);
+  text-align:left;
+}
+.score-panel .sp-cell:last-child{border-right:none}
+.score-panel .sp-cell.hero{background:var(--paper-2)}
+.score-panel .sp-n{
+  font-family:'Playfair Display',serif;
+  font-size:28px; font-weight:700;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em; line-height:1;
+}
+.score-panel .sp-cell.hero .sp-n{color:var(--crimson); font-size:32px}
+.score-panel .sp-n .sp-u{
+  font-size:12px; color:var(--muted);
+  font-weight:500; margin-left:3px;
+  letter-spacing:0;
+}
+.score-panel .sp-l{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:9px; color:var(--muted);
+  margin-top:6px; letter-spacing:.22em;
+  text-transform:uppercase; font-weight:600;
+}
+.score-panel .sp-delta{
+  display:inline-block; margin-left:6px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; font-weight:600;
+  color:var(--gold);
+  letter-spacing:.01em;
+}
+.score-panel .sp-delta.up{color:var(--crimson)}
+.score-panel .sp-best{
+  padding:10px 18px;
+  border-top:1px solid var(--rule-3);
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11.5px; color:var(--muted);
+  letter-spacing:.005em;
+}
+.score-panel .sp-best b{
+  color:var(--ink); font-style:normal;
+  font-family:'Playfair Display',serif; font-weight:700;
+}
+@media(max-width:600px){
+  .score-panel .sp-grid{grid-template-columns:repeat(2, 1fr)}
+  .score-panel .sp-cell:nth-child(2n){border-right:none}
+  .score-panel .sp-cell:nth-child(-n+2){border-bottom:1px solid var(--rule-3)}
+  .score-panel .sp-n{font-size:24px}
+  .score-panel .sp-cell.hero .sp-n{font-size:28px}
+}
+
+/* ============================================================
+   LEADERBOARD — Ranking Panel (editorial)
+   ============================================================ */
+.leader-panel{
+  background:var(--card);
+  border:1px solid var(--rule-2);
+  border-top:3px solid var(--ink);
+  padding:20px 22px 18px;
+  margin:18px 0 24px;
+  position:relative;
+}
+.leader-panel::before{
+  content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:2px;
+  background:linear-gradient(90deg, var(--crimson) 0%, var(--crimson) 30%, var(--gold) 30%, var(--gold) 60%, var(--ink) 60%);
+}
+.leader-panel .lp-head{
+  display:flex; align-items:baseline; justify-content:space-between;
+  margin-bottom:12px; gap:12px; flex-wrap:wrap;
+}
+.leader-panel .lp-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:14px; color:var(--crimson); letter-spacing:.04em;
+}
+.leader-panel .lp-sub{
+  font-size:11px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase;
+  font-family:'Inter',sans-serif; font-weight:500;
+}
+.leader-panel .lp-tabs{
+  display:flex; gap:0; border-bottom:1px solid var(--rule-2);
+  margin-bottom:10px; flex-wrap:wrap;
+}
+.leader-panel .lp-tab{
+  background:transparent; border:none; padding:8px 14px; cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif; font-size:12px; font-weight:500;
+  color:var(--muted); letter-spacing:.06em;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all .2s ease;
+}
+.leader-panel .lp-tab:hover{color:var(--ink)}
+.leader-panel .lp-tab.active{
+  color:var(--ink); border-bottom-color:var(--crimson); font-weight:700;
+}
+.leader-panel .lp-list{
+  display:flex; flex-direction:column;
+}
+.leader-panel .lp-row{
+  display:grid; grid-template-columns:36px 1fr auto; gap:12px; align-items:center;
+  padding:10px 4px; border-bottom:1px dotted var(--rule-3);
+}
+.leader-panel .lp-row:last-child{border-bottom:none}
+.leader-panel .lp-row.me{
+  background:linear-gradient(90deg, rgba(184,29,36,.06) 0%, transparent 100%);
+  border-left:3px solid var(--crimson); padding-left:10px;
+}
+.leader-panel .lp-rank{
+  font-family:'Playfair Display',serif; font-weight:700; font-size:18px;
+  color:var(--ink); text-align:center;
+}
+.leader-panel .lp-row.me .lp-rank{color:var(--crimson)}
+.leader-panel .lp-rank.rk-1{color:var(--gold); font-size:22px}
+.leader-panel .lp-rank.rk-2{color:#8A8077; font-size:20px}
+.leader-panel .lp-rank.rk-3{color:#A87B4E; font-size:19px}
+.leader-panel .lp-nm{
+  font-family:'Noto Serif JP',serif; font-size:14px; color:var(--ink);
+  font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.leader-panel .lp-row.me .lp-nm::after{
+  content:' · あなた';
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--crimson); font-size:12px; font-weight:400;
+}
+.leader-panel .lp-nm.anon{color:var(--muted); font-style:italic}
+.leader-panel .lp-val{
+  font-family:'Inter',sans-serif; font-variant-numeric:tabular-nums;
+  font-weight:600; font-size:14px; color:var(--ink-2);
+}
+.leader-panel .lp-val .lp-u{
+  font-size:10px; color:var(--muted); font-weight:500; margin-left:3px; letter-spacing:.08em;
+}
+.leader-panel .lp-foot{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:10px; gap:12px; flex-wrap:wrap;
+}
+.leader-panel .lp-more{
+  background:none; border:1px solid var(--rule-2);
+  padding:6px 14px; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:11px; font-weight:500;
+  color:var(--ink-2); letter-spacing:.1em; text-transform:uppercase;
+  transition:all .2s ease;
+}
+.leader-panel .lp-more:hover{background:var(--paper-2); border-color:var(--ink)}
+.leader-panel .lp-note{
+  font-size:11px; color:var(--muted); font-style:italic;
+  font-family:'Playfair Display',serif;
+}
+.leader-panel .lp-empty{
+  padding:28px 4px; text-align:center; color:var(--muted);
+  font-family:'Noto Serif JP',serif; font-size:13px; font-style:italic;
+}
+.leader-panel .lp-pin{
+  margin-top:10px; padding-top:10px; border-top:2px solid var(--rule-2);
+}
+.leader-panel .lp-pin .lp-pin-lbl{
+  font-size:10px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase;
+  font-family:'Inter',sans-serif; margin-bottom:6px; display:block;
+}
+@media(max-width:600px){
+  .leader-panel{padding:16px 14px 14px}
+  .leader-panel .lp-tab{padding:7px 10px; font-size:11px}
+  .leader-panel .lp-row{grid-template-columns:28px 1fr auto; gap:8px}
+  .leader-panel .lp-nm{font-size:13px}
+}
+
+/* ============================================================
+   MINI LEADERBOARD — compact card on main page
+   ============================================================ */
+.mini-leader{
+  background:var(--card);
+  border:1px solid var(--rule-2);
+  border-top:2px solid var(--ink);
+  padding:16px 18px 14px;
+  margin:20px 0 16px;
+  position:relative;
+}
+.mini-leader::before{
+  content:''; position:absolute; top:-1px; left:-1px; right:-1px; height:1px;
+  background:linear-gradient(90deg, var(--crimson) 0%, var(--crimson) 35%, var(--gold) 35%, var(--gold) 70%, var(--ink) 70%);
+}
+.mini-leader .ml-top{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:12px; margin-bottom:10px;
+}
+.mini-leader .ml-head{
+  display:flex; flex-direction:column; gap:2px;
+}
+.mini-leader .ml-kicker{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:12px; color:var(--crimson); letter-spacing:.06em;
+}
+.mini-leader .ml-ttl{
+  font-family:'Noto Serif JP',serif; font-size:15px; color:var(--ink);
+  font-weight:600; letter-spacing:.02em;
+}
+.mini-leader .ml-status{
+  font-size:10px; color:var(--muted); letter-spacing:.14em; text-transform:uppercase;
+  font-family:'Inter',sans-serif; font-weight:500; white-space:nowrap;
+}
+.mini-leader .ml-tabs{
+  display:flex; gap:0; border-bottom:1px solid var(--rule-3);
+  margin-bottom:10px; overflow-x:auto; scrollbar-width:none;
+}
+.mini-leader .ml-tabs::-webkit-scrollbar{display:none}
+.mini-leader .ml-tab{
+  background:transparent; border:none; padding:6px 10px; cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif; font-size:11px; font-weight:500;
+  color:var(--muted); letter-spacing:.04em; white-space:nowrap;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all .2s ease;
+}
+.mini-leader .ml-tab:hover{color:var(--ink)}
+.mini-leader .ml-tab.active{
+  color:var(--ink); border-bottom-color:var(--crimson); font-weight:700;
+}
+.mini-leader .ml-me{
+  display:flex; align-items:baseline; justify-content:space-between;
+  padding:8px 10px; margin-bottom:8px;
+  background:linear-gradient(90deg, rgba(184,29,36,.06) 0%, transparent 70%);
+  border-left:3px solid var(--crimson);
+}
+.mini-leader .ml-me-lbl{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11px; color:var(--muted); letter-spacing:.06em;
+}
+.mini-leader .ml-me-val{
+  font-family:'Playfair Display',serif; font-weight:700;
+  color:var(--ink); font-size:15px;
+}
+.mini-leader .ml-me-val .ml-me-rank{color:var(--crimson); font-size:20px; margin-right:4px}
+.mini-leader .ml-me-val .ml-me-val-u{
+  font-family:'Inter',sans-serif; font-size:11px; color:var(--muted);
+  font-weight:500; margin-left:4px; letter-spacing:.06em;
+}
+.mini-leader .ml-top3{
+  list-style:none; padding:0; margin:0;
+  display:flex; flex-direction:column;
+}
+.mini-leader .ml-row{
+  display:grid; grid-template-columns:26px 1fr auto; gap:10px; align-items:center;
+  padding:7px 4px; border-bottom:1px dotted var(--rule-3);
+}
+.mini-leader .ml-row:last-child{border-bottom:none}
+.mini-leader .ml-rank{
+  font-family:'Playfair Display',serif; font-weight:700; font-size:15px;
+  color:var(--ink); text-align:center;
+}
+.mini-leader .ml-rank.rk-1{color:var(--gold); font-size:17px}
+.mini-leader .ml-rank.rk-2{color:#8A8077; font-size:16px}
+.mini-leader .ml-rank.rk-3{color:#A87B4E; font-size:16px}
+.mini-leader .ml-nm{
+  font-family:'Noto Serif JP',serif; font-size:13px; color:var(--ink-2);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.mini-leader .ml-nm.anon{color:var(--muted); font-style:italic}
+.mini-leader .ml-val{
+  font-family:'Inter',sans-serif; font-variant-numeric:tabular-nums;
+  font-weight:600; font-size:13px; color:var(--ink-2);
+}
+.mini-leader .ml-val .ml-u{
+  font-size:9px; color:var(--muted); font-weight:500; margin-left:2px; letter-spacing:.08em;
+}
+.mini-leader .ml-empty{
+  padding:14px 4px; text-align:center; color:var(--muted);
+  font-family:'Noto Serif JP',serif; font-size:12px; font-style:italic;
+}
+.mini-leader .ml-all{
+  display:block; width:100%; margin-top:10px;
+  background:none; border:1px solid var(--rule-2);
+  padding:8px 14px; cursor:pointer;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:12px; color:var(--ink-2); letter-spacing:.04em;
+  transition:all .2s ease;
+}
+.mini-leader .ml-all:hover{background:var(--paper-2); border-color:var(--ink); color:var(--ink)}
+@media(max-width:600px){
+  .mini-leader{padding:14px 14px 12px}
+  .mini-leader .ml-ttl{font-size:14px}
+  .mini-leader .ml-tab{padding:6px 8px; font-size:10.5px}
+  .mini-leader .ml-me-val{font-size:14px}
+  .mini-leader .ml-me-val .ml-me-rank{font-size:18px}
+}
+
 /* ============================================================
    MILESTONE — a full-page dispatch
    ============================================================ */
@@ -2281,6 +2638,29 @@ body{
 
   <div id="task-list"></div>
   <div id="done-sec"></div>
+
+  <!-- Mini Leaderboard — compact ranking card on the main page -->
+  <section class="mini-leader" id="mini-leader" aria-label="ランキング・ダイジェスト">
+    <div class="ml-top">
+      <div class="ml-head">
+        <span class="ml-kicker">Leaderboard</span>
+        <span class="ml-ttl">今、ほかの読者たちは</span>
+      </div>
+      <span class="ml-status" id="ml-status">接続中…</span>
+    </div>
+    <div class="ml-tabs" id="ml-tabs">
+      <button class="ml-tab active" data-k="yesterdayScore">昨日スコア</button>
+      <button class="ml-tab" data-k="yesterdayDone">昨日完了</button>
+      <button class="ml-tab" data-k="personalBest">自己ベスト</button>
+      <button class="ml-tab" data-k="totalScore">累計</button>
+    </div>
+    <div class="ml-me" id="ml-me">
+      <span class="ml-me-lbl">あなたの現在地</span>
+      <span class="ml-me-val" id="ml-me-val">—</span>
+    </div>
+    <ol class="ml-top3" id="ml-top3"></ol>
+    <button class="ml-all" id="ml-all" type="button">全部見る →</button>
+  </section>
 </main>
 
 <footer class="colophon">
@@ -2330,7 +2710,7 @@ body{
     </div>
 
     <div class="fg">
-      <label class="fl">期限（任意）
+      <label class="fl">期限（任意）<span class="fl-pt">+5 pt</span>
         <span class="fl-hint">期限を入れると、緊急度は日付から自動判定されます</span>
       </label>
       <input class="fi" id="f-dead" type="date">
@@ -2428,19 +2808,19 @@ body{
     </div>
 
     <div class="fg">
-      <label class="fl">① いつ始める？
+      <label class="fl">① いつ始める？<span class="fl-pt">+4 pt</span>
         <span class="fl-hint">「もし◯◯になったら」まで具体的に書くと実行率が上がります</span>
       </label>
       <input class="fi" id="f-when" type="text" placeholder="例：明日の朝9時、コーヒーを淹れたあと">
     </div>
     <div class="fg">
-      <label class="fl">② どこで？
+      <label class="fl">② どこで？<span class="fl-pt">+3 pt</span>
         <span class="fl-hint">場所を固定すると習慣化しやすくなります</span>
       </label>
       <input class="fi" id="f-where" type="text" placeholder="例：自宅デスク／近くのカフェ">
     </div>
     <div class="fg">
-      <label class="fl">③ 最初の一歩（2分以内で着手できる行動）
+      <label class="fl">③ 最初の一歩（2分以内で着手できる行動）<span class="fl-pt">+6 pt</span>
         <span class="fl-hint">小さすぎるくらいが正解。現在志向バイアスを突破する鍵です</span>
       </label>
       <input class="fi" id="f-firststep" type="text" placeholder="例：Keynoteを開いて、表紙だけ作る">
@@ -2450,24 +2830,24 @@ body{
     <div class="mform-section">
       <span class="mform-section-num">III</span>
       <span>モチベーション設計</span>
-      <span class="mform-tip">任意・強い効果あり</span>
+      <span class="mform-tip">任意・書くほどスコアボーナス</span>
     </div>
 
     <div class="fg">
-      <label class="fl">後悔プレビュー：やらなかったら何を失う？
+      <label class="fl">後悔プレビュー：やらなかったら何を失う？<span class="fl-pt">+4 pt</span>
         <span class="fl-hint">損失回避バイアスを味方につける</span>
       </label>
       <textarea class="ft" id="f-regret" placeholder="例：明日提出できないと、先方の信頼を失い、案件が流れる"></textarea>
     </div>
     <div class="fg">
-      <label class="fl">ご褒美ペアリング：完了したら自分に何をあげる？
+      <label class="fl">ご褒美ペアリング：完了したら自分に何をあげる？<span class="fl-pt">+3 pt</span>
         <span class="fl-hint">Temptation Bundling（Milkman）で着手コストを下げる</span>
       </label>
       <input class="fi" id="f-reward" type="text" placeholder="例：お気に入りのカフェラテを淹れる／散歩に出る">
     </div>
 
     <div class="fg">
-      <label class="fl">メモ（自由記述）</label>
+      <label class="fl">メモ（自由記述）<span class="fl-pt">+2 pt</span></label>
       <textarea class="ft" id="f-memo" placeholder="補足があればどうぞ（空欄でOK）"></textarea>
     </div>
 
@@ -2535,7 +2915,12 @@ body{
       <div class="man-tip">「II 計画的に」を意識して積むのが、成果につながる最短ルートです。</div>
     </section>
     <section class="man-sec">
-      <h4><span class="man-no">05</span>振り返り・バックアップ</h4>
+      <h4><span class="man-no">05</span>スコアと自己ベスト</h4>
+      <p>タスクを完了すると<b>ポイント</b>が入ります。<b>重要なタスク</b>ほど、<b>任意項目を埋めた</b>タスクほど、<b>タイマーで集中した</b>タスクほど多く積まれる設計。<br><b>振り返り</b>の上段で「今日／昨日／自己ベスト／累計」を一覧できます。</p>
+      <div class="man-tip">任意項目を埋めるほど意思決定の質が上がり、結果としてスコアも伸びます。ライバル（昨日の自分）に勝ちに行きましょう。</div>
+    </section>
+    <section class="man-sec">
+      <h4><span class="man-no">06</span>振り返り・バックアップ</h4>
       <p>右上メニューの<b>振り返り</b>で達成の蓄積を可視化できます。<br>データはブラウザ内（localStorage）に保存されるため、<b>設定・バックアップ</b>から定期的にファイル書き出しをしておくと安心です。</p>
     </section>
     <div class="man-foot">
@@ -2610,6 +2995,12 @@ body{
       </div>
     </button>
 
+    <div class="nick-field">
+      <label class="nf-lbl" for="f-nick">ランキング用ニックネーム（任意）</label>
+      <span class="nf-hint">将来のランキング連携で使います。空欄のままでも利用に支障はありません。</span>
+      <input class="nf-input" id="f-nick" type="text" maxlength="20" placeholder="例：Toru / Bloom Reader">
+    </div>
+
     <input type="file" id="import-file" accept=".json,application/json" style="display:none">
   </div>
 </div>
@@ -2631,6 +3022,58 @@ body{
     </div>
 
     <div class="recap-body" id="recap-body">
+      <!-- Score panel — 成績表（今日／昨日／自己ベスト／累計） -->
+      <div class="score-panel" id="score-panel">
+        <div class="sp-head">
+          <span class="sp-kicker">Scoreboard · 成績表</span>
+          <span class="sp-nick" id="sp-nick"></span>
+        </div>
+        <div class="sp-grid">
+          <div class="sp-cell hero">
+            <div class="sp-n"><span id="sp-today">0</span><span class="sp-u">pt</span><span class="sp-delta" id="sp-delta"></span></div>
+            <div class="sp-l">今日のスコア</div>
+          </div>
+          <div class="sp-cell">
+            <div class="sp-n"><span id="sp-yest">0</span><span class="sp-u">pt</span></div>
+            <div class="sp-l">昨日のスコア</div>
+          </div>
+          <div class="sp-cell">
+            <div class="sp-n"><span id="sp-best">0</span><span class="sp-u">pt</span></div>
+            <div class="sp-l">自己ベスト</div>
+          </div>
+          <div class="sp-cell">
+            <div class="sp-n"><span id="sp-total">0</span><span class="sp-u">pt</span></div>
+            <div class="sp-l">累計スコア</div>
+          </div>
+        </div>
+        <div class="sp-best" id="sp-best-caption">最高記録はまだありません — 最初の一手を積みましょう。</div>
+      </div>
+
+      <!-- Leaderboard — Ranking across all users -->
+      <div class="leader-panel" id="leader-panel">
+        <div class="lp-head">
+          <span class="lp-kicker">Leaderboard · 今月の読者たち</span>
+          <span class="lp-sub" id="lp-status">接続中…</span>
+        </div>
+        <div class="lp-tabs" id="lp-tabs">
+          <button class="lp-tab active" data-k="yesterdayScore">昨日のスコア</button>
+          <button class="lp-tab" data-k="yesterdayDone">昨日の完了数</button>
+          <button class="lp-tab" data-k="personalBest">自己ベスト</button>
+          <button class="lp-tab" data-k="totalScore">累計スコア</button>
+        </div>
+        <div class="lp-list" id="lp-list">
+          <div class="lp-empty">読み込み中…</div>
+        </div>
+        <div class="lp-pin" id="lp-pin" style="display:none">
+          <span class="lp-pin-lbl">あなたの現在地</span>
+          <div id="lp-me-row"></div>
+        </div>
+        <div class="lp-foot">
+          <button class="lp-more" id="lp-more" style="display:none">さらに見る</button>
+          <span class="lp-note">ニックネーム未設定の方は「読者」として表示されます</span>
+        </div>
+      </div>
+
       <!-- Period tabs -->
       <div class="recap-tabs">
         <button class="rtab on" data-r="week">今週</button>
@@ -2881,7 +3324,7 @@ function pickDailyQuote(){
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'' }; }
 function load(){
   try{ return Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}')); }
   catch(e){ return defData(); }
@@ -2990,6 +3433,216 @@ function getReason(t){
   ];
   if(parts.length<2) parts.push(nudges[Math.floor(Math.random()*nudges.length)]);
   return parts.join(' ／ ');
+}
+
+// ============================================================
+// EARNED SCORE — タスク完了で獲得するポイント
+//   基礎点 × Q係数（象限）+ インパクト + 任意項目ボーナス + 集中ボーナス
+//   任意項目は「書けば書くほど」獲得が増える設計（ピア競争の動機付け）
+// ============================================================
+const Q_COEF = {1:1.5, 2:1.3, 3:1.0, 4:0.6};
+
+function earnedScore(t){
+  if(!t) return 0;
+  const q = t.q || 4;
+  const qCoef = Q_COEF[q] || 1.0;
+  const base = Math.round(10 * qCoef);             // 15 / 13 / 10 / 6
+  const il   = Math.max(1, Math.min(5, t.impactLevel||1));
+  const impactBonus = il * 5;                      // 5 / 10 / 15 / 20 / 25
+  let optional = 0;
+  if(t.deadline)   optional += 5;
+  if(t.whenStart)  optional += 4;
+  if(t.whereStart) optional += 3;
+  if(t.firstStep)  optional += 6;
+  if(t.regret)     optional += 4;
+  if(t.reward)     optional += 3;
+  if(t.memo)       optional += 2;
+  const focusBonus = t.usedTimer ? 10 : 0;         // タイマー使って集中した
+  return base + impactBonus + optional + focusBonus;
+}
+
+function earnedBreakdown(t){
+  const q = t.q || 4;
+  const qCoef = Q_COEF[q] || 1.0;
+  const base = Math.round(10 * qCoef);
+  const il   = Math.max(1, Math.min(5, t.impactLevel||1));
+  const rows = [];
+  rows.push({k:`基礎点（Q${q} × ${qCoef}）`, v:base});
+  rows.push({k:`インパクトLv.${il}`, v:il*5});
+  if(t.deadline)   rows.push({k:'期限あり', v:5});
+  if(t.whenStart)  rows.push({k:'いつ始める', v:4});
+  if(t.whereStart) rows.push({k:'どこで', v:3});
+  if(t.firstStep)  rows.push({k:'最初の一歩', v:6});
+  if(t.regret)     rows.push({k:'後悔プレビュー', v:4});
+  if(t.reward)     rows.push({k:'ご褒美ペアリング', v:3});
+  if(t.memo)       rows.push({k:'メモ', v:2});
+  if(t.usedTimer)  rows.push({k:'集中タイマー', v:10});
+  return rows;
+}
+
+// Close previous day if needed — yesterday's final snapshot becomes immutable
+// （同日の追加完了は当日の合計に加算）
+function rolloverScore(){
+  const today = todayStr();
+  D.scoreByDate = D.scoreByDate || {};
+  D.doneCountByDate = D.doneCountByDate || {};
+  // 当日を扱う関数はそれぞれアクセス時に scoreByDate[today] を参照すればOK
+  // personalBest は加算のたびに更新
+  return today;
+}
+
+function addEarnedScore(t){
+  const today = rolloverScore();
+  const pts = earnedScore(t);
+  D.scoreByDate[today] = (D.scoreByDate[today]||0) + pts;
+  D.doneCountByDate[today] = (D.doneCountByDate[today]||0) + 1;
+  D.totalScore = (D.totalScore||0) + pts;
+  if(D.scoreByDate[today] > (D.personalBest||0)){
+    D.personalBest = D.scoreByDate[today];
+    D.personalBestDay = today;
+  }
+  return pts;
+}
+
+// ============================================================
+// FIREBASE — Cloud sync + ranking
+// ============================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBWnaesBp-li6RKMGEU52RnCLsKRnZ9s8Y",
+  authDomain: "bloom-task-coach.firebaseapp.com",
+  projectId: "bloom-task-coach",
+  storageBucket: "bloom-task-coach.firebasestorage.app",
+  messagingSenderId: "712992842711",
+  appId: "1:712992842711:web:3d3f28e6ff9f7f30082192"
+};
+const SCORES_COLLECTION = 'task_coach_scores';
+const APP_VERSION = 'editorial-v1';
+
+// Firebase state
+let fbApp = null, fbAuth = null, fbDb = null;
+let fbUid = null, fbReady = false, fbError = null;
+let fbUploadTimer = null;
+let rankingCache = { data: {}, at: 0 }; // kind -> [rows]
+const RANKING_TTL = 5 * 60 * 1000; // 5 min
+
+function fbInit(){
+  if(fbReady || fbError) return;
+  if(typeof firebase === 'undefined'){
+    fbError = 'sdk-missing';
+    setLpStatus('オフライン');
+    return;
+  }
+  try{
+    fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+    fbAuth = firebase.auth();
+    fbDb = firebase.firestore();
+    setLpStatus('認証中…');
+    fbAuth.signInAnonymously()
+      .then(cred => {
+        fbUid = cred.user.uid;
+        fbReady = true;
+        setLpStatus('接続済み');
+        // Kick off first upload to register this user
+        scheduleUpload(800);
+        // Refresh mini leaderboard once auth is ready (delayed slightly so upload lands first)
+        setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 1500);
+      })
+      .catch(err => {
+        console.warn('[fb] auth error', err);
+        fbError = 'auth-fail';
+        setLpStatus('オフライン');
+      });
+  }catch(e){
+    console.warn('[fb] init error', e);
+    fbError = 'init-fail';
+    setLpStatus('オフライン');
+  }
+}
+function setLpStatus(msg){
+  const el = document.getElementById('lp-status');
+  if(el) el.textContent = msg;
+}
+function myScorePayload(){
+  const today = todayStr();
+  const yest = daysAgoStr(1);
+  const nick = ((D.nickname||'').trim()).slice(0, 20);
+  return {
+    nickname: nick || '',
+    todayScore: D.scoreByDate?.[today] || 0,
+    todayDone:  D.doneCountByDate?.[today] || 0,
+    yesterdayScore: D.scoreByDate?.[yest] || 0,
+    yesterdayDone:  D.doneCountByDate?.[yest] || 0,
+    personalBest: D.personalBest || 0,
+    personalBestDay: D.personalBestDay || null,
+    totalScore: D.totalScore || 0,
+    totalDone: D.totalDone || 0,
+    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+    appVersion: APP_VERSION
+  };
+}
+function scheduleUpload(delay){
+  if(!fbReady || !fbUid || !fbDb) return;
+  if(fbUploadTimer) clearTimeout(fbUploadTimer);
+  fbUploadTimer = setTimeout(uploadMyScore, delay || 1500);
+}
+function uploadMyScore(){
+  if(!fbReady || !fbUid || !fbDb) return Promise.resolve();
+  try{
+    const payload = myScorePayload();
+    return fbDb.collection(SCORES_COLLECTION).doc(fbUid)
+      .set(payload, { merge: true })
+      .then(() => {
+        // Invalidate ranking cache after upload
+        rankingCache = { data: {}, at: 0 };
+        // Refresh the mini leaderboard so the user sees their new position quickly
+        try { renderMiniLeader(); } catch(e){}
+      })
+      .catch(err => {
+        console.warn('[fb] upload error', err);
+      });
+  }catch(e){
+    console.warn('[fb] upload exception', e);
+    return Promise.resolve();
+  }
+}
+function fetchRanking(kind, limit){
+  if(!fbReady || !fbDb) return Promise.resolve([]);
+  const orderField = kind || 'yesterdayScore';
+  const lim = limit || 50;
+  // Use cache if fresh (cache stores by kind+limit composite key)
+  const cacheKey = orderField + ':' + lim;
+  const now = Date.now();
+  if(rankingCache.data[cacheKey] && (now - rankingCache.at) < RANKING_TTL){
+    return Promise.resolve(rankingCache.data[cacheKey]);
+  }
+  return fbDb.collection(SCORES_COLLECTION)
+    .orderBy(orderField, 'desc')
+    .limit(lim)
+    .get()
+    .then(snap => {
+      const rows = [];
+      snap.forEach(doc => {
+        const d = doc.data() || {};
+        rows.push({
+          uid: doc.id,
+          nickname: d.nickname || '',
+          yesterdayScore: d.yesterdayScore || 0,
+          yesterdayDone: d.yesterdayDone || 0,
+          personalBest: d.personalBest || 0,
+          totalScore: d.totalScore || 0,
+          totalDone: d.totalDone || 0,
+          todayScore: d.todayScore || 0,
+          value: d[orderField] || 0
+        });
+      });
+      rankingCache.data[cacheKey] = rows;
+      rankingCache.at = now;
+      return rows;
+    })
+    .catch(err => {
+      console.warn('[fb] fetchRanking error', err);
+      return [];
+    });
 }
 
 // ============================================================
@@ -3301,6 +3954,9 @@ function startTimer(taskId, mode5min){
   if(timerInt) stopTimer();
   activeTaskId = taskId;
   timerSec = 0;
+  // 集中ボーナスのためのフラグ（タイマー起動＝本気で取り掛かった）
+  const _t = D.tasks.find(x=>x.id===taskId);
+  if(_t){ _t.usedTimer = true; save(); }
   document.getElementById('focus-timer').classList.add('show');
   document.getElementById('focus-actions').style.display = 'none';
   updateTimerDisplay();
@@ -3332,23 +3988,55 @@ function updateTimerDisplay(){
 function chkTask(id){
   const t = D.tasks.find(x=>x.id===id);
   if(!t) return;
+  const wasDone = !!t.done;
   t.done = !t.done;
   t.doneAt = t.done ? new Date().toISOString() : null;
   if(t.done){
     if(id===activeTaskId) stopTimer();
     updateStreak();
     D.totalDone = (D.totalDone||0)+1;
+    // スコア加算（※未完了→完了の遷移時のみ。既に加算済みなら二重加算しない）
+    let earned = 0;
+    if(!t.scored){
+      earned = addEarnedScore(t);
+      t.scored = true;
+      t.earned = earned;
+    }
     save(); render();
+    // トースト：+pt を先に見せる → その上でご褒美文
+    const ptMsg = earned ? `+${earned} pt 獲得` : '完了';
     if(t.reward){
-      showToast(`完了 — ご褒美：${t.reward}`);
+      showToast(`${ptMsg} — ご褒美：${t.reward}`);
     } else {
-      showToast('完了 — よくできました');
+      showToast(`${ptMsg} — よくできました`);
     }
     const pts = D.tasks.filter(x=>x.done).length;
     const ms = MILESTONES.find(m=>m===pts && !D.msShown.includes(m));
     if(ms){ D.msShown.push(ms); save(); setTimeout(()=>showMilestone(ms), 400); }
-    if(Math.random()<0.12) setTimeout(()=>showToast('ボーナス達成 × 倍速で進んでいます'), 700);
+    // 自己ベスト更新の瞬間は追撃トーストで讃える
+    if(earned && D.personalBestDay === todayStr() && D.scoreByDate[todayStr()] === D.personalBest && D.personalBest > 0){
+      const prevBest = (D.personalBest - earned);
+      if(prevBest > 0 && earned >= 10){
+        setTimeout(()=>showToast(`自己ベスト更新 — ${D.personalBest} pt`), 900);
+      }
+    }
+    // Cloud sync — debounce a couple seconds so rapid completions coalesce
+    scheduleUpload(2000);
   } else {
+    // 取り消し：同日なら減点（他日は巻き戻さない＝過去記録は守る）
+    if(wasDone && t.scored){
+      const dayKey = (t.doneAt || '').slice(0,10) || todayStr();
+      const today = todayStr();
+      const pts = t.earned || 0;
+      if(dayKey === today && pts>0){
+        D.scoreByDate[today] = Math.max(0, (D.scoreByDate[today]||0) - pts);
+        D.doneCountByDate[today] = Math.max(0, (D.doneCountByDate[today]||0) - 1);
+        D.totalScore = Math.max(0, (D.totalScore||0) - pts);
+      }
+      t.scored = false;
+      t.earned = 0;
+      scheduleUpload(2000);
+    }
     save(); render();
     showToast('未完了に戻しました');
   }
@@ -3642,6 +4330,9 @@ function openSettings(){
     stEl.innerHTML = `現在のデータ：<b>${total}件</b>（完了 ${done}件）<br>
       前回バックアップ：<b>${days===0?'今日':days+'日前'}</b>。${note}`;
   }
+  // ニックネームを現在値で初期化
+  const nk = document.getElementById('f-nick');
+  if(nk) nk.value = D.nickname || '';
   document.getElementById('settings-ov').classList.add('open');
 }
 function closeSettings(){ document.getElementById('settings-ov').classList.remove('open'); }
@@ -3746,6 +4437,274 @@ function tasksInPeriod(period){
   return doneTasksAll().filter(t=>{
     const d = parseYmd(t.doneAt.slice(0,10));
     return d>=from && d<=to;
+  });
+}
+
+function renderScorePanel(){
+  const today = todayStr();
+  const yest  = daysAgoStr(1);
+  const sbd   = D.scoreByDate || {};
+  const dbd   = D.doneCountByDate || {};
+  const sToday = sbd[today] || 0;
+  const sYest  = sbd[yest]  || 0;
+  const dToday = dbd[today] || 0;
+  const sBest  = D.personalBest || 0;
+  const sTotal = D.totalScore || 0;
+
+  const nickEl = document.getElementById('sp-nick');
+  if(nickEl){
+    if(D.nickname && String(D.nickname).trim()){
+      nickEl.innerHTML = esc(D.nickname.trim());
+    } else {
+      nickEl.innerHTML = '<span class="sp-nick-ph">ニックネーム未設定</span>';
+    }
+  }
+
+  const fmt = n => Number(n||0).toLocaleString('en-US');
+  const tEl = document.getElementById('sp-today'); if(tEl) tEl.textContent = fmt(sToday);
+  const yEl = document.getElementById('sp-yest');  if(yEl) yEl.textContent = fmt(sYest);
+  const bEl = document.getElementById('sp-best');  if(bEl) bEl.textContent = fmt(sBest);
+  const aEl = document.getElementById('sp-total'); if(aEl) aEl.textContent = fmt(sTotal);
+
+  // 昨日比デルタ（昨日が0なら非表示）
+  const dEl = document.getElementById('sp-delta');
+  if(dEl){
+    if(sYest > 0){
+      const diff = sToday - sYest;
+      if(diff > 0){
+        dEl.textContent = `▲ ${fmt(diff)} vs 昨日`;
+        dEl.className = 'sp-delta up';
+      } else if(diff < 0){
+        dEl.textContent = `▼ ${fmt(-diff)} vs 昨日`;
+        dEl.className = 'sp-delta';
+      } else {
+        dEl.textContent = '＝ 昨日と同じ';
+        dEl.className = 'sp-delta';
+      }
+    } else {
+      dEl.textContent = '';
+      dEl.className = 'sp-delta';
+    }
+  }
+
+  const cap = document.getElementById('sp-best-caption');
+  if(cap){
+    if(sBest <= 0){
+      cap.innerHTML = '最高記録はまだありません — 最初の一手を積みましょう。';
+    } else {
+      const best = D.personalBestDay ? `（${fmtDate(D.personalBestDay)}）` : '';
+      if(sToday > 0 && sToday === sBest){
+        cap.innerHTML = `<b>本日ベスト更新中</b> — ${fmt(sBest)} pt / 完了 ${dToday} 件`;
+      } else {
+        cap.innerHTML = `自己ベスト <b>${fmt(sBest)} pt</b> ${best} — 更新を狙いましょう。`;
+      }
+    }
+  }
+}
+
+// ============================================================
+// LEADERBOARD — render ranking panel
+// ============================================================
+let rankingKind = 'yesterdayScore';
+let rankingExpanded = false;
+
+function rankLabel(kind){
+  const m = {
+    yesterdayScore: 'pt',
+    yesterdayDone:  '件',
+    personalBest:   'pt',
+    totalScore:     'pt'
+  };
+  return m[kind] || 'pt';
+}
+function rankValueFor(row, kind){
+  if(kind === 'yesterdayDone') return row.yesterdayDone || 0;
+  return row[kind] || 0;
+}
+function escNick(n){
+  const s = (n||'').trim();
+  if(!s) return '<span class="lp-nm anon">読者</span>';
+  return esc(s);
+}
+function renderLeaderboardList(rows, kind){
+  const listEl = document.getElementById('lp-list');
+  const moreEl = document.getElementById('lp-more');
+  const pinEl  = document.getElementById('lp-pin');
+  const meRowEl= document.getElementById('lp-me-row');
+  if(!listEl) return;
+
+  const visibleCount = rankingExpanded ? 20 : 5;
+  const fmtN = n => Number(n||0).toLocaleString('en-US');
+  const unit = rankLabel(kind);
+
+  // Filter rows: hide rows where the primary value is 0 AND no nickname (noise)
+  const filtered = rows.filter(r => rankValueFor(r, kind) > 0 || r.uid === fbUid);
+
+  if(!filtered.length){
+    listEl.innerHTML = '<div class="lp-empty">まだ誰もポイントを積んでいません — 最初の一人になりましょう。</div>';
+    if(moreEl) moreEl.style.display = 'none';
+    if(pinEl)  pinEl.style.display = 'none';
+    return;
+  }
+
+  const visible = filtered.slice(0, visibleCount);
+  listEl.innerHTML = visible.map((r, i) => {
+    const rank = i + 1;
+    const rkClass = rank<=3 ? ` rk-${rank}` : '';
+    const meClass = (r.uid === fbUid) ? ' me' : '';
+    const nm = (r.uid === fbUid && !r.nickname) ? 'あなた' : (r.nickname || '読者');
+    const nmClass = (r.nickname||'').trim() ? '' : ' anon';
+    const val = fmtN(rankValueFor(r, kind));
+    return `<div class="lp-row${meClass}">
+      <div class="lp-rank${rkClass}">${rank}</div>
+      <div class="lp-nm${nmClass}">${esc(nm)}</div>
+      <div class="lp-val">${val}<span class="lp-u">${unit}</span></div>
+    </div>`;
+  }).join('');
+
+  // More button
+  if(moreEl){
+    if(filtered.length > visibleCount){
+      moreEl.style.display = '';
+      moreEl.textContent = rankingExpanded ? '閉じる' : `さらに見る（${filtered.length - visibleCount}人）`;
+    } else if(!rankingExpanded && filtered.length > 5){
+      moreEl.style.display = '';
+    } else {
+      moreEl.style.display = rankingExpanded ? '' : 'none';
+      if(rankingExpanded) moreEl.textContent = '閉じる';
+    }
+  }
+
+  // Pin "me" row if outside visible range
+  const myIdxInFiltered = filtered.findIndex(r => r.uid === fbUid);
+  if(pinEl && meRowEl){
+    if(fbUid && myIdxInFiltered >= visibleCount){
+      const me = filtered[myIdxInFiltered];
+      const rank = myIdxInFiltered + 1;
+      const nm = me.nickname || 'あなた';
+      const nmClass = (me.nickname||'').trim() ? '' : ' anon';
+      const val = fmtN(rankValueFor(me, kind));
+      meRowEl.innerHTML = `<div class="lp-row me">
+        <div class="lp-rank">${rank}</div>
+        <div class="lp-nm${nmClass}">${esc(nm)}</div>
+        <div class="lp-val">${val}<span class="lp-u">${unit}</span></div>
+      </div>`;
+      pinEl.style.display = '';
+    } else if(pinEl){
+      pinEl.style.display = 'none';
+    }
+  }
+}
+
+function renderRanking(){
+  const listEl = document.getElementById('lp-list');
+  if(!listEl) return;
+
+  // Update active tab
+  const tabs = document.querySelectorAll('#lp-tabs .lp-tab');
+  tabs.forEach(b => b.classList.toggle('active', b.getAttribute('data-k') === rankingKind));
+
+  if(!fbReady){
+    if(fbError){
+      listEl.innerHTML = '<div class="lp-empty">オフライン — ランキングを取得できません。<br>ネット接続を確認のうえ、振り返りをもう一度開いてみてください。</div>';
+    } else {
+      listEl.innerHTML = '<div class="lp-empty">接続中…</div>';
+      // Retry shortly if fbInit is still pending
+      setTimeout(() => { if(fbReady && document.getElementById('recap').classList.contains('open')) renderRanking(); }, 1200);
+    }
+    const moreEl = document.getElementById('lp-more'); if(moreEl) moreEl.style.display = 'none';
+    const pinEl  = document.getElementById('lp-pin');  if(pinEl)  pinEl.style.display  = 'none';
+    return;
+  }
+
+  listEl.innerHTML = '<div class="lp-empty">読み込み中…</div>';
+  fetchRanking(rankingKind, 50).then(rows => {
+    renderLeaderboardList(rows, rankingKind);
+  });
+}
+
+// ============================================================
+// MINI LEADERBOARD — compact version on main page
+// ============================================================
+let miniRankingKind = 'yesterdayScore';
+
+function setMlStatus(msg){
+  const el = document.getElementById('ml-status');
+  if(el) el.textContent = msg;
+}
+function renderMiniLeaderList(rows){
+  const top3El = document.getElementById('ml-top3');
+  const meEl   = document.getElementById('ml-me-val');
+  if(!top3El || !meEl) return;
+
+  const fmtN = n => Number(n||0).toLocaleString('en-US');
+  const unit = rankLabel(miniRankingKind);
+
+  const filtered = rows.filter(r => rankValueFor(r, miniRankingKind) > 0 || r.uid === fbUid);
+
+  if(!filtered.length){
+    top3El.innerHTML = '<div class="ml-empty">まだ誰もポイントを積んでいません — 最初の一人に。</div>';
+    meEl.innerHTML = '<span class="ml-me-val-u">未登録</span>';
+    return;
+  }
+
+  // Top 3
+  const top3 = filtered.slice(0, 3);
+  top3El.innerHTML = top3.map((r, i) => {
+    const rank = i + 1;
+    const rkClass = ` rk-${rank}`;
+    const meClass = (r.uid === fbUid) ? ' me' : '';
+    const nm = (r.uid === fbUid && !r.nickname) ? 'あなた' : (r.nickname || '読者');
+    const nmClass = (r.nickname||'').trim() ? '' : ' anon';
+    const val = fmtN(rankValueFor(r, miniRankingKind));
+    return `<li class="ml-row${meClass}">
+      <div class="ml-rank${rkClass}">${rank}</div>
+      <div class="ml-nm${nmClass}">${esc(nm)}</div>
+      <div class="ml-val">${val}<span class="ml-u">${unit}</span></div>
+    </li>`;
+  }).join('');
+
+  // My current rank among filtered
+  const myIdx = filtered.findIndex(r => r.uid === fbUid);
+  if(myIdx >= 0){
+    const me = filtered[myIdx];
+    const rank = myIdx + 1;
+    const val = fmtN(rankValueFor(me, miniRankingKind));
+    meEl.innerHTML = `<span class="ml-me-rank">${rank}位</span>${val}<span class="ml-me-val-u">${unit}</span>`;
+  } else {
+    // User exists (uid registered) but value is 0 — still offer encouragement
+    meEl.innerHTML = `<span class="ml-me-val-u">今日のタスクを完了してランクイン</span>`;
+  }
+}
+
+function renderMiniLeader(){
+  const wrap = document.getElementById('mini-leader');
+  if(!wrap) return;
+
+  // Update active tab
+  const tabs = document.querySelectorAll('#ml-tabs .ml-tab');
+  tabs.forEach(b => b.classList.toggle('active', b.getAttribute('data-k') === miniRankingKind));
+
+  const top3El = document.getElementById('ml-top3');
+  const meEl   = document.getElementById('ml-me-val');
+
+  if(!fbReady){
+    if(fbError){
+      setMlStatus('オフライン');
+      if(top3El) top3El.innerHTML = '<div class="ml-empty">ネット接続を確認してください。</div>';
+      if(meEl)   meEl.innerHTML   = '<span class="ml-me-val-u">オフライン</span>';
+    } else {
+      setMlStatus('接続中…');
+      if(top3El) top3El.innerHTML = '<div class="ml-empty">読み込み中…</div>';
+      if(meEl)   meEl.innerHTML   = '<span class="ml-me-val-u">—</span>';
+      setTimeout(() => { if(fbReady) renderMiniLeader(); }, 1200);
+    }
+    return;
+  }
+
+  setMlStatus('接続済み');
+  fetchRanking(miniRankingKind, 50).then(rows => {
+    renderMiniLeaderList(rows);
   });
 }
 
@@ -3928,6 +4887,10 @@ function openRecap(){
     body.classList.remove('hide');
     // デフォルトは今日を選択
     recapSelectedDate = recapSelectedDate || todayStr();
+    renderScorePanel();
+    // Leaderboard — kick off fresh render (reset expanded view per open)
+    rankingExpanded = false;
+    renderRanking();
     renderRecapStats();
     renderRecapHeatmap();
     renderRecapBreakdown();
@@ -4036,6 +4999,60 @@ document.getElementById('import-file').addEventListener('change', e=>{
   e.target.value = '';
 });
 document.getElementById('btn-reset').addEventListener('click', resetAll);
+(function wireNickname(){
+  const nk = document.getElementById('f-nick');
+  if(!nk) return;
+  const commit = ()=>{
+    const v = (nk.value || '').trim().slice(0, 20);
+    if(v !== (D.nickname||'')){
+      D.nickname = v;
+      save();
+      // Push updated nickname to cloud so ranking reflects it
+      scheduleUpload(500);
+    }
+  };
+  nk.addEventListener('change', commit);
+  nk.addEventListener('blur', commit);
+})();
+
+// Leaderboard — tab switching + "さらに見る" toggle
+(function wireLeaderboard(){
+  const tabs = document.querySelectorAll('#lp-tabs .lp-tab');
+  tabs.forEach(b => {
+    b.addEventListener('click', () => {
+      rankingKind = b.getAttribute('data-k') || 'yesterdayScore';
+      rankingExpanded = false;
+      renderRanking();
+    });
+  });
+  const more = document.getElementById('lp-more');
+  if(more){
+    more.addEventListener('click', () => {
+      rankingExpanded = !rankingExpanded;
+      renderRanking();
+    });
+  }
+})();
+
+// Mini Leaderboard — tab switching + "全部見る" opens recap
+(function wireMiniLeader(){
+  const tabs = document.querySelectorAll('#ml-tabs .ml-tab');
+  tabs.forEach(b => {
+    b.addEventListener('click', () => {
+      miniRankingKind = b.getAttribute('data-k') || 'yesterdayScore';
+      renderMiniLeader();
+    });
+  });
+  const all = document.getElementById('ml-all');
+  if(all){
+    all.addEventListener('click', () => {
+      // Align modal to the same indicator the user was browsing
+      rankingKind = miniRankingKind;
+      rankingExpanded = false;
+      openRecap();
+    });
+  }
+})();
 
 // Recap
 document.getElementById('recap-btn').addEventListener('click', openRecap);
@@ -4186,6 +5203,40 @@ document.getElementById('letter-cta').addEventListener('click', ()=>{
 })();
 
 // ============================================================
+// Intro chain — 起動フロー: Welcome → Manual →（該当日のみ）→ Quote → Letter
+// ============================================================
+let _introStep = null; // 'welcome' | 'manual' | 'quote' | null
+function advanceIntro(){
+  // Welcome / Manual の閉じた後は、今日の一節（未表示ならその日初回）→ レター へ
+  if(_introStep === 'welcome' || _introStep === 'manual'){
+    if(D.quoteLastShownDay !== todayStr()){
+      _introStep = 'quote';
+      setTimeout(openQuotePopup, 320);
+    } else {
+      _introStep = null;
+      setTimeout(maybeShowLetter, 320);
+    }
+    return;
+  }
+  if(_introStep === 'quote'){
+    _introStep = null;
+    setTimeout(maybeShowLetter, 320);
+    return;
+  }
+}
+function bootstrapIntro(){
+  if(!D.manualShownFirst){
+    _introStep = 'welcome';
+    setTimeout(openWelcome, 500);
+  } else if(D.quoteLastShownDay !== todayStr()){
+    _introStep = 'quote';
+    setTimeout(openQuotePopup, 500);
+  } else {
+    maybeShowLetter();
+  }
+}
+
+// ============================================================
 // Manual — 使い方マニュアル（いつでも開ける）
 // ============================================================
 function openManual(){
@@ -4193,6 +5244,7 @@ function openManual(){
 }
 function closeManual(){
   document.getElementById('manual-ov').classList.remove('open');
+  if(_introStep === 'manual'){ advanceIntro(); }
 }
 document.getElementById('manual-btn').addEventListener('click', openManual);
 document.getElementById('manual-close').addEventListener('click', closeManual);
@@ -4211,9 +5263,14 @@ function closeWelcome(){
   document.getElementById('welcome-ov').classList.remove('open');
   D.manualShownFirst = true;
   save();
+  if(_introStep === 'welcome'){ advanceIntro(); }
 }
+// 「マニュアルを読む」: Welcome 閉じて Manual 開く → Manual 閉じたら Quote へ
 document.getElementById('welcome-read').addEventListener('click', ()=>{
-  closeWelcome();
+  document.getElementById('welcome-ov').classList.remove('open');
+  D.manualShownFirst = true;
+  save();
+  _introStep = 'manual';
   setTimeout(openManual, 220);
 });
 document.getElementById('welcome-later').addEventListener('click', closeWelcome);
@@ -4221,10 +5278,32 @@ document.getElementById('welcome-close').addEventListener('click', closeWelcome)
 document.getElementById('welcome-ov').addEventListener('click', e=>{
   if(e.target === document.getElementById('welcome-ov')) closeWelcome();
 });
-function maybeShowWelcome(){
-  if(D.manualShownFirst) return;
-  setTimeout(openWelcome, 500);
+
+// ============================================================
+// Quote Popup — 各日初回の「今日の一節」
+// ============================================================
+function openQuotePopup(){
+  const q = pickDailyQuote();
+  const tEl = document.getElementById('qp-text');
+  const aEl = document.getElementById('qp-author');
+  const gEl = document.getElementById('qp-tag');
+  if(tEl) tEl.textContent = q.t;
+  if(aEl) aEl.textContent = q.a;
+  if(gEl) gEl.textContent = q.g;
+  document.getElementById('quote-ov').classList.add('open');
+  // 開いた瞬間に「今日は表示済み」を記録（同日リロード対策）
+  D.quoteLastShownDay = todayStr();
+  save();
 }
+function closeQuotePopup(){
+  document.getElementById('quote-ov').classList.remove('open');
+  if(_introStep === 'quote'){ advanceIntro(); }
+}
+document.getElementById('quote-close').addEventListener('click', closeQuotePopup);
+document.getElementById('quote-ok').addEventListener('click', closeQuotePopup);
+document.getElementById('quote-ov').addEventListener('click', e=>{
+  if(e.target === document.getElementById('quote-ov')) closeQuotePopup();
+});
 
 // ============================================================
 // Slim header on scroll — スクロールでヘッダーをミニマスト化
@@ -4253,12 +5332,11 @@ function maybeShowWelcome(){
 // ============================================================
 trackOpenDay();
 render();
-// 初回のみ「ようこそ」を優先表示。以降はエディターズレター。
-if(!D.manualShownFirst){
-  maybeShowWelcome();
-} else {
-  maybeShowLetter();
-}
+bootstrapIntro();
+// Firebase — start async; never blocks rendering
+try { fbInit(); } catch(e) { console.warn('[fb] init top-level', e); }
+// Show initial "接続中…" state immediately for mini leaderboard on main page
+try { renderMiniLeader(); } catch(e){}
 </script>
 </body>
 </html>
