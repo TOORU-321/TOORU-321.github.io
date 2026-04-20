@@ -4236,6 +4236,33 @@ function fbInit(){
         });
       }
     });
+
+    // Backup listener — onIdTokenChanged fires on token refresh AND when an
+    // anonymous user is linked to a provider (linkWithPopup), whereas
+    // onAuthStateChanged does NOT fire for linkWithPopup because the UID is
+    // unchanged. This is the canonical way to catch "anon → Google linked".
+    fbAuth.onIdTokenChanged(user => {
+      if(!user) return; // sign-out case is already handled above
+      const prevAnon = fbIsAnonymous;
+      fbUid = user.uid;
+      fbUser = user;
+      fbIsAnonymous = !!user.isAnonymous;
+      fbReady = true;
+      // Only fire UI refresh when the anonymity flag actually changed
+      // (prevents redundant repaint on ordinary token refresh).
+      if(prevAnon !== fbIsAnonymous){
+        setLpStatus(user.isAnonymous ? '接続済み（匿名）' : '接続済み');
+        if(!user.isAnonymous && !(D.nickname||'').trim() && user.displayName){
+          D.nickname = String(user.displayName).slice(0, 20);
+          save();
+          const nk = document.getElementById('f-nick');
+          if(nk) nk.value = D.nickname;
+        }
+        try { updateAuthUI(); } catch(e){ console.warn('[fb] updateAuthUI onIdToken', e); }
+        scheduleUpload(500);
+        setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
+      }
+    });
   }catch(e){
     console.warn('[fb] init error', e);
     fbError = 'init-fail';
@@ -4253,12 +4280,30 @@ function signInWithGoogle(){
     fbError = null; // allow a fresh attempt
     try { fbInit(); } catch(e){ console.warn('[fb] retry init', e); }
   }
+  // If still not ready, wait for the CDN scripts to finish loading (up to ~6s).
+  // This avoids the annoying "接続エラー" when the user taps before Firebase has
+  // finished parsing.
   if(!fbAuth){
-    if(typeof firebase === 'undefined'){
-      showToast('接続エラー：ページを再読み込みしてお試しください');
-    } else {
-      showToast('ログイン機能の準備中です。少し待ってから再度お試しください');
-    }
+    showToast('ログインを準備しています…');
+    let tries = 0;
+    const MAX_TRIES = 30; // 30 × 200ms = 6s
+    const poll = setInterval(() => {
+      tries++;
+      if(typeof firebase !== 'undefined'){
+        clearInterval(poll);
+        fbError = null;
+        try { fbInit(); } catch(e){ console.warn('[fb] late init', e); }
+        if(fbAuth){
+          // Success — now re-drive the flow (this will branch to TOS if needed)
+          signInWithGoogle();
+        } else {
+          showToast('ログイン準備に失敗しました。再読み込みをお願いします');
+        }
+      } else if(tries >= MAX_TRIES){
+        clearInterval(poll);
+        showToast('通信環境のためログイン機能を読み込めませんでした。再読み込みをお試しください');
+      }
+    }, 200);
     return;
   }
   // Gate: require ToS acceptance before first Google sign-in
@@ -4268,6 +4313,46 @@ function signInWithGoogle(){
   }
   _doGoogleSignInActual();
 }
+
+// Hidden diagnostics — long-press the pill (500ms) to show current auth state
+// and Firebase SDK status. Purely for troubleshooting from the device.
+(function wireAuthDiagnostics(){
+  const pill = document.getElementById('auth-pill');
+  if(!pill) return;
+  let pressTimer = null;
+  const start = (e) => {
+    pressTimer = setTimeout(() => {
+      pressTimer = null;
+      const lines = [
+        '— Auth diagnostics —',
+        'SDK loaded: ' + (typeof firebase !== 'undefined' ? 'yes' : 'NO'),
+        'fbAuth:    ' + (!!fbAuth),
+        'fbReady:   ' + !!fbReady,
+        'fbError:   ' + (fbError || '(none)'),
+        'fbUser:    ' + (fbUser ? (fbUser.displayName || fbUser.email || fbUser.uid) : '(none)'),
+        'isAnon:    ' + !!fbIsAnonymous,
+        'current:   ' + (fbAuth && fbAuth.currentUser ? (fbAuth.currentUser.displayName || fbAuth.currentUser.uid) : '(none)'),
+        'currAnon:  ' + (fbAuth && fbAuth.currentUser ? fbAuth.currentUser.isAnonymous : '-'),
+        'TOS:       ' + (D.tosAcceptedAt ? 'accepted ' + D.tosVersion : 'not accepted'),
+        '',
+        'OK を押すと最後のコンソール警告もコピー可能な状態にします。'
+      ].join('\n');
+      alert(lines);
+      // Prevent the long-press from also firing the normal click
+      e.preventDefault && e.preventDefault();
+    }, 500);
+  };
+  const cancel = () => {
+    if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
+  };
+  pill.addEventListener('touchstart', start, { passive: true });
+  pill.addEventListener('touchend', cancel);
+  pill.addEventListener('touchcancel', cancel);
+  pill.addEventListener('touchmove', cancel);
+  pill.addEventListener('mousedown', start);
+  pill.addEventListener('mouseup', cancel);
+  pill.addEventListener('mouseleave', cancel);
+})();
 function _doGoogleSignInActual(){
   const provider = new firebase.auth.GoogleAuthProvider();
   const current = fbAuth.currentUser;
@@ -4275,6 +4360,16 @@ function _doGoogleSignInActual(){
   const onSuccess = (result) => {
     const u = result && result.user;
     showToast('Googleアカウントと連携しました');
+    // IMPORTANT — linkWithPopup does NOT re-fire onAuthStateChanged (UID unchanged),
+    // so we must update the module-level auth state ourselves. Otherwise the UI
+    // stays in "anonymous" mode even though the link succeeded.
+    if(u){
+      fbUser = u;
+      fbUid = u.uid;
+      fbIsAnonymous = !!u.isAnonymous;
+      fbReady = true;
+      setLpStatus(u.isAnonymous ? '接続済み（匿名）' : '接続済み');
+    }
     // Auto-fill nickname from Google displayName if blank
     if(u && u.displayName && !(D.nickname||'').trim()){
       D.nickname = String(u.displayName).slice(0, 20);
@@ -4282,6 +4377,10 @@ function _doGoogleSignInActual(){
       const nk = document.getElementById('f-nick');
       if(nk) nk.value = D.nickname;
     }
+    // Refresh UI — pill, locked regions, menu labels, greeting
+    try { updateAuthUI(); } catch(e){ console.warn('[fb] updateAuthUI after link', e); }
+    // Refresh mini leaderboard so the user sees their display name / avatar
+    setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 300);
     scheduleUpload(300);
   };
 
@@ -4293,10 +4392,12 @@ function _doGoogleSignInActual(){
       // Offer to switch — they will lose current anonymous data unless they export first.
       if(confirm('このGoogleアカウントはすでに登録されています。\n切り替えますか？\n\n（現在のこの端末の記録はこのまま残りますが、ログインはそちらのGoogleアカウントに切り替わります）')){
         const cred = err.credential;
-        fbAuth.signInWithCredential(cred).catch(e => {
-          console.warn('[fb] signInWithCredential error', e);
-          showToast('切り替えに失敗しました');
-        });
+        fbAuth.signInWithCredential(cred)
+          .then(result => { try { onSuccess(result); } catch(e){} })
+          .catch(e => {
+            console.warn('[fb] signInWithCredential error', e);
+            showToast('切り替えに失敗しました');
+          });
       }
       return;
     }
@@ -4367,35 +4468,51 @@ function updateLockedRegions(){
 }
 
 function updateAuthUI(){
+  // Defensive re-sync: if Firebase has a currentUser but our module-level cache
+  // missed it (e.g. linkWithPopup fired onIdTokenChanged but not onAuthStateChanged,
+  // and the onSuccess path raced ahead), trust fbAuth as the source of truth.
+  try {
+    if(fbAuth && fbAuth.currentUser){
+      const cu = fbAuth.currentUser;
+      // Prefer the freshest user object so displayName/photoURL/isAnonymous are current.
+      fbUser = cu;
+      fbUid = cu.uid;
+      fbIsAnonymous = !!cu.isAnonymous;
+    }
+  } catch(e){}
+
   const btn    = document.getElementById('auth-btn');
   const label  = document.getElementById('auth-label');
   const desc   = document.getElementById('auth-desc');
   const avatar = document.getElementById('auth-avatar');
   const numEl  = document.getElementById('auth-num');
-  if(!btn) return;
 
-  if(fbUser && !fbIsAnonymous){
-    // Signed in with Google — menu item becomes the logout affordance
-    btn.classList.add('is-in');
-    if(label) label.textContent = 'ログアウト';
-    if(desc)  desc.textContent  = fbUser.displayName || fbUser.email || 'ログイン中';
-    if(numEl) numEl.textContent = '✓';
-    if(avatar){
-      if(fbUser.photoURL){
-        avatar.src = fbUser.photoURL;
-        avatar.hidden = false;
-        avatar.alt = (fbUser.displayName || 'User') + ' のアバター';
-      } else {
-        avatar.hidden = true;
+  // Do NOT bail out when btn is missing — the pill, locked regions and greeting
+  // still need to be refreshed. Only skip the btn-related writes.
+  if(btn){
+    if(fbUser && !fbIsAnonymous){
+      // Signed in with Google — menu item becomes the logout affordance
+      btn.classList.add('is-in');
+      if(label) label.textContent = 'ログアウト';
+      if(desc)  desc.textContent  = fbUser.displayName || fbUser.email || 'ログイン中';
+      if(numEl) numEl.textContent = '✓';
+      if(avatar){
+        if(fbUser.photoURL){
+          avatar.src = fbUser.photoURL;
+          avatar.hidden = false;
+          avatar.alt = (fbUser.displayName || 'User') + ' のアバター';
+        } else {
+          avatar.hidden = true;
+        }
       }
+    } else {
+      // Anonymous or not yet authed
+      btn.classList.remove('is-in');
+      if(label) label.textContent = 'Googleでログイン';
+      if(desc)  desc.textContent  = '記録を守る／端末間で同期';
+      if(numEl) numEl.textContent = 'IV';
+      if(avatar){ avatar.hidden = true; avatar.src = ''; }
     }
-  } else {
-    // Anonymous or not yet authed
-    btn.classList.remove('is-in');
-    if(label) label.textContent = 'Googleでログイン';
-    if(desc)  desc.textContent  = '記録を守る／端末間で同期';
-    if(numEl) numEl.textContent = 'IV';
-    if(avatar){ avatar.hidden = true; avatar.src = ''; }
   }
   // Auth pill — always-visible login state indicator
   const pill    = document.getElementById('auth-pill');
