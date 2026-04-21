@@ -3209,7 +3209,8 @@ body{
       <span class="ml-status" id="ml-status">接続中…</span>
     </div>
     <div class="ml-tabs" id="ml-tabs">
-      <button class="ml-tab active" data-k="yesterdayScore">昨日スコア</button>
+      <button class="ml-tab active" data-k="weeklyScore">今週</button>
+      <button class="ml-tab" data-k="yesterdayScore">昨日スコア</button>
       <button class="ml-tab" data-k="yesterdayDone">昨日完了</button>
       <button class="ml-tab" data-k="personalBest">自己ベスト</button>
       <button class="ml-tab" data-k="totalScore">累計</button>
@@ -3819,7 +3820,8 @@ body{
           <span class="lp-sub" id="lp-status">接続中…</span>
         </div>
         <div class="lp-tabs" id="lp-tabs">
-          <button class="lp-tab active" data-k="yesterdayScore">昨日のスコア</button>
+          <button class="lp-tab active" data-k="weeklyScore">今週のスコア</button>
+          <button class="lp-tab" data-k="yesterdayScore">昨日のスコア</button>
           <button class="lp-tab" data-k="yesterdayDone">昨日の完了数</button>
           <button class="lp-tab" data-k="personalBest">自己ベスト</button>
           <button class="lp-tab" data-k="totalScore">累計スコア</button>
@@ -4092,7 +4094,7 @@ function pickDailyQuote(){
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'', privacy:{ showAvatar:true }, tosAcceptedAt:null, tosVersion:null, rankingOnboardingSeen:false }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, weeklyScore:0, weekStartDate:null, nickname:'', privacy:{ showAvatar:true }, tosAcceptedAt:null, tosVersion:null, rankingOnboardingSeen:false }; }
 function load(){
   try{
     const raw = Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}'));
@@ -4102,6 +4104,9 @@ function load(){
     // Drop legacy nameMode field (replaced by free-text nickname + fallback chain)
     if('nameMode' in raw.privacy) delete raw.privacy.nameMode;
     if(typeof raw.rankingOnboardingSeen !== 'boolean') raw.rankingOnboardingSeen = false;
+    // Weekly ranking migration: ensure numeric + string types
+    if(typeof raw.weeklyScore !== 'number') raw.weeklyScore = 0;
+    if(raw.weekStartDate && typeof raw.weekStartDate !== 'string') raw.weekStartDate = null;
     return raw;
   }
   catch(e){ return defData(); }
@@ -4129,6 +4134,30 @@ function todayStr(){
 function daysAgoStr(n){
   const d=new Date(); d.setDate(d.getDate()-n);
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+// Week boundary: the Monday of the current local week (Asia/Tokyo follows the
+// device clock). Returns an ISO date string like "2026-04-20".
+// Used by the weekly leaderboard — weeklyScore resets at 00:00 on Monday.
+function thisMondayStr(){
+  const d = new Date();
+  // getDay(): Sun=0, Mon=1, ..., Sat=6. Offset back to Monday.
+  const dow = d.getDay();
+  const back = (dow === 0) ? 6 : (dow - 1);
+  d.setDate(d.getDate() - back);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+// Reset weekly counters if we've crossed a Monday boundary since last write.
+// Idempotent — safe to call on every score event, every upload, and every
+// boot. The guard `D.weekStartDate !== thisMondayStr()` only triggers a write
+// when the week genuinely rolled over.
+function ensureWeeklyRollover(){
+  if(!D) return;
+  const monday = thisMondayStr();
+  if(D.weekStartDate !== monday){
+    D.weeklyScore = 0;
+    D.weekStartDate = monday;
+    save();
+  }
 }
 function showToast(msg){
   const el=document.getElementById('toast');
@@ -4270,10 +4299,13 @@ function rolloverScore(){
 
 function addEarnedScore(t){
   const today = rolloverScore();
+  // Weekly rollover: zero weeklyScore if we've crossed a Monday boundary
+  ensureWeeklyRollover();
   const pts = earnedScore(t);
   D.scoreByDate[today] = (D.scoreByDate[today]||0) + pts;
   D.doneCountByDate[today] = (D.doneCountByDate[today]||0) + 1;
   D.totalScore = (D.totalScore||0) + pts;
+  D.weeklyScore = (D.weeklyScore||0) + pts;
   if(D.scoreByDate[today] > (D.personalBest||0)){
     D.personalBest = D.scoreByDate[today];
     D.personalBestDay = today;
@@ -4854,6 +4886,10 @@ function setLpStatus(msg){
 function myScorePayload(){
   const today = todayStr();
   const yest = daysAgoStr(1);
+  // Ensure the weekly aggregate we ship is correct for the current week —
+  // this catches the case where the user hasn't interacted since the last
+  // Monday rollover, so addEarnedScore never got a chance to reset.
+  ensureWeeklyRollover();
   const nick = ((D.nickname||'').trim()).slice(0, 20);
   // Privacy model (post-refactor): there is no more nameMode dropdown.
   // We always publish the user's chosen nickname (can be empty) AND their
@@ -4876,6 +4912,8 @@ function myScorePayload(){
     todayDone:  D.doneCountByDate?.[today] || 0,
     yesterdayScore: D.scoreByDate?.[yest] || 0,
     yesterdayDone:  D.doneCountByDate?.[yest] || 0,
+    weeklyScore: D.weeklyScore || 0,
+    weekStartDate: D.weekStartDate || null,
     personalBest: D.personalBest || 0,
     personalBestDay: D.personalBestDay || null,
     totalScore: D.totalScore || 0,
@@ -4927,6 +4965,12 @@ function fetchRanking(kind, limit){
       const rows = [];
       snap.forEach(doc => {
         const d = doc.data() || {};
+        // Safety: only count a user's weeklyScore if their weekStartDate
+        // matches the current week's Monday. This prevents a user who
+        // hasn't opened the app since last week from topping the chart
+        // with a stale aggregate before their client-side rollover fires.
+        const curMonday = thisMondayStr();
+        const weeklyValid = (d.weekStartDate === curMonday);
         rows.push({
           uid: doc.id,
           nickname:    d.nickname    || '',
@@ -4935,6 +4979,8 @@ function fetchRanking(kind, limit){
           isAnonymous: d.isAnonymous !== false,
           yesterdayScore: d.yesterdayScore || 0,
           yesterdayDone: d.yesterdayDone || 0,
+          weeklyScore: weeklyValid ? (d.weeklyScore || 0) : 0,
+          weekStartDate: d.weekStartDate || null,
           personalBest: d.personalBest || 0,
           totalScore: d.totalScore || 0,
           totalDone: d.totalDone || 0,
@@ -5350,6 +5396,12 @@ function chkTask(id){
         D.scoreByDate[today] = Math.max(0, (D.scoreByDate[today]||0) - pts);
         D.doneCountByDate[today] = Math.max(0, (D.doneCountByDate[today]||0) - 1);
         D.totalScore = Math.max(0, (D.totalScore||0) - pts);
+        // Weekly rollback — only if we're still inside the same week window
+        // (i.e., the task's doneAt date is >= this week's Monday).
+        ensureWeeklyRollover();
+        if(dayKey >= (D.weekStartDate || '')){
+          D.weeklyScore = Math.max(0, (D.weeklyScore||0) - pts);
+        }
       }
       t.scored = false;
       t.earned = 0;
@@ -5857,11 +5909,12 @@ function renderScorePanel(){
 // ============================================================
 // LEADERBOARD — render ranking panel
 // ============================================================
-let rankingKind = 'yesterdayScore';
+let rankingKind = 'weeklyScore';
 let rankingExpanded = false;
 
 function rankLabel(kind){
   const m = {
+    weeklyScore:    'pt',
     yesterdayScore: 'pt',
     yesterdayDone:  '件',
     personalBest:   'pt',
@@ -6017,7 +6070,7 @@ function renderRanking(){
 // ============================================================
 // MINI LEADERBOARD — compact version on main page
 // ============================================================
-let miniRankingKind = 'yesterdayScore';
+let miniRankingKind = 'weeklyScore';
 
 function setMlStatus(msg){
   const el = document.getElementById('ml-status');
@@ -6418,7 +6471,7 @@ document.getElementById('btn-reset').addEventListener('click', resetAll);
   const tabs = document.querySelectorAll('#lp-tabs .lp-tab');
   tabs.forEach(b => {
     b.addEventListener('click', () => {
-      rankingKind = b.getAttribute('data-k') || 'yesterdayScore';
+      rankingKind = b.getAttribute('data-k') || 'weeklyScore';
       rankingExpanded = false;
       renderRanking();
     });
@@ -6437,7 +6490,7 @@ document.getElementById('btn-reset').addEventListener('click', resetAll);
   const tabs = document.querySelectorAll('#ml-tabs .ml-tab');
   tabs.forEach(b => {
     b.addEventListener('click', () => {
-      miniRankingKind = b.getAttribute('data-k') || 'yesterdayScore';
+      miniRankingKind = b.getAttribute('data-k') || 'weeklyScore';
       renderMiniLeader();
     });
   });
@@ -7000,6 +7053,10 @@ function restorePrivacyUI(){
 // ============================================================
 // INIT — 独立キー、他版とは完全分離
 // ============================================================
+// Weekly rollover: zero weeklyScore if we've crossed a Monday boundary
+// since the last time this browser ran the app. Must fire before any
+// scoring logic touches D.weeklyScore.
+try { ensureWeeklyRollover(); } catch(e) { console.warn('[init] rollover', e); }
 trackOpenDay();
 render();
 bootstrapIntro();
