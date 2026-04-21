@@ -636,6 +636,82 @@ body{
 }
 .welcome-later:hover{background:var(--card-2); color:var(--ink)}
 
+/* ---- Ranking name onboarding (shown after Google sign-in) ---- */
+.rkn-modal{
+  max-width:460px;
+  border-top:6px solid var(--crimson);
+}
+.rkn-modal .mh{
+  flex-direction:column; align-items:flex-start; gap:4px;
+  border-bottom:1px solid var(--rule-3);
+  padding-bottom:14px; margin-bottom:4px; position:relative;
+}
+.rkn-modal .mttl-mark{color:var(--crimson)}
+.rkn-modal .mx{position:absolute; top:-2px; right:0}
+.rkn-body{
+  padding:14px 4px 10px;
+  font-family:'Noto Serif JP',serif;
+  font-size:13.5px; line-height:1.75; color:var(--ink-2);
+}
+.rkn-lede{margin-bottom:14px}
+.rkn-lede b{color:var(--ink); font-weight:700}
+.rkn-field{
+  display:flex; flex-direction:column; gap:6px;
+  margin:14px 0 10px;
+  padding:14px 16px;
+  background:var(--paper);
+  border:1px solid var(--rule-3);
+}
+.rkn-field .rkn-lbl{
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:11.5px; color:var(--muted);
+  letter-spacing:.05em;
+}
+.rkn-field .rkn-hint{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; color:var(--muted); line-height:1.55;
+}
+.rkn-input{
+  width:100%; box-sizing:border-box;
+  padding:10px 12px;
+  background:var(--card); color:var(--ink);
+  border:1px solid var(--rule-2);
+  font-family:'Noto Serif JP',serif; font-size:14px;
+  outline:none;
+}
+.rkn-input:focus{border-color:var(--crimson)}
+.rkn-toggle-row{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:14px; margin-top:6px;
+}
+.rkn-toggle-row .rkn-toggle-info{display:flex; flex-direction:column; gap:2px}
+.rkn-toggle-row .rkn-toggle-info .rkn-lbl{font-size:12px; color:var(--ink-2); font-style:normal; font-family:'Noto Serif JP',serif}
+.rkn-actions{
+  display:flex; flex-direction:column; gap:10px;
+  padding-top:14px; border-top:1px solid var(--rule-3);
+}
+.rkn-primary{
+  background:var(--ink); color:var(--paper);
+  padding:13px 18px;
+  border:1px solid var(--ink);
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:12px; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .18s, color .18s, transform .12s;
+}
+.rkn-primary:hover{background:var(--crimson); border-color:var(--crimson); transform:translateY(-1px)}
+.rkn-later{
+  background:transparent; border:1px solid var(--rule-2);
+  color:var(--muted); padding:10px 14px;
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  font-size:11px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase;
+  cursor:pointer;
+  transition:background .2s, color .2s;
+}
+.rkn-later:hover{background:var(--card-2); color:var(--ink)}
+
 /* ---- Privacy section inside Settings modal ------------- */
 .privacy-section{
   margin-top:22px; padding-top:18px;
@@ -3128,7 +3204,7 @@ body{
     <div class="ml-top">
       <div class="ml-head">
         <span class="ml-kicker">Leaderboard</span>
-        <span class="ml-ttl">今、ほかの読者たちは</span>
+        <span class="ml-ttl">今、ほかの参加者たちは</span>
       </div>
       <span class="ml-status" id="ml-status">接続中…</span>
     </div>
@@ -3493,6 +3569,43 @@ body{
   </div>
 </div>
 
+<!-- Ranking name onboarding (opens once after Google sign-in) -->
+<div class="ov" id="rkn-ov">
+  <div class="modal rkn-modal">
+    <div class="mh">
+      <span class="mttl-mark">Connected · 連携完了</span>
+      <span class="mttl">ランキングネームを確認</span>
+      <button class="mx" id="rkn-close" aria-label="閉じる">×</button>
+    </div>
+    <div class="rkn-body">
+      <div class="rkn-lede">
+        Googleアカウントと連携しました。<br>
+        ランキングに表示される<b>名前とアイコン</b>を確認してください（あとでも変更できます）。
+      </div>
+
+      <div class="rkn-field">
+        <label class="rkn-lbl" for="rkn-name">ランキング表示名</label>
+        <input class="rkn-input" id="rkn-name" type="text" maxlength="20" placeholder="例：Toru / Bloom Reader">
+        <span class="rkn-hint">空欄にするとGoogle表示名を使います。</span>
+      </div>
+
+      <div class="rkn-field">
+        <div class="rkn-toggle-row">
+          <div class="rkn-toggle-info">
+            <span class="rkn-lbl">プロフィール画像を表示</span>
+            <span class="rkn-hint">OFFにすると、イニシャル円が表示されます</span>
+          </div>
+          <input type="checkbox" class="ps-toggle" id="rkn-show-avatar">
+        </div>
+      </div>
+    </div>
+    <div class="rkn-actions">
+      <button class="rkn-primary" id="rkn-save" type="button">保存してランキングへ</button>
+      <button class="rkn-later" id="rkn-later" type="button">あとで設定から変更</button>
+    </div>
+  </div>
+</div>
+
 <!-- Terms / Privacy / Disclaimer Modal -->
 <div class="ov" id="tos-ov">
   <div class="modal tos-modal">
@@ -3524,9 +3637,9 @@ body{
 
       <h3 data-num="II">公開される情報</h3>
       <ul>
-        <li>ランキングに表示されるもの：<b>表示名</b>（またはニックネーム）、<b>アイコン</b>、スコア、記録</li>
-        <li>これらは <b>設定 → プライバシー設定</b> から非公開に切り替えられます</li>
-        <li>デフォルトは「ニックネーム優先」です。ニックネーム未設定ならGoogle表示名が出ます</li>
+        <li>ランキングに表示されるもの：<b>表示名</b>（ニックネームまたはGoogle表示名）、<b>アイコン</b>、スコア、記録</li>
+        <li>表示名は <b>設定 → ランキング用ニックネーム</b> から自由に変更できます（空欄にすればGoogle表示名が使われます）</li>
+        <li>アイコン表示は <b>設定 → プライバシー設定</b> から ON/OFF 切替可能です</li>
       </ul>
 
       <h3 data-num="III">技術的な安全性</h3>
@@ -3614,7 +3727,7 @@ body{
 
     <div class="nick-field">
       <label class="nf-lbl" for="f-nick">ランキング用ニックネーム（任意）</label>
-      <span class="nf-hint">将来のランキング連携で使います。空欄のままでも利用に支障はありません。</span>
+      <span class="nf-hint">ランキングで表示される名前です。空欄の場合はGoogle表示名（未ログインなら自動生成の名前）を使います。</span>
       <input class="nf-input" id="f-nick" type="text" maxlength="20" placeholder="例：Toru / Bloom Reader">
     </div>
 
@@ -3626,13 +3739,8 @@ body{
       <div class="ps-row">
         <div class="ps-info">
           <span class="ps-label">ランキングの表示名</span>
-          <span class="ps-desc">ニックネーム優先 / Google表示名 / 匿名（「読者」）</span>
+          <span class="ps-desc">上の「ランキング用ニックネーム」欄で自由に編集できます。空欄ならGoogle表示名（未ログインの場合は自動生成の名前）を使います。</span>
         </div>
-        <select class="ps-select" id="ps-name-mode">
-          <option value="nickname">ニックネーム優先</option>
-          <option value="google">Google表示名</option>
-          <option value="anon">匿名（読者）</option>
-        </select>
       </div>
 
       <div class="ps-row">
@@ -3707,7 +3815,7 @@ body{
       <!-- Leaderboard — Ranking across all users -->
       <div class="leader-panel" id="leader-panel">
         <div class="lp-head">
-          <span class="lp-kicker">Leaderboard · 今月の読者たち</span>
+          <span class="lp-kicker">Leaderboard · 今月の参加者たち</span>
           <span class="lp-sub" id="lp-status">接続中…</span>
         </div>
         <div class="lp-tabs" id="lp-tabs">
@@ -3725,7 +3833,7 @@ body{
         </div>
         <div class="lp-foot">
           <button class="lp-more" id="lp-more" style="display:none">さらに見る</button>
-          <span class="lp-note">ニックネーム未設定の方は「読者」として表示されます</span>
+          <span class="lp-note">表示名はいつでも設定から変更できます</span>
         </div>
       </div>
 
@@ -3984,14 +4092,16 @@ function pickDailyQuote(){
 // ============================================================
 // STATE
 // ============================================================
-function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'', privacy:{ nameMode:'nickname', showAvatar:true }, tosAcceptedAt:null, tosVersion:null }; }
+function defData(){ return { tasks:[], totalDone:0, msShown:[], streakDates:[], lastOpen:null, sortMode:'eisen', openDates:[], letterCount:0, lastLetterDay:null, quoteLastShownDay:null, manualShownFirst:false, totalScore:0, personalBest:0, personalBestDay:null, scoreByDate:{}, doneCountByDate:{}, nickname:'', privacy:{ showAvatar:true }, tosAcceptedAt:null, tosVersion:null, rankingOnboardingSeen:false }; }
 function load(){
   try{
     const raw = Object.assign(defData(), JSON.parse(localStorage.getItem(SK)||'{}'));
     // Privacy migration: ensure privacy object has all keys
-    if(!raw.privacy || typeof raw.privacy !== 'object') raw.privacy = { nameMode:'nickname', showAvatar:true };
-    if(!['nickname','google','anon'].includes(raw.privacy.nameMode)) raw.privacy.nameMode = 'nickname';
+    if(!raw.privacy || typeof raw.privacy !== 'object') raw.privacy = { showAvatar:true };
     if(typeof raw.privacy.showAvatar !== 'boolean') raw.privacy.showAvatar = true;
+    // Drop legacy nameMode field (replaced by free-text nickname + fallback chain)
+    if('nameMode' in raw.privacy) delete raw.privacy.nameMode;
+    if(typeof raw.rankingOnboardingSeen !== 'boolean') raw.rankingOnboardingSeen = false;
     return raw;
   }
   catch(e){ return defData(); }
@@ -4287,6 +4397,8 @@ function fbInit(){
             try { updateAuthUI(); } catch(e){}
             scheduleUpload(500);
             setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
+            // First-login-only: confirm ranking name + avatar
+            try { _rkMaybeShowAfterLogin(); } catch(e){}
           }
         })
         .catch(err => {
@@ -4298,6 +4410,7 @@ function fbInit(){
                   showToast('Googleアカウントと連携しました');
                   try { updateAuthUI(); } catch(e){}
                   scheduleUpload(500);
+                  try { _rkMaybeShowAfterLogin(); } catch(e){}
                 })
                 .catch(e => {
                   console.warn('[fb] signInWithCredential after redirect', e);
@@ -4450,6 +4563,8 @@ function handleGisCredential(response){
     try { updateAuthUI(); } catch(e){ console.warn('[gis] updateAuthUI', e); }
     setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 300);
     scheduleUpload(300);
+    // First-login-only: confirm ranking name + avatar
+    try { _rkMaybeShowAfterLogin(); } catch(e){}
   };
 
   const onError = (err) => {
@@ -4558,6 +4673,8 @@ function _doGoogleSignInLegacyFallback(){
     // Refresh mini leaderboard so the user sees their display name / avatar
     setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 300);
     scheduleUpload(300);
+    // First-login-only: confirm ranking name + avatar
+    try { _rkMaybeShowAfterLogin(); } catch(e){}
   };
 
   const onError = (err) => {
@@ -4738,23 +4855,16 @@ function myScorePayload(){
   const today = todayStr();
   const yest = daysAgoStr(1);
   const nick = ((D.nickname||'').trim()).slice(0, 20);
-  // Respect privacy settings: nameMode decides which name fields are public; showAvatar decides photoURL exposure
-  const privacy = (D.privacy && typeof D.privacy === 'object') ? D.privacy : { nameMode:'nickname', showAvatar:true };
-  const mode = ['nickname','google','anon'].includes(privacy.nameMode) ? privacy.nameMode : 'nickname';
+  // Privacy model (post-refactor): there is no more nameMode dropdown.
+  // We always publish the user's chosen nickname (can be empty) AND their
+  // Google displayName (if signed in); rankingName() picks nickname first,
+  // then displayName, then an auto-generated "ランナー-XXXX" label keyed off
+  // the UID. showAvatar still gates photoURL exposure.
+  const privacy = (D.privacy && typeof D.privacy === 'object') ? D.privacy : { showAvatar:true };
   const showAvatar = privacy.showAvatar !== false;
-  let pubNick = '';
-  let pubDisplay = '';
-  if(mode === 'nickname'){
-    pubNick = nick || '';
-    pubDisplay = '';
-  } else if(mode === 'google'){
-    pubNick = '';
-    pubDisplay = (fbUser && !fbIsAnonymous && fbUser.displayName) ? String(fbUser.displayName).slice(0,40) : '';
-  } else {
-    // anon: nothing public → ranking falls back to "読者"
-    pubNick = '';
-    pubDisplay = '';
-  }
+  const pubNick = nick || '';
+  const pubDisplay = (fbUser && !fbIsAnonymous && fbUser.displayName)
+    ? String(fbUser.displayName).slice(0,40) : '';
   const pubPhoto = (showAvatar && fbUser && !fbIsAnonymous && fbUser.photoURL)
     ? String(fbUser.photoURL) : '';
   return {
@@ -4762,7 +4872,6 @@ function myScorePayload(){
     displayName: pubDisplay,
     photoURL: pubPhoto,
     isAnonymous: !!fbIsAnonymous,
-    privacyMode: mode,
     todayScore: D.scoreByDate?.[today] || 0,
     todayDone:  D.doneCountByDate?.[today] || 0,
     yesterdayScore: D.scoreByDate?.[yest] || 0,
@@ -5766,16 +5875,30 @@ function rankValueFor(row, kind){
 }
 function escNick(n){
   const s = (n||'').trim();
-  if(!s) return '<span class="lp-nm anon">読者</span>';
   return esc(s);
 }
-// Pick a display name for a ranking row, in priority order: nickname > Google displayName > "読者"
+// Stable auto-generated fallback name, keyed off UID so the same
+// user gets the same label every time. Used for rows that have no
+// nickname and no Google displayName (e.g. fresh anonymous users who
+// haven't named themselves yet).
+function autoNameForUid(uid){
+  const raw = String(uid || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const tail = raw ? raw.slice(-4).padStart(4, '0') : '----';
+  return 'ランナー-' + tail;
+}
+// Pick a display name for a ranking row, in priority order:
+// nickname > Google displayName > auto-generated "ランナー-XXXX".
+// Never returns "読者" — every row gets a real-looking label.
 function rankingName(row){
-  const nick = (row.nickname || '').trim();
-  if(nick) return { text: nick, anon: false };
-  const dn = (row.displayName || '').trim();
-  if(dn) return { text: dn, anon: false };
-  return { text: '読者', anon: true };
+  const r = row || {};
+  const nick = (r.nickname || '').trim();
+  if(nick) return { text: nick, anon: false, auto: false };
+  const dn = (r.displayName || '').trim();
+  if(dn) return { text: dn, anon: false, auto: false };
+  // No explicit name — synthesize a stable handle. Mark auto=true so the
+  // leaderboard can still distinguish it visually (muted/italic) and
+  // swap in "あなた" on the user's own row.
+  return { text: autoNameForUid(r.uid), anon: false, auto: true };
 }
 function avatarHtml(row, sizeCls){
   // sizeCls: 'lp-av' (large) or 'ml-av' (small)
@@ -5815,8 +5938,8 @@ function renderLeaderboardList(rows, kind){
     const rkClass = rank<=3 ? ` rk-${rank}` : '';
     const meClass = (r.uid === fbUid) ? ' me' : '';
     const nmRes = rankingName(r);
-    const nm = (r.uid === fbUid && nmRes.anon) ? 'あなた' : nmRes.text;
-    const nmClass = nmRes.anon ? ' anon' : '';
+    const nm = (r.uid === fbUid && nmRes.auto) ? 'あなた' : nmRes.text;
+    const nmClass = nmRes.auto ? ' anon' : '';
     const val = fmtN(rankValueFor(r, kind));
     const av = avatarHtml(r, 'lp-av');
     return `<div class="lp-row${meClass}">
@@ -5847,8 +5970,8 @@ function renderLeaderboardList(rows, kind){
       const me = filtered[myIdxInFiltered];
       const rank = myIdxInFiltered + 1;
       const nmRes = rankingName(me);
-      const nm = nmRes.anon ? 'あなた' : nmRes.text;
-      const nmClass = nmRes.anon ? ' anon' : '';
+      const nm = nmRes.auto ? 'あなた' : nmRes.text;
+      const nmClass = nmRes.auto ? ' anon' : '';
       const val = fmtN(rankValueFor(me, kind));
       const av = avatarHtml(me, 'lp-av');
       meRowEl.innerHTML = `<div class="lp-row me">
@@ -5923,8 +6046,8 @@ function renderMiniLeaderList(rows){
     const rkClass = ` rk-${rank}`;
     const meClass = (r.uid === fbUid) ? ' me' : '';
     const nmRes = rankingName(r);
-    const nm = (r.uid === fbUid && nmRes.anon) ? 'あなた' : nmRes.text;
-    const nmClass = nmRes.anon ? ' anon' : '';
+    const nm = (r.uid === fbUid && nmRes.auto) ? 'あなた' : nmRes.text;
+    const nmClass = nmRes.auto ? ' anon' : '';
     const val = fmtN(rankValueFor(r, miniRankingKind));
     const av = avatarHtml(r, 'ml-av');
     return `<li class="ml-row${meClass}">
@@ -6743,49 +6866,118 @@ function closeTosModal(){
 })();
 
 // ============================================================
+// Ranking name onboarding — shown once after successful Google sign-in
+// ============================================================
+// Purpose: after Googleログイン, let the user confirm the display name
+// that appears in the public ranking (prefilled with the Google displayName)
+// and their avatar preference. Fires once per install (D.rankingOnboardingSeen),
+// and can always be re-visited from Settings → プライバシー設定 + ニックネーム欄.
+function openRankingOnboarding(){
+  const ov = document.getElementById('rkn-ov');
+  const nameEl = document.getElementById('rkn-name');
+  const chkEl = document.getElementById('rkn-show-avatar');
+  if(!ov || !nameEl || !chkEl) return;
+  // Pre-fill: current nickname wins, else Google displayName, else auto-name
+  const currentNick = ((D.nickname || '').trim()).slice(0, 20);
+  const googleName = (fbUser && !fbIsAnonymous && fbUser.displayName)
+    ? String(fbUser.displayName).slice(0, 20) : '';
+  nameEl.value = currentNick || googleName || '';
+  chkEl.checked = !(D.privacy && D.privacy.showAvatar === false);
+  ov.classList.add('open');
+  // Defer focus so the overlay is in place before we try to type
+  setTimeout(() => { try { nameEl.focus(); nameEl.select(); } catch(e){} }, 50);
+}
+function closeRankingOnboarding(){
+  const ov = document.getElementById('rkn-ov');
+  if(ov) ov.classList.remove('open');
+}
+function _rkMaybeShowAfterLogin(){
+  // Only show once per install; user can always visit Settings later.
+  if(D.rankingOnboardingSeen) return;
+  // Wait a beat so the success toast + UI update settle first
+  setTimeout(() => {
+    if(D.rankingOnboardingSeen) return; // might have been set meanwhile
+    openRankingOnboarding();
+  }, 700);
+}
+(function wireRkn(){
+  const ov = document.getElementById('rkn-ov');
+  const closeBtn = document.getElementById('rkn-close');
+  const saveBtn = document.getElementById('rkn-save');
+  const laterBtn = document.getElementById('rkn-later');
+  const nameEl = document.getElementById('rkn-name');
+  const chkEl = document.getElementById('rkn-show-avatar');
+  if(closeBtn) closeBtn.addEventListener('click', () => {
+    D.rankingOnboardingSeen = true; save();
+    closeRankingOnboarding();
+  });
+  if(laterBtn) laterBtn.addEventListener('click', () => {
+    D.rankingOnboardingSeen = true; save();
+    closeRankingOnboarding();
+  });
+  if(ov){
+    ov.addEventListener('click', (e) => {
+      if(e.target === ov){
+        D.rankingOnboardingSeen = true; save();
+        closeRankingOnboarding();
+      }
+    });
+  }
+  if(saveBtn){
+    saveBtn.addEventListener('click', () => {
+      const v = ((nameEl && nameEl.value) || '').trim().slice(0, 20);
+      D.nickname = v;
+      if(!D.privacy) D.privacy = { showAvatar:true };
+      D.privacy.showAvatar = !!(chkEl && chkEl.checked);
+      D.rankingOnboardingSeen = true;
+      save();
+      // Reflect into the Settings modal's nickname input if it's present
+      const nk = document.getElementById('f-nick');
+      if(nk) nk.value = v;
+      // Push to cloud + refresh leaderboard UI
+      scheduleUpload(200);
+      try { renderMiniLeader(); } catch(e){}
+      try { renderRanking && renderRanking(); } catch(e){}
+      try { updateAuthUI(); } catch(e){}
+      try { refreshPrivacyPreview(); } catch(e){}
+      showToast('ランキング設定を保存しました');
+      closeRankingOnboarding();
+    });
+  }
+})();
+
+// ============================================================
 // Privacy settings wiring
 // ============================================================
 function refreshPrivacyPreview(){
   const el = document.getElementById('ps-preview-name');
   if(!el) return;
-  const mode = (D.privacy && D.privacy.nameMode) || 'nickname';
   const nick = ((D.nickname||'').trim()).slice(0, 20);
   const googleName = (fbUser && !fbIsAnonymous && fbUser.displayName) ? String(fbUser.displayName) : '';
+  // Priority mirrors rankingName(): nickname → Google displayName → auto-name
   let preview = '';
-  if(mode === 'anon'){
-    preview = '読者';
-  } else if(mode === 'google'){
-    preview = googleName || '（Googleログインすると表示されます）';
+  if(nick){
+    preview = nick;
+  } else if(googleName){
+    preview = googleName;
+  } else if(fbUid){
+    preview = autoNameForUid(fbUid);
   } else {
-    preview = nick || googleName || '読者';
+    preview = '（接続すると表示されます）';
   }
   const showAv = (D.privacy && D.privacy.showAvatar !== false);
   el.innerHTML = esc(preview) + (showAv ? '（アイコンあり）' : '（アイコンなし／イニシャル円）');
 }
 function restorePrivacyUI(){
-  const sel = document.getElementById('ps-name-mode');
   const chk = document.getElementById('ps-show-avatar');
-  if(sel) sel.value = (D.privacy && D.privacy.nameMode) || 'nickname';
   if(chk) chk.checked = !(D.privacy && D.privacy.showAvatar === false);
   refreshPrivacyPreview();
 }
 (function wirePrivacy(){
-  const sel = document.getElementById('ps-name-mode');
   const chk = document.getElementById('ps-show-avatar');
-  if(sel){
-    sel.addEventListener('change', () => {
-      if(!D.privacy) D.privacy = { nameMode:'nickname', showAvatar:true };
-      D.privacy.nameMode = sel.value;
-      save();
-      refreshPrivacyPreview();
-      scheduleUpload(300);
-      try { renderMiniLeader(); } catch(e){}
-      try { renderRanking && renderRanking(); } catch(e){}
-    });
-  }
   if(chk){
     chk.addEventListener('change', () => {
-      if(!D.privacy) D.privacy = { nameMode:'nickname', showAvatar:true };
+      if(!D.privacy) D.privacy = { showAvatar:true };
       D.privacy.showAvatar = !!chk.checked;
       save();
       refreshPrivacyPreview();
