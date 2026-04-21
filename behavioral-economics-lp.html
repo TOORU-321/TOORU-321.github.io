@@ -656,6 +656,35 @@
       position: relative;
       top: -.1rem;
     }
+
+    .home-btn-wrap {
+      text-align: center;
+      padding: 5rem 0 7rem;
+      border-top: 1px solid rgba(201,168,99,.07);
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .8rem;
+      font-family: var(--sans);
+      font-size: .82rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 1rem 2.4rem;
+      transition: color .3s, border-color .3s, background .3s;
+    }
+
+    .home-btn:hover {
+      color: var(--gold-light);
+      border-color: var(--border-mid);
+      background: rgba(201,168,99,.05);
+    }
+
+    .home-btn .arr { transition: transform .3s; }
+    .home-btn:hover .arr { transform: translateX(-4px); }
   </style>
 </head>
 <body>
@@ -879,6 +908,14 @@
     </div>
   </section>
 
+
+
+  <!-- ── HOME BUTTON ── -->
+  <div class="home-btn-wrap">
+    <a href="https://l-mine.com/" class="home-btn">
+      <span class="arr">←</span> ホームへ戻る
+    </a>
+  </div>
 
   <!-- ── Scripts ── -->
   <script>
