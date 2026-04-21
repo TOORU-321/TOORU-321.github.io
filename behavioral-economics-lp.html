@@ -146,7 +146,7 @@
       font-family: var(--serif);
       font-size: clamp(1.05rem, 2vw, 1.3rem);
       font-weight: 400;
-      color: var(--text-muted);
+      color: var(--white);
       line-height: 1.7;
       max-width: 520px;
       margin-bottom: 3.2rem;
@@ -154,7 +154,7 @@
 
     .hero-body {
       font-size: .9rem;
-      color: var(--text-dim);
+      color: #c8c4bc;
       line-height: 2;
       max-width: 440px;
       padding-left: 1.2rem;
@@ -641,6 +641,21 @@
       color: var(--gold);
       font-weight: 500;
     }
+
+    .beta-badge {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: .6rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      color: var(--gold);
+      border: 1px solid var(--border-mid);
+      padding: .15rem .55rem;
+      vertical-align: middle;
+      margin-left: .7rem;
+      position: relative;
+      top: -.1rem;
+    }
   </style>
 </head>
 <body>
@@ -755,7 +770,7 @@
           <div class="app-num">02</div>
           <div class="app-content">
             <p class="app-tag">TASK COACH</p>
-            <h3 class="app-name">Bloom タスクコーチ</h3>
+            <h3 class="app-name">Bloom タスクコーチ<span class="beta-badge">β版</span></h3>
             <p class="app-tagline">「やらされる」タスクを、「咲かせる」タスクへ。</p>
             <p class="app-desc">
               行動経済学が明らかにしたことがある。<br>
@@ -774,7 +789,7 @@
           <div class="app-num">03</div>
           <div class="app-content">
             <p class="app-tag">NUDGE ARCHITECT</p>
-            <h3 class="app-name">ナッジアーキテクト</h3>
+            <h3 class="app-name">ナッジアーキテクト<span class="beta-badge">β版</span></h3>
             <p class="app-tagline">操るのではなく、設計する。</p>
             <p class="app-desc">
               あなたは選択設計者（チョイス・アーキテクト）。<br>
