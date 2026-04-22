@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FAF5EB">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="タマゴヤキ">
+<meta name="robots" content="noindex,nofollow">
+<title>タマゴヤキハサイカクニン | かよママ献立サポート（ナチュラル版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Shippori+Mincho:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='55' r='35' fill='%23F0EAD8'/%3E%3Ccircle cx='50' cy='55' r='15' fill='%238FA181'/%3E%3C/svg%3E">
+<style>
+/* =========================================================
+   タマゴヤキハサイカクニン β版_ナチュラル
+   Palette  : 生成りベージュ #F7F1E6 / セージ #8FA181 /
+              テラコッタ #C8835A / 墨 #3D3A34
+   Fonts    : Shippori Mincho (見出し) + Zen Kaku Gothic New (本文)
+   Concept  : 暮らしの道具店／kinfolk 的な素朴で上質な空気感
+   ========================================================= */
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Zen Kaku Gothic New','Noto Sans JP',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#F7F1E6;color:#3D3A34;min-height:100vh;
+  overscroll-behavior:none;-webkit-tap-highlight-color:transparent;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  font-weight:400;letter-spacing:.02em;
+}
+button{font-family:inherit}
+#app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:82px;background:#F7F1E6}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky;top:0;z-index:10;
+  background:#FAF5EB;color:#3D3A34;
+  padding:18px 20px 16px;border-bottom:1px solid #E8E0CC;
+}
+.logo{
+  font-family:'Shippori Mincho','Noto Serif JP',serif;
+  font-size:17px;font-weight:500;letter-spacing:.08em;color:#3D3A34;
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-right:44px;
+}
+.logo::before{content:'';width:3px;height:18px;background:#8FA181;border-radius:1px;flex-shrink:0}
+.logo small{
+  font-size:10.5px;opacity:.8;font-family:'Zen Kaku Gothic New',sans-serif;
+  font-weight:500;margin-left:auto;white-space:nowrap;letter-spacing:.05em;color:#5F5852;
+}
+.date-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#F0EAD8;border:1px solid #E8E0CC;border-radius:2px;padding:5px 6px;gap:4px;
+}
+.date-bar button{
+  background:transparent;border:none;color:#5F5852;font-size:16px;
+  width:36px;height:32px;border-radius:2px;cursor:pointer;font-weight:400;
+}
+.date-bar button:active{background:#E8E0CC}
+.date-bar .current{
+  flex:1;text-align:center;font-size:13px;font-weight:500;color:#3D3A34;
+  font-family:'Shippori Mincho',serif;letter-spacing:.06em;
+}
+.today-badge{
+  display:inline-block;font-size:9.5px;background:#8FA181;color:#FAF5EB;
+  padding:2px 8px;border-radius:1px;margin-left:8px;font-weight:500;vertical-align:1px;
+  letter-spacing:.2em;font-family:'Zen Kaku Gothic New',sans-serif;
+}
+.streak-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  color:#5F5852;padding:2px 8px 2px 0;font-size:10.5px;font-weight:500;
+  margin-right:8px;letter-spacing:.06em;border-right:1px solid #D9CDB0;
+}
+.streak-pill .flame{font-size:11px;opacity:.85}
+main{padding:16px 14px}
+
+/* ---------- Summary card ---------- */
+.summary-card{
+  background:#FAF5EB;border:1px solid #E8E0CC;border-radius:2px;
+  padding:18px 20px;margin-bottom:16px;
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+}
+.summary-count{
+  font-family:'Shippori Mincho',serif;
+  font-size:32px;font-weight:400;color:#8FA181;line-height:1;letter-spacing:.02em;
+}
+.summary-count .total{font-size:14px;color:#A89F90;font-weight:400;margin-left:3px}
+.summary-label{font-size:11.5px;color:#5F5852;text-align:right;line-height:1.7;letter-spacing:.05em}
+.summary-label b{
+  display:block;font-size:13px;color:#3D3A34;font-weight:500;margin-bottom:3px;
+  font-family:'Shippori Mincho',serif;letter-spacing:.08em;
+}
+.summary-label .enc{color:#6B8E5A;font-size:10.5px;margin-top:4px;display:block;font-weight:500;letter-spacing:.12em}
+
+/* ---------- Item cards ---------- */
+.items{display:flex;flex-direction:column;gap:7px}
+.item-card{
+  background:#FAF5EB;border:1px solid #EDE6D4;border-radius:2px;
+  padding:11px 13px;display:flex;align-items:center;gap:11px;
+  transition:border-color .2s,background .2s;
+}
+.item-card.full{background:#F3EFE3;border-color:#C5D1B4}
+.item-letter{
+  width:36px;height:36px;border-radius:50%;background:#F0EAD8;color:#8FA181;
+  font-family:'Klee One',serif;font-size:20px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.item-card.full .item-letter{background:#D9E4CA;color:#6B8E5A}
+.item-char{
+  width:46px;height:46px;border-radius:50%;
+  background:#F0EAD8;flex-shrink:0;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;border:1px solid #E0D6BE;cursor:pointer;
+}
+.item-card.full .item-char{border-color:#B8C7A4;background:#E9F0DD}
+.item-char img{width:100%;height:100%;object-fit:cover;display:block}
+.item-char .letter-fallback{font-family:'Klee One',serif;font-size:20px;font-weight:700;color:#8FA181}
+.item-card.full .item-char .letter-fallback{color:#6B8E5A}
+.char-stage{
+  position:absolute;right:-4px;bottom:-4px;
+  background:#8FA181;color:#FAF5EB;font-size:8.5px;font-weight:500;
+  padding:2px 6px;border-radius:1px;border:1.5px solid #FAF5EB;
+  font-family:'Zen Kaku Gothic New',sans-serif;line-height:1.2;letter-spacing:.12em;
+}
+.item-card.full .char-stage{background:#6B8E5A}
+
+/* Progress mini */
+.progress-mini{display:flex;align-items:center;gap:7px;margin-top:5px}
+.progress-track{flex:1;height:2px;background:#EDE6D4;overflow:hidden}
+.progress-fill{height:100%;background:#C8835A;transition:width .6s ease-out}
+.progress-fill.stage-2{background:#B07143}
+.progress-fill.stage-3{background:#6B8E5A}
+.progress-text{
+  font-size:9.5px;color:#8A8378;font-weight:400;white-space:nowrap;line-height:1;
+  letter-spacing:.08em;font-family:'Shippori Mincho',serif;
+}
+.progress-text.max{color:#6B8E5A}
+
+/* Speech bubble */
+.speech{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.8);
+  background:#FAF5EB;border:1px solid #D9CDB0;border-radius:2px;
+  padding:6px 10px;font-size:11px;color:#3D3A34;line-height:1.5;
+  white-space:nowrap;box-shadow:0 2px 8px rgba(61,58,52,.08);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.2,.9,.3,1.4);
+  z-index:6;font-family:'Shippori Mincho',serif;font-weight:500;letter-spacing:.05em;
+}
+.speech::after{
+  content:'';position:absolute;bottom:-6px;left:50%;
+  width:10px;height:10px;background:#FAF5EB;
+  border-right:1px solid #D9CDB0;border-bottom:1px solid #D9CDB0;
+  transform:translateX(-50%) rotate(45deg);
+}
+.speech.on{opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
+
+/* Confetti */
+.confetti-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:300}
+.confetti-piece{position:absolute;top:-20px;width:8px;height:12px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}10%{opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:.8}}
+@keyframes charBounce{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-3px) scale(1.06)}60%{transform:translateY(0) scale(.96)}}
+.item-char.grown{animation:charBounce .6s ease-out}
+
+/* ---------- Char Dex ---------- */
+.char-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.char-cell{
+  background:#FAF5EB;border:1px solid #EDE6D4;border-radius:2px;
+  padding:12px 6px 10px;text-align:center;position:relative;
+}
+.char-cell.stage-3{background:#F3EFE3;border-color:#C5D1B4}
+.char-cell.stage-0{opacity:.45;filter:grayscale(.65)}
+.char-thumb{
+  width:64px;height:64px;margin:0 auto 5px;border-radius:50%;
+  background:#F0EAD8;display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.char-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.char-thumb .letter-fallback{font-family:'Klee One',serif;font-size:28px;font-weight:700;color:#8FA181}
+.char-cell .cname{font-size:11px;font-weight:500;color:#3D3A34;line-height:1.35;letter-spacing:.05em;font-family:'Shippori Mincho',serif}
+.char-cell .ccount{font-size:10px;color:#8A8378;margin-top:3px;letter-spacing:.06em}
+.char-cell .cbadge{
+  display:inline-block;font-size:9px;font-weight:500;color:#FAF5EB;
+  background:#C2B3A0;padding:2px 8px;border-radius:1px;margin-top:5px;letter-spacing:.15em;
+}
+.char-cell.stage-1 .cbadge{background:#C8835A}
+.char-cell.stage-2 .cbadge{background:#B07143}
+.char-cell.stage-3 .cbadge{background:#6B8E5A}
+
+.item-info{flex:1;min-width:0}
+.item-name{font-size:13px;font-weight:500;color:#3D3A34;line-height:1.4;font-family:'Shippori Mincho',serif;letter-spacing:.06em}
+.item-desc{font-size:10.5px;color:#8A8378;margin-top:3px;line-height:1.4;letter-spacing:.04em}
+
+/* Meal toggles */
+.meal-toggles{display:flex;gap:5px}
+.meal-btn{
+  width:36px;height:36px;border-radius:2px;
+  border:1px solid #E0D6BE;background:#FAF5EB;
+  font-size:11px;font-weight:500;color:#A89F90;cursor:pointer;
+  transition:transform .1s,background .15s,border-color .15s,color .15s;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;padding:0;letter-spacing:.04em;
+  font-family:'Shippori Mincho',serif;
+}
+.meal-btn:active{transform:scale(.9)}
+.meal-btn.on{background:#8FA181;border-color:#7B8E6C;color:#FAF5EB}
+.meal-btn.on::before{content:'〇';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(250,245,235,.22);font-weight:400}
+.meal-btn.on span{position:relative;z-index:1}
+
+/* ---------- Hint / Perfect ---------- */
+.hint-card{
+  margin-top:18px;background:#F0EAD8;border:1px solid #D9CDB0;
+  border-left:3px solid #C8835A;border-radius:2px;padding:14px 16px;
+}
+.hint-title{
+  font-size:11px;font-weight:500;color:#B07143;margin:0 0 8px;
+  display:flex;align-items:center;gap:5px;letter-spacing:.15em;
+  font-family:'Shippori Mincho',serif;
+}
+.hint-text{font-size:12.5px;color:#3D3A34;line-height:1.9;margin:0;letter-spacing:.05em}
+.hint-tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.hint-tag{
+  font-size:10.5px;background:#E8E0CC;color:#5F5852;
+  padding:3px 10px;border-radius:1px;font-weight:500;letter-spacing:.08em;
+  font-family:'Shippori Mincho',serif;
+}
+
+.perfect-banner{
+  background:#F3EFE3;color:#3D3A34;
+  border:1px solid #C5D1B4;border-left:3px solid #6B8E5A;border-radius:2px;
+  padding:14px 16px;margin-top:16px;text-align:center;
+}
+.perfect-banner h3{
+  margin:0 0 5px;font-size:14px;
+  font-family:'Shippori Mincho',serif;color:#6B8E5A;font-weight:500;letter-spacing:.12em;
+}
+.perfect-banner p{margin:0;font-size:11.5px;color:#5F5852;letter-spacing:.06em}
+
+/* ---------- Dashboard ---------- */
+.dash-view{display:none}
+.dash-view.on{display:block}
+.main-view.off{display:none}
+
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{
+  background:#FAF5EB;border:1px solid #EDE6D4;border-radius:2px;
+  padding:16px;text-align:center;
+}
+.stat-num{
+  font-family:'Shippori Mincho',serif;
+  font-size:28px;font-weight:400;color:#C8835A;line-height:1;letter-spacing:.02em;
+}
+.stat-num .unit{font-size:13px;color:#8A8378;font-weight:400;margin-left:3px}
+.stat-label{font-size:11px;color:#5F5852;margin-top:7px;letter-spacing:.1em}
+
+.card-box{
+  background:#FAF5EB;border:1px solid #EDE6D4;border-radius:2px;
+  padding:15px 16px;margin-bottom:14px;
+}
+.card-box h3{
+  margin:0 0 12px;font-size:13px;color:#3D3A34;font-weight:500;
+  display:flex;align-items:center;gap:6px;padding-bottom:8px;border-bottom:1px solid #EDE6D4;
+  font-family:'Shippori Mincho',serif;letter-spacing:.1em;
+}
+.card-box h3 .muted{color:#8A8378;font-weight:400;font-size:10.5px;margin-left:auto;letter-spacing:.05em;font-family:'Zen Kaku Gothic New',sans-serif}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar-row:last-child{margin-bottom:0}
+.bar-label{width:90px;font-size:11px;color:#3D3A34;display:flex;gap:6px;align-items:baseline;flex-shrink:0;letter-spacing:.04em}
+.bar-label .k{font-family:'Klee One',serif;font-weight:700;color:#C8835A;font-size:14px;width:12px;text-align:center}
+.bar-track{flex:1;height:5px;background:#EDE6D4;overflow:hidden;position:relative}
+.bar-fill{height:100%;background:#8FA181;transition:width .5s ease-out}
+.bar-fill.low{background:#C8835A}
+.bar-count{font-size:11px;color:#5F5852;width:34px;text-align:right;font-weight:500;font-family:'Shippori Mincho',serif;letter-spacing:.04em}
+
+.weak-list{display:flex;flex-direction:column;gap:8px}
+.weak-item{
+  display:flex;align-items:center;gap:11px;
+  background:#F0EAD8;border:1px solid #D9CDB0;border-left:3px solid #C8835A;
+  border-radius:2px;padding:10px 13px;
+}
+.weak-item .k{font-family:'Klee One',serif;color:#C8835A;font-size:16px;font-weight:700}
+.weak-item .info{flex:1;font-size:12px;color:#5F5852;letter-spacing:.05em}
+.weak-item .info b{font-weight:500;color:#3D3A34;font-family:'Shippori Mincho',serif;letter-spacing:.06em}
+.weak-item .count{font-size:11px;color:#8A8378;font-weight:500}
+
+.export-row{display:flex;gap:8px;margin-top:14px;margin-bottom:4px}
+.btn{
+  flex:1;background:#8FA181;color:#FAF5EB;border:none;
+  padding:14px;border-radius:2px;font-size:12.5px;font-weight:500;cursor:pointer;
+  letter-spacing:.2em;font-family:'Shippori Mincho',serif;
+}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:#FAF5EB;color:#8FA181;border:1px solid #8FA181}
+
+/* ---------- Bottom Nav ---------- */
+nav.bottom{
+  position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;
+  background:#FAF5EB;border-top:1px solid #E8E0CC;
+  display:flex;padding:7px;z-index:5;
+  padding-bottom:calc(7px + env(safe-area-inset-bottom));
+}
+nav.bottom button{
+  flex:1;background:transparent;border:none;padding:10px 6px;
+  font-size:11px;color:#8A8378;font-weight:500;border-radius:2px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  letter-spacing:.15em;font-family:'Shippori Mincho',serif;
+}
+nav.bottom button svg{width:20px;height:20px}
+nav.bottom button.active{background:#F0EAD8;color:#B07143}
+nav.bottom button:active{transform:scale(.97)}
+
+/* ---------- Expired ---------- */
+.expired{
+  position:fixed;inset:0;padding:40px 24px;text-align:center;
+  background:#F7F1E6;
+  display:none;flex-direction:column;justify-content:center;align-items:center;z-index:100;overflow-y:auto;
+}
+.expired.on{display:flex}
+.expired .emoji{font-size:52px;margin-bottom:4px;opacity:.9}
+.expired h1{
+  font-family:'Shippori Mincho',serif;font-size:22px;color:#B07143;
+  margin:14px 0 12px;line-height:1.6;font-weight:500;letter-spacing:.12em;
+}
+.expired p{color:#5F5852;line-height:1.9;font-size:13px;max-width:360px;margin:0 auto 12px;letter-spacing:.06em}
+.expired .stats-mini{
+  background:#FAF5EB;border:1px solid #E8E0CC;border-radius:2px;
+  padding:18px 22px;margin:18px auto;max-width:320px;width:100%;
+}
+.expired .stats-mini .num{
+  font-size:28px;color:#C8835A;font-weight:400;
+  font-family:'Shippori Mincho',serif;letter-spacing:.03em;
+}
+.expired .stats-mini .lbl{font-size:11.5px;color:#5F5852;letter-spacing:.1em}
+.expired .btn{display:inline-block;max-width:240px;margin-top:8px}
+
+/* ---------- Menu button (hamburger) ---------- */
+.menu-btn{
+  position:absolute;top:16px;right:16px;
+  width:32px;height:32px;border-radius:2px;
+  background:transparent;border:1px solid #D9CDB0;color:#5F5852;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  padding:0;line-height:1;z-index:11;
+}
+.menu-btn svg{width:15px;height:15px;display:block}
+.menu-btn:active{transform:scale(.92);background:#F0EAD8}
+
+/* ---------- Side drawer ---------- */
+.drawer-bg{
+  position:fixed;inset:0;background:rgba(61,58,52,.45);display:none;z-index:400;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+.drawer-bg.on{display:block;animation:fadeIn .2s ease-out}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:80%;max-width:290px;
+  background:#FAF5EB;box-shadow:-2px 0 18px rgba(61,58,52,.12);
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.3,1);
+  z-index:401;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);
+}
+.drawer.on{transform:translateX(0)}
+.drawer-head{
+  padding:22px 22px 16px;border-bottom:1px solid #E8E0CC;
+  display:flex;align-items:center;justify-content:space-between;background:#F3EFE3;
+}
+.drawer-head .d-title{
+  font-family:'Shippori Mincho',serif;font-size:14px;color:#3D3A34;font-weight:500;letter-spacing:.2em;
+}
+.drawer-close{
+  background:none;border:none;color:#8A8378;font-size:22px;cursor:pointer;
+  width:30px;height:30px;border-radius:2px;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;
+}
+.drawer-close:active{background:#E8E0CC}
+.drawer-list{padding:8px 0;flex:1;overflow-y:auto}
+.drawer-item{
+  display:flex;align-items:center;gap:13px;
+  padding:14px 22px;border:none;background:transparent;width:100%;
+  color:#3D3A34;font-size:13px;font-weight:500;text-align:left;
+  cursor:pointer;font-family:'Shippori Mincho',serif;text-decoration:none;letter-spacing:.1em;
+}
+.drawer-item:active{background:#F0EAD8}
+.drawer-item .ico{font-size:15px;width:22px;text-align:center;flex-shrink:0;opacity:.8}
+.drawer-item .arrow{margin-left:auto;color:#B8A994;font-size:13px}
+.drawer-divider{border-top:1px solid #E8E0CC;margin:6px 22px}
+.drawer-item.danger{color:#B55F3A}
+.drawer-foot{
+  padding:16px 22px calc(20px + env(safe-area-inset-bottom));
+  border-top:1px solid #E8E0CC;background:#F3EFE3;
+  font-size:10.5px;color:#8A8378;line-height:1.9;text-align:center;letter-spacing:.06em;
+}
+.drawer-foot .beta{
+  display:inline-block;background:#E8E0CC;color:#B07143;padding:2px 9px;
+  border-radius:1px;font-weight:500;margin-bottom:5px;font-size:10px;letter-spacing:.2em;
+  font-family:'Shippori Mincho',serif;
+}
+
+/* ---------- Onboarding Modal ---------- */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(61,58,52,.55);
+  display:none;align-items:flex-end;justify-content:center;z-index:500;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.modal-bg.on{display:flex;animation:fadeIn .25s ease-out}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal{
+  background:#FAF5EB;border-radius:2px 2px 0 0;
+  max-width:480px;width:100%;max-height:92vh;overflow-y:auto;
+  padding:26px 24px 30px;box-shadow:0 -4px 20px rgba(61,58,52,.15);
+  animation:slideUp .3s cubic-bezier(.2,.8,.3,1);
+  padding-bottom:calc(30px + env(safe-area-inset-bottom));
+}
+@media(min-height:760px){
+  .modal-bg{align-items:center}
+  .modal{border-radius:2px;max-width:420px;margin:0 12px;padding-bottom:30px}
+}
+.modal-hero{text-align:center;padding:4px 0 2px}
+.modal-hero .emoji{font-size:40px;line-height:1;opacity:.95}
+.modal h2{
+  font-family:'Shippori Mincho',serif;font-size:20px;color:#3D3A34;
+  margin:12px 0 6px;line-height:1.5;text-align:center;font-weight:500;letter-spacing:.15em;
+}
+.modal .sub{
+  font-size:11.5px;color:#5F5852;margin:0 0 20px;text-align:center;line-height:1.9;
+  letter-spacing:.08em;
+}
+
+.step{
+  background:#F7F1E6;border:1px solid #E8E0CC;border-radius:2px;
+  padding:14px 16px;margin-bottom:10px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.step .num{
+  flex-shrink:0;width:26px;height:26px;border-radius:50%;
+  background:#8FA181;color:#FAF5EB;
+  font-family:'Shippori Mincho',serif;font-size:12px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;margin-top:1px;
+}
+.step .body{flex:1;font-size:12.5px;line-height:1.85;color:#3D3A34;letter-spacing:.05em}
+.step .body b{color:#B07143;font-weight:500;font-family:'Shippori Mincho',serif;letter-spacing:.06em}
+.step .body .title{
+  font-weight:500;color:#3D3A34;margin-bottom:6px;font-size:13px;
+  font-family:'Shippori Mincho',serif;letter-spacing:.1em;
+}
+.step .body .hint{
+  display:block;margin-top:8px;font-size:11px;color:#5F5852;
+  background:#F0EAD8;border-left:3px solid #C8835A;
+  padding:8px 10px;border-radius:0;line-height:1.8;letter-spacing:.04em;
+}
+.step .body .hint b{color:#B07143}
+
+.key-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:5px;
+  background:#F0EAD8;border:1px solid #E0D6BE;border-radius:2px;
+  padding:12px 8px;margin:10px 0 0;
+}
+.key-cell{text-align:center;font-size:9.5px;color:#5F5852;line-height:1.4;letter-spacing:.05em}
+.key-cell .k{
+  font-family:'Klee One',serif;font-size:15px;color:#C8835A;font-weight:700;display:block;margin-bottom:2px;
+}
+
+.growth-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.growth-step{
+  background:#F0EAD8;border:1px solid #E0D6BE;border-radius:2px;
+  padding:10px 4px;text-align:center;
+  font-size:10.5px;color:#5F5852;line-height:1.4;letter-spacing:.04em;
+}
+.growth-step .ico{font-size:22px;display:block;margin-bottom:3px;line-height:1}
+.growth-step b{
+  font-family:'Shippori Mincho',serif;color:#C8835A;display:block;
+  font-size:11.5px;margin-bottom:3px;font-weight:500;letter-spacing:.1em;
+}
+.growth-step:nth-child(2){background:#EDE6D4}
+.growth-step:nth-child(2) b{color:#B07143}
+.growth-step:nth-child(3){background:#E9F0DD;border-color:#C5D1B4}
+.growth-step:nth-child(3) b{color:#6B8E5A}
+
+.period-note{
+  background:#F3EFE3;border:1px solid #D9CDB0;border-radius:2px;
+  padding:12px 14px;font-size:11.5px;color:#5F5852;
+  text-align:center;line-height:1.9;margin:14px 0 14px;letter-spacing:.06em;
+}
+.period-note b{color:#B07143;font-family:'Shippori Mincho',serif;letter-spacing:.1em}
+
+.secret-tease{
+  display:flex;align-items:flex-start;gap:12px;
+  background:#F5EFDE;border:1px solid #C8B48A;border-radius:2px;
+  padding:12px 14px;margin:14px 0 10px;position:relative;
+}
+.secret-tease::before{content:'';position:absolute;left:10px;right:10px;top:6px;height:1px;background:#D9CDB0}
+.secret-tease::after{content:'';position:absolute;left:10px;right:10px;bottom:6px;height:1px;background:#D9CDB0}
+.secret-tease .st-ico{font-size:22px;line-height:1.2;flex-shrink:0}
+.secret-tease .st-body{font-size:11.5px;color:#5F5852;line-height:1.85;flex:1;letter-spacing:.06em}
+.secret-tease .st-body b{color:#C8835A;font-family:'Shippori Mincho',serif;font-size:12.5px;letter-spacing:.1em;font-weight:500}
+.secret-tease .st-hint{display:block;margin-top:3px;font-size:11px;color:#8A7E70}
+.secret-tease .st-hint b{color:#B07143;font-family:inherit;font-size:11px;letter-spacing:.04em}
+
+/* Secret Help Modal (Natural) */
+.secret-help-close{
+  position:absolute;top:14px;right:16px;background:none;border:none;
+  font-size:24px;color:#A89F8F;cursor:pointer;line-height:1;padding:2px 6px;z-index:2;
+}
+.secret-help-close:active{color:#5F5852}
+#secretHelpModal .modal{position:relative}
+.sh-section{margin:16px 0 14px}
+.sh-head{font-family:'Shippori Mincho',serif;font-size:13px;color:#B07143;margin-bottom:8px;letter-spacing:.12em;font-weight:500;text-align:center}
+.sh-list{margin:0;padding-left:20px;font-size:12px;color:#5F5852;line-height:2;letter-spacing:.04em}
+.sh-list li{margin-bottom:2px}
+.sh-list b{color:#B07143;font-family:'Shippori Mincho',serif;letter-spacing:.08em;font-weight:500}
+.sh-hints{display:flex;flex-direction:column;gap:8px}
+.sh-hint{
+  display:flex;gap:12px;align-items:flex-start;
+  background:#F3EFE3;border:1px solid #D9CDB0;border-radius:2px;padding:10px 12px;
+}
+.sh-hint .shi{font-size:20px;line-height:1.2;flex-shrink:0;margin-top:1px}
+.sh-hint .sht{flex:1;font-size:11.5px;color:#5F5852;line-height:1.7;letter-spacing:.04em}
+.sh-hint .sht b{display:block;color:#B07143;font-family:'Shippori Mincho',serif;font-size:12px;margin-bottom:2px;letter-spacing:.1em;font-weight:500}
+.sh-hint .sht .shint{color:#8A7E70;font-size:11px}
+.sh-foot{
+  background:#F5EFDE;border:1px solid #D9CDB0;border-radius:2px;padding:10px 12px;
+  font-size:11.5px;color:#5F5852;text-align:center;margin:14px 0 16px;line-height:1.7;letter-spacing:.06em;
+}
+
+.modal .btn-start{
+  display:block;width:100%;background:#8FA181;color:#FAF5EB;
+  border:none;padding:16px;border-radius:2px;
+  font-size:13px;font-weight:500;cursor:pointer;
+  letter-spacing:.25em;margin-top:10px;
+  font-family:'Shippori Mincho',serif;
+}
+.modal .btn-start:active{transform:scale(.98)}
+
+/* ---------- Snap button ---------- */
+.snap-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;background:#FAF5EB;color:#5F5852;border:1px solid #D9CDB0;
+  padding:13px;border-radius:2px;font-size:12px;font-weight:500;cursor:pointer;
+  margin-top:4px;letter-spacing:.18em;font-family:'Shippori Mincho',serif;
+}
+.snap-btn:active{transform:scale(.98);background:#F0EAD8}
+
+/* ---------- Snap modal ---------- */
+.snap-bg{
+  position:fixed;inset:0;background:rgba(61,58,52,.6);display:none;
+  align-items:flex-start;justify-content:center;z-index:500;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  padding:20px 12px;overflow-y:auto;
+}
+.snap-bg.on{display:flex;animation:fadeIn .25s ease-out}
+.snap-close{
+  position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:2px;
+  background:#FAF5EB;border:1px solid #D9CDB0;font-size:18px;color:#5F5852;
+  cursor:pointer;z-index:10;
+  display:flex;align-items:center;justify-content:center;padding:0;line-height:1;
+}
+.snap-card{
+  position:relative;width:100%;max-width:380px;
+  background:#FAF5EB;border:1px solid #D9CDB0;border-radius:2px;
+  padding:26px 22px 20px;box-shadow:0 6px 24px rgba(61,58,52,.18);
+  animation:slideUp .3s cubic-bezier(.2,.8,.3,1);overflow:hidden;
+}
+.snap-head{text-align:center;margin-bottom:16px;position:relative;padding-bottom:12px;border-bottom:1px solid #E8E0CC}
+.snap-head .title{
+  font-family:'Shippori Mincho',serif;font-size:18px;color:#3D3A34;font-weight:500;
+  line-height:1.6;margin-bottom:4px;letter-spacing:.18em;
+}
+.snap-head .period{
+  font-size:10px;color:#8A8378;font-weight:500;letter-spacing:.25em;
+  font-family:'Shippori Mincho',serif;
+}
+.snap-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  background:#F3EFE3;border:1px solid #E8E0CC;border-radius:2px;
+  padding:12px 8px;margin-bottom:12px;position:relative;
+}
+.snap-cell{text-align:center;position:relative}
+.snap-thumb{
+  width:56px;height:56px;margin:0 auto 4px;border-radius:50%;
+  background:#F0EAD8;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;border:1px solid #E0D6BE;
+}
+.snap-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.snap-thumb .letter-fallback{font-family:'Klee One',serif;font-size:24px;font-weight:700;color:#8FA181}
+.snap-cell.stage-3 .snap-thumb{border-color:#B8C7A4;background:#E9F0DD}
+.snap-cell.stage-0 .snap-thumb{opacity:.35;filter:grayscale(1)}
+.snap-cell .cname{font-size:9px;color:#5F5852;font-weight:500;line-height:1.3;letter-spacing:.04em}
+.snap-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.snap-stat{
+  background:#F3EFE3;border:1px solid #E0D6BE;border-radius:2px;
+  padding:10px 4px;text-align:center;
+}
+.snap-stat .num{
+  font-family:'Shippori Mincho',serif;font-size:20px;color:#C8835A;font-weight:400;
+  line-height:1;letter-spacing:.02em;
+}
+.snap-stat .lbl{font-size:9.5px;color:#5F5852;font-weight:500;margin-top:4px;line-height:1.3;letter-spacing:.12em}
+.snap-credit{text-align:center;font-size:10px;color:#8A8378;line-height:1.8;margin-bottom:12px;letter-spacing:.08em}
+.snap-credit b{color:#B07143;font-weight:500;font-family:'Shippori Mincho',serif;letter-spacing:.1em}
+.snap-cta{
+  background:#F3EFE3;border:1px solid #D9CDB0;border-radius:2px;
+  padding:12px 14px;text-align:center;
+}
+.snap-cta .main{font-size:11.5px;color:#3D3A34;font-weight:500;margin-bottom:5px;letter-spacing:.1em;font-family:'Shippori Mincho',serif}
+.snap-cta .sub{font-size:10.5px;color:#5F5852;line-height:1.8;letter-spacing:.06em}
+.snap-cta .sub b{color:#B07143;font-family:'Shippori Mincho',serif;letter-spacing:.1em}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:#3D3A34;color:#FAF5EB;padding:11px 20px;border-radius:2px;
+  font-size:12.5px;font-weight:500;opacity:0;transition:all .25s;z-index:200;pointer-events:none;
+  letter-spacing:.12em;font-family:'Shippori Mincho',serif;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Sparkle animation (grown char) */
+@keyframes sparkle{0%{transform:scale(0);opacity:1}100%{transform:scale(1.8);opacity:0}}
+.sparkle{position:absolute;inset:0;pointer-events:none;border-radius:50%;background:radial-gradient(circle,rgba(200,131,90,.35) 0%,transparent 60%);animation:sparkle .5s ease-out forwards}
+
+/* Footer */
+.ftr{text-align:center;font-size:10.5px;color:#8A8378;padding:26px 16px 14px;line-height:1.9;letter-spacing:.08em}
+.ftr .beta{
+  display:inline-block;background:#E8E0CC;color:#B07143;padding:2px 9px;
+  border-radius:1px;font-weight:500;margin-bottom:7px;font-size:10px;letter-spacing:.2em;
+  font-family:'Shippori Mincho',serif;
+}
+.ftr a{color:#B07143;text-decoration:none;border-bottom:1px solid #D9CDB0;padding-bottom:1px}
+
+/* ======== お休み日モード（ナチュラル） ======== */
+.rest-banner{background:#FAF5EB;border:1px solid #D9CDB0;border-radius:2px;padding:14px 16px;margin:0 0 12px;display:flex;gap:12px;align-items:center;position:relative}
+.rest-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#C8835A}
+.rest-banner .ico{font-size:20px;color:#8FA181}
+.rest-banner .txt{flex:1;font-size:11.5px;line-height:1.7;color:#5F5852;letter-spacing:.04em}
+.rest-banner .txt b{color:#C8835A;font-family:'Shippori Mincho',serif;letter-spacing:.1em;font-weight:500}
+.rest-banner .undo{background:#FAF5EB;border:1px solid #D9CDB0;color:#8A7A5A;padding:5px 12px;border-radius:2px;font-size:10.5px;cursor:pointer;font-family:'Shippori Mincho',serif;letter-spacing:.15em;flex-shrink:0}
+.rest-banner .undo:active{background:#F0E8D6}
+.rest-chip{display:inline-block;background:#E8E0CC;color:#8A7A5A;padding:2px 8px;border-radius:1px;font-size:9.5px;letter-spacing:.18em;font-family:'Shippori Mincho',serif;margin-left:6px}
+
+/* ======== 前日ミラー ======== */
+.mirror-row{margin:0 0 14px;display:flex;justify-content:center}
+.mirror-btn{background:transparent;border:1px dashed #C8B48A;color:#8A7A5A;padding:9px 18px;border-radius:1px;font-size:11px;cursor:pointer;font-family:'Shippori Mincho',serif;letter-spacing:.15em;display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+.mirror-btn:active{background:#F0E8D6;transform:scale(.98)}
+.mirror-btn .arrow-ico{font-size:13px;color:#C8835A}
+
+/* ======== シークレットキャラ ======== */
+.secret-section{margin-top:18px;padding-top:18px;border-top:1px dashed #E8E0CC}
+.secret-title{font-family:'Shippori Mincho',serif;font-size:13px;color:#5F5852;margin:0 0 12px;display:flex;align-items:center;gap:8px;letter-spacing:.15em;font-weight:500}
+.secret-title .q{font-size:10.5px;color:#8A8378;letter-spacing:.1em;font-family:'Zen Kaku Gothic New',sans-serif}
+.secret-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.secret-cell{background:#FAF5EB;border:1px dashed #D9CDB0;padding:12px 6px;text-align:center;position:relative;transition:all .2s}
+.secret-cell.found{background:#FAF5EB;border:1px solid #C8B48A;border-style:solid}
+.secret-cell.pending{background:#F6EFDD;border:1px dashed #C8B48A}
+.secret-cell .sil{width:44px;height:44px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#C8B48A;filter:blur(1.5px) grayscale(1);opacity:.55;overflow:hidden;border-radius:50%}
+.secret-cell.found .sil{color:inherit;filter:none;opacity:1;font-size:28px;background:transparent}
+.secret-cell.found .sil img{width:100%;height:100%;object-fit:contain;display:block}
+.secret-cell.found .sil .sil-emoji{font-size:28px}
+.secret-cell.pending .sil{color:#B89A5A;opacity:.75;animation:pendingPulseN 1.8s ease-in-out infinite}
+@keyframes pendingPulseN{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.85;transform:scale(1.08)}}
+.secret-cell .sname{font-size:10.5px;color:#8A8378;letter-spacing:.08em;line-height:1.4;font-family:'Shippori Mincho',serif}
+.secret-cell.found .sname{color:#C8835A;letter-spacing:.12em}
+.secret-cell.pending .sname{color:#A18344}
+.secret-cell .sdate{font-size:9px;color:#A89F8F;margin-top:3px;letter-spacing:.06em}
+.secret-cell.pending .sdate{color:#B89A5A}
+.secret-hint{font-size:10.5px;color:#8A8378;text-align:center;margin:12px 0 0;line-height:1.8;letter-spacing:.08em;font-style:normal;font-family:'Shippori Mincho',serif}
+
+/* 発見時の演出 */
+.secret-reveal-bg{position:fixed;inset:0;background:rgba(61,58,52,.5);display:none;align-items:center;justify-content:center;z-index:70;animation:fadeIn .3s ease-out}
+.secret-reveal-bg.on{display:flex}
+.secret-reveal-card{background:#FAF5EB;border:1px solid #C8B48A;padding:32px 22px 24px;max-width:300px;width:88%;text-align:center;position:relative;animation:slideUp .4s ease-out;box-shadow:0 8px 24px rgba(61,58,52,.25);border-radius:2px}
+.secret-reveal-card::before{content:'';position:absolute;left:20px;right:20px;top:18px;height:1px;background:#E8E0CC}
+.secret-reveal-card::after{content:'';position:absolute;left:20px;right:20px;bottom:60px;height:1px;background:#E8E0CC}
+.secret-reveal-card .big{font-size:58px;margin:8px 0 10px;display:flex;align-items:center;justify-content:center;min-height:110px}
+.secret-reveal-card .big img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(61,58,52,.2))}
+.secret-reveal-card h3{font-family:'Shippori Mincho',serif;font-size:16px;color:#C8835A;margin:0 0 6px;letter-spacing:.18em;font-weight:500}
+.secret-reveal-card .sub{font-size:11.5px;color:#5F5852;margin:0 0 18px;line-height:1.9;letter-spacing:.06em}
+.secret-reveal-card .sub b{color:#C8835A;font-family:'Shippori Mincho',serif;letter-spacing:.12em;font-weight:500;font-size:13px}
+.secret-reveal-card .sub .tagline{display:block;margin-top:6px;font-size:10.5px;color:#8A7E70;font-style:italic;letter-spacing:.04em}
+.secret-reveal-card .close{background:#8FA181;color:#FAF5EB;border:none;padding:9px 26px;border-radius:2px;font-size:12px;font-family:'Shippori Mincho',serif;letter-spacing:.2em;cursor:pointer}
+
+/* ======== 月末ダイジェスト ======== */
+.digest-bg{position:fixed;inset:0;background:rgba(61,58,52,.5);display:none;align-items:flex-start;justify-content:center;z-index:60;overflow-y:auto;padding:16px 0;animation:fadeIn .25s ease-out}
+.digest-bg.on{display:flex}
+.digest-card{background:#FAF5EB;border:1px solid #E8E0CC;max-width:360px;width:92%;padding:26px 22px;position:relative;margin:auto;box-shadow:0 8px 24px rgba(61,58,52,.2);animation:slideUp .35s ease-out;border-radius:2px}
+.digest-card .close{position:absolute;top:12px;right:12px;background:#F0E8D6;border:none;width:30px;height:30px;border-radius:50%;font-size:14px;cursor:pointer;color:#5F5852}
+.digest-card h2{font-family:'Shippori Mincho',serif;font-size:17px;color:#C8835A;margin:0 0 6px;text-align:center;letter-spacing:.25em;font-weight:500}
+.digest-card .sub{font-size:10.5px;color:#8A8378;text-align:center;margin:0 0 18px;letter-spacing:.1em}
+.digest-hero{background:#fff;border:1px solid #E8E0CC;padding:16px 10px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;text-align:center;border-radius:2px}
+.digest-hero .dnum{font-family:'Shippori Mincho',serif;font-size:22px;color:#C8835A;font-weight:500;line-height:1.1;letter-spacing:.08em}
+.digest-hero .dlbl{font-size:10px;color:#8A8378;margin-top:4px;letter-spacing:.1em}
+.digest-card h3{font-size:12px;color:#5F5852;margin:14px 0 8px;font-family:'Shippori Mincho',serif;letter-spacing:.15em;font-weight:500}
+.digest-list{background:#fff;border:1px solid #E8E0CC;padding:10px 14px;font-size:11.5px;border-radius:2px}
+.digest-row{display:flex;align-items:center;gap:10px;padding:5px 0;color:#3D3A34;letter-spacing:.04em}
+.digest-row .rk{width:18px;font-weight:500;color:#C8835A;font-family:'Shippori Mincho',serif;letter-spacing:0}
+.digest-row .rc{margin-left:auto;color:#8A8378;font-size:10.5px;letter-spacing:.08em}
+.digest-msg{font-size:11.5px;color:#5F5852;background:#fff;border-left:3px solid #8FA181;padding:12px 14px;line-height:1.9;margin-top:16px;letter-spacing:.05em;border-radius:2px}
+.digest-msg b{color:#C8835A;font-family:'Shippori Mincho',serif;letter-spacing:.1em;font-weight:500}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <button class="menu-btn" id="menuBtn" aria-label="メニュー">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <line x1="4" y1="7" x2="20" y2="7"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <line x1="4" y1="17" x2="20" y2="17"/>
+      </svg>
+    </button>
+    <div class="logo">
+      🍳 タマゴヤキハサイカクニン
+      <small><span id="streakPill"></span><span id="countdown"></span></small>
+    </div>
+    <div class="date-bar">
+      <button id="prevDay" aria-label="前日">‹</button>
+      <div class="current" id="currentDate">—</div>
+      <button id="nextDay" aria-label="翌日">›</button>
+    </div>
+  </header>
+  <main>
+    <section class="main-view" id="mainView">
+      <div id="restBanner"></div>
+
+      <div class="summary-card">
+        <div>
+          <div class="summary-count"><span id="todayCount">0</span><span class="total">/36</span></div>
+        </div>
+        <div class="summary-label">
+          <b id="summaryTitle">今日の〇</b>
+          <span id="summaryMsg">朝昼晩、食べたものにタップで〇！</span>
+          <span class="enc" id="summaryEnc"></span>
+        </div>
+      </div>
+
+      <div id="mirrorRow"></div>
+
+      <div class="items" id="itemsList"></div>
+
+      <div id="perfectBanner"></div>
+
+      <div class="hint-card">
+        <p class="hint-title">💡 明日のヒント</p>
+        <p class="hint-text" id="hintText">朝昼晩のごはんで食べたものに〇をつけてみてね。</p>
+        <div class="hint-tags" id="hintTags"></div>
+      </div>
+    </section>
+
+    <section class="dash-view" id="dashView">
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num"><span id="monthTotal">0</span></div>
+          <div class="stat-label">今月の合計〇</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num"><span id="monthStreak">0</span><span class="unit">日</span></div>
+          <div class="stat-label">記録した日数</div>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <h3>🌱 育成図鑑<span class="muted" id="dexProgress"></span></h3>
+        <div class="char-grid" id="charDex"></div>
+        <p style="font-size:10.5px;color:#8A8378;margin:12px 0 0;text-align:center;line-height:1.8;letter-spacing:.08em;font-family:'Shippori Mincho',serif">
+          1〇で<b style="color:#C8835A;letter-spacing:.1em">たまご</b> → 5〇で<b style="color:#B07143;letter-spacing:.1em">ちびっこ</b> → 15〇で<b style="color:#6B8E5A;letter-spacing:.1em">一人前</b>
+        </p>
+
+        <div class="secret-section">
+          <div class="secret-title">🗝 シークレットキャラ <span class="q" id="secretProgress">0/3 発見</span></div>
+          <div class="secret-grid" id="secretGrid"></div>
+          <p class="secret-hint" id="secretHint">条件はナイショ…食卓の組み合わせで、きっと会えるはず。</p>
+        </div>
+      </div>
+
+      <div class="card-box">
+        <h3>🌿 栄養バランス<span class="muted" id="monthLabel"></span></h3>
+        <div id="barList"></div>
+      </div>
+
+      <div class="card-box">
+        <h3>📝 まず取り入れたい3つ</h3>
+        <div class="weak-list" id="weakList"></div>
+      </div>
+
+      <div class="export-row">
+        <button class="btn sec" id="exportBtn">📋 月報をコピー</button>
+        <button class="btn" id="shareBtn">💬 かよママに送る</button>
+      </div>
+      <button class="snap-btn" id="snapBtn">📸 スナップ画面を開く</button>
+    </section>
+  </main>
+
+  <nav class="bottom">
+    <button id="navRecord" class="active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+      記録
+    </button>
+    <button id="navDash">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5"/><rect x="12" y="9" width="3" height="9"/><rect x="17" y="5" width="3" height="13"/></svg>
+      ダッシュボード
+    </button>
+  </nav>
+
+  <p class="ftr">
+    <span class="beta">β版</span><br>
+    かよママ 献立サポート生向け<br>
+    2026-04-21 〜 2026-05-11 までご利用いただけます<br>
+    <span style="display:inline-block;margin-top:12px;color:#8A8378;letter-spacing:.08em">
+      監修：<a href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer" style="font-weight:500;font-family:'Shippori Mincho',serif;letter-spacing:.1em">かよママ（料理講師）</a>
+      <svg viewBox="0 0 24 24" width="11" height="11" fill="#B07143" style="vertical-align:-1px;margin-left:3px"><path d="M12 2.2c3.2 0 3.6 0 4.8.07 1.2.05 1.9.24 2.3.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.17.4.36 1.1.4 2.3.07 1.2.07 1.6.07 4.8s0 3.6-.07 4.8c-.05 1.2-.24 1.9-.4 2.3-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.17-1.1.36-2.3.4-1.2.07-1.6.07-4.8.07s-3.6 0-4.8-.07c-1.2-.05-1.9-.24-2.3-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.17-.4-.36-1.1-.4-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.8c.05-1.2.24-1.9.4-2.3.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.17 1.1-.36 2.3-.4C8.4 2.2 8.8 2.2 12 2.2zm0 5.4a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8zm0 7.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6zm5.6-7.4a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+    </span>
+  </p>
+</div>
+
+<div class="expired" id="expiredView">
+  <div class="emoji">🌸</div>
+  <h1>1ヶ月、<br>お疲れさまでした</h1>
+  <p>β版の提供期間が終了しました。<br>〇つけ習慣が少しでも残ってくれていたら嬉しいです。</p>
+  <div class="stats-mini">
+    <div class="num"><span id="finalTotal">0</span>〇</div>
+    <div class="lbl">あなたがつけた〇の合計</div>
+  </div>
+  <p style="font-size:12px;color:#8C7A6A">感想・ご要望はかよママへのLINEでお待ちしています。<br>ご好評いただければ本格版として復活予定です🍳</p>
+  <button class="btn sec" id="expiredExport" style="margin-top:14px;max-width:240px">📋 自分の記録をコピー</button>
+</div>
+
+<div class="modal-bg" id="onboardModal">
+  <div class="modal">
+    <div class="modal-hero">
+      <span class="emoji">🍳🌱</span>
+    </div>
+    <h2>ようこそ！</h2>
+    <p class="sub">かよママ監修の<br>「12食材バランスチェッカー」β版です</p>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="body">
+        <div class="title">📝 朝・昼・晩、食べたらタップ</div>
+        食材ごとに <b>朝／昼／晩</b> のボタンが並んでいます。<br>
+        食べたものの時間帯にタップすると <b>〇（まる）</b> がひとつ付きます。<br>
+        <span class="hint">※「〇」＝その食材を<b>1回食べた印</b>。もう一度タップで取り消せます。</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div class="body">
+        <div class="title">🌈 12食材「タマゴヤキハサイカクニン」</div>
+        毎日これを合言葉に、幅広く食べるのがコツ。
+        <div class="key-grid">
+          <div class="key-cell"><span class="k">タ</span>炭水化物</div>
+          <div class="key-cell"><span class="k">マ</span>豆</div>
+          <div class="key-cell"><span class="k">ゴ</span>ごま</div>
+          <div class="key-cell"><span class="k">ヤ</span>野菜</div>
+          <div class="key-cell"><span class="k">キ</span>きのこ</div>
+          <div class="key-cell"><span class="k">ハ</span>発酵</div>
+          <div class="key-cell"><span class="k">サ</span>魚</div>
+          <div class="key-cell"><span class="k">イ</span>芋</div>
+          <div class="key-cell"><span class="k">カ</span>海藻</div>
+          <div class="key-cell"><span class="k">ク</span>果物</div>
+          <div class="key-cell"><span class="k">ニ</span>肉</div>
+          <div class="key-cell"><span class="k">ン</span>ニンニク</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div class="body">
+        <div class="title">🌱 食べるほどキャラが育つ</div>
+        各食材に可愛いキャラがいて、<b>〇（食べた回数）の合計</b>で成長します。
+        <div class="growth-row">
+          <div class="growth-step"><span class="ico">🥚</span><b>たまご</b>1〜4〇</div>
+          <div class="growth-step"><span class="ico">🐥</span><b>ちびっこ</b>5〜14〇</div>
+          <div class="growth-step"><span class="ico">✨</span><b>一人前</b>15〇〜</div>
+        </div>
+        <span class="hint">※全期間の合計回数です（例：〇が15個たまると一人前に進化！）</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">4</div>
+      <div class="body">
+        <div class="title">📊 ダッシュボードで見える化</div>
+        下のタブ「<b>ダッシュボード</b>」で<b>育成図鑑</b>・<b>栄養バランス</b>・<b>まず取り入れたい3つ</b>が見られます。<br>
+        月末には「💬 かよママに送る」でまとめをLINEに送れます。
+      </div>
+    </div>
+
+    <div class="secret-tease">
+      <div class="st-ico">🎁</div>
+      <div class="st-body">
+        <b>ちなみに…隠れキャラも6体います</b><br>
+        <span class="st-hint">特別な組み合わせの食卓ができた日の<b>翌日</b>、ひょっこり会えるかも。条件はナイショです。</span>
+      </div>
+    </div>
+
+    <div class="period-note">
+      β版ご利用期間：<br><b>2026-04-21 〜 2026-05-11</b>（21日間）<br>
+      ログイン不要・無料で使えます
+    </div>
+
+    <button class="btn-start" id="onboardStart">はじめる 🌸</button>
+  </div>
+</div>
+
+<div class="drawer-bg" id="drawerBg"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <span class="d-title">🍳 メニュー</span>
+    <button class="drawer-close" id="drawerClose" aria-label="閉じる">×</button>
+  </div>
+  <div class="drawer-list">
+    <button class="drawer-item" data-act="manual"><span class="ico">📖</span>使い方を見る<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="mirror"><span class="ico">↙</span><span id="mirrorMenuLabel">昨日の献立をコピー</span><span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="rest"><span class="ico">🌴</span><span id="restMenuLabel">今日はお休み日にする</span><span class="arrow">›</span></button>
+    <div class="drawer-divider"></div>
+    <button class="drawer-item" data-act="digest"><span class="ico">🌸</span>ダイジェストを見る<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="snap"><span class="ico">📸</span>スナップ画面<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="month"><span class="ico">📋</span>月報をコピー<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="secrethelp"><span class="ico">🎁</span>シークレットキャラについて<span class="arrow">›</span></button>
+    <div class="drawer-divider"></div>
+    <a class="drawer-item" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
+      <span class="ico">💬</span>かよママ Instagram<span class="arrow">↗</span>
+    </a>
+    <div class="drawer-divider"></div>
+    <button class="drawer-item danger" data-act="reset"><span class="ico">🔄</span>データをリセット</button>
+  </div>
+  <div class="drawer-foot">
+    <span class="beta">β版</span><br>
+    2026-04-21 〜 2026-05-11<br>
+    監修：かよママ（料理講師）
+  </div>
+</aside>
+
+<div class="snap-bg" id="snapModal">
+  <div class="snap-card">
+    <button class="snap-close" id="snapClose" aria-label="閉じる">×</button>
+    <div class="snap-head">
+      <div class="title">🍳 タマゴヤキハサイカクニン</div>
+      <div class="period" id="snapPeriod"></div>
+    </div>
+    <div class="snap-grid" id="snapGrid"></div>
+    <div class="snap-stat-row" id="snapStats"></div>
+    <div class="snap-credit">🌸 監修：<b>かよママ（料理講師）</b></div>
+    <div class="snap-cta">
+      <div class="main">📸 スクショして共有</div>
+      <div class="sub">
+        <b>LINE</b>でかよママに報告／<br>
+        <b>Instagramストーリー</b>で <b>@kayocookingclass</b> をタグ付け
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="secret-reveal-bg" id="secretReveal">
+  <div class="secret-reveal-card">
+    <div class="big" id="secretRevealEmoji">🎁</div>
+    <h3 id="secretRevealName">？？？</h3>
+    <p class="sub" id="secretRevealDesc">シークレットキャラ発見！</p>
+    <button class="close" id="secretRevealClose">ありがとう</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="secretHelpModal">
+  <div class="modal">
+    <button class="close secret-help-close" id="secretHelpClose" aria-label="閉じる">×</button>
+    <div class="modal-hero"><span class="emoji">🎁</span></div>
+    <h2>シークレットキャラについて</h2>
+    <p class="sub">ふだんの12キャラとは別に、条件を満たすと<br>ひょっこり現れる<b>隠れキャラが6体</b>います。</p>
+
+    <div class="sh-section">
+      <div class="sh-head">基本ルール</div>
+      <ul class="sh-list">
+        <li>条件を満たした <b>翌日</b> に開放（寝かせて発酵中）</li>
+        <li>開放されると<b>おめでとうポップアップ</b></li>
+        <li>条件は<b>ナイショ</b>。偶然の出会いをお楽しみください</li>
+      </ul>
+    </div>
+
+    <div class="sh-section">
+      <div class="sh-head">ざっくりヒント（条件の種類）</div>
+      <div class="sh-hints">
+        <div class="sh-hint"><span class="shi">🍱</span><div class="sht"><b>同じ食事で特定の組み合わせ</b><span class="shint">朝・昼・晩どこか1食で、特定の食材がそろった時</span></div></div>
+        <div class="sh-hint"><span class="shi">🌈</span><div class="sht"><b>1日で種類を重ねる</b><span class="shint">1日の中で、ある食材グループが全部そろった時</span></div></div>
+        <div class="sh-hint"><span class="shi">📊</span><div class="sht"><b>1日の食材数</b><span class="shint">1日にたくさんの種類を使えた時</span></div></div>
+        <div class="sh-hint"><span class="shi">👑</span><div class="sht"><b>マスター条件</b><span class="shint">1日で12種類すべてを使いきれた時（超レア）</span></div></div>
+      </div>
+    </div>
+
+    <div class="sh-foot">見つけたらぜひ、かよママにもご報告を</div>
+    <button class="btn-start" id="secretHelpDone">OK</button>
+  </div>
+</div>
+
+<div class="digest-bg" id="digestModal">
+  <div class="digest-card">
+    <button class="close" id="digestClose" aria-label="閉じる">×</button>
+    <h2>β期間ダイジェスト</h2>
+    <div class="sub" id="digestPeriod">これまでの記録のまとめ</div>
+    <div class="digest-hero">
+      <div><div class="dnum" id="digestTotal">0</div><div class="dlbl">合計〇</div></div>
+      <div><div class="dnum" id="digestDays">0</div><div class="dlbl">記録日数</div></div>
+      <div><div class="dnum" id="digestHatched">0</div><div class="dlbl">キャラ登場</div></div>
+    </div>
+    <h3>🌿 よく食卓に並んだTOP3</h3>
+    <div class="digest-list" id="digestTop"></div>
+    <h3>📝 次の1ヶ月で意識したい</h3>
+    <div class="digest-list" id="digestWeak"></div>
+    <div class="digest-msg" id="digestMsg"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ======== Config ========
+const STORAGE_KEY='kayomama-sainikun-v1';
+const ONBOARD_KEY='kayomama-sainikun-onboarded-v1';
+const REST_KEY='kayomama-sainikun-rest-v1';
+const SECRETS_KEY='kayomama-sainikun-secrets-v1';
+const DIGEST_SEEN_KEY='kayomama-sainikun-digest-v1';
+// β終了: 2026-05-12 00:00 JST = 2026-05-11 15:00 UTC
+const EXPIRE_AT=new Date('2026-05-11T15:00:00.000Z');
+const START_AT=new Date('2026-04-21T00:00:00+09:00');
+
+// シークレットキャラ定義
+// cond type: mealSet / daySet / dayCount / mealCount
+const SECRETS=[
+  {id:'onigiri',emoji:'🍙',name:'おにぎりちゃん',tagline:'炭水化物＋海苔の名コンビ',
+   cond:{type:'mealSet',keys:['タ','カ']}},
+  {id:'misoshiru',emoji:'🍲',name:'おみそしるくん',tagline:'発酵×野菜×海藻の三重奏',
+   cond:{type:'mealSet',keys:['ハ','ヤ','カ']}},
+  {id:'salada',emoji:'🥗',name:'いろどりサラダさん',tagline:'野菜×果物×ごまの彩り上手',
+   cond:{type:'mealSet',keys:['ヤ','ク','ゴ']}},
+  {id:'curry',emoji:'🍛',name:'スタミナカレーくん',tagline:'炭水化物×肉×ニンニクの元気トリオ',
+   cond:{type:'mealSet',keys:['タ','ニ','ン']}},
+  {id:'obento',emoji:'🍱',name:'おべんとうさん',tagline:'1食で5種類を揃えた達人',
+   cond:{type:'mealCount',min:5}},
+  {id:'haleno',emoji:'🎉',name:'ハレの日さん',tagline:'1日で全12種類を制覇した名手',
+   cond:{type:'daySet',keys:['タ','マ','ゴ','ヤ','キ','ハ','サ','イ','カ','ク','ニ','ン']}}
+];
+
+const ITEMS=[
+  {k:'タ',n:'炭水化物',d:'ご飯・パン・麺'},
+  {k:'マ',n:'豆',d:'納豆・豆腐・豆乳'},
+  {k:'ゴ',n:'ごま',d:'すりごま・黒ごま'},
+  {k:'ヤ',n:'野菜',d:'旬のものを'},
+  {k:'キ',n:'キノコ',d:'しめじ・えのき等'},
+  {k:'ハ',n:'発酵',d:'味噌・納豆・キムチ'},
+  {k:'サ',n:'魚',d:'魚介・出汁でもOK'},
+  {k:'イ',n:'芋',d:'じゃが・さつま・長芋'},
+  {k:'カ',n:'海藻',d:'わかめ・昆布・海苔'},
+  {k:'ク',n:'果物',d:'旬・冷凍ベリー可'},
+  {k:'ニ',n:'肉',d:'鶏豚牛・卵も可'},
+  {k:'ン',n:'ニンニク',d:'生姜でも代用可'}
+];
+const MEALS=['朝','昼','晩'];
+const FUKUSAI={
+  'タ':['雑穀ご飯','焼きおにぎり','おにぎり'],
+  'マ':['納豆出すだけ','豆腐サラダ','豆乳スープ'],
+  'ゴ':['ごま和え','ごまドレサラダ','ごま塩ご飯'],
+  'ヤ':['お浸し','サラダ','ナムル','蒸し野菜'],
+  'キ':['きのこ出汁漬け','きのこナムル','きのこ炒め'],
+  'ハ':['味噌汁','キムチ出すだけ','ぬか漬け'],
+  'サ':['しらすご飯','骨なし魚焼き','かつお出汁味噌汁'],
+  'イ':['ふかし芋','芋の味噌汁','長芋千切り'],
+  'カ':['もずく出すだけ','めかぶ出すだけ','わかめ味噌汁'],
+  'ク':['切るだけ果物','冷凍ベリー','朝に果物'],
+  'ニ':['サラダチキン','卵焼き','ハム盛るだけ'],
+  'ン':['おろしニンニク炒め','味噌汁に少し']
+};
+const ENC=[
+  [0,'ゆっくり記録してみてね'],
+  [6,'いい感じのスタート！'],
+  [12,'バランス整ってきたね ✨'],
+  [20,'すごい！かなり幅広い 🌿'],
+  [28,'完璧に近いバランス！🌸']
+];
+
+// ======== 育成キャラ ========
+const KEY2LATIN={'タ':'ta','マ':'ma','ゴ':'go','ヤ':'ya','キ':'ki','ハ':'ha','サ':'sa','イ':'i','カ':'ka','ク':'ku','ニ':'ni','ン':'n'};
+const CHAR_NAMES={
+  'タ':'おむすびちゃん','マ':'おマメちゃん','ゴ':'ゴマちゃん',
+  'ヤ':'やさいちゃん','キ':'きのこちゃん','ハ':'麹ちゃん',
+  'サ':'さかなちゃん','イ':'おいもちゃん','カ':'わかめちゃん',
+  'ク':'フルーツちゃん','ニ':'おにくくん','ン':'ニンニクさま'
+};
+const STAGE_LABEL=['たまご','たまご','ちびっこ','一人前'];
+// stage: 0=未登場, 1=1-4〇(たまご), 2=5-14〇(ちびっこ), 3=15+〇(一人前)
+function getStage(count){
+  if(count<=0)return 0;
+  if(count<5)return 1;
+  if(count<15)return 2;
+  return 3;
+}
+function totalByKey(data){
+  const o={};ITEMS.forEach(i=>o[i.k]=0);
+  for(const d in data){
+    for(const m in data[d]){
+      data[d][m].forEach(k=>{if(o[k]!==undefined)o[k]++});
+    }
+  }
+  return o;
+}
+function charImgSrc(key,stage){
+  if(stage<=0)return '';
+  return 'assets/chars/'+KEY2LATIN[key]+'_'+Math.min(3,stage)+'.png';
+}
+function secretImgSrc(id){return 'assets/chars/secret_'+id+'.png'}
+// 次ステージまでの必要〇数（stage 0=5で成長,1=5,2=15,3=MAX）
+const STAGE_THRESHOLDS=[1,5,15];
+function nextStageNeed(count){
+  for(let i=0;i<STAGE_THRESHOLDS.length;i++){
+    if(count<STAGE_THRESHOLDS[i])return {need:STAGE_THRESHOLDS[i]-count,target:STAGE_THRESHOLDS[i],prev:i>0?STAGE_THRESHOLDS[i-1]:0};
+  }
+  return null;
+}
+
+// キャラセリフ（stage 0=未登場,1=たまご,2=ちびっこ,3=一人前）
+const CHAR_LINES={
+  'タ':['ぽかぽかあったまってきた〜','ぼく、モチモチです！','おにぎり、いつでもどうぞ！'],
+  'マ':['ぽよよん...','たんぱく質お任せ！','毎日ちょっとがコツだよ'],
+  'ゴ':['パラパラ〜','すりごまがおすすめ','和え物にぜひ！'],
+  'ヤ':['芽が出てきた〜','旬を食べよう！','サラダもお浸しもOK'],
+  'キ':['ひょっこり...','出汁とりませんか？','きのこで免疫UP！'],
+  'ハ':['ぷくぷく...','発酵のちから！','腸内ぴかぴかにするよ'],
+  'サ':['すいすい〜','EPA・DHAお届け！','週3で食べてほしい'],
+  'イ':['もぞもぞ...','ほっくほく！','食物繊維たっぷり'],
+  'カ':['ゆらゆら〜','ミネラル豊富です','味噌汁の相棒だよ'],
+  'ク':['あま〜い♪','ビタミンC配達中','朝のフルーツは金！'],
+  'ニ':['もぐもぐ...','力がつくよ！','たんぱく質の王様'],
+  'ン':['シャキーン','スタミナ補給！','料理の影の主役']
+};
+const EGG_LINE='たまごの中で待ってるよ...🥚';
+
+// ストリーク（連続記録日数）
+// お休み日は「連続を切らない」扱い（カウントには入れないが遡行は止まらない）
+function currentStreak(data,rest){
+  rest=rest||{};
+  let s=0;let d=today();
+  const todayHas=Object.keys(data[d]||{}).length>0;
+  if(!todayHas&&!rest[d])d=shiftDate(d,-1);
+  while(true){
+    if(parseDate(d)<parseDate('2026-04-21'))break;
+    const has=data[d]&&Object.keys(data[d]).length>0;
+    if(has){s++;d=shiftDate(d,-1);continue}
+    if(rest[d]){d=shiftDate(d,-1);continue}
+    break;
+  }
+  return s;
+}
+
+// ======== Helpers ========
+function pad(n){return n<10?'0'+n:''+n}
+function jstDate(d){
+  d=d||new Date();
+  // epoch に +9h 加算し getUTC* で JST 日付を取り出す（どのTZでも正しい）
+  return new Date(d.getTime()+9*3600*1000);
+}
+function dateStr(d){d=jstDate(d);return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())}
+function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+function shiftDate(s,delta){const d=parseDate(s);d.setUTCDate(d.getUTCDate()+delta);return dateStr(d)}
+function fmtJP(s){
+  const d=parseDate(s);
+  const w=['日','月','火','水','木','金','土'][d.getUTCDay()];
+  return (d.getUTCMonth()+1)+'月'+d.getUTCDate()+'日 ('+w+')';
+}
+function today(){return dateStr(new Date())}
+function isToday(s){return s===today()}
+function loadData(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{}}catch(e){return{}}
+}
+function saveData(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d))}catch(e){}}
+
+// ======== お休み日 ========
+function loadRest(){
+  try{return JSON.parse(localStorage.getItem(REST_KEY))||{}}catch(e){return{}}
+}
+function saveRest(r){try{localStorage.setItem(REST_KEY,JSON.stringify(r))}catch(e){}}
+function isRestDay(date){return !!state.rest[date]}
+function toggleRestDay(date){
+  if(state.rest[date]){delete state.rest[date]}
+  else state.rest[date]=1;
+  saveRest(state.rest);
+}
+
+// ======== シークレット ========
+function loadSecrets(){
+  try{return JSON.parse(localStorage.getItem(SECRETS_KEY))||{}}catch(e){return{}}
+}
+function saveSecrets(s){try{localStorage.setItem(SECRETS_KEY,JSON.stringify(s))}catch(e){}}
+function isSecretRevealed(info){
+  if(!info)return false;
+  const trig=info.triggeredDate||info.date;
+  return parseDate(today())>parseDate(trig);
+}
+function checkSecrets(date){
+  const day=state.data[date]||{};
+  const triggered=[];
+  SECRETS.forEach(sec=>{
+    if(state.secrets[sec.id])return;
+    const c=sec.cond;
+    let hit=false;
+    if(c.type==='mealSet'){
+      for(const m in day){
+        if(c.keys.every(k=>day[m].indexOf(k)>=0)){hit=true;break}
+      }
+    }else if(c.type==='daySet'){
+      const all=new Set();
+      for(const m in day)day[m].forEach(k=>all.add(k));
+      hit=c.keys.every(k=>all.has(k));
+    }else if(c.type==='dayCount'){
+      const all=new Set();
+      for(const m in day)day[m].forEach(k=>all.add(k));
+      hit=all.size>=c.min;
+    }else if(c.type==='mealCount'){
+      for(const m in day){
+        const u=new Set(day[m]);
+        if(u.size>=c.min){hit=true;break}
+      }
+    }
+    if(hit){
+      state.secrets[sec.id]={triggeredDate:date,at:Date.now(),seen:false};
+      triggered.push(sec);
+    }
+  });
+  if(triggered.length){saveSecrets(state.secrets);}
+  return triggered;
+}
+function promoteRevealedSecrets(){
+  const queue=[];
+  SECRETS.forEach(sec=>{
+    const info=state.secrets[sec.id];
+    if(!info||info.seen)return;
+    if(isSecretRevealed(info))queue.push(sec);
+  });
+  if(queue.length===0)return;
+  state._secretRevealQueue=queue.slice();
+  showNextRevealFromQueue();
+}
+function showNextRevealFromQueue(){
+  if(!state._secretRevealQueue||state._secretRevealQueue.length===0)return;
+  const sec=state._secretRevealQueue.shift();
+  const info=state.secrets[sec.id];
+  if(info){info.seen=true;saveSecrets(state.secrets);}
+  setTimeout(()=>showSecretReveal(sec),400);
+}
+
+// ======== 前日ミラー ========
+function mirrorYesterday(){
+  const y=shiftDate(state.date,-1);
+  const ydata=state.data[y];
+  if(!ydata||Object.keys(ydata).length===0)return false;
+  state.data[state.date]=JSON.parse(JSON.stringify(ydata));
+  saveData(state.data);
+  return true;
+}
+function getDay(data,date){return data[date]||{}}
+function toggle(data,date,meal,key){
+  if(!data[date])data[date]={};
+  if(!data[date][meal])data[date][meal]=[];
+  const arr=data[date][meal];
+  const i=arr.indexOf(key);
+  if(i>=0)arr.splice(i,1);else arr.push(key);
+  if(arr.length===0)delete data[date][meal];
+  if(Object.keys(data[date]).length===0)delete data[date];
+  return i<0;
+}
+function countDay(day){
+  let n=0;for(const m in day)n+=day[m].length;return n;
+}
+function countByKey(day){
+  const o={};ITEMS.forEach(i=>o[i.k]=0);
+  for(const m in day)day[m].forEach(k=>{if(o[k]!==undefined)o[k]++});
+  return o;
+}
+function monthDays(data,ym){
+  // ym: '2026-04'
+  return Object.keys(data).filter(k=>k.startsWith(ym));
+}
+function monthStats(data,ym){
+  const days=monthDays(data,ym);
+  const byKey={};ITEMS.forEach(i=>byKey[i.k]=0);
+  let total=0;
+  days.forEach(d=>{
+    for(const m in data[d])data[d][m].forEach(k=>{
+      if(byKey[k]!==undefined){byKey[k]++;total++}
+    });
+  });
+  return {byKey,total,streak:days.length};
+}
+
+// ======== State ========
+const state={view:'main',date:today(),data:loadData(),rest:loadRest(),secrets:loadSecrets(),prevStages:{},perfectDates:{}};
+// init prevStages + perfectDates
+(function(){
+  const tot=totalByKey(state.data);
+  ITEMS.forEach(i=>{state.prevStages[i.k]=getStage(tot[i.k])});
+  // 過去のパーフェクトデーは紙吹雪対象外として既に完成扱い
+  for(const d in state.data){
+    const dbk=countByKey(state.data[d]);
+    const hit=Object.values(dbk).filter(v=>v>0).length;
+    if(hit===12)state.perfectDates[d]=true;
+  }
+})();
+
+// ======== Rendering ========
+const $=id=>document.getElementById(id);
+
+function render(){
+  renderHeader();
+  if(state.view==='main')renderMain();else renderDash();
+}
+
+function renderHeader(){
+  const el=$('currentDate');
+  const s=fmtJP(state.date);
+  el.innerHTML=s+(isToday(state.date)?' <span class="today-badge">今日</span>':'');
+  // countdown
+  const now=new Date();
+  const ms=EXPIRE_AT-now;
+  const cd=$('countdown');
+  if(ms>0){
+    const d=Math.floor(ms/86400000);
+    const h=Math.floor(ms%86400000/3600000);
+    cd.textContent=d>0?('あと'+d+'日'):('あと'+h+'時間');
+  }else cd.textContent='β終了';
+  // streak
+  const sp=$('streakPill');
+  const streak=currentStreak(state.data,state.rest);
+  sp.innerHTML=streak>=2?'<span class="streak-pill"><span class="flame">🔥</span>'+streak+'日連続</span>':'';
+}
+
+function renderMain(){
+  const day=getDay(state.data,state.date);
+  const list=$('itemsList');
+  list.innerHTML='';
+  const byKey=countByKey(day);
+
+  // お休み日バナー
+  const rb=$('restBanner');
+  if(isRestDay(state.date)){
+    rb.innerHTML='<div class="rest-banner"><span class="ico">🌴</span><div class="txt"><b>お休み日</b>として記録しています。<br>連続🔥はキープされるので、ゆっくりどうぞ。</div><button class="undo" data-act="restOff">解除</button></div>';
+  }else rb.innerHTML='';
+
+  // 前日ミラー記録ボタン
+  const mr=$('mirrorRow');
+  const totalDay=countDay(day);
+  const ystd=shiftDate(state.date,-1);
+  const hasYstd=state.data[ystd]&&Object.keys(state.data[ystd]).length>0;
+  if(isToday(state.date)&&totalDay===0&&hasYstd&&!isRestDay(state.date)){
+    mr.innerHTML='<div class="mirror-row"><button class="mirror-btn" id="mirrorBtn"><span class="arrow-ico">↙</span>昨日と同じ献立でスタート</button></div>';
+  }else mr.innerHTML='';
+  const allByKey=totalByKey(state.data);
+  const grownKeys=[];
+
+  ITEMS.forEach(it=>{
+    const full=byKey[it.k]>0;
+    const totalCount=allByKey[it.k];
+    const stage=getStage(totalCount);
+    const prevStage=state.prevStages[it.k]||0;
+    if(stage>prevStage){grownKeys.push(it.k)}
+    const latin=KEY2LATIN[it.k];
+    const charInner=stage>0
+      ? '<img src="'+charImgSrc(it.k,stage)+'" alt="'+CHAR_NAMES[it.k]+'" loading="lazy" onerror="this.outerHTML=\'<span class=&quot;letter-fallback&quot;>'+it.k+'</span>\'">'
+      : '<span class="letter-fallback">'+it.k+'</span>';
+    const stageBadge=stage>0?'<span class="char-stage">'+STAGE_LABEL[stage]+'</span>':'';
+    // 進捗バー
+    const need=nextStageNeed(totalCount);
+    let progHtml='';
+    if(need){
+      const span=need.target-need.prev;
+      const cur=totalCount-need.prev;
+      const pct=Math.max(4,Math.min(100,(cur/span)*100));
+      const nextLabel=stage===0?'たまご誕生':stage===1?'ちびっこまで':'一人前まで';
+      progHtml='<div class="progress-mini">'+
+        '<div class="progress-track"><div class="progress-fill stage-'+(stage+1)+'" style="width:'+pct+'%"></div></div>'+
+        '<span class="progress-text">'+nextLabel+'あと'+need.need+'〇</span>'+
+      '</div>';
+    }else{
+      progHtml='<div class="progress-mini"><div class="progress-track"><div class="progress-fill stage-3" style="width:100%"></div></div><span class="progress-text max">✨ 一人前</span></div>';
+    }
+    const card=document.createElement('div');
+    card.className='item-card'+(full?' full':'');
+    card.innerHTML=
+      '<div class="item-char" data-key="'+it.k+'">'+charInner+stageBadge+'</div>'+
+      '<div class="item-info"><div class="item-name">'+CHAR_NAMES[it.k]+' <span style="color:#B8A994;font-weight:500;font-size:11px">('+it.n+')</span></div><div class="item-desc">'+it.d+'</div>'+progHtml+'</div>'+
+      '<div class="meal-toggles">'+
+        MEALS.map(m=>{
+          const on=day[m]&&day[m].indexOf(it.k)>=0;
+          return '<button class="meal-btn'+(on?' on':'')+'" data-meal="'+m+'" data-key="'+it.k+'"><span>'+m+'</span></button>';
+        }).join('')+
+      '</div>';
+    list.appendChild(card);
+  });
+
+  // stage-up bounce + toast
+  if(grownKeys.length){
+    grownKeys.forEach(k=>{
+      const el=list.querySelector('.item-char[data-key="'+k+'"]');
+      if(el){el.classList.add('grown');setTimeout(()=>el.classList.remove('grown'),700)}
+      state.prevStages[k]=getStage(allByKey[k]);
+    });
+    const name=CHAR_NAMES[grownKeys[0]];
+    const newStage=STAGE_LABEL[state.prevStages[grownKeys[0]]];
+    setTimeout(()=>showToast('🎉 '+name+'が'+newStage+'に成長！'),200);
+  }
+
+  const total=countDay(day);
+  $('todayCount').textContent=total;
+  const categoriesHit=Object.values(byKey).filter(v=>v>0).length;
+
+  // Encouragement
+  let enc='';
+  for(let i=ENC.length-1;i>=0;i--)if(total>=ENC[i][0]){enc=ENC[i][1];break}
+  $('summaryEnc').textContent=enc;
+
+  // Summary title
+  $('summaryTitle').textContent=isToday(state.date)?'今日の〇':fmtJP(state.date)+'の〇';
+  $('summaryMsg').textContent=categoriesHit+'/12項目が登場';
+
+  // Perfect banner + confetti（今日達成した瞬間のみ）
+  const pb=$('perfectBanner');
+  if(categoriesHit===12){
+    pb.innerHTML='<div class="perfect-banner"><h3>🌸 パーフェクト！</h3><p>12項目すべて〇がつきました。今日はほんとに栄養満点！</p></div>';
+    if(isToday(state.date)&&!state.perfectDates[state.date]){
+      state.perfectDates[state.date]=true;
+      confetti();
+      setTimeout(()=>showToast('🌸 パーフェクトデー達成！'),300);
+    }
+  }else pb.innerHTML='';
+
+  // Hint
+  const missing=ITEMS.filter(i=>byKey[i.k]===0);
+  const hintText=$('hintText');
+  const hintTags=$('hintTags');
+  if(isToday(state.date)){
+    if(missing.length===0){
+      hintText.textContent='今日は完璧！このバランスを覚えておきたいですね。';
+      hintTags.innerHTML='';
+    }else if(missing.length<=3){
+      hintText.textContent='今日まだ〇がない：'+missing.map(m=>m.n).join('・')+'。軽く一品足せればパーフェクトです。';
+      hintTags.innerHTML=missing.flatMap(m=>FUKUSAI[m.k]||[]).slice(0,5).map(x=>'<span class="hint-tag">'+x+'</span>').join('');
+    }else{
+      // Show top 3 missing
+      const top3=missing.slice(0,3);
+      hintText.textContent='朝昼晩でまだ登場していない食材：'+top3.map(m=>m.n).join('・')+' など。';
+      hintTags.innerHTML=top3.flatMap(m=>FUKUSAI[m.k]||[]).slice(0,4).map(x=>'<span class="hint-tag">'+x+'</span>').join('');
+    }
+  }else{
+    // Past/future day hint
+    if(total===0){
+      hintText.textContent='この日の記録はまだありません。';
+      hintTags.innerHTML='';
+    }else{
+      hintText.textContent='この日は12項目中 '+categoriesHit+' 種類が食卓に登場しました。';
+      hintTags.innerHTML='';
+    }
+  }
+}
+
+function renderDash(){
+  const ym=state.date.slice(0,7);
+  const stats=monthStats(state.data,ym);
+  $('monthTotal').textContent=stats.total;
+  $('monthStreak').textContent=stats.streak;
+  $('monthLabel').textContent=ym.replace('-','年')+'月';
+
+  // Char Dex (全期間の累計で判定)
+  const allByKey=totalByKey(state.data);
+  let hatched=0,ichimae=0;
+  const dexHtml=ITEMS.map(it=>{
+    const c=allByKey[it.k];
+    const stage=getStage(c);
+    if(stage>0)hatched++;
+    if(stage===3)ichimae++;
+    const latin=KEY2LATIN[it.k];
+    const inner=stage>0
+      ? '<img src="'+charImgSrc(it.k,stage)+'" alt="'+CHAR_NAMES[it.k]+'" loading="lazy" onerror="this.outerHTML=\'<span class=&quot;letter-fallback&quot;>'+it.k+'</span>\'">'
+      : '<span class="letter-fallback">'+it.k+'</span>';
+    return '<div class="char-cell stage-'+stage+'">'+
+      '<div class="char-thumb">'+inner+'</div>'+
+      '<div class="cname">'+CHAR_NAMES[it.k]+'</div>'+
+      '<div class="ccount">'+c+'〇</div>'+
+      '<span class="cbadge">'+STAGE_LABEL[stage]+'</span>'+
+    '</div>';
+  }).join('');
+  $('charDex').innerHTML=dexHtml;
+  $('dexProgress').textContent=hatched+'/12 登場'+(ichimae>0?'・一人前'+ichimae:'');
+
+  // シークレットキャラ
+  let foundCount=0;
+  const secretHtml=SECRETS.map(sec=>{
+    const info=state.secrets[sec.id];
+    const revealed=isSecretRevealed(info);
+    const pending=!!info&&!revealed;
+    if(revealed)foundCount++;
+    let silInner;
+    if(revealed){
+      silInner='<img src="'+secretImgSrc(sec.id)+'" alt="'+sec.name+'" loading="lazy" onerror="this.outerHTML=\'<span class=&quot;sil-emoji&quot;>'+sec.emoji+'</span>\'">';
+    }else{
+      silInner='？';
+    }
+    const name=revealed?sec.name:(pending?'？？？（明日開放）':'？？？');
+    const trig=info&&(info.triggeredDate||info.date);
+    const date=revealed?fmtJP(trig).replace(/ \(.+\)/,'に発見'):(pending?'明日のおたのしみ…':'未発見');
+    return '<div class="secret-cell'+(revealed?' found':'')+(pending?' pending':'')+'">'+
+      '<div class="sil">'+silInner+'</div>'+
+      '<div class="sname">'+name+'</div>'+
+      '<div class="sdate">'+date+'</div>'+
+    '</div>';
+  }).join('');
+  $('secretGrid').innerHTML=secretHtml;
+  $('secretProgress').textContent=foundCount+'/'+SECRETS.length+' 発見';
+  const sh=$('secretHint');
+  if(foundCount===SECRETS.length){
+    sh.textContent='🎉 シークレット全員コンプリート！素晴らしい食卓でした。';
+  }else if(foundCount>0){
+    sh.textContent='あと'+(SECRETS.length-foundCount)+'体。食卓の組み合わせ次第で、もうすぐ出会えるかも。';
+  }else{
+    sh.textContent='条件はナイショ…食卓の組み合わせで、きっと会えるはず。';
+  }
+
+  // Bars
+  const maxCount=Math.max(1,...Object.values(stats.byKey));
+  const barHtml=ITEMS.map(it=>{
+    const c=stats.byKey[it.k];
+    const pct=(c/maxCount)*100;
+    const low=c<Math.max(1,stats.total/24);
+    return '<div class="bar-row">'+
+      '<div class="bar-label"><span class="k">'+it.k+'</span><span>'+it.n+'</span></div>'+
+      '<div class="bar-track"><div class="bar-fill'+(low?' low':'')+'" style="width:'+pct+'%"></div></div>'+
+      '<div class="bar-count">'+c+'</div>'+
+    '</div>';
+  }).join('');
+  $('barList').innerHTML=barHtml;
+
+  // Weak top3
+  const ranking=ITEMS.slice().sort((a,b)=>stats.byKey[a.k]-stats.byKey[b.k]).slice(0,3);
+  const weakHtml=ranking.map(it=>{
+    const c=stats.byKey[it.k];
+    const tips=(FUKUSAI[it.k]||[]).slice(0,2).join('・');
+    return '<div class="weak-item"><span class="k">'+it.k+'</span>'+
+      '<div class="info"><b>'+it.n+'</b>　'+tips+'</div>'+
+      '<span class="count">'+c+'〇</span>'+
+    '</div>';
+  }).join('');
+  $('weakList').innerHTML=weakHtml||'<div class="weak-item"><div class="info">まだ記録がありません</div></div>';
+}
+
+function buildReport(){
+  const ym=state.date.slice(0,7);
+  const stats=monthStats(state.data,ym);
+  const lines=[];
+  lines.push('【タマゴヤキハサイカクニン '+ym.replace('-','年')+'月】');
+  lines.push('記録日数：'+stats.streak+'日 ／ 合計：'+stats.total+'〇');
+  lines.push('');
+  lines.push('--- バランス ---');
+  ITEMS.forEach(it=>{
+    const c=stats.byKey[it.k];
+    const bar='■'.repeat(Math.min(10,c))+'□'.repeat(Math.max(0,10-c));
+    lines.push(it.k+' '+it.n+'　'+bar+' '+c);
+  });
+  lines.push('');
+  lines.push('かよママ、見てもらえると嬉しいです🌸');
+  return lines.join('\n');
+}
+
+function showToast(msg){
+  const t=$('toast');t.textContent=msg;t.classList.add('on');
+  clearTimeout(showToast._t);
+  showToast._t=setTimeout(()=>t.classList.remove('on'),1800);
+}
+
+function copyText(txt){
+  if(navigator.clipboard){return navigator.clipboard.writeText(txt)}
+  const ta=document.createElement('textarea');
+  ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy')}catch(e){}
+  document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
+// ======== Speech bubble ========
+function showSpeech(charEl,key){
+  // remove existing
+  document.querySelectorAll('.speech').forEach(s=>s.remove());
+  const allByKey=totalByKey(state.data);
+  const stage=getStage(allByKey[key]);
+  let line;
+  if(stage===0)line=EGG_LINE;
+  else line=(CHAR_LINES[key]||[])[stage-1]||'...';
+  const bubble=document.createElement('div');
+  bubble.className='speech';bubble.textContent=line;
+  charEl.appendChild(bubble);
+  // animate in
+  requestAnimationFrame(()=>bubble.classList.add('on'));
+  clearTimeout(showSpeech._t);
+  showSpeech._t=setTimeout(()=>{bubble.classList.remove('on');setTimeout(()=>bubble.remove(),250)},2400);
+}
+
+// ======== Confetti ========
+function confetti(){
+  // ナチュラル配色: セージ・テラコッタ・クリーム・ほんのり若葉
+  const colors=['#8FA181','#6B8E5A','#C8835A','#B07143','#E8E0CC','#D9CDB0','#A8BA96'];
+  const layer=document.createElement('div');
+  layer.className='confetti-layer';
+  for(let i=0;i<45;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left=(Math.random()*100)+'%';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration=(2.4+Math.random()*1.8)+'s';
+    p.style.animationDelay=(Math.random()*.5)+'s';
+    p.style.width=(5+Math.random()*7)+'px';
+    p.style.height=(8+Math.random()*10)+'px';
+    p.style.borderRadius=Math.random()<.3?'50%':'1px';
+    p.style.transform='rotate('+(Math.random()*360)+'deg)';
+    layer.appendChild(p);
+  }
+  document.body.appendChild(layer);
+  setTimeout(()=>layer.remove(),4500);
+}
+
+// ======== Events ========
+document.addEventListener('click',e=>{
+  // キャラ吹き出し
+  const char=e.target.closest('.item-char');
+  if(char){
+    showSpeech(char,char.dataset.key);
+    return;
+  }
+  const btn=e.target.closest('.meal-btn');
+  if(btn){
+    const meal=btn.dataset.meal,key=btn.dataset.key;
+    const nowOn=toggle(state.data,state.date,meal,key);
+    saveData(state.data);
+    if(nowOn&&navigator.vibrate)navigator.vibrate(15);
+    // sparkle
+    if(nowOn){
+      const s=document.createElement('span');s.className='sparkle';btn.appendChild(s);
+      setTimeout(()=>s.remove(),500);
+    }
+    // シークレットキャラトリガー判定（開放は翌日）
+    if(nowOn){
+      checkSecrets(state.date);
+    }
+    renderMain();
+    return;
+  }
+  // お休み日解除ボタン
+  if(e.target.closest('.rest-banner .undo')){
+    toggleRestDay(state.date);
+    showToast('お休み日を解除しました');
+    render();
+    return;
+  }
+  // 前日ミラーボタン
+  if(e.target.closest('#mirrorBtn')){
+    if(mirrorYesterday()){
+      checkSecrets(state.date);
+      showToast('昨日と同じ献立で埋めました 🗒');
+      render();
+    }else{
+      showToast('昨日の記録が見つかりませんでした');
+    }
+    return;
+  }
+  // シークレット発見モーダル閉じる
+  if(e.target.closest('#secretRevealClose')||e.target.id==='secretReveal'){
+    closeSecretReveal();return;
+  }
+  // ダイジェスト閉じる
+  if(e.target.closest('#digestClose')||e.target.id==='digestModal'){
+    closeDigest();return;
+  }
+  // シークレットヘルプ閉じる
+  if(e.target.closest('#secretHelpClose')||e.target.closest('#secretHelpDone')||e.target.id==='secretHelpModal'){
+    closeSecretHelp();return;
+  }
+  if(e.target.closest('#prevDay')){state.date=shiftDate(state.date,-1);render();return}
+  if(e.target.closest('#nextDay')){
+    const next=shiftDate(state.date,1);
+    // 未来日付はロック
+    if(parseDate(next)>parseDate(today())){showToast('今日より先はまだ記録できません');return}
+    state.date=next;render();return;
+  }
+  if(e.target.closest('#navRecord')){setView('main');return}
+  if(e.target.closest('#navDash')){setView('dash');return}
+  if(e.target.closest('#exportBtn')||e.target.closest('#expiredExport')){
+    copyText(buildReport()).then(()=>showToast('月報をコピーしました！'));
+    return;
+  }
+  if(e.target.closest('#shareBtn')){
+    const txt=buildReport();
+    copyText(txt).then(()=>{
+      showToast('コピー完了！LINEに貼ってね');
+    });
+    return;
+  }
+  if(e.target.closest('#onboardStart')){closeOnboard(true);return}
+  if(e.target.id==='onboardModal'){closeOnboard(true);return}
+  if(e.target.closest('#snapBtn')){openSnap();return}
+  if(e.target.closest('#snapClose')){closeSnap();return}
+  if(e.target.id==='snapModal'){closeSnap();return}
+
+  // Drawer
+  if(e.target.closest('#menuBtn')){openDrawer();return}
+  if(e.target.closest('#drawerClose')||e.target.id==='drawerBg'){closeDrawer();return}
+  const item=e.target.closest('.drawer-item');
+  if(item&&item.dataset.act){
+    const act=item.dataset.act;
+    if(act==='manual'){closeDrawer();setTimeout(openOnboard,200);return}
+    if(act==='snap'){closeDrawer();setTimeout(openSnap,200);return}
+    if(act==='month'){
+      closeDrawer();
+      copyText(buildReport()).then(()=>showToast('月報をコピーしました！'));
+      return;
+    }
+    if(act==='mirror'){
+      closeDrawer();
+      if(!isToday(state.date)){
+        setTimeout(()=>showToast('前日コピーは今日の画面で使えます'),250);
+        return;
+      }
+      setTimeout(()=>{
+        if(mirrorYesterday()){
+          checkSecrets(state.date);
+          showToast('昨日と同じ献立で埋めました 🗒');
+          render();
+        }else{
+          showToast('昨日の記録が見つかりませんでした');
+        }
+      },200);
+      return;
+    }
+    if(act==='rest'){
+      closeDrawer();
+      const on=isRestDay(state.date);
+      toggleRestDay(state.date);
+      setTimeout(()=>{
+        showToast(on?'お休み日を解除しました':'🌴 お休み日に設定しました');
+        render();
+      },200);
+      return;
+    }
+    if(act==='secrethelp'){
+      closeDrawer();
+      setTimeout(openSecretHelp,200);
+      return;
+    }
+    if(act==='digest'){
+      closeDrawer();
+      setTimeout(openDigest,200);
+      return;
+    }
+    if(act==='reset'){
+      if(confirm('記録をすべて削除します。よろしいですか？\n（この操作は元に戻せません）')){
+        try{
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(REST_KEY);
+          localStorage.removeItem(SECRETS_KEY);
+        }catch(e){}
+        state.data={};
+        state.rest={};
+        state.secrets={};
+        ITEMS.forEach(i=>{state.prevStages[i.k]=0});
+        state.perfectDates={};
+        closeDrawer();
+        showToast('データをリセットしました');
+        render();
+      }
+      return;
+    }
+  }
+});
+
+// ======== Onboarding ========
+function openOnboard(){$('onboardModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeOnboard(markSeen){
+  $('onboardModal').classList.remove('on');
+  document.body.style.overflow='';
+  if(markSeen){try{localStorage.setItem(ONBOARD_KEY,'1')}catch(e){}}
+}
+function maybeShowOnboard(){
+  let seen=false;
+  try{seen=!!localStorage.getItem(ONBOARD_KEY)}catch(e){}
+  if(!seen)openOnboard();
+}
+
+// ======== Drawer ========
+function openDrawer(){
+  const rl=$('restMenuLabel');
+  if(rl)rl.textContent=isRestDay(state.date)?'お休み日を解除':'今日はお休み日にする';
+  const ml=$('mirrorMenuLabel');
+  if(ml){
+    const ystd=shiftDate(state.date,-1);
+    const hasYstd=state.data[ystd]&&Object.keys(state.data[ystd]).length>0;
+    ml.textContent=hasYstd?'昨日の献立をコピー':'昨日の献立をコピー（記録なし）';
+  }
+  $('drawer').classList.add('on');$('drawerBg').classList.add('on');document.body.style.overflow='hidden';
+}
+function closeDrawer(){$('drawer').classList.remove('on');$('drawerBg').classList.remove('on');document.body.style.overflow=''}
+
+// ======== シークレットキャラ発見演出 ========
+function showSecretReveal(sec){
+  $('secretRevealEmoji').innerHTML=
+    '<img src="'+secretImgSrc(sec.id)+'" alt="'+sec.name+'" onerror="this.outerHTML=\''+sec.emoji+'\'">';
+  $('secretRevealName').textContent='🎁 '+sec.name;
+  $('secretRevealDesc').innerHTML='おめでとうございます<br>きのうの食卓から<br><b>"'+sec.name+'"</b> が誕生しました<br><span class="tagline">'+sec.tagline+'</span>';
+  $('secretReveal').classList.add('on');
+  if(navigator.vibrate)navigator.vibrate([20,40,20]);
+  confetti();
+}
+function closeSecretReveal(){
+  $('secretReveal').classList.remove('on');
+  if(state.view==='dash')renderDash();
+  if(state._secretRevealQueue&&state._secretRevealQueue.length>0){
+    setTimeout(showNextRevealFromQueue,300);
+  }
+}
+
+// ======== 月末ダイジェスト ========
+function buildDigest(){
+  const start=parseDate('2026-04-21');
+  const dates=Object.keys(state.data).filter(d=>parseDate(d)>=start).sort();
+  const byKey={};ITEMS.forEach(i=>byKey[i.k]=0);
+  let total=0;
+  dates.forEach(d=>{
+    for(const m in state.data[d])state.data[d][m].forEach(k=>{
+      if(byKey[k]!==undefined){byKey[k]++;total++}
+    });
+  });
+  const restDays=Object.keys(state.rest).filter(d=>parseDate(d)>=start).length;
+  const all=totalByKey(state.data);
+  const hatched=ITEMS.filter(i=>getStage(all[i.k])>0).length;
+  const ichimae=ITEMS.filter(i=>getStage(all[i.k])===3).length;
+  const sorted=ITEMS.slice().sort((a,b)=>byKey[b.k]-byKey[a.k]);
+  const top3=sorted.slice(0,3);
+  const weak3=sorted.slice().reverse().slice(0,3);
+  const days=dates.length;
+  let msg;
+  if(days===0)msg='まだ記録がありません。ゆっくり始めていきましょう 🌱';
+  else if(days<=3)msg='はじめの一歩、<b>'+days+'日分</b>の記録ができました。少しずつ習慣に。';
+  else if(hatched>=8)msg='たくさんの食材が登場しました。<b>'+hatched+'/12種類</b>と出会えた食卓、素敵です 🌸';
+  else msg='<b>'+total+'〇</b>、しっかり積み上がっています。次の月も無理のないペースで。';
+  return {total,days,hatched,ichimae,top3,weak3,byKey,restDays,msg};
+}
+function renderDigest(){
+  const d=buildDigest();
+  const today_=today();
+  $('digestPeriod').textContent='2026-04-21 〜 '+today_+' のまとめ';
+  $('digestTotal').textContent=d.total;
+  $('digestDays').textContent=d.days;
+  $('digestHatched').textContent=d.hatched;
+  $('digestTop').innerHTML=d.top3.map((it,i)=>{
+    const c=d.byKey[it.k];
+    return '<div class="digest-row"><span class="rk">'+(i+1)+'</span>'+
+      '<span>'+it.k+' '+it.n+'</span><span class="rc">'+c+'〇</span></div>';
+  }).join('')||'<div class="digest-row">まだ記録がありません</div>';
+  $('digestWeak').innerHTML=d.weak3.map(it=>{
+    const c=d.byKey[it.k];
+    const tips=(FUKUSAI[it.k]||[]).slice(0,1).join('・');
+    return '<div class="digest-row"><span class="rk">'+it.k+'</span>'+
+      '<span>'+it.n+(tips?' ・ '+tips:'')+'</span><span class="rc">'+c+'〇</span></div>';
+  }).join('')||'<div class="digest-row">—</div>';
+  $('digestMsg').innerHTML='💭 '+d.msg+(d.restDays>0?'<br><span style="font-size:11px;color:#8A8378">（お休み日：'+d.restDays+'日）</span>':'');
+}
+function openDigest(){renderDigest();$('digestModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeDigest(){$('digestModal').classList.remove('on');document.body.style.overflow=''}
+function openSecretHelp(){$('secretHelpModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeSecretHelp(){$('secretHelpModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== Snap 記念画面 ========
+function renderSnap(){
+  const allByKey=totalByKey(state.data);
+  // period text
+  const startStr='4/21';
+  const nowStr=(new Date().getMonth()+1)+'/'+new Date().getDate();
+  $('snapPeriod').textContent=startStr+' – '+nowStr+' の記録';
+  // grid
+  const g=$('snapGrid');
+  g.innerHTML=ITEMS.map(it=>{
+    const c=allByKey[it.k];
+    const stage=getStage(c);
+    const inner=stage>0
+      ? '<img src="'+charImgSrc(it.k,stage)+'" alt="'+CHAR_NAMES[it.k]+'" loading="lazy" onerror="this.outerHTML=\'<span class=&quot;letter-fallback&quot;>'+it.k+'</span>\'">'
+      : '<span class="letter-fallback">'+it.k+'</span>';
+    return '<div class="snap-cell stage-'+stage+'">'+
+      '<div class="snap-thumb">'+inner+'</div>'+
+      '<div class="cname">'+CHAR_NAMES[it.k]+'</div>'+
+    '</div>';
+  }).join('');
+  // stats
+  const total=allPeriodTotal();
+  const days=Object.keys(state.data).filter(d=>parseDate(d)>=parseDate('2026-04-21')).length;
+  const streak=currentStreak(state.data,state.rest);
+  $('snapStats').innerHTML=
+    '<div class="snap-stat"><div class="num">'+total+'</div><div class="lbl">合計〇</div></div>'+
+    '<div class="snap-stat"><div class="num">'+days+'</div><div class="lbl">記録日数</div></div>'+
+    '<div class="snap-stat"><div class="num">'+streak+'</div><div class="lbl">連続記録🔥</div></div>';
+}
+function openSnap(){renderSnap();$('snapModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeSnap(){$('snapModal').classList.remove('on');document.body.style.overflow=''}
+
+function setView(v){
+  state.view=v;
+  $('mainView').classList.toggle('off',v!=='main');
+  $('dashView').classList.toggle('on',v==='dash');
+  $('navRecord').classList.toggle('active',v==='main');
+  $('navDash').classList.toggle('active',v==='dash');
+  render();
+}
+
+// ======== Expire check ========
+function allPeriodTotal(){
+  let total=0;
+  for(const d in state.data){for(const m in state.data[d]){total+=state.data[d][m].length}}
+  return total;
+}
+function checkExpire(){
+  const now=new Date();
+  if(now>=EXPIRE_AT){
+    $('finalTotal').textContent=allPeriodTotal();
+    $('expiredView').classList.add('on');
+    document.body.style.overflow='hidden';
+    return true;
+  }
+  return false;
+}
+
+// ======== Init ========
+function init(){
+  if(checkExpire())return;
+  render();
+  maybeShowOnboard();
+  // 起動時に翌日開放シークレットを順に表示
+  setTimeout(promoteRevealedSecrets,800);
+  // Update countdown every minute
+  setInterval(()=>{renderHeader();checkExpire()},60000);
+}
+init();
+
+})();
+</script>
+</body>
+</html>
