@@ -693,6 +693,30 @@ nav.bottom button:active{transform:scale(.97)}
 .farewell-card .ig-btn:active{transform:scale(.96)}
 .farewell-card .close-btn{display:block;margin:14px auto 0;background:none;border:none;color:#8C7A6A;font-size:12px;cursor:pointer;padding:8px 16px;text-decoration:underline;font-family:inherit}
 
+/* ===== 最終評価カード ===== */
+.final-eval{background:linear-gradient(180deg,#FFF8E7 0%,#FFEFC5 100%);border:1px solid #F5CF8E;border-radius:14px;padding:14px 12px;margin:14px 0 8px;box-shadow:0 2px 8px rgba(193,107,26,.08)}
+.final-eval .eval-title{font-family:'Klee One',serif;font-size:13px;color:#C16B1A;font-weight:700;text-align:center;margin-bottom:10px;letter-spacing:.04em}
+.final-eval .eval-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.final-eval .eval-item{background:#fff;border-radius:8px;padding:8px 4px;text-align:center;border:1px solid #FAE0B5}
+.final-eval .eval-item .val{font-family:'Klee One',serif;font-size:18px;font-weight:700;color:#B3631A;line-height:1.1}
+.final-eval .eval-item .lbl{font-size:10px;color:#8C7A6A;margin-top:3px}
+.final-eval .eval-badge{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border-radius:999px;padding:7px 14px;text-align:center;font-family:'Klee One',serif;font-size:13px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 6px rgba(245,166,35,.3);margin-bottom:6px}
+.final-eval .eval-msg{font-size:12px;color:#6A5A4A;line-height:1.7;text-align:center;margin-top:6px}
+.final-eval .eval-msg b{color:#B3631A}
+
+/* ===== 次のステップ オファー ===== */
+.next-step{background:linear-gradient(180deg,#FFFCF5 0%,#FDF3E0 100%);border:1px dashed #E8B976;border-radius:14px;padding:13px 14px 12px;margin:10px 0 12px}
+.next-step .ns-title{font-size:12px;color:#8C7A6A;text-align:center;margin-bottom:10px;line-height:1.5}
+.next-step .ns-title b{color:#B3631A;font-size:13px}
+.next-step .ns-item{display:flex;align-items:flex-start;gap:10px;background:#fff;border-radius:10px;padding:9px 11px;margin-bottom:7px;border:1px solid #F5E4C5}
+.next-step .ns-item.hl{border-color:#F5A623;background:linear-gradient(90deg,#FFFCF0 0%,#FFF4D8 100%);box-shadow:0 2px 6px rgba(245,166,35,.12)}
+.next-step .ns-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.next-step .ns-text{font-size:12px;color:#5A4A3A;line-height:1.55;flex:1;text-align:left}
+.next-step .ns-text b{color:#B3631A}
+.next-step .ns-hl-tag{display:inline-block;background:#F5A623;color:#fff;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:4px;vertical-align:1px;letter-spacing:.03em}
+.next-step .ns-cta{font-size:11.5px;color:#8C7A6A;text-align:center;margin-top:8px;line-height:1.65}
+.next-step .ns-cta b{color:#B3631A}
+
 /* ===== 読み取り専用モード ===== */
 .read-only-banner{background:linear-gradient(135deg,#FFF4DC 0%,#FFE7B0 100%);border:1px solid #F5CF8E;border-radius:10px;padding:10px 14px;margin:8px 14px 0;font-size:12px;color:#7A5A2A;line-height:1.6;display:flex;align-items:center;gap:8px}
 .read-only-banner .ico{font-size:18px;flex-shrink:0}
@@ -1037,6 +1061,14 @@ body.read-only .drawer-item[data-act="mirror"],body.read-only .drawer-item[data-
     <span class="sakura">🌸</span>
     <img src="assets/kayomama.jpg" alt="かよママ" class="kayomama-avatar lg" onerror="this.style.display='none'">
     <h2>ありがとうございました</h2>
+
+    <div class="final-eval" id="finalEval">
+      <div class="eval-title">🏆 あなたの1ヶ月の記録</div>
+      <div class="eval-grid" id="finalEvalGrid"></div>
+      <div class="eval-badge" id="finalEvalBadge">バランス型</div>
+      <div class="eval-msg" id="finalEvalMsg"></div>
+    </div>
+
     <div class="msg">2週間あまり、毎朝
 「タマゴヤキハサイカクニン」で
 お子さんと一緒に食を確認してくださった
@@ -1046,14 +1078,23 @@ body.read-only .drawer-item[data-act="mirror"],body.read-only .drawer-item[data-
 一年後、十年後、<b>大きな食習慣の種</b>に
 なっていきますように。
 
-皆さんと一緒にこの実験を
-できたことが、本当に嬉しかったです。
-たくさんの「続けられた！」の声が
-私の励みになりました。
-
 <b>今後も新しい食育企画を
 考えていきますので、
 ぜひまたご一緒してくださいね！</b>🍳✨</div>
+
+    <div class="next-step" id="nextStep">
+      <div class="ns-title"><b>こんな方にオススメ</b><br>次の一歩のヒントです🌱</div>
+      <div class="ns-item" id="nsRecipe">
+        <div class="ns-ico">📖</div>
+        <div class="ns-text"><b>献立のレパートリーを広げたい方へ</b><br><span style="color:#8C7A6A">かよママの<b>サブスクレシピ集</b>で、季節や家族の好みに合わせた献立がずっと見られます</span></div>
+      </div>
+      <div class="ns-item" id="nsFlavor">
+        <div class="ns-ico">🧂</div>
+        <div class="ns-text"><b>毎日の味付けを一段上へ</b><br><span style="color:#8C7A6A">かよママの<b>味付けサポート</b>で、さしすせそを使いこなす基礎が身につきます</span></div>
+      </div>
+      <div class="ns-cta">気になるものがあったら、ぜひ <b>かよママまでお気軽に</b> 声をかけてくださいね 🌸</div>
+    </div>
+
     <div class="signature">— かよママ より</div>
     <a class="ig-btn" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M12 2.2c3.2 0 3.6 0 4.8.07 1.2.05 1.9.24 2.3.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.17.4.36 1.1.4 2.3.07 1.2.07 1.6.07 4.8s0 3.6-.07 4.8c-.05 1.2-.24 1.9-.4 2.3-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.17-1.1.36-2.3.4-1.2.07-1.6.07-4.8.07s-3.6 0-4.8-.07c-1.2-.05-1.9-.24-2.3-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.17-.4-.36-1.1-.4-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.8c.05-1.2.24-1.9.4-2.3.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.17 1.1-.36 2.3-.4C8.4 2.2 8.8 2.2 12 2.2zm0 5.4a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8zm0 7.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6zm5.6-7.4a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
@@ -2164,7 +2205,111 @@ function maybeShowWeeklyRadarAuto(){
 }
 
 // ======== 感謝ポップアップ（5/12以降 1回限り） ========
-function openFarewell(){$('farewellModal').classList.add('on');document.body.style.overflow='hidden'}
+// 最終評価の計算：期間全体のトータル統計＋偏り検出
+function computeFinalStats(){
+  const data=state.data||{};
+  const rest=state.rest||{};
+  // 〇総数 / 記録日数 / 食材別カウント
+  let totalO=0, daysRecorded=0;
+  const byKey={}; ITEMS.forEach(i=>byKey[i.k]=0);
+  for(const d in data){
+    let had=false;
+    for(const m in data[d]){
+      data[d][m].forEach(k=>{if(byKey[k]!==undefined){byKey[k]++;totalO++;had=true;}});
+    }
+    if(had)daysRecorded++;
+  }
+  // パーフェクトデー（12食材全部登場した日）
+  let perfectDays=0;
+  for(const d in data){
+    const set=new Set();
+    for(const m in data[d])data[d][m].forEach(k=>set.add(k));
+    if(set.size>=12)perfectDays++;
+  }
+  // 最長ストリーク（過去全体を走査）
+  const dates=Object.keys(data).filter(d=>Object.keys(data[d]||{}).length>0).sort();
+  let maxStreak=0;
+  if(dates.length){
+    let cur=1,prev=parseDate(dates[0]);
+    for(let i=1;i<dates.length;i++){
+      const cd=parseDate(dates[i]);
+      const diff=Math.round((cd-prev)/86400000);
+      if(diff===1||(diff>1&&allRestBetween(prev,cd,rest))){cur++;}
+      else{cur=1;}
+      if(cur>maxStreak)maxStreak=cur;
+      prev=cd;
+    }
+    if(!maxStreak)maxStreak=1;
+  }
+  // 発見シークレット数
+  const secretsFound=Object.keys(state.secrets||{}).length;
+  // 使った食材カテゴリ数（1回以上）
+  const usedCount=Object.values(byKey).filter(v=>v>0).length;
+  const unusedKeys=ITEMS.filter(i=>byKey[i.k]===0).map(i=>i.k);
+  // 偏りスコア: 標準偏差 / 平均 (変動係数)。使ってないのもあるほど高くなる
+  const vals=Object.values(byKey);
+  const avg=vals.reduce((a,b)=>a+b,0)/vals.length||0;
+  const variance=vals.reduce((a,b)=>a+(b-avg)*(b-avg),0)/vals.length;
+  const stdev=Math.sqrt(variance);
+  const cv=avg>0?stdev/avg:0;
+  // 少なかったトップ3（0除く）
+  const low3=ITEMS.map(i=>({k:i.k,n:i.n,c:byKey[i.k]})).filter(x=>x.c>0).sort((a,b)=>a.c-b.c).slice(0,3);
+  return {totalO,daysRecorded,maxStreak,perfectDays,secretsFound,usedCount,unusedKeys,byKey,cv,low3};
+}
+// 期間中にお休みだけの日が連続しててもストリークを継続する補助
+function allRestBetween(a,b,rest){
+  const one=86400000;
+  for(let t=a.getTime()+one;t<b.getTime();t+=one){
+    const d=new Date(t);
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(!rest[key])return false;
+  }
+  return true;
+}
+
+// タイプ診断（1つだけ返す・優先度順）
+function diagnoseType(s){
+  if(s.totalO===0)return {t:'これからタイプ',m:'記録はまだ少なめ。<b>改良版が出たら</b>ぜひまたご一緒しましょう🌱',emp:'recipe'};
+  if(s.perfectDays>=3&&s.usedCount>=11)return {t:'🌟 12食材マスター',m:'パーフェクトデーを<b>'+s.perfectDays+'回</b>達成！バランス感覚が素晴らしかったです',emp:'flavor'};
+  if(s.maxStreak>=10)return {t:'🔥 コツコツ継続型',m:'最長<b>'+s.maxStreak+'日連続</b>の記録！毎日の積み重ねがまさに黄金でした',emp:'flavor'};
+  if(s.secretsFound>=3)return {t:'🔍 シークレットハンター',m:'シークレット<b>'+s.secretsFound+'体</b>発見！組み合わせの観察眼が鋭いです',emp:'flavor'};
+  if(s.unusedKeys.length>=3||s.cv>=0.7)return {t:'💕 偏愛タイプ',m:'好きな食材を<b>しっかり使えた</b>1ヶ月。次は幅を広げるのが楽しみですね',emp:'recipe'};
+  if(s.usedCount>=10&&s.cv<0.5)return {t:'⚖️ バランス型',m:'<b>'+s.usedCount+'/12カテゴリ</b>をまんべんなく。理想的な献立パターンです',emp:'flavor'};
+  return {t:'🌱 これから伸びる人',m:'<b>'+s.daysRecorded+'日</b>の記録、よく頑張りました！次の一歩が楽しみです',emp:'recipe'};
+}
+
+// Farewellモーダルを開く（統計＆診断を動的描画）
+function openFarewell(){
+  try{
+    const s=computeFinalStats();
+    const d=diagnoseType(s);
+    const grid=$('finalEvalGrid');
+    if(grid){
+      grid.innerHTML=
+        '<div class="eval-item"><div class="val">'+s.totalO+'</div><div class="lbl">総〇</div></div>'+
+        '<div class="eval-item"><div class="val">'+s.maxStreak+'日</div><div class="lbl">最長連続</div></div>'+
+        '<div class="eval-item"><div class="val">'+s.usedCount+'/12</div><div class="lbl">食材制覇</div></div>'+
+        '<div class="eval-item"><div class="val">'+s.secretsFound+'</div><div class="lbl">シークレット</div></div>';
+    }
+    const badge=$('finalEvalBadge'); if(badge)badge.textContent=d.t;
+    const msg=$('finalEvalMsg'); if(msg)msg.innerHTML=d.m;
+    // オファー強調：偏り寄りならレシピ、そうでなければ味付けを強調
+    const nsR=$('nsRecipe'), nsF=$('nsFlavor');
+    if(nsR&&nsF){
+      nsR.classList.remove('hl'); nsF.classList.remove('hl');
+      // 既存の「おすすめタグ」を一度リセット
+      nsR.querySelectorAll('.ns-hl-tag').forEach(n=>n.remove());
+      nsF.querySelectorAll('.ns-hl-tag').forEach(n=>n.remove());
+      const target=d.emp==='recipe'?nsR:nsF;
+      target.classList.add('hl');
+      const tag=document.createElement('span');
+      tag.className='ns-hl-tag';
+      tag.textContent='あなた向け';
+      target.querySelector('.ns-text b').appendChild(tag);
+    }
+  }catch(e){/* 失敗しても表示は続ける */}
+  $('farewellModal').classList.add('on');document.body.style.overflow='hidden';
+}
 function closeFarewell(){
   $('farewellModal').classList.remove('on');document.body.style.overflow='';
   try{localStorage.setItem(FAREWELL_SEEN_KEY,'1')}catch(e){}
