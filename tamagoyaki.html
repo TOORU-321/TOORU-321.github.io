@@ -651,6 +651,56 @@ nav.bottom button:active{transform:scale(.97)}
 .digest-row .rc{margin-left:auto;color:#8C7A6A;font-size:11px}
 .digest-msg{font-size:12px;color:#7A5A2A;background:#FFF4DC;border-left:3px solid #F5CF8E;padding:10px 12px;border-radius:6px;line-height:1.7;margin-top:14px}
 .digest-msg b{color:#B3631A}
+
+/* ===== かよママアバター ===== */
+.kayomama-avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:center top;border:3px solid #FFF4DC;box-shadow:0 2px 10px rgba(230,126,34,.18);display:block;margin:0 auto 6px}
+.kayomama-avatar.lg{width:100px;height:100px;border:4px solid #FFF}
+
+/* ===== 週次レーダー ===== */
+.radar-bg{position:fixed;inset:0;background:rgba(45,34,22,.5);display:none;align-items:flex-start;justify-content:center;z-index:60;overflow-y:auto;padding:16px 0;animation:fadeIn .25s ease-out}
+.radar-bg.on{display:flex}
+.radar-card{background:#fff;border-radius:16px;max-width:360px;width:92%;padding:22px 20px;position:relative;margin:auto;box-shadow:0 8px 24px rgba(0,0,0,.15);animation:slideUp .35s ease-out}
+.radar-card .close{position:absolute;top:10px;right:10px;background:#F5EADA;border:none;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;color:#8C7A6A}
+.radar-card h2{font-family:'Klee One',serif;font-size:18px;color:#C16B1A;margin:0 0 4px;text-align:center;letter-spacing:.05em}
+.radar-card .sub{font-size:11px;color:#8C7A6A;text-align:center;margin:0 0 14px}
+.radar-svg-wrap{display:flex;justify-content:center;margin:4px 0 8px}
+.radar-svg{width:100%;max-width:300px;height:auto;display:block}
+.radar-svg .grid-poly{fill:#FFF8ED;stroke:#EAD8BA;stroke-width:1;opacity:.85}
+.radar-svg .grid-poly.outer{fill:none;stroke:#E4C98E;stroke-width:1.3}
+.radar-svg .data-poly{fill:rgba(245,166,35,.30);stroke:#E67E22;stroke-width:2;stroke-linejoin:round}
+.radar-svg .axis-line{stroke:#E4C98E;stroke-width:1;stroke-dasharray:2 3;opacity:.55}
+.radar-svg .data-dot{fill:#E67E22;stroke:#FFF;stroke-width:1.6}
+.radar-svg .axis-label{font-family:'Klee One',serif;font-size:12px;fill:#7A5A2A;font-weight:700}
+.radar-svg .axis-value{font-family:'Klee One',serif;font-size:10px;fill:#B3631A;font-weight:700}
+.radar-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:linear-gradient(135deg,#FFF4DC 0%,#FFEBC3 100%);border-radius:12px;padding:12px;margin-top:8px;text-align:center}
+.radar-stats .dnum{font-family:'Klee One',serif;font-size:20px;color:#C16B1A;font-weight:700;line-height:1.1}
+.radar-stats .dlbl{font-size:10px;color:#8C7A6A;margin-top:2px}
+.radar-msg{font-size:12px;color:#7A5A2A;background:#FFF4DC;border-left:3px solid #F5CF8E;padding:10px 12px;border-radius:6px;line-height:1.7;margin-top:12px}
+.radar-msg b{color:#B3631A}
+.radar-empty{text-align:center;color:#8C7A6A;font-size:12.5px;padding:24px 12px;line-height:1.9}
+
+/* ===== 5/12以降 感謝ポップアップ ===== */
+.farewell-bg{position:fixed;inset:0;background:rgba(45,34,22,.55);display:none;align-items:flex-start;justify-content:center;z-index:90;overflow-y:auto;padding:16px 0;animation:fadeIn .35s ease-out}
+.farewell-bg.on{display:flex}
+.farewell-card{background:linear-gradient(180deg,#FFFCF5 0%,#FFF4DC 100%);border-radius:20px;max-width:340px;width:92%;padding:26px 22px 22px;position:relative;margin:auto;box-shadow:0 12px 32px rgba(0,0,0,.2);animation:slideUp .45s ease-out;text-align:center}
+.farewell-card .sakura{font-size:26px;margin-bottom:4px;display:inline-block;animation:sakuraFloat 3.2s ease-in-out infinite}
+@keyframes sakuraFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-4px) rotate(6deg)}}
+.farewell-card h2{font-family:'Klee One',serif;font-size:19px;color:#C16B1A;margin:6px 0 6px;letter-spacing:.06em;line-height:1.5}
+.farewell-card .msg{font-size:13px;color:#5A4A3A;line-height:1.95;margin:14px 4px;text-align:left;white-space:pre-line}
+.farewell-card .msg b{color:#B3631A}
+.farewell-card .signature{font-family:'Klee One',serif;font-size:14px;color:#C16B1A;text-align:right;margin:4px 6px 14px;font-weight:700}
+.farewell-card .ig-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;padding:11px 20px;border-radius:999px;font-weight:700;font-size:13px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 3px 10px rgba(245,166,35,.3);transition:transform .15s;font-family:inherit}
+.farewell-card .ig-btn:active{transform:scale(.96)}
+.farewell-card .close-btn{display:block;margin:14px auto 0;background:none;border:none;color:#8C7A6A;font-size:12px;cursor:pointer;padding:8px 16px;text-decoration:underline;font-family:inherit}
+
+/* ===== 読み取り専用モード ===== */
+.read-only-banner{background:linear-gradient(135deg,#FFF4DC 0%,#FFE7B0 100%);border:1px solid #F5CF8E;border-radius:10px;padding:10px 14px;margin:8px 14px 0;font-size:12px;color:#7A5A2A;line-height:1.6;display:flex;align-items:center;gap:8px}
+.read-only-banner .ico{font-size:18px;flex-shrink:0}
+.read-only-banner b{color:#B3631A}
+body.read-only .meal-btn{pointer-events:none;opacity:.55;cursor:not-allowed}
+body.read-only .mirror-btn,body.read-only #mirrorRow{display:none!important}
+body.read-only .rest-banner .undo{display:none}
+body.read-only .drawer-item[data-act="mirror"],body.read-only .drawer-item[data-act="rest"],body.read-only .drawer-item[data-act="reset"]{opacity:.45;pointer-events:none}
 </style>
 </head>
 <body>
@@ -782,6 +832,7 @@ nav.bottom button:active{transform:scale(.97)}
 <div class="modal-bg" id="onboardModal">
   <div class="modal">
     <div class="modal-hero">
+      <img src="assets/kayomama.jpg" alt="かよママ" class="kayomama-avatar lg" onerror="this.style.display='none'">
       <span class="emoji">🍳🌱</span>
     </div>
     <h2>ようこそ！</h2>
@@ -870,6 +921,7 @@ nav.bottom button:active{transform:scale(.97)}
     <button class="drawer-item" data-act="mirror"><span class="ico">↙</span><span id="mirrorMenuLabel">昨日の献立をコピー</span><span class="arrow">›</span></button>
     <button class="drawer-item" data-act="rest"><span class="ico">🌴</span><span id="restMenuLabel">今日はお休み日にする</span><span class="arrow">›</span></button>
     <div class="drawer-divider"></div>
+    <button class="drawer-item" data-act="weekradar"><span class="ico">📊</span>今週のチャートを見る<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="digest"><span class="ico">🌸</span>ダイジェストを見る<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="snap"><span class="ico">📸</span>スナップ画面<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="month"><span class="ico">📋</span>月報をコピー<span class="arrow">›</span></button>
@@ -966,6 +1018,48 @@ nav.bottom button:active{transform:scale(.97)}
   </div>
 </div>
 
+<!-- 週次レーダーチャート -->
+<div class="radar-bg" id="radarModal">
+  <div class="radar-card">
+    <button class="close" id="radarClose" aria-label="閉じる">×</button>
+    <h2>📊 先週のキミのチャート</h2>
+    <div class="sub" id="radarPeriod">—</div>
+    <div id="radarBody"></div>
+  </div>
+</div>
+
+<!-- 5/12以降 感謝ポップアップ -->
+<div class="farewell-bg" id="farewellModal">
+  <div class="farewell-card">
+    <span class="sakura">🌸</span>
+    <img src="assets/kayomama.jpg" alt="かよママ" class="kayomama-avatar lg" onerror="this.style.display='none'">
+    <h2>ありがとうございました</h2>
+    <div class="msg">2週間あまり、毎朝
+「タマゴヤキハサイカクニン」で
+お子さんと一緒に食を確認してくださった
+すべての皆さんへ──
+
+小さな「今日のたまご」が、
+一年後、十年後、<b>大きな食習慣の種</b>に
+なっていきますように。
+
+皆さんと一緒にこの実験を
+できたことが、本当に嬉しかったです。
+たくさんの「続けられた！」の声が
+私の励みになりました。
+
+<b>今後も新しい食育企画を
+考えていきますので、
+ぜひまたご一緒してくださいね！</b>🍳✨</div>
+    <div class="signature">— かよママ より</div>
+    <a class="ig-btn" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M12 2.2c3.2 0 3.6 0 4.8.07 1.2.05 1.9.24 2.3.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.17.4.36 1.1.4 2.3.07 1.2.07 1.6.07 4.8s0 3.6-.07 4.8c-.05 1.2-.24 1.9-.4 2.3-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.17-1.1.36-2.3.4-1.2.07-1.6.07-4.8.07s-3.6 0-4.8-.07c-1.2-.05-1.9-.24-2.3-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.17-.4-.36-1.1-.4-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.8c.05-1.2.24-1.9.4-2.3.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.17 1.1-.36 2.3-.4C8.4 2.2 8.8 2.2 12 2.2zm0 5.4a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8zm0 7.2a2.8 2.8 0 1 1 0-5.6 2.8 2.8 0 0 1 0 5.6zm5.6-7.4a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/></svg>
+      かよママInstagramをフォロー
+    </a>
+    <button class="close-btn" id="farewellClose">閉じる</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -978,6 +1072,8 @@ const ONBOARD_KEY='kayomama-sainikun-onboarded-v1';
 const REST_KEY='kayomama-sainikun-rest-v1';
 const SECRETS_KEY='kayomama-sainikun-secrets-v1';
 const DIGEST_SEEN_KEY='kayomama-sainikun-digest-v1';
+const RADAR_SEEN_WEEK_KEY='kayomama-sainikun-radar-week-v1';
+const FAREWELL_SEEN_KEY='kayomama-sainikun-farewell-v1';
 // β終了: 2026-05-12 00:00 JST = 2026-05-11 15:00 UTC
 const EXPIRE_AT=new Date('2026-05-11T15:00:00.000Z');
 const START_AT=new Date('2026-04-21T00:00:00+09:00');
@@ -1604,6 +1700,7 @@ document.addEventListener('click',e=>{
   }
   const btn=e.target.closest('.meal-btn');
   if(btn){
+    if(isReadOnly()){showToast('🌸 β版は終了しました（閲覧のみ可能）');return}
     const meal=btn.dataset.meal,key=btn.dataset.key;
     const nowOn=toggle(state.data,state.date,meal,key);
     saveData(state.data);
@@ -1622,6 +1719,7 @@ document.addEventListener('click',e=>{
   }
   // お休み日解除ボタン（バナー内）
   if(e.target.closest('.rest-banner .undo')){
+    if(isReadOnly()){showToast('🌸 β版は終了しました（閲覧のみ可能）');return}
     toggleRestDay(state.date);
     showToast('お休み日を解除しました');
     render();
@@ -1629,6 +1727,7 @@ document.addEventListener('click',e=>{
   }
   // 前日ミラーボタン
   if(e.target.closest('#mirrorBtn')){
+    if(isReadOnly()){showToast('🌸 β版は終了しました（閲覧のみ可能）');return}
     if(mirrorYesterday()){
       // ミラー後にシークレットのトリガー判定も走らせる（開放は翌日）
       checkSecrets(state.date);
@@ -1650,6 +1749,14 @@ document.addEventListener('click',e=>{
   // シークレットヘルプ閉じる
   if(e.target.closest('#secretHelpClose')||e.target.closest('#secretHelpDone')||e.target.id==='secretHelpModal'){
     closeSecretHelp();return;
+  }
+  // 週次レーダー閉じる
+  if(e.target.closest('#radarClose')||e.target.id==='radarModal'){
+    closeWeeklyRadar();return;
+  }
+  // 感謝ポップアップ閉じる（IGボタンは<a>なのでhref遷移。close-btnのみここで閉じる）
+  if(e.target.closest('#farewellClose')){
+    closeFarewell();return;
   }
   if(e.target.closest('#prevDay')){state.date=shiftDate(state.date,-1);render();return}
   if(e.target.closest('#nextDay')){
@@ -1692,6 +1799,7 @@ document.addEventListener('click',e=>{
     }
     if(act==='mirror'){
       closeDrawer();
+      if(isReadOnly()){setTimeout(()=>showToast('🌸 β版は終了しました（閲覧のみ可能）'),250);return}
       if(!isToday(state.date)){
         setTimeout(()=>showToast('前日コピーは今日の画面で使えます'),250);
         return;
@@ -1709,12 +1817,24 @@ document.addEventListener('click',e=>{
     }
     if(act==='rest'){
       closeDrawer();
+      if(isReadOnly()){setTimeout(()=>showToast('🌸 β版は終了しました（閲覧のみ可能）'),250);return}
       const on=isRestDay(state.date);
       toggleRestDay(state.date);
       setTimeout(()=>{
         showToast(on?'お休み日を解除しました':'🌴 お休み日に設定しました');
         render();
       },200);
+      return;
+    }
+    if(act==='weekradar'){
+      closeDrawer();
+      // デフォルトは「前週」を表示。前週にデータがなければ「今週（進行中）」を自動切替
+      const thisMon=getMondayOf(today());
+      const lastMon=shiftDate(thisMon,-7);
+      const lastInfo=getWeekInfo(lastMon);
+      const lastStats=computeWeekStats(lastInfo.monday,lastInfo.sunday);
+      const target=(lastStats.recordDays===0&&lastStats.totalO===0)?thisMon:lastMon;
+      setTimeout(()=>openWeeklyRadar(target),200);
       return;
     }
     if(act==='digest'){
@@ -1728,6 +1848,7 @@ document.addEventListener('click',e=>{
       return;
     }
     if(act==='reset'){
+      if(isReadOnly()){showToast('🌸 β版は終了しました（閲覧のみ可能）');return}
       if(confirm('記録をすべて削除します。よろしいですか？\n（この操作は元に戻せません）')){
         try{
           localStorage.removeItem(STORAGE_KEY);
@@ -1899,26 +2020,172 @@ function allPeriodTotal(){
   for(const d in state.data){for(const m in state.data[d]){total+=state.data[d][m].length}}
   return total;
 }
-function checkExpire(){
-  const now=new Date();
-  if(now>=EXPIRE_AT){
-    $('finalTotal').textContent=allPeriodTotal();
-    $('expiredView').classList.add('on');
-    document.body.style.overflow='hidden';
-    return true;
+function isReadOnly(){return new Date()>=EXPIRE_AT}
+function applyReadOnlyMode(){
+  if(!isReadOnly())return;
+  document.body.classList.add('read-only');
+  // ヘッダー直下に読み取り専用バナー（render外の静的挿入なので上書きされない）
+  if(!document.getElementById('readOnlyBanner')){
+    const app=$('app'); const header=app&&app.querySelector('header');
+    if(header){
+      const bar=document.createElement('div');
+      bar.id='readOnlyBanner'; bar.className='read-only-banner';
+      bar.innerHTML='<span class="ico">🌸</span><div><b>β版提供期間は終了しました</b><br>これまでの記録は引き続き閲覧できます。本格版をお楽しみに🍳</div>';
+      header.insertAdjacentElement('afterend',bar);
+    }
   }
-  return false;
+}
+
+// ======== 週次レーダーチャート ========
+function getMondayOf(dStr){
+  const d=parseDate(dStr);
+  const dow=d.getUTCDay()||7; // 月=1 ... 日=7
+  const mon=new Date(d); mon.setUTCDate(d.getUTCDate()-dow+1);
+  return dateStr(mon);
+}
+function getWeekInfo(dStr){
+  const mon=getMondayOf(dStr);
+  return {monday:mon, sunday:shiftDate(mon,6), key:mon};
+}
+function computeWeekStats(weekStart,weekEnd){
+  const dates=[]; let d=weekStart;
+  while(d<=weekEnd){dates.push(d); d=shiftDate(d,1)}
+  let totalO=0, recordDays=0, hitDays=0, maxStreak=0, curStreak=0, perfectDays=0;
+  const uniqueKeys=new Set();
+  dates.forEach(dt=>{
+    const day=state.data[dt]||{};
+    const mealKeys=Object.keys(day);
+    let dayO=0; const dayKeys=new Set();
+    mealKeys.forEach(m=>{(day[m]||[]).forEach(k=>{dayO++; uniqueKeys.add(k); dayKeys.add(k)})});
+    if(mealKeys.length>0||isRestDay(dt))recordDays++;
+    if(dayO>0){hitDays++; curStreak++; if(curStreak>maxStreak)maxStreak=curStreak}
+    else if(isRestDay(dt)){/* お休み日はストリーク維持 */}
+    else{curStreak=0}
+    if(dayKeys.size===12)perfectDays++;
+    totalO+=dayO;
+  });
+  let newSecrets=0;
+  for(const id in state.secrets){
+    const s=state.secrets[id];
+    if(s&&s.triggeredDate&&s.triggeredDate>=weekStart&&s.triggeredDate<=weekEnd)newSecrets++;
+  }
+  return {totalO, recordDays, hitDays, maxStreak, uniqueCount:uniqueKeys.size, perfectDays, newSecrets};
+}
+function buildWeekAxes(stats){
+  return [
+    {label:'達成', value:Math.round(stats.hitDays/7*100), detail:stats.hitDays+'/7日'},
+    {label:'量',   value:Math.min(100,Math.round(stats.totalO/42*100)), detail:stats.totalO+'〇'},
+    {label:'多様', value:Math.round(stats.uniqueCount/12*100), detail:stats.uniqueCount+'/12'},
+    {label:'継続', value:Math.round(stats.maxStreak/7*100), detail:stats.maxStreak+'連日'},
+    {label:'挑戦', value:Math.min(100,stats.perfectDays*40+stats.newSecrets*30), detail:(stats.perfectDays?stats.perfectDays+'🌸':'')+(stats.newSecrets?(stats.perfectDays?' ':'')+stats.newSecrets+'🎁':'')||'—'}
+  ];
+}
+function renderRadarSVG(axes){
+  const cx=150, cy=140, R=88, N=axes.length;
+  const ang=i=>(-90+i*(360/N))*Math.PI/180;
+  const pt=(i,r)=>{const a=ang(i); return[cx+Math.cos(a)*r, cy+Math.sin(a)*r]};
+  let grid=''; [20,40,60,80,100].forEach(pct=>{
+    const pts=[]; for(let i=0;i<N;i++){const[x,y]=pt(i,R*pct/100); pts.push(x.toFixed(1)+','+y.toFixed(1))}
+    grid+='<polygon class="grid-poly'+(pct===100?' outer':'')+'" points="'+pts.join(' ')+'"/>';
+  });
+  let axisL=''; for(let i=0;i<N;i++){const[x,y]=pt(i,R); axisL+='<line class="axis-line" x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'"/>'}
+  const dataPts=[], dots=[];
+  axes.forEach((ax,i)=>{
+    const v=Math.max(0,Math.min(100,ax.value));
+    const[x,y]=pt(i,R*(v/100));
+    dataPts.push(x.toFixed(1)+','+y.toFixed(1));
+    dots.push('<circle class="data-dot" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.5"/>');
+  });
+  const dataPoly='<polygon class="data-poly" points="'+dataPts.join(' ')+'"/>';
+  let labels='';
+  axes.forEach((ax,i)=>{
+    const[lx,ly]=pt(i,R+16); const a=ang(i);
+    let anc='middle'; if(Math.cos(a)>0.3)anc='start'; else if(Math.cos(a)<-0.3)anc='end';
+    labels+='<text class="axis-label" x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anc+'" dominant-baseline="middle">'+ax.label+'</text>';
+    const[vx,vy]=pt(i,R+32);
+    labels+='<text class="axis-value" x="'+vx.toFixed(1)+'" y="'+vy.toFixed(1)+'" text-anchor="'+anc+'" dominant-baseline="middle">'+ax.detail+'</text>';
+  });
+  return '<svg class="radar-svg" viewBox="0 0 300 270" xmlns="http://www.w3.org/2000/svg">'+grid+axisL+dataPoly+dots.join('')+labels+'</svg>';
+}
+function buildRadarMessage(stats){
+  if(stats.recordDays===0&&stats.totalO===0){
+    return '<b>今週の記録はまだないよ</b><br>来週も少しずつ、一緒に続けよう🌱';
+  }
+  const avg=(Math.min(100,stats.hitDays/7*100)+Math.min(100,stats.totalO/42*100)+Math.min(100,stats.uniqueCount/12*100)+Math.min(100,stats.maxStreak/7*100))/4;
+  if(avg>=75)return '<b>すごい！</b>バランスよく、たくさん続けられたね🌸<br>この調子をキープして、来週は「挑戦」軸にも挑んでみよう！';
+  if(avg>=50){
+    const axes=buildWeekAxes(stats); let best=axes[0]; axes.forEach(a=>{if(a.value>best.value)best=a});
+    return '<b>いいペース！</b>特に <b>'+best.label+'</b> が光ってた週だったね🍳<br>来週は少しだけ、へこみ軸を埋めてみよう。';
+  }
+  if(avg>=25)return '<b>記録できた日があったね、えらい！</b><br>忙しい日もあるよね。来週はちょっとだけ〇を増やせるかな？';
+  return '<b>お休み多めの週だったね🌴</b><br>無理せず、気が向いた日だけでOK。小さな一歩がだいじ。';
+}
+function openWeeklyRadar(refDate){
+  const ref=refDate||shiftDate(today(),-7);
+  const info=getWeekInfo(ref);
+  const stats=computeWeekStats(info.monday,info.sunday);
+  $('radarPeriod').textContent=info.monday+' 〜 '+info.sunday;
+  const body=$('radarBody');
+  if(stats.recordDays===0&&stats.totalO===0){
+    body.innerHTML='<div class="radar-empty">この週の記録はまだないよ🌱<br>記録がたまった頃にまた見てみてね。</div>';
+  }else{
+    const axes=buildWeekAxes(stats);
+    body.innerHTML='<div class="radar-svg-wrap">'+renderRadarSVG(axes)+'</div>'+
+      '<div class="radar-stats">'+
+        '<div><div class="dnum">'+stats.totalO+'</div><div class="dlbl">合計〇</div></div>'+
+        '<div><div class="dnum">'+stats.hitDays+'</div><div class="dlbl">達成日</div></div>'+
+        '<div><div class="dnum">'+stats.maxStreak+'</div><div class="dlbl">連続🔥</div></div>'+
+      '</div>'+
+      '<div class="radar-msg">💭 '+buildRadarMessage(stats)+'</div>';
+  }
+  $('radarModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeWeeklyRadar(){$('radarModal').classList.remove('on');document.body.style.overflow=''}
+function maybeShowWeeklyRadarAuto(){
+  // 新しい週の初回起動で前週分を自動表示（1週につき1回）
+  const thisMon=getMondayOf(today());
+  const lastMon=shiftDate(thisMon,-7);
+  let lastShown=''; try{lastShown=localStorage.getItem(RADAR_SEEN_WEEK_KEY)||''}catch(e){}
+  if(lastShown===lastMon)return;
+  const info=getWeekInfo(lastMon);
+  const stats=computeWeekStats(info.monday,info.sunday);
+  if(stats.recordDays===0&&stats.totalO===0){
+    // データ無いときは表示せず、seenも記録せず（翌週また試行）
+    return;
+  }
+  setTimeout(()=>{
+    openWeeklyRadar(lastMon);
+    try{localStorage.setItem(RADAR_SEEN_WEEK_KEY,lastMon)}catch(e){}
+  },1400);
+}
+
+// ======== 感謝ポップアップ（5/12以降 1回限り） ========
+function openFarewell(){$('farewellModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeFarewell(){
+  $('farewellModal').classList.remove('on');document.body.style.overflow='';
+  try{localStorage.setItem(FAREWELL_SEEN_KEY,'1')}catch(e){}
+}
+function maybeShowFarewell(){
+  if(!isReadOnly())return;
+  let seen=false; try{seen=!!localStorage.getItem(FAREWELL_SEEN_KEY)}catch(e){}
+  if(seen)return;
+  setTimeout(openFarewell,500);
 }
 
 // ======== Init ========
 function init(){
-  if(checkExpire())return;
+  applyReadOnlyMode();
   render();
   maybeShowOnboard();
   // 起動時に翌日開放シークレットを順に表示
   setTimeout(promoteRevealedSecrets,800);
-  // Update countdown every minute
-  setInterval(()=>{renderHeader();checkExpire()},60000);
+  // 感謝ポップアップ（期間外のみ、1回限り）
+  maybeShowFarewell();
+  // 週次レーダー自動表示（新しい週の初回、データあれば）
+  if(!isReadOnly())maybeShowWeeklyRadarAuto();
+  // Update countdown every minute + read-only mode reapply
+  setInterval(()=>{renderHeader();applyReadOnlyMode()},60000);
 }
 init();
 
