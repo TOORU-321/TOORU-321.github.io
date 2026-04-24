@@ -2734,6 +2734,201 @@ img.bestiary-entry__illus {
   color: var(--color-ivory-muted);
 }
 
+/* ============================================================
+   ✦ Quest Dock — 固定フッター（直近クエスト / タイマー）
+   「邪魔にならない」をKPIに、低コントラスト＋ガラス質感。
+   iOS safe-area、タップ圏48px↑、z-indexはモーダル未満(80)。
+   ============================================================ */
+.quest-dock {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(110%);
+  bottom: 0;
+  width: calc(100% - 1rem);
+  max-width: 720px;
+  z-index: 55; /* qm-ov(60)とapp-ov(95)の下 — モーダル時は隠す */
+  background: linear-gradient(180deg,
+    rgba(18, 22, 32, 0.82),
+    rgba(12, 16, 24, 0.92));
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  border-top: 1px solid var(--color-gold-dim);
+  border-left: 1px solid rgba(201,169,97,0.12);
+  border-right: 1px solid rgba(201,169,97,0.12);
+  border-radius: 12px 12px 0 0;
+  padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom)) 0.85rem;
+  color: var(--color-ivory);
+  font-family: var(--font-cjk);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.35);
+  transition: transform 0.32s cubic-bezier(.2,.8,.2,1), opacity 0.24s;
+  opacity: 0;
+  pointer-events: none;
+}
+.quest-dock.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.quest-dock.is-running {
+  border-top-color: var(--color-gold);
+  box-shadow: 0 -8px 28px rgba(201,169,97,0.18);
+}
+.quest-dock__row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.quest-dock__row + .quest-dock__row { margin-top: 0.35rem; }
+.quest-dock__q {
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  padding: 2px 6px;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-gold);
+  background: rgba(201,169,97,0.06);
+  border-radius: 2px;
+}
+.quest-dock__q--q1 { color: #FF6B8A; border-color: rgba(255,107,138,0.45); background: rgba(168,51,77,0.12); }
+.quest-dock__q--q2 { color: var(--color-gold); }
+.quest-dock__q--q3 { color: #9FB5A8; border-color: rgba(159,181,168,0.45); background: rgba(159,181,168,0.08); }
+.quest-dock__q--q4 { color: var(--color-ivory-dim); }
+.quest-dock__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.92rem;
+  color: var(--color-ivory);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.quest-dock__time {
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  letter-spacing: 0.1em;
+  color: var(--color-gold);
+  font-variant-numeric: tabular-nums;
+  min-width: 52px;
+  text-align: right;
+}
+.quest-dock__time.is-paused { color: var(--color-ivory-dim); }
+.quest-dock__time.is-idle { color: var(--color-ivory-dim); opacity: 0.5; }
+.quest-dock__next {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.72rem;
+  color: var(--color-ivory-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quest-dock__next-label {
+  color: var(--color-gold);
+  letter-spacing: 0.08em;
+  margin-right: 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+}
+.quest-dock__ctrls {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.35rem;
+}
+.quest-dock__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  border: 1px solid var(--color-gold-dim);
+  background: rgba(201,169,97,0.04);
+  color: var(--color-ivory);
+  cursor: pointer;
+  transition: all 0.18s;
+  border-radius: 3px;
+  font-size: 0.82rem;
+}
+.quest-dock__btn:hover {
+  background: rgba(201,169,97,0.12);
+  border-color: var(--color-gold);
+}
+.quest-dock__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.quest-dock__btn--primary {
+  background: rgba(201,169,97,0.14);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+.quest-dock__btn--primary:hover {
+  background: rgba(201,169,97,0.22);
+}
+.quest-dock__btn--done {
+  color: #9FD1A8;
+  border-color: rgba(159,209,168,0.45);
+}
+.quest-dock__btn--done:hover {
+  background: rgba(159,209,168,0.12);
+  border-color: #9FD1A8;
+}
+.quest-dock__collapse {
+  position: absolute;
+  top: -14px;
+  right: 12px;
+  width: 28px;
+  height: 14px;
+  border: 1px solid var(--color-gold-dim);
+  border-bottom: 0;
+  background: rgba(18,22,32,0.9);
+  color: var(--color-gold);
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: 6px 6px 0 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quest-dock__collapse:hover {
+  background: rgba(201,169,97,0.14);
+}
+.quest-dock.is-collapsed {
+  transform: translateX(-50%) translateY(calc(100% - 20px));
+  opacity: 0.88;
+}
+.quest-dock.is-collapsed .quest-dock__row { visibility: hidden; }
+.quest-dock.is-collapsed .quest-dock__collapse { top: 4px; }
+
+@media (max-width: 600px) {
+  .quest-dock {
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    padding: 0.55rem 0.7rem calc(0.55rem + env(safe-area-inset-bottom)) 0.7rem;
+  }
+  .quest-dock__title { font-size: 0.86rem; }
+  .quest-dock__time { font-size: 0.82rem; min-width: 48px; }
+  .quest-dock__next { font-size: 0.68rem; }
+  .quest-dock__btn { width: 34px; height: 30px; font-size: 0.78rem; }
+}
+@media (max-width: 400px) {
+  .quest-dock__title { font-size: 0.8rem; }
+  .quest-dock__next { display: none; }  /* 狭すぎる端末では経過と主タスクのみ */
+  .quest-dock__btn { width: 32px; height: 28px; }
+}
+
+/* フッターを出してる間は本文下に余白を確保（スクロール時に最後が隠れない） */
+body.has-quest-dock { padding-bottom: 96px; }
+@media (max-width: 600px) {
+  body.has-quest-dock { padding-bottom: 108px; }
+}
+
 /* 空状態（Empty States） */
 .empty-focus {
   text-align: center;
@@ -4100,6 +4295,27 @@ img.bestiary-entry__illus {
 </div>
 
 <!-- ============================================================
+     ✦ Quest Dock — 固定フッター（直近クエスト＋タイマー）
+     「邪魔にならない」をKPIに、最小２行構成。
+     ============================================================ -->
+<aside class="quest-dock" id="quest-dock" aria-label="進行中のクエスト">
+  <button type="button" class="quest-dock__collapse" id="qd-collapse" aria-label="フッターを最小化">▾</button>
+  <div class="quest-dock__row">
+    <span class="quest-dock__q" id="qd-q">Q2</span>
+    <span class="quest-dock__title" id="qd-title" title="タップで編集">—</span>
+    <span class="quest-dock__time is-idle" id="qd-time">00:00</span>
+  </div>
+  <div class="quest-dock__row">
+    <span class="quest-dock__next" id="qd-next"><span class="quest-dock__next-label">NEXT</span><span id="qd-next-title">—</span></span>
+    <span class="quest-dock__ctrls">
+      <button type="button" class="quest-dock__btn quest-dock__btn--primary" id="qd-start" aria-label="開始">▶</button>
+      <button type="button" class="quest-dock__btn" id="qd-pause" aria-label="中断" disabled>⏸</button>
+      <button type="button" class="quest-dock__btn quest-dock__btn--done" id="qd-done" aria-label="完了">✓</button>
+    </span>
+  </div>
+</aside>
+
+<!-- ============================================================
      ✦ Ranking Settings Modal — 冒険者情報の整備
      ============================================================ -->
 <div class="app-ov" id="ranking-settings-ov">
@@ -4920,6 +5136,240 @@ img.bestiary-entry__illus {
       renderFocus();
       renderList();
       renderHomeNotice();
+      renderQuestDock();
+    }
+
+    // ============================================================
+    // ✦ Quest Dock — 固定フッター制御
+    //   状態: { activeId, status: 'idle'|'running'|'paused',
+    //           elapsedMs, lastTick, collapsed }
+    //   ルール:
+    //     - 未完了タスクがない／開始前 → idle（活動すべきクエストは
+    //       getTopQuest の結果を直近タスクとして表示、▶で開始）
+    //     - idle で▶ → activeId=top.id, running。タイマー start。
+    //     - running で⏸ → paused。elapsedMs に積算。
+    //     - paused で▶ → running。lastTick を now に。
+    //     - ✓ 完了 → 対象タスクの done=true → マークアクティビティ
+    //       → レアドロップ判定 → idle に戻す → renderAll
+    //   「邪魔にならない」ために：タスクが1件も無ければ非表示、
+    //    collapsed 状態はユーザ意思として localStorage に保持。
+    // ============================================================
+    const DOCK = {
+      activeId: null,
+      status: 'idle',
+      elapsedMs: 0,
+      lastTick: 0,
+      collapsed: (typeof localStorage !== 'undefined' && localStorage.getItem('atlas_dock_collapsed') === '1')
+    };
+    let DOCK_TIMER = null;
+
+    function dockEls(){
+      return {
+        root:  document.getElementById('quest-dock'),
+        q:     document.getElementById('qd-q'),
+        title: document.getElementById('qd-title'),
+        time:  document.getElementById('qd-time'),
+        next:  document.getElementById('qd-next'),
+        nextTitle: document.getElementById('qd-next-title'),
+        start: document.getElementById('qd-start'),
+        pause: document.getElementById('qd-pause'),
+        done:  document.getElementById('qd-done'),
+        collapse: document.getElementById('qd-collapse')
+      };
+    }
+
+    function fmtElapsed(ms){
+      const s = Math.max(0, Math.floor(ms/1000));
+      const hh = Math.floor(s/3600);
+      const mm = Math.floor((s%3600)/60);
+      const ss = s%60;
+      const pad = n => String(n).padStart(2,'0');
+      return hh > 0 ? `${pad(hh)}:${pad(mm)}:${pad(ss)}` : `${pad(mm)}:${pad(ss)}`;
+    }
+
+    function getDockTarget(){
+      // active があればそれを、無ければ top quest を直近タスクとして採用
+      if(DOCK.activeId){
+        const t = PRI_TASKS.find(x => x.id === DOCK.activeId && !x.done);
+        if(t) return t;
+        // 対象が消えた/完了した → idle にリセット
+        resetDock();
+      }
+      return getTopQuest(priMode);
+    }
+
+    function getNextTask(currentId){
+      const active = PRI_TASKS.filter(t => !t.done && t.id !== currentId);
+      if(!active.length) return null;
+      return sortByMode(active, priMode)[0];
+    }
+
+    function resetDock(){
+      DOCK.activeId = null;
+      DOCK.status = 'idle';
+      DOCK.elapsedMs = 0;
+      DOCK.lastTick = 0;
+      stopDockTimer();
+    }
+
+    function startDockTimer(){
+      stopDockTimer();
+      DOCK.lastTick = Date.now();
+      DOCK_TIMER = setInterval(() => {
+        const now = Date.now();
+        DOCK.elapsedMs += (now - DOCK.lastTick);
+        DOCK.lastTick = now;
+        updateDockTime();
+      }, 1000);
+    }
+
+    function stopDockTimer(){
+      if(DOCK_TIMER){ clearInterval(DOCK_TIMER); DOCK_TIMER = null; }
+    }
+
+    function updateDockTime(){
+      const e = dockEls();
+      if(!e.time) return;
+      e.time.textContent = fmtElapsed(DOCK.elapsedMs);
+      e.time.classList.toggle('is-paused', DOCK.status === 'paused');
+      e.time.classList.toggle('is-idle',   DOCK.status === 'idle');
+    }
+
+    function renderQuestDock(){
+      const e = dockEls();
+      if(!e.root) return;
+
+      const target = getDockTarget();
+      const hasAnyActive = PRI_TASKS.some(t => !t.done);
+
+      // 表示ルール: 未完了が1件も無ければ完全に隠す
+      if(!hasAnyActive || !target){
+        e.root.classList.remove('is-visible', 'is-running', 'is-collapsed');
+        document.body.classList.remove('has-quest-dock');
+        stopDockTimer();
+        return;
+      }
+
+      // 基本表示
+      e.root.classList.add('is-visible');
+      e.root.classList.toggle('is-running', DOCK.status === 'running');
+      e.root.classList.toggle('is-collapsed', DOCK.collapsed);
+      document.body.classList.add('has-quest-dock');
+
+      // Quadrant バッジ
+      const q = calcQ(target.imp, target.urg);
+      e.q.className = 'quest-dock__q quest-dock__q--q' + q;
+      e.q.textContent = 'Q' + q;
+
+      // タイトル
+      e.title.textContent = target.title || '—';
+      e.title.dataset.id = target.id;
+
+      // 次のタスク
+      const nextT = getNextTask(target.id);
+      if(nextT){
+        e.nextTitle.textContent = nextT.title;
+        e.next.style.visibility = '';
+      } else {
+        e.nextTitle.textContent = '—';
+        e.next.style.visibility = 'hidden';
+      }
+
+      // ボタン状態
+      if(DOCK.status === 'idle'){
+        e.start.textContent = '▶';
+        e.start.disabled = false;
+        e.pause.disabled = true;
+        e.done.disabled  = false;
+      } else if(DOCK.status === 'running'){
+        e.start.textContent = '▶';
+        e.start.disabled = true;
+        e.pause.disabled = false;
+        e.done.disabled  = false;
+      } else if(DOCK.status === 'paused'){
+        e.start.textContent = '▶';
+        e.start.disabled = false;
+        e.pause.disabled = true;
+        e.done.disabled  = false;
+      }
+      updateDockTime();
+    }
+
+    // ---- ボタンハンドラ（DOMContentLoaded 後の1回だけ配線） ----
+    function wireQuestDock(){
+      const e = dockEls();
+      if(!e.root || e.root.dataset.wired === '1') return;
+      e.root.dataset.wired = '1';
+
+      // 開始（idle or paused）
+      e.start.addEventListener('click', () => {
+        const target = getDockTarget();
+        if(!target) return;
+        if(DOCK.status === 'idle'){
+          DOCK.activeId = target.id;
+          DOCK.status = 'running';
+          DOCK.elapsedMs = 0;
+          startDockTimer();
+          renderQuestDock();
+          if(typeof qmToast === 'function') qmToast('⚔︎ クエスト着手：' + target.title);
+        } else if(DOCK.status === 'paused'){
+          DOCK.status = 'running';
+          startDockTimer();
+          renderQuestDock();
+        }
+      });
+
+      // 中断
+      e.pause.addEventListener('click', () => {
+        if(DOCK.status !== 'running') return;
+        const now = Date.now();
+        DOCK.elapsedMs += (now - DOCK.lastTick);
+        DOCK.status = 'paused';
+        stopDockTimer();
+        renderQuestDock();
+        if(typeof qmToast === 'function') qmToast('⏸ 中断 — 戻ってこれる余白を残そう');
+      });
+
+      // 完了
+      e.done.addEventListener('click', () => {
+        const target = getDockTarget();
+        if(!target) return;
+        const t = PRI_TASKS.find(x => x.id === target.id);
+        if(!t) return;
+        const wasDone = t.done;
+        t.done = true;
+        savePriTasks();
+        if(!wasDone){
+          markActivityToday();
+          maybeRareDrop();
+        }
+        if(typeof qmToast === 'function') qmToast(`✓ 討伐完了：${t.title}（+${t.exp||20}pt）`);
+        resetDock();
+        renderAll();
+      });
+
+      // タイトルタップ → 編集モーダル
+      e.title.addEventListener('click', () => {
+        const id = e.title.dataset.id;
+        if(id && typeof qmOpenEdit === 'function') qmOpenEdit(id);
+      });
+
+      // 最小化トグル
+      e.collapse.addEventListener('click', () => {
+        DOCK.collapsed = !DOCK.collapsed;
+        try { localStorage.setItem('atlas_dock_collapsed', DOCK.collapsed ? '1' : '0'); } catch(_){}
+        e.root.classList.toggle('is-collapsed', DOCK.collapsed);
+        e.collapse.textContent = DOCK.collapsed ? '▴' : '▾';
+      });
+
+      // 初回：collapse アイコンを状態反映
+      e.collapse.textContent = DOCK.collapsed ? '▴' : '▾';
+    }
+    // DOM ready で配線
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', wireQuestDock);
+    } else {
+      wireQuestDock();
     }
 
     // ---- Home 上部のノティスを、タスク数＋ストリーク日数で動的に切替 ----
