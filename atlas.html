@@ -3418,7 +3418,7 @@ body.has-quest-dock { padding-bottom: 96px; }
 
       <div class="task-manager__head">
         <h3 class="task-manager__title">今日のクエスト</h3>
-        <span class="task-manager__stat">2 / 4 完了 · +75 EXP</span>
+        <span class="task-manager__stat" id="task-manager-stat">—</span>
       </div>
 
       <!-- Task input (quick) -->
@@ -3662,16 +3662,15 @@ body.has-quest-dock { padding-bottom: 96px; }
       </ul>
     </div>
 
-    <!-- Phase 2 teaser（ギルド戦・ランキング） -->
+    <!-- Phase 2 teaser（週次ランキング） -->
     <div class="info-section card-frame" id="raid-phase2-teaser">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-      <h3 class="info-section__title">ギルド戦 — 近日開放</h3>
+      <h3 class="info-section__title">週次ランキング — 開発中</h3>
       <p class="flavor-text">
-        他の冒険者とパーティを組み、同じレイドボスを同時に叩く <b style="color:var(--color-gold);">ギルド戦</b>、
-        そして <b style="color:var(--color-gold);">週次ランキング</b>（総ダメージ／貢献度／連続参加）は、
-        Phase 2 で開放予定。<br>
-        いまは <b>あなた自身のダメージ</b>が記録され、次の週に正式なギルドへ引き継がれます。
+        他の冒険者たちとの <b style="color:var(--color-gold);">週次ダメージ・ランキング</b> を開発中です。
+        毎週月曜にリセットされ、あなたの討伐ダメージが全体の順位に反映されます。<br>
+        いまはあなた個人のダメージが <b>このボス固有の戦績</b> として記録されます。
       </p>
     </div>
   </section>
@@ -5100,6 +5099,18 @@ body.has-quest-dock { padding-bottom: 96px; }
       const active = tasks.filter(t => !t.done);
       const done = tasks.filter(t => t.done);
       const sorted = [...sortByMode(active, priMode), ...done];
+
+      // --- ヘッダ右のスタット：M / N 完了 · +P EXP ---
+      const statEl = document.getElementById('task-manager-stat');
+      if(statEl){
+        const total = tasks.length;
+        if(total === 0){
+          statEl.textContent = 'まだ白紙';
+        } else {
+          const doneExp = done.reduce((s,t) => s + (t.exp || 20), 0);
+          statEl.textContent = `${done.length} / ${total} 完了 · +${doneExp.toLocaleString('en-US')} EXP`;
+        }
+      }
 
       listEl.innerHTML = sorted.map(t => {
         const q = calcQ(t.imp, t.urg);
