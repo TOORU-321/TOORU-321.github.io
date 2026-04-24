@@ -5057,8 +5057,14 @@ body.has-quest-dock { padding-bottom: 96px; }
 
     // === 推薦ロジック ===
     function getTopQuest(mode){
-      const active = PRI_TASKS.filter(t => !t.done);
-      if(!active.length) return null;
+      // _skipped フラグが立っているタスクは「今はスキップ」された本命候補。
+      // 残り候補が無くなったら、一度フラグをクリアして全体から再選択する（行き止まり回避）。
+      let active = PRI_TASKS.filter(t => !t.done && !t._skipped);
+      if(!active.length){
+        PRI_TASKS.forEach(t => { if(t._skipped) delete t._skipped; });
+        active = PRI_TASKS.filter(t => !t.done);
+        if(!active.length) return null;
+      }
       const sorted = sortByMode(active, mode);
       return sorted[0];
     }
@@ -5136,7 +5142,32 @@ body.has-quest-dock { padding-bottom: 96px; }
       const skipBtn = document.getElementById('focus-skip');
       if(skipBtn) skipBtn.addEventListener('click', () => {
         top._skipped = true;
-        renderFocus();
+        // フォーカスとリストどちらにも影響するので全体再描画（renderList で順序表示も更新される）
+        renderAll();
+      });
+
+      // 「⚔︎ いま挑む」— 固定フッター（quest-dock）でこのクエストを開始
+      const ctaBtn = focusEl.querySelector('.focus-quest__cta');
+      if(ctaBtn) ctaBtn.addEventListener('click', () => {
+        // すでに別タスクが走っていたら一度リセットしてから切り替え
+        if(typeof DOCK === 'object'){
+          if(DOCK.status !== 'idle' && DOCK.activeId !== top.id){
+            resetDock();
+          }
+          if(DOCK.status === 'idle'){
+            DOCK.activeId = top.id;
+            DOCK.status = 'running';
+            DOCK.elapsedMs = 0;
+            if(typeof startDockTimer === 'function') startDockTimer();
+            if(typeof renderQuestDock === 'function') renderQuestDock();
+            if(typeof qmToast === 'function') qmToast('⚔︎ クエスト着手：' + top.title);
+          }
+        }
+        // 固定フッターまで視線を誘導（スマホで画面下にあっても気づけるように）
+        const dockEl = document.getElementById('quest-dock');
+        if(dockEl){
+          dockEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        }
       });
     }
 
