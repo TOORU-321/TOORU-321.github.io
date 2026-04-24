@@ -3480,33 +3480,33 @@ body.has-quest-dock { padding-bottom: 96px; }
 
       <div class="status-main">
         <div class="status-row1">
-          <h2 class="status-name">冒険者 とーる</h2>
-          <span class="status-class">Sage — 今週の姿</span>
+          <h2 class="status-name" id="status-name">冒険者</h2>
+          <span class="status-class" id="status-class">駆け出し — 今週の姿</span>
         </div>
 
         <div class="exp-wrap">
           <div class="exp-meta">
-            <span>Lv.<b>47</b></span>
-            <span>次のレベルまで <b>1,240 / 2,500 EXP</b></span>
+            <span>Lv.<b id="status-lv">1</b></span>
+            <span id="status-exp-meta">次のレベルまで <b>0 / 10 EXP</b></span>
           </div>
-          <div class="exp-bar"><div class="exp-bar__fill" style="width: 49.6%;"></div></div>
+          <div class="exp-bar"><div class="exp-bar__fill" id="status-exp-fill" style="width: 0%;"></div></div>
         </div>
 
         <div class="class-weights">
           <div class="cw-item">
             <div class="cw-label">Knight</div>
-            <div class="cw-value">45%</div>
-            <div class="cw-mini-bar" style="--pct: 45%"></div>
+            <div class="cw-value" id="cw-knight-val">0%</div>
+            <div class="cw-mini-bar" id="cw-knight-bar" style="--pct: 0%"></div>
           </div>
           <div class="cw-item">
             <div class="cw-label">Sage</div>
-            <div class="cw-value">35%</div>
-            <div class="cw-mini-bar" style="--pct: 35%"></div>
+            <div class="cw-value" id="cw-sage-val">0%</div>
+            <div class="cw-mini-bar" id="cw-sage-bar" style="--pct: 0%"></div>
           </div>
           <div class="cw-item">
             <div class="cw-label">Ranger</div>
-            <div class="cw-value">20%</div>
-            <div class="cw-mini-bar" style="--pct: 20%"></div>
+            <div class="cw-value" id="cw-ranger-val">0%</div>
+            <div class="cw-mini-bar" id="cw-ranger-bar" style="--pct: 0%"></div>
           </div>
         </div>
       </div>
@@ -5270,8 +5270,86 @@ body.has-quest-dock { padding-bottom: 96px; }
       renderFocus();
       renderList();
       renderHomeNotice();
+      renderHomeStatus();
       renderQuestDock();
       renderRecord();
+    }
+
+    // ============================================================
+    // ✦ ホームステータスカード（冒険者名 / Lv / EXP / クラス分布）
+    //   個人戦績と同じ computeLevel を使用し、整合性を保つ。
+    //   クラス分布は完了済みタスクのカテゴリ比率から算出：
+    //     事務         → Knight（規律・堅実）
+    //     クライアント  → Ranger（外界との接点・俊敏）
+    //     開拓／自分ごと → Sage（探索・研究・内省）
+    // ============================================================
+    function renderHomeStatus(){
+      const nameEl = document.getElementById('status-name');
+      const classEl = document.getElementById('status-class');
+      const lvEl = document.getElementById('status-lv');
+      const metaEl = document.getElementById('status-exp-meta');
+      const fillEl = document.getElementById('status-exp-fill');
+      const cwKV = document.getElementById('cw-knight-val');
+      const cwKB = document.getElementById('cw-knight-bar');
+      const cwSV = document.getElementById('cw-sage-val');
+      const cwSB = document.getElementById('cw-sage-bar');
+      const cwRV = document.getElementById('cw-ranger-val');
+      const cwRB = document.getElementById('cw-ranger-bar');
+      if(!nameEl || !lvEl) return; // ステータスカードが無い画面では何もしない
+
+      // ---- 冒険者名（D.nickname / user.displayName > 既定） ----
+      let adventurerName = '冒険者';
+      if(D && D.nickname) adventurerName = D.nickname;
+      else if(D && D.user && D.user.displayName) adventurerName = '冒険者 ' + D.user.displayName;
+      nameEl.textContent = adventurerName;
+
+      // ---- Lv / EXP バー ----
+      const done = (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).filter(t => t.done);
+      const totalExp = done.reduce((s,t) => s + (t.exp || 20), 0);
+      const lv = computeLevel(totalExp);
+      // 逆算：Lv N の下限 = 10 * (N-1)^2、Lv N+1 の下限 = 10 * N^2
+      const prevThreshold = 10 * (lv - 1) * (lv - 1);
+      const nextThreshold = 10 * lv * lv;
+      const curInLv = Math.max(0, totalExp - prevThreshold);
+      const needInLv = Math.max(1, nextThreshold - prevThreshold);
+      const pct = Math.min(100, Math.round(curInLv / needInLv * 1000) / 10);
+      lvEl.textContent = String(lv);
+      if(metaEl){
+        metaEl.innerHTML = `次のレベルまで <b>${curInLv.toLocaleString('en-US')} / ${needInLv.toLocaleString('en-US')} EXP</b>`;
+      }
+      if(fillEl) fillEl.style.width = pct + '%';
+
+      // ---- クラス分布 ----
+      const weights = { Knight: 0, Sage: 0, Ranger: 0 };
+      done.forEach(t => {
+        if(t.cat === '事務') weights.Knight += 1;
+        else if(t.cat === 'クライアント') weights.Ranger += 1;
+        else if(t.cat === '開拓' || t.cat === '自分ごと') weights.Sage += 1;
+        else weights.Sage += 0.5; // カテゴリ無しは薄く Sage に寄せる
+      });
+      const total = weights.Knight + weights.Sage + weights.Ranger;
+      let kp = 0, sp = 0, rp = 0;
+      if(total > 0){
+        kp = Math.round(weights.Knight / total * 100);
+        sp = Math.round(weights.Sage / total * 100);
+        rp = 100 - kp - sp; // 丸め誤差は Ranger に吸収
+      }
+      if(cwKV) cwKV.textContent = kp + '%';
+      if(cwKB) cwKB.style.setProperty('--pct', kp + '%');
+      if(cwSV) cwSV.textContent = sp + '%';
+      if(cwSB) cwSB.style.setProperty('--pct', sp + '%');
+      if(cwRV) cwRV.textContent = rp + '%';
+      if(cwRB) cwRB.style.setProperty('--pct', rp + '%');
+
+      // 最多クラスを「今週の姿」として表示
+      if(classEl){
+        if(total === 0){
+          classEl.textContent = '駆け出し — 今週の姿';
+        } else {
+          const top = Object.keys(weights).reduce((a,b) => weights[a] >= weights[b] ? a : b);
+          classEl.textContent = top + ' — 今週の姿';
+        }
+      }
     }
 
     // ============================================================
