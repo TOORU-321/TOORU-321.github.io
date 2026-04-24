@@ -3622,8 +3622,8 @@ body.has-quest-dock { padding-bottom: 96px; }
       <div class="hp-meta"><span>残り体力</span><span><b id="raid-hp-meta">—</b></span></div>
 
       <div class="raid-share">
-        <button class="btn btn--primary">協力を呼ぶ</button>
-        <button class="btn">戦績を分かち合う</button>
+        <!-- 「協力を呼ぶ」は Phase 2（ギルド戦）で復活。現時点では非表示。 -->
+        <button class="btn" id="raid-share-btn" type="button">戦績を分かち合う</button>
       </div>
     </div>
 
@@ -3652,102 +3652,27 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
     </div>
 
-    <!-- Damage log -->
+    <!-- Damage log — あなたの直近7日の攻撃記録 -->
     <div class="info-section card-frame">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-      <h3 class="info-section__title">最近の攻撃記録</h3>
-      <ul class="log-list">
-        <li class="log-item">
-          <span class="log-item__time">14:42</span>
-          <span class="log-item__name">ひなた<span class="log-item__name-role">— Knight</span></span>
-          <span class="log-item__dmg">+120</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">14:28</span>
-          <span class="log-item__name">みずき<span class="log-item__name-role">— Sage</span></span>
-          <span class="log-item__dmg">+85</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">14:05</span>
-          <span class="log-item__name">冒険者 とーる<span class="log-item__name-role">— Sage</span></span>
-          <span class="log-item__dmg">+75</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">13:51</span>
-          <span class="log-item__name">けんた<span class="log-item__name-role">— Ranger</span></span>
-          <span class="log-item__dmg">+60</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">13:22</span>
-          <span class="log-item__name">ゆきの<span class="log-item__name-role">— Knight</span></span>
-          <span class="log-item__dmg">+95</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">12:58</span>
-          <span class="log-item__name">ようへい<span class="log-item__name-role">— Ranger</span></span>
-          <span class="log-item__dmg">+40</span>
-        </li>
-        <li class="log-item">
-          <span class="log-item__time">12:40</span>
-          <span class="log-item__name">さえ<span class="log-item__name-role">— Sage</span></span>
-          <span class="log-item__dmg">+55</span>
-        </li>
+      <h3 class="info-section__title">あなたの攻撃記録・直近7日</h3>
+      <ul class="log-list" id="raid-log-list">
+        <!-- 動的に描画 -->
       </ul>
     </div>
 
-    <!-- Ranking -->
-    <div class="info-section card-frame">
+    <!-- Phase 2 teaser（ギルド戦・ランキング） -->
+    <div class="info-section card-frame" id="raid-phase2-teaser">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-      <h3 class="info-section__title">今週のランキング</h3>
-
-      <div class="rank-tabs">
-        <button class="rank-tab is-active">総ダメージ</button>
-        <button class="rank-tab">貢献度</button>
-        <button class="rank-tab">ルーキー</button>
-        <button class="rank-tab">連続参加</button>
-        <button class="rank-tab">召喚数</button>
-      </div>
-
-      <ul class="rank-list">
-        <li class="rank-item rank-item--top">
-          <span class="rank-item__no">I</span>
-          <span class="rank-item__avatar">ひ</span>
-          <span class="rank-item__name">ひなた<span class="rank-item__role">— Knight</span></span>
-          <span class="rank-item__val">480 DMG</span>
-        </li>
-        <li class="rank-item rank-item--top">
-          <span class="rank-item__no">II</span>
-          <span class="rank-item__avatar">ゆ</span>
-          <span class="rank-item__name">ゆきの<span class="rank-item__role">— Knight</span></span>
-          <span class="rank-item__val">395 DMG</span>
-        </li>
-        <li class="rank-item rank-item--top">
-          <span class="rank-item__no">III</span>
-          <span class="rank-item__avatar">け</span>
-          <span class="rank-item__name">けんた<span class="rank-item__role">— Ranger</span></span>
-          <span class="rank-item__val">342 DMG</span>
-        </li>
-        <li class="rank-item">
-          <span class="rank-item__no">4</span>
-          <span class="rank-item__avatar">み</span>
-          <span class="rank-item__name">みずき<span class="rank-item__role">— Sage</span></span>
-          <span class="rank-item__val">280 DMG</span>
-        </li>
-        <li class="rank-item rank-item--you">
-          <span class="rank-item__no">7</span>
-          <span class="rank-item__avatar">と</span>
-          <span class="rank-item__name">冒険者 とーる<span class="rank-item__role">— Sage</span></span>
-          <span class="rank-item__val">215 DMG</span>
-        </li>
-        <li class="rank-item">
-          <span class="rank-item__no">8</span>
-          <span class="rank-item__avatar">さ</span>
-          <span class="rank-item__name">さえ<span class="rank-item__role">— Sage</span></span>
-          <span class="rank-item__val">190 DMG</span>
-        </li>
-      </ul>
+      <h3 class="info-section__title">ギルド戦 — 近日開放</h3>
+      <p class="flavor-text">
+        他の冒険者とパーティを組み、同じレイドボスを同時に叩く <b style="color:var(--color-gold);">ギルド戦</b>、
+        そして <b style="color:var(--color-gold);">週次ランキング</b>（総ダメージ／貢献度／連続参加）は、
+        Phase 2 で開放予定。<br>
+        いまは <b>あなた自身のダメージ</b>が記録され、次の週に正式なギルドへ引き継がれます。
+      </p>
     </div>
   </section>
 
@@ -5353,6 +5278,73 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
     }
 
+    // 戦績を分かち合う — X（旧Twitter）シェア用URL を生成
+    function buildRaidShareUrl(){
+      const r = D.raid || {};
+      const hpMax = r.hpMax || 0;
+      const startedAt = r.startedAt || todayKey();
+      const damage = damageSinceRaidStart(startedAt);
+      const hpCur = Math.max(0, hpMax - damage);
+      const week = r.week || 1;
+      const pct = hpMax > 0 ? Math.round((1 - hpCur / hpMax) * 100) : 0;
+      const lines = [
+        `【Bloom Atlas · 討伐進行中】`,
+        `期日竜ゴルゴザイア 第${week}週`,
+        `与えたダメージ ${damage.toLocaleString('en-US')} / HP ${hpMax.toLocaleString('en-US')}（${pct}% 削った）`,
+        `— タスクを討伐してRPG風に進む、フリーランスのための地図。`,
+      ];
+      const text = encodeURIComponent(lines.join('\n'));
+      const url = encodeURIComponent('https://columns.l-mine.com/atlas.html');
+      const hashtags = encodeURIComponent('BloomAtlas,タスク管理');
+      return `https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=${hashtags}`;
+    }
+
+    function wireRaidShare(){
+      const btn = document.getElementById('raid-share-btn');
+      if(!btn || btn.dataset.wired === '1') return;
+      btn.dataset.wired = '1';
+      btn.addEventListener('click', () => {
+        try {
+          window.open(buildRaidShareUrl(), '_blank', 'noopener,noreferrer');
+        } catch(_){
+          if(typeof qmToast === 'function') qmToast('シェア用のタブを開けませんでした');
+        }
+      });
+    }
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireRaidShare);
+    else wireRaidShare();
+
+    // 直近7日の自分の攻撃記録を描画（dailyExp からビルド）
+    function renderRaidLog(){
+      const listEl = document.getElementById('raid-log-list');
+      if(!listEl) return;
+      const dailyExp = (D && D.dailyExp) || {};
+      const dates = Object.keys(dailyExp).filter(k => (dailyExp[k] || 0) > 0).sort().reverse(); // 新しい順
+      if(!dates.length){
+        listEl.innerHTML =
+          '<li class="log-item" style="opacity:.7;">' +
+            '<span class="log-item__time">—</span>' +
+            '<span class="log-item__name">まだ攻撃の記録は残っていない。クエストを1つ討伐すれば、ここに剣の跡が刻まれる。</span>' +
+            '<span class="log-item__dmg">—</span>' +
+          '</li>';
+        return;
+      }
+      const last7 = dates.slice(0, 7);
+      listEl.innerHTML = last7.map(iso => {
+        const dmg = dailyExp[iso] || 0;
+        const label = (typeof formatEventDate === 'function') ? formatEventDate(iso) : iso;
+        // クラス推定：その日の攻撃を「おそらく」どのクラスで行ったか（簡易：ダメージ規模で表現）
+        const tone = dmg >= 150 ? '— 全力討伐' : dmg >= 80 ? '— 安定攻撃' : '— 偵察級';
+        return (
+          '<li class="log-item">' +
+            '<span class="log-item__time">' + label + '</span>' +
+            '<span class="log-item__name">あなた<span class="log-item__name-role">' + tone + '</span></span>' +
+            '<span class="log-item__dmg">+' + dmg.toLocaleString('en-US') + '</span>' +
+          '</li>'
+        );
+      }).join('');
+    }
+
     function renderRaid(){
       const hpFill    = document.getElementById('raid-hp-fill');
       const hpMeta    = document.getElementById('raid-hp-meta');
@@ -5361,6 +5353,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       const daysEl    = document.getElementById('raid-stat-days');
       const weekEl    = document.getElementById('raid-stat-week');
       const paceEl    = document.getElementById('raid-stat-pace');
+      renderRaidLog();
       if(!hpFill) return; // scene-raid が無ければ何もしない
 
       ensureRaid();
