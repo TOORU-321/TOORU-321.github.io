@@ -1150,11 +1150,20 @@ nav.tabs {
   box-shadow: var(--shadow-deep), var(--shadow-glow-gold);
   padding: 1.5rem 1.4rem 1.8rem;
   color: var(--color-ivory);
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .qm { padding: 1.1rem 1rem 1.4rem; }
+  .qm-ov { padding: 1rem 0.6rem 4rem; }
 }
 .qm__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
   padding-bottom: 0.9rem;
   margin-bottom: 1.1rem;
   border-bottom: 1px solid var(--color-gold-dim);
@@ -1165,6 +1174,14 @@ nav.tabs {
   letter-spacing: 0.14em;
   color: var(--color-gold);
   margin: 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+@media (max-width: 480px) {
+  .qm__title { font-size: 0.95rem; letter-spacing: 0.08em; }
 }
 .qm__close {
   background: transparent;
@@ -1262,6 +1279,8 @@ nav.tabs {
 
 .qm-fi, .qm-fs, .qm-ft {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--color-bg-deep);
   border: 1px solid var(--color-gold-dim);
   color: var(--color-ivory);
@@ -1292,7 +1311,11 @@ nav.tabs {
   background: rgba(15, 20, 40, 0.4);
   cursor: pointer;
   transition: all var(--transition-quick);
+  box-sizing: border-box;
+  min-width: 0;
 }
+.qm-il-opt > div { min-width: 0; flex: 1; }
+.qm-il-desc { overflow-wrap: anywhere; word-break: break-word; }
 .qm-il-opt:hover {
   border-color: var(--color-gold-soft);
   background: var(--color-gold-dim);
@@ -1329,7 +1352,8 @@ nav.tabs {
 .qm-il-opt[data-lv="1"] .qm-il-name { color: var(--color-ivory-dim); }
 
 /* Toggle buttons (重要度/緊急度) */
-.qm-tg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.qm-tg-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.4rem; }
+.qm-tgb { box-sizing: border-box; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 .qm-tgb {
   background: transparent;
   border: 1px solid var(--color-gold-dim);
@@ -1352,6 +1376,8 @@ nav.tabs {
 /* Submit button */
 .qm-submit {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--color-gold);
   color: var(--color-bg-deep);
   border: 1px solid var(--color-gold);
@@ -1459,7 +1485,8 @@ nav.tabs {
   padding: 0.2rem 0.55rem;
   border: 1px solid var(--color-gold-dim);
   border-radius: 999px;
-  margin-left: 0.7rem;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .qm-auth-pill__dot {
   width: 6px; height: 6px;
