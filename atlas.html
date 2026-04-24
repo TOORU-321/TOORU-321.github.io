@@ -316,6 +316,41 @@ nav.tabs {
   letter-spacing: 0.1em;
 }
 
+/* モバイルは 2×2 グリッド（3番目の "III" が折り返して見栄えが崩れるのを回避） */
+@media (max-width: 600px) {
+  nav.tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 1.25rem 0 1.75rem;
+    padding: 0.25rem 0 0;
+  }
+  .tab {
+    padding: 0.7rem 0.4rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.1em;
+    text-align: center;
+    /* セルの境界に淡いディバイダーを入れて "2×2 の格" に見せる */
+    border-bottom: 1px solid rgba(201, 166, 107, 0.14);
+  }
+  .tab:nth-child(odd) {
+    border-right: 1px solid rgba(201, 166, 107, 0.14);
+  }
+  .tab:nth-child(3), .tab:nth-child(4) {
+    border-bottom: none;
+  }
+  /* アクティブ下線は2×2 のセル内にきれいに収める */
+  .tab.is-active::after {
+    left: 30%;
+    right: 30%;
+    bottom: 2px;
+  }
+  .tab__num {
+    font-size: 0.6rem;
+    margin-right: 0.4em;
+  }
+}
+
 /* ==========================================================================
    Card frame with corner filigree
    ========================================================================== */
