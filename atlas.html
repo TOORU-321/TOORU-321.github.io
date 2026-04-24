@@ -5450,10 +5450,29 @@ body.has-quest-dock { padding-bottom: 96px; }
       const openCount = tasks.filter(t => !t.done).length;
       const streakDays = (D && D.streak && typeof D.streak.current === 'number') ? D.streak.current : 0;
 
-      // ストリーク接頭辞（3日以上で添える）
-      const streakPrefix = streakDays >= 3
-        ? `<span style="color:var(--color-gold);">🔥 連続 ${streakDays}日、夜は続く。</span>&nbsp;&nbsp;`
-        : '';
+      // ── ストリーク接頭辞：Day 1 から Stage 進化への距離感を出す（Goal Gradient）
+      //    STAGE_THRESHOLDS は { 2: 3, 3: 10 } を前提に、ハードコードではなく参照。
+      const T2 = (typeof STAGE_THRESHOLDS === 'object' && STAGE_THRESHOLDS[2]) || 3;
+      const T3 = (typeof STAGE_THRESHOLDS === 'object' && STAGE_THRESHOLDS[3]) || 10;
+      let streakPrefix = '';
+      if(streakDays === 1){
+        // 初日：芽吹きの色で、次のマイルストーンを静かに見せる
+        streakPrefix = `<span style="color:#9FB5A8;">🌱 連続 1日。</span><span style="color:var(--color-ivory-muted);">熟練（Stage 2）まで あと ${T2 - 1}日。</span>&nbsp;&nbsp;`;
+      } else if(streakDays === 2){
+        // 2日目：明日が進化のふち — アンティシペーションを最大化
+        streakPrefix = `<span style="color:#C5A56B;">🌿 連続 2日。</span><span style="color:var(--color-gold);">明日、熟練の気配。</span>&nbsp;&nbsp;`;
+      } else if(streakDays >= T2 && streakDays < T3){
+        // Stage 2 達成〜Stage 3 前：次の達人を遠望
+        const remain = T3 - streakDays;
+        streakPrefix = `<span style="color:var(--color-gold);">🔥 連続 ${streakDays}日、夜は続く。</span><span style="color:var(--color-ivory-muted);">達人（Stage 3）まで あと ${remain}日。</span>&nbsp;&nbsp;`;
+      } else if(streakDays === T3){
+        // ちょうど Stage 3 到達日
+        streakPrefix = `<span style="color:var(--color-gold);">👑 連続 ${streakDays}日、達人の夜明け。</span>&nbsp;&nbsp;`;
+      } else if(streakDays > T3){
+        // Stage 3 以降：達人の夜を重ねる
+        streakPrefix = `<span style="color:var(--color-gold);">👑 連続 ${streakDays}日、達人の夜が続く。</span>&nbsp;&nbsp;`;
+      }
+      // streakDays === 0 の場合は prefix なし（未開始者の地図を邪魔しない）
 
       let body;
       if(openCount === 0 && tasks.length === 0){
