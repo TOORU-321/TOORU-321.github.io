@@ -1019,8 +1019,9 @@ nav.tabs {
   background: rgba(15, 20, 40, 0.82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 1rem 4rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .qm-ov.is-open {
   display: flex;
@@ -2199,11 +2200,12 @@ img.bestiary-entry__illus {
   background: rgba(15, 20, 40, 0.72);
   backdrop-filter: blur(6px);
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 95;
-  padding: 1rem;
+  padding: 2rem 1rem 4rem;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .app-ov.is-open { display: flex; }
 
@@ -2211,8 +2213,7 @@ img.bestiary-entry__illus {
   position: relative;
   width: 100%;
   max-width: 560px;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
+  margin: auto 0;
   background: linear-gradient(180deg, var(--color-bg-deep) 0%, var(--color-bg-mid) 100%);
   border: 1px solid var(--color-gold);
   box-shadow: var(--shadow-deep), 0 0 40px rgba(201, 169, 97, 0.12);
