@@ -3608,7 +3608,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
 
-      <p class="raid-hero__label">永続レイド・第3週</p>
+      <p class="raid-hero__label" id="raid-label">永続レイド・第1週</p>
       <p class="raid-hero__latin">Draco terminus · Gorgosaia</p>
       <h2 class="raid-hero__name">期日竜 ゴルゴザイア</h2>
 
@@ -3618,8 +3618,8 @@ body.has-quest-dock { padding-bottom: 96px; }
              alt="期日竜ゴルゴザイア">
       </figure>
 
-      <div class="hp-bar"><div class="hp-bar__fill" style="width: 62%"></div></div>
-      <div class="hp-meta"><span>残り体力</span><span><b>6,240 / 10,000</b></span></div>
+      <div class="hp-bar"><div class="hp-bar__fill" id="raid-hp-fill" style="width: 100%"></div></div>
+      <div class="hp-meta"><span>残り体力</span><span><b id="raid-hp-meta">—</b></span></div>
 
       <div class="raid-share">
         <button class="btn btn--primary">協力を呼ぶ</button>
@@ -3634,20 +3634,20 @@ body.has-quest-dock { padding-bottom: 96px; }
       <h3 class="info-section__title">戦況</h3>
       <div class="stats-cols">
         <div class="stat-col">
-          <p class="stat-col__num">47</p>
-          <p class="stat-col__label">参加人数</p>
+          <p class="stat-col__num" id="raid-stat-damage">0</p>
+          <p class="stat-col__label">累計ダメージ</p>
         </div>
         <div class="stat-col">
-          <p class="stat-col__num">3,760</p>
-          <p class="stat-col__label">総ダメージ</p>
+          <p class="stat-col__num" id="raid-stat-days">0 日</p>
+          <p class="stat-col__label">挑戦日数</p>
         </div>
         <div class="stat-col">
-          <p class="stat-col__num">第3週</p>
-          <p class="stat-col__label">持ち越し週</p>
+          <p class="stat-col__num" id="raid-stat-week">第1週</p>
+          <p class="stat-col__label">継続週</p>
         </div>
         <div class="stat-col">
-          <p class="stat-col__num">−20%</p>
-          <p class="stat-col__label">次月曜の弱体化</p>
+          <p class="stat-col__num" id="raid-stat-pace">—</p>
+          <p class="stat-col__label">想定討伐まで</p>
         </div>
       </div>
     </div>
@@ -4728,7 +4728,9 @@ body.has-quest-dock { padding-bottom: 96px; }
       events: [],                // 出来事ログ {type, date:YYYY-MM-DD, msg} 最大20件
       welcomeSeen: false,        // 初回ウェルカム
       tosAcceptedAt: null,       // 同意タイムスタンプ
-      tosVersion: null
+      tosVersion: null,
+      dailyExp: {},              // 'YYYY-MM-DD': number（レイド計算＆統計で使用）
+      raid: null                 // { startedAt, hpMax, week } — null なら renderRaid で初期化
     };
     const TOS_VERSION = '2026-04-24';
 
@@ -5228,6 +5230,7 @@ body.has-quest-dock { padding-bottom: 96px; }
             // 未完了→完了 の瞬間だけストリーク／レアドロップ／イベント記録／トースト演出をトリガ
             if(!wasDone && t.done){
               markActivityToday();
+              try { trackDailyExp(t.exp || 20); } catch(_){}
               maybeRareDrop();
               let result = null;
               try { result = logQuestCompletion(t, prevLevel); } catch(_){}
@@ -5270,6 +5273,143 @@ body.has-quest-dock { padding-bottom: 96px; }
       renderQuestDock();
       renderRecord();
       renderZako();
+      renderRaid();
+    }
+
+    // ============================================================
+    // ✦ Daily EXP 追跡（レイド HP 計算の基盤）
+    //   タスク完了時に呼び、その日の獲得 EXP を積算する。
+    //   古い（60日以上前の）エントリは renderRaid 時に自動でトリミングする。
+    // ============================================================
+    function trackDailyExp(exp){
+      if(!D) return;
+      if(!D.dailyExp) D.dailyExp = {};
+      const today = todayKey();
+      D.dailyExp[today] = (D.dailyExp[today] || 0) + (exp || 0);
+      saveD();
+    }
+
+    // ============================================================
+    // ✦ レイドボス（scene-raid）
+    //   HP_max = 直近のdaily EXP 平均 × 7
+    //     - 平均ペースなら 1 週間で討伐
+    //     - 頑張る日が多いユーザーは 4〜5 日で早期討伐 → 次週ボスへ
+    //     - 軽いユーザーでも最低 300 HP は確保（手応えを担保）
+    //   蓄積ダメージ = raid 開始日以降の dailyExp 合計
+    //   HP が 0 以下になったら次の週のボスを自動 spawn（celebration トースト）
+    // ============================================================
+    function computeRecentAvgDailyExp(){
+      if(!D.dailyExp) return 0;
+      const dates = Object.keys(D.dailyExp).sort(); // 昇順
+      if(!dates.length) return 0;
+      // 直近 7 エントリの平均（ゼロ日はノイズになるので、実際に EXP を得た日だけで平均を取る）
+      const last7 = dates.slice(-7).map(d => D.dailyExp[d] || 0).filter(v => v > 0);
+      if(!last7.length) return 0;
+      return last7.reduce((s, v) => s + v, 0) / last7.length;
+    }
+
+    function ensureRaid(){
+      if(!D.raid){
+        const avg = computeRecentAvgDailyExp();
+        // データ無しなら 500（5-6日で討伐できる軽めの初回ボス）、
+        // ある場合は avg × 7（10刻み）。最低 300 で手応えを担保。
+        const hpMax = avg > 0
+          ? Math.max(300, Math.round(avg * 7 / 10) * 10)
+          : 500;
+        D.raid = {
+          startedAt: todayKey(),
+          hpMax: hpMax,
+          week: 1
+        };
+        saveD();
+      }
+    }
+
+    function damageSinceRaidStart(startIso){
+      if(!D.dailyExp || !startIso) return 0;
+      const start = new Date(startIso + 'T00:00:00');
+      let sum = 0;
+      Object.keys(D.dailyExp).forEach(d => {
+        if(new Date(d + 'T00:00:00') >= start) sum += (D.dailyExp[d] || 0);
+      });
+      return sum;
+    }
+
+    function spawnNextRaid(){
+      const avg = computeRecentAvgDailyExp();
+      const hpMax = avg > 0
+        ? Math.max(300, Math.round(avg * 7 / 10) * 10)
+        : 500;
+      const prevWeek = (D.raid && D.raid.week) || 1;
+      D.raid = {
+        startedAt: todayKey(),
+        hpMax: hpMax,
+        week: prevWeek + 1
+      };
+      saveD();
+      if(typeof logEvent === 'function') logEvent('raid', `レイド第${prevWeek}週を討伐 — 新たな竜が地平に`);
+      if(typeof qmToast === 'function'){
+        qmToast('🐉 レイド討伐！第' + prevWeek + '週のボスが地に還った。', { variant:'celebration', duration: 4200 });
+      }
+    }
+
+    function renderRaid(){
+      const hpFill    = document.getElementById('raid-hp-fill');
+      const hpMeta    = document.getElementById('raid-hp-meta');
+      const labelEl   = document.getElementById('raid-label');
+      const dmgEl     = document.getElementById('raid-stat-damage');
+      const daysEl    = document.getElementById('raid-stat-days');
+      const weekEl    = document.getElementById('raid-stat-week');
+      const paceEl    = document.getElementById('raid-stat-pace');
+      if(!hpFill) return; // scene-raid が無ければ何もしない
+
+      ensureRaid();
+
+      let damage = damageSinceRaidStart(D.raid.startedAt);
+      let hpMax = D.raid.hpMax;
+      let hpCur = Math.max(0, hpMax - damage);
+
+      // 討伐達成 → 次ボスを即 spawn（celebration）し、新しい値で再計算
+      if(hpCur <= 0 && damage >= hpMax){
+        spawnNextRaid();
+        damage = damageSinceRaidStart(D.raid.startedAt);
+        hpMax = D.raid.hpMax;
+        hpCur = Math.max(0, hpMax - damage);
+      }
+
+      const pct = hpMax > 0 ? Math.round(hpCur / hpMax * 1000) / 10 : 0;
+      hpFill.style.width = pct + '%';
+      if(hpMeta) hpMeta.textContent = hpCur.toLocaleString('en-US') + ' / ' + hpMax.toLocaleString('en-US');
+      if(labelEl) labelEl.textContent = '永続レイド・第' + D.raid.week + '週';
+
+      // ---- 戦況4列 ----
+      if(dmgEl) dmgEl.textContent = damage.toLocaleString('en-US');
+
+      // 挑戦日数（raid 開始から今日まで）
+      const startIso = D.raid.startedAt;
+      const daysSince = (() => {
+        try {
+          const start = new Date(startIso + 'T00:00:00');
+          const today = new Date(todayKey() + 'T00:00:00');
+          return Math.max(1, Math.floor((today - start) / 86400000) + 1);
+        } catch(_){ return 1; }
+      })();
+      if(daysEl) daysEl.textContent = daysSince + ' 日';
+
+      if(weekEl) weekEl.textContent = '第' + D.raid.week + '週';
+
+      // 想定討伐まで = 残HP ÷ 直近平均EXP/日、下限 0 日
+      if(paceEl){
+        const avg = computeRecentAvgDailyExp();
+        if(hpCur === 0){
+          paceEl.textContent = '討伐済';
+        } else if(avg <= 0){
+          paceEl.textContent = '—';
+        } else {
+          const eta = Math.max(1, Math.ceil(hpCur / avg));
+          paceEl.textContent = '約 ' + eta + ' 日';
+        }
+      }
     }
 
     // ============================================================
@@ -5731,6 +5871,7 @@ body.has-quest-dock { padding-bottom: 96px; }
         let result = null;
         if(!wasDone){
           markActivityToday();
+          try { trackDailyExp(t.exp || 20); } catch(_){}
           maybeRareDrop();
           try { result = logQuestCompletion(t, prevLevel); } catch(_){}
         }
