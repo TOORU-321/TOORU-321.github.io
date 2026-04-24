@@ -1120,6 +1120,35 @@ nav.tabs {
   margin-top: 0.15rem;
   font-style: italic;
 }
+/* 未記入エラー表示（バリデーション） */
+.qm-fl__err {
+  display: inline-block;
+  margin-left: 0.6rem;
+  padding: 0.15rem 0.45rem;
+  background: rgba(168, 51, 77, 0.18);
+  border: 1px solid var(--color-jewel-red);
+  color: var(--color-jewel-red);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  animation: qmFlErrPulse 0.32s ease-out;
+}
+@keyframes qmFlErrPulse {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  60%  { opacity: 1; transform: translateY(1px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.qm-fi.is-error,
+.qm-fs.is-error,
+.qm-ft.is-error {
+  border-color: var(--color-jewel-red) !important;
+  box-shadow: 0 0 0 2px rgba(168, 51, 77, 0.15);
+}
+.qm-il-grid.is-error {
+  outline: 1px solid var(--color-jewel-red);
+  outline-offset: 4px;
+  box-shadow: 0 0 18px rgba(168, 51, 77, 0.25);
+}
 
 .qm-fi, .qm-fs, .qm-ft {
   width: 100%;
@@ -5073,21 +5102,58 @@ img.bestiary-entry__illus {
       });
     });
 
+    // --- 必須バリデーション：未記入エラー表示 ---
+    function clearQmFieldError(field){
+      if (!field) return;
+      field.classList.remove('is-error');
+      const fg = field.closest ? field.closest('.qm-fg') : null;
+      const label = fg ? fg.querySelector('.qm-fl') : null;
+      if (label) {
+        const err = label.querySelector('.qm-fl__err');
+        if (err) err.remove();
+      }
+    }
+    function showQmFieldError(field, msg){
+      if (!field) return;
+      const fg = field.closest ? field.closest('.qm-fg') : null;
+      const label = fg ? fg.querySelector('.qm-fl') : null;
+      if (label && !label.querySelector('.qm-fl__err')) {
+        const errSpan = document.createElement('span');
+        errSpan.className = 'qm-fl__err';
+        errSpan.textContent = '← ' + (msg || '未記入');
+        label.appendChild(errSpan);
+      }
+      field.classList.add('is-error');
+      // フィールドを中央にスムーズスクロール
+      try {
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (_) { field.scrollIntoView(); }
+      // テキスト入力ならフォーカスも
+      if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
+        setTimeout(() => { try { field.focus({ preventScroll: true }); } catch(_) { field.focus(); } }, 260);
+      }
+      // 6秒後に自動クリア
+      const autoClear = setTimeout(() => clearQmFieldError(field), 6000);
+      // 入力 or クリックしたらクリア
+      const onInteract = () => { clearTimeout(autoClear); clearQmFieldError(field); };
+      field.addEventListener('input', onInteract, { once: true });
+      field.addEventListener('click', onInteract, { once: true });
+      // 画面上部にトーストも
+      if (typeof qmToast === 'function') qmToast('⚠ ' + (msg || '未記入') + ' の項目があります');
+    }
+
     // --- 登録 / 更新ボタン ---
     if (qmSubmit) {
       qmSubmit.addEventListener('click', () => {
         const title = qmTitleIn ? qmTitleIn.value.trim() : '';
         if (!title) {
-          qmTitleIn.focus();
-          qmTitleIn.style.borderColor = 'var(--color-jewel-red)';
-          setTimeout(() => qmTitleIn.style.borderColor = '', 1600);
+          showQmFieldError(qmTitleIn, '未記入');
           return;
         }
         const selLv = document.querySelector('#qm-il-grid .qm-il-opt.is-sel');
         if (!selLv) {
           const grid = document.getElementById('qm-il-grid');
-          grid.style.outline = '1px solid var(--color-jewel-red)';
-          setTimeout(() => grid.style.outline = '', 1600);
+          showQmFieldError(grid, '未選択');
           return;
         }
         // フォーム値を集約
