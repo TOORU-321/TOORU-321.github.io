@@ -3924,10 +3924,11 @@ body.has-quest-dock { padding-bottom: 96px; }
     <div class="qm-fg">
       <label class="qm-fl" for="qm-type">種類</label>
       <select class="qm-fs" id="qm-type">
-        <option value="client">💼 クライアントワーク</option>
-        <option value="internal">🏢 社内・自社業務</option>
-        <option value="growth">🌱 自己成長・学習</option>
-        <option value="other">📌 その他・雑務</option>
+        <option value="クライアント">💼 クライアントワーク（納品・提案・商談）</option>
+        <option value="事務">🏢 事務・経理・管理業務</option>
+        <option value="開拓">🔭 新規開拓・試作・学習</option>
+        <option value="自分ごと">🌱 自分ごと（健康・生活・内省）</option>
+        <option value="">📌 その他・雑務</option>
       </select>
     </div>
 
@@ -6151,7 +6152,7 @@ body.has-quest-dock { padding-bottom: 96px; }
         }
 
         if(list.length === 0){
-          badgesEl.innerHTML = '<span class="badge" style="opacity:.5">まだ獲得バッジはありません</span>';
+          badgesEl.innerHTML = '<span class="badge" style="opacity:.5">勲章はまだ刻まれていない — 最初の一手から、旅路の徽章が生まれる。</span>';
         } else {
           badgesEl.innerHTML = list.map(b =>
             `<span class="badge ${b.cls||''}">${esc(b.label)}</span>`
@@ -6169,7 +6170,7 @@ body.has-quest-dock { padding-bottom: 96px; }
         if(evs.length === 0){
           eventsEl.innerHTML = cornerHtml +
             '<div class="info-row"><span class="info-row__val--jp" style="opacity:.6">' +
-            '✦ まだ記されていない物語。今日の一歩から、記録は始まります。' +
+            '✦&nbsp;まだ記されていない物語。今日の一歩が、最初の頁になる。' +
             '</span></div>';
         } else {
           eventsEl.innerHTML = cornerHtml + evs.map(ev =>
@@ -6303,7 +6304,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     // フォームの全フィールドをリセット
     function qmResetForm() {
       qmTitleIn.value = '';
-      document.getElementById('qm-type').value = 'client';
+      document.getElementById('qm-type').value = ''; // 「その他」を初期値に
       document.getElementById('qm-time').value = '1h';
       document.getElementById('qm-dead').value = '';
       document.getElementById('qm-when').value = '';
@@ -6319,7 +6320,8 @@ body.has-quest-dock { padding-bottom: 96px; }
     // タスクをフォームに流し込む（編集時）
     function qmFillForm(t) {
       qmTitleIn.value = t.title || '';
-      document.getElementById('qm-type').value = t.cat ? catToType(t.cat) : (t.type || 'client');
+      // 旧データ（英語コード）は typeToCat で吸収、既に日本語カテゴリならそのまま
+      document.getElementById('qm-type').value = typeToCat(t.cat || t.type || '');
       document.getElementById('qm-time').value = t.time || '1h';
       document.getElementById('qm-dead').value = t.deadline || '';
       document.getElementById('qm-when').value = t.whenStart || '';
@@ -6342,11 +6344,40 @@ body.has-quest-dock { padding-bottom: 96px; }
       if (urgBtn) urgBtn.classList.add('is-on');
     }
 
-    // カテゴリ ↔ type のマッピング
-    const CAT_TO_TYPE = { 'クライアント':'client', '事務':'other', '自分ごと':'growth', '開拓':'internal' };
-    const TYPE_TO_CAT = { 'client':'クライアント', 'other':'事務', 'growth':'自分ごと', 'internal':'開拓' };
-    function catToType(c){ return CAT_TO_TYPE[c] || 'other'; }
-    function typeToCat(t){ return TYPE_TO_CAT[t] || 'その他'; }
+    // カテゴリと select option の value は同一（日本語カテゴリ名）。
+    //   旧：英語中間コード（client/internal/growth/other）からのマッピングを持っていたが、
+    //       semantic に混乱する（社内業務→開拓 等）ため identity 化。
+    //   互換のため旧コードが入ってきたら変換。'その他' は UI 上 空 value に対応。
+    const LEGACY_TYPE_TO_CAT = { 'client':'クライアント', 'internal':'事務', 'growth':'自分ごと', 'other':'' };
+    function catToType(c){ return c || ''; }
+    function typeToCat(t){
+      if(t == null) return '';
+      if(LEGACY_TYPE_TO_CAT.hasOwnProperty(t)) return LEGACY_TYPE_TO_CAT[t];
+      return t; // すでに日本語カテゴリ名
+    }
+
+    // タイトルから category を自動推論（完全一致ではなくキーワード含有判定）。
+    // ユーザーがクイック入力したタイトル全文にマッチするので、辞書は広めに。
+    const CAT_INFER_KEYWORDS = {
+      'クライアント': ['クライアント', '提案', '見積', '商談', '打ち合わせ', '打合せ', 'キックオフ', '議事録', '契約', 'ヒアリング', '先方', 'mtg', 'meeting', 'デモ', '納品', '検収', 'フィードバック', 'レビュー反映', '顧客', 'お客様', 'クロージング', 'アポ', '提出'],
+      '事務': ['請求', '見積書', '領収書', '経費', '振込', '支払い', '確定申告', '税務', '経理', '事務', '書類', '契約書送付', '請求書', 'インボイス', '記帳', '月次', '締め', '決算', '振替', '口座'],
+      '開拓': ['新規', '企画', 'アイデア', '草案', '試作', 'プロト', 'リサーチ', '学習', '勉強', '読書', '調査', 'ランディング', 'LP', '開拓', 'スキル', '資格', '教材', '検証', '仮説', 'ブログ', '執筆', 'コンテンツ制作', '発信'],
+      '自分ごと': ['運動', 'ストレッチ', '散歩', 'ジム', 'ヨガ', '瞑想', '健康', '睡眠', '食事', '掃除', '片付け', '整理', '休憩', '振り返り', '日記', '内省', '歯医者', '病院', '家事', '買い物', '自分', '健診']
+    };
+    function inferCat(title){
+      if(!title || typeof title !== 'string') return '';
+      const t = title.toLowerCase();
+      let best = '', bestScore = 0;
+      Object.keys(CAT_INFER_KEYWORDS).forEach(cat => {
+        const kws = CAT_INFER_KEYWORDS[cat];
+        let score = 0;
+        kws.forEach(kw => {
+          if(t.indexOf(kw.toLowerCase()) >= 0) score += 1;
+        });
+        if(score > bestScore){ bestScore = score; best = cat; }
+      });
+      return best; // マッチ0なら空文字（＝「その他」）
+    }
 
     function qmOpenAdd() {
       qmEditingId = null;
@@ -6354,6 +6385,15 @@ body.has-quest-dock { padding-bottom: 96px; }
       // 簡易入力から引き継ぎ
       if (qmQuick && qmQuick.value.trim() && !qmTitleIn.value.trim()) {
         qmTitleIn.value = qmQuick.value.trim();
+      }
+      // タイトル自動推論でカテゴリをプリセット（ユーザーはモーダル内で任意変更可）
+      const titleForInfer = qmTitleIn.value.trim();
+      if (titleForInfer) {
+        const inferred = inferCat(titleForInfer);
+        if (inferred) {
+          const typeEl = document.getElementById('qm-type');
+          if (typeEl) typeEl.value = inferred;
+        }
       }
       qmTitleEl.childNodes[0].nodeValue = '✦ クエストを記す';
       qmSubmit.textContent = '✦ クエストを登録';
@@ -6515,7 +6555,12 @@ body.has-quest-dock { padding-bottom: 96px; }
         // フォーム値を集約
         const impBtn = document.querySelector('.qm-tgb[data-tg="imp"].is-on');
         const urgBtn = document.querySelector('.qm-tgb[data-tg="urg"].is-on');
-        const typeVal = document.getElementById('qm-type').value;
+        let typeVal = document.getElementById('qm-type').value;
+        // ユーザーが未選択（=「その他」または空）の場合はタイトル推論で埋める
+        if (!typeVal) {
+          const inferred = inferCat(title);
+          if (inferred) typeVal = inferred;
+        }
         const data = {
           title: title,
           cat:   typeToCat(typeVal),
