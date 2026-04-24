@@ -916,6 +916,73 @@ nav.tabs {
 .task-row.is-touch .task-row__actions { opacity: 1; }
 @media (hover: none) { .task-row__actions { opacity: 1; } }
 
+/* ==========================================================================
+   ✦ Task Row — モバイル最適化（狭い画面で2段組に組み替え）
+   ========================================================================== */
+.task-row__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+@media (min-width: 601px) {
+  /* デスクトップでは meta は連結せず従来通り横一列に */
+  .task-row__meta { display: contents; }
+}
+@media (max-width: 600px) {
+  .task-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "check title   points"
+      ".     meta    actions";
+    column-gap: 0.6rem;
+    row-gap: 0.35rem;
+    align-items: start;
+    padding: 0.8rem 0;
+  }
+  .task-row__check   { grid-area: check; margin-right: 0; margin-top: 3px; }
+  .task-row__label   {
+    grid-area: title;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+  .task-row__points  {
+    grid-area: points;
+    padding-left: 0;
+    font-size: 0.72rem;
+    align-self: start;
+    margin-top: 3px;
+    white-space: nowrap;
+  }
+  .task-row__actions {
+    grid-area: actions;
+    opacity: 1;
+    align-self: center;
+    justify-self: end;
+  }
+  .task-row__meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    align-items: center;
+  }
+  .task-row__category {
+    margin-right: 0;
+    font-size: 0.66rem;
+    padding: 1px 6px;
+  }
+}
+
+/* より狭い画面でのフォントサイズ微調整 */
+@media (max-width: 400px) {
+  .task-row__label    { font-size: 0.9rem; }
+  .task-row__category { font-size: 0.62rem; padding: 1px 5px; }
+}
+
 .task-row__action {
   background: transparent;
   border: 1px solid var(--color-gold-dim);
@@ -4740,10 +4807,12 @@ img.bestiary-entry__illus {
         return `
           <div class="task-row ${t.done?'is-done':''}" data-id="${t.id}">
             <span class="task-row__check ${t.done?'is-done':''}"></span>
-            <span class="task-row__q task-row__q--q${q}" title="${Q_LABEL[q]}">${Q_LABEL[q]}</span>
-            <span class="task-row__lv" data-lv="${t.impactLevel||3}">Lv.${t.impactLevel||3}</span>
-            ${dlHtml}
-            <span class="task-row__category">${esc(t.cat)}</span>
+            <span class="task-row__meta">
+              <span class="task-row__q task-row__q--q${q}" title="${Q_LABEL[q]}">${Q_LABEL[q]}</span>
+              <span class="task-row__lv" data-lv="${t.impactLevel||3}">Lv.${t.impactLevel||3}</span>
+              ${dlHtml}
+              <span class="task-row__category">${esc(t.cat)}</span>
+            </span>
             <span class="task-row__label" data-edit="1" title="タップで編集">${esc(t.title)}</span>
             <span class="task-row__points">+${t.exp||20}</span>
             <span class="task-row__actions">
