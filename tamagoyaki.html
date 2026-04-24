@@ -693,6 +693,28 @@ nav.bottom button:active{transform:scale(.97)}
 .farewell-card .ig-btn:active{transform:scale(.96)}
 .farewell-card .close-btn{display:block;margin:14px auto 0;background:none;border:none;color:#8C7A6A;font-size:12px;cursor:pointer;padding:8px 16px;text-decoration:underline;font-family:inherit}
 
+/* ===== 称号システム ===== */
+.title-section{background:linear-gradient(180deg,#FFF8E7 0%,#FFF1CF 100%);border:1px solid #F5CF8E;border-radius:12px;padding:10px 12px;margin:10px 16px 0}
+.title-section .ts-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.title-section .ts-head .ts-title{font-family:'Klee One',serif;font-size:12px;color:#B3631A;font-weight:700;letter-spacing:.04em}
+.title-section .ts-head .ts-count{margin-left:auto;font-size:10px;color:#8C7A6A;background:#fff;border-radius:999px;padding:2px 8px;border:1px solid #F5E0B5}
+.title-grid{display:flex;flex-wrap:wrap;gap:5px}
+.title-chip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;padding:3px 8px;border-radius:999px;font-weight:700;font-family:inherit;white-space:nowrap;letter-spacing:.02em}
+.title-chip.earned.tier1{background:#FFF4E5;color:#A05A1A;border:1px solid #F5C78A}
+.title-chip.earned.tier2{background:#FFE8BE;color:#8C4A0D;border:1px solid #E9AF5C}
+.title-chip.earned.tier3{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border:1px solid #C8810F;box-shadow:0 1px 3px rgba(245,166,35,.3)}
+.title-chip.earned.tier4{background:linear-gradient(135deg,#F5A623 0%,#B66F08 100%);color:#fff;border:1px solid #8C4A0D;box-shadow:0 1px 4px rgba(181,111,8,.4)}
+.title-chip.locked{background:#F5ECD8;color:#BCA88A;border:1px dashed #D9C4A0;opacity:.75}
+.title-chip .ico{font-size:11px}
+.title-featured{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:999px;font-weight:700;background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border:1px solid #C8810F;box-shadow:0 1px 3px rgba(245,166,35,.3);margin-top:4px;letter-spacing:.03em;vertical-align:middle}
+
+/* ===== ラッキーデイ ===== */
+.lucky-banner{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,#FFE7B0 0%,#FFC56B 50%,#FFE7B0 100%);background-size:200% 100%;animation:luckyShimmer 4s linear infinite;border:1px solid #F5A623;border-radius:12px;padding:9px 12px;margin:8px 16px 0;color:#8C4A0D;font-weight:700;font-size:12px;box-shadow:0 2px 6px rgba(245,166,35,.25)}
+.lucky-banner .ico{font-size:18px;flex-shrink:0}
+.lucky-banner .txt{flex:1;line-height:1.5}
+.lucky-banner .txt small{display:block;font-size:10px;color:#A06B1F;font-weight:500;margin-top:1px}
+@keyframes luckyShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 /* ===== 最終評価カード ===== */
 .final-eval{background:linear-gradient(180deg,#FFF8E7 0%,#FFEFC5 100%);border:1px solid #F5CF8E;border-radius:14px;padding:14px 12px;margin:14px 0 8px;box-shadow:0 2px 8px rgba(193,107,26,.08)}
 .final-eval .eval-title{font-family:'Klee One',serif;font-size:13px;color:#C16B1A;font-weight:700;text-align:center;margin-bottom:10px;letter-spacing:.04em}
@@ -749,7 +771,9 @@ body.read-only .drawer-item[data-act="mirror"],body.read-only .drawer-item[data-
   </header>
   <main>
     <section class="main-view" id="mainView">
+      <div id="luckyBanner"></div>
       <div id="restBanner"></div>
+      <div id="titleSection"></div>
 
       <div class="summary-card">
         <div>
@@ -1124,10 +1148,14 @@ const START_AT=new Date('2026-04-21T00:00:00+09:00');
 
 // シークレットキャラ定義
 // cond type:
-//   'mealSet'   — 同じ食事(朝/昼/晩)のどれかにkeysすべてが揃った
-//   'daySet'    — 同じ日の食事全体(3食合算)でkeysが揃った
-//   'dayCount'  — 同じ日に min 種類以上が登場
-//   'mealCount' — 1食で min 種類以上が登場
+//   'mealSet'     — 同じ食事(朝/昼/晩)のどれかにkeysすべてが揃った
+//   'daySet'      — 同じ日の食事全体(3食合算)でkeysが揃った
+//   'dayCount'    — 同じ日に min 種類以上が登場
+//   'mealCount'   — 1食で min 種類以上が登場
+//   'totalO'      — 累計〇がmin以上
+//   'streak'      — 最長連続日数がmin以上
+//   'perfectDays' — パーフェクトデーの累計回数がmin以上
+//   'metaSecrets' — 既に発見済みの他シークレット数がmin以上（メタ条件）
 const SECRETS=[
   {id:'onigiri',emoji:'🍙',name:'おにぎりちゃん',tagline:'炭水化物＋海苔の名コンビ',
    cond:{type:'mealSet',keys:['タ','カ']}},
@@ -1140,7 +1168,16 @@ const SECRETS=[
   {id:'obento',emoji:'🍱',name:'おべんとうさん',tagline:'1食で5種類を揃えた達人',
    cond:{type:'mealCount',min:5}},
   {id:'haleno',emoji:'🎉',name:'ハレの日さん',tagline:'1日で全12種類を制覇した名手',
-   cond:{type:'daySet',keys:['タ','マ','ゴ','ヤ','キ','ハ','サ','イ','カ','ク','ニ','ン']}}
+   cond:{type:'daySet',keys:['タ','マ','ゴ','ヤ','キ','ハ','サ','イ','カ','ク','ニ','ン']}},
+  // ▼ 追加4体（条件はコードを見ないと分からないレア系）
+  {id:'kotsukotsu',emoji:'🔥',name:'コツコツのたましい',tagline:'連続記録を重ねた者だけが出会える',
+   cond:{type:'streak',min:7}},
+  {id:'hyakumaru',emoji:'💯',name:'ひゃくまるさま',tagline:'〇の累計が一定に届いた時 そっと現れる',
+   cond:{type:'totalO',min:100}},
+  {id:'nidoPerfect',emoji:'👑',name:'にどパーフェクト王',tagline:'パーフェクトを重ねた人の証',
+   cond:{type:'perfectDays',min:2}},
+  {id:'kansatsusha',emoji:'🔍',name:'ひみつの観察者',tagline:'他のシークレット達を見つけてきた人に',
+   cond:{type:'metaSecrets',min:4}}
 ];
 
 const ITEMS=[
@@ -1210,7 +1247,8 @@ function charImgSrc(key,stage){
   return 'assets/chars/'+KEY2LATIN[key]+'_'+Math.min(3,stage)+'.png';
 }
 // シークレットキャラの画像パス（画像がなければonerrorで絵文字fallback）
-function secretImgSrc(id){return 'assets/chars/secret_'+id+'.png'}
+// 全て小文字化：GitHub Pages (Linux) のケースセンシティブ対策
+function secretImgSrc(id){return 'assets/chars/secret_'+String(id).toLowerCase()+'.png'}
 // 次ステージまでの必要〇数（stage 0=5で成長,1=5,2=15,3=MAX）
 const STAGE_THRESHOLDS=[1,5,15];
 function nextStageNeed(count){
@@ -1300,10 +1338,40 @@ function isSecretRevealed(info){
   const trig=info.triggeredDate||info.date; // 旧データ互換
   return parseDate(today())>parseDate(trig);
 }
+// 累計系シークレット用の軽量集計（totalO / perfectDays / maxStreak）
+function computeGlobalStats(){
+  const data=state.data||{};
+  let totalO=0, perfectDays=0;
+  for(const d in data){
+    const set=new Set();
+    for(const m in data[d])data[d][m].forEach(k=>{
+      set.add(k);
+      if(Object.prototype.hasOwnProperty.call({タ:1,マ:1,ゴ:1,ヤ:1,キ:1,ハ:1,サ:1,イ:1,カ:1,ク:1,ニ:1,ン:1},k))totalO++;
+    });
+    if(set.size>=12)perfectDays++;
+  }
+  // 最長ストリーク（過去全体を走査）
+  const dates=Object.keys(data).filter(d=>Object.keys(data[d]||{}).length>0).sort();
+  let maxStreak=0, cur=0, prev=null;
+  for(const d of dates){
+    if(prev){
+      const diff=Math.round((parseDate(d)-parseDate(prev))/86400000);
+      if(diff===1)cur++;
+      else cur=1;
+    }else{cur=1;}
+    if(cur>maxStreak)maxStreak=cur;
+    prev=d;
+  }
+  return {totalO,perfectDays,maxStreak};
+}
+
 function checkSecrets(date){
   // 指定日のデータから未トリガーのシークレットをチェック（トリガーのみ、開放は翌日）
   const day=state.data[date]||{};
   const triggered=[];
+  // 累計系の計算は1度だけ行う（レア条件用）
+  let globalComputed=false, globalStats=null;
+  const lazyGlobal=()=>{if(!globalComputed){globalStats=computeGlobalStats();globalComputed=true;}return globalStats;};
   SECRETS.forEach(sec=>{
     if(state.secrets[sec.id])return; // すでにトリガー済（開放待ち含む）
     const c=sec.cond;
@@ -1325,6 +1393,16 @@ function checkSecrets(date){
         const u=new Set(day[m]);
         if(u.size>=c.min){hit=true;break}
       }
+    }else if(c.type==='totalO'){
+      hit=lazyGlobal().totalO>=c.min;
+    }else if(c.type==='streak'){
+      hit=lazyGlobal().maxStreak>=c.min;
+    }else if(c.type==='perfectDays'){
+      hit=lazyGlobal().perfectDays>=c.min;
+    }else if(c.type==='metaSecrets'){
+      // 他のシークレット発見数（自分自身を除く）
+      const others=Object.keys(state.secrets||{}).filter(id=>id!==sec.id);
+      hit=others.length>=c.min;
     }
     if(hit){
       state.secrets[sec.id]={triggeredDate:date,at:Date.now(),seen:false};
@@ -1420,7 +1498,114 @@ const $=id=>document.getElementById(id);
 
 function render(){
   renderHeader();
+  renderLuckyBanner();
+  renderTitleSection();
   if(state.view==='main')renderMain();else renderDash();
+}
+
+// ======== 称号システム ========
+// tier: 1=白銅 / 2=銅 / 3=銀（ハイライト）/ 4=金（最高峰）
+const TITLES=[
+  // 累計系（10個ぐらい取れる）
+  {id:'t1',tier:1,axis:'total',icon:'🥚',name:'はじめの一歩',min:1},
+  {id:'t10',tier:1,axis:'total',icon:'🌱',name:'10〇の記録者',min:10},
+  {id:'t30',tier:2,axis:'total',icon:'📋',name:'30〇の習慣派',min:30},
+  {id:'t50',tier:2,axis:'total',icon:'🎖️',name:'50〇の番人',min:50},
+  {id:'t100',tier:3,axis:'total',icon:'🏅',name:'100〇の達人',min:100},
+  {id:'t200',tier:4,axis:'total',icon:'👑',name:'伝説の記録者',min:200},
+  // ストリーク系
+  {id:'s2',tier:1,axis:'streak',icon:'🌼',name:'2日坊主クリア',min:2},
+  {id:'s3',tier:2,axis:'streak',icon:'🔥',name:'燃える3日間',min:3},
+  {id:'s7',tier:3,axis:'streak',icon:'💪',name:'1週間戦士',min:7},
+  {id:'s14',tier:4,axis:'streak',icon:'🏆',name:'2週間の覇者',min:14},
+  // 達成系
+  {id:'a-var',tier:2,axis:'achieve',icon:'🌈',name:'12食材ハンター',check:s=>s.usedCount>=12},
+  {id:'a-p1',tier:3,axis:'achieve',icon:'⭐',name:'パーフェクト経験者',check:s=>s.perfectDays>=1},
+  {id:'a-p3',tier:4,axis:'achieve',icon:'🌟',name:'パーフェクト3冠王',check:s=>s.perfectDays>=3},
+  {id:'a-s3',tier:3,axis:'achieve',icon:'🔍',name:'シークレット探偵',check:s=>s.secretsFound>=3},
+  {id:'a-all',tier:4,axis:'achieve',icon:'👁️',name:'全キャラ一人前',check:s=>s.allIchininae}
+];
+function computeTitleStats(){
+  const g=computeGlobalStats();
+  const byKey={}; ITEMS.forEach(i=>byKey[i.k]=0);
+  for(const d in state.data){
+    for(const m in state.data[d])state.data[d][m].forEach(k=>{if(byKey[k]!==undefined)byKey[k]++});
+  }
+  const usedCount=Object.values(byKey).filter(v=>v>0).length;
+  const allIchininae=ITEMS.every(i=>byKey[i.k]>=STAGE_THRESHOLDS[2]); // 15〇以上
+  const secretsFound=Object.keys(state.secrets||{}).length;
+  return {totalO:g.totalO,maxStreak:g.maxStreak,perfectDays:g.perfectDays,usedCount,allIchininae,secretsFound};
+}
+function earnedTitles(stats){
+  return TITLES.filter(t=>{
+    if(t.check)return !!t.check(stats);
+    if(t.axis==='total')return stats.totalO>=t.min;
+    if(t.axis==='streak')return stats.maxStreak>=t.min;
+    return false;
+  });
+}
+function featuredTitle(earned){
+  if(!earned.length)return null;
+  // 最高tierを優先、同tierなら最新（配列後方）を採用
+  const maxT=Math.max.apply(null,earned.map(e=>e.tier));
+  const top=earned.filter(e=>e.tier===maxT);
+  return top[top.length-1];
+}
+function renderTitleSection(){
+  const el=$('titleSection'); if(!el)return;
+  const stats=computeTitleStats();
+  const earned=earnedTitles(stats);
+  if(!earned.length){el.innerHTML='';return;}
+  const earnedIds=new Set(earned.map(e=>e.id));
+  // 次に獲れそうな未獲得（1つだけ匂わせ：「あと◯で」）
+  const unearned=TITLES.filter(t=>!earnedIds.has(t.id));
+  // earnedのtier降順で表示
+  const sorted=earned.slice().sort((a,b)=>b.tier-a.tier);
+  const chips=sorted.map(t=>'<span class="title-chip earned tier'+t.tier+'"><span class="ico">'+t.icon+'</span>'+t.name+'</span>').join('');
+  // 次目標を1つだけ控えめに
+  let nextHint='';
+  if(unearned.length){
+    // 次にもっとも近いものをピック
+    const nx=pickNextTitle(unearned,stats);
+    if(nx){
+      nextHint='<span class="title-chip locked"><span class="ico">'+nx.icon+'</span>'+nx.name+(nx.hint?'（'+nx.hint+'）':'')+'</span>';
+    }
+  }
+  el.innerHTML='<div class="title-section">'+
+    '<div class="ts-head"><span class="ts-title">🏅 称号</span><span class="ts-count">'+earned.length+'/'+TITLES.length+'</span></div>'+
+    '<div class="title-grid">'+chips+nextHint+'</div>'+
+  '</div>';
+}
+function pickNextTitle(candidates,stats){
+  // 各候補までの「距離」を計算し最短を返す
+  let best=null, bestDist=Infinity;
+  candidates.forEach(t=>{
+    let dist=Infinity, hint='';
+    if(t.axis==='total'){dist=t.min-stats.totalO; hint='あと'+Math.max(1,dist)+'〇';}
+    else if(t.axis==='streak'){dist=t.min-stats.maxStreak; hint='あと'+Math.max(1,dist)+'日連続';}
+    else if(t.axis==='achieve'){dist=1; hint='条件達成でGET';}
+    if(dist>0&&dist<bestDist){bestDist=dist; best={...t,hint};}
+  });
+  return best;
+}
+
+// ======== ラッキーデイ ========
+// 日付をハッシュして約20%の確率で true を返す（同じ日は同じ結果＝デバイス間で一貫）
+function isLuckyDay(dateStr){
+  if(!dateStr)return false;
+  let h=17;
+  for(let i=0;i<dateStr.length;i++){h=((h*37)+dateStr.charCodeAt(i))|0;}
+  return ((h>>>0)%100)<20;
+}
+function renderLuckyBanner(){
+  const el=$('luckyBanner'); if(!el)return;
+  // 読み取り専用モード（5/12以降）や記録期間前には出さない
+  if(isReadOnly()){el.innerHTML='';return;}
+  const now=new Date();
+  if(now<START_AT){el.innerHTML='';return;}
+  if(!isLuckyDay(state.date)){el.innerHTML='';return;}
+  if(!isToday(state.date)){el.innerHTML='';return;} // 過去日を見てる時は出さない
+  el.innerHTML='<div class="lucky-banner" id="luckyBannerBox"><span class="ico">🌟</span><div class="txt">今日はラッキーデイ！<small>キャラたちが特別におしゃべりしちゃうかも…🎁</small></div></div>';
 }
 
 function renderHeader(){
@@ -1755,8 +1940,10 @@ document.addEventListener('click',e=>{
       setTimeout(()=>s.remove(),500);
     }
     // シークレットキャラトリガー判定（ONしたときのみ、開放は翌日）
+    // 2回呼ぶことで「新発見→metaSecretsの閾値到達」も同時に拾える
     if(nowOn){
-      checkSecrets(state.date);
+      const first=checkSecrets(state.date);
+      if(first&&first.length)checkSecrets(state.date);
     }
     renderMain();
     return;
@@ -2324,6 +2511,20 @@ function maybeShowFarewell(){
 // ======== Init ========
 function init(){
   applyReadOnlyMode();
+  // 起動時にシークレットを遡及判定
+  // - meal/day系: 過去の全日付を走査
+  // - 累計系(totalO/streak/perfectDays/metaSecrets): 最後に1回呼べば判定される
+  // 発見が連鎖する可能性があるので数回リトライ
+  try{
+    for(const d in (state.data||{}))checkSecrets(d);
+    // 累計系＋metaSecretsの連鎖：最大3周
+    for(let i=0;i<3;i++){
+      const before=Object.keys(state.secrets||{}).length;
+      checkSecrets(state.date);
+      const after=Object.keys(state.secrets||{}).length;
+      if(after===before)break;
+    }
+  }catch(e){}
   render();
   maybeShowOnboard();
   // 起動時に翌日開放シークレットを順に表示
