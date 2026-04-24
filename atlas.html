@@ -5197,11 +5197,13 @@ body.has-quest-dock { padding-bottom: 96px; }
             const prevLevel = computeLevel(PRI_TASKS.filter(x=>x.done).reduce((s,x)=>s+(x.exp||20),0));
             t.done = !t.done;
             savePriTasks();
-            // 未完了→完了 の瞬間だけストリーク／レアドロップ／イベント記録をトリガ
+            // 未完了→完了 の瞬間だけストリーク／レアドロップ／イベント記録／トースト演出をトリガ
             if(!wasDone && t.done){
               markActivityToday();
               maybeRareDrop();
-              try { logQuestCompletion(t, prevLevel); } catch(_){}
+              let result = null;
+              try { result = logQuestCompletion(t, prevLevel); } catch(_){}
+              try { showCompletionFx(t, result); } catch(_){}
             }
             renderAll();
           }
@@ -5441,12 +5443,13 @@ body.has-quest-dock { padding-bottom: 96px; }
         const prevLevel = computeLevel(PRI_TASKS.filter(x=>x.done).reduce((s,x)=>s+(x.exp||20),0));
         t.done = true;
         savePriTasks();
+        let result = null;
         if(!wasDone){
           markActivityToday();
           maybeRareDrop();
-          try { logQuestCompletion(t, prevLevel); } catch(_){}
+          try { result = logQuestCompletion(t, prevLevel); } catch(_){}
         }
-        if(typeof qmToast === 'function') qmToast(`✓ 討伐完了：${t.title}（+${t.exp||20}pt）`);
+        try { showCompletionFx(t, result); } catch(_){}
         resetDock();
         renderAll();
       });
@@ -5564,8 +5567,9 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     // 討伐完了時のイベント群（mob種＋レベルアップ＋図鑑解禁）
+    //   戻り値: { mobName, leveledUp, newLevel, firstMob } — 呼び出し側で演出に使う
     function logQuestCompletion(t, prevLevel){
-      if(!t) return;
+      if(!t) return { mobName:'', leveledUp:false, newLevel:prevLevel, firstMob:false };
       // 1) 討伐イベント本体
       let mobName = '';
       const mob = CAT_TO_MOB[t.cat];
@@ -5587,7 +5591,8 @@ body.has-quest-dock { padding-bottom: 96px; }
       const doneTasks = PRI_TASKS.filter(x => x.done);
       const totalExp = doneTasks.reduce((s,x) => s + (x.exp || 20), 0);
       const newLevel = computeLevel(totalExp);
-      if(newLevel > prevLevel){
+      const leveledUp = newLevel > prevLevel;
+      if(leveledUp){
         logEvent('level', `Lv.${newLevel} 到達`);
       }
 
@@ -5599,8 +5604,37 @@ body.has-quest-dock { padding-bottom: 96px; }
           (x.deadline && daysLeft(x.deadline) < 0 ? 'dragon' : 'goblin'));
         return m2 === mobKey;
       });
-      if(sameMobDone.length === 1){
+      const firstMob = sameMobDone.length === 1;
+      if(firstMob){
         logEvent('bestiary', `討伐図鑑に「${mobName}」を記録`);
+      }
+
+      return { mobName, leveledUp, newLevel, firstMob };
+    }
+
+    // 完了時の演出統一ヘルパー：完了トースト → （必要なら）図鑑記録 → レベルアップ celebration
+    function showCompletionFx(t, result){
+      if(!t) return;
+      const pt = t.exp || 20;
+      const baseMsg = `✓ 討伐完了：${t.title}（+${pt}pt）`;
+      if(typeof qmToast === 'function') qmToast(baseMsg);
+      if(!result) return;
+      // 図鑑初登録 → 2.4 秒後に図鑑通知（完了トーストを隠さない）
+      if(result.firstMob){
+        setTimeout(() => {
+          if(typeof qmToast === 'function'){
+            qmToast(`📖 討伐図鑑に「${result.mobName}」を記録`);
+          }
+        }, 2400);
+      }
+      // レベルアップ → 図鑑より後（4.8秒後）に celebration トースト
+      if(result.leveledUp){
+        const delay = result.firstMob ? 4800 : 2400;
+        setTimeout(() => {
+          if(typeof qmToast === 'function'){
+            qmToast(`⚡ Lv.${result.newLevel} 到達 — 夜が、あなたに追いついた。`, { variant:'celebration', duration: 3800 });
+          }
+        }, delay);
       }
     }
 
@@ -5925,14 +5959,40 @@ body.has-quest-dock { padding-bottom: 96px; }
       qmEditingId = null;
     }
 
-    // 共通トースト
-    function qmToast(msg) {
+    // 共通トースト（opts: { variant: 'default' | 'celebration', duration: ms }）
+    function qmToast(msg, opts) {
+      opts = opts || {};
+      const variant = opts.variant || 'default';
+      const duration = opts.duration || (variant === 'celebration' ? 3800 : 2200);
       const toast = document.createElement('div');
       toast.textContent = msg;
-      toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--color-gold);color:var(--color-bg-deep);padding:.75rem 1.4rem;font-family:var(--font-cjk);font-size:.85rem;letter-spacing:.1em;box-shadow:var(--shadow-deep);z-index:99;opacity:0;transition:opacity .3s';
+      // スタック表示のため既存トーストを考慮してオフセット
+      const existing = document.querySelectorAll('.qm-toast');
+      const offset = Array.from(existing).reduce((a, el) => a + el.offsetHeight + 8, 0);
+      toast.className = 'qm-toast qm-toast--' + variant;
+      if(variant === 'celebration'){
+        toast.style.cssText =
+          'position:fixed;bottom:' + (32 + offset) + 'px;left:50%;transform:translateX(-50%) scale(.92);' +
+          'background:linear-gradient(135deg,#E9C77B 0%,#C9A66B 55%,#9C7D41 100%);' +
+          'color:var(--color-bg-deep);padding:.95rem 1.6rem;' +
+          'font-family:var(--font-cjk);font-size:.92rem;font-weight:700;letter-spacing:.14em;' +
+          'border:1px solid var(--color-gold);' +
+          'box-shadow:0 10px 32px rgba(0,0,0,.55), 0 0 0 4px rgba(201,166,107,.18), 0 0 24px rgba(201,166,107,.45);' +
+          'max-width:92vw;text-align:center;z-index:120;opacity:0;' +
+          'transition:opacity .32s cubic-bezier(.2,.8,.2,1), transform .46s cubic-bezier(.2,1.5,.3,1);';
+      } else {
+        toast.style.cssText =
+          'position:fixed;bottom:' + (32 + offset) + 'px;left:50%;transform:translateX(-50%);' +
+          'background:var(--color-gold);color:var(--color-bg-deep);' +
+          'padding:.75rem 1.4rem;font-family:var(--font-cjk);font-size:.85rem;letter-spacing:.1em;' +
+          'box-shadow:var(--shadow-deep);z-index:99;opacity:0;transition:opacity .3s';
+      }
       document.body.appendChild(toast);
-      requestAnimationFrame(() => toast.style.opacity = '1');
-      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, 2200);
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        if(variant === 'celebration') toast.style.transform = 'translateX(-50%) scale(1)';
+      });
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 400); }, duration);
     }
     window.qmToast = qmToast;
 
