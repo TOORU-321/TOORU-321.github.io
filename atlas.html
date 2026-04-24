@@ -3714,98 +3714,98 @@ body.has-quest-dock { padding-bottom: 96px; }
       </figcaption>
     </div>
 
-    <div class="record-overview">
+    <div class="record-overview" id="record-overview">
       <div class="record-stat card-frame">
         <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
         <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-        <p class="record-stat__num">Lv.47</p>
+        <p class="record-stat__num" id="rec-level">Lv.1</p>
         <p class="record-stat__label">現在レベル</p>
       </div>
       <div class="record-stat card-frame">
         <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
         <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-        <p class="record-stat__num">12,840</p>
+        <p class="record-stat__num" id="rec-exp">0</p>
         <p class="record-stat__label">累計 EXP</p>
       </div>
       <div class="record-stat card-frame">
         <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
         <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-        <p class="record-stat__num">50</p>
+        <p class="record-stat__num" id="rec-kills">0</p>
         <p class="record-stat__label">総撃破数</p>
       </div>
       <div class="record-stat card-frame">
         <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
         <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-        <p class="record-stat__num">23 日</p>
+        <p class="record-stat__num" id="rec-streak">0 日</p>
         <p class="record-stat__label">連続記録</p>
       </div>
     </div>
 
     <div class="record-section">
       <h3 class="record-section__title">— 討伐図鑑 —</h3>
-      <div class="bestiary-grid">
+      <div class="bestiary-grid" id="bestiary-grid">
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="slime">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/invoice-slime.webp" alt="請求書スライム" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Gelatinus facturae</p>
           <p class="bestiary-entry__name">請求書スライム</p>
-          <p class="bestiary-entry__count">× 14</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="goblin">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/lost-goblin.webp" alt="迷いゴブリン" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Goblin aberrans</p>
           <p class="bestiary-entry__name">迷いゴブリン</p>
-          <p class="bestiary-entry__count">× 9</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="ghoul">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/sloth-ghoul.webp" alt="怠惰グール" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Gula inertiae</p>
           <p class="bestiary-entry__name">怠惰グール</p>
-          <p class="bestiary-entry__count">× 22</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="wyvern">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/monthend-wyvern.webp" alt="月末ワイバーン" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Wyvern ultimus</p>
           <p class="bestiary-entry__name">月末ワイバーン</p>
-          <p class="bestiary-entry__count">× 3</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="dragon">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/bosses/gorgozaia.webp" alt="期日竜ゴルゴザイア" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Draco terminus</p>
           <p class="bestiary-entry__name">期日竜</p>
-          <p class="bestiary-entry__count">レイド × 2</p>
+          <p class="bestiary-entry__count" data-count data-prefix="レイド ">レイド × 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="troll">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/procrastination-troll.webp" alt="先延ばしトロル" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Trollus procrastinans</p>
           <p class="bestiary-entry__name">先延ばしトロル</p>
-          <p class="bestiary-entry__count">× 7</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
-        <article class="bestiary-entry card-frame">
+        <article class="bestiary-entry card-frame" data-mob="dragonling">
           <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
           <span class="corner corner--bl"></span><span class="corner corner--br"></span>
           <img class="bestiary-entry__illus" src="assets/mobs/deadline-dragonling.webp" alt="幼期日竜" loading="lazy" decoding="async">
           <p class="bestiary-entry__latin">Draco pullus</p>
           <p class="bestiary-entry__name">幼期日竜</p>
-          <p class="bestiary-entry__count">× 5</p>
+          <p class="bestiary-entry__count" data-count>× 0</p>
         </article>
 
         <article class="bestiary-entry bestiary-entry--locked card-frame">
@@ -3826,37 +3826,17 @@ body.has-quest-dock { padding-bottom: 96px; }
 
     <div class="record-section">
       <h3 class="record-section__title">— 獲得バッジ —</h3>
-      <div class="badges">
-        <span class="badge">初討伐</span>
-        <span class="badge badge--streak">7日連続</span>
-        <span class="badge">レイド初参加</span>
-        <span class="badge">レイド討伐×2</span>
-        <span class="badge badge--rookie">ルーキー枠入賞</span>
-        <span class="badge">召喚印（被招待）</span>
+      <div class="badges" id="rec-badges">
+        <!-- renderRecord() が派生バッジ＋D.badges を合成して描画 -->
       </div>
     </div>
 
     <div class="record-section">
       <h3 class="record-section__title">— 最近の出来事 —</h3>
-      <div class="info-section card-frame" style="margin-top:0;">
+      <div class="info-section card-frame" id="rec-events" style="margin-top:0;">
         <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
         <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-        <div class="info-row">
-          <span class="info-row__key">4/22 (水)</span>
-          <span class="info-row__val--jp">期日竜ゴルゴザイア・弱体化を見届ける</span>
-        </div>
-        <div class="info-row">
-          <span class="info-row__key">4/19 (日)</span>
-          <span class="info-row__val--jp">Lv.47 到達・称号「夜を歩く者」獲得</span>
-        </div>
-        <div class="info-row">
-          <span class="info-row__key">4/15 (水)</span>
-          <span class="info-row__val--jp">月末ワイバーン討伐・図鑑3種目登録</span>
-        </div>
-        <div class="info-row">
-          <span class="info-row__key">4/08 (水)</span>
-          <span class="info-row__val--jp">7日連続記録達成</span>
-        </div>
+        <!-- renderRecord() が D.events から直近5件を描画 -->
       </div>
     </div>
   </section>
@@ -4648,6 +4628,7 @@ body.has-quest-dock { padding-bottom: 96px; }
         streakFreeze: true       // 週1救済
       },
       badges: [],                // 獲得バッジ
+      events: [],                // 出来事ログ {type, date:YYYY-MM-DD, msg} 最大20件
       welcomeSeen: false,        // 初回ウェルカム
       tosAcceptedAt: null,       // 同意タイムスタンプ
       tosVersion: null
@@ -4786,7 +4767,15 @@ body.has-quest-dock { padding-bottom: 96px; }
         s.lastActiveDate = today;
       }
 
-      if(s.current > s.longest) s.longest = s.current;
+      const streakWasLonger = s.current > s.longest;
+      if(streakWasLonger) s.longest = s.current;
+
+      // --- ストリーク節目のイベント記録（3/7/14/30/50/100日） ---
+      const MILESTONES = [3, 7, 14, 30, 50, 100];
+      if(MILESTONES.includes(s.current) && typeof logEvent === 'function'){
+        // 今日の同日重複は logEvent 側で弾かれる
+        logEvent('streak', `連続 ${s.current}日 達成`);
+      }
 
       const oldStage = s.stage;
       const newStage = computeStage(s.current);
@@ -4805,6 +4794,11 @@ body.has-quest-dock { padding-bottom: 96px; }
         saveD();
         if(D.settings && D.settings.stageFX !== false){
           setTimeout(() => openStageUpModal(newStage, s.current), 300);
+        }
+        // Stage進化イベント
+        if(typeof logEvent === 'function'){
+          const stageName = (typeof STAGE_NAMES !== 'undefined' && STAGE_NAMES[newStage]) || ('Stage ' + newStage);
+          logEvent('stage', `${stageName}の冒険者へ進化`);
         }
       }
 
@@ -4873,9 +4867,13 @@ body.has-quest-dock { padding-bottom: 96px; }
       if(D.settings && D.settings.rareDrops === false) return; // OFF設定
       if(Math.random() > 0.12) return; // 約12%
       const drop = RARE_DROPS[Math.floor(Math.random() * RARE_DROPS.length)];
-      if(!D.badges.some(b => b.name === drop.name)){
-        D.badges.push({ name: drop.name, acquiredAt: new Date().toISOString() });
+      const isFirst = !D.badges.some(b => b.name === drop.name);
+      if(isFirst){
+        D.badges.push({ name: drop.name, emoji: drop.emoji, acquiredAt: new Date().toISOString() });
         saveD();
+        if(typeof logEvent === 'function'){
+          logEvent('drop', `${drop.emoji} ${drop.name} を拾得`);
+        }
       }
       showDropToast(drop);
     }
@@ -5096,12 +5094,14 @@ body.has-quest-dock { padding-bottom: 96px; }
           const t = PRI_TASKS.find(x => x.id === id);
           if(t){
             const wasDone = t.done;
+            const prevLevel = computeLevel(PRI_TASKS.filter(x=>x.done).reduce((s,x)=>s+(x.exp||20),0));
             t.done = !t.done;
             savePriTasks();
-            // 未完了→完了 の瞬間だけストリーク／レアドロップをトリガ
+            // 未完了→完了 の瞬間だけストリーク／レアドロップ／イベント記録をトリガ
             if(!wasDone && t.done){
               markActivityToday();
               maybeRareDrop();
+              try { logQuestCompletion(t, prevLevel); } catch(_){}
             }
             renderAll();
           }
@@ -5137,6 +5137,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       renderList();
       renderHomeNotice();
       renderQuestDock();
+      renderRecord();
     }
 
     // ============================================================
@@ -5337,11 +5338,13 @@ body.has-quest-dock { padding-bottom: 96px; }
         const t = PRI_TASKS.find(x => x.id === target.id);
         if(!t) return;
         const wasDone = t.done;
+        const prevLevel = computeLevel(PRI_TASKS.filter(x=>x.done).reduce((s,x)=>s+(x.exp||20),0));
         t.done = true;
         savePriTasks();
         if(!wasDone){
           markActivityToday();
           maybeRareDrop();
+          try { logQuestCompletion(t, prevLevel); } catch(_){}
         }
         if(typeof qmToast === 'function') qmToast(`✓ 討伐完了：${t.title}（+${t.exp||20}pt）`);
         resetDock();
@@ -5406,6 +5409,194 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
 
       el.innerHTML = streakPrefix + body;
+    }
+
+    // ============================================================
+    // ✦ 個人戦績（scene-record）実データ化
+    //   Lv / 累計EXP / 撃破数 / 連続記録 / 討伐図鑑 / バッジ / 出来事
+    //   を D と PRI_TASKS から算出して描画する。
+    // ============================================================
+
+    // カテゴリ → mob キー（対応しないカテゴリは goblin=迷い、としてフォールバック）
+    const CAT_TO_MOB = {
+      '事務':       'slime',
+      'クライアント': 'wyvern',
+      '開拓':       'dragonling',
+      '自分ごと':    'ghoul'
+    };
+
+    // レベル算出：序盤のリズムを速く、中盤以降は緩やかに
+    //   Lv = 1 + floor( sqrt(exp / 10) )
+    //   exp=  0 → Lv.1,  exp=40 → Lv.3,  exp=90 → Lv.4, exp=250 → Lv.6, exp=1000 → Lv.11
+    function computeLevel(totalExp){
+      return 1 + Math.floor(Math.sqrt(Math.max(0, totalExp) / 10));
+    }
+
+    // イベントログ追記（最大20件・同日同typeは重複抑止）
+    function logEvent(type, msg){
+      if(!D.events) D.events = [];
+      const today = todayKey();
+      // 連続記録ミレストーンなど、同日・同 type は1件に圧縮
+      const sameToday = D.events.find(e => e.date === today && e.type === type && e.msg === msg);
+      if(sameToday) return;
+      D.events.unshift({ type, date: today, msg });
+      if(D.events.length > 20) D.events.length = 20;
+      saveD();
+    }
+
+    // 討伐完了時のイベント群（mob種＋レベルアップ＋図鑑解禁）
+    function logQuestCompletion(t, prevLevel){
+      if(!t) return;
+      // 1) 討伐イベント本体
+      let mobName = '';
+      const mob = CAT_TO_MOB[t.cat];
+      const MOB_NAME = {
+        slime:'請求書スライム', goblin:'迷いゴブリン', ghoul:'怠惰グール',
+        wyvern:'月末ワイバーン', dragon:'期日竜', troll:'先延ばしトロル',
+        dragonling:'幼期日竜'
+      };
+      if(mob) mobName = MOB_NAME[mob];
+      else if(!t.imp && !t.urg) mobName = MOB_NAME.troll;
+      else if(t.deadline){
+        const dl = daysLeft(t.deadline);
+        if(dl !== null && dl < 0) mobName = MOB_NAME.dragon;
+      }
+      if(!mobName) mobName = MOB_NAME.goblin;
+      logEvent('quest', `${mobName}を討伐（${t.title}）`);
+
+      // 2) レベルアップ検出
+      const doneTasks = PRI_TASKS.filter(x => x.done);
+      const totalExp = doneTasks.reduce((s,x) => s + (x.exp || 20), 0);
+      const newLevel = computeLevel(totalExp);
+      if(newLevel > prevLevel){
+        logEvent('level', `Lv.${newLevel} 到達`);
+      }
+
+      // 3) 図鑑の初登録（その mob の初討伐）
+      const mobKey = (mob || (!t.imp && !t.urg ? 'troll' :
+        (t.deadline && daysLeft(t.deadline) < 0 ? 'dragon' : 'goblin')));
+      const sameMobDone = doneTasks.filter(x => {
+        const m2 = CAT_TO_MOB[x.cat] || (!x.imp && !x.urg ? 'troll' :
+          (x.deadline && daysLeft(x.deadline) < 0 ? 'dragon' : 'goblin'));
+        return m2 === mobKey;
+      });
+      if(sameMobDone.length === 1){
+        logEvent('bestiary', `討伐図鑑に「${mobName}」を記録`);
+      }
+    }
+
+    // ISO(YYYY-MM-DD) → "M/D (曜)"
+    function formatEventDate(iso){
+      if(!iso) return '';
+      const d = new Date(iso + 'T00:00:00');
+      if(isNaN(d)) return iso;
+      const m = d.getMonth() + 1;
+      const day = d.getDate();
+      const wk = ['日','月','火','水','木','金','土'][d.getDay()];
+      return `${m}/${String(day).padStart(2,'0')} (${wk})`;
+    }
+
+    function renderRecord(){
+      // タスク由来の集計
+      const done = PRI_TASKS.filter(t => t.done);
+      const totalExp = done.reduce((s,t) => s + (t.exp || 20), 0);
+      const kills = done.length;
+      const level = computeLevel(totalExp);
+
+      // ---- 統計カード ----
+      const lvEl = document.getElementById('rec-level');
+      const expEl = document.getElementById('rec-exp');
+      const killsEl = document.getElementById('rec-kills');
+      const streakEl = document.getElementById('rec-streak');
+      if(lvEl) lvEl.textContent = 'Lv.' + level;
+      if(expEl) expEl.textContent = totalExp.toLocaleString('en-US');
+      if(killsEl) killsEl.textContent = String(kills);
+      if(streakEl) streakEl.textContent = (D.streak && D.streak.current || 0) + ' 日';
+
+      // ---- 討伐図鑑 ----
+      const grid = document.getElementById('bestiary-grid');
+      if(grid){
+        const counts = { slime:0, goblin:0, ghoul:0, wyvern:0, dragon:0, troll:0, dragonling:0 };
+        done.forEach(t => {
+          // 基本はカテゴリ→mob
+          const mob = CAT_TO_MOB[t.cat];
+          if(mob){ counts[mob]++; return; }
+          // Q4（!imp && !urg）→ 先延ばしトロル
+          if(!t.imp && !t.urg){ counts.troll++; return; }
+          // deadline超過で完了 → 期日竜（レイド）
+          if(t.deadline){
+            const dl = daysLeft(t.deadline);
+            if(dl !== null && dl < 0){ counts.dragon++; return; }
+          }
+          // それ以外は迷いゴブリン
+          counts.goblin++;
+        });
+        grid.querySelectorAll('.bestiary-entry[data-mob]').forEach(el => {
+          const mob = el.dataset.mob;
+          const cnt = counts[mob] || 0;
+          const target = el.querySelector('[data-count]');
+          if(target){
+            const prefix = target.dataset.prefix || '';
+            target.textContent = `${prefix}× ${cnt}`;
+          }
+        });
+      }
+
+      // ---- バッジ ----
+      const badgesEl = document.getElementById('rec-badges');
+      if(badgesEl){
+        const list = [];
+        // 派生バッジ（条件達成で自動付与）
+        if(kills >= 1) list.push({ label:'初討伐', cls:'' });
+        if(D.streak){
+          if(D.streak.longest >= 3)  list.push({ label:'3日連続', cls:'badge--streak' });
+          if(D.streak.longest >= 7)  list.push({ label:'7日連続', cls:'badge--streak' });
+          if(D.streak.longest >= 14) list.push({ label:'14日連続', cls:'badge--streak' });
+          if(D.streak.longest >= 30) list.push({ label:'30日連続', cls:'badge--streak' });
+          if(D.streak.stage >= 2)    list.push({ label:'熟練の域', cls:'' });
+          if(D.streak.stage >= 3)    list.push({ label:'達人の眼差し', cls:'' });
+        }
+        if(kills >= 10) list.push({ label:'十体討伐', cls:'' });
+        if(kills >= 50) list.push({ label:'五十体討伐', cls:'' });
+        if(kills >= 100) list.push({ label:'百体討伐', cls:'badge--rookie' });
+
+        // レアドロップ（D.badges）を追加
+        if(Array.isArray(D.badges)){
+          D.badges.forEach(b => {
+            if(b && b.name) list.push({ label: (b.emoji || '★') + ' ' + b.name, cls: '' });
+          });
+        }
+
+        if(list.length === 0){
+          badgesEl.innerHTML = '<span class="badge" style="opacity:.5">まだ獲得バッジはありません</span>';
+        } else {
+          badgesEl.innerHTML = list.map(b =>
+            `<span class="badge ${b.cls||''}">${esc(b.label)}</span>`
+          ).join('');
+        }
+      }
+
+      // ---- 最近の出来事 ----
+      const eventsEl = document.getElementById('rec-events');
+      if(eventsEl){
+        const cornerHtml =
+          '<span class="corner corner--tl"></span><span class="corner corner--tr"></span>' +
+          '<span class="corner corner--bl"></span><span class="corner corner--br"></span>';
+        const evs = (D.events || []).slice(0, 5);
+        if(evs.length === 0){
+          eventsEl.innerHTML = cornerHtml +
+            '<div class="info-row"><span class="info-row__val--jp" style="opacity:.6">' +
+            '✦ まだ記されていない物語。今日の一歩から、記録は始まります。' +
+            '</span></div>';
+        } else {
+          eventsEl.innerHTML = cornerHtml + evs.map(ev =>
+            `<div class="info-row">
+               <span class="info-row__key">${esc(formatEventDate(ev.date))}</span>
+               <span class="info-row__val--jp">${esc(ev.msg)}</span>
+             </div>`
+          ).join('');
+        }
+      }
     }
 
     function esc(s){
