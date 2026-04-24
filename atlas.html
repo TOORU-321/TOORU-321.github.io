@@ -3462,6 +3462,12 @@ body.has-quest-dock { padding-bottom: 96px; }
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h12"/><path d="M11 8l4 4-4 4"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
     Bloom タスクコーチへ移る
   </a>
+  <a class="drawer__item" id="drawer-creator" style="cursor:pointer;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+    製作者の想い
+  </a>
 
   <div class="drawer__section">
     <a class="drawer__item" id="drawer-logout" style="cursor:pointer;">
@@ -4603,6 +4609,45 @@ body.has-quest-dock { padding-bottom: 96px; }
     <div class="rules-foot">
       <button class="app-btn--primary" id="game-rules-save" type="button">✦ 設定を保存</button>
       <button class="app-btn--ghost" id="game-rules-cancel" type="button">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ✦ 製作者の想い（Creator's Note）モーダル
+     ============================================================ -->
+<div class="app-ov" id="creator-ov">
+  <div class="app-modal">
+    <div class="app-modal__head">
+      <div>
+        <span class="app-modal__kicker">Creator's Note</span>
+        <h2 class="app-modal__title">製作者の想い</h2>
+      </div>
+      <button class="app-modal__close" id="creator-close" aria-label="閉じる">×</button>
+    </div>
+
+    <div class="app-modal__body">
+      <p class="flavor-text" style="margin-bottom: 1rem;">
+        昨今、<b style="color:var(--color-gold);">一人起業家</b>が増えています。SNSでは日々の交流があっても、実際の作業はひとりで机に向かう時間がほとんどで、<b>孤独との闘い</b>になりやすい環境です。
+      </p>
+      <p class="flavor-text" style="margin-bottom: 1rem;">
+        この Bloom Atlas は、その孤独のなかに<b style="color:var(--color-gold);">同じように歩む誰か</b>の気配を重ねていくことで、切磋琢磨しながら「自分ひとりじゃない」と気づいていただきたい、という想いで設計しました。
+      </p>
+      <p class="flavor-text" style="margin-bottom: 1.4rem;">
+        私の知見である <b>行動経済学の理論</b>——Goal Gradient、Loss Aversion、Variable Ratio、Implementation Intentions など——を随所に組み込み、意志の力ではなく設計の力で前に進めるよう整えています。
+      </p>
+
+      <div style="padding: 1rem 1rem; background: rgba(201,169,97,0.06); border: 1px solid var(--color-gold-dim); text-align: center; margin-bottom: 0.6rem;">
+        <p class="flavor-text" style="margin: 0 0 0.7rem; font-size: 0.86rem;">
+          同じ思想で作った他のアプリもあります。
+        </p>
+        <a href="https://columns.l-mine.com/behavioral-economics-lp.html"
+           target="_blank" rel="noopener noreferrer"
+           class="app-btn--primary"
+           style="display: inline-block; text-decoration: none;">
+          ✦ 行動経済学ベースのアプリ一覧を見る →
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -6897,7 +6942,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     // 全オーバーレイ共通：背景クリック＆ESCで閉じる
-    ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov'].forEach(id => {
+    ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov','creator-ov'].forEach(id => {
       const ov = document.getElementById(id);
       if(!ov) return;
       ov.addEventListener('click', (e) => {
@@ -6906,7 +6951,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     });
     document.addEventListener('keydown', (e) => {
       if(e.key !== 'Escape') return;
-      ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov'].forEach(id => {
+      ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov','creator-ov'].forEach(id => {
         const ov = document.getElementById(id);
         if(ov && ov.classList.contains('is-open')) closeModal(id);
       });
@@ -6923,6 +6968,16 @@ body.has-quest-dock { padding-bottom: 96px; }
       markWelcomeSeen();
       closeModal('welcome-ov');
       setTimeout(() => openModal('manual-ov'), 200);
+    });
+
+    // --- Creator's Note ---
+    const creatorClose = document.getElementById('creator-close');
+    const drawerCreator = document.getElementById('drawer-creator');
+    if(creatorClose) creatorClose.addEventListener('click', () => closeModal('creator-ov'));
+    if(drawerCreator) drawerCreator.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeDrawer();
+      setTimeout(() => openModal('creator-ov'), 180);
     });
 
     // --- Manual ---
