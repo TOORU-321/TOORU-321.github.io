@@ -1079,6 +1079,61 @@ nav.tabs {
   transition: all var(--transition-quick);
   padding: 0;
 }
+/* モバイルでは誤タップを避けるためタップ領域を 40×40 に拡大し、間隔もあける */
+@media (max-width: 600px) {
+  .task-row__action { width: 40px; height: 40px; }
+  .task-row__action svg { width: 16px; height: 16px; }
+  .task-row__actions { gap: 0.5rem; }
+}
+
+/* ==========================================================================
+   過去の討伐 — アーカイブ（収納型）
+   ========================================================================== */
+.task-archive {
+  margin-top: 1rem;
+  border-top: 1px dashed var(--color-gold-dim);
+  padding-top: 0.9rem;
+}
+.task-archive__toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--color-ivory-muted);
+  font-family: var(--font-cjk);
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  padding: 0.55rem 0.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color var(--transition-quick);
+}
+.task-archive__toggle:hover { color: var(--color-gold); }
+.task-archive__toggle-icon {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-gold);
+  transition: transform 0.28s cubic-bezier(.2,.8,.2,1);
+}
+.task-archive.is-open .task-archive__toggle-icon { transform: rotate(180deg); }
+.task-archive__body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(.2,.8,.2,1);
+}
+.task-archive.is-open .task-archive__body { max-height: 2400px; } /* 十分大きな値で自然に展開 */
+.task-archive__group {
+  padding: 0.6rem 0 0.2rem;
+}
+.task-archive__date {
+  font-family: var(--font-cjk);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  color: var(--color-gold-soft);
+  margin: 0 0 0.3rem;
+  padding-left: 0.15rem;
+}
 .task-row__action:hover {
   color: var(--color-gold);
   border-color: var(--color-gold);
@@ -3561,6 +3616,17 @@ body.has-quest-dock { padding-bottom: 96px; }
       <div id="task-list">
         <!-- 動的に描画 -->
       </div>
+
+      <!-- 過去の討伐（収納型アーカイブ） -->
+      <div class="task-archive" id="task-archive" style="display:none;">
+        <button type="button" class="task-archive__toggle" id="task-archive-toggle" aria-expanded="false">
+          <span id="task-archive-label">過去の討伐</span>
+          <span class="task-archive__toggle-icon" aria-hidden="true">▾</span>
+        </button>
+        <div class="task-archive__body" id="task-archive-body">
+          <!-- 動的に描画（日付別にグループ化） -->
+        </div>
+      </div>
     </div>
 
     <!-- ③ ステータス（Status card） -->
@@ -5274,21 +5340,28 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     function renderList(){
-      let tasks = [...PRI_TASKS];
-      // 完了は下、未完了は上（未完了内でモード順にソート）
-      const active = tasks.filter(t => !t.done);
-      const done = tasks.filter(t => t.done);
-      const sorted = [...sortByMode(active, priMode), ...done];
+      const today = todayKey();
+      const allTasks = [...PRI_TASKS];
+      // 3 分類：
+      //   main  = 未完了 + 今日完了（"今日のクエスト"）
+      //   past  = 過去の完了（アーカイブ送り）
+      const active   = allTasks.filter(t => !t.done);
+      const todayDone = allTasks.filter(t => t.done && t.completedAt === today);
+      const pastDone  = allTasks.filter(t => t.done && t.completedAt !== today);
+      // main は 未完了（モード順）→ 今日完了（最近完了した順）
+      const sorted = [...sortByMode(active, priMode), ...todayDone];
 
-      // --- ヘッダ右のスタット：M / N 完了 · +P EXP ---
+      // --- ヘッダ右のスタット：今日 M / N 完了 · +P EXP ---
       const statEl = document.getElementById('task-manager-stat');
       if(statEl){
-        const total = tasks.length;
-        if(total === 0){
+        const visibleCount = sorted.length;
+        if(visibleCount === 0 && pastDone.length === 0){
           statEl.textContent = 'まだ白紙';
+        } else if(visibleCount === 0){
+          statEl.textContent = `過去の討伐のみ（${pastDone.length}件）`;
         } else {
-          const doneExp = done.reduce((s,t) => s + (t.exp || 20), 0);
-          statEl.textContent = `${done.length} / ${total} 完了 · +${doneExp.toLocaleString('en-US')} EXP`;
+          const todayExp = todayDone.reduce((s,t) => s + (t.exp || 20), 0);
+          statEl.textContent = `今日 ${todayDone.length} / ${visibleCount} 完了 · +${todayExp.toLocaleString('en-US')} EXP`;
         }
       }
 
@@ -5342,6 +5415,9 @@ body.has-quest-dock { padding-bottom: 96px; }
             const wasDone = t.done;
             const prevLevel = computeLevel(PRI_TASKS.filter(x=>x.done).reduce((s,x)=>s+(x.exp||20),0));
             t.done = !t.done;
+            // 完了時刻を刻む／取り消し時はクリア（アーカイブ振分けに使用）
+            if(t.done) t.completedAt = todayKey();
+            else delete t.completedAt;
             savePriTasks();
             // 未完了→完了 の瞬間だけストリーク／レアドロップ／イベント記録／トースト演出をトリガ
             if(!wasDone && t.done){
@@ -5373,13 +5449,130 @@ body.has-quest-dock { padding-bottom: 96px; }
             if(ok){
               const idx = PRI_TASKS.findIndex(x => x.id === id);
               if(idx >= 0) PRI_TASKS.splice(idx, 1);
+              savePriTasks(); // ← 永続化を明示（以前は renderAll のみで localStorage に落ちず再読み込みで復活していた）
               renderAll();
-              qmToast(`✦「${t.title}」を削除しました`);
+              if(typeof qmToast === 'function') qmToast(`✦「${t.title}」を地図から消しました`);
+            }
+          });
+        }
+      });
+
+      // -------------------- 過去の討伐アーカイブ --------------------
+      renderArchive(pastDone);
+    }
+
+    // 過去完了タスクを日付グループで表示（収納型）
+    function renderArchive(pastDone){
+      const wrap = document.getElementById('task-archive');
+      const body = document.getElementById('task-archive-body');
+      const label = document.getElementById('task-archive-label');
+      if(!wrap || !body) return;
+
+      if(!pastDone || pastDone.length === 0){
+        wrap.style.display = 'none';
+        body.innerHTML = '';
+        return;
+      }
+      wrap.style.display = '';
+      if(label) label.textContent = `過去の討伐（${pastDone.length}件）`;
+
+      // 日付でグループ化。completedAt 未設定のものは "記録なし" に
+      const groups = {};
+      pastDone.forEach(t => {
+        const key = t.completedAt || '記録なし';
+        if(!groups[key]) groups[key] = [];
+        groups[key].push(t);
+      });
+      // 新しい日付順（"記録なし" は最後）
+      const dateKeys = Object.keys(groups).sort((a,b) => {
+        if(a === '記録なし') return 1;
+        if(b === '記録なし') return -1;
+        return b.localeCompare(a);
+      });
+
+      body.innerHTML = dateKeys.map(dk => {
+        const header = (dk === '記録なし') ? '記録なし' : (typeof formatEventDate === 'function' ? formatEventDate(dk) : dk);
+        const rowsHtml = groups[dk].map(t => {
+          const q = calcQ(t.imp, t.urg);
+          return `
+            <div class="task-row is-done" data-id="${t.id}">
+              <span class="task-row__check is-done"></span>
+              <span class="task-row__meta">
+                <span class="task-row__q task-row__q--q${q}">${Q_LABEL[q]}</span>
+                <span class="task-row__lv" data-lv="${t.impactLevel||3}">Lv.${t.impactLevel||3}</span>
+                <span class="task-row__category">${esc(t.cat||'')}</span>
+              </span>
+              <span class="task-row__label" data-edit="1" title="タップで編集">${esc(t.title)}</span>
+              <span class="task-row__points">+${t.exp||20}</span>
+              <span class="task-row__actions">
+                <button type="button" class="task-row__action task-row__action--delete" aria-label="削除" data-delete="1">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                  </svg>
+                </button>
+              </span>
+            </div>`;
+        }).join('');
+        return `
+          <div class="task-archive__group">
+            <p class="task-archive__date">${esc(header)}</p>
+            ${rowsHtml}
+          </div>`;
+      }).join('');
+
+      // アーカイブ内の行にもチェック（取消し）・編集・削除を配線
+      body.querySelectorAll('.task-row').forEach(row => {
+        const id = row.dataset.id;
+        const check = row.querySelector('.task-row__check');
+        if(check) check.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const t = PRI_TASKS.find(x => x.id === id);
+          if(!t) return;
+          // 取消し（完了状態を解除して main に戻す）
+          t.done = false;
+          delete t.completedAt;
+          savePriTasks();
+          renderAll();
+          if(typeof qmToast === 'function') qmToast(`✦「${t.title}」を今日のクエストに戻しました`);
+        });
+        row.querySelectorAll('[data-edit="1"]').forEach(el => {
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(typeof qmOpenEdit === 'function') qmOpenEdit(id);
+          });
+        });
+        const delBtn = row.querySelector('[data-delete="1"]');
+        if(delBtn){
+          delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const t = PRI_TASKS.find(x => x.id === id);
+            if(!t) return;
+            const ok = window.confirm(`過去の討伐記録を削除しますか？\n\n「${t.title}」\n\n※ 完了済みの記録が完全に消え、元に戻せません`);
+            if(ok){
+              const idx = PRI_TASKS.findIndex(x => x.id === id);
+              if(idx >= 0) PRI_TASKS.splice(idx, 1);
+              savePriTasks();
+              renderAll();
+              if(typeof qmToast === 'function') qmToast(`✦ 過去の記録を整理しました`);
             }
           });
         }
       });
     }
+
+    // アーカイブ開閉トグル（一度だけ配線）
+    (function wireArchiveToggle(){
+      const wrap = document.getElementById('task-archive');
+      const btn = document.getElementById('task-archive-toggle');
+      if(!wrap || !btn || btn.dataset.wired === '1') return;
+      btn.dataset.wired = '1';
+      btn.addEventListener('click', () => {
+        const open = wrap.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
 
     function renderAll(){
       renderFocus();
