@@ -3550,46 +3550,44 @@ body.has-quest-dock { padding-bottom: 96px; }
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
 
-      <p class="zako-hero__label">いま、あなたの前にいる敵</p>
-      <p class="zako-hero__latin">Gelatinus facturae</p>
-      <h2 class="zako-hero__name">請求書スライム</h2>
+      <p class="zako-hero__label" id="zako-label">いま、あなたの前にいる敵</p>
+      <p class="zako-hero__latin" id="zako-latin">—</p>
+      <h2 class="zako-hero__name" id="zako-name">—</h2>
 
       <figure class="zako-hero__frame">
-        <img class="zako-hero__img"
-             src="assets/mobs/invoice-slime.webp"
-             alt="請求書スライム">
+        <img class="zako-hero__img" id="zako-img"
+             src="assets/mobs/lost-goblin.webp"
+             alt="—">
       </figure>
 
-      <div class="hp-bar"><div class="hp-bar__fill" style="width: 38%"></div></div>
-      <div class="hp-meta"><span>体力</span><span><b>340 / 900</b></span></div>
+      <div class="hp-bar"><div class="hp-bar__fill" id="zako-hp-fill" style="width: 0%"></div></div>
+      <div class="hp-meta"><span>体力</span><span><b id="zako-hp-meta">0 / 0</b></span></div>
     </div>
 
-    <div class="info-section card-frame">
+    <div class="info-section card-frame" id="zako-info-eco">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
       <h3 class="info-section__title">生態と情報</h3>
-      <p class="flavor-text">
-        事務系タスクの先送りから発生する、半透明の不定形怪物。書類・請求・経理の類を栄養源とする。紙の触手が本体から伸び、油断すると机の上に広がって他の書類を飲み込む。討伐には数を淡々と片付けるのが最も効く。
-      </p>
+      <p class="flavor-text" id="zako-flavor">—</p>
       <div class="info-row">
         <span class="info-row__key">出現理由</span>
-        <span class="info-row__val--jp">事務タスク3件滞留</span>
+        <span class="info-row__val--jp" id="zako-reason">—</span>
       </div>
       <div class="info-row">
         <span class="info-row__key">有効な攻撃</span>
-        <span class="info-row__val--jp">事務・請求系クエスト</span>
+        <span class="info-row__val--jp" id="zako-effective">—</span>
       </div>
       <div class="info-row">
         <span class="info-row__key">撃破ボーナス</span>
-        <span class="info-row__val">+85 EXP</span>
+        <span class="info-row__val" id="zako-bonus">+0 EXP</span>
       </div>
       <div class="info-row">
         <span class="info-row__key">図鑑登録</span>
-        <span class="info-row__val">14 体撃破済</span>
+        <span class="info-row__val" id="zako-register">0 体撃破済</span>
       </div>
       <div class="info-row">
         <span class="info-row__key">次に現れる敵</span>
-        <span class="info-row__val--jp">迷いゴブリン</span>
+        <span class="info-row__val--jp" id="zako-next">—</span>
       </div>
     </div>
 
@@ -3597,9 +3595,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
       <h3 class="info-section__title">撃破までの見立て</h3>
-      <p class="flavor-text">
-        いまの体力 340 なら、<b style="color:var(--color-gold);">+30〜50 EXP のクエスト7〜10件</b>で倒せる見込み。撃破すると即座に次の獣が現れ、撃破ボーナスはレイドボスへのダメージにも加算される。
-      </p>
+      <p class="flavor-text" id="zako-forecast">—</p>
     </div>
   </section>
 
@@ -5273,6 +5269,185 @@ body.has-quest-dock { padding-bottom: 96px; }
       renderHomeStatus();
       renderQuestDock();
       renderRecord();
+      renderZako();
+    }
+
+    // ============================================================
+    // ✦ 今日の獣（scene-zako）
+    //   active タスクのカテゴリ分布から当日の mob を選定し、
+    //   HP / 出現理由 / 有効な攻撃 / 撃破ボーナス / 図鑑 / 次の敵 / 見立てを
+    //   実データから描画する。
+    // ============================================================
+    const MOB_DATA = {
+      slime: {
+        name: '請求書スライム', latin: 'Gelatinus facturae',
+        img: 'assets/mobs/invoice-slime.webp', cat: '事務',
+        flavor: '事務の先送りから発生する、半透明の不定形怪物。書類・請求・経理の類を栄養源とする。紙の触手が本体から伸び、油断すると机の上に広がって他の書類を飲み込む。討伐には数を淡々と片付けるのが最も効く。',
+        reason: (n) => `事務タスク ${n} 件が滞留`,
+        effective: '事務・請求・経理系クエスト'
+      },
+      wyvern: {
+        name: '月末ワイバーン', latin: 'Wyverna mensalis',
+        img: 'assets/mobs/monthend-wyvern.webp', cat: 'クライアント',
+        flavor: 'クライアントとの約束事が積み上がるほど月末の空に翼を広げる竜族。翼の影に覆われると、作業時間が静かに霞む。明確な優先順位と早めの着手だけが地に落とす矢になる。',
+        reason: (n) => `クライアント案件 ${n} 件が集中`,
+        effective: 'クライアントワーク系クエスト'
+      },
+      dragonling: {
+        name: '幼期日竜', latin: 'Draculus terminus',
+        img: 'assets/mobs/deadline-dragonling.webp', cat: '開拓',
+        flavor: '新規開拓・学習・試作の休眠期間に孵化する若い竜。知の欠片を食べて育ち、放置されるほど翼が伸びて、いずれ期日竜へと羽化する。小さな一歩を積み重ねることが、最も早い討伐法。',
+        reason: (n) => `開拓・学習 ${n} 件が休眠中`,
+        effective: '開拓・学習・試作系クエスト'
+      },
+      ghoul: {
+        name: '怠惰グール', latin: 'Ignavia incarnata',
+        img: 'assets/mobs/sloth-ghoul.webp', cat: '自分ごと',
+        flavor: '自分のための計画ばかりを後回しにする習慣から湧く灰色の半透明体。健康・学び・整理整頓といった領域に巣くう。小さく着手するだけで、あっさり遠ざかる弱点を持つ。',
+        reason: (n) => `自分ごと ${n} 件が棚上げ中`,
+        effective: '自己計画・健康・生活整備系クエスト'
+      },
+      goblin: {
+        name: '迷いゴブリン', latin: 'Goblinus erraticus',
+        img: 'assets/mobs/lost-goblin.webp', cat: null,
+        flavor: '行き先のはっきりしないタスクから湧く、小柄で俊敏な妖精種。単体は弱いが群れると厄介。最初の一歩さえ定めれば、討伐はすぐに追いついてくる。',
+        reason: (n) => `迷走中のクエストが ${n} 件`,
+        effective: '最初の一歩を定めた行動'
+      },
+      troll: {
+        name: '先延ばしトロル', latin: 'Cunctator magnus',
+        img: 'assets/mobs/procrastination-troll.webp', cat: null,
+        flavor: '重要度も緊急度も低いまま放置された仕事に寄生する巨人種。放っておくと体躯が膨らみ、ついには本命クエストの前に立ちはだかる。無視するほど手強くなる性質を持つ。',
+        reason: (n) => `着手の決まらないクエストが ${n} 件`,
+        effective: '小さくても着手する行動'
+      }
+    };
+
+    // タスク1件 → mobキー（renderRecord と同じ規則）
+    function taskToMobKey(t){
+      if(!t) return 'goblin';
+      const m = CAT_TO_MOB[t.cat];
+      if(m) return m;
+      if(!t.imp && !t.urg) return 'troll';
+      const dl = daysLeft(t.deadline);
+      if(dl !== null && dl < 0) return 'dragonling'; // 期日竜はレイドボス画像なのでdragonlingで代替
+      return 'goblin';
+    }
+
+    // active タスク群から、いま前にいる獣を選定
+    function selectTodayMob(){
+      const active = (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).filter(t => !t.done);
+      if(!active.length) return null;
+      const tally = {};
+      active.forEach(t => {
+        const k = taskToMobKey(t);
+        tally[k] = (tally[k] || 0) + 1;
+      });
+      // 最多の mob キー
+      let topKey = null, topN = 0;
+      Object.keys(tally).forEach(k => {
+        if(tally[k] > topN){ topN = tally[k]; topKey = k; }
+      });
+      return topKey || 'goblin';
+    }
+
+    // active タスクから、次に出現する mob（現mobを除いた2番目）
+    function selectNextMob(currentKey){
+      const active = (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).filter(t => !t.done);
+      const tally = {};
+      active.forEach(t => {
+        const k = taskToMobKey(t);
+        if(k === currentKey) return;
+        tally[k] = (tally[k] || 0) + 1;
+      });
+      let topKey = null, topN = 0;
+      Object.keys(tally).forEach(k => {
+        if(tally[k] > topN){ topN = tally[k]; topKey = k; }
+      });
+      return topKey; // 候補が無ければ null
+    }
+
+    function renderZako(){
+      const nameEl     = document.getElementById('zako-name');
+      const latinEl    = document.getElementById('zako-latin');
+      const imgEl      = document.getElementById('zako-img');
+      const hpFill     = document.getElementById('zako-hp-fill');
+      const hpMeta     = document.getElementById('zako-hp-meta');
+      const flavorEl   = document.getElementById('zako-flavor');
+      const reasonEl   = document.getElementById('zako-reason');
+      const effectEl   = document.getElementById('zako-effective');
+      const bonusEl    = document.getElementById('zako-bonus');
+      const registerEl = document.getElementById('zako-register');
+      const nextEl     = document.getElementById('zako-next');
+      const forecastEl = document.getElementById('zako-forecast');
+      const labelEl    = document.getElementById('zako-label');
+      if(!nameEl) return; // scene-zako が未ロードなら何もしない
+
+      const key = selectTodayMob();
+
+      // ---- 空状態：undone タスク無し ----
+      if(!key){
+        if(labelEl)   labelEl.textContent = '今、前にいる敵はいない';
+        if(nameEl)    nameEl.textContent = '静寂の地平';
+        if(latinEl)   latinEl.textContent = 'Silentium';
+        if(imgEl){    imgEl.src = 'assets/mobs/lost-goblin.webp'; imgEl.alt = '—'; imgEl.style.opacity = '0.25'; }
+        if(hpFill)    hpFill.style.width = '0%';
+        if(hpMeta)    hpMeta.textContent = '0 / 0';
+        if(flavorEl)  flavorEl.textContent = '今日の地図はまだ白紙。ホームで最初のクエストを登録すると、それに応じた獣がここに現れる。';
+        if(reasonEl)  reasonEl.textContent = '—';
+        if(effectEl)  effectEl.textContent = '—';
+        if(bonusEl)   bonusEl.textContent = '—';
+        if(registerEl) registerEl.textContent = '—';
+        if(nextEl)    nextEl.textContent = '—';
+        if(forecastEl) forecastEl.textContent = 'クエストを1つでも登録すれば、体力と討伐までの見立てがここに描かれる。';
+        return;
+      }
+
+      const mob = MOB_DATA[key];
+      if(!mob) return;
+      if(labelEl) labelEl.textContent = 'いま、あなたの前にいる敵';
+      if(nameEl)  nameEl.textContent = mob.name;
+      if(latinEl) latinEl.textContent = mob.latin;
+      if(imgEl){  imgEl.src = mob.img; imgEl.alt = mob.name; imgEl.style.opacity = ''; }
+      if(flavorEl) flavorEl.textContent = mob.flavor;
+
+      // ---- HP：同じ mob に属するタスクの active/total EXP 比 ----
+      let hpCur = 0, hpMax = 0, activeCount = 0, doneCount = 0;
+      (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).forEach(t => {
+        if(taskToMobKey(t) !== key) return;
+        const exp = t.exp || 20;
+        hpMax += exp;
+        if(t.done) doneCount++;
+        else { hpCur += exp; activeCount++; }
+      });
+      if(hpFill) hpFill.style.width = (hpMax > 0 ? Math.round(hpCur / hpMax * 100) : 0) + '%';
+      if(hpMeta) hpMeta.textContent = hpCur.toLocaleString('en-US') + ' / ' + hpMax.toLocaleString('en-US');
+
+      if(reasonEl) reasonEl.textContent = mob.reason(activeCount);
+      if(effectEl) effectEl.textContent = mob.effective;
+      if(bonusEl)  bonusEl.textContent = '+' + hpCur.toLocaleString('en-US') + ' EXP';
+      if(registerEl) registerEl.textContent = doneCount.toLocaleString('en-US') + ' 体撃破済';
+
+      // ---- 次に現れる敵 ----
+      const nextKey = selectNextMob(key);
+      if(nextEl){
+        if(nextKey && MOB_DATA[nextKey]) nextEl.textContent = MOB_DATA[nextKey].name;
+        else nextEl.textContent = '地平の向こう（候補なし）';
+      }
+
+      // ---- 撃破までの見立て ----
+      if(forecastEl){
+        if(activeCount === 0){
+          forecastEl.innerHTML = 'この獣はもうほとんど姿を失っている。<b style="color:var(--color-gold);">討伐まで残り 0 件</b>。次の獣が地平に現れる準備ができた。';
+        } else {
+          // average exp per matching task
+          const avg = Math.max(1, Math.round(hpCur / activeCount));
+          forecastEl.innerHTML =
+            `いまの体力 <b style="color:var(--color-gold);">${hpCur.toLocaleString('en-US')}</b> は、` +
+            `<b style="color:var(--color-gold);">+${avg} EXP のクエスト ${activeCount} 件</b>で削り切れる見込み。` +
+            `撃破すると次の獣が地平に現れ、撃破ボーナスはレイドボスへのダメージにも加算される。`;
+        }
+      }
     }
 
     // ============================================================
