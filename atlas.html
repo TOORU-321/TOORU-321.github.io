@@ -4102,11 +4102,14 @@ body.has-quest-dock { padding-bottom: 96px; }
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
       <p class="login-block__msg">
         <span class="login-block__msg-anon">
-          ログインすると Google アイコンが冒険者に反映され、レイドボスへの参戦が可能になります。<br>
-          <span style="opacity:.75;font-size:0.92em;">※ 週次ランキング・端末間同期は近日開放予定。匿名のままでも、今日のクエストと獣の討伐は記録されます。</span>
+          ログインすると Google アイコンが冒険者に反映され、レイドボスへの参戦と週次ランキングが解放されます。<br>
+          <span style="opacity:.75;font-size:0.88em;">
+            ※ 匿名のままでも、今日のクエストと獣の討伐は記録されます。<br>
+            ※ Bloom Atlas は姉妹アプリ <b>Bloom タスクコーチ</b> と同じ認証基盤を共用しているため、Google ログイン画面に「Bloom タスクコーチ」と表示される場合があります（同じ Bloom ファミリーです）。
+          </span>
         </span>
         <span class="login-block__msg-authed">
-          ✦ ギルドに登録済み — レイド戦に参加できます。<span style="opacity:.75;font-size:0.92em;">週次ランキング解放までもう少し。</span>
+          ✦ ギルドに登録済み — レイド戦と週次ランキングに参加できます。
         </span>
       </p>
       <button class="btn btn--primary btn--google" id="login-btn">
@@ -4787,8 +4790,11 @@ body.has-quest-dock { padding-bottom: 96px; }
     <section class="man-sec">
       <h4><span class="man-no">05</span>Googleログインで解放される章</h4>
       <p>未ログインでも基本機能はすべて使えます。ただし <b>II 実行意図（If-Thenプラン）</b> と <b>III モチベーション設計</b> の2章は、ログイン時のみ設定可能。</p>
-      <p>この2章は <b>着手率を2〜3倍</b> に引き上げる設計（Gollwitzer の実行意図）。<b>ランキング上位を目指すならログイン必須</b>です。</p>
-      <div class="man-tip">ロックされた章の「🔒 Googleでログインして解放」からいつでも開放できます。</div>
+      <p>この2章は <b>着手率を2〜3倍</b> に引き上げる設計（Gollwitzer の実行意図）。<b>レイドボス参戦と週次ランキングもログイン必須</b>です。</p>
+      <div class="man-tip">
+        ロックされた章の「🔒 Googleでログインして解放」からいつでも開放できます。<br>
+        <span style="opacity:.85;">※ Bloom Atlas は姉妹アプリ <b>Bloom タスクコーチ</b> と同じ認証基盤を共用しているため、Google ログイン画面に「Bloom タスクコーチ」と表示される場合があります（同じ Bloom ファミリーです）。</span>
+      </div>
     </section>
 
     <section class="man-sec">
@@ -4855,6 +4861,15 @@ body.has-quest-dock { padding-bottom: 96px; }
       </ul>
       <div class="tos-note">
         ※ 自作パスワード認証より、Googleログイン経由の方が構造的に安全です。
+      </div>
+      <div class="tos-block" style="margin-top:0.8rem;">
+        <b>Bloom ブランド共通認証基盤について</b><br>
+        Bloom Atlas は、姉妹アプリ <b>Bloom タスクコーチ</b> と <b>同じ Firebase プロジェクト</b> を共有しています。
+        <ul>
+          <li>Google ログイン画面に「<b>Bloom タスクコーチ</b>」と表示される場合がありますが、同じ Bloom ブランドファミリーの一部としてご利用いただけます</li>
+          <li>データは <b>アプリごとに完全分離</b>（Atlas のクエスト記録がタスコに混ざることはありません）</li>
+          <li>同じ Google アカウントなら、両アプリに <b>同じ冒険者として</b> 入れます</li>
+        </ul>
       </div>
 
       <h3 data-num="IV">免責事項</h3>
