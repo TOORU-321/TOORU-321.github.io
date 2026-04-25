@@ -2864,6 +2864,193 @@ img.bestiary-entry__illus {
 }
 
 /* ==========================================================================
+   🛡 Moderation Panel — 管理者専用（?mod=1 ＋ uid 一致時のみ表示）
+   ========================================================================== */
+.mod-ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 22, 0.96);
+  z-index: 200;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1rem;
+  display: none;
+}
+.mod-ov.is-open { display: block; }
+.mod-panel {
+  max-width: 720px;
+  margin: 1rem auto;
+  background: linear-gradient(180deg, var(--color-bg-deep), var(--color-bg-mid));
+  border: 1px solid var(--color-jewel-red);
+  padding: 1.5rem 1.4rem;
+  font-family: var(--font-cjk);
+  color: var(--color-ivory);
+  box-shadow: 0 0 36px rgba(168, 51, 77, 0.3);
+}
+.mod-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--color-jewel-red);
+  padding-bottom: 0.8rem;
+  margin-bottom: 1rem;
+}
+.mod-title {
+  font-family: var(--font-cjk);
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  color: var(--color-jewel-red);
+  margin: 0;
+}
+.mod-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.mod-week-select {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory);
+  padding: 0.4rem 0.6rem;
+  font-family: var(--font-cjk);
+  font-size: 0.82rem;
+}
+.mod-btn {
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory-muted);
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.mod-btn:hover { color: var(--color-gold); border-color: var(--color-gold); }
+.mod-btn--close {
+  border-color: var(--color-jewel-red);
+  color: var(--color-jewel-red);
+}
+.mod-meta {
+  font-size: 0.74rem;
+  color: var(--color-ivory-muted);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+}
+.mod-meta b { color: var(--color-gold); }
+
+.mod-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mod-entry {
+  border: 1px solid var(--color-gold-dim);
+  background: rgba(15, 20, 40, 0.4);
+  padding: 0.95rem;
+  margin-bottom: 0.6rem;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: start;
+}
+.mod-entry__avatar {
+  width: 44px; height: 44px;
+  border: 1px solid var(--color-gold-dim);
+  background: var(--color-bg-elevated);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-cjk);
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+.mod-entry__avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 22%;
+  display: block;
+}
+.mod-entry__main { min-width: 0; overflow: hidden; }
+.mod-entry__name {
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  color: var(--color-ivory);
+  font-weight: 500;
+}
+.mod-entry__chips {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  font-size: 0.7rem; color: var(--color-ivory-muted);
+  margin-top: 0.25rem;
+  letter-spacing: 0.04em;
+}
+.mod-entry__bio {
+  font-family: var(--font-cjk);
+  font-size: 0.84rem;
+  color: var(--color-ivory);
+  background: rgba(168, 51, 77, 0.06);
+  border-left: 2px solid var(--color-jewel-red);
+  padding: 0.4rem 0.6rem;
+  margin: 0.5rem 0;
+  line-height: 1.7;
+  word-break: break-word;
+}
+.mod-entry__sns {
+  display: flex; flex-wrap: wrap; gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+.mod-entry__sns a {
+  font-size: 0.74rem;
+  color: var(--color-gold);
+  border: 1px solid var(--color-gold-dim);
+  padding: 0.2rem 0.5rem;
+  text-decoration: none;
+  word-break: break-all;
+}
+.mod-entry__sns a:hover { border-color: var(--color-gold); background: rgba(201,169,97,.08); }
+.mod-entry__uid {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  color: var(--color-ivory-dim);
+  letter-spacing: 0.06em;
+  margin-top: 0.4rem;
+  word-break: break-all;
+}
+.mod-entry__actions {
+  display: flex; gap: 0.5rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+.mod-entry__delete {
+  background: var(--color-jewel-red);
+  color: var(--color-ivory);
+  border: 1px solid var(--color-jewel-red);
+  padding: 0.45rem 0.95rem;
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.mod-entry__delete:hover { background: #8B2A40; }
+.mod-entry__copy {
+  background: transparent;
+  color: var(--color-ivory-muted);
+  border: 1px solid var(--color-gold-dim);
+  padding: 0.45rem 0.85rem;
+  font-family: var(--font-cjk);
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+.mod-empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--color-ivory-muted);
+  font-size: 0.86rem;
+}
+
+/* ==========================================================================
    Weekly Leaderboard — 6軸タブ + カード式（ランキング本体）
    ========================================================================== */
 .lb-intro {
@@ -4987,6 +5174,26 @@ body.has-quest-dock { padding-bottom: 96px; }
 <!-- ============================================================
      ✦ シェア3択パネル（X / Threads / Instagram）
      ============================================================ -->
+<!-- ============================================================
+     🛡 Moderation Panel — 管理者専用（?mod=1 ＋ 管理者uid 一致時のみ表示）
+     ============================================================ -->
+<div class="mod-ov" id="mod-ov" role="dialog" aria-modal="true">
+  <div class="mod-panel">
+    <div class="mod-head">
+      <h2 class="mod-title">🛡 モデレーション・パネル</h2>
+      <div class="mod-controls">
+        <select class="mod-week-select" id="mod-week-select" aria-label="表示する週"></select>
+        <button type="button" class="mod-btn" id="mod-refresh-btn">🔄 更新</button>
+        <button type="button" class="mod-btn mod-btn--close" id="mod-close-btn">閉じる</button>
+      </div>
+    </div>
+    <p class="mod-meta" id="mod-meta">読み込み中…</p>
+    <ul class="mod-list" id="mod-list">
+      <!-- 動的描画 -->
+    </ul>
+  </div>
+</div>
+
 <div class="share-ov" id="share-ov" role="dialog" aria-modal="true" aria-labelledby="share-title">
   <div class="share-panel">
     <button type="button" class="share-panel__close" id="share-close" aria-label="閉じる">✕</button>
@@ -7702,6 +7909,8 @@ body.has-quest-dock { padding-bottom: 96px; }
                 setTimeout(() => loadLeaderboardForAxis(LB_STATE.axis), 1500);
               }
             } catch(_){}
+            // ?mod=1 で来た管理者は自動でパネル展開
+            try { if(typeof _maybeOpenModeration === 'function') _maybeOpenModeration(); } catch(_){}
           } else {
             // user === null（ログアウト or セッション切れ）
             // ローカルに残った D.user は削除して、UI を未ログインに同期する
@@ -8216,6 +8425,245 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
       return year + '-W' + String(week).padStart(2, '0');
     }
+
+    // =====================================================================
+    // === ✦ Moderation Panel — 管理者専用ビュー＋削除 ===
+    // =====================================================================
+    //   URL: ?mod=1 でアクセス。ログイン中の uid が ADMIN_UID と一致する場合のみ
+    //   表示される。一致しない場合は何も起こらない（パネルは開かない）。
+    //   削除は Firestore Rules 側でも ADMIN_UID を許可する必要あり（手動更新）。
+    // =====================================================================
+    const ADMIN_UID = 'c8fChQDas9On4Wod6UdPCMefKXh2'; // とーる（@LMeta321）
+    const _modParam = (typeof URLSearchParams === 'function')
+      ? new URLSearchParams(location.search).get('mod')
+      : null;
+
+    function isAdmin(){
+      return !!(D.user && D.user.uid && D.user.uid === ADMIN_UID);
+    }
+
+    function _modListWeeks(weeksBack){
+      // 直近 N 週のキーを新しい順で返す
+      const out = [];
+      const now = _currentWeekKey();
+      if(!now) return out;
+      for(let i = 0; i < (weeksBack || 8); i++){
+        out.push(_weekKeyMinusN(now, i));
+      }
+      return out;
+    }
+
+    let _modCurrentWeek = null;
+
+    async function loadModEntries(weekKey){
+      if(!fbDb || !fbUid) return [];
+      _modCurrentWeek = weekKey;
+      try {
+        // 管理者は orderBy 制限が緩い（インデックス不要のため updatedAt なし）
+        const snap = await fbDb
+          .collection('atlas_weekly_scores')
+          .doc(weekKey)
+          .collection('players')
+          .orderBy('weeklyDamage', 'desc')
+          .limit(200)
+          .get();
+        const rows = [];
+        snap.forEach(doc => rows.push(Object.assign({_docId: doc.id}, doc.data())));
+        return rows;
+      } catch(e){
+        console.warn('[mod] load failed', e);
+        return [];
+      }
+    }
+
+    function _modAvatarHtml(row){
+      if(row.photoURL){
+        return `<img src="${esc(row.photoURL)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+      }
+      const p = row.portrait || {};
+      if(p.cls && p.gender && p.stage){
+        const path = `assets/portraits/${p.cls}-${p.gender}-${p.stage}.webp`;
+        return `<img src="${esc(path)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+      }
+      const name = row.displayName || '?';
+      return esc(Array.from(String(name))[0] || '?');
+    }
+
+    function renderModEntries(rows){
+      const listEl = document.getElementById('mod-list');
+      const metaEl = document.getElementById('mod-meta');
+      if(!listEl || !metaEl) return;
+
+      if(!rows || rows.length === 0){
+        listEl.innerHTML = '';
+        metaEl.innerHTML = `週 <b>${esc(_modCurrentWeek || '?')}</b>：登録 0 件`;
+        listEl.innerHTML = '<li class="mod-empty">この週はまだエントリがありません。</li>';
+        return;
+      }
+
+      metaEl.innerHTML = `週 <b>${esc(_modCurrentWeek || '?')}</b>：登録 <b>${rows.length}</b> 件 / 自分の uid <code style="color:var(--color-ivory-dim);font-size:.7rem;">${esc(fbUid || '')}</code>`;
+
+      listEl.innerHTML = rows.map((row, idx) => {
+        const stageEmoji = (row.stage >= 3) ? '👑' : (row.stage >= 2) ? '🎓' : '🌱';
+        const cls = row.dominantClass ? row.dominantClass.charAt(0).toUpperCase() + row.dominantClass.slice(1) : '';
+        const chipsHtml = `
+          <div class="mod-entry__chips">
+            <span>Lv.${row.level || 1}</span>
+            <span>${stageEmoji} ${esc(cls)}</span>
+            <span>🔥 連続 ${row.streakDays || 0}日</span>
+            <span>⚔︎ 今週 ${row.weeklyKills || 0}討伐</span>
+            <span style="color:var(--color-gold);">📊 ${(row.weeklyDamage || 0).toLocaleString('en-US')}ダメ</span>
+          </div>`;
+        const bioHtml = row.bio ? `<div class="mod-entry__bio">${esc(row.bio)}</div>` : '';
+        const snsList = Array.isArray(row.snsLinks) ? row.snsLinks : [];
+        const snsHtml = snsList.length > 0
+          ? `<div class="mod-entry__sns">${snsList.map(s => {
+              if(!s || !s.url) return '';
+              const t = s.type || 'site';
+              const label = t === 'x' ? '𝕏 X' : t === 'threads' ? '𝓣 Threads' : t === 'instagram' ? '📷 IG' : t === 'note' ? '✎ Note' : '🌐 Site';
+              return `<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(label)}：${esc(s.url)}</a>`;
+            }).join('')}</div>` : '';
+        return `
+          <li class="mod-entry">
+            <div class="mod-entry__avatar">${_modAvatarHtml(row)}</div>
+            <div class="mod-entry__main">
+              <div class="mod-entry__name">${idx+1}. ${esc(row.displayName || '冒険者')}</div>
+              ${chipsHtml}
+              ${bioHtml}
+              ${snsHtml}
+              <div class="mod-entry__uid">uid: ${esc(row.uid || row._docId)}</div>
+              <div class="mod-entry__actions">
+                <button type="button" class="mod-entry__delete" data-uid="${esc(row.uid || row._docId)}">🗑 このエントリを削除</button>
+                <button type="button" class="mod-entry__copy" data-copy="${esc(row.uid || row._docId)}">uid をコピー</button>
+              </div>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      // 削除ボタン（削除＋ブロックリスト登録）
+      listEl.querySelectorAll('.mod-entry__delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const targetUid = btn.dataset.uid;
+          if(!targetUid) return;
+          const ok = confirm(
+            `このエントリを削除し、ブロックリストに登録しますか？\n\n` +
+            `uid: ${targetUid}\n週: ${_modCurrentWeek}\n\n` +
+            `■ 今週のスコアが Firestore から削除されます\n` +
+            `■ ブロックリストに登録 → このユーザーは今後 Firestore へ書込できなくなります\n` +
+            `■ アプリ内のローカル機能は使えますが、ランキングへ参加できません\n` +
+            `■ 復活させるには Firebase Console から atlas_blocked_uids/{uid} を手動削除\n\n` +
+            `※ 元に戻すには手動操作が必要です`
+          );
+          if(!ok) return;
+          try {
+            // ① 今週分のスコア削除
+            await fbDb
+              .collection('atlas_weekly_scores')
+              .doc(_modCurrentWeek)
+              .collection('players')
+              .doc(targetUid)
+              .delete();
+            // ② ブロックリストへ登録（今後の書込を rules でブロックする）
+            try {
+              await fbDb
+                .collection('atlas_blocked_uids')
+                .doc(targetUid)
+                .set({
+                  uid: targetUid,
+                  blockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                  blockedBy: fbUid,
+                  reason: 'モデレーションパネルからの削除'
+                });
+            } catch(e2){
+              console.warn('[mod] block list write failed', e2);
+            }
+            if(typeof qmToast === 'function') qmToast(`✦ 削除＋ブロック完了（uid: ${targetUid.slice(0,8)}…）`);
+            // 再読込
+            const rows = await loadModEntries(_modCurrentWeek);
+            renderModEntries(rows);
+          } catch(e){
+            console.warn('[mod] delete failed', e);
+            if(typeof qmToast === 'function') qmToast('削除失敗：Security Rules で管理者 uid が許可されているか確認してください');
+          }
+        });
+      });
+
+      // uid コピー
+      listEl.querySelectorAll('.mod-entry__copy').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const v = btn.dataset.copy || '';
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(v).then(() => {
+              if(typeof qmToast === 'function') qmToast('uid をコピーしました');
+            });
+          }
+        });
+      });
+    }
+
+    function populateWeekSelect(){
+      const sel = document.getElementById('mod-week-select');
+      if(!sel) return;
+      const weeks = _modListWeeks(8);
+      sel.innerHTML = weeks.map((w, i) => `<option value="${esc(w)}">${esc(w)}${i===0 ? '（今週）' : ''}</option>`).join('');
+    }
+
+    async function openModerationPanel(){
+      if(!isAdmin()){
+        // 管理者じゃない → 何もしない（侵入されてもパネルは開かない）
+        return;
+      }
+      const ov = document.getElementById('mod-ov');
+      if(!ov) return;
+      populateWeekSelect();
+      const sel = document.getElementById('mod-week-select');
+      const week = (sel && sel.value) || _currentWeekKey();
+      ov.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      const rows = await loadModEntries(week);
+      renderModEntries(rows);
+    }
+
+    function closeModerationPanel(){
+      const ov = document.getElementById('mod-ov');
+      if(!ov) return;
+      ov.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    // wire（一度だけ）
+    (function wireModerationPanel(){
+      const closeBtn = document.getElementById('mod-close-btn');
+      const refreshBtn = document.getElementById('mod-refresh-btn');
+      const sel = document.getElementById('mod-week-select');
+      if(closeBtn) closeBtn.addEventListener('click', closeModerationPanel);
+      if(refreshBtn) refreshBtn.addEventListener('click', async () => {
+        const w = (sel && sel.value) || _currentWeekKey();
+        const rows = await loadModEntries(w);
+        renderModEntries(rows);
+      });
+      if(sel) sel.addEventListener('change', async () => {
+        const rows = await loadModEntries(sel.value);
+        renderModEntries(rows);
+      });
+      // Escape で閉じる
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape'){
+          const ov = document.getElementById('mod-ov');
+          if(ov && ov.classList.contains('is-open')) closeModerationPanel();
+        }
+      });
+    })();
+
+    // ?mod=1 アクセス時、ログイン後に自動で開く（管理者のみ）
+    function _maybeOpenModeration(){
+      if(_modParam === '1' && isAdmin()){
+        // 少し遅らせて、Firestore SDK と D.user の準備を待つ
+        setTimeout(() => { openModerationPanel().catch(_=>{}); }, 800);
+      }
+    }
+    window._maybeOpenModeration = _maybeOpenModeration;
 
     // 起動時に init を試みる（SDK ロード済みなら即座、未ロードならポーリング）
     (function bootFirebase(){
