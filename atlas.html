@@ -3914,11 +3914,11 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
     </div>
 
-    <!-- Login Gate（未ログイン時のみ表示・モザイク中央オーバーレイ）-->
+    <!-- Raid Gate（未ログイン or 準備中時のみ表示・モザイク中央オーバーレイ）-->
     <div class="raid-gate" id="raid-gate">
-      <p class="raid-gate__kicker">Locked · 冒険者の証が必要</p>
-      <h3 class="raid-gate__title">みんなが協力して<br>この竜と戦っています</h3>
-      <p class="raid-gate__lead">
+      <p class="raid-gate__kicker" id="raid-gate-kicker">Locked · 冒険者の証が必要</p>
+      <h3 class="raid-gate__title" id="raid-gate-title">みんなが協力して<br>この竜と戦っています</h3>
+      <p class="raid-gate__lead" id="raid-gate-lead">
         あなたも参加しませんか？<br>
         その日に積み上げた一手が、この竜のHPを削ります。
       </p>
@@ -5062,6 +5062,25 @@ body.has-quest-dock { padding-bottom: 96px; }
     };
     const TOS_VERSION = '2026-04-25';
 
+    // =====================================================================
+    // === ✦ Raid Release Switch — 「準備中 / 解放」 切替フラグ ===
+    // =====================================================================
+    // リリース直後の数日は 'preparing'（準備中表示）にしておき、
+    // 合図に合わせて 'open' に変えてデプロイし直すだけで完全解放される。
+    //
+    //   'preparing' — レイド戦シーンを「最終調整中」表示にする（ログイン不可）
+    //   'open'      — 通常運用（ログイン → 戦闘参加）
+    //
+    // URL パラメータでテスト上書き可能：?raid=preparing もしくは ?raid=open
+    // =====================================================================
+    const RAID_RELEASE_STATE = 'open';   // ← リリース時はここを 'preparing' に
+    const _raidParam = (typeof URLSearchParams === 'function')
+      ? new URLSearchParams(location.search).get('raid')
+      : null;
+    const RAID_STATE = (_raidParam === 'preparing' || _raidParam === 'open')
+      ? _raidParam
+      : RAID_RELEASE_STATE;
+
     function loadD(){
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -6027,12 +6046,37 @@ body.has-quest-dock { padding-bottom: 96px; }
       const paceEl    = document.getElementById('raid-stat-pace');
       const sceneEl   = document.getElementById('scene-raid');
 
-      // ---- ログインゲート判定 ----
+      // ---- レイドゲート判定（準備中モード or 通常ロック）----
       // 認証状態の真実は D.user。qmAuthed は派生フラグなのでここでは使わない
       // （初回 renderAll は qmAuthed の let 宣言より前に動くため TDZ 回避が必須）
       const isAuthed = !!(D.user && D.user.uid);
+      const releaseState = (typeof RAID_STATE === 'string') ? RAID_STATE : 'open';
       if(sceneEl){
-        sceneEl.classList.toggle('is-locked', !isAuthed);
+        if(releaseState === 'preparing'){
+          // 準備中モード：認証状態によらず常にロック表示
+          sceneEl.classList.add('is-locked');
+        } else {
+          // 通常モード：未ログインのみロック
+          sceneEl.classList.toggle('is-locked', !isAuthed);
+        }
+      }
+      // ゲート内のコピーをモードに応じて差し替え
+      const gKicker = document.getElementById('raid-gate-kicker');
+      const gTitle  = document.getElementById('raid-gate-title');
+      const gLead   = document.getElementById('raid-gate-lead');
+      const gCta    = document.getElementById('raid-gate-cta');
+      if(gKicker && gTitle && gLead && gCta){
+        if(releaseState === 'preparing'){
+          gKicker.textContent = 'Coming Soon · 準備中';
+          gTitle.innerHTML    = 'レイド戦は<br>最終調整中です';
+          gLead.innerHTML     = '近日、冒険者の皆さまに開放します。<br>もうしばらくお待ちください。';
+          gCta.style.display  = 'none';
+        } else {
+          gKicker.textContent = 'Locked · 冒険者の証が必要';
+          gTitle.innerHTML    = 'みんなが協力して<br>この竜と戦っています';
+          gLead.innerHTML     = 'あなたも参加しませんか？<br>その日に積み上げた一手が、この竜のHPを削ります。';
+          gCta.style.display  = '';
+        }
       }
 
       renderRaidLog();
