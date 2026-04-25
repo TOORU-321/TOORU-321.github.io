@@ -3261,6 +3261,55 @@ img.bestiary-entry__illus {
   letter-spacing: 0.04em;
 }
 
+/* 管理者専用：ランキングカード展開時に表示 */
+.lb-detail__admin {
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-jewel-red);
+}
+.lb-detail__admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.lb-admin-btn {
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.95rem;
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory-muted);
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.lb-admin-btn--delete {
+  border-color: #FF6B8A;
+  color: #FF6B8A;
+}
+.lb-admin-btn--delete:hover {
+  background: rgba(255, 107, 138, 0.12);
+  box-shadow: 0 0 12px rgba(255, 107, 138, 0.25);
+}
+.lb-admin-btn--block {
+  border-color: var(--color-jewel-red);
+  color: var(--color-jewel-red);
+  background: rgba(168, 51, 77, 0.08);
+}
+.lb-admin-btn--block:hover {
+  background: var(--color-jewel-red);
+  color: var(--color-ivory);
+  box-shadow: 0 0 14px rgba(168, 51, 77, 0.45);
+}
+.lb-detail__admin-note {
+  font-size: 0.68rem;
+  color: var(--color-ivory-dim);
+  margin: 0.5rem 0 0;
+  line-height: 1.7;
+  letter-spacing: 0.03em;
+}
+
 /* フッター（さらに見る / 状態） */
 .lb-foot {
   text-align: center;
@@ -6834,8 +6883,24 @@ body.has-quest-dock { padding-bottom: 96px; }
           <div class="lb-detail__bio">${esc(row.bio)}</div>
         </div>` : '';
 
-      // 詳細セクションが空（bio/sns/badge全てなし）なら expand しない
-      const hasDetail = !!(fullBioHtml || snsHtml || badgesHtml);
+      // 管理者専用：自分以外のエントリに表示
+      const isAdminUser = (typeof isAdmin === 'function') ? isAdmin() : false;
+      const isMyOwnEntry = (fbUid && row.uid === fbUid);
+      const adminHtml = (isAdminUser && !isMyOwnEntry) ? `
+        <div class="lb-detail__row lb-detail__admin">
+          <span class="lb-detail__label">🛡 管理者操作</span>
+          <div class="lb-detail__admin-actions">
+            <button type="button" class="lb-admin-btn lb-admin-btn--delete" data-admin-delete="${esc(row.uid || '')}">🗑 今週分を削除</button>
+            <button type="button" class="lb-admin-btn lb-admin-btn--block" data-admin-block="${esc(row.uid || '')}">🚫 削除＋ブロック</button>
+          </div>
+          <p class="lb-detail__admin-note">
+            <b>削除</b>：今週のスコアだけ消す（軽処分・再書込可）<br>
+            <b>削除＋ブロック</b>：今週分削除＋ブロックリスト登録（重処分・以降書込不可・解除は手動）
+          </p>
+        </div>` : '';
+
+      // 詳細セクションが空（bio/sns/badge/admin全てなし）なら expand しない
+      const hasDetail = !!(fullBioHtml || snsHtml || badgesHtml || adminHtml);
 
       return `
         <li class="lb-item ${isMe ? 'is-me' : ''} ${isOpen ? 'is-open' : ''}" data-uid="${esc(row.uid || '')}" data-can-open="${hasDetail ? '1' : '0'}">
@@ -6852,7 +6917,7 @@ body.has-quest-dock { padding-bottom: 96px; }
             ${bioHtml}
           </span>
           <span class="lb-item__metric">${esc(metric.value)}<small>${esc(metric.label)}</small></span>
-          ${hasDetail ? `<div class="lb-item__detail">${fullBioHtml}${snsHtml}${badgesHtml}</div>` : ''}
+          ${hasDetail ? `<div class="lb-item__detail">${fullBioHtml}${snsHtml}${badgesHtml}${adminHtml}</div>` : ''}
         </li>
       `;
     }
@@ -6915,16 +6980,93 @@ body.has-quest-dock { padding-bottom: 96px; }
         });
       }
 
-      // カードクリック → 詳細展開
+      // カードクリック → 詳細展開（管理者ボタンクリックは展開トグルを発火させない）
       listEl.querySelectorAll('.lb-item').forEach(el => {
         const uid = el.dataset.uid;
         const canOpen = el.dataset.canOpen === '1';
         if(!canOpen) return;
         el.addEventListener('click', (e) => {
-          // SNS リンクのクリックは展開を発火させない
+          // SNS リンク・管理者ボタンのクリックは展開トグルを抑制
           if(e.target.tagName === 'A') return;
+          if(e.target.closest && e.target.closest('.lb-admin-btn')) return;
           LB_STATE.openUid = (LB_STATE.openUid === uid) ? null : uid;
           renderLeaderboard();
+        });
+      });
+
+      // 管理者：削除ボタン（今週分のみ）
+      listEl.querySelectorAll('[data-admin-delete]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const targetUid = btn.dataset.adminDelete;
+          if(!targetUid) return;
+          const ok = confirm(
+            `🗑 今週のスコアを削除しますか？（軽処分）\n\n` +
+            `uid: ${targetUid}\n\n` +
+            `■ 今週のランキングからは消えます\n` +
+            `■ このユーザーが次にタスクを完了したら、また書込されます（再発の可能性あり）\n` +
+            `■ 永久ブロックしたい場合は「🚫 削除＋ブロック」を使ってください`
+          );
+          if(!ok) return;
+          try {
+            await fbDb
+              .collection('atlas_weekly_scores')
+              .doc(_currentWeekKey())
+              .collection('players')
+              .doc(targetUid)
+              .delete();
+            if(typeof qmToast === 'function') qmToast(`✦ 今週分を削除しました`);
+            // キャッシュをクリアして再取得
+            Object.keys(_leaderboardCache).forEach(k => delete _leaderboardCache[k]);
+            await loadLeaderboardForAxis(LB_STATE.axis);
+          } catch(err){
+            console.warn('[admin] delete failed', err);
+            if(typeof qmToast === 'function') qmToast('削除失敗：管理者権限を確認してください');
+          }
+        });
+      });
+
+      // 管理者：削除＋ブロックボタン（重処分）
+      listEl.querySelectorAll('[data-admin-block]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const targetUid = btn.dataset.adminBlock;
+          if(!targetUid) return;
+          const ok = confirm(
+            `🚫 このユーザーをブロックしますか？（重処分）\n\n` +
+            `uid: ${targetUid}\n\n` +
+            `■ 今週のスコアを削除\n` +
+            `■ ブロックリストに登録 → このユーザーは今後 Firestore へ書込できなくなります\n` +
+            `■ アプリ自体は使えますが、ランキングへ参加できません\n` +
+            `■ 解除するには Firebase Console から atlas_blocked_uids/{uid} を手動削除\n\n` +
+            `※ 元に戻すには手動操作が必要です`
+          );
+          if(!ok) return;
+          try {
+            // ① 今週分のスコア削除
+            await fbDb
+              .collection('atlas_weekly_scores')
+              .doc(_currentWeekKey())
+              .collection('players')
+              .doc(targetUid)
+              .delete();
+            // ② ブロックリスト登録
+            await fbDb
+              .collection('atlas_blocked_uids')
+              .doc(targetUid)
+              .set({
+                uid: targetUid,
+                blockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                blockedBy: fbUid,
+                reason: 'ランキングカードからのブロック'
+              });
+            if(typeof qmToast === 'function') qmToast(`🚫 削除＋ブロック完了`);
+            Object.keys(_leaderboardCache).forEach(k => delete _leaderboardCache[k]);
+            await loadLeaderboardForAxis(LB_STATE.axis);
+          } catch(err){
+            console.warn('[admin] block failed', err);
+            if(typeof qmToast === 'function') qmToast('ブロック失敗：管理者権限を確認してください');
+          }
         });
       });
     }
@@ -8533,7 +8675,8 @@ body.has-quest-dock { padding-bottom: 96px; }
               ${snsHtml}
               <div class="mod-entry__uid">uid: ${esc(row.uid || row._docId)}</div>
               <div class="mod-entry__actions">
-                <button type="button" class="mod-entry__delete" data-uid="${esc(row.uid || row._docId)}">🗑 このエントリを削除</button>
+                <button type="button" class="mod-entry__delete" data-uid="${esc(row.uid || row._docId)}" data-mode="delete">🗑 削除のみ（軽処分）</button>
+                <button type="button" class="mod-entry__delete" data-uid="${esc(row.uid || row._docId)}" data-mode="block" style="background:var(--color-jewel-red);border-color:var(--color-jewel-red);">🚫 削除＋ブロック（重処分）</button>
                 <button type="button" class="mod-entry__copy" data-copy="${esc(row.uid || row._docId)}">uid をコピー</button>
               </div>
             </div>
@@ -8541,50 +8684,61 @@ body.has-quest-dock { padding-bottom: 96px; }
         `;
       }).join('');
 
-      // 削除ボタン（削除＋ブロックリスト登録）
+      // 削除ボタン（モードに応じて挙動分岐）
       listEl.querySelectorAll('.mod-entry__delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           const targetUid = btn.dataset.uid;
+          const mode = btn.dataset.mode || 'delete'; // 'delete' or 'block'
           if(!targetUid) return;
-          const ok = confirm(
-            `このエントリを削除し、ブロックリストに登録しますか？\n\n` +
-            `uid: ${targetUid}\n週: ${_modCurrentWeek}\n\n` +
-            `■ 今週のスコアが Firestore から削除されます\n` +
-            `■ ブロックリストに登録 → このユーザーは今後 Firestore へ書込できなくなります\n` +
-            `■ アプリ内のローカル機能は使えますが、ランキングへ参加できません\n` +
-            `■ 復活させるには Firebase Console から atlas_blocked_uids/{uid} を手動削除\n\n` +
-            `※ 元に戻すには手動操作が必要です`
-          );
+          const isBlock = (mode === 'block');
+          const msg = isBlock
+            ? `🚫 このエントリを削除し、ブロックリストに登録しますか？（重処分）\n\n` +
+              `uid: ${targetUid}\n週: ${_modCurrentWeek}\n\n` +
+              `■ 今週のスコアを Firestore から削除\n` +
+              `■ ブロックリストに登録 → 以降 Firestore への書込が完全に拒否されます\n` +
+              `■ 解除するには Firebase Console から atlas_blocked_uids/{uid} を手動削除\n\n` +
+              `※ 元に戻すには手動操作が必要です`
+            : `🗑 このエントリを削除しますか？（軽処分）\n\n` +
+              `uid: ${targetUid}\n週: ${_modCurrentWeek}\n\n` +
+              `■ 今週のスコアを Firestore から削除\n` +
+              `■ ユーザーが次にタスクを完了したら、また書込されます（再発の可能性あり）\n` +
+              `■ 永久ブロックしたい場合は「🚫 削除＋ブロック」を使ってください`;
+          const ok = confirm(msg);
           if(!ok) return;
           try {
-            // ① 今週分のスコア削除
+            // 今週分のスコア削除
             await fbDb
               .collection('atlas_weekly_scores')
               .doc(_modCurrentWeek)
               .collection('players')
               .doc(targetUid)
               .delete();
-            // ② ブロックリストへ登録（今後の書込を rules でブロックする）
-            try {
-              await fbDb
-                .collection('atlas_blocked_uids')
-                .doc(targetUid)
-                .set({
-                  uid: targetUid,
-                  blockedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                  blockedBy: fbUid,
-                  reason: 'モデレーションパネルからの削除'
-                });
-            } catch(e2){
-              console.warn('[mod] block list write failed', e2);
+            // ブロックモードならブロックリストへ登録
+            if(isBlock){
+              try {
+                await fbDb
+                  .collection('atlas_blocked_uids')
+                  .doc(targetUid)
+                  .set({
+                    uid: targetUid,
+                    blockedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    blockedBy: fbUid,
+                    reason: 'モデレーションパネルからのブロック'
+                  });
+              } catch(e2){
+                console.warn('[mod] block list write failed', e2);
+              }
             }
-            if(typeof qmToast === 'function') qmToast(`✦ 削除＋ブロック完了（uid: ${targetUid.slice(0,8)}…）`);
+            const toastMsg = isBlock
+              ? `🚫 削除＋ブロック完了（uid: ${targetUid.slice(0,8)}…）`
+              : `✦ 削除しました（uid: ${targetUid.slice(0,8)}…）`;
+            if(typeof qmToast === 'function') qmToast(toastMsg);
             // 再読込
             const rows = await loadModEntries(_modCurrentWeek);
             renderModEntries(rows);
           } catch(e){
             console.warn('[mod] delete failed', e);
-            if(typeof qmToast === 'function') qmToast('削除失敗：Security Rules で管理者 uid が許可されているか確認してください');
+            if(typeof qmToast === 'function') qmToast('失敗：Security Rules で管理者 uid が許可されているか確認してください');
           }
         });
       });
