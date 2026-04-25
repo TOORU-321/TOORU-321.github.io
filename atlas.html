@@ -6999,6 +6999,30 @@ body.has-quest-dock { padding-bottom: 96px; }
             try { renderAll(); } catch(_){}
           }
         });
+        // signInWithRedirect 後のリターン処理。返却した瞬間 onAuthStateChanged も発火するが
+        // エラーの種類によっては別途救済（例：credential-already-in-use）が必要。
+        try {
+          fbAuth.getRedirectResult()
+            .then(result => {
+              if(result && result.user){
+                if(typeof qmToast === 'function') qmToast('✦ ログインしました — 冒険者の印を刻みました');
+              }
+            })
+            .catch(err => {
+              if(!err || !err.code) return;
+              console.warn('[fb] getRedirectResult', err);
+              if(err.code === 'auth/credential-already-in-use'){
+                // 既存のアカウントに切替確認
+                if(confirm('このGoogleアカウントは既に登録されています。切り替えますか？')){
+                  fbAuth.signInWithCredential(err.credential)
+                    .then(_onSignInSuccess)
+                    .catch(_onSignInError);
+                }
+                return;
+              }
+              if(typeof _onSignInError === 'function') _onSignInError(err);
+            });
+        } catch(e){ console.warn('[fb] getRedirectResult setup', e); }
       } catch(e){
         console.warn('[fb] init error', e);
         fbError = 'init-fail';
@@ -7076,29 +7100,50 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
     }
 
-    function _doGoogleSignInPopupFallback(){
+    // signIn 結果共通処理
+    function _onSignInSuccess(result){
+      const u = result && result.user;
+      if(u){
+        D.user = {
+          uid: u.uid,
+          displayName: u.displayName || '',
+          photoURL: u.photoURL || ''
+        };
+        if(!(D.nickname || '').trim() && u.displayName){
+          D.nickname = String(u.displayName).slice(0, 20);
+        }
+        saveD();
+      }
+      if(typeof qmToast === 'function') qmToast('✦ ログインしました — 冒険者の印を刻みました');
+    }
+
+    function _onSignInError(err){
+      if(err && (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request')) return; // silent
+      console.warn('[fb] sign-in error', err);
+      const code = (err && err.code) || '';
+      let msg = 'ログインに失敗しました';
+      if(code === 'auth/network-request-failed') msg = 'ネットワーク接続を確認してください';
+      else if(code === 'auth/unauthorized-domain') msg = 'このサイトではログインが許可されていません';
+      else if(code === 'auth/operation-not-allowed') msg = 'Googleログインが現在利用できません';
+      else if(code === 'auth/popup-blocked') msg = 'ブラウザがポップアップをブロックしました（許可して再度お試しください）';
+      if(typeof qmToast === 'function') qmToast(msg);
+    }
+
+    // Popup → 失敗時 Redirect の二段構え
+    function _doSignInPopup(){
       if(!fbAuth) return;
       const provider = new firebase.auth.GoogleAuthProvider();
       fbAuth.signInWithPopup(provider)
-        .then(result => {
-          const u = result && result.user;
-          if(u){
-            D.user = {
-              uid: u.uid,
-              displayName: u.displayName || '',
-              photoURL: u.photoURL || ''
-            };
-            if(!(D.nickname || '').trim() && u.displayName){
-              D.nickname = String(u.displayName).slice(0, 20);
-            }
-            saveD();
-          }
-          if(typeof qmToast === 'function') qmToast('✦ ログインしました — 冒険者の印を刻みました');
-        })
+        .then(_onSignInSuccess)
         .catch(err => {
-          if(err && (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request')) return;
-          console.warn('[fb] popup sign-in error', err);
-          if(typeof qmToast === 'function') qmToast('ログインに失敗しました');
+          // ポップアップブロック時は redirect にフォールバック（iOS Safari 等で確実）
+          if(err && err.code === 'auth/popup-blocked'){
+            try {
+              fbAuth.signInWithRedirect(provider);
+            } catch(e){ _onSignInError(e); }
+            return;
+          }
+          _onSignInError(err);
         });
     }
 
@@ -7132,8 +7177,11 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     function _doSignInActual(){
-      if(_tryGisSignIn()) return;
-      _doGoogleSignInPopupFallback();
+      // Popup を主路に（user gesture を維持できるので iOS Safari でもコンスタント）。
+      // GIS One Tap は 2 回目以降の prompt が iOS Safari で skip されやすく、
+      // skip コールバックが async のため popup へ繋ぐと gesture を失って失敗する。
+      // よって GIS は一旦不採用、Popup → Redirect フォールバックの二段構え。
+      _doSignInPopup();
     }
     window._doSignInActual = _doSignInActual;
 
