@@ -5868,15 +5868,16 @@ body.has-quest-dock { padding-bottom: 96px; }
     // =====================================================================
     // === ✦ Raid Release Switch — 「準備中 / 解放」 切替フラグ ===
     // =====================================================================
-    // リリース直後の数日は 'preparing'（準備中表示）にしておき、
+    // β 期間は 'preparing'（ギルド戦準備中表示）にしておき、
     // 合図に合わせて 'open' に変えてデプロイし直すだけで完全解放される。
     //
-    //   'preparing' — レイド戦シーンを「最終調整中」表示にする（ログイン不可）
-    //   'open'      — 通常運用（ログイン → 戦闘参加）
+    //   'preparing' — レイド戦シーンのみ「最終調整中」表示にする
+    //                 （ログイン・週次ランキング・タスク機能は通常運用）
+    //   'open'      — レイド戦も含めて通常運用
     //
     // URL パラメータでテスト上書き可能：?raid=preparing もしくは ?raid=open
     // =====================================================================
-    const RAID_RELEASE_STATE = 'open';   // ← リリース時はここを 'preparing' に
+    const RAID_RELEASE_STATE = 'preparing';   // ← β中は 'preparing'、ギルド戦解放時に 'open' へ
     const _raidParam = (typeof URLSearchParams === 'function')
       ? new URLSearchParams(location.search).get('raid')
       : null;
@@ -7083,18 +7084,13 @@ body.has-quest-dock { padding-bottom: 96px; }
       const footEl = document.getElementById('lb-foot');
       if(!listEl || !footEl) return;
 
-      // 未ログイン → ランキング自体は raid-gate で隠れているので何もしないでOK
+      // 未ログイン → ログインを促すメッセージを表示
       if(!fbUid){
         listEl.innerHTML = '';
         footEl.innerHTML = '<div class="lb-foot__msg">ログインすると、他の冒険者のランキングが見られます。</div>';
         return;
       }
-      // 準備中フェーズ
-      if(typeof RAID_STATE === 'string' && RAID_STATE !== 'open'){
-        listEl.innerHTML = '';
-        footEl.innerHTML = '<div class="lb-foot__msg">週次ランキングは近日開放予定です。</div>';
-        return;
-      }
+      // 注意：週次ランキングは β 段階から有効。ギルド戦（RAID_STATE）の準備中フラグとは独立して動く。
 
       if(LB_STATE.loading){
         footEl.innerHTML = '<div class="lb-foot__msg">読み込み中…</div>';
@@ -8462,8 +8458,8 @@ body.has-quest-dock { padding-bottom: 96px; }
     //
     // ガード条件:
     //   - fbAuth + fbUid（ログイン済）
-    //   - RAID_STATE === 'open'（準備中フェーズではアップロードしない）
     //   - 連続呼び出しを避けるため debounce（最後の呼び出しから 600ms）
+    // 注意：週次ランキングは RAID_STATE と独立。ギルド戦準備中でも稼働する。
     // =====================================================================
     let _uploadTimer = null;
     function scheduleUpload(delayMs){
@@ -8542,9 +8538,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       if(!fbDb || !fbUid){
         return; // 未ログインまたは SDK 未準備
       }
-      if(typeof RAID_STATE === 'string' && RAID_STATE !== 'open'){
-        return; // 準備中はアップロードしない
-      }
+      // 週次ランキングは β 段階から有効化。RAID_STATE の準備中フラグとは独立で動く。
       const weekKey = _currentWeekKey();
       if(!weekKey) return;
 
