@@ -6918,7 +6918,8 @@ body.has-quest-dock { padding-bottom: 96px; }
     function ensureAdminBar(dataLen){
       const bar = document.getElementById('lb-admin-bar');
       if(!bar) return;
-      const adminMode = (typeof isAdmin === 'function') ? isAdmin() : false;
+      // ?mod=1 のときだけ表示（通常URLは出さない）
+      const adminMode = (typeof isModerationMode === 'function') ? isModerationMode() : false;
       if(!adminMode){
         bar.hidden = true;
         bar.innerHTML = '';
@@ -7031,10 +7032,10 @@ body.has-quest-dock { padding-bottom: 96px; }
           <div class="lb-detail__bio">${esc(row.bio)}</div>
         </div>` : '';
 
-      // 管理者：自分以外のエントリには行内に常時ボタン＋展開時に詳細説明
-      const isAdminUser = (typeof isAdmin === 'function') ? isAdmin() : false;
+      // 管理者：?mod=1 のときだけ自分以外のエントリに行内ボタンを表示
+      const isModMode = (typeof isModerationMode === 'function') ? isModerationMode() : false;
       const isMyOwnEntry = (fbUid && row.uid === fbUid);
-      const showAdminControls = (isAdminUser && !isMyOwnEntry);
+      const showAdminControls = (isModMode && !isMyOwnEntry);
 
       // 行内の常時ボタン（タップ展開不要）
       const adminStripHtml = showAdminControls ? `
@@ -8762,6 +8763,11 @@ body.has-quest-dock { padding-bottom: 96px; }
 
     function isAdmin(){
       return !!(D.user && D.user.uid && D.user.uid === ADMIN_UID);
+    }
+    // モデレーションモード判定：管理者 ＋ ?mod=1 URL のときだけ
+    // 通常URLは「素のランキング」、?mod=1 で「管理者UI（検索バー・行内ボタン）」が出る
+    function isModerationMode(){
+      return isAdmin() && _modParam === '1';
     }
 
     function _modListWeeks(weeksBack){
