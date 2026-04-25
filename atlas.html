@@ -3334,6 +3334,39 @@ img.bestiary-entry__illus {
   padding: 1rem 0;
   letter-spacing: 0.04em;
 }
+/* 管理者専用：全件表示ボタン */
+.lb-foot__btn--admin {
+  border-color: var(--color-jewel-red);
+  color: var(--color-jewel-red);
+  background: rgba(168, 51, 77, 0.08);
+}
+.lb-foot__btn--admin:hover {
+  background: var(--color-jewel-red);
+  color: var(--color-ivory);
+}
+/* 管理者専用：名前検索 */
+.lb-admin-search {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 0.7rem;
+  padding: 0.55rem 0.85rem;
+  background: rgba(168, 51, 77, 0.06);
+  border: 1px solid var(--color-jewel-red);
+  color: var(--color-ivory);
+  font-family: var(--font-cjk);
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  box-sizing: border-box;
+  text-align: left;
+}
+.lb-admin-search:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  background: rgba(168, 51, 77, 0.1);
+  box-shadow: 0 0 12px rgba(168, 51, 77, 0.2);
+}
+.lb-admin-search::placeholder { color: var(--color-ivory-dim); }
 
 .lb-disclaimer {
   font-family: var(--font-cjk);
@@ -6945,11 +6978,32 @@ body.has-quest-dock { padding-bottom: 96px; }
         return;
       }
 
-      const data = LB_STATE.data || [];
+      // 管理者のフィルタが効いている時は filteredData を優先
+      const baseData = LB_STATE.data || [];
+      const data = (LB_STATE.filteredData && Array.isArray(LB_STATE.filteredData))
+        ? LB_STATE.filteredData
+        : baseData;
       if(data.length === 0){
         listEl.innerHTML = '';
         const axisLabel = LB_AXIS_LABEL[LB_STATE.axis] || '';
-        footEl.innerHTML = `<div class="lb-foot__msg">まだ「${axisLabel}」軸のランキングは記録されていません。<br>あなたの一手が、最初の一行になる。</div>`;
+        if(LB_STATE.filteredData){
+          // 検索結果が空
+          footEl.innerHTML =
+            `<input type="text" id="lb-admin-search" placeholder="🛡 名前で検索（管理者）" class="lb-admin-search" autocomplete="off" value="">` +
+            `<div class="lb-foot__msg" style="margin-top:.6rem;">検索条件に一致する冒険者はいません</div>`;
+          // 検索 input を再ワイヤ
+          const inp = document.getElementById('lb-admin-search');
+          if(inp){
+            inp.addEventListener('input', () => {
+              if(!inp.value.trim()){
+                LB_STATE.filteredData = null;
+                renderLeaderboard();
+              }
+            });
+          }
+        } else {
+          footEl.innerHTML = `<div class="lb-foot__msg">まだ「${axisLabel}」軸のランキングは記録されていません。<br>あなたの一手が、最初の一行になる。</div>`;
+        }
         return;
       }
 
@@ -6962,12 +7016,21 @@ body.has-quest-dock { padding-bottom: 96px; }
       const inSlice = slice.some(r => r.uid === fbUid);
 
       const remaining = data.length - LB_STATE.visible;
+      const isAdminUser = (typeof isAdmin === 'function') ? isAdmin() : false;
       let footHtml = '';
       if(remaining > 0){
         footHtml += `<button type="button" class="lb-foot__btn" id="lb-more-btn">▾ さらに ${Math.min(remaining, 10)} 件見る</button>`;
+        // 管理者は「全件表示」を即時で出せる（圏外の違反者を見つけるため）
+        if(isAdminUser){
+          footHtml += `<button type="button" class="lb-foot__btn lb-foot__btn--admin" id="lb-show-all-btn" style="margin-left:0.5rem;">🛡 全件表示 (${data.length})</button>`;
+        }
       }
       if(myRank && !inSlice){
         footHtml += `<div class="lb-foot__msg" style="margin-top:.6rem;">あなたの順位：${myRank} 位（圏外）</div>`;
+      }
+      // 管理者向けの名前検索（取得済みデータのクライアント側フィルタ）
+      if(isAdminUser && data.length > 0){
+        footHtml = `<input type="text" id="lb-admin-search" placeholder="🛡 名前で検索（管理者）" class="lb-admin-search" autocomplete="off">` + footHtml;
       }
       footEl.innerHTML = footHtml || '<div class="lb-foot__msg">これがすべての冒険者です。</div>';
 
@@ -6977,6 +7040,44 @@ body.has-quest-dock { padding-bottom: 96px; }
         moreBtn.addEventListener('click', () => {
           LB_STATE.visible = Math.min(LB_STATE.visible + 10, data.length);
           renderLeaderboard();
+        });
+      }
+      // 管理者：全件表示
+      const showAllBtn = document.getElementById('lb-show-all-btn');
+      if(showAllBtn){
+        showAllBtn.addEventListener('click', () => {
+          LB_STATE.visible = data.length;
+          renderLeaderboard();
+        });
+      }
+      // 管理者：名前検索（クライアント側フィルタ）
+      const searchInput = document.getElementById('lb-admin-search');
+      if(searchInput){
+        searchInput.addEventListener('input', () => {
+          const q = searchInput.value.trim().toLowerCase();
+          if(!q){
+            // 空 → 通常表示に戻す
+            LB_STATE.filteredData = null;
+            LB_STATE.visible = (window.innerWidth >= 768) ? 10 : 5;
+            renderLeaderboard();
+            // フォーカス維持のため再 query
+            const inp2 = document.getElementById('lb-admin-search');
+            if(inp2){ inp2.focus(); inp2.value = ''; }
+            return;
+          }
+          // フィルタ：名前 / bio / SNS URL / uid に部分一致するもの
+          const filtered = data.filter(r => {
+            const name = (r.displayName || '').toLowerCase();
+            const bio = (r.bio || '').toLowerCase();
+            const uid = (r.uid || '').toLowerCase();
+            const sns = (r.snsLinks || []).map(s => (s.url||'').toLowerCase()).join(' ');
+            return name.includes(q) || bio.includes(q) || uid.includes(q) || sns.includes(q);
+          });
+          LB_STATE.filteredData = filtered;
+          LB_STATE.visible = filtered.length;
+          renderLeaderboard();
+          const inp2 = document.getElementById('lb-admin-search');
+          if(inp2){ inp2.focus(); inp2.value = q; inp2.setSelectionRange(q.length, q.length); }
         });
       }
 
@@ -7076,6 +7177,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       LB_STATE.axis = axis;
       LB_STATE.openUid = null;
       LB_STATE.visible = (window.innerWidth >= 768) ? 10 : 5;
+      LB_STATE.filteredData = null; // 検索フィルタはタブ切替でリセット
       LB_STATE.loading = true;
       renderLeaderboard();
       const rows = await fetchWeeklyLeaderboard(axis);
