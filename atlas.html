@@ -3334,8 +3334,41 @@ img.bestiary-entry__illus {
   padding: 1rem 0;
   letter-spacing: 0.04em;
 }
+/* 管理者バー（永続要素：検索＋全件表示） */
+.lb-admin-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+  padding: 0.7rem;
+  background: rgba(168, 51, 77, 0.06);
+  border: 1px solid var(--color-jewel-red);
+}
+.lb-admin-bar[hidden] { display: none !important; }
+.lb-admin-search {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.55rem 0.85rem;
+  background: var(--color-bg-deep);
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory);
+  font-family: var(--font-cjk);
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  box-sizing: border-box;
+}
+.lb-admin-search:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 10px rgba(201, 169, 97, 0.2);
+}
+.lb-admin-search::placeholder { color: var(--color-ivory-dim); }
+
 /* 管理者専用：全件表示ボタン */
 .lb-foot__btn--admin {
+  flex-shrink: 0;
   border-color: var(--color-jewel-red);
   color: var(--color-jewel-red);
   background: rgba(168, 51, 77, 0.08);
@@ -3344,29 +3377,43 @@ img.bestiary-entry__illus {
   background: var(--color-jewel-red);
   color: var(--color-ivory);
 }
-/* 管理者専用：名前検索 */
-.lb-admin-search {
-  display: block;
-  width: 100%;
-  max-width: 320px;
-  margin: 0 auto 0.7rem;
-  padding: 0.55rem 0.85rem;
-  background: rgba(168, 51, 77, 0.06);
-  border: 1px solid var(--color-jewel-red);
-  color: var(--color-ivory);
+
+/* ランキング行内の管理者ミニボタン（常時表示） */
+.lb-item__admin-strip {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(168, 51, 77, 0.3);
+  flex-wrap: wrap;
+}
+.lb-admin-mini {
   font-family: var(--font-cjk);
-  font-size: 0.86rem;
-  letter-spacing: 0.04em;
-  box-sizing: border-box;
-  text-align: left;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-quick);
 }
-.lb-admin-search:focus {
-  outline: none;
-  border-color: var(--color-gold);
-  background: rgba(168, 51, 77, 0.1);
-  box-shadow: 0 0 12px rgba(168, 51, 77, 0.2);
+.lb-admin-mini--delete {
+  border-color: #FF6B8A;
+  color: #FF6B8A;
 }
-.lb-admin-search::placeholder { color: var(--color-ivory-dim); }
+.lb-admin-mini--delete:hover {
+  background: rgba(255, 107, 138, 0.15);
+}
+.lb-admin-mini--block {
+  border-color: var(--color-jewel-red);
+  color: var(--color-jewel-red);
+  background: rgba(168, 51, 77, 0.08);
+}
+.lb-admin-mini--block:hover {
+  background: var(--color-jewel-red);
+  color: var(--color-ivory);
+}
 
 .lb-disclaimer {
   font-family: var(--font-cjk);
@@ -4550,6 +4597,9 @@ body.has-quest-dock { padding-bottom: 96px; }
         <button type="button" class="lb-tab" data-lb-axis="sage">Sage</button>
         <button type="button" class="lb-tab" data-lb-axis="ranger">Ranger</button>
       </div>
+
+      <!-- 管理者専用バー（検索＋全件表示）— 永続要素・再レンダーで壊さない -->
+      <div class="lb-admin-bar" id="lb-admin-bar" hidden></div>
 
       <!-- ランキング本体 -->
       <ul class="lb-list" id="lb-list">
@@ -6863,6 +6913,71 @@ body.has-quest-dock { padding-bottom: 96px; }
       return String(rank);
     }
 
+    // 管理者バー（検索＋全件表示）の永続セットアップ — 1回だけ初期化
+    let _adminBarInitialized = false;
+    function ensureAdminBar(dataLen){
+      const bar = document.getElementById('lb-admin-bar');
+      if(!bar) return;
+      const adminMode = (typeof isAdmin === 'function') ? isAdmin() : false;
+      if(!adminMode){
+        bar.hidden = true;
+        bar.innerHTML = '';
+        _adminBarInitialized = false;
+        return;
+      }
+      bar.hidden = false;
+      // 既に初期化済みなら（input 要素が DOM に存在）触らない（IMEを壊さないため）
+      if(_adminBarInitialized && document.getElementById('lb-admin-search')) {
+        // 全件表示ボタンの件数表記だけ更新
+        const sa = document.getElementById('lb-show-all-btn');
+        if(sa) sa.textContent = `🛡 全件表示 (${dataLen || 0})`;
+        return;
+      }
+      bar.innerHTML =
+        '<input type="text" id="lb-admin-search" class="lb-admin-search" autocomplete="off" placeholder="🛡 名前・一言・SNS・uid で検索（管理者）">' +
+        `<button type="button" class="lb-foot__btn lb-foot__btn--admin" id="lb-show-all-btn">🛡 全件表示 (${dataLen || 0})</button>`;
+      const inp = document.getElementById('lb-admin-search');
+      const showAll = document.getElementById('lb-show-all-btn');
+      let isComposing = false;
+      if(inp){
+        inp.addEventListener('compositionstart', () => { isComposing = true; });
+        inp.addEventListener('compositionend', () => {
+          isComposing = false;
+          applyAdminSearch(inp.value);
+        });
+        inp.addEventListener('input', () => {
+          if(!isComposing) applyAdminSearch(inp.value);
+        });
+      }
+      if(showAll){
+        showAll.addEventListener('click', () => {
+          const data = LB_STATE.filteredData || LB_STATE.data || [];
+          LB_STATE.visible = data.length;
+          renderLeaderboard();
+        });
+      }
+      _adminBarInitialized = true;
+    }
+
+    function applyAdminSearch(rawQ){
+      const q = String(rawQ || '').trim().toLowerCase();
+      if(!q){
+        LB_STATE.filteredData = null;
+        LB_STATE.visible = (window.innerWidth >= 768) ? 10 : 5;
+      } else {
+        const base = LB_STATE.data || [];
+        LB_STATE.filteredData = base.filter(r => {
+          const name = (r.displayName || '').toLowerCase();
+          const bio = (r.bio || '').toLowerCase();
+          const uid = (r.uid || '').toLowerCase();
+          const sns = (r.snsLinks || []).map(s => (s && s.url) ? s.url.toLowerCase() : '').join(' ');
+          return name.includes(q) || bio.includes(q) || uid.includes(q) || sns.includes(q);
+        });
+        LB_STATE.visible = LB_STATE.filteredData.length;
+      }
+      renderLeaderboard(); // bar は壊さない（_adminBarInitialized で守られる）
+    }
+
     function _lbItemHtml(row, idx){
       const rank = idx + 1;
       const rankCls = (rank <= 3) ? 'lb-item__rank--top' : '';
@@ -6916,23 +7031,29 @@ body.has-quest-dock { padding-bottom: 96px; }
           <div class="lb-detail__bio">${esc(row.bio)}</div>
         </div>` : '';
 
-      // 管理者専用：自分以外のエントリに表示
+      // 管理者：自分以外のエントリには行内に常時ボタン＋展開時に詳細説明
       const isAdminUser = (typeof isAdmin === 'function') ? isAdmin() : false;
       const isMyOwnEntry = (fbUid && row.uid === fbUid);
-      const adminHtml = (isAdminUser && !isMyOwnEntry) ? `
+      const showAdminControls = (isAdminUser && !isMyOwnEntry);
+
+      // 行内の常時ボタン（タップ展開不要）
+      const adminStripHtml = showAdminControls ? `
+        <div class="lb-item__admin-strip">
+          <button type="button" class="lb-admin-mini lb-admin-mini--delete" data-admin-delete="${esc(row.uid || '')}" title="今週分を削除（軽処分）">🗑 削除</button>
+          <button type="button" class="lb-admin-mini lb-admin-mini--block" data-admin-block="${esc(row.uid || '')}" title="削除＋ブロック（重処分）">🚫 ブロック</button>
+        </div>` : '';
+
+      // 展開時の管理者説明（補足のみ・ボタンは行内側）
+      const adminHtml = showAdminControls ? `
         <div class="lb-detail__row lb-detail__admin">
           <span class="lb-detail__label">🛡 管理者操作</span>
-          <div class="lb-detail__admin-actions">
-            <button type="button" class="lb-admin-btn lb-admin-btn--delete" data-admin-delete="${esc(row.uid || '')}">🗑 今週分を削除</button>
-            <button type="button" class="lb-admin-btn lb-admin-btn--block" data-admin-block="${esc(row.uid || '')}">🚫 削除＋ブロック</button>
-          </div>
           <p class="lb-detail__admin-note">
-            <b>削除</b>：今週のスコアだけ消す（軽処分・再書込可）<br>
-            <b>削除＋ブロック</b>：今週分削除＋ブロックリスト登録（重処分・以降書込不可・解除は手動）
+            <b>🗑 削除</b>：今週のスコアだけ消す（軽処分・再書込可）<br>
+            <b>🚫 ブロック</b>：今週分削除＋ブロックリスト登録（重処分・以降書込不可・解除は手動）
           </p>
         </div>` : '';
 
-      // 詳細セクションが空（bio/sns/badge/admin全てなし）なら expand しない
+      // 詳細セクションが空（bio/sns/badge全てなし）でも、admin なら expand 可能（説明用）
       const hasDetail = !!(fullBioHtml || snsHtml || badgesHtml || adminHtml);
 
       return `
@@ -6950,6 +7071,7 @@ body.has-quest-dock { padding-bottom: 96px; }
             ${bioHtml}
           </span>
           <span class="lb-item__metric">${esc(metric.value)}<small>${esc(metric.label)}</small></span>
+          ${adminStripHtml}
           ${hasDetail ? `<div class="lb-item__detail">${fullBioHtml}${snsHtml}${badgesHtml}${adminHtml}</div>` : ''}
         </li>
       `;
@@ -7016,21 +7138,12 @@ body.has-quest-dock { padding-bottom: 96px; }
       const inSlice = slice.some(r => r.uid === fbUid);
 
       const remaining = data.length - LB_STATE.visible;
-      const isAdminUser = (typeof isAdmin === 'function') ? isAdmin() : false;
       let footHtml = '';
       if(remaining > 0){
         footHtml += `<button type="button" class="lb-foot__btn" id="lb-more-btn">▾ さらに ${Math.min(remaining, 10)} 件見る</button>`;
-        // 管理者は「全件表示」を即時で出せる（圏外の違反者を見つけるため）
-        if(isAdminUser){
-          footHtml += `<button type="button" class="lb-foot__btn lb-foot__btn--admin" id="lb-show-all-btn" style="margin-left:0.5rem;">🛡 全件表示 (${data.length})</button>`;
-        }
       }
       if(myRank && !inSlice){
         footHtml += `<div class="lb-foot__msg" style="margin-top:.6rem;">あなたの順位：${myRank} 位（圏外）</div>`;
-      }
-      // 管理者向けの名前検索（取得済みデータのクライアント側フィルタ）
-      if(isAdminUser && data.length > 0){
-        footHtml = `<input type="text" id="lb-admin-search" placeholder="🛡 名前で検索（管理者）" class="lb-admin-search" autocomplete="off">` + footHtml;
       }
       footEl.innerHTML = footHtml || '<div class="lb-foot__msg">これがすべての冒険者です。</div>';
 
@@ -7042,44 +7155,9 @@ body.has-quest-dock { padding-bottom: 96px; }
           renderLeaderboard();
         });
       }
-      // 管理者：全件表示
-      const showAllBtn = document.getElementById('lb-show-all-btn');
-      if(showAllBtn){
-        showAllBtn.addEventListener('click', () => {
-          LB_STATE.visible = data.length;
-          renderLeaderboard();
-        });
-      }
-      // 管理者：名前検索（クライアント側フィルタ）
-      const searchInput = document.getElementById('lb-admin-search');
-      if(searchInput){
-        searchInput.addEventListener('input', () => {
-          const q = searchInput.value.trim().toLowerCase();
-          if(!q){
-            // 空 → 通常表示に戻す
-            LB_STATE.filteredData = null;
-            LB_STATE.visible = (window.innerWidth >= 768) ? 10 : 5;
-            renderLeaderboard();
-            // フォーカス維持のため再 query
-            const inp2 = document.getElementById('lb-admin-search');
-            if(inp2){ inp2.focus(); inp2.value = ''; }
-            return;
-          }
-          // フィルタ：名前 / bio / SNS URL / uid に部分一致するもの
-          const filtered = data.filter(r => {
-            const name = (r.displayName || '').toLowerCase();
-            const bio = (r.bio || '').toLowerCase();
-            const uid = (r.uid || '').toLowerCase();
-            const sns = (r.snsLinks || []).map(s => (s.url||'').toLowerCase()).join(' ');
-            return name.includes(q) || bio.includes(q) || uid.includes(q) || sns.includes(q);
-          });
-          LB_STATE.filteredData = filtered;
-          LB_STATE.visible = filtered.length;
-          renderLeaderboard();
-          const inp2 = document.getElementById('lb-admin-search');
-          if(inp2){ inp2.focus(); inp2.value = q; inp2.setSelectionRange(q.length, q.length); }
-        });
-      }
+      // 管理者バー（検索＋全件表示）は永続要素として ensureAdminBar が管理
+      // ※ renderLeaderboard 末尾で呼び出して件数表示を更新
+      ensureAdminBar(LB_STATE.data ? LB_STATE.data.length : 0);
 
       // カードクリック → 詳細展開（管理者ボタンクリックは展開トグルを発火させない）
       listEl.querySelectorAll('.lb-item').forEach(el => {
@@ -7087,9 +7165,9 @@ body.has-quest-dock { padding-bottom: 96px; }
         const canOpen = el.dataset.canOpen === '1';
         if(!canOpen) return;
         el.addEventListener('click', (e) => {
-          // SNS リンク・管理者ボタンのクリックは展開トグルを抑制
+          // SNS リンク・管理者ボタン（行内ミニ・展開内）のクリックは展開トグルを抑制
           if(e.target.tagName === 'A') return;
-          if(e.target.closest && e.target.closest('.lb-admin-btn')) return;
+          if(e.target.closest && (e.target.closest('.lb-admin-btn') || e.target.closest('.lb-admin-mini'))) return;
           LB_STATE.openUid = (LB_STATE.openUid === uid) ? null : uid;
           renderLeaderboard();
         });
