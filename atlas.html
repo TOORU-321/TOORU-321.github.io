@@ -49,6 +49,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Shippori+Mincho+B1:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK (compat 11.x) — Auth + Firestore for Phase 2 ranking -->
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore-compat.js"></script>
+<!-- Google Identity Services (GIS) — primary sign-in path. GIS speaks
+     directly to Google on the user's own origin (columns.l-mine.com) and
+     returns an ID token we exchange with Firebase via signInWithCredential.
+     Bypasses 3rd-party cookie issues on PC Chrome. -->
+<script async defer src="https://accounts.google.com/gsi/client"></script>
+
 <style>
 /* ==========================================================================
    Bloom Atlas — Pattern E Design Tokens
@@ -2853,6 +2864,85 @@ img.bestiary-entry__illus {
 }
 
 /* ==========================================================================
+   Raid Login Gate — 未ログイン時はコンテンツをブラー＋中央CTA
+   ========================================================================== */
+.scene#scene-raid.is-locked .raid-hero__img,
+.scene#scene-raid.is-locked .hp-bar,
+.scene#scene-raid.is-locked .hp-meta {
+  filter: blur(0px);
+  /* ヒーロー部分は見せる（ボス名+HPバーチラ見せ）*/
+}
+.scene#scene-raid.is-locked .raid-hero__name {
+  /* ボス名は見せる */
+}
+/* ヒーロー以下のセクション群はブラー＋クリック禁止 */
+.scene#scene-raid.is-locked > .info-section,
+.scene#scene-raid.is-locked > #raid-phase2-teaser {
+  filter: blur(8px) saturate(0.4);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.5;
+  transition: filter 0.3s, opacity 0.3s;
+}
+/* シェアボタンも未ログイン時は隠す */
+.scene#scene-raid.is-locked .raid-share { display: none; }
+
+/* CTA オーバーレイ */
+.raid-gate {
+  position: relative;
+  margin: 1.25rem 0 1.5rem;
+  padding: 1.5rem 1.4rem;
+  background: linear-gradient(180deg, rgba(15,20,40,0.85), rgba(20,26,48,0.92));
+  border: 1px solid var(--color-gold);
+  text-align: center;
+  font-family: var(--font-cjk);
+  color: var(--color-ivory);
+  box-shadow: var(--shadow-deep), 0 0 36px rgba(201,169,97,0.18);
+  display: none;
+}
+.scene#scene-raid.is-locked .raid-gate { display: block; }
+.raid-gate__kicker {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--color-jewel-red);
+  margin-bottom: 0.4rem;
+}
+.raid-gate__title {
+  font-family: var(--font-cjk);
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+  margin: 0 0 0.5rem;
+}
+.raid-gate__lead {
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--color-ivory-muted);
+  margin: 0 0 1.1rem;
+}
+.raid-gate__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-gold);
+  color: var(--color-bg-deep);
+  border: 1px solid var(--color-gold);
+  padding: 0.85rem 1.6rem;
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.raid-gate__cta:hover {
+  background: #D9B878;
+  box-shadow: var(--shadow-glow-gold);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
    Share Panel — 戦績を分かち合う（X / Threads / Instagram 3択）
    ========================================================================== */
 .share-ov {
@@ -3685,11 +3775,11 @@ body.has-quest-dock { padding-bottom: 96px; }
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
       <p class="login-block__msg">
         <span class="login-block__msg-anon">
-          ログインすると、ランキング参加・招待機能・端末間の同期が使えるようになります。<br>
-          匿名のままでも、今日のクエストと獣の討伐は記録されます。
+          ログインすると Google アイコンが冒険者に反映され、レイドボスへの参戦が可能になります。<br>
+          <span style="opacity:.75;font-size:0.92em;">※ 週次ランキング・端末間同期は近日開放予定。匿名のままでも、今日のクエストと獣の討伐は記録されます。</span>
         </span>
         <span class="login-block__msg-authed">
-          ギルド本部と同期中。ランキング・招待・端末間同期が利用できます。
+          ✦ ギルドに登録済み — レイド戦に参加できます。<span style="opacity:.75;font-size:0.92em;">週次ランキング解放までもう少し。</span>
         </span>
       </p>
       <button class="btn btn--primary btn--google" id="login-btn">
@@ -3792,6 +3882,19 @@ body.has-quest-dock { padding-bottom: 96px; }
         <!-- 「協力を呼ぶ」は Phase 2（ギルド戦）で復活。現時点では非表示。 -->
         <button class="btn" id="raid-share-btn" type="button">戦績を分かち合う</button>
       </div>
+    </div>
+
+    <!-- Login Gate（未ログイン時のみ表示）-->
+    <div class="raid-gate" id="raid-gate">
+      <p class="raid-gate__kicker">Locked · この戦いの先へ</p>
+      <h3 class="raid-gate__title">レイド戦は冒険者の証が必要です</h3>
+      <p class="raid-gate__lead">
+        その日に積み上げた一手が、この竜のHPを削っていきます。<br>
+        ログインで「冒険者の印」を刻み、戦況とランキングを開きましょう。
+      </p>
+      <button type="button" class="raid-gate__cta" id="raid-gate-cta">
+        ✦ ログインして、この戦いに加わる
+      </button>
     </div>
 
     <!-- Raid stats -->
@@ -4281,7 +4384,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
       <div class="wb-row">
         <span class="wb-num">IV</span>
-        <span><b>Googleログイン</b>で実行意図・モチベ設計・ランキング・端末間同期を解放<span class="wb-hint">匿名のまま閉じても記録は消えません</span></span>
+        <span><b>Googleログイン</b>で実行意図・モチベ設計・レイドボス参戦が解放（週次ランキング・端末間同期は近日開放予定）<span class="wb-hint">匿名のまま閉じても記録は消えません</span></span>
       </div>
     </div>
     <div class="welcome-actions">
@@ -4418,7 +4521,32 @@ body.has-quest-dock { padding-bottom: 96px; }
         </ul>
       </div>
 
-      <h3 data-num="V">データの削除・お問い合わせ</h3>
+      <h3 data-num="V">コミュニティ運営方針</h3>
+      <div class="tos-block">
+        Bloom Atlas は、冒険を共にする仲間たちが安心して繋がれる場であることを優先します。以下に該当するコンテンツは、予告なく運営側で削除する場合があります。
+        <ul>
+          <li>他の冒険者への <b>誹謗中傷・嫌がらせ・差別的な発言</b></li>
+          <li>ニックネームや一言メッセージ欄での <b>荒らし行為・無関係な宣伝</b></li>
+          <li>不適切な SNS リンク（スパム・マルウェア・性的コンテンツ等）</li>
+          <li>ランキング操作を目的とした <b>不正行為</b></li>
+        </ul>
+        <div class="tos-note" style="margin-top:0.5rem;">
+          ※ 繰り返しの違反が認められた場合、該当アカウントの<b>ランキングからの除外措置</b>を取ることがあります。
+        </div>
+      </div>
+
+      <h3 data-num="VI">ランキング機能と SNS リンクについて</h3>
+      <div class="tos-block">
+        Phase 2 で開放される週次ランキングには、各冒険者が任意で公開した <b>SNS リンク</b> が表示される場合があります。
+        <ul>
+          <li>掲載されている SNS リンクは <b>冒険者本人の任意情報</b> です</li>
+          <li>連絡・繋がりは <b>すべてご自身の判断と自己責任</b> でお願いします</li>
+          <li>本サービスは <b>冒険者同士のトラブルに関与しません</b></li>
+          <li>SNS リンクは事前に許可ドメイン（X / Threads / Instagram / Note / 自サイト等）のみ受け付け、不正な URL は登録できない仕組みです</li>
+        </ul>
+      </div>
+
+      <h3 data-num="VII">データの削除・お問い合わせ</h3>
       <ul>
         <li>端末内のデータ：ブラウザの localStorage クリアまたは <b>設定 → 全データを削除</b></li>
         <li>クラウド上のデータ（Google連携時）：お問い合わせください</li>
@@ -4426,7 +4554,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       </ul>
 
       <div class="tos-meta">
-        制作：とーる（@LMeta321）／ 最終更新：2026-04-24
+        制作：とーる（@LMeta321）／ 最終更新：2026-04-25
       </div>
     </div>
     <div class="tos-actions" id="tos-actions">
@@ -4902,7 +5030,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       dailyExp: {},              // 'YYYY-MM-DD': number（レイド計算＆統計で使用）
       raid: null                 // { startedAt, hpMax, week } — null なら renderRaid で初期化
     };
-    const TOS_VERSION = '2026-04-24';
+    const TOS_VERSION = '2026-04-25';
 
     function loadD(){
       try {
@@ -5775,6 +5903,17 @@ body.has-quest-dock { padding-bottom: 96px; }
       document.body.style.overflow = '';
     }
 
+    // Raid gate の CTA を wire（一度だけ）
+    (function wireRaidGateCta(){
+      const cta = document.getElementById('raid-gate-cta');
+      if(!cta || cta.dataset.wired === '1') return;
+      cta.dataset.wired = '1';
+      cta.addEventListener('click', () => {
+        if(typeof signInWithGoogle === 'function') signInWithGoogle();
+        else if(typeof requestLogin === 'function') requestLogin();
+      });
+    })();
+
     function wireRaidShare(){
       const btn = document.getElementById('raid-share-btn');
       if(btn && btn.dataset.wired !== '1'){
@@ -5856,6 +5995,14 @@ body.has-quest-dock { padding-bottom: 96px; }
       const daysEl    = document.getElementById('raid-stat-days');
       const weekEl    = document.getElementById('raid-stat-week');
       const paceEl    = document.getElementById('raid-stat-pace');
+      const sceneEl   = document.getElementById('scene-raid');
+
+      // ---- ログインゲート判定 ----
+      const isAuthed = !!(D.user && D.user.uid) || (typeof qmAuthed !== 'undefined' && qmAuthed);
+      if(sceneEl){
+        sceneEl.classList.toggle('is-locked', !isAuthed);
+      }
+
       renderRaidLog();
       if(!hpFill) return; // scene-raid が無ければ何もしない
 
@@ -5866,16 +6013,24 @@ body.has-quest-dock { padding-bottom: 96px; }
       let hpCur = Math.max(0, hpMax - damage);
 
       // 討伐達成 → 次ボスを即 spawn（celebration）し、新しい値で再計算
-      if(hpCur <= 0 && damage >= hpMax){
+      // 未ログインなら討伐判定もスキップ（誰もダメージを与えていない＝HP満タンなので普通は来ない）
+      if(isAuthed && hpCur <= 0 && damage >= hpMax){
         spawnNextRaid();
         damage = damageSinceRaidStart(D.raid.startedAt);
         hpMax = D.raid.hpMax;
         hpCur = Math.max(0, hpMax - damage);
       }
 
+      // 未ログイン時は HP 数値をぼかす（バーの長さは見せて、数字だけ ??? に）
       const pct = hpMax > 0 ? Math.round(hpCur / hpMax * 1000) / 10 : 0;
       hpFill.style.width = pct + '%';
-      if(hpMeta) hpMeta.textContent = hpCur.toLocaleString('en-US') + ' / ' + hpMax.toLocaleString('en-US');
+      if(hpMeta){
+        if(isAuthed){
+          hpMeta.textContent = hpCur.toLocaleString('en-US') + ' / ' + hpMax.toLocaleString('en-US');
+        } else {
+          hpMeta.textContent = '??? / ????';
+        }
+      }
       if(labelEl) labelEl.textContent = '永続レイド・第' + D.raid.week + '週';
 
       // ---- 戦況4列 ----
@@ -6694,6 +6849,247 @@ body.has-quest-dock { padding-bottom: 96px; }
     renderAll();
 
     // =====================================================================
+    // === ✦ Firebase Auth — Google ログイン（GIS 経由）===
+    // =====================================================================
+    // タスコと同一 Firebase プロジェクトを共用（コレクション prefix で分離）。
+    // Atlas は Phase 2 までは Auth のみ利用、Firestore 書込みは Session β で実装。
+    // 匿名認証は使わない（個人プレイは localStorage で完結、ログインは任意）。
+    // =====================================================================
+    const GOOGLE_CLIENT_ID = '712992842711-v2fen1i84k6mflcuih05d6atl752eul5.apps.googleusercontent.com';
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBWnaesBp-li6RKMGEU52RnCLsKRnZ9s8Y",
+      authDomain: "bloom-task-coach.firebaseapp.com",
+      projectId: "bloom-task-coach",
+      storageBucket: "bloom-task-coach.firebasestorage.app",
+      messagingSenderId: "712992842711",
+      appId: "1:712992842711:web:3d3f28e6ff9f7f30082192"
+    };
+    // Firebase state（モジュール内クロージャ）
+    let fbApp = null, fbAuth = null, fbDb = null;
+    let fbUid = null, fbUser = null, fbReady = false, fbError = null;
+
+    function fbInit(){
+      if(fbReady || fbError) return;
+      if(typeof firebase === 'undefined'){
+        fbError = 'sdk-missing';
+        return;
+      }
+      try {
+        if(firebase.apps && firebase.apps.length > 0){
+          fbApp = firebase.app();
+        } else {
+          fbApp = firebase.initializeApp(FIREBASE_CONFIG);
+        }
+        fbAuth = firebase.auth();
+        fbDb = firebase.firestore();
+
+        // 認証状態の永続購読：起動時 / signIn / signOut で発火
+        fbAuth.onAuthStateChanged(user => {
+          if(user && !user.isAnonymous){
+            fbUid = user.uid;
+            fbUser = user;
+            fbReady = true;
+            // D.user に必要最小限を保存（avatar fallback と Phase 2 ranking で使う）
+            D.user = {
+              uid: user.uid,
+              displayName: user.displayName || '',
+              photoURL: user.photoURL || ''
+            };
+            // ニックネーム未設定なら Google displayName を初期値に
+            if(!(D.nickname || '').trim() && user.displayName){
+              D.nickname = String(user.displayName).slice(0, 20);
+            }
+            saveD();
+            try { qmAuthed = true; qmApplyAuth(); } catch(_){}
+            try { renderAll(); } catch(_){}
+            try {
+              if(loginBlock) loginBlock.classList.add('is-logged-in');
+            } catch(_){}
+          } else {
+            // user === null（ログアウト）または匿名（このアプリでは未使用）
+            fbUid = null;
+            fbUser = null;
+            fbReady = false;
+            try { qmAuthed = false; qmApplyAuth(); } catch(_){}
+            try {
+              if(loginBlock) loginBlock.classList.remove('is-logged-in');
+            } catch(_){}
+            try { renderAll(); } catch(_){}
+          }
+        });
+      } catch(e){
+        console.warn('[fb] init error', e);
+        fbError = 'init-fail';
+      }
+    }
+
+    // GIS の credential を受けて Firebase Auth に橋渡し
+    function handleGisCredential(response){
+      if(!response || !response.credential){
+        if(typeof qmToast === 'function') qmToast('Googleログインに失敗しました');
+        return;
+      }
+      if(!fbAuth){
+        if(typeof qmToast === 'function') qmToast('認証サービスが準備できていません。再読み込みをお試しください');
+        return;
+      }
+      const cred = firebase.auth.GoogleAuthProvider.credential(response.credential);
+
+      const onSuccess = (result) => {
+        const u = result && result.user;
+        if(u){
+          // onAuthStateChanged が D.user を埋めるが、即時反映のため明示的にも保存
+          D.user = {
+            uid: u.uid,
+            displayName: u.displayName || '',
+            photoURL: u.photoURL || ''
+          };
+          if(!(D.nickname || '').trim() && u.displayName){
+            D.nickname = String(u.displayName).slice(0, 20);
+          }
+          saveD();
+        }
+        if(typeof qmToast === 'function') qmToast('✦ ログインしました — 冒険者の印を刻みました');
+      };
+
+      const onError = (err) => {
+        console.warn('[gis] sign-in error', err);
+        const code = (err && err.code) || '';
+        let msg = 'ログインに失敗しました';
+        if(code === 'auth/network-request-failed') msg = 'ネットワーク接続を確認してください';
+        else if(code === 'auth/unauthorized-domain') msg = 'このサイトではログインが許可されていません';
+        else if(code === 'auth/operation-not-allowed') msg = 'Googleログインが現在利用できません';
+        if(typeof qmToast === 'function') qmToast(msg);
+      };
+
+      fbAuth.signInWithCredential(cred).then(onSuccess).catch(onError);
+    }
+
+    function _tryGisSignIn(){
+      if(!window.google || !google.accounts || !google.accounts.id){
+        return false;
+      }
+      try {
+        google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGisCredential,
+          auto_select: false,
+          cancel_on_tap_outside: false,
+          use_fedcm_for_prompt: true  // Chrome 127+ FedCM
+        });
+        google.accounts.id.prompt((notification) => {
+          if(!notification) return;
+          const notDisplayed = notification.isNotDisplayed && notification.isNotDisplayed();
+          if(notDisplayed){
+            const reason = notification.getNotDisplayedReason && notification.getNotDisplayedReason();
+            console.warn('[gis] prompt not displayed:', reason);
+            // フォールバック：Firebase の signInWithPopup
+            setTimeout(_doGoogleSignInPopupFallback, 200);
+          }
+        });
+        return true;
+      } catch(e){
+        console.warn('[gis] init/prompt failed', e);
+        return false;
+      }
+    }
+
+    function _doGoogleSignInPopupFallback(){
+      if(!fbAuth) return;
+      const provider = new firebase.auth.GoogleAuthProvider();
+      fbAuth.signInWithPopup(provider)
+        .then(result => {
+          const u = result && result.user;
+          if(u){
+            D.user = {
+              uid: u.uid,
+              displayName: u.displayName || '',
+              photoURL: u.photoURL || ''
+            };
+            if(!(D.nickname || '').trim() && u.displayName){
+              D.nickname = String(u.displayName).slice(0, 20);
+            }
+            saveD();
+          }
+          if(typeof qmToast === 'function') qmToast('✦ ログインしました — 冒険者の印を刻みました');
+        })
+        .catch(err => {
+          if(err && (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request')) return;
+          console.warn('[fb] popup sign-in error', err);
+          if(typeof qmToast === 'function') qmToast('ログインに失敗しました');
+        });
+    }
+
+    function signInWithGoogle(){
+      if(!fbAuth){
+        try { fbInit(); } catch(_){}
+      }
+      if(!fbAuth){
+        if(typeof qmToast === 'function') qmToast('ログインを準備しています…少しお待ちください');
+        // SDK ロード待ち（最大 6 秒）
+        let tries = 0;
+        const poll = setInterval(() => {
+          tries++;
+          if(typeof firebase !== 'undefined'){
+            clearInterval(poll);
+            try { fbInit(); } catch(_){}
+            if(fbAuth) signInWithGoogle();
+          } else if(tries >= 30){
+            clearInterval(poll);
+            if(typeof qmToast === 'function') qmToast('通信環境のためログインを読み込めません。再読み込みをお試しください');
+          }
+        }, 200);
+        return;
+      }
+      // TOS 同意必須（既存ロジック）
+      if(!D.tosAcceptedAt || D.tosVersion !== TOS_VERSION){
+        if(typeof openTosModal === 'function') openTosModal('accept');
+        return;
+      }
+      _doSignInActual();
+    }
+
+    function _doSignInActual(){
+      if(_tryGisSignIn()) return;
+      _doGoogleSignInPopupFallback();
+    }
+    window._doSignInActual = _doSignInActual;
+
+    function fbSignOut(){
+      if(!fbAuth){
+        if(typeof qmToast === 'function') qmToast('既にログアウト状態です');
+        return;
+      }
+      fbAuth.signOut().then(() => {
+        // D.user は残す or 消す？ ローカル進捗との紐付けはニックネームだけ残るよう、user は消す。
+        delete D.user;
+        saveD();
+        if(typeof qmToast === 'function') qmToast('✦ ログアウトしました');
+      }).catch(err => {
+        console.warn('[fb] signOut error', err);
+        if(typeof qmToast === 'function') qmToast('ログアウトに失敗しました');
+      });
+    }
+
+    // 起動時に init を試みる（SDK ロード済みなら即座、未ロードならポーリング）
+    (function bootFirebase(){
+      if(typeof firebase !== 'undefined'){
+        try { fbInit(); } catch(_){}
+        return;
+      }
+      let tries = 0;
+      const poll = setInterval(() => {
+        tries++;
+        if(typeof firebase !== 'undefined'){
+          clearInterval(poll);
+          try { fbInit(); } catch(_){}
+        } else if(tries >= 50){
+          clearInterval(poll); // SDK が結局ロードされなかった → 静かに諦める
+        }
+      }, 200);
+    })();
+
+    // =====================================================================
     // === ✦ Quest Modal（タスク詳細入力・II/III ロック制） ===
     // =====================================================================
     const qmOv        = document.getElementById('qm-ov');
@@ -6712,9 +7108,10 @@ body.has-quest-dock { padding-bottom: 96px; }
     // 編集中のタスク ID（null = 新規追加モード）
     let qmEditingId = null;
 
-    // --- 認証状態（モックアップ用：login-block とも同期） ---
-    // 実装時は onAuthStateChanged に差し替え
-    let qmAuthed = !!D.mockAuthed;
+    // --- 認証状態（fbInit の onAuthStateChanged と連動）---
+    // 起動時の qmAuthed 初期値は D.user が保存されていれば true（onAuthStateChanged が
+    // SDK ロード後に正しく上書きする）。SDK 未ロード時の "ちらつき" を最小化するための先読み。
+    let qmAuthed = !!(D.user && D.user.uid);
     if (qmAuthed) {
       const _lb = document.querySelector('.login-block');
       if (_lb) _lb.classList.add('is-logged-in');
@@ -6736,47 +7133,39 @@ body.has-quest-dock { padding-bottom: 96px; }
     const loginBlock = document.querySelector('.login-block');
     const loginBtn   = document.querySelector('.login-block .btn--google');
 
-    // ログイン完了時の実処理（本番では Google Identity Services のコールバック先）
-    function _doLoginComplete(){
-      qmAuthed = true;
-      D.mockAuthed = true;
-      saveD();
-      if (loginBlock) loginBlock.classList.add('is-logged-in');
-      qmApplyAuth();
-      qmToast('✦ ギルド本部と同期しました');
-    }
-
     // ログアウト処理（ドロワー「ログアウト」から呼ばれる）
-    // ローカルの進捗（localStorage）は残す。ランキングは再び匿名参加。
+    // ローカルの進捗（localStorage）は残す。ニックネーム等のローカル設定もそのまま。
     function _doLogout(){
       if(!qmAuthed){
-        qmToast('✦ 既にログアウト状態です');
+        if(typeof qmToast === 'function') qmToast('✦ 既にログアウト状態です');
         return;
       }
       const ok = confirm(
-        'ギルド本部との同期を解除しますか？\n\n' +
+        'ログアウトしますか？\n\n' +
         '・ この端末の記録（localStorage の進捗・討伐図鑑）はそのまま残ります。\n' +
-        '・ ランキングは再び「匿名の雅号」として参加します。\n' +
-        '・ 同じGoogleアカウントで再ログインすれば、今の記録に上書き同期されます。'
+        '・ Phase 2 のランキング参加・端末間同期は無効になります。\n' +
+        '・ 同じGoogleアカウントで再ログインすれば、また連携できます。'
       );
       if(!ok) return;
-      qmAuthed = false;
-      D.mockAuthed = false;
-      saveD();
-      if (loginBlock) loginBlock.classList.remove('is-logged-in');
-      qmApplyAuth();
-      qmToast('✦ ギルド本部との同期を解除しました');
+      // 実 signOut（onAuthStateChanged が D.user 削除と UI 更新を行う）
+      try { fbSignOut(); } catch(e){
+        console.warn('[fb] logout fallback', e);
+        // SDK 未ロード等のフォールバック
+        delete D.user;
+        saveD();
+        qmAuthed = false;
+        qmApplyAuth();
+        if (loginBlock) loginBlock.classList.remove('is-logged-in');
+        if(typeof qmToast === 'function') qmToast('✦ ログアウトしました');
+      }
     }
     window._doLogout = _doLogout;
 
     // TOS 同意を必須化したログインリクエスト
     function requestLogin(){
       if(qmAuthed) return; // 既にログイン済みなら何もしない
-      if(!D.tosAcceptedAt || D.tosVersion !== TOS_VERSION){
-        openTosModal('accept');
-      } else {
-        _doLoginComplete();
-      }
+      // signInWithGoogle は内部で TOS 同意確認を行う
+      signInWithGoogle();
     }
 
     if (loginBtn) {
@@ -7207,7 +7596,10 @@ body.has-quest-dock { padding-bottom: 96px; }
           D.tosVersion = TOS_VERSION;
           saveD();
           closeModal('tos-ov');
-          setTimeout(() => _doLoginComplete(), 120);
+          // TOS 同意後 → 実際の Google サインインフロー（GIS → Firebase Auth）へ
+          setTimeout(() => {
+            try { _doSignInActual(); } catch(e){ console.warn('[fb] post-TOS signIn', e); }
+          }, 120);
         });
         actions.appendChild(cancel);
         actions.appendChild(accept);
