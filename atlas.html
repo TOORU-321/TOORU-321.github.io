@@ -2864,62 +2864,91 @@ img.bestiary-entry__illus {
 }
 
 /* ==========================================================================
-   Raid Login Gate — 未ログイン時はコンテンツをブラー＋中央CTA
+   Raid Login Gate — モンスターだけ見える／それ以外は強モザイク／中央にCTA
    ========================================================================== */
-.scene#scene-raid.is-locked .raid-hero__img,
+/* シーン全体を相対基準にして gate を絶対配置 */
+.scene#scene-raid { position: relative; }
+
+/* ロック時：モンスター画像 "以外" を全部モザイク */
+.scene#scene-raid.is-locked .raid-hero__label,
+.scene#scene-raid.is-locked .raid-hero__latin,
+.scene#scene-raid.is-locked .raid-hero__name,
 .scene#scene-raid.is-locked .hp-bar,
 .scene#scene-raid.is-locked .hp-meta {
-  filter: blur(0px);
-  /* ヒーロー部分は見せる（ボス名+HPバーチラ見せ）*/
+  filter: blur(10px) saturate(0.3);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.55;
+  transition: filter 0.32s, opacity 0.32s;
 }
-.scene#scene-raid.is-locked .raid-hero__name {
-  /* ボス名は見せる */
-}
-/* ヒーロー以下のセクション群はブラー＋クリック禁止 */
 .scene#scene-raid.is-locked > .info-section,
 .scene#scene-raid.is-locked > #raid-phase2-teaser {
-  filter: blur(8px) saturate(0.4);
+  filter: blur(10px) saturate(0.3);
   pointer-events: none;
   user-select: none;
   opacity: 0.5;
-  transition: filter 0.3s, opacity 0.3s;
+  transition: filter 0.32s, opacity 0.32s;
 }
-/* シェアボタンも未ログイン時は隠す */
+/* モンスター画像はクッキリ見せる（少しだけ抑えて gate を引き立てる） */
+.scene#scene-raid.is-locked .raid-hero__img {
+  filter: brightness(0.88) contrast(1.05) saturate(1.05);
+  transition: filter 0.32s;
+}
+/* シェアボタンも未ログイン時は完全に隠す */
 .scene#scene-raid.is-locked .raid-share { display: none; }
 
-/* CTA オーバーレイ */
+/* 中央オーバーレイ CTA — モザイクの真上に被せる */
 .raid-gate {
-  position: relative;
-  margin: 1.25rem 0 1.5rem;
-  padding: 1.5rem 1.4rem;
-  background: linear-gradient(180deg, rgba(15,20,40,0.85), rgba(20,26,48,0.92));
+  display: none;
+}
+.scene#scene-raid.is-locked .raid-gate {
+  display: block;
+  position: absolute;
+  top: 56%;                      /* 画像の下〜info-section にまたがる視覚的中心 */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 2rem);
+  max-width: 380px;
+  margin: 0;
+  padding: 1.7rem 1.4rem 1.5rem;
+  background: linear-gradient(180deg, rgba(15,20,40,0.97), rgba(20,26,48,0.97));
   border: 1px solid var(--color-gold);
   text-align: center;
   font-family: var(--font-cjk);
   color: var(--color-ivory);
-  box-shadow: var(--shadow-deep), 0 0 36px rgba(201,169,97,0.18);
-  display: none;
+  box-shadow:
+    0 0 60px rgba(0,0,0,0.55),
+    0 0 32px rgba(201,169,97,0.32),
+    inset 0 0 18px rgba(201,169,97,0.06);
+  z-index: 40;
+  box-sizing: border-box;
 }
-.scene#scene-raid.is-locked .raid-gate { display: block; }
+@media (max-width: 600px) {
+  .scene#scene-raid.is-locked .raid-gate {
+    top: 60%;
+    padding: 1.4rem 1.1rem 1.2rem;
+  }
+}
 .raid-gate__kicker {
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
   color: var(--color-jewel-red);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
 }
 .raid-gate__title {
   font-family: var(--font-cjk);
-  font-size: 1.05rem;
-  letter-spacing: 0.14em;
+  font-size: 1.02rem;
+  letter-spacing: 0.12em;
   color: var(--color-gold);
-  margin: 0 0 0.5rem;
+  line-height: 1.6;
+  margin: 0 0 0.7rem;
 }
 .raid-gate__lead {
-  font-size: 0.86rem;
-  line-height: 1.7;
+  font-size: 0.84rem;
+  line-height: 1.85;
   color: var(--color-ivory-muted);
-  margin: 0 0 1.1rem;
+  margin: 0 0 1.2rem;
 }
 .raid-gate__cta {
   display: inline-flex;
@@ -2928,17 +2957,18 @@ img.bestiary-entry__illus {
   background: var(--color-gold);
   color: var(--color-bg-deep);
   border: 1px solid var(--color-gold);
-  padding: 0.85rem 1.6rem;
+  padding: 0.85rem 1.4rem;
   font-family: var(--font-cjk);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   cursor: pointer;
   transition: all var(--transition-quick);
+  box-shadow: 0 4px 16px rgba(201,169,97,0.25);
 }
 .raid-gate__cta:hover {
   background: #D9B878;
-  box-shadow: var(--shadow-glow-gold);
+  box-shadow: 0 6px 22px rgba(201,169,97,0.4);
   transform: translateY(-1px);
 }
 
@@ -3884,16 +3914,16 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
     </div>
 
-    <!-- Login Gate（未ログイン時のみ表示）-->
+    <!-- Login Gate（未ログイン時のみ表示・モザイク中央オーバーレイ）-->
     <div class="raid-gate" id="raid-gate">
-      <p class="raid-gate__kicker">Locked · この戦いの先へ</p>
-      <h3 class="raid-gate__title">レイド戦は冒険者の証が必要です</h3>
+      <p class="raid-gate__kicker">Locked · 冒険者の証が必要</p>
+      <h3 class="raid-gate__title">みんなが協力して<br>この竜と戦っています</h3>
       <p class="raid-gate__lead">
-        その日に積み上げた一手が、この竜のHPを削っていきます。<br>
-        ログインで「冒険者の印」を刻み、戦況とランキングを開きましょう。
+        あなたも参加しませんか？<br>
+        その日に積み上げた一手が、この竜のHPを削ります。
       </p>
       <button type="button" class="raid-gate__cta" id="raid-gate-cta">
-        ✦ ログインして、この戦いに加わる
+        ✦ ログインして冒険に加わる
       </button>
     </div>
 
@@ -6908,10 +6938,16 @@ body.has-quest-dock { padding-bottom: 96px; }
               if(loginBlock) loginBlock.classList.add('is-logged-in');
             } catch(_){}
           } else {
-            // user === null（ログアウト）または匿名（このアプリでは未使用）
+            // user === null（ログアウト or セッション切れ）
+            // ローカルに残った D.user は削除して、UI を未ログインに同期する
+            // （これがないと "phantom 認証" 状態になり、レイドゲートが効かない）
             fbUid = null;
             fbUser = null;
             fbReady = false;
+            if(D.user){
+              delete D.user;
+              try { saveD(); } catch(_){}
+            }
             try { qmAuthed = false; qmApplyAuth(); } catch(_){}
             try {
               if(loginBlock) loginBlock.classList.remove('is-logged-in');
