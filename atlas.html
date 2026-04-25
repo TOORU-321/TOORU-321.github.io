@@ -2864,6 +2864,265 @@ img.bestiary-entry__illus {
 }
 
 /* ==========================================================================
+   Weekly Leaderboard — 6軸タブ + カード式（ランキング本体）
+   ========================================================================== */
+.lb-intro {
+  font-family: var(--font-cjk);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--color-ivory-muted);
+  margin: 0 0 1rem;
+  letter-spacing: 0.04em;
+}
+.lb-intro__sub { font-size: 0.78rem; color: var(--color-ivory-dim); }
+
+/* タブ */
+.lb-tabs {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  scrollbar-width: thin;
+}
+.lb-tabs::-webkit-scrollbar { height: 4px; }
+.lb-tabs::-webkit-scrollbar-thumb { background: var(--color-gold-dim); }
+.lb-tab {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory-muted);
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  padding: 0.55rem 0.95rem;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.lb-tab:hover { color: var(--color-ivory); border-color: var(--color-gold-soft); }
+.lb-tab.is-active {
+  background: var(--color-gold);
+  color: var(--color-bg-deep);
+  border-color: var(--color-gold);
+  font-weight: 700;
+}
+
+/* ランキングリスト */
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lb-item {
+  display: grid;
+  grid-template-columns: 36px 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 0.5rem;
+  border-bottom: 1px dashed var(--color-gold-dim);
+  cursor: pointer;
+  transition: background-color var(--transition-quick);
+}
+.lb-item:hover { background: rgba(201, 169, 97, 0.05); }
+.lb-item.is-me { background: rgba(201, 169, 97, 0.08); border-left: 2px solid var(--color-gold); padding-left: calc(0.5rem - 2px); }
+.lb-item__rank {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--color-gold);
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+.lb-item__rank--top {
+  font-size: 1.05rem;
+  text-shadow: 0 0 8px rgba(201, 169, 97, 0.4);
+}
+.lb-item__avatar {
+  width: 44px; height: 44px;
+  border: 1px solid var(--color-gold-dim);
+  background: var(--color-bg-elevated);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cjk);
+  font-size: 0.95rem;
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+.lb-item__avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+  filter: sepia(0.1) saturate(0.95);
+}
+.lb-item__main { min-width: 0; overflow: hidden; }
+.lb-item__name {
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  color: var(--color-ivory);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-item__line2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--font-cjk);
+  font-size: 0.7rem;
+  color: var(--color-ivory-muted);
+  margin-top: 0.2rem;
+  letter-spacing: 0.04em;
+}
+.lb-item__chip {
+  white-space: nowrap;
+}
+.lb-item__chip--stage { color: var(--color-gold-soft); }
+.lb-item__chip--streak { color: #FFB58A; }
+.lb-item__bio {
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  color: var(--color-ivory-dim);
+  margin-top: 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.lb-item__metric {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--color-gold);
+  letter-spacing: 0.06em;
+  text-align: right;
+  white-space: nowrap;
+}
+.lb-item__metric small {
+  display: block;
+  font-family: var(--font-cjk);
+  font-size: 0.6rem;
+  color: var(--color-ivory-dim);
+  letter-spacing: 0.08em;
+  margin-top: 0.1rem;
+}
+
+/* 展開時の詳細ブロック */
+.lb-item__detail {
+  display: none;
+  grid-column: 1 / -1;
+  margin-top: 0.6rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--color-gold-dim);
+  font-family: var(--font-cjk);
+}
+.lb-item.is-open .lb-item__detail { display: block; }
+.lb-item.is-open { background: rgba(201, 169, 97, 0.04); }
+.lb-detail__row {
+  margin: 0.45rem 0;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--color-ivory-muted);
+}
+.lb-detail__label {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  color: var(--color-gold-soft);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.lb-detail__bio {
+  color: var(--color-ivory);
+  font-size: 0.86rem;
+  line-height: 1.85;
+}
+.lb-detail__sns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.lb-detail__sns a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--color-gold);
+  border: 1px solid var(--color-gold-dim);
+  padding: 0.35rem 0.7rem;
+  text-decoration: none;
+  transition: all var(--transition-quick);
+}
+.lb-detail__sns a:hover {
+  border-color: var(--color-gold);
+  background: rgba(201, 169, 97, 0.08);
+}
+.lb-detail__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.lb-detail__badge {
+  font-size: 0.74rem;
+  color: var(--color-gold-soft);
+  background: rgba(201, 169, 97, 0.06);
+  border: 1px solid var(--color-gold-dim);
+  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.04em;
+}
+
+/* フッター（さらに見る / 状態） */
+.lb-foot {
+  text-align: center;
+  margin-top: 0.8rem;
+  font-family: var(--font-cjk);
+}
+.lb-foot__btn {
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-gold);
+  padding: 0.6rem 1.4rem;
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all var(--transition-quick);
+}
+.lb-foot__btn:hover { border-color: var(--color-gold); background: rgba(201, 169, 97, 0.08); }
+.lb-foot__msg {
+  font-size: 0.78rem;
+  color: var(--color-ivory-dim);
+  padding: 1rem 0;
+  letter-spacing: 0.04em;
+}
+
+.lb-disclaimer {
+  font-family: var(--font-cjk);
+  font-size: 0.66rem;
+  color: var(--color-ivory-dim);
+  line-height: 1.7;
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--color-gold-dim);
+  letter-spacing: 0.04em;
+}
+
+/* モバイルで avatar/rank を縮小 */
+@media (max-width: 480px) {
+  .lb-item {
+    grid-template-columns: 28px 38px minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0.7rem 0.4rem;
+  }
+  .lb-item__avatar { width: 38px; height: 38px; }
+  .lb-item__rank { font-size: 0.85rem; }
+  .lb-item__metric { font-size: 0.85rem; }
+}
+
+/* ==========================================================================
    Raid Login Gate — モンスターだけ見える／それ以外は強モザイク／中央にCTA
    ========================================================================== */
 /* シーン全体を相対基準にして gate を絶対配置 */
@@ -3412,6 +3671,44 @@ body.has-quest-dock { padding-bottom: 96px; }
   box-shadow: 0 0 0 2px rgba(201, 169, 97, 0.15);
 }
 .rank-input::placeholder { color: rgba(232, 225, 204, 0.35); }
+
+/* SNS rows in ranking settings */
+.rank-sns-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.rank-sns-row {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+}
+.rank-sns-label {
+  font-family: var(--font-cjk);
+  font-size: 0.78rem;
+  color: var(--color-gold-soft);
+  letter-spacing: 0.08em;
+}
+.rank-sns-input {
+  font-size: 0.82rem;
+}
+.rank-sns-note {
+  font-family: var(--font-cjk);
+  font-size: 0.7rem;
+  color: var(--color-ivory-dim);
+  margin: 0.6rem 0 0;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 480px) {
+  .rank-sns-row {
+    grid-template-columns: 80px minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+  .rank-sns-label { font-size: 0.74rem; }
+}
 
 /* Toggle row */
 .rank-toggle-row {
@@ -3962,15 +4259,37 @@ body.has-quest-dock { padding-bottom: 96px; }
       </ul>
     </div>
 
-    <!-- Phase 2 teaser（週次ランキング） -->
+    <!-- 週次ランキング（6 軸タブ・カード形式） -->
     <div class="info-section card-frame" id="raid-phase2-teaser">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-      <h3 class="info-section__title">週次ランキング — 開発中</h3>
-      <p class="flavor-text">
-        他の冒険者たちとの <b style="color:var(--color-gold);">週次ダメージ・ランキング</b> を開発中です。
-        毎週月曜にリセットされ、あなたの討伐ダメージが全体の順位に反映されます。<br>
-        いまはあなた個人のダメージが <b>このボス固有の戦績</b> として記録されます。
+      <h3 class="info-section__title">今週の冒険者ランキング</h3>
+      <p class="lb-intro">
+        その日の一手が、ここに刻まれていく。<br>
+        <span class="lb-intro__sub">気になる冒険者の SNS から繋がる場としてもどうぞ。</span>
+      </p>
+
+      <!-- 6 軸タブ -->
+      <div class="lb-tabs" role="tablist" aria-label="ランキング軸">
+        <button type="button" class="lb-tab is-active" data-lb-axis="damage">総討伐力</button>
+        <button type="button" class="lb-tab" data-lb-axis="growth">伸び率</button>
+        <button type="button" class="lb-tab" data-lb-axis="rookie">ルーキー</button>
+        <button type="button" class="lb-tab" data-lb-axis="knight">Knight</button>
+        <button type="button" class="lb-tab" data-lb-axis="sage">Sage</button>
+        <button type="button" class="lb-tab" data-lb-axis="ranger">Ranger</button>
+      </div>
+
+      <!-- ランキング本体 -->
+      <ul class="lb-list" id="lb-list">
+        <!-- 動的描画 -->
+      </ul>
+
+      <!-- さらに見る / ローディング・空状態 -->
+      <div class="lb-foot" id="lb-foot"></div>
+
+      <!-- 免責 -->
+      <p class="lb-disclaimer">
+        ※ ここに掲載されている SNS リンクは冒険者本人の任意情報です。連絡・繋がりは自己責任でお願いします。本サービスは冒険者同士のトラブルに関与しません。
       </p>
     </div>
   </section>
@@ -4710,7 +5029,53 @@ body.has-quest-dock { padding-bottom: 96px; }
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">II</span>プライバシー設定</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">II</span>一言メッセージ（任意）</h3>
+      <p class="rank-sec-desc">
+        ランキングカードに表示される自己紹介。最大 50 文字。
+      </p>
+      <input
+        class="rank-input"
+        id="rank-bio"
+        type="text"
+        maxlength="50"
+        placeholder="例：夜の薬草調合にこだわっています">
+    </section>
+
+    <section class="rank-section">
+      <h3 class="rank-sec-head"><span class="rank-no">III</span>SNS リンク（任意）</h3>
+      <p class="rank-sec-desc">
+        他の冒険者から繋がれるよう、自分の SNS を任意で公開できます。<br>
+        対応：X / Threads / Instagram / Note / 自分のサイト
+      </p>
+      <div class="rank-sns-grid">
+        <div class="rank-sns-row">
+          <span class="rank-sns-label">𝕏 X</span>
+          <input class="rank-input rank-sns-input" id="rank-sns-x" type="url" maxlength="200" placeholder="https://x.com/your_handle">
+        </div>
+        <div class="rank-sns-row">
+          <span class="rank-sns-label">𝓣 Threads</span>
+          <input class="rank-input rank-sns-input" id="rank-sns-threads" type="url" maxlength="200" placeholder="https://www.threads.net/@your_handle">
+        </div>
+        <div class="rank-sns-row">
+          <span class="rank-sns-label">📷 Instagram</span>
+          <input class="rank-input rank-sns-input" id="rank-sns-instagram" type="url" maxlength="200" placeholder="https://www.instagram.com/your_handle">
+        </div>
+        <div class="rank-sns-row">
+          <span class="rank-sns-label">✎ Note</span>
+          <input class="rank-input rank-sns-input" id="rank-sns-note" type="url" maxlength="200" placeholder="https://note.com/your_handle">
+        </div>
+        <div class="rank-sns-row">
+          <span class="rank-sns-label">🌐 サイト</span>
+          <input class="rank-input rank-sns-input" id="rank-sns-site" type="url" maxlength="200" placeholder="https://your-site.com">
+        </div>
+      </div>
+      <p class="rank-sns-note">
+        ※ 不正な URL（javascript:・data:）や許可されていないドメインは保存時に自動で除外されます。
+      </p>
+    </section>
+
+    <section class="rank-section">
+      <h3 class="rank-sec-head"><span class="rank-no">IV</span>プライバシー設定</h3>
       <p class="rank-sec-desc">ランキングに公開する情報を選べます。OFF にするといつでも非公開に戻せます。</p>
 
       <div class="rank-toggle-row">
@@ -4723,10 +5088,43 @@ body.has-quest-dock { padding-bottom: 96px; }
           <span class="rank-switch__slider"></span>
         </label>
       </div>
+
+      <div class="rank-toggle-row">
+        <div class="rank-toggle-info">
+          <span class="rank-toggle-lbl">一言メッセージを表示</span>
+          <span class="rank-toggle-desc">OFFにすると bio がランキングに表示されません。</span>
+        </div>
+        <label class="rank-switch">
+          <input type="checkbox" id="rank-show-bio">
+          <span class="rank-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="rank-toggle-row">
+        <div class="rank-toggle-info">
+          <span class="rank-toggle-lbl">SNS リンクを表示</span>
+          <span class="rank-toggle-desc">OFFにすると SNS アイコンがランキングに表示されません。</span>
+        </div>
+        <label class="rank-switch">
+          <input type="checkbox" id="rank-show-sns">
+          <span class="rank-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="rank-toggle-row">
+        <div class="rank-toggle-info">
+          <span class="rank-toggle-lbl">クラスとStageを表示</span>
+          <span class="rank-toggle-desc">OFFにすると Knight/Sage/Ranger と Stage がランキングに表示されません。</span>
+        </div>
+        <label class="rank-switch">
+          <input type="checkbox" id="rank-show-class">
+          <span class="rank-switch__slider"></span>
+        </label>
+      </div>
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">III</span>現在のランキング表示</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">V</span>現在のランキング表示</h3>
       <p class="rank-sec-desc">保存後、冒険者ギルドの週次レポートに反映されます。</p>
 
       <div class="rank-preview">
@@ -4896,6 +5294,10 @@ body.has-quest-dock { padding-bottom: 96px; }
         tabs.forEach(t => t.classList.toggle('is-active', t === tab));
         scenes.forEach(s => s.classList.toggle('is-active', s.id === 'scene-' + target));
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        // レイドタブを開いたタイミングでランキング再取得（ログイン中のみ）
+        if(target === 'raid' && typeof loadLeaderboardForAxis === 'function'){
+          try { loadLeaderboardForAxis(LB_STATE.axis); } catch(_){}
+        }
       });
     });
 
@@ -5046,7 +5448,14 @@ body.has-quest-dock { padding-bottom: 96px; }
         lastFreezeWeek: null     // YYYY-Www（週次でリセット）
       },
       nickname: '',
-      privacy: { showAvatar: true },
+      bio: '',                    // 一言メッセージ（最大50字）
+      snsLinks: [],               // [{type:'x'|'threads'|'instagram'|'note'|'site', url}]
+      privacy: {                  // ランキング表示制御（4トグル・全ON既定）
+        showAvatar: true,
+        showBio: true,
+        showSns: true,
+        showClass: true
+      },
       settings: {                // ゲームルールのON/OFF
         rareDrops: true,         // クエスト完了時のレアバッジ抽選
         stageFX: true,           // Stage進化モーダル
@@ -5604,6 +6013,8 @@ body.has-quest-dock { padding-bottom: 96px; }
               let result = null;
               try { result = logQuestCompletion(t, prevLevel); } catch(_){}
               try { showCompletionFx(t, result); } catch(_){}
+              // ログイン済みなら週次ランキングへ debounce upload
+              try { if(typeof scheduleUpload === 'function') scheduleUpload(800); } catch(_){}
             }
             renderAll();
           }
@@ -6035,6 +6446,252 @@ body.has-quest-dock { padding-bottom: 96px; }
         );
       }).join('');
     }
+
+    // ============================================================
+    // ✦ 週次ランキング描画（Phase 2 本体）
+    //   状態：選択軸／表示件数／開いてるカード uid
+    //   UI：6 軸タブ → fetchWeeklyLeaderboard で取得 → カード展開可能
+    // ============================================================
+    const LB_STATE = {
+      axis: 'damage',
+      visible: 5,         // モバイル既定 TOP 5、デスクトップは 10 に拡張
+      data: [],
+      openUid: null,
+      loading: false
+    };
+    // デスクトップ初期表示は 10 件
+    if(typeof window !== 'undefined' && window.innerWidth >= 768){
+      LB_STATE.visible = 10;
+    }
+
+    const LB_AXIS_LABEL = {
+      damage: '討伐力',
+      growth: '伸び率',
+      rookie: 'ルーキー',
+      knight: 'Knight',
+      sage: 'Sage',
+      ranger: 'Ranger'
+    };
+
+    function _lbStageEmoji(stage){
+      if(stage >= 3) return '👑';
+      if(stage >= 2) return '🎓';
+      return '🌱';
+    }
+    function _lbClassLabel(cls){
+      if(cls === 'knight') return 'Knight';
+      if(cls === 'sage')   return 'Sage';
+      if(cls === 'ranger') return 'Ranger';
+      return '';
+    }
+    function _lbAvatarHtml(row){
+      const showAva = !(row.privacy && row.privacy.showAvatar === false);
+      if(showAva && row.photoURL){
+        return `<img src="${esc(row.photoURL)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+      }
+      // ポートレートフォールバック
+      const p = row.portrait || {};
+      if(showAva && p.cls && p.gender && p.stage){
+        const path = `assets/portraits/${p.cls}-${p.gender}-${p.stage}.webp`;
+        return `<img src="${esc(path)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+      }
+      // 最終フォールバック：イニシャル
+      const name = row.displayName || '冒';
+      const initial = Array.from(String(name))[0] || '冒';
+      return esc(initial);
+    }
+
+    function _lbMetricForAxis(row, axis){
+      if(axis === 'growth'){
+        const ratio = (row._growth != null) ? row._growth : 0;
+        const sign = ratio > 0 ? '+' : '';
+        const pct = Math.round(ratio * 100);
+        return { value: sign + pct + '%', label: '前週比' };
+      }
+      // damage / rookie / class — すべて週次damage
+      return { value: (row.weeklyDamage || 0).toLocaleString('en-US'), label: '今週ダメ' };
+    }
+
+    function _lbRankLabel(rank){
+      if(rank === 1) return 'I';
+      if(rank === 2) return 'II';
+      if(rank === 3) return 'III';
+      return String(rank);
+    }
+
+    function _lbItemHtml(row, idx){
+      const rank = idx + 1;
+      const rankCls = (rank <= 3) ? 'lb-item__rank--top' : '';
+      const isMe = (fbUid && row.uid === fbUid);
+      const isOpen = (LB_STATE.openUid === row.uid);
+      const metric = _lbMetricForAxis(row, LB_STATE.axis);
+
+      const showClass = !(row.privacy && row.privacy.showClass === false);
+      const stageEmoji = showClass ? _lbStageEmoji(row.stage || 1) : '';
+      const classLabel = showClass ? _lbClassLabel(row.dominantClass) : '';
+      const lvText = 'Lv.' + (row.level || 1);
+      const streakText = (row.streakDays > 0) ? ('🔥 連続 ' + row.streakDays + '日') : '';
+      const killsText = (row.weeklyKills > 0) ? ('⚔︎ 今週 ' + row.weeklyKills + '討伐') : '';
+
+      const showBio = !(row.privacy && row.privacy.showBio === false);
+      const bioHtml = (showBio && row.bio) ? `<div class="lb-item__bio">${esc(row.bio)}</div>` : '';
+
+      // 展開時の詳細
+      const showSns = !(row.privacy && row.privacy.showSns === false);
+      const snsList = (showSns && Array.isArray(row.snsLinks)) ? row.snsLinks : [];
+      const snsHtml = snsList.length > 0 ? `
+        <div class="lb-detail__row">
+          <span class="lb-detail__label">繋がる</span>
+          <div class="lb-detail__sns">
+            ${snsList.map(s => {
+              const t = (s && s.type) || '';
+              const u = (s && s.url) || '';
+              if(!u) return '';
+              const label = t === 'x' ? '𝕏 X'
+                          : t === 'threads' ? '𝓣 Threads'
+                          : t === 'instagram' ? '📷 Instagram'
+                          : t === 'note' ? '✎ Note'
+                          : '🌐 サイト';
+              return `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(label)}</a>`;
+            }).join('')}
+          </div>
+        </div>` : '';
+
+      const badges = Array.isArray(row.topBadges) ? row.topBadges.slice(0, 3) : [];
+      const badgesHtml = badges.length > 0 ? `
+        <div class="lb-detail__row">
+          <span class="lb-detail__label">勲章</span>
+          <div class="lb-detail__badges">
+            ${badges.map(b => `<span class="lb-detail__badge">${esc((b.emoji||'★') + ' ' + (b.name||''))}</span>`).join('')}
+          </div>
+        </div>` : '';
+
+      const fullBioHtml = (showBio && row.bio) ? `
+        <div class="lb-detail__row">
+          <span class="lb-detail__label">一言</span>
+          <div class="lb-detail__bio">${esc(row.bio)}</div>
+        </div>` : '';
+
+      // 詳細セクションが空（bio/sns/badge全てなし）なら expand しない
+      const hasDetail = !!(fullBioHtml || snsHtml || badgesHtml);
+
+      return `
+        <li class="lb-item ${isMe ? 'is-me' : ''} ${isOpen ? 'is-open' : ''}" data-uid="${esc(row.uid || '')}" data-can-open="${hasDetail ? '1' : '0'}">
+          <span class="lb-item__rank ${rankCls}">${_lbRankLabel(rank)}</span>
+          <span class="lb-item__avatar">${_lbAvatarHtml(row)}</span>
+          <span class="lb-item__main">
+            <span class="lb-item__name">${esc(row.displayName || '冒険者')}</span>
+            <span class="lb-item__line2">
+              <span class="lb-item__chip">${esc(lvText)}</span>
+              ${stageEmoji ? `<span class="lb-item__chip lb-item__chip--stage">${stageEmoji}${classLabel ? ' ' + esc(classLabel) : ''}</span>` : ''}
+              ${streakText ? `<span class="lb-item__chip lb-item__chip--streak">${esc(streakText)}</span>` : ''}
+              ${killsText ? `<span class="lb-item__chip">${esc(killsText)}</span>` : ''}
+            </span>
+            ${bioHtml}
+          </span>
+          <span class="lb-item__metric">${esc(metric.value)}<small>${esc(metric.label)}</small></span>
+          ${hasDetail ? `<div class="lb-item__detail">${fullBioHtml}${snsHtml}${badgesHtml}</div>` : ''}
+        </li>
+      `;
+    }
+
+    function renderLeaderboard(){
+      const listEl = document.getElementById('lb-list');
+      const footEl = document.getElementById('lb-foot');
+      if(!listEl || !footEl) return;
+
+      // 未ログイン → ランキング自体は raid-gate で隠れているので何もしないでOK
+      if(!fbUid){
+        listEl.innerHTML = '';
+        footEl.innerHTML = '<div class="lb-foot__msg">ログインすると、他の冒険者のランキングが見られます。</div>';
+        return;
+      }
+      // 準備中フェーズ
+      if(typeof RAID_STATE === 'string' && RAID_STATE !== 'open'){
+        listEl.innerHTML = '';
+        footEl.innerHTML = '<div class="lb-foot__msg">週次ランキングは近日開放予定です。</div>';
+        return;
+      }
+
+      if(LB_STATE.loading){
+        footEl.innerHTML = '<div class="lb-foot__msg">読み込み中…</div>';
+        return;
+      }
+
+      const data = LB_STATE.data || [];
+      if(data.length === 0){
+        listEl.innerHTML = '';
+        const axisLabel = LB_AXIS_LABEL[LB_STATE.axis] || '';
+        footEl.innerHTML = `<div class="lb-foot__msg">まだ「${axisLabel}」軸のランキングは記録されていません。<br>あなたの一手が、最初の一行になる。</div>`;
+        return;
+      }
+
+      // 表示件数まで切り出し
+      const slice = data.slice(0, LB_STATE.visible);
+      listEl.innerHTML = slice.map((row, idx) => _lbItemHtml(row, idx)).join('');
+
+      // 自分の順位（圏外時のみフッターに表示）
+      const myRank = findMyRank(data);
+      const inSlice = slice.some(r => r.uid === fbUid);
+
+      const remaining = data.length - LB_STATE.visible;
+      let footHtml = '';
+      if(remaining > 0){
+        footHtml += `<button type="button" class="lb-foot__btn" id="lb-more-btn">▾ さらに ${Math.min(remaining, 10)} 件見る</button>`;
+      }
+      if(myRank && !inSlice){
+        footHtml += `<div class="lb-foot__msg" style="margin-top:.6rem;">あなたの順位：${myRank} 位（圏外）</div>`;
+      }
+      footEl.innerHTML = footHtml || '<div class="lb-foot__msg">これがすべての冒険者です。</div>';
+
+      // 「さらに見る」ハンドラ
+      const moreBtn = document.getElementById('lb-more-btn');
+      if(moreBtn){
+        moreBtn.addEventListener('click', () => {
+          LB_STATE.visible = Math.min(LB_STATE.visible + 10, data.length);
+          renderLeaderboard();
+        });
+      }
+
+      // カードクリック → 詳細展開
+      listEl.querySelectorAll('.lb-item').forEach(el => {
+        const uid = el.dataset.uid;
+        const canOpen = el.dataset.canOpen === '1';
+        if(!canOpen) return;
+        el.addEventListener('click', (e) => {
+          // SNS リンクのクリックは展開を発火させない
+          if(e.target.tagName === 'A') return;
+          LB_STATE.openUid = (LB_STATE.openUid === uid) ? null : uid;
+          renderLeaderboard();
+        });
+      });
+    }
+
+    // タブ切替 → fetch → render
+    async function loadLeaderboardForAxis(axis){
+      LB_STATE.axis = axis;
+      LB_STATE.openUid = null;
+      LB_STATE.visible = (window.innerWidth >= 768) ? 10 : 5;
+      LB_STATE.loading = true;
+      renderLeaderboard();
+      const rows = await fetchWeeklyLeaderboard(axis);
+      LB_STATE.data = rows || [];
+      LB_STATE.loading = false;
+      renderLeaderboard();
+    }
+
+    // タブ初期化（一度だけ wire）
+    (function wireLeaderboardTabs(){
+      const tabs = document.querySelectorAll('.lb-tab');
+      if(!tabs.length || tabs[0].dataset.wired === '1') return;
+      tabs.forEach(tab => {
+        tab.dataset.wired = '1';
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.toggle('is-active', t === tab));
+          loadLeaderboardForAxis(tab.dataset.lbAxis);
+        });
+      });
+    })();
 
     function renderRaid(){
       const hpFill    = document.getElementById('raid-hp-fill');
@@ -6601,6 +7258,7 @@ body.has-quest-dock { padding-bottom: 96px; }
           try { trackDailyExp(t.exp || 20); } catch(_){}
           maybeRareDrop();
           try { result = logQuestCompletion(t, prevLevel); } catch(_){}
+          try { if(typeof scheduleUpload === 'function') scheduleUpload(800); } catch(_){}
         }
         try { showCompletionFx(t, result); } catch(_){}
         resetDock();
@@ -6981,6 +7639,14 @@ body.has-quest-dock { padding-bottom: 96px; }
             try {
               if(loginBlock) loginBlock.classList.add('is-logged-in');
             } catch(_){}
+            // ログイン直後のアップロード（少し遅らせて renderAll 後に発火）
+            try { if(typeof scheduleUpload === 'function') scheduleUpload(1200); } catch(_){}
+            // ログイン直後にランキングも先読み（次のレイドタブ表示が即座に映える）
+            try {
+              if(typeof loadLeaderboardForAxis === 'function'){
+                setTimeout(() => loadLeaderboardForAxis(LB_STATE.axis), 1500);
+              }
+            } catch(_){}
           } else {
             // user === null（ログアウト or セッション切れ）
             // ローカルに残った D.user は削除して、UI を未ログインに同期する
@@ -7199,6 +7865,301 @@ body.has-quest-dock { padding-bottom: 96px; }
         console.warn('[fb] signOut error', err);
         if(typeof qmToast === 'function') qmToast('ログアウトに失敗しました');
       });
+    }
+
+    // =====================================================================
+    // === ✦ Weekly Score Upload — 週次ランキングへの送信 ===
+    // =====================================================================
+    // ログイン中ユーザーが完了アクションを起こすたびに、Firestore の
+    // atlas_weekly_scores/{weekKey}/{uid} へ upsert する。
+    //
+    // ガード条件:
+    //   - fbAuth + fbUid（ログイン済）
+    //   - RAID_STATE === 'open'（準備中フェーズではアップロードしない）
+    //   - 連続呼び出しを避けるため debounce（最後の呼び出しから 600ms）
+    // =====================================================================
+    let _uploadTimer = null;
+    function scheduleUpload(delayMs){
+      if(_uploadTimer) clearTimeout(_uploadTimer);
+      _uploadTimer = setTimeout(() => {
+        _uploadTimer = null;
+        uploadMyWeeklyScore().catch(e => console.warn('[fb] upload', e));
+      }, delayMs || 600);
+    }
+
+    function _currentWeekKey(){
+      // ISO 週ベース（既存の isoWeek を使用）
+      try { return isoWeek(todayKey()); } catch(_){ return ''; }
+    }
+
+    function _myJoinedWeekKey(){
+      // 初参加週：D に保存。未保存なら今週として記録。
+      if(!D._joinedWeekKey){
+        D._joinedWeekKey = _currentWeekKey();
+        try { saveD(); } catch(_){}
+      }
+      return D._joinedWeekKey;
+    }
+
+    function _myDominantClass(){
+      // ホームステータスと同じ計算をローカルで再構築
+      const done = (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).filter(t => t.done);
+      const w = { knight:0, sage:0, ranger:0 };
+      done.forEach(t => {
+        if(t.cat === '事務') w.knight += 1;
+        else if(t.cat === 'クライアント') w.ranger += 1;
+        else if(t.cat === '開拓' || t.cat === '自分ごと') w.sage += 1;
+        else w.sage += 0.5;
+      });
+      const total = w.knight + w.sage + w.ranger;
+      const norm = total > 0
+        ? { knight: w.knight/total, sage: w.sage/total, ranger: w.ranger/total }
+        : { knight: 0, sage: 0, ranger: 0 };
+      let dom = 'sage', maxV = -1;
+      Object.keys(norm).forEach(k => { if(norm[k] > maxV){ maxV = norm[k]; dom = k; } });
+      return { weights: norm, dominant: dom };
+    }
+
+    function _myTopBadges(maxN){
+      const list = [];
+      // 派生バッジ（連続日数・撃破数）から代表 3 つを抽出
+      const done = (typeof PRI_TASKS === 'object' ? PRI_TASKS : []).filter(t => t.done);
+      const kills = done.length;
+      const longest = (D.streak && D.streak.longest) || 0;
+      const stage = (D.streak && D.streak.stage) || 1;
+      if(kills >= 100) list.push({ name:'百体討伐', emoji:'⚔︎' });
+      else if(kills >= 50) list.push({ name:'五十体討伐', emoji:'⚔︎' });
+      else if(kills >= 10) list.push({ name:'十体討伐', emoji:'⚔︎' });
+      else if(kills >= 1) list.push({ name:'初討伐', emoji:'✦' });
+      if(longest >= 30) list.push({ name:'30日連続', emoji:'🔥' });
+      else if(longest >= 14) list.push({ name:'14日連続', emoji:'🔥' });
+      else if(longest >= 7) list.push({ name:'7日連続', emoji:'🔥' });
+      else if(longest >= 3) list.push({ name:'3日連続', emoji:'🌿' });
+      if(stage >= 3) list.push({ name:'達人の眼差し', emoji:'👑' });
+      else if(stage >= 2) list.push({ name:'熟練の域', emoji:'🎓' });
+      // レアドロップから1つ
+      if(Array.isArray(D.badges) && D.badges.length > 0){
+        const rare = D.badges[D.badges.length - 1];
+        if(rare && rare.name) list.push({ name: rare.name, emoji: rare.emoji || '★' });
+      }
+      return list.slice(0, maxN || 3);
+    }
+
+    function _weekStartIso(weekKey){
+      // 'YYYY-Www' → ざっくりその週の月曜の YYYY-MM-DD（クエリ・参照用）
+      // 簡易実装：今は使用しないが将来用
+      return weekKey;
+    }
+
+    async function uploadMyWeeklyScore(){
+      if(!fbDb || !fbUid){
+        return; // 未ログインまたは SDK 未準備
+      }
+      if(typeof RAID_STATE === 'string' && RAID_STATE !== 'open'){
+        return; // 準備中はアップロードしない
+      }
+      const weekKey = _currentWeekKey();
+      if(!weekKey) return;
+
+      // ---- 集計値 ----
+      const today = todayKey();
+      const dailyExp = D.dailyExp || {};
+      // 今週の damage：weekKey に属する dailyExp の合計
+      let weeklyDamage = 0;
+      let weeklyKills = 0;
+      Object.keys(dailyExp).forEach(d => {
+        try {
+          if(isoWeek(d) === weekKey){
+            weeklyDamage += (dailyExp[d] || 0);
+          }
+        } catch(_){}
+      });
+      // 今週の討伐数：completedAt が今週内のタスク
+      (PRI_TASKS || []).forEach(t => {
+        if(t.done && t.completedAt){
+          try { if(isoWeek(t.completedAt) === weekKey) weeklyKills++; } catch(_){}
+        }
+      });
+
+      // ---- プロフィール集計 ----
+      const totalExp = (PRI_TASKS || []).filter(t => t.done).reduce((s,t) => s + (t.exp||20), 0);
+      const level = (typeof computeLevel === 'function') ? computeLevel(totalExp) : 1;
+      const stage = (D.streak && D.streak.stage) || 1;
+      const streakDays = (D.streak && D.streak.current) || 0;
+      const cls = _myDominantClass();
+      const joinedWeekKey = _myJoinedWeekKey();
+      const topBadges = _myTopBadges(3);
+
+      // ---- 前週比（伸び率タブ用）----
+      let prevWeekDamage = 0;
+      try {
+        // 前週の damage：weekKey の 1 つ前の週
+        // 簡易：今週内に含まれない dailyExp の中で最近の 1 週分を勘定
+        const weekDates = Object.keys(dailyExp).filter(d => {
+          try { return isoWeek(d) !== weekKey; } catch(_){ return false; }
+        }).sort().slice(-7);
+        weekDates.forEach(d => prevWeekDamage += (dailyExp[d] || 0));
+      } catch(_){}
+
+      // ---- ポートレート情報（fallback 用）----
+      const portrait = {
+        cls: (typeof ps === 'object' && ps.cls) || cls.dominant,
+        gender: (typeof ps === 'object' && ps.gender) || 'm',
+        stage: String(stage)
+      };
+
+      // ---- プライバシーを尊重したペイロード生成 ----
+      const priv = D.privacy || {};
+      const payload = {
+        uid: fbUid,
+        weekKey: weekKey,
+        displayName: (D.nickname && D.nickname.trim()) || (D.user && D.user.displayName) || '冒険者',
+        photoURL: (priv.showAvatar !== false && D.user && D.user.photoURL) ? D.user.photoURL : '',
+        portrait: portrait,
+        bio: (priv.showBio !== false) ? (D.bio || '') : '',
+        snsLinks: (priv.showSns !== false) ? (Array.isArray(D.snsLinks) ? D.snsLinks : []) : [],
+        weeklyDamage: weeklyDamage,
+        weeklyKills: weeklyKills,
+        level: level,
+        stage: (priv.showClass !== false) ? stage : 1,
+        streakDays: streakDays,
+        classWeights: (priv.showClass !== false) ? cls.weights : { knight:0, sage:0, ranger:0 },
+        dominantClass: (priv.showClass !== false) ? cls.dominant : '',
+        joinedWeekKey: joinedWeekKey,
+        topBadges: topBadges,
+        prevWeekDamage: prevWeekDamage,
+        privacy: {
+          showAvatar: priv.showAvatar !== false,
+          showBio:    priv.showBio    !== false,
+          showSns:    priv.showSns    !== false,
+          showClass:  priv.showClass  !== false
+        },
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // ---- Firestore upsert（merge:true）----
+      try {
+        await fbDb.collection('atlas_weekly_scores')
+          .doc(weekKey)
+          .collection('players')
+          .doc(fbUid)
+          .set(payload, { merge: true });
+      } catch(e){
+        console.warn('[fb] uploadMyWeeklyScore failed', e);
+      }
+    }
+    window.uploadMyWeeklyScore = uploadMyWeeklyScore;
+    window.scheduleUpload = scheduleUpload;
+
+    // =====================================================================
+    // === ✦ Weekly Leaderboard Fetch — 6 軸の週次ランキング取得 ===
+    // =====================================================================
+    //   軸:
+    //     'damage'   — 総討伐力（週次damage 降順）
+    //     'growth'   — 伸び率（前週比成長率、クライアント側ソート）
+    //     'rookie'   — ルーキー（参加4週以内）
+    //     'knight'   — Knight 主導の冒険者
+    //     'sage'     — Sage 主導の冒険者
+    //     'ranger'   — Ranger 主導の冒険者
+    //
+    //   キャッシュ: 軸×週単位で 5分 TTL（Firestore 読込み削減）
+    // =====================================================================
+    const _leaderboardCache = {};
+    const LEADERBOARD_TTL = 5 * 60 * 1000;
+    const LEADERBOARD_LIMIT = 100;   // 1度に最大100件まで取得（さらに見るで開放）
+
+    function _isFresh(cacheKey){
+      const c = _leaderboardCache[cacheKey];
+      return c && (Date.now() - c.ts < LEADERBOARD_TTL);
+    }
+
+    function _cacheKey(axis, weekKey){
+      return axis + '|' + weekKey;
+    }
+
+    async function fetchWeeklyLeaderboard(axis, weekKey){
+      if(!fbDb || !fbUid){
+        // 未ログインは取得不可（rules でも蹴られる）
+        return [];
+      }
+      weekKey = weekKey || _currentWeekKey();
+      if(!weekKey) return [];
+
+      const ck = _cacheKey(axis, weekKey);
+      if(_isFresh(ck)) return _leaderboardCache[ck].data;
+
+      const col = fbDb.collection('atlas_weekly_scores').doc(weekKey).collection('players');
+      let snap;
+      try {
+        if(axis === 'damage' || axis === 'growth'){
+          // damage と growth は同じ「damage 降順」のクエリ。growth は client 側で再ソート
+          snap = await col.orderBy('weeklyDamage', 'desc').limit(LEADERBOARD_LIMIT).get();
+        } else if(axis === 'rookie'){
+          // ルーキー：joinedWeekKey が 4 週以内のユーザー
+          // 厳密には ISO週の比較が必要だが、文字列比較でも 'YYYY-Www' 形式なら時系列順
+          const cutoff = _weekKeyMinusN(weekKey, 4);
+          snap = await col
+            .where('joinedWeekKey', '>=', cutoff)
+            .orderBy('joinedWeekKey', 'desc')
+            .limit(LEADERBOARD_LIMIT)
+            .get();
+        } else if(axis === 'knight' || axis === 'sage' || axis === 'ranger'){
+          // クラス別：dominantClass がそのクラスのユーザーを damage 降順で
+          snap = await col
+            .where('dominantClass', '==', axis)
+            .orderBy('weeklyDamage', 'desc')
+            .limit(LEADERBOARD_LIMIT)
+            .get();
+        } else {
+          return [];
+        }
+      } catch(e){
+        // 複合インデックス未作成エラー等は Firebase が自動的にコンソールリンクを示す
+        // ユーザーが初回アクセスした時にコンソールでインデックス作成 → 反映待ち
+        console.warn('[fb] leaderboard query failed', axis, e);
+        return [];
+      }
+
+      let rows = [];
+      snap.forEach(doc => rows.push(doc.data()));
+
+      // 軸特有のクライアントサイド変換
+      if(axis === 'growth'){
+        rows = rows.map(r => {
+          const prev = Math.max(1, r.prevWeekDamage || 0);
+          const cur = r.weeklyDamage || 0;
+          const ratio = (cur - prev) / prev;  // -1.0 〜 ∞
+          return Object.assign({}, r, { _growth: ratio });
+        }).sort((a,b) => b._growth - a._growth);
+      } else if(axis === 'rookie'){
+        // joinedWeekKey 順で取った後、damage 降順に再ソート（複合インデックス不要のため）
+        rows.sort((a,b) => (b.weeklyDamage || 0) - (a.weeklyDamage || 0));
+      }
+
+      _leaderboardCache[ck] = { ts: Date.now(), data: rows };
+      return rows;
+    }
+    window.fetchWeeklyLeaderboard = fetchWeeklyLeaderboard;
+
+    // 自分の順位を算出（その軸内での 1-based rank。見つからなければ null）
+    function findMyRank(rows){
+      if(!fbUid || !Array.isArray(rows)) return null;
+      const idx = rows.findIndex(r => r && r.uid === fbUid);
+      return idx >= 0 ? (idx + 1) : null;
+    }
+    window.findMyRank = findMyRank;
+
+    // 'YYYY-Www' を N 週前にずらす（簡易：年跨ぎは保守的に YYYY-W01 を境にロールバック）
+    function _weekKeyMinusN(weekKey, n){
+      const m = String(weekKey).match(/^(\d{4})-W(\d{2})$/);
+      if(!m) return weekKey;
+      let year = parseInt(m[1], 10);
+      let week = parseInt(m[2], 10) - n;
+      while(week < 1){
+        year -= 1;
+        week += 52; // 厳密には ISO 週は年により 52/53 だが、cutoff として保守的でOK
+      }
+      return year + '-W' + String(week).padStart(2, '0');
     }
 
     // 起動時に init を試みる（SDK ロード済みなら即座、未ロードならポーリング）
@@ -7805,23 +8766,92 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
     }
 
+    // SNS URL ホワイトリスト：許可ドメインのみ受け付け、不正な URL（javascript: / data: 等）を遮断
+    const SNS_TYPE_HOST_PATTERNS = {
+      x:        [/^(www\.)?x\.com$/i, /^(www\.)?twitter\.com$/i],
+      threads:  [/^(www\.)?threads\.net$/i],
+      instagram:[/^(www\.)?instagram\.com$/i],
+      note:     [/^(www\.)?note\.com$/i],
+      site:     null  // 自サイトは https のみ要求、ドメイン制限なし
+    };
+    function isAllowedSnsUrl(type, url){
+      if(!url || typeof url !== 'string') return false;
+      const trimmed = url.trim();
+      if(!trimmed) return false;
+      // javascript: / data: / file: / about: 等の擬似スキームを遮断
+      let parsed;
+      try { parsed = new URL(trimmed); } catch(_){ return false; }
+      if(parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
+      // 自サイトはドメイン制限なし、それ以外はホワイトリスト一致を要求
+      if(type === 'site') return true;
+      const patterns = SNS_TYPE_HOST_PATTERNS[type];
+      if(!patterns) return false;
+      return patterns.some(re => re.test(parsed.hostname));
+    }
+
     function openRankingSettings(){
       const input = document.getElementById('rank-nickname');
-      const toggle = document.getElementById('rank-show-avatar');
+      const bioIn = document.getElementById('rank-bio');
+      const tgAva = document.getElementById('rank-show-avatar');
+      const tgBio = document.getElementById('rank-show-bio');
+      const tgSns = document.getElementById('rank-show-sns');
+      const tgCls = document.getElementById('rank-show-class');
       if(input) input.value = D.nickname || '';
-      if(toggle) toggle.checked = !!(D.privacy && D.privacy.showAvatar !== false);
+      if(bioIn) bioIn.value = D.bio || '';
+      if(tgAva) tgAva.checked = !(D.privacy && D.privacy.showAvatar === false);
+      if(tgBio) tgBio.checked = !(D.privacy && D.privacy.showBio    === false);
+      if(tgSns) tgSns.checked = !(D.privacy && D.privacy.showSns    === false);
+      if(tgCls) tgCls.checked = !(D.privacy && D.privacy.showClass  === false);
+      // 既存の SNS リンクを各 input に流し込み
+      const links = Array.isArray(D.snsLinks) ? D.snsLinks : [];
+      ['x','threads','instagram','note','site'].forEach(t => {
+        const el = document.getElementById('rank-sns-' + t);
+        if(!el) return;
+        const found = links.find(l => l && l.type === t);
+        el.value = (found && found.url) || '';
+      });
       updateRankingPreview();
       openModal('ranking-settings-ov');
     }
     function saveRankingSettings(){
       const input = document.getElementById('rank-nickname');
-      const toggle = document.getElementById('rank-show-avatar');
-      D.nickname = input ? input.value.trim() : D.nickname;
-      if(!D.privacy) D.privacy = { showAvatar: true };
-      D.privacy.showAvatar = !!(toggle && toggle.checked);
+      const bioIn = document.getElementById('rank-bio');
+      const tgAva = document.getElementById('rank-show-avatar');
+      const tgBio = document.getElementById('rank-show-bio');
+      const tgSns = document.getElementById('rank-show-sns');
+      const tgCls = document.getElementById('rank-show-class');
+      D.nickname = input ? input.value.trim().slice(0, 20) : D.nickname;
+      D.bio      = bioIn ? bioIn.value.trim().slice(0, 50) : (D.bio || '');
+      if(!D.privacy) D.privacy = {};
+      D.privacy.showAvatar = !!(tgAva && tgAva.checked);
+      D.privacy.showBio    = !!(tgBio && tgBio.checked);
+      D.privacy.showSns    = !!(tgSns && tgSns.checked);
+      D.privacy.showClass  = !!(tgCls && tgCls.checked);
+      // SNS リンク収集（各 input → ホワイトリスト検証 → 通ったものだけ保存）
+      const validLinks = [];
+      const rejected = [];
+      ['x','threads','instagram','note','site'].forEach(t => {
+        const el = document.getElementById('rank-sns-' + t);
+        const v = el ? el.value.trim() : '';
+        if(!v) return; // 空は許容
+        if(isAllowedSnsUrl(t, v)){
+          validLinks.push({ type: t, url: v });
+        } else {
+          rejected.push(t);
+        }
+      });
+      D.snsLinks = validLinks;
       saveD();
-      qmToast('✦ ランキング設定を保存しました');
+      if(rejected.length > 0){
+        qmToast(`✦ 設定を保存しました（${rejected.join(', ')} の URL は不正のため除外）`, { duration: 3600 });
+      } else {
+        qmToast('✦ ランキング設定を保存しました');
+      }
       closeModal('ranking-settings-ov');
+      // ログイン中ならアップロード（β-2 で実装）
+      if(typeof uploadMyWeeklyScore === 'function'){
+        try { uploadMyWeeklyScore(); } catch(_){}
+      }
     }
 
     const drawerRanking = document.getElementById('drawer-ranking');
