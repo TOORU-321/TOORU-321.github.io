@@ -2761,6 +2761,27 @@ img.bestiary-entry__illus {
   font-style: italic;
   margin: 0.5rem 0;
 }
+.tos-warn {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  background: rgba(168, 51, 77, 0.12);
+  border: 1px solid var(--color-jewel-red);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  margin: 0.8rem 0;
+  font-size: 0.85rem;
+  line-height: 1.78;
+  color: var(--color-ivory);
+}
+.tos-warn-mark {
+  color: var(--color-jewel-red);
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.tos-warn b { color: var(--color-jewel-red); font-weight: 600; }
 .tos-meta {
   font-size: 0.72rem;
   color: var(--color-gold-soft);
@@ -3938,6 +3959,29 @@ body.has-quest-dock { padding-bottom: 96px; }
   border: 1px solid var(--color-gold-dim);
 }
 .rank-lede b { color: var(--color-gold); font-weight: 600; }
+
+.rank-warning {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  background: rgba(168, 51, 77, 0.12);
+  border: 1px solid var(--color-jewel-red);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  color: var(--color-ivory);
+}
+.rank-warning-mark {
+  color: var(--color-jewel-red);
+  font-size: 1.05rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  padding-top: 1px;
+  letter-spacing: 0.05em;
+}
+.rank-warning b { color: var(--color-jewel-red); font-weight: 600; }
 
 .rank-section {
   padding: 1rem 0;
@@ -5207,12 +5251,24 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
 
       <h3 data-num="V">コミュニティ運営方針</h3>
+
+      <div class="tos-warn" role="note">
+        <span class="tos-warn-mark">⚠</span>
+        <div>
+          <b>勧誘・募集の禁止について</b><br>
+          投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の<b>勧誘・募集・宣伝</b>は、一言メッセージ・SNS リンクのいずれにも記載できません。<br>
+          一言メッセージ欄では<b>保存時に自動で検出・拒否</b>されます。SNS リンク欄に該当する内容がリンク先に含まれる場合も、運営確認のうえ<b>ランキングから削除</b>される対象となります。
+        </div>
+      </div>
+
       <div class="tos-block">
         Bloom Atlas は、冒険を共にする仲間たちが安心して繋がれる場であることを優先します。以下に該当するコンテンツは、予告なく運営側で削除する場合があります。
         <ul>
           <li>他の冒険者への <b>誹謗中傷・嫌がらせ・差別的な発言</b></li>
           <li>ニックネームや一言メッセージ欄での <b>荒らし行為・無関係な宣伝</b></li>
+          <li><b>投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の勧誘・募集・宣伝</b>（一言メッセージ欄では検出時に自動で拒否されます）</li>
           <li>不適切な SNS リンク（スパム・マルウェア・性的コンテンツ等）</li>
+          <li>用意されていないカテゴリの URL 添付（X / Threads / Instagram / Note は <b>各専用枠のみ</b>に登録してください）</li>
           <li>ランキング操作を目的とした <b>不正行為</b></li>
           <li>公人・有名人・他の利用者への <b>なりすまし</b></li>
           <li>個人を特定できる情報（電話番号・住所・他人の本名等）の無断掲載</li>
@@ -5406,6 +5462,15 @@ body.has-quest-dock { padding-bottom: 96px; }
       <b>冒険者名</b>と<b>肖像の表示</b>は、いつでも変更できます。
     </div>
 
+    <div class="rank-warning" role="note">
+      <span class="rank-warning-mark">⚠</span>
+      <div>
+        <b>勧誘・募集の禁止</b><br>
+        投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の<b>勧誘・募集・宣伝</b>は、一言メッセージ・SNS リンクのいずれにも記載できません。<br>
+        検出時は<b>保存できません</b>。違反が確認された場合は<b>ランキングから削除</b>される対象となります。
+      </div>
+    </div>
+
     <section class="rank-section">
       <h3 class="rank-sec-head"><span class="rank-no">I</span>冒険者名（ランキング表示名）</h3>
       <p class="rank-sec-desc">
@@ -5423,7 +5488,8 @@ body.has-quest-dock { padding-bottom: 96px; }
     <section class="rank-section">
       <h3 class="rank-sec-head"><span class="rank-no">II</span>一言メッセージ（任意）</h3>
       <p class="rank-sec-desc">
-        ランキングカードに表示される自己紹介。最大 50 文字。
+        ランキングカードに表示される自己紹介。最大 50 文字。<br>
+        ※ <b>URL 添付禁止</b>（SNS は下の専用枠を使用）／<b>投資・アフィリ・MLM 等の勧誘や募集は禁止</b>（保存時に自動で弾かれます）
       </p>
       <input
         class="rank-input"
@@ -5463,6 +5529,8 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
       <p class="rank-sns-note">
         ※ 不正な URL（javascript:・data:）や許可されていないドメインは保存時に自動で除外されます。<br>
+        ※ X / Threads / Instagram / Note の URL は<b>専用枠のみ</b>有効です（自サイト枠に貼っても自動で弾かれます）。<br>
+        ※ URL 短縮サービス（bit.ly・t.me・lin.ee 等）は <b>リンク先が不透明なため拒否</b> されます。<br>
         ※ <b>公開しても問題ないアカウントのみ</b>ご登録ください。個人特定につながる情報（電話番号・住所・本名等）は<b>記載しないでください</b>。<br>
         ※ いつでも <b>設定 → ランキング設定</b> から修正・削除できます。
       </p>
@@ -9609,8 +9677,26 @@ body.has-quest-dock { padding-bottom: 96px; }
       threads:  [/^(www\.)?threads\.net$/i],
       instagram:[/^(www\.)?instagram\.com$/i],
       note:     [/^(www\.)?note\.com$/i],
-      site:     null  // 自サイトは https のみ要求、ドメイン制限なし
+      site:     null  // 自サイトはドメイン制限なし（ただし下記 deny-list で拒否）
     };
+
+    // 自サイト枠の deny-list：専用枠があるSNS、および URL 短縮サービス
+    const SITE_SLOT_DENY_HOSTS = [
+      /^(www\.)?x\.com$/i, /^(www\.)?twitter\.com$/i,
+      /^(www\.)?threads\.net$/i,
+      /^(www\.)?instagram\.com$/i,
+      /^(www\.)?note\.com$/i,
+      /^(www\.)?facebook\.com$/i, /^(www\.)?fb\.com$/i,
+      /^(www\.)?tiktok\.com$/i,
+      /^(www\.)?youtube\.com$/i, /^(www\.)?youtu\.be$/i,
+    ];
+    const URL_SHORTENER_HOSTS = [
+      /^bit\.ly$/i, /^t\.co$/i, /^tinyurl\.com$/i, /^ow\.ly$/i,
+      /^t\.me$/i, /^lin\.ee$/i, /^buff\.ly$/i, /^goo\.gl$/i,
+      /^is\.gd$/i, /^dlvr\.it$/i, /^bit\.do$/i, /^cutt\.ly$/i,
+      /^rebrand\.ly$/i, /^short\.io$/i,
+    ];
+
     function isAllowedSnsUrl(type, url){
       if(!url || typeof url !== 'string') return false;
       const trimmed = url.trim();
@@ -9619,11 +9705,47 @@ body.has-quest-dock { padding-bottom: 96px; }
       let parsed;
       try { parsed = new URL(trimmed); } catch(_){ return false; }
       if(parsed.protocol !== 'https:' && parsed.protocol !== 'http:') return false;
-      // 自サイトはドメイン制限なし、それ以外はホワイトリスト一致を要求
-      if(type === 'site') return true;
+      const host = parsed.hostname || '';
+      // 自サイト枠：deny-list に該当するホストは拒否（X/Threads/Instagram 等は専用枠を使う想定）
+      if(type === 'site'){
+        if(SITE_SLOT_DENY_HOSTS.some(re => re.test(host))) return false;
+        if(URL_SHORTENER_HOSTS.some(re => re.test(host))) return false;
+        return true;
+      }
       const patterns = SNS_TYPE_HOST_PATTERNS[type];
       if(!patterns) return false;
-      return patterns.some(re => re.test(parsed.hostname));
+      return patterns.some(re => re.test(host));
+    }
+
+    // bio（一言メッセージ）の禁止内容を検出
+    // - URL 添付（SNS は専用枠で受け付ける）
+    // - 投資勧誘 / アフィリ / MLM 等のキーワード
+    const BIO_URL_PATTERN = /https?:\/\/[\w\-./?%&=#~+:;,@!$()*]+/i;
+    const BIO_FORBIDDEN_PATTERNS = [
+      /アフィリエイト|アフィリ(?!ア|エ)/,
+      /\bMLM\b/i,
+      /ネットワーク\s*ビジネス/,
+      /仮想通貨|暗号資産|\bNFT\b/,
+      /\bFX\b|バイナリーオプション|バイナリー/i,
+      /不労所得|月収.{0,3}万|月.{0,3}万円?(稼|入)/,
+      /利回り.{0,4}[％%]|配当.{0,4}[％%]/,
+      /LINE\s*@|公式\s*LINE|@LINE登録/i,
+      /Telegram\s*登録|TG\s*登録|テレグラム\s*登録/i,
+      /勝てる手法|必勝法|稼げる方法/,
+      /限定.{0,3}名募集|急募|参加者募集|メンバー募集/,
+      /(投資|副業).{0,5}(勝てる|稼げる|募集|案件|セミナー|スクール|オンラインサロン)/,
+    ];
+    function bioValidate(bio){
+      if(!bio || typeof bio !== 'string') return { ok: true };
+      if(BIO_URL_PATTERN.test(bio)){
+        return { ok: false, reason: 'URL は記載できません。SNS リンクは下の専用枠をお使いください。' };
+      }
+      for(const re of BIO_FORBIDDEN_PATTERNS){
+        if(re.test(bio)){
+          return { ok: false, reason: '投資勧誘・アフィリエイト・MLM 等の勧誘・募集は禁止されています。' };
+        }
+      }
+      return { ok: true };
     }
 
     function openRankingSettings(){
@@ -9657,8 +9779,18 @@ body.has-quest-dock { padding-bottom: 96px; }
       const tgBio = document.getElementById('rank-show-bio');
       const tgSns = document.getElementById('rank-show-sns');
       const tgCls = document.getElementById('rank-show-class');
+
+      // 一言メッセージのコンテンツ検証（URL 添付・投資勧誘等は拒否）
+      const bioRaw = bioIn ? bioIn.value.trim().slice(0, 50) : (D.bio || '');
+      const bioCheck = bioValidate(bioRaw);
+      if(!bioCheck.ok){
+        qmToast('✦ 一言メッセージを保存できません：' + bioCheck.reason, { duration: 5000 });
+        if(bioIn){ try { bioIn.focus(); } catch(_){} }
+        return; // 保存を中止（モーダルは開いたまま）
+      }
+
       D.nickname = input ? input.value.trim().slice(0, 20) : D.nickname;
-      D.bio      = bioIn ? bioIn.value.trim().slice(0, 50) : (D.bio || '');
+      D.bio      = bioRaw;
       if(!D.privacy) D.privacy = {};
       D.privacy.showAvatar = !!(tgAva && tgAva.checked);
       D.privacy.showBio    = !!(tgBio && tgBio.checked);
