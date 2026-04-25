@@ -5998,7 +5998,9 @@ body.has-quest-dock { padding-bottom: 96px; }
       const sceneEl   = document.getElementById('scene-raid');
 
       // ---- ログインゲート判定 ----
-      const isAuthed = !!(D.user && D.user.uid) || (typeof qmAuthed !== 'undefined' && qmAuthed);
+      // 認証状態の真実は D.user。qmAuthed は派生フラグなのでここでは使わない
+      // （初回 renderAll は qmAuthed の let 宣言より前に動くため TDZ 回避が必須）
+      const isAuthed = !!(D.user && D.user.uid);
       if(sceneEl){
         sceneEl.classList.toggle('is-locked', !isAuthed);
       }
