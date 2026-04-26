@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bloom Atlas — タスクは、冒険になる。</title>
+<meta name="description" content="フリーランスのための RPG風タスクマネージャー。毎日のタスクを討伐に変え、レベルを上げ、週次ランキングで仲間と歩む。Bloom Studio が贈る β版、こっそり開けてます。">
+<meta name="theme-color" content="#0F1428">
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon-32.png">
+
+<!-- OGP -->
+<meta property="og:title" content="Bloom Atlas — タスクは、冒険になる。">
+<meta property="og:description" content="フリーランスのための RPG風タスクマネージャー。β版、こっそり開けてます。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://columns.l-mine.com/landing.html">
+<meta property="og:image" content="https://columns.l-mine.com/assets/ogp/atlas-ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=EB+Garamond:wght@400;500&family=Shippori+Mincho+B1:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --color-bg-deep: #0F1428;
+  --color-bg-mid: #141A30;
+  --color-bg-card: #1A1F3A;
+  --color-bg-elevated: #232949;
+  --color-plum: #6B4D7A;
+  --color-plum-soft: rgba(107, 77, 122, 0.35);
+  --color-gold: #C9A961;
+  --color-gold-soft: rgba(201, 169, 97, 0.4);
+  --color-gold-dim: rgba(201, 169, 97, 0.15);
+  --color-jewel-red: #A8334D;
+  --color-jewel-red-soft: rgba(168, 51, 77, 0.3);
+  --color-ivory: #E8E1CC;
+  --color-ivory-muted: rgba(232, 225, 204, 0.78);
+  --color-ivory-dim: rgba(232, 225, 204, 0.5);
+
+  --font-display: 'Cinzel', 'Shippori Mincho B1', serif;
+  --font-heading: 'Cormorant Garamond', 'Shippori Mincho B1', serif;
+  --font-body: 'EB Garamond', 'Shippori Mincho B1', serif;
+  --font-cjk: 'Shippori Mincho B1', serif;
+
+  --shadow-glow-gold: 0 0 24px rgba(201, 169, 97, 0.28);
+  --shadow-glow-red: 0 0 28px rgba(168, 51, 77, 0.32);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--color-bg-deep);
+  color: var(--color-ivory);
+  font-family: var(--font-body), var(--font-cjk);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(107, 77, 122, 0.18), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168, 51, 77, 0.12), transparent 70%),
+    var(--color-bg-deep);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ノイズ装飾 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(201, 169, 97, 0.04) 1px, transparent 1px),
+    radial-gradient(circle at 80% 70%, rgba(232, 225, 204, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px, 90px 90px;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+/* === Hero === */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-brand {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.42em;
+  color: var(--color-gold);
+  margin-bottom: 24px;
+  display: inline-block;
+  padding: 6px 22px;
+  border-top: 1px solid var(--color-gold-dim);
+  border-bottom: 1px solid var(--color-gold-dim);
+}
+
+.hero-title {
+  font-family: var(--font-cjk);
+  font-weight: 600;
+  font-size: clamp(34px, 8vw, 52px);
+  line-height: 1.35;
+  color: var(--color-ivory);
+  margin: 18px 0 24px;
+  letter-spacing: 0.04em;
+}
+
+.hero-title em {
+  font-style: normal;
+  color: var(--color-gold);
+  display: inline-block;
+  position: relative;
+}
+.hero-title em::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -4px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+.hero-sub {
+  font-family: var(--font-cjk);
+  color: var(--color-ivory-muted);
+  font-size: 15px;
+  margin-bottom: 36px;
+  letter-spacing: 0.06em;
+}
+
+.hero-art {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-art-frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(168, 51, 77, 0.15), transparent 70%),
+    linear-gradient(160deg, var(--color-bg-card), var(--color-bg-elevated));
+  box-shadow: var(--shadow-glow-red);
+}
+
+.hero-art-monster {
+  font-size: 96px;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 4px 14px rgba(168, 51, 77, 0.5));
+}
+
+.hero-art-orbit {
+  position: absolute;
+  inset: -12px;
+  border: 1px dashed var(--color-gold-dim);
+  border-radius: 50%;
+  animation: rotate 24s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cta-primary {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  color: var(--color-bg-deep);
+  background: linear-gradient(135deg, var(--color-gold) 0%, #d4b87a 100%);
+  padding: 16px 38px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 32px rgba(201, 169, 97, 0.42);
+}
+
+.cta-primary::before {
+  content: '⚜';
+  margin-right: 10px;
+  color: var(--color-bg-deep);
+}
+
+.cta-note {
+  display: block;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--color-ivory-dim);
+  letter-spacing: 0.08em;
+  font-family: var(--font-cjk);
+}
+
+/* === Section === */
+section {
+  padding: 56px 0;
+  position: relative;
+}
+
+.sec-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+
+.sec-title {
+  font-family: var(--font-cjk);
+  font-weight: 600;
+  font-size: clamp(22px, 5.6vw, 30px);
+  line-height: 1.55;
+  color: var(--color-ivory);
+  text-align: center;
+  margin-bottom: 36px;
+  letter-spacing: 0.04em;
+}
+
+/* === Problem === */
+.problem-quote {
+  font-family: var(--font-cjk);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-ivory);
+  text-align: center;
+  line-height: 1.8;
+  padding: 28px 22px;
+  border-top: 1px solid var(--color-gold-dim);
+  border-bottom: 1px solid var(--color-gold-dim);
+  position: relative;
+  margin: 0 auto 32px;
+  max-width: 480px;
+}
+
+.problem-quote::before,
+.problem-quote::after {
+  content: '⚜︎';
+  position: absolute;
+  color: var(--color-gold);
+  font-size: 12px;
+  background: var(--color-bg-deep);
+  padding: 0 14px;
+}
+.problem-quote::before { top: -8px; left: 50%; transform: translateX(-50%); }
+.problem-quote::after { bottom: -8px; left: 50%; transform: translateX(-50%); }
+
+.pain-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.pain-item {
+  background: linear-gradient(160deg, var(--color-bg-card), var(--color-bg-elevated));
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 4px;
+  padding: 16px 20px;
+  font-family: var(--font-cjk);
+  font-size: 15px;
+  color: var(--color-ivory-muted);
+  line-height: 1.7;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.pain-item-mark {
+  color: var(--color-jewel-red);
+  font-family: var(--font-display);
+  font-size: 14px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* === Pivot（転換） === */
+.pivot {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.pivot-text {
+  font-family: var(--font-cjk);
+  font-size: clamp(26px, 6vw, 36px);
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  text-shadow: 0 0 18px rgba(201, 169, 97, 0.3);
+}
+
+.pivot-divider {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  margin: 22px auto;
+}
+
+.pivot-sub {
+  font-family: var(--font-cjk);
+  color: var(--color-ivory-muted);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+
+/* === Features === */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.feature-card {
+  background: linear-gradient(160deg, var(--color-bg-card), var(--color-bg-elevated));
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 6px;
+  padding: 26px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-gold), var(--color-jewel-red));
+}
+
+.feature-icon {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--color-gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+}
+
+.feature-title {
+  font-family: var(--font-cjk);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--color-ivory);
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+
+.feature-desc {
+  font-family: var(--font-cjk);
+  font-size: 14px;
+  color: var(--color-ivory-muted);
+  line-height: 1.75;
+}
+
+/* === Behavior Section === */
+.behavior {
+  background: linear-gradient(160deg, rgba(107, 77, 122, 0.18), rgba(168, 51, 77, 0.08));
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 6px;
+  padding: 32px 26px;
+  margin-top: 12px;
+}
+
+.behavior-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.32em;
+  color: var(--color-gold);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.behavior-desc {
+  font-family: var(--font-cjk);
+  font-size: 14px;
+  color: var(--color-ivory-muted);
+  line-height: 1.85;
+  text-align: center;
+}
+
+.behavior-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.tag {
+  font-family: var(--font-cjk);
+  font-size: 12px;
+  color: var(--color-ivory);
+  background: rgba(201, 169, 97, 0.1);
+  border: 1px solid var(--color-gold-dim);
+  padding: 5px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+
+/* === Brand voice === */
+.voice {
+  text-align: center;
+  padding: 48px 22px;
+  background:
+    linear-gradient(180deg, transparent, rgba(26, 31, 58, 0.5)),
+    var(--color-bg-mid);
+  border-top: 1px solid var(--color-gold-dim);
+  border-bottom: 1px solid var(--color-gold-dim);
+  margin: 40px -22px 0;
+}
+
+.voice-mark {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--color-gold);
+  letter-spacing: 0.4em;
+  margin-bottom: 16px;
+}
+
+.voice-text {
+  font-family: var(--font-cjk);
+  font-size: 16px;
+  color: var(--color-ivory);
+  line-height: 2;
+  letter-spacing: 0.04em;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.voice-sister {
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--color-ivory-dim);
+  font-family: var(--font-cjk);
+  letter-spacing: 0.06em;
+}
+
+.voice-sister a {
+  color: var(--color-gold);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--color-gold-dim);
+}
+
+/* === Final CTA === */
+.final-cta {
+  text-align: center;
+  padding: 64px 22px 48px;
+}
+
+.final-cta-title {
+  font-family: var(--font-cjk);
+  font-weight: 600;
+  font-size: clamp(22px, 5.4vw, 28px);
+  color: var(--color-ivory);
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+  line-height: 1.55;
+}
+
+.final-cta-sub {
+  font-family: var(--font-cjk);
+  font-size: 14px;
+  color: var(--color-ivory-muted);
+  margin-bottom: 32px;
+  line-height: 1.75;
+}
+
+.cta-meta {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 22px;
+  font-family: var(--font-cjk);
+  font-size: 12px;
+  color: var(--color-ivory-dim);
+}
+
+.cta-meta-item::before { content: '⚜︎ '; color: var(--color-gold); }
+
+/* === Footer === */
+footer {
+  text-align: center;
+  padding: 40px 22px 48px;
+  border-top: 1px solid var(--color-gold-dim);
+  margin-top: 40px;
+  font-family: var(--font-cjk);
+  font-size: 12px;
+  color: var(--color-ivory-dim);
+  line-height: 2;
+}
+
+footer a {
+  color: var(--color-ivory-muted);
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+footer a:hover { color: var(--color-gold); border-color: var(--color-gold-dim); }
+
+footer .studio-mark {
+  font-family: var(--font-display);
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* === Reveal animation === */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  main { padding: 0 18px; }
+  .hero { padding: 56px 0 40px; }
+  .hero-art { width: 168px; height: 168px; margin-bottom: 30px; }
+  .hero-art-monster { font-size: 84px; }
+  section { padding: 44px 0; }
+  .voice { padding: 40px 18px; margin: 32px -18px 0; }
+  .final-cta { padding: 52px 18px 40px; }
+  .pain-item { padding: 14px 16px; font-size: 14px; }
+  .feature-card { padding: 22px 20px; }
+}
+</style>
+</head>
+<body>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <span class="hero-brand">BLOOM ATLAS</span>
+
+    <div class="hero-art reveal">
+      <div class="hero-art-orbit"></div>
+      <div class="hero-art-frame"></div>
+      <div class="hero-art-monster" aria-hidden="true">🐉</div>
+    </div>
+
+    <h1 class="hero-title">
+      タスクは、<br><em>冒険になる。</em>
+    </h1>
+    <p class="hero-sub">フリーランスのための、RPG風タスクマネージャー</p>
+
+    <a class="cta-primary" href="atlas.html">冒険を始める</a>
+    <span class="cta-note">無料／Googleでログイン／β版</span>
+  </section>
+
+  <!-- Problem -->
+  <section class="reveal">
+    <div class="sec-label">PROLOGUE</div>
+    <h2 class="sec-title">SNSで繋がってても、<br>タスクって結局、<br>ひとりで戦ってない？</h2>
+
+    <ul class="pain-list">
+      <li class="pain-item">
+        <span class="pain-item-mark">I.</span>
+        <div>進捗を共有しても、<br>結局、やるのは自分。</div>
+      </li>
+      <li class="pain-item">
+        <span class="pain-item-mark">II.</span>
+        <div>Zoom繋いで作業会をしても、<br>画面を切るとまた孤独。</div>
+      </li>
+      <li class="pain-item">
+        <span class="pain-item-mark">III.</span>
+        <div>タスク管理アプリは、<br>真面目すぎて続かない。</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Pivot -->
+  <section class="pivot reveal">
+    <div class="pivot-text">だから、<br>ゲームにした。</div>
+    <div class="pivot-divider"></div>
+    <p class="pivot-sub">真面目さじゃなく、楽しさで続けたかった。</p>
+  </section>
+
+  <!-- Features -->
+  <section class="reveal">
+    <div class="sec-label">CORE FEATURES</div>
+    <h2 class="sec-title">3つの冒険装置</h2>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">⚔ DAILY HUNT</div>
+        <h3 class="feature-title">毎日の討伐</h3>
+        <p class="feature-desc">
+          タスクを倒すと、経験値が手に入る。<br>
+          今日の獣は毎日入れ替わり、討伐図鑑に記録される。
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚜ EVOLUTION</div>
+        <h3 class="feature-title">レベル＆肖像進化</h3>
+        <p class="feature-desc">
+          続けるほど、レベルが上がり、ジョブが拓ける。<br>
+          3日で熟練、10日で達人へ──肖像が3段階で進化する。
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🏆 LEADERBOARD</div>
+        <h3 class="feature-title">仲間と週次ランキング</h3>
+        <p class="feature-desc">
+          毎週月曜にリセット。<br>
+          総討伐力／伸び率／ルーキー枠など、6軸であなたの強みが光る。
+        </p>
+      </div>
+    </div>
+
+    <div class="behavior">
+      <div class="behavior-title">BEHAVIORAL DESIGN</div>
+      <p class="behavior-desc">
+        習慣化を、行動経済学で支える。<br>
+        「目標に近づくほど加速する」「失いたくない連続記録」<br>
+        「ふいに訪れるレアドロップ」──<br>
+        続けたくなる仕掛けを、世界観の中に編み込んだ。
+      </p>
+      <div class="behavior-tags">
+        <span class="tag">Goal Gradient</span>
+        <span class="tag">Loss Aversion</span>
+        <span class="tag">Variable Ratio</span>
+        <span class="tag">Streak Freeze</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand voice -->
+  <section class="voice reveal">
+    <div class="voice-mark">⚜︎</div>
+    <p class="voice-text">
+      孤独な戦いを、<br>
+      仲間と歩む冒険に。<br>
+      <br>
+      ひとりで戦っているあなたへ、<br>
+      Bloom Studio から贈ります。
+    </p>
+    <p class="voice-sister">
+      姉妹アプリ：<a href="https://columns.l-mine.com/" target="_blank" rel="noopener">Bloom タスクコーチ</a>
+    </p>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta reveal">
+    <h2 class="final-cta-title">β版、こっそり開けてます。<br>一緒に、冒険しませんか？</h2>
+    <p class="final-cta-sub">
+      30秒でログインして、最初のクエストを登録するだけ。<br>
+      合わなければ、いつでもデータ削除できます。
+    </p>
+    <a class="cta-primary" href="atlas.html">冒険を始める</a>
+    <div class="cta-meta">
+      <span class="cta-meta-item">無料</span>
+      <span class="cta-meta-item">Google ログイン</span>
+      <span class="cta-meta-item">β版（機能順次追加）</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="studio-mark">BLOOM STUDIO</span>
+  <div>
+    <a href="atlas.html">アプリを開く</a>　|
+    <a href="https://columns.l-mine.com/" target="_blank" rel="noopener">タスクコーチ</a>　|
+    <a href="atlas.html#tos">利用規約・プライバシー</a>
+  </div>
+  <div style="margin-top: 14px; font-size: 11px;">
+    © 2026 Bloom Studio
+  </div>
+</footer>
+
+<script>
+// IntersectionObserver で reveal アニメーション
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+
+</body>
+</html>
