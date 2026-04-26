@@ -89,6 +89,38 @@ main {
   padding: 0 22px;
 }
 
+/* 著者ページへ戻るリンク */
+.back-link {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 18px 0 0 22px;
+  padding: 7px 16px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--color-ivory-muted);
+  text-decoration: none;
+  background: rgba(232, 225, 204, 0.04);
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 999px;
+  transition: color .2s, border-color .2s, background .2s, transform .2s;
+}
+.back-link:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  background: rgba(201, 169, 97, 0.1);
+  transform: translateX(-2px);
+}
+.back-link::before {
+  content: '←';
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
 /* === Hero === */
 .hero {
   padding: 80px 0 60px;
@@ -567,6 +599,8 @@ footer .studio-mark {
 </head>
 <body>
 
+<a class="back-link" href="https://columns.l-mine.com/behavioral-economics-lp.html">著者のページへ</a>
+
 <main>
 
   <!-- Hero -->
@@ -704,6 +738,7 @@ footer .studio-mark {
   <div>
     <a href="atlas.html">アプリを開く</a>　|
     <a href="https://columns.l-mine.com/" target="_blank" rel="noopener">タスクコーチ</a>　|
+    <a href="https://columns.l-mine.com/behavioral-economics-lp.html">著者のページ</a>　|
     <a href="atlas.html#tos">利用規約・プライバシー</a>
   </div>
   <div style="margin-top: 14px; font-size: 11px;">
