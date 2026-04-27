@@ -4687,9 +4687,9 @@ body.has-quest-dock { padding-bottom: 96px; }
 
       <!-- 免責 -->
       <p class="lb-disclaimer">
-        ※ ここに掲載されている SNS リンクは冒険者本人の任意情報です。<b>名前や肖像は本人のものとは限りません</b>（なりすましの可能性があります）。連絡・繋がりは <b>ご自身の判断と自己責任</b> でお願いします。<br>
+        ※ ここに掲載されている SNS リンクは冒険者本人の任意情報です。<b>名前や肖像は本人のものとは限りません</b>（なりすましの可能性があります）。連絡・繋がりは <b>ご自身の判断と自己責任</b> でお願いします。不審な記載を見つけた場合は <a href="mailto:info@l-mine.com" class="contact-mail-template" style="color:var(--color-gold);">info@l-mine.com</a>（または <a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);">X DM @LMeta321</a>）までご連絡ください。<br>
         ⚠ <b>DM 等で金銭・個人情報・パスワードを求められた場合は、絶対に応じないでください</b>。<br>
-        不審な記載を見つけた場合は <a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);">通報窓口（@LMeta321）</a> までご連絡ください。本サービスは冒険者同士のトラブルに関与しません。
+        本サービスは冒険者同士のトラブルに関与しません。
       </p>
     </div>
   </section>
@@ -5229,10 +5229,12 @@ body.has-quest-dock { padding-bottom: 96px; }
         安心してご利用いただくため、扱う情報・技術的な安全性・免責事項をお伝えします。
       </div>
 
-      <h3 data-num="I">収集する情報</h3>
+      <h3 data-num="I">収集する情報と利用目的</h3>
       <ul>
-        <li>Googleログイン時、Googleから提供される <b>表示名</b> と <b>プロフィール画像URL</b></li>
-        <li>アプリ内で生成される <b>クエスト・完了履歴・連続日数・Stage・設定</b></li>
+        <li>Googleログイン時、Googleから提供される <b>表示名</b>と<b>プロフィール画像URL</b><br>
+          <span style="color:var(--color-ivory-dim);font-size:0.85em;">→ 利用目的：ランキング表示・冒険者の識別</span></li>
+        <li>アプリ内で生成される <b>クエスト・完了履歴・連続日数・Stage・設定</b><br>
+          <span style="color:var(--color-ivory-dim);font-size:0.85em;">→ 利用目的：個人の進捗管理・週次ランキング集計・端末間の同期</span></li>
         <li>ログイン中、上記の進捗データは Firebase Firestore（<code>atlas_user_data</code>）に保存され、<b>同じGoogleアカウントの他端末でも続きから遊べます</b>。匿名のまま使う場合は端末内（localStorage）のみに記録され、クラウドには送信されません</li>
       </ul>
       <div class="tos-block">
@@ -5250,10 +5252,11 @@ body.has-quest-dock { padding-bottom: 96px; }
         <li>アイコン表示は <b>設定 → プライバシー設定</b> から ON/OFF 切替可能です</li>
       </ul>
 
-      <h3 data-num="III">技術的な安全性</h3>
+      <h3 data-num="III">技術的な安全性とデータの保管場所</h3>
       <ul>
         <li><b>OAuth 2.0 / Google Identity Services</b>：Googleの公式認証方式を採用</li>
         <li><b>Firebase</b>：Google運営のセキュリティ基盤を使用</li>
+        <li><b>データの保管場所</b>：上記データは Google LLC（米国）が運営する Firebase に保管されます。<b>個人情報の越境移転</b>に該当します。Google のプライバシーポリシー（<a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">policies.google.com/privacy</a>）が適用されます</li>
         <li><b>HTTPS</b>：通信はすべて暗号化</li>
         <li><b>Firestoreセキュリティルール</b>：ユーザーは自分の記録のみ書き換え可能</li>
       </ul>
@@ -5280,6 +5283,9 @@ body.has-quest-dock { padding-bottom: 96px; }
           <li>バグや不具合を含む可能性があります</li>
           <li>法令により求められる場合を除き、<b>個人情報を第三者に提供することはありません</b></li>
           <li>本アプリは医療・法務・金融等の助言を提供するものではありません</li>
+          <li><b>Firebase / Google サービスの障害・仕様変更／通信回線の障害／不可抗力（災害・サイバー攻撃等）</b>により生じた損害について、運営は責任を負いません</li>
+          <li><b>他の利用者との間で生じたトラブル</b>（DM・外部 SNS でのやりとり等）について、運営は介入・責任を負いません</li>
+          <li>本アプリで生成された記録（クエスト・スコア等）の<b>知的財産権は利用者本人</b>に帰属します。アプリ本体（コード・デザイン・キャラクター・世界観）の知的財産権は <b>Bloom Studio</b> に帰属します</li>
         </ul>
       </div>
 
@@ -5289,8 +5295,8 @@ body.has-quest-dock { padding-bottom: 96px; }
         <span class="tos-warn-mark">⚠</span>
         <div>
           <b>勧誘・募集の禁止について</b><br>
-          投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の<b>勧誘・募集・宣伝</b>は、一言メッセージ・SNS リンクのいずれにも記載できません。<br>
-          一言メッセージ欄では<b>保存時に自動で検出・拒否</b>されます。SNS リンク欄に該当する内容がリンク先に含まれる場合も、運営確認のうえ<b>ランキングから削除</b>される対象となります。
+          投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の<b>勧誘・募集・宣伝</b>は、本サービス内のいかなる箇所でも禁止しています。<br>
+          一言メッセージは<b>運営が用意したプリセット選択式</b>（自由記述不可）に変更し、勧誘文言が混入する経路を遮断しています。SNS リンク欄に該当する内容がリンク先に含まれる場合は、運営確認のうえ<b>ランキングから削除</b>・<b>書込禁止</b>の対象となります。
         </div>
       </div>
 
@@ -5315,7 +5321,11 @@ body.has-quest-dock { padding-bottom: 96px; }
         <ul>
           <li><b>通常 3 営業日以内</b>に削除・対応を行います</li>
           <li>明らかな違法・有害コンテンツは <b>即時対応</b> します</li>
-          <li>通報窓口：<a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">X · @LMeta321</a> までDMでご連絡ください</li>
+          <li>通報・お問い合わせ窓口：
+            <a href="mailto:info@l-mine.com" class="contact-mail-template" style="color:var(--color-gold);text-decoration:underline">info@l-mine.com</a>
+            （メール推奨／タップで通報テンプレが開きます）<br>
+            または <a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">X · @LMeta321</a> へDM
+          </li>
         </ul>
       </div>
       <div class="tos-block" style="margin-top:0.6rem;">
@@ -5351,7 +5361,7 @@ body.has-quest-dock { padding-bottom: 96px; }
         <ul>
           <li>名前や肖像は <b>本人のものとは限りません</b>（なりすましの可能性があります）</li>
           <li><b>DM等で金銭・個人情報・パスワードを求められた場合は、絶対に応じないでください</b></li>
-          <li>違和感を感じた場合は通報窓口（<a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">X · @LMeta321</a>）までご連絡ください</li>
+          <li>違和感を感じた場合は通報窓口（<a href="mailto:info@l-mine.com" class="contact-mail-template" style="color:var(--color-gold);text-decoration:underline">info@l-mine.com</a> または <a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">X DM @LMeta321</a>）までご連絡ください</li>
           <li>ご自身の判断と責任において連絡を取ってください</li>
         </ul>
       </div>
@@ -5360,7 +5370,10 @@ body.has-quest-dock { padding-bottom: 96px; }
       <ul>
         <li>端末内のデータ：ブラウザの localStorage クリアまたは <b>設定 → 全データを削除</b></li>
         <li>クラウド上のデータ（Google連携時）：お問い合わせください</li>
-        <li>連絡先：<a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">X · @LMeta321</a></li>
+        <li>連絡先（メール推奨／タップで通報・問合わせテンプレが開きます）：
+          <a href="mailto:info@l-mine.com" class="contact-mail-template" style="color:var(--color-gold);text-decoration:underline">info@l-mine.com</a>
+        </li>
+        <li>SNS（X DM）：<a href="https://x.com/LMeta321" target="_blank" rel="noopener noreferrer" style="color:var(--color-gold);text-decoration:underline">@LMeta321</a></li>
       </ul>
 
       <div class="tos-meta">
@@ -5498,9 +5511,10 @@ body.has-quest-dock { padding-bottom: 96px; }
     <div class="rank-warning" role="note">
       <span class="rank-warning-mark">⚠</span>
       <div>
-        <b>勧誘・募集の禁止</b><br>
-        投資・暗号資産（仮想通貨）・FX・アフィリエイト・MLM（ネットワークビジネス）・副業ビジネス等の<b>勧誘・募集・宣伝</b>は、一言メッセージ・SNS リンクのいずれにも記載できません。<br>
-        検出時は<b>保存できません</b>。違反が確認された場合は<b>ランキングから削除</b>される対象となります。
+        <b>安全なランキング運営のためのお願い</b><br>
+        一言メッセージは <b>運営が用意したプリセット</b> からの選択式です（自由記述不可）。<br>
+        SNS リンクには <b>公開して問題ないアカウント</b> のみを登録してください。投資・FX・暗号資産・アフィリエイト・MLM・副業ビジネス等の勧誘・募集を目的としたアカウントへのリンクは禁止です。<br>
+        違反が確認された場合は<b>ランキングから削除</b>・<b>書込禁止</b>の対象となります。
       </div>
     </div>
 
@@ -5521,15 +5535,53 @@ body.has-quest-dock { padding-bottom: 96px; }
     <section class="rank-section">
       <h3 class="rank-sec-head"><span class="rank-no">II</span>一言メッセージ（任意）</h3>
       <p class="rank-sec-desc">
-        ランキングカードに表示される自己紹介。最大 50 文字。<br>
-        ※ <b>URL 添付禁止</b>（SNS は下の専用枠を使用）／<b>投資・アフィリ・MLM 等の勧誘や募集は禁止</b>（保存時に自動で弾かれます）
+        ランキングカードに表示される自己紹介。<br>
+        ※ <b>30 種類のプリセットから選択</b>する方式です（自由記述は不可）。安全・健全なランキング運営のため、運営側で文言を厳選しています。
       </p>
-      <input
-        class="rank-input"
-        id="rank-bio"
-        type="text"
-        maxlength="50"
-        placeholder="例：夜の薬草調合にこだわっています">
+      <select class="rank-input" id="rank-bio">
+        <option value="">― 一言なし</option>
+        <optgroup label="働き方">
+          <option value="コツコツ型">コツコツ型</option>
+          <option value="スプリント型">スプリント型</option>
+          <option value="マイペース派">マイペース派</option>
+          <option value="完璧より完了派">完璧より完了派</option>
+          <option value="集中型">集中型</option>
+          <option value="整理整頓家">整理整頓家</option>
+          <option value="一歩ずつ前へ">一歩ずつ前へ</option>
+          <option value="小さな積み重ね派">小さな積み重ね派</option>
+        </optgroup>
+        <optgroup label="活動時間">
+          <option value="朝活派">朝活派</option>
+          <option value="夜活派">夜活派</option>
+          <option value="早朝の冒険者">早朝の冒険者</option>
+          <option value="深夜の探索者">深夜の探索者</option>
+        </optgroup>
+        <optgroup label="冒険者の型">
+          <option value="夜の薬草調合師">夜の薬草調合師</option>
+          <option value="月光の旅人">月光の旅人</option>
+          <option value="朝霧の冒険者">朝霧の冒険者</option>
+          <option value="星屑の収集家">星屑の収集家</option>
+          <option value="古文書の翻訳家">古文書の翻訳家</option>
+          <option value="静寂の地図描き">静寂の地図描き</option>
+          <option value="風と歩む者">風と歩む者</option>
+          <option value="影に潜む賢者">影に潜む賢者</option>
+          <option value="光を追う者">光を追う者</option>
+        </optgroup>
+        <optgroup label="アイデンティティ">
+          <option value="フリーランス冒険者">フリーランス冒険者</option>
+          <option value="ソロ事業者">ソロ事業者</option>
+          <option value="個人の探索者">個人の探索者</option>
+          <option value="ひとり鍛錬中">ひとり鍛錬中</option>
+        </optgroup>
+        <optgroup label="姿勢">
+          <option value="冒険を楽しむ派">冒険を楽しむ派</option>
+          <option value="学び続ける冒険者">学び続ける冒険者</option>
+          <option value="自分のペースで前へ">自分のペースで前へ</option>
+          <option value="失敗も冒険のうち">失敗も冒険のうち</option>
+          <option value="小さな勝利を積む">小さな勝利を積む</option>
+          <option value="静かな探求者">静かな探求者</option>
+        </optgroup>
+      </select>
     </section>
 
     <section class="rank-section">
@@ -8106,6 +8158,51 @@ body.has-quest-dock { padding-bottom: 96px; }
       wireQuestDock();
     }
 
+    // 連絡先メールリンクに通報テンプレートを差し込む
+    function setupContactMailtoLinks(){
+      const subj = '【Bloom Atlas】お問い合わせ／通報';
+      const body = [
+        'お問い合わせ内容（該当に印を付け、詳細をご記入ください）',
+        '',
+        '【種類】',
+        '□ 不適切なコンテンツの通報',
+        '□ なりすまし／誹謗中傷の通報',
+        '□ 投資・MLM・アフィリ等の勧誘の通報',
+        '□ データ・アカウントの削除依頼',
+        '□ 不具合の報告',
+        '□ その他',
+        '',
+        '【詳細】',
+        '',
+        '',
+        '',
+        '【該当する冒険者名・URLなど（あれば）】',
+        '',
+        '',
+        '【ご使用環境（不具合の場合のみ）】',
+        '・端末／OS：',
+        '・ブラウザ：',
+        '',
+        '――',
+        'ご連絡ありがとうございます。',
+        '通常 3 営業日以内にご対応いたします。',
+        'Bloom Atlas / Bloom Studio'
+      ].join('\n');
+      const url = 'mailto:info@l-mine.com'
+        + '?subject=' + encodeURIComponent(subj)
+        + '&body='    + encodeURIComponent(body);
+      try {
+        document.querySelectorAll('a.contact-mail-template').forEach(a => {
+          a.href = url;
+        });
+      } catch(_){}
+    }
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', setupContactMailtoLinks);
+    } else {
+      setupContactMailtoLinks();
+    }
+
     // ---- Home 上部のノティスを、タスク数＋ストリーク日数で動的に切替 ----
     // Atlas 世界観（探検家／夜の地図）でコピーを差し替える。
     // 素人感ゼロ宣言：空状態でも「淡い」ではなく「静かだが有意義」を保つ。
@@ -10040,36 +10137,49 @@ body.has-quest-dock { padding-bottom: 96px; }
       return patterns.some(re => re.test(host));
     }
 
-    // bio（一言メッセージ）の禁止内容を検出
-    // - URL 添付（SNS は専用枠で受け付ける）
-    // - 投資勧誘 / アフィリ / MLM 等のキーワード
-    const BIO_URL_PATTERN = /https?:\/\/[\w\-./?%&=#~+:;,@!$()*]+/i;
-    const BIO_FORBIDDEN_PATTERNS = [
-      /アフィリエイト|アフィリ(?!ア|エ)/,
-      /\bMLM\b/i,
-      /ネットワーク\s*ビジネス/,
-      /仮想通貨|暗号資産|\bNFT\b/,
-      /\bFX\b|バイナリーオプション|バイナリー/i,
-      /不労所得|月収.{0,3}万|月.{0,3}万円?(稼|入)/,
-      /利回り.{0,4}[％%]|配当.{0,4}[％%]/,
-      /LINE\s*@|公式\s*LINE|@LINE登録/i,
-      /Telegram\s*登録|TG\s*登録|テレグラム\s*登録/i,
-      /勝てる手法|必勝法|稼げる方法/,
-      /限定.{0,3}名募集|急募|参加者募集|メンバー募集/,
-      /(投資|副業).{0,5}(勝てる|稼げる|募集|案件|セミナー|スクール|オンラインサロン)/,
+    // bio（一言メッセージ）はプリセット選択式。許可された文言だけを保存可能。
+    // 自由記述は受け付けない（選択肢以外は保存時に拒否される）。
+    const BIO_PRESETS = [
+      // 働き方
+      'コツコツ型','スプリント型','マイペース派','完璧より完了派',
+      '集中型','整理整頓家','一歩ずつ前へ','小さな積み重ね派',
+      // 活動時間
+      '朝活派','夜活派','早朝の冒険者','深夜の探索者',
+      // 冒険者の型
+      '夜の薬草調合師','月光の旅人','朝霧の冒険者','星屑の収集家',
+      '古文書の翻訳家','静寂の地図描き','風と歩む者','影に潜む賢者','光を追う者',
+      // アイデンティティ
+      'フリーランス冒険者','ソロ事業者','個人の探索者','ひとり鍛錬中',
+      // 姿勢
+      '冒険を楽しむ派','学び続ける冒険者','自分のペースで前へ','失敗も冒険のうち',
+      '小さな勝利を積む','静かな探求者'
     ];
+
     function bioValidate(bio){
+      // 空文字（一言なし）は許容
       if(!bio || typeof bio !== 'string') return { ok: true };
-      if(BIO_URL_PATTERN.test(bio)){
-        return { ok: false, reason: 'URL は記載できません。SNS リンクは下の専用枠をお使いください。' };
-      }
-      for(const re of BIO_FORBIDDEN_PATTERNS){
-        if(re.test(bio)){
-          return { ok: false, reason: '投資勧誘・アフィリエイト・MLM 等の勧誘・募集は禁止されています。' };
-        }
-      }
-      return { ok: true };
+      const trimmed = bio.trim();
+      if(trimmed === '') return { ok: true };
+      // プリセット完全一致のみ許可
+      if(BIO_PRESETS.indexOf(trimmed) >= 0) return { ok: true };
+      return {
+        ok: false,
+        reason: 'プリセットから選択してください。自由記述は受け付けていません。'
+      };
     }
+
+    // 旧バージョンで自由記述された bio を、起動時にプリセットに合致しなければクリア
+    // （表示・送信前に migration）
+    function migrateLegacyBio(){
+      const cur = (D && typeof D.bio === 'string') ? D.bio.trim() : '';
+      if(cur === '') return;
+      if(BIO_PRESETS.indexOf(cur) < 0){
+        // プリセットでない → 安全のため空に置き換え
+        D.bio = '';
+        try { saveD(); } catch(_){}
+      }
+    }
+    try { migrateLegacyBio(); } catch(_){}
 
     function openRankingSettings(){
       const input = document.getElementById('rank-nickname');
