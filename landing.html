@@ -193,13 +193,18 @@ main {
     radial-gradient(circle at center, rgba(168, 51, 77, 0.15), transparent 70%),
     linear-gradient(160deg, var(--color-bg-card), var(--color-bg-elevated));
   box-shadow: var(--shadow-glow-red);
+  overflow: hidden;
 }
 
 .hero-art-monster {
-  font-size: 96px;
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 4px 14px rgba(168, 51, 77, 0.5));
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: drop-shadow(0 6px 22px rgba(168, 51, 77, 0.55));
+  display: block;
 }
 
 .hero-art-orbit {
@@ -609,8 +614,9 @@ footer .studio-mark {
 
     <div class="hero-art reveal">
       <div class="hero-art-orbit"></div>
-      <div class="hero-art-frame"></div>
-      <div class="hero-art-monster" aria-hidden="true">🐉</div>
+      <div class="hero-art-frame">
+        <img class="hero-art-monster" src="assets/mobs/deadline-dragonling.webp" alt="期日竜ノ子" width="400" height="400" loading="eager" decoding="async">
+      </div>
     </div>
 
     <h1 class="hero-title">
