@@ -5101,7 +5101,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
       <div class="wb-row">
         <span class="wb-num">IV</span>
-        <span><b>Googleログイン</b>で実行意図・モチベ設計・レイドボス参戦が解放（週次ランキング・端末間同期は近日開放予定）<span class="wb-hint">匿名のまま閉じても記録は消えません</span></span>
+        <span><b>Googleログイン</b>で実行意図・モチベ設計・週次ランキング・<b>端末間同期</b>が解放（レイドボス戦は近日開放予定）<span class="wb-hint">匿名のまま閉じても記録は消えません／ログイン中の進捗は他端末でも続きから遊べます</span></span>
       </div>
     </div>
     <div class="welcome-actions">
@@ -5201,6 +5201,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       <ul>
         <li>Googleログイン時、Googleから提供される <b>表示名</b> と <b>プロフィール画像URL</b></li>
         <li>アプリ内で生成される <b>クエスト・完了履歴・連続日数・Stage・設定</b></li>
+        <li>ログイン中、上記の進捗データは Firebase Firestore（<code>atlas_user_data</code>）に保存され、<b>同じGoogleアカウントの他端末でも続きから遊べます</b>。匿名のまま使う場合は端末内（localStorage）のみに記録され、クラウドには送信されません</li>
       </ul>
       <div class="tos-block">
         <div class="tos-good">◎ 収集しない情報</div>
@@ -5996,8 +5997,14 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     function saveD(){
+      // ローカル変更時刻をスタンプ（端末間同期の比較用）
+      try { D._localChangedAt = Date.now(); } catch(_){}
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(D));
+        // ログイン中ならクラウドにも push（4秒デバウンス）
+        if(typeof schedulePushUserData === 'function' && typeof fbUid !== 'undefined' && fbUid){
+          schedulePushUserData(4000);
+        }
       } catch(e){
         // 容量超過系のエラーコードを網羅的に判定
         // QuotaExceededError : モダンブラウザ
@@ -8288,8 +8295,15 @@ body.has-quest-dock { padding-bottom: 96px; }
             try {
               if(loginBlock) loginBlock.classList.add('is-logged-in');
             } catch(_){}
+            // ログイン直後：クラウドからユーザーデータを pull（または初回 push）
+            // → renderAll を内部でもう一度呼ぶので、ローカルが上書きされても画面が追従する
+            try {
+              if(typeof syncUserDataOnLogin === 'function'){
+                setTimeout(() => syncUserDataOnLogin(), 600);
+              }
+            } catch(_){}
             // ログイン直後のアップロード（少し遅らせて renderAll 後に発火）
-            try { if(typeof scheduleUpload === 'function') scheduleUpload(1200); } catch(_){}
+            try { if(typeof scheduleUpload === 'function') scheduleUpload(2400); } catch(_){}
             // ログイン直後にランキングも先読み（次のレイドタブ表示が即座に映える）
             try {
               if(typeof loadLeaderboardForAxis === 'function'){
@@ -8305,6 +8319,8 @@ body.has-quest-dock { padding-bottom: 96px; }
             fbUid = null;
             fbUser = null;
             fbReady = false;
+            // 同期状態リセット（次回ログインで再 pull するため）
+            try { if(typeof _resetUserDataSync === 'function') _resetUserDataSync(); } catch(_){}
             if(D.user){
               delete D.user;
               try { saveD(); } catch(_){}
@@ -8699,6 +8715,133 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
     window.uploadMyWeeklyScore = uploadMyWeeklyScore;
     window.scheduleUpload = scheduleUpload;
+
+    // =====================================================================
+    // === ✦ User Data Cross-Device Sync — 端末間でタスク・Lv・進化を同期 ===
+    // =====================================================================
+    // Google ログイン中の進捗（タスク・Lv・streak・badges 等）を
+    // Firestore: atlas_user_data/{uid} に保存し、別端末でログインしたときに
+    // 復元する。シンプルな「last writer wins」方式（β段階の現実解）。
+    //
+    // 同期しないフィールド:
+    //   - D.user        … Firebase Auth から再構築されるため
+    //   - _lastSyncAt   … 同期メタ（クラウドに送らない）
+    //   - _localChangedAt … 同期メタ（クラウドに送らない）
+    //
+    // 戦略:
+    //   - ログイン時：クラウド側にデータがあれば取得して上書き、無ければ初期登録
+    //   - 変更時：4秒デバウンスで自動 push
+    //   - Firestore Security Rules: 自 UID のみ read/write 可
+    // =====================================================================
+    const SYNC_DENY_FIELDS = ['user', '_lastSyncAt', '_localChangedAt'];
+    const USER_DATA_VERSION = 1;
+    let _userDataPushTimer = null;
+    let _userDataSyncing = false;
+    let _userDataInitialSyncDone = false;
+
+    function _userDataSnapshot(){
+      let snap;
+      try { snap = JSON.parse(JSON.stringify(D)); }
+      catch(_){ snap = {}; }
+      SYNC_DENY_FIELDS.forEach(k => { delete snap[k]; });
+      return snap;
+    }
+
+    function _applyRemoteUserData(remoteData){
+      if(!remoteData || typeof remoteData !== 'object') return;
+      Object.keys(remoteData).forEach(k => {
+        if(SYNC_DENY_FIELDS.indexOf(k) >= 0) return;
+        D[k] = remoteData[k];
+      });
+    }
+
+    // localStorage 直接書き込み（saveD のリエントラント呼び出しを避ける）
+    function _saveDDirect(){
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(D)); }
+      catch(e){ console.warn('[sync] saveDirect', e); }
+    }
+
+    async function pushUserData(){
+      if(!fbDb || !fbUid) return;
+      if(_userDataSyncing) return;
+      _userDataSyncing = true;
+      try {
+        const payload = {
+          data: _userDataSnapshot(),
+          version: USER_DATA_VERSION,
+          serverModifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          clientModifiedAt: Date.now(),
+        };
+        await fbDb.collection('atlas_user_data').doc(fbUid).set(payload, { merge: true });
+        D._lastSyncAt = Date.now();
+        _saveDDirect(); // saveD 経由しない（再スケジューリング防止）
+      } catch(e){
+        console.warn('[fb] pushUserData', e);
+      } finally {
+        _userDataSyncing = false;
+      }
+    }
+
+    function schedulePushUserData(delayMs){
+      if(!fbUid) return; // 未ログインならスキップ
+      if(_userDataPushTimer) clearTimeout(_userDataPushTimer);
+      _userDataPushTimer = setTimeout(() => {
+        _userDataPushTimer = null;
+        pushUserData().catch(e => console.warn('[fb] schedulePush', e));
+      }, delayMs || 4000);
+    }
+
+    async function pullUserData(){
+      if(!fbDb || !fbUid) return null;
+      try {
+        const doc = await fbDb.collection('atlas_user_data').doc(fbUid).get();
+        if(!doc.exists) return null;
+        return doc.data();
+      } catch(e){
+        console.warn('[fb] pullUserData', e);
+        return null;
+      }
+    }
+
+    async function syncUserDataOnLogin(){
+      if(!fbDb || !fbUid) return;
+      if(_userDataInitialSyncDone) return;
+      _userDataInitialSyncDone = true;
+      try {
+        const remote = await pullUserData();
+        if(remote && remote.data){
+          // クラウドに既存データあり → ローカルを上書き
+          const remoteLv = (remote.data && remote.data.level) || 1;
+          _applyRemoteUserData(remote.data);
+          D._lastSyncAt = Date.now();
+          _saveDDirect();
+          try { renderAll(); } catch(_){}
+          if(typeof qmToast === 'function'){
+            qmToast('✦ クラウドから冒険記録を復元しました（Lv.' + remoteLv + '）', { duration: 4000 });
+          }
+        } else {
+          // クラウドに未登録 → 現在のローカル状態を seed として push
+          await pushUserData();
+          if(typeof qmToast === 'function'){
+            qmToast('✦ この端末をクラウドに登録しました — 別端末でも続きから遊べます', { duration: 4000 });
+          }
+        }
+      } catch(e){
+        console.warn('[fb] syncUserDataOnLogin', e);
+      }
+    }
+
+    function _resetUserDataSync(){
+      // ログアウト時に同期状態をリセット（次回ログインで再 pull するため）
+      if(_userDataPushTimer){ clearTimeout(_userDataPushTimer); _userDataPushTimer = null; }
+      _userDataInitialSyncDone = false;
+      _userDataSyncing = false;
+    }
+
+    window.pushUserData = pushUserData;
+    window.pullUserData = pullUserData;
+    window.schedulePushUserData = schedulePushUserData;
+    window.syncUserDataOnLogin = syncUserDataOnLogin;
 
     // =====================================================================
     // === ✦ Weekly Leaderboard Fetch — 6 軸の週次ランキング取得 ===
