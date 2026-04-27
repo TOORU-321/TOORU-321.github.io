@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#FAF6EE">
+<meta name="description" content="ともこ先生からの特典｜あなたの体質と「今日の体調」をかけ合わせて、合いやすいセルフケアを選べる地図。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="セルフケアナビ">
+<meta name="robots" content="noindex,nofollow">
+<title>今日のセルフケアナビ｜ともこ先生からの特典</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FAF6EE'/%3E%3Cpath d='M16 28 C 16 20, 11 16, 9 9 C 16 10, 19 14, 18 28' stroke='%23B85A3F' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M18 22 C 19 18, 22 16, 25 14' stroke='%23B85A3F' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{
+  --ivory:#FAF6EE; --ivory-2:#F4EEE2; --paper:#FFFFFF; --paper-warm:#FCFAF4;
+  --ink:#2A2520; --ink-2:#5C5249; --ink-3:#8E8479; --ink-4:#BFB7AC;
+  --hairline:#E5DCCC; --hairline-2:#F0E8D8;
+  --accent:#B85A3F; --accent-deep:#8E3F25; --accent-soft:#ECDDD3; --accent-tint:#F7EAE0;
+  --gold:#B58E3A;
+  --shadow-card:0 1px 0 rgba(40,30,20,.02), 0 8px 24px rgba(40,30,20,.04);
+  --font-serif:'Shippori Mincho','Hiragino Mincho ProN','YuMincho','Noto Serif JP',serif;
+  --font-sans:'Zen Kaku Gothic New',-apple-system,BlinkMacSystemFont,'Helvetica Neue','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+  --font-maru:'Hiragino Maru Gothic ProN','YuMaruGothic','Hiragino Kaku Gothic ProN',sans-serif;
+  --font-mono:'Inter','SF Mono','Menlo',monospace;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);background:var(--ivory);color:var(--ink);min-height:100vh;
+  overscroll-behavior:none;-webkit-tap-highlight-color:transparent;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  font-weight:400;letter-spacing:.02em;font-size:15.5px;line-height:1.85;
+  -webkit-font-smoothing:antialiased;font-feature-settings:'palt';
+}
+button,input,a{font-family:inherit;color:inherit}
+.serif{font-family:var(--font-serif);letter-spacing:.04em}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+#app{position:relative;max-width:480px;margin:0 auto;min-height:100vh;background:transparent;z-index:1;box-shadow:0 0 80px rgba(40,30,20,.04)}
+.screen{display:none;animation:fadeIn .5s ease-out both}
+.screen.is-active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes popUp{0%{opacity:0;transform:translate(-50%,-46%) scale(.96)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes pulse{0%,100%{opacity:.85}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.screen,*{animation:none!important}}
+
+.app-header{position:sticky;top:0;z-index:10;background:var(--ivory);border-bottom:1px solid var(--hairline);padding:18px 24px 14px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+.brand-mark{width:26px;height:26px;flex-shrink:0;color:var(--accent)}
+.brand-name{font-family:var(--font-serif);font-size:15px;font-weight:500;letter-spacing:.1em;color:var(--ink);display:flex;flex-direction:column;line-height:1.2}
+.brand-name small{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--ink-3);font-weight:400;margin-top:2px;text-transform:uppercase}
+.day-pill{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink-2);background:transparent;border:1px solid var(--hairline);padding:5px 10px 4px;font-weight:600;white-space:nowrap;text-transform:uppercase}
+.day-pill .sep{margin:0 4px;color:var(--ink-4)}
+.day-pill.is-final{color:var(--accent);border-color:var(--accent-soft)}
+.day-pill.is-final::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent);margin-right:7px;animation:pulse 2.4s ease-in-out infinite;vertical-align:1px}
+
+main{padding:32px 24px 56px}
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.26em;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:16px}
+.eyebrow .num{color:var(--accent);font-weight:700;letter-spacing:.1em;flex-shrink:0}
+.eyebrow .line{flex:1;height:1px;background:var(--hairline)}
+.eyebrow .label{flex-shrink:0;color:var(--ink-3);letter-spacing:.22em}
+
+h1,h2,h3{font-weight:500;color:var(--ink);margin:0;line-height:1.55}
+.hero-title{font-family:var(--font-serif);font-size:26px;line-height:1.5;letter-spacing:.04em;font-weight:500;color:var(--ink);margin-bottom:14px}
+.hero-title em{font-style:normal;color:var(--accent);font-weight:500}
+.hero-meta{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.2em;color:var(--ink-3);text-transform:uppercase;font-weight:500;margin-top:6px}
+.h2-serif{font-family:var(--font-serif);font-size:18px;letter-spacing:.06em;color:var(--ink);font-weight:500}
+.section{margin:36px 0 0}
+p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
+
+.pullquote{background:var(--paper);border:1px solid var(--hairline);padding:26px 24px 22px;margin-top:22px;position:relative}
+.pullquote::before{content:'';position:absolute;top:0;left:24px;width:48px;height:1px;background:var(--accent);transform:translateY(-1px)}
+.pullquote-mark{font-family:var(--font-serif);font-size:32px;line-height:1;color:var(--accent);display:block;margin-bottom:6px;font-weight:400}
+.pullquote-body p{font-family:var(--font-serif);font-size:14.5px;line-height:2;color:var(--ink);letter-spacing:.04em}
+.pullquote-body p+p{margin-top:14px}
+.pullquote-body strong{color:var(--accent);font-weight:500}
+.pullquote-body em{font-style:normal;color:var(--accent);font-weight:500;border-bottom:.5px solid var(--accent-soft);padding-bottom:1px}
+.pullquote-attr{margin-top:18px;padding-top:14px;border-top:1px solid var(--hairline-2);font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase;font-weight:500}
+.pullquote-attr em{font-style:italic;color:var(--ink-2);font-family:var(--font-serif);font-size:13px;letter-spacing:.06em;text-transform:none;margin-left:2px}
+
+.welcome-recap{background:var(--paper);border:1px solid var(--hairline);padding:22px 22px 18px;margin-top:22px}
+.recap-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:14px}
+.recap-head .label{font-family:var(--font-mono);font-size:10px;letter-spacing:.26em;color:var(--accent);font-weight:600;text-transform:uppercase}
+.recap-head .stat{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;color:var(--ink-3)}
+.timeline{display:flex;align-items:center;gap:0;margin:18px -2px}
+.timeline-node{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.timeline-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--hairline);background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;color:var(--ink-3);font-weight:700}
+.timeline-dot.is-done{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.timeline-dot.is-current{background:var(--paper);border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 4px var(--accent-tint)}
+.timeline-label{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;color:var(--ink-3);font-weight:600;text-transform:uppercase}
+.timeline-line{flex-shrink:0;width:auto;flex:.7;height:1px;background:var(--hairline);margin:9px -1px 0}
+.timeline-line.is-done{background:var(--accent)}
+
+.recap-rows{display:flex;flex-direction:column;border-top:1px solid var(--hairline-2);margin-top:10px}
+.recap-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--hairline-2);font-size:13px;line-height:1.55;gap:14px}
+.recap-row:last-child{border-bottom:0}
+.recap-row .day{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:.22em;font-weight:600;flex-shrink:0;text-transform:uppercase}
+.recap-row .choice{font-family:var(--font-serif);font-size:14px;color:var(--ink);font-weight:500;letter-spacing:.04em;text-align:right;line-height:1.55}
+.recap-row.is-current .day{color:var(--accent)}
+.recap-row.is-current .choice{color:var(--accent)}
+.recap-row.is-future{opacity:.45}
+.recap-row.is-future .choice{color:var(--ink-3);font-style:italic}
+
+.type-grid{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--hairline);margin-top:6px}
+.type-card{appearance:none;border:0;border-bottom:1px solid var(--hairline);background:transparent;padding:18px 4px;text-align:left;cursor:pointer;display:flex;gap:16px;align-items:center;width:100%;transition:background .2s ease,padding .2s ease}
+.type-card:hover{background:var(--paper-warm);padding-left:10px;padding-right:10px}
+.type-card.is-selected{background:var(--accent-tint);padding-left:14px;padding-right:14px}
+.type-card .badge{width:36px;height:36px;border:1px solid var(--hairline);background:var(--paper);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:18px;color:var(--ink-2);font-weight:500;font-style:italic}
+.type-card.is-selected .badge{border-color:var(--accent);color:var(--accent);background:var(--paper)}
+.type-card .body{flex:1;min-width:0}
+.type-card .name{font-family:var(--font-serif);font-size:15px;color:var(--ink);font-weight:500;letter-spacing:.06em;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;line-height:1.4}
+.type-card .name .sub{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-3);font-weight:600;letter-spacing:.18em;text-transform:uppercase}
+.type-card .desc{font-size:12px;color:var(--ink-2);line-height:1.65;margin-top:3px}
+.type-card .arrow{width:14px;height:14px;color:var(--ink-4);flex-shrink:0;transition:transform .2s,color .2s}
+.type-card:hover .arrow{transform:translateX(3px);color:var(--accent)}
+.type-card.is-selected .arrow{color:var(--accent);transform:translateX(3px)}
+
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.section-head .meta{font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase;font-weight:600}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chip{appearance:none;border:1px solid var(--hairline);background:var(--paper);color:var(--ink-2);font-size:13px;font-weight:500;padding:9px 14px;cursor:pointer;letter-spacing:.04em;transition:border-color .15s,background .15s,color .15s,transform .15s;min-height:40px;font-family:var(--font-serif)}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip:active{transform:scale(.97)}
+.chip.is-on{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.chip-meta{display:flex;justify-content:space-between;align-items:center;margin-top:22px;font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:.16em}
+.chip-meta .count{color:var(--accent);font-weight:700}
+
+.cta{padding:36px 0 0;text-align:center}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;cursor:pointer;font-size:14px;font-weight:500;letter-spacing:.16em;border:1px solid transparent;transition:all .2s ease;text-decoration:none;font-family:var(--font-sans);border-radius:0;padding:0 20px}
+.btn-primary{background:var(--accent);color:var(--paper)}
+.btn-primary:hover{background:var(--accent-deep)}
+.btn-primary[disabled]{background:var(--ink-4);cursor:not-allowed;opacity:.7}
+.btn-secondary{background:transparent;color:var(--ink);border-color:var(--hairline)}
+.btn-secondary:hover{border-color:var(--ink);color:var(--ink)}
+.btn .arrow{width:14px;height:14px;flex-shrink:0;transition:transform .2s}
+.btn-primary:hover .arrow{transform:translateX(3px)}
+.btn-link{appearance:none;border:0;background:transparent;color:var(--ink-3);font-size:11.5px;letter-spacing:.16em;cursor:pointer;padding:8px 4px;font-family:var(--font-mono);font-weight:600;text-transform:uppercase}
+.btn-link:hover{color:var(--accent)}
+
+.tomoko-card{background:var(--paper);border:1px solid var(--hairline);padding:24px 22px 22px;margin-top:6px;position:relative}
+.tomoko-card::before{content:'';position:absolute;top:0;left:0;width:48px;height:2px;background:var(--accent)}
+.tomoko-card .head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--hairline-2)}
+.tomoko-avatar{width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent-soft);background:var(--paper);color:var(--accent)}
+.tomoko-card .who{flex:1;min-width:0}
+.tomoko-card .who .role{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);font-weight:600;text-transform:uppercase;display:block}
+.tomoko-card .who .name{font-family:var(--font-serif);font-size:14px;color:var(--ink);font-weight:500;letter-spacing:.06em;margin-top:3px;display:block}
+.tomoko-card .who .name em{font-style:italic;color:var(--accent);margin-left:4px}
+.tomoko-card .msg{font-family:var(--font-serif);font-size:14.5px;line-height:2.05;color:var(--ink);font-weight:500;letter-spacing:.04em;white-space:pre-line}
+
+.summary-card{background:transparent;border-left:2px solid var(--accent);padding:6px 0 6px 16px;margin-top:6px}
+.summary-card .type-line{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.summary-card .type-line strong{color:var(--accent);font-weight:700}
+.summary-card .summary-text{font-family:var(--font-serif);font-size:15px;line-height:1.95;color:var(--ink);font-weight:500;letter-spacing:.04em}
+.summary-card .summary-text em{font-style:normal;color:var(--accent);font-weight:500}
+
+.rec-list{display:flex;flex-direction:column;gap:0}
+.rec-card{background:var(--paper);border:1px solid var(--hairline);border-bottom:0;padding:22px 22px 20px;position:relative}
+.rec-card:last-child{border-bottom:1px solid var(--hairline)}
+.rec-card .rank{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.26em;color:var(--accent);font-weight:700;text-transform:uppercase}
+.rec-card .rank-num{font-size:11px}
+.rec-card .rank-line{flex:1;height:1px;background:var(--hairline)}
+.rec-card.is-rank2 .rank{color:var(--ink-2)}
+.rec-card.is-rank2 .rank-line{background:var(--hairline-2)}
+.rec-card.is-avoid{background:var(--ivory-2)}
+.rec-card.is-avoid .rank{color:var(--ink-3)}
+.rec-card .care-name{font-family:var(--font-serif);font-size:21px;color:var(--ink);font-weight:500;letter-spacing:.04em;line-height:1.5}
+.rec-card .care-catch{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:.22em;text-transform:uppercase;margin-top:6px;font-weight:600}
+.rec-card .care-reason{font-size:13.5px;line-height:1.95;color:var(--ink-2);margin-top:14px;letter-spacing:.04em}
+
+.action-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--hairline);margin-top:6px}
+.action-card{background:transparent;border:0;border-bottom:1px solid var(--hairline);padding:16px 4px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .18s,padding .18s;width:100%;text-align:left}
+.action-card:hover{background:var(--paper-warm);padding-left:10px;padding-right:10px}
+.action-card .check{width:22px;height:22px;border:1px solid var(--ink-4);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--paper);transition:background .18s,border-color .18s}
+.action-card.is-done{background:var(--accent-tint)}
+.action-card.is-done .check{background:var(--accent);border-color:var(--accent)}
+.action-card.is-done .check::after{content:'';width:10px;height:5px;border-left:1.5px solid var(--paper);border-bottom:1.5px solid var(--paper);transform:rotate(-45deg) translateY(-1px)}
+.action-card .text{font-family:var(--font-serif);font-size:14.5px;color:var(--ink);line-height:1.6;flex:1;font-weight:500;letter-spacing:.03em}
+.action-card .text strong{color:var(--accent);font-weight:600}
+.action-card.is-done .text{color:var(--accent-deep)}
+.action-card .tag{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;font-weight:600;padding:3px 8px;flex-shrink:0;border:1px solid var(--hairline);color:var(--ink-3);text-transform:uppercase}
+.action-card .tag.food{border-color:var(--accent-soft);color:var(--accent)}
+
+.reason-toggle{appearance:none;background:transparent;border:0;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);width:100%;text-align:left;padding:18px 4px;cursor:pointer;font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.22em;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.reason-toggle .arrow{transition:transform .25s;font-size:14px;color:var(--accent)}
+.reason-toggle[aria-expanded="true"] .arrow{transform:rotate(90deg)}
+.reason-body{display:none;padding:18px 4px 4px;font-size:13.5px;line-height:2.05;color:var(--ink-2);letter-spacing:.04em;font-family:var(--font-serif)}
+.reason-body.is-open{display:block;animation:fadeIn .3s ease-out both}
+.reason-body p+p{margin-top:14px}
+.reason-body strong{color:var(--accent);font-weight:600}
+
+.review-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:14px;border:1px solid var(--hairline)}
+.review-option{appearance:none;border:0;border-right:1px solid var(--hairline);background:transparent;padding:18px 6px 16px;cursor:pointer;font-family:var(--font-serif);font-size:13.5px;color:var(--ink-2);font-weight:500;letter-spacing:.06em;transition:background .18s,color .18s}
+.review-option:last-child{border-right:0}
+.review-option:hover{background:var(--paper-warm);color:var(--ink)}
+.review-option.is-on{background:var(--accent);color:var(--paper)}
+
+.day-foot{text-align:center;padding:32px 22px;background:var(--paper);border:1px solid var(--hairline);margin-top:22px;position:relative}
+.day-foot::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:48px;height:2px;background:var(--accent)}
+.day-foot .label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.28em;color:var(--accent);font-weight:600;text-transform:uppercase}
+.day-foot .msg{font-family:var(--font-serif);font-size:17px;color:var(--ink);font-weight:500;margin-top:14px;line-height:1.7;letter-spacing:.05em}
+.day-foot .sub{font-size:13px;color:var(--ink-2);margin-top:10px;line-height:1.85;letter-spacing:.03em;font-family:var(--font-serif)}
+.day-foot .teaser{margin-top:20px;padding-top:14px;border-top:1px solid var(--hairline-2);font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:.22em;text-transform:uppercase;font-weight:600}
+
+.preview-card,.next-card{background:var(--paper);border:1px solid var(--hairline);padding:24px 22px 22px;margin-top:14px;position:relative}
+.preview-card .stamp,.next-card .stamp{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.26em;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:12px}
+.preview-card h3,.next-card h3{font-family:var(--font-serif);font-size:16px;color:var(--ink);font-weight:500;letter-spacing:.06em;margin-bottom:10px}
+.preview-card p{font-size:13.5px;line-height:1.95;letter-spacing:.04em}
+.next-card .pts{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--hairline-2)}
+.next-card .pts li{font-size:13px;color:var(--ink-2);line-height:1.85;letter-spacing:.03em;padding:12px 0 12px 22px;position:relative;border-bottom:1px solid var(--hairline-2);font-family:var(--font-serif)}
+.next-card .pts li:last-child{border-bottom:0}
+.next-card .pts li::before{content:'';position:absolute;left:0;top:18px;width:10px;height:1px;background:var(--accent)}
+.next-card .pts li strong{color:var(--accent);font-weight:600}
+
+.cta-stack{display:flex;flex-direction:column;gap:8px;margin-top:22px}
+.cta-foot{text-align:center;font-family:var(--font-serif);font-size:12px;color:var(--ink-3);margin-top:16px;line-height:1.85;letter-spacing:.04em}
+.divider{height:1px;background:var(--hairline);margin:32px 0;border:0}
+
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--ivory);font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;padding:11px 22px;text-transform:uppercase;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:60}
+.toast.is-show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.app-foot{text-align:center;padding:24px 22px 32px;font-family:var(--font-mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.22em;font-weight:500;text-transform:uppercase;border-top:1px solid var(--hairline-2);margin-top:32px}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.offer-overlay{position:fixed;inset:0;background:rgba(40,30,20,.5);backdrop-filter:blur(4px);z-index:100;display:none;animation:fadeIn .3s ease-out both}
+.offer-overlay.is-show{display:block}
+.offer-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.96);width:calc(100% - 32px);max-width:420px;background:var(--paper);padding:36px 28px 28px;border:1px solid var(--hairline);box-shadow:0 24px 60px rgba(40,30,20,.18);z-index:101;display:none;opacity:0}
+.offer-overlay.is-show .offer-popup{display:block;animation:popUp .42s cubic-bezier(.18,.89,.32,1.18) both;opacity:1}
+.offer-popup-mark{width:38px;height:38px;color:var(--accent);margin-bottom:18px}
+.offer-popup-stamp{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:10px}
+.offer-popup h2{font-family:var(--font-serif);color:var(--ink);font-size:21px;line-height:1.55;margin-bottom:14px;letter-spacing:.04em;font-weight:500}
+.offer-popup-body{font-family:var(--font-serif);font-size:14px;line-height:2;color:var(--ink-2);margin:14px 0 22px;letter-spacing:.04em;white-space:pre-line;padding-top:16px;border-top:1px solid var(--hairline-2)}
+.offer-popup-body strong{color:var(--accent);font-weight:600}
+.offer-popup-actions{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.offer-popup-foot{text-align:center;font-family:var(--font-mono);font-size:9.5px;color:var(--ink-3);margin-top:16px;letter-spacing:.2em;text-transform:uppercase}
+.offer-popup-close{position:absolute;top:18px;right:20px;background:transparent;border:0;font-size:22px;color:var(--ink-3);cursor:pointer;line-height:1;padding:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:color .18s}
+.offer-popup-close:hover{color:var(--ink)}
+
+@media (max-width:480px){
+  main{padding:28px 20px 48px}
+  .hero-title{font-size:23px}
+  .rec-card .care-name{font-size:19px}
+  .offer-popup h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+<div id="app" role="main">
+  <header class="app-header">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M16 28 C 16 20, 11 16, 9 9 C 16 10, 19 14, 18 28"/>
+        <path d="M18 22 C 19 18, 22 16, 25 14"/>
+      </svg>
+      <span class="brand-name">今日のセルフケアナビ<small>Selfcare Navi</small></span>
+    </div>
+    <span class="day-pill" id="dayPill" aria-live="polite">DAY <span class="mono">01</span> <span class="sep">/</span> <span class="mono">03</span></span>
+  </header>
+
+  <main>
+    <section class="screen is-active" id="screen1" aria-labelledby="s1-title">
+      <div class="eyebrow"><span class="num" id="welcomeNum">001</span><span class="line"></span><span class="label" id="welcomeBadge">A TOKEN FROM TOMOKO</span></div>
+      <h1 class="hero-title" id="s1-title">
+        <span id="welcomeTitleText">今日の自分に合うケアを、</span><br>
+        <em id="welcomeTitleAccent">迷わず選べる地図。</em>
+      </h1>
+      <p class="hero-meta" id="welcomeSub">3 MIN ／ 3 DAYS LIMITED</p>
+      <div class="welcome-recap" id="welcomeRecap" style="display:none">
+        <div class="recap-head"><span class="label">3-Day Footprint</span><span class="stat" id="recapStat">2 of 3</span></div>
+        <div class="timeline" id="timeline"></div>
+        <div class="recap-rows" id="recapRows"></div>
+      </div>
+      <aside class="pullquote">
+        <span class="pullquote-mark">«</span>
+        <div class="pullquote-body">
+          <p id="welcomeMsg1">—</p>
+          <p id="welcomeMsg2">—</p>
+        </div>
+        <div class="pullquote-attr">— 腸活ダイエットコーチ <em>ともこ</em></div>
+      </aside>
+      <div class="section" id="typeSection">
+        <div class="eyebrow"><span class="num">002</span><span class="line"></span><span class="label">CHOOSE YOUR TYPE</span></div>
+        <div class="section-head"><h2 class="h2-serif">あなたの体質タイプ</h2><span class="meta">6 TYPES</span></div>
+        <div class="type-grid" id="typeGrid" role="radiogroup" aria-label="体質タイプを選ぶ"></div>
+      </div>
+      <div class="cta">
+        <button class="btn btn-primary" id="toScreen2" type="button" disabled>今日の状態を見る<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button>
+      </div>
+    </section>
+
+    <section class="screen" id="screen2" aria-labelledby="s2-title">
+      <div class="eyebrow"><span class="num">003</span><span class="line"></span><span class="label">TODAY'S CHECK</span></div>
+      <h1 class="hero-title" id="s2-title">今日のあなたを、<br><em>聞かせてください。</em></h1>
+      <p>いまの体感に近いものを <strong>3〜5つほど</strong>。<br>無理に当てはめず、なんとなく近いものでOKです。</p>
+      <div class="section">
+        <div class="chips" id="stateChips" role="group" aria-label="今日の状態を選ぶ"></div>
+        <div class="chip-meta">
+          <span><span class="count" id="chipCount">0</span> SELECTED · 3 to 5</span>
+          <button class="btn-link" id="skipChips" type="button">なんとなくで進める</button>
+        </div>
+      </div>
+      <div class="cta"><button class="btn btn-primary" id="toScreen3" type="button">今日のケアを見る<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button></div>
+    </section>
+
+    <section class="screen" id="screen3" aria-labelledby="s3-title">
+      <div class="eyebrow"><span class="num">004</span><span class="line"></span><span class="label">TODAY'S DIRECTION</span></div>
+      <h1 class="hero-title" id="s3-title">今日のあなたに<br><em>合いやすい方向性</em></h1>
+      <div class="section">
+        <div class="tomoko-card">
+          <div class="head">
+            <div class="tomoko-avatar" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C 12 15, 8 12, 7 7 C 12 8, 14 11, 13 21"/><path d="M13 16 C 14 13, 16 11, 19 10"/></svg>
+            </div>
+            <div class="who"><span class="role">A note from</span><span class="name">ともこ <em id="resultTypeSub">— —</em></span></div>
+          </div>
+          <p class="msg" id="tomokoMsg">—</p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="summary-card">
+          <div class="type-line">YOUR TYPE · <strong id="summaryType">—</strong> <span id="summaryCk">—</span></div>
+          <div class="summary-text" id="summaryText">—</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="eyebrow"><span class="num">005</span><span class="line"></span><span class="label">RECOMMENDED CARE</span></div>
+        <div class="rec-list" id="recList"></div>
+      </div>
+      <div class="section">
+        <div class="eyebrow"><span class="num">006</span><span class="line"></span><span class="label">TO BE AVOIDED</span></div>
+        <div class="rec-list" id="avoidList"></div>
+      </div>
+      <div class="section">
+        <div class="eyebrow"><span class="num">007</span><span class="line"></span><span class="label">THREE SMALL STEPS</span></div>
+        <div class="action-list" id="actionList"></div>
+      </div>
+      <div class="section">
+        <button class="reason-toggle" id="reasonToggle" type="button" aria-expanded="false" aria-controls="reasonBody">
+          <span>なぜ、この方向性が合いやすいのか</span><span class="arrow" aria-hidden="true">›</span>
+        </button>
+        <div class="reason-body" id="reasonBody" role="region" aria-label="理由の解説"></div>
+      </div>
+      <div class="cta"><button class="btn btn-primary" id="toScreen4" type="button">最後の振り返りへ<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button></div>
+    </section>
+
+    <section class="screen" id="screen4" aria-labelledby="s4-title">
+      <div class="eyebrow"><span class="num">008</span><span class="line"></span><span class="label" id="reviewBadge">REFLECT</span></div>
+      <h1 class="hero-title" id="s4-title">—</h1>
+      <p id="dayCloseLede">完璧でなくて大丈夫。少し触れたかどうか、感覚でお選びください。</p>
+      <div class="section"><div class="review-options" id="reviewOptions" role="group" aria-label="今日の取り組み"></div></div>
+      <hr class="divider">
+      <div class="preview-card"><span class="stamp">If you continue</span><h3>数日続けると、見えてくること</h3><p id="previewText">—</p></div>
+      <div class="next-card" id="nextCard" style="display:none">
+        <span class="stamp">Beyond these 3 days</span>
+        <h3>ここから先で、本当に大事なこと</h3>
+        <ul class="pts">
+          <li>3日間で見えた「合いやすい方向性」は、あなたの <strong>体質地図のほんの入り口</strong> です。</li>
+          <li>本当の体は、1つのタイプだけでなく、いくつかの傾向が <strong>重なっています</strong>。</li>
+          <li>「何が合うか」だけでなく、<strong>「何を先に整えるか」</strong>。それが地図を完成させる鍵です。</li>
+          <li>レーダーチャートとあわせて見ると、その優先順位がはっきりします。</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="tomoko-card">
+          <div class="head">
+            <div class="tomoko-avatar" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C 12 15, 8 12, 7 7 C 12 8, 14 11, 13 21"/><path d="M13 16 C 14 13, 16 11, 19 10"/></svg>
+            </div>
+            <div class="who"><span class="role" id="tomokoCloseEyebrow">A FINAL NOTE</span><span class="name">ともこ</span></div>
+          </div>
+          <p class="msg" id="tomokoClose">—</p>
+        </div>
+      </div>
+      <div id="offerSection" style="display:none">
+        <div class="cta-stack">
+          <a class="btn btn-primary" id="zoomCta" data-zoom-url="#" href="#" target="_blank" rel="noopener">迷子卒業セッションを予約する<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></a>
+          <button class="btn btn-secondary" id="restartBtn" type="button">最初からやり直す</button>
+        </div>
+        <div class="cta-foot">30 MIN ／ FREE SESSION<br>レーダーチャートを見ながら、あなただけのダイエット地図を一緒に描きます。</div>
+      </div>
+      <div id="dayFoot" class="day-foot" style="display:none">
+        <span class="label" id="dayFootLabel">— TO BE CONTINUED —</span>
+        <div class="msg" id="dayFootMsg">—</div>
+        <div class="sub" id="dayFootSub">—</div>
+        <div class="teaser" id="dayFootTeaser">—</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="app-foot">© SELFCARE NAVI · 2026 · v0.5</div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<div class="offer-overlay" id="offerOverlay" aria-hidden="true">
+  <div class="offer-popup" role="dialog" aria-modal="true" aria-labelledby="offerPopupTitle">
+    <button class="offer-popup-close" id="offerPopupClose" aria-label="閉じる" type="button">×</button>
+    <svg class="offer-popup-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M16 28 C 16 20, 11 16, 9 9 C 16 10, 19 14, 18 28"/>
+      <path d="M18 22 C 19 18, 22 16, 25 14"/>
+    </svg>
+    <span class="offer-popup-stamp">3日間、お疲れさまでした</span>
+    <h2 id="offerPopupTitle">ここから先の話、<br>一緒にしませんか？</h2>
+    <p class="offer-popup-body">3日間で見えた「合いやすい方向性」は、あなたの <strong>体質地図のほんの入り口</strong>。
+本当の体は、いくつかの傾向が <strong>重なっています</strong>。
+
+「何を先に整えるか」── その続きを、ともこ先生と30分だけ。</p>
+    <div class="offer-popup-actions">
+      <a class="btn btn-primary" id="offerPopupCta" data-zoom-url="#" href="#" target="_blank" rel="noopener">迷子卒業セッションを予約する<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></a>
+      <button class="btn btn-secondary" id="offerPopupLater" type="button">あとで、このまま見る</button>
+    </div>
+    <div class="offer-popup-foot">30 MIN ／ FREE SESSION</div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const TOTAL_DAYS=3;
+const STORAGE_KEY='selfcareNavi_v4';
+const POPUP_SESSION_KEY='selfcareNavi_v4_popupShown';
+const TYPES={guttari:{id:'guttari',label:'ぐったり迷子さん',tcm:'気虚タイプ',icon:'ぐ',persona:'頑張っているのに痩せない・疲れやすい・続かない',base:{warm:3,flow:0,rest:3,limit:2,relax:1},forbidden:'flow',forbiddenLabel:null,summarySpark:'消耗を増やさないことが、近道になりやすいです',tomokoMsg:'いつもお疲れさまです。頑張り屋さんのあなたには、まず「エネルギーを育てる」ケアが必要です。誰かの真似ではなく、あなたの体を労わることから始めましょう。',tomokoClose:'あなたが頑張ってきたこと、ちゃんと見えています。ここからは、一緒に「貯めて、満たす」整え方をお話しさせてください。',longReason:['今のあなたは、生命活動の源である<strong>「気（エネルギー）」が不足</strong>している状態です。','胃腸の力も少し弱まりやすく、頑張ろうとして食事を減らしたり、激しい運動をするほど、余計に消耗してしまう構造があります。','だからこそ、<strong>「減らす」ではなく「満たす」</strong>。温かいもの、消化にやさしいもの、そして睡眠で「気」を補い、貯めていくことが先決です。'],foodAction:'今日の食事に <strong>さつまいも</strong> や <strong>かぼちゃ</strong> を1品足す'},moyamoya:{id:'moyamoya',label:'もやもや迷子さん',tcm:'気滞タイプ',icon:'も',persona:'ストレスで食べすぎる・イライラ・頭が重い',base:{warm:1,flow:3,rest:0,limit:1,relax:3},forbidden:'rest',forbiddenLabel:null,summarySpark:'こもりを抜くと、思考も体も軽くなりやすいです',tomokoMsg:'いつも頑張りすぎていませんか？完璧を目指すあなたには、まず「ココロの詰まり」を流すケアが必要です。我慢するダイエットは絶対NG。香りでリフレッシュしながら進みましょう。',tomokoClose:'我慢で抑えるダイエット、本当にお疲れさまでした。詰まりをほどく地図、一緒に描きませんか。',longReason:['今のあなたは、ストレスや緊張で<strong>「気」がどこかで詰まっている</strong>状態です。','完璧主義で頑張りすぎると、感情を溜め込んで、ある日突然偏食や過食に走ることが多いです。これは意志の弱さではなく、<strong>「気の滞り」という体の構造のサイン</strong>です。','我慢する食事制限は、滞りをさらに深めます。必要なのは、<strong>香りや軽い動きで気を流すこと</strong>。それから、心の詰まりも一緒にほどけていきます。'],foodAction:'<strong>みかん／柚子／レモン</strong> など香りのある柑橘を1個 or <strong>梅干し</strong> を1粒'},furafura:{id:'furafura',label:'ふらふら迷子さん',tcm:'血虚タイプ',icon:'ふ',persona:'立ちくらみ・顔色がさえない・冷えやすい',base:{warm:3,flow:1,rest:2,limit:3,relax:1},forbidden:'flow',forbiddenLabel:null,summarySpark:'削るより、満たすことから始めるのが合いやすいです',tomokoMsg:'いつも自分のことは後回しにして、誰かのために頑張っていませんか？今のあなたには「血（栄養）」と「休息」が必要です。まずは自分自身を満たすことから始めましょう。',tomokoClose:'誰かのためにずっと頑張ってきたあなたへ。今度は、自分を満たす番です。一緒にその道を組み立てましょう。',longReason:['今のあなたは、全身に栄養を届ける<strong>「血」が不足しやすい</strong>状態です。','自分のことを後回しにして、人のために頑張ることが続くと、血をつくる材料も枯れていきます。「マイナス思考」「立ちくらみ」「目の疲れ」も、性格や疲れではなく、<strong>栄養が足りていないサイン</strong>です。','削るのではなく、温かく、消化にやさしいものを少しずつ満たすこと。そして、<strong>十分な睡眠が一番の腸活</strong>になります。'],foodAction:'<strong>黒豆／黒ごま／ナツメ</strong> のいずれかを1日1回'},pochapocha:{id:'pochapocha',label:'ぽちゃぽちゃ迷子さん',tcm:'水滞タイプ',icon:'ぽ',persona:'むくみ・重だるい・甘いもの／冷たい物が多い',base:{warm:1,flow:3,rest:0,limit:3,relax:1},forbidden:'limit_inverse',forbiddenLabel:'limit',summarySpark:'軽く流して、入れすぎないが基本になりやすいです',tomokoMsg:'周りと自分を比べて、ため息をついていませんか？今のあなたには、ため込んだ「余分な水分と老廃物」を手放すケアが必要です。無理な運動よりも、まずは心と体の巡りを良くすることから始めましょう。',tomokoClose:'比べて落ち込む夜は、もう終わりにしましょう。あなたのリズムで、一緒に進める方法があります。',longReason:['今のあなたは、体の中に<strong>「余分な水分」が溜まりやすい</strong>状態です。','甘いもの・冷たいもの・たくさん食べが続くと、さらに重さがこもります。雨の日に体調を崩しやすいのも、このタイプ特有のサインです。','必要なのは、<strong>「出す」より「入れすぎない」を先にする</strong>こと。食物繊維・温かい食事・少し汗をかく程度の軽い運動で、自分で水を出す力を育てていきます。'],foodAction:'<strong>あずき茶</strong> を1杯 or <strong>わかめのお味噌汁</strong> を1杯'},doyon:{id:'doyon',label:'どよ〜ん迷子さん',tcm:'瘀血タイプ',icon:'ど',persona:'重だるい・肩こり・冷えのぼせ',base:{warm:3,flow:3,rest:1,limit:0,relax:1},forbidden:'limit_inverse',forbiddenLabel:'limit',summarySpark:'温めながら巡らせるのが、抜け道になりやすいです',tomokoMsg:'感情を抑え込んで、気づけば一つのことに縛られていませんか？今のあなたには「巡り」を良くするケアが必要です。滞りを解消して、本来の軽やかなあなたを取り戻しましょう。',tomokoClose:'感情を溜め込んできたあなたへ。巡りを取り戻す道は、ちゃんとあります。一緒に歩きましょう。',longReason:['今のあなたは、体内の<strong>「血」が滞って流れが悪くなっている</strong>状態です。','冷えやストレス、長く座り続けることで、滞りはさらに深くなります。肩こりや頭痛、生理痛、肌のくすみは、性格でも年齢のせいでもなく、<strong>血の巡りが出してくれているサイン</strong>です。','必要なのは、<strong>温めながら、軽くでも動かすこと</strong>。両方を一緒に入れることで、巡りが目を覚まします。'],foodAction:'<strong>生姜</strong> を入れた飲み物 or <strong>青魚</strong>（さば等）を1食'},karakara:{id:'karakara',label:'からから迷子さん',tcm:'陰虚タイプ',icon:'か',persona:'のぼせ・口の渇き・寝つきが悪い',base:{warm:0,flow:1,rest:2,limit:3,relax:3},forbidden:'warm',forbiddenLabel:null,summarySpark:'熱を抜き、潤いを残すことが大切な状態です',tomokoMsg:'いつも好奇心旺盛で動き回っていませんか？今のあなたには「潤い」と「リフレッシュ」が必要です。水分をガブ飲みするのではなく、身体の内側から潤すケアを始めましょう。',tomokoClose:'走り続けてきたあなたへ。鎮める時間も、整え方の一部です。一緒に組み立てましょう。',longReason:['今のあなたは、体内の<strong>「水分（潤い）」が不足して乾いている</strong>状態です。','好奇心旺盛で常に動いている方は、内側の潤いも消耗しがちになります。寝つきの悪さや のぼせ、口の渇きは <strong>潤いが追いついていないサイン</strong> です。','水をガブ飲みしても、ただ流れていくだけ。必要なのは、<strong>潤いを生む食材を内側に届けること</strong> と、夜に「鎮める」時間をつくることです。'],foodAction:'朝に <strong>トマト</strong> を1個 or <strong>豆腐／アボカド</strong> を1品'}};
+const CATEGORIES={warm:{label:'温めるケア',catch:'冷やさない / Warm',reasonRec:'今日は冷やさないことで、体が動きやすくなりやすい状態です。内側からじんわり温めるイメージで。',reasonAvoid:{karakara:'温めすぎは熱がこもりやすい状態です。今日はクールダウンを優先しましょう。',default:'今日は温めすぎより、ほどよく冷やさないくらいでちょうどよいです。'},actions:['白湯をマグカップ1杯ゆっくり飲む','くるぶしまで隠れる靴下に替える','夕食に温かい汁ものを1品足す']},flow:{label:'巡らせるケア',catch:'軽く動かす / Flow',reasonRec:'体を軽く動かすと、こわばりが抜けて思考もすっきりしやすい状態です。激しさは要りません。',reasonAvoid:{guttari:'今日は燃やそうと頑張るより、消耗を増やさない方が合いやすいです。',furafura:'激しく動かすとフラつきやすい状態です。今日は控えめに。',default:'今日は強い燃焼系を頑張るより、ゆるく流すくらいで十分です。'},actions:['肩をゆっくり10回まわす','5分だけ家のまわりを歩く','深呼吸を3回、吐く方を長めに']},rest:{label:'休ませるケア',catch:'消耗を増やさない / Rest',reasonRec:'今日は頑張るより、まず消耗を増やさないことが大切です。回復の余白をつくるイメージで。',reasonAvoid:{moyamoya:'休みすぎはかえってこもりを深めやすい状態です。少し動く方が抜けます。',default:'今日は休みに偏りすぎず、軽く流す方が合いやすいです。'},actions:['夜は予定を1つ減らして早めに横になる','昼休みに5分だけ目を閉じる','夕方以降の刺激物（コーヒー等）を控える']},limit:{label:'出しすぎないケア',catch:'過剰を控える / Limit',reasonRec:'強い刺激や減らしすぎを控えるだけで、体の揺れが小さくなりやすい状態です。',reasonAvoid:{pochapocha:'今日は満たしすぎ＝甘い・冷たい・大盛りが続くと、重さが増しやすい状態です。',doyon:'じっとしすぎ・冷えのままは、滞りを深めやすい状態です。少しでも動かしましょう。',default:'今日は出しすぎ・抜きすぎより、ほどよく整えるのが合いやすいです。'},actions:['食事を抜かず、少なめでも3食とる','カフェインは1日1〜2杯までにする','甘いものは少量で満足させる工夫を']},relax:{label:'ゆるめるケア',catch:'こわばりを解く / Relax',reasonRec:'こわばりや乾きをほどくと、巡りも睡眠も整いやすい状態です。夜の鎮め時間が効きます。',reasonAvoid:{default:'今日はゆるめすぎより、軽く動かすほうが合いやすいです。'},actions:['湯船に5〜10分だけつかる','蒸しタオルで目元を温める','夜のスマホを30分早く閉じる']}};
+const STATE_TAGS=[{id:'tired',label:'疲れやすい',score:{warm:1,flow:0,rest:2,limit:1,relax:0}},{id:'cold',label:'冷えている',score:{warm:2,flow:1,rest:0,limit:0,relax:0}},{id:'swollen',label:'むくみが気になる',score:{warm:0,flow:2,rest:0,limit:1,relax:0}},{id:'heavy',label:'重だるい',score:{warm:0,flow:2,rest:1,limit:0,relax:0}},{id:'irritated',label:'イライラしやすい',score:{warm:0,flow:1,rest:0,limit:0,relax:2}},{id:'sweet',label:'甘いものが欲しい',score:{warm:1,flow:0,rest:1,limit:2,relax:0}},{id:'headheavy',label:'頭が重い',score:{warm:0,flow:1,rest:1,limit:0,relax:2}},{id:'fullgut',label:'食後が重い',score:{warm:0,flow:1,rest:0,limit:2,relax:0}},{id:'lowmood',label:'やる気が出ない',score:{warm:1,flow:0,rest:2,limit:0,relax:1}}];
+const PREVIEW_TEXT={guttari:'この調子で数日、消耗を増やさない選択を続けると、朝の重さや日中のエネルギー切れが少し軽くなる感覚に出会いやすくなります。「頑張る」を別の言葉に置き換える、その練習です。',moyamoya:'数日、こまめに巡らせる選択を続けると、頭のもやと食後の重さがふっと抜ける瞬間に気づきやすくなります。「我慢で抑える」より「軽く動かす」が解になりやすいタイプです。',furafura:'数日、温めて満たす選択を続けると、立ち上がりのフラつきや午後の冷えが少しやわらいでいく感覚を持ちやすくなります。減らすより、満たすに寄せる練習です。',pochapocha:'数日、軽く流して入れすぎない選択を続けると、朝のむくみや夕方の重さが少し抜ける感覚に出会えます。出すより、入れすぎないが先です。',doyon:'数日、温めながら巡らせる選択を続けると、肩や腰のこわばり、午後のだるさがほどける瞬間が増えます。動と温は、組み合わせて初めて効きやすくなります。',karakara:'数日、熱を抜きながら潤いを残す選択を続けると、寝つきの悪さや口の渇きが少し変わる感覚を持ちやすくなります。発散より、鎮めるを先に置く練習です。'};
+const DAY_CLOSING={1:{h1:'今日の自分への、<br><em>小さなねぎらいを。</em>',lede:'完璧でなくて大丈夫。少し触れたかどうか、感覚でお選びください。',eyebrowEn:'TO BE CONTINUED',msg:'今日は、最初の一歩。\nここまで来てくれて、ありがとうございます。\n明日も同じように、今日のあなたに合うケアを選びにきてください。\n3日続けてみると、合う方向性がもう少し見えてきます。',footLabel:'TO BE CONTINUED',footMsg:'また明日、ここで会いましょう。',footSub:'今日感じたことを、明日のあなたに渡してあげてください。',footTeaser:'TOMORROW · DAY 02'},2:{h1:'また会えて、<br><em>嬉しいです。</em>',lede:'今日も、感覚に近いものでお選びください。完璧でなくて大丈夫です。',eyebrowEn:'ONE MORE DAY',msg:'今日も来てくれてありがとうございます。\n明日が3日目、ひとまずの最終日です。\n今日感じた体の声を、明日まで覚えておいてくださいね。',footLabel:'TOMORROW IS THE FINAL DAY',footMsg:'明日、3日目に会いましょう。',footSub:'明日は、3日間で見えてきた地図を一緒に振り返ります。',footTeaser:'TOMORROW · DAY 03 · FINAL'},3:{h1:'3日間、<br><em>お疲れさまでした。</em>',lede:'最後の日です。完璧でなくて大丈夫。少し触れたかどうかで結構です。',eyebrowEn:'A FINAL NOTE'}};
+const state={type:null,tags:[],done:[false,false,false],review:null,result:null,day:null};
+const $=sel=>document.querySelector(sel);
+const $$=sel=>Array.from(document.querySelectorAll(sel));
+function showToast(msg,ms){ms=ms||1600;const t=$('#toast');t.textContent=msg;t.classList.add('is-show');clearTimeout(showToast._t);showToast._t=setTimeout(function(){t.classList.remove('is-show');},ms);}
+function goScreen(n){$$('.screen').forEach(function(s){s.classList.remove('is-active');});document.getElementById('screen'+n).classList.add('is-active');window.scrollTo({top:0,behavior:'smooth'});}
+function loadStored(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch(e){return{};}}
+function saveStored(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch(e){}}
+function getStored(){let d=loadStored();let m=false;if(!d.firstVisitKey){d.firstVisitKey=todayKey();m=true;}if(!d.history){d.history={};m=true;}if(m)saveStored(d);return d;}
+function persistType(id){const d=getStored();d.type=id;saveStored(d);}
+function saveToday(){const d=getStored();d.history=d.history||{};d.history[todayKey()]={tags:state.tags.slice(),rec1:state.result?state.result.rec1:null,rec2:state.result?state.result.rec2:null,avoidCat:state.result?state.result.avoidCat:null,done:state.done.slice(),review:state.review};saveStored(d);}
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dateKeyOffset(baseKey,offsetDays){const base=new Date(baseKey+'T00:00:00');const target=new Date(base.getTime()+offsetDays*86400000);return target.getFullYear()+'-'+String(target.getMonth()+1).padStart(2,'0')+'-'+String(target.getDate()).padStart(2,'0');}
+function getOverride(){const params=new URLSearchParams(location.search);const d=parseInt(params.get('day'),10);if(d>=1&&d<=5)return d;return null;}
+function computeDay(){const override=getOverride();const stored=getStored();const first=new Date(stored.firstVisitKey+'T00:00:00');const today=new Date(todayKey()+'T00:00:00');const dayNumber=Math.max(1,Math.floor((today-first)/86400000)+1);const effective=override||dayNumber;return{actual:dayNumber,effective:effective,display:Math.min(effective,TOTAL_DAYS),showOffer:effective>=TOTAL_DAYS,isOverride:!!override};}
+function pad2(n){return String(n).padStart(2,'0');}
+function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+typeName+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+typeName+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまのあなたに合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='001';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent='今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML='ようこそ。腸活ダイエットコーチのともこです。<br>ここまで一緒に進んでくださって、本当にありがとうございます。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今のあなたに合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
+function renderRecap(){const stored=getStored();const day=state.day;$('#recapStat').textContent=(day.display-1)+' OF 3 COMPLETED';const tl=$('#timeline');tl.innerHTML='';for(let i=1;i<=3;i++){const node=document.createElement('span');node.className='timeline-node';const dot=document.createElement('span');dot.className='timeline-dot'+(i<day.display?' is-done':i===day.display?' is-current':'');dot.textContent=i<day.display?'✓':pad2(i);if(i<day.display)dot.textContent='✓';const lbl=document.createElement('span');lbl.className='timeline-label';lbl.textContent='DAY '+pad2(i);node.appendChild(dot);node.appendChild(lbl);tl.appendChild(node);if(i<3){const ln=document.createElement('span');ln.className='timeline-line'+(i<day.display?' is-done':'');tl.appendChild(ln);}}const rows=$('#recapRows');rows.innerHTML='';const firstKey=stored.firstVisitKey;for(let i=1;i<=3;i++){const row=document.createElement('div');let choice='',cls='';if(i<day.display){const targetKey=dateKeyOffset(firstKey,i-1);const dd=stored.history&&stored.history[targetKey];if(dd&&dd.rec1){const rev=dd.review?'・'+dd.review:'';choice=(CATEGORIES[dd.rec1]?CATEGORIES[dd.rec1].label:dd.rec1)+rev;}else{choice='— 未完了';}}else if(i===day.display){choice=i===3?'今日が最終日':'今日のあなたを聞かせて';cls='is-current';}else{choice=i===3?'最終日 · 3日間の振り返り':'まだ未来';cls='is-future';}row.className='recap-row '+cls;row.innerHTML='<span class="day">DAY '+pad2(i)+'</span><span class="choice">'+choice+'</span>';rows.appendChild(row);}}
+function showOfferPopup(){const ov=$('#offerOverlay');ov.classList.add('is-show');ov.setAttribute('aria-hidden','false');}
+function hideOfferPopup(){const ov=$('#offerOverlay');ov.classList.remove('is-show');ov.setAttribute('aria-hidden','true');}
+function maybeAutoPopup(){if(!state.day||!state.day.showOffer)return;let shown=false;try{shown=sessionStorage.getItem(POPUP_SESSION_KEY)==='1';}catch(e){}if(shown)return;setTimeout(function(){showOfferPopup();try{sessionStorage.setItem(POPUP_SESSION_KEY,'1');}catch(e){}},1100);}
+function renderTypes(){const grid=$('#typeGrid');grid.innerHTML='';Object.values(TYPES).forEach(function(t){const btn=document.createElement('button');btn.type='button';btn.className='type-card';btn.setAttribute('role','radio');btn.setAttribute('aria-checked','false');btn.dataset.id=t.id;btn.innerHTML='<span class="badge" aria-hidden="true">'+t.icon+'</span><span class="body"><span class="name">'+t.label+' <span class="sub">'+t.tcm+'</span></span><span class="desc">'+t.persona+'</span></span><svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4 L 11 8 L 5 12"/></svg>';btn.addEventListener('click',function(){selectType(t.id);});grid.appendChild(btn);});}
+function selectType(id){state.type=id;persistType(id);$$('.type-card').forEach(function(c){const on=c.dataset.id===id;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});$('#toScreen2').disabled=false;}
+function renderChips(){const wrap=$('#stateChips');wrap.innerHTML='';STATE_TAGS.forEach(function(t){const b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed','false');b.dataset.id=t.id;b.textContent=t.label;b.addEventListener('click',function(){toggleChip(t.id,b);});wrap.appendChild(b);});}
+function toggleChip(id,el){const idx=state.tags.indexOf(id);if(idx>=0){state.tags.splice(idx,1);el.classList.remove('is-on');el.setAttribute('aria-pressed','false');}else{if(state.tags.length>=5){showToast('5つまでに絞ると見やすいです');return;}state.tags.push(id);el.classList.add('is-on');el.setAttribute('aria-pressed','true');}$('#chipCount').textContent=state.tags.length;}
+function compute(){const type=TYPES[state.type];const score={warm:0,flow:0,rest:0,limit:0,relax:0};Object.keys(score).forEach(function(k){score[k]=type.base[k];});state.tags.forEach(function(id){const tag=STATE_TAGS.find(function(t){return t.id===id;});if(!tag)return;Object.keys(score).forEach(function(k){score[k]+=tag.score[k]||0;});});const avoidCat=type.forbiddenLabel||type.forbidden;const candidates=Object.entries(score).filter(function(e){return e[0]!==avoidCat;}).sort(function(a,b){if(b[1]!==a[1])return b[1]-a[1];return type.base[b[0]]-type.base[a[0]];});const rec1=candidates[0][0];const rec2=candidates[1][0];const cat=CATEGORIES[avoidCat];const avoidReason=(cat.reasonAvoid&&cat.reasonAvoid[type.id])||cat.reasonAvoid.default;const tagLabels=state.tags.map(function(id){return(STATE_TAGS.find(function(t){return t.id===id;})||{}).label;}).filter(Boolean);let summaryText;if(tagLabels.length===0){summaryText='今日は体調感覚を選んでいないので、<em>'+type.label+'</em> の基本傾向から方向性をご提案します。'+type.summarySpark+'。';}else if(tagLabels.length===1){summaryText='今日のあなたは、<em>「'+tagLabels[0]+'」</em> の感覚が少し強めです。'+type.summarySpark+'。';}else{summaryText='今日のあなたは、<em>「'+tagLabels[0]+'」</em> と <em>「'+tagLabels[1]+'」</em> の感覚が少し強めです。'+type.summarySpark+'。';}state.result={rec1:rec1,rec2:rec2,avoidCat:avoidCat,type:type,summaryText:summaryText,avoidReason:avoidReason,actions:[{text:CATEGORIES[rec1].actions[0],tag:'LIFE'},{text:type.foodAction,tag:'FOOD',isFood:true},{text:CATEGORIES[rec2].actions[0],tag:'LIFE'}]};saveToday();}
+function renderResult(){const r=state.result;const type=r.type;const c1=CATEGORIES[r.rec1];const c2=CATEGORIES[r.rec2];const cAvoid=CATEGORIES[r.avoidCat];$('#tomokoMsg').textContent=type.tomokoMsg;$('#resultTypeSub').textContent='· '+type.label;$('#summaryType').textContent=type.label;$('#summaryCk').textContent=type.tcm;$('#summaryText').innerHTML=r.summaryText;const recList=$('#recList');recList.innerHTML='';[{rank:'PRIORITY',num:'01',cat:c1,cls:''},{rank:'SECONDARY',num:'02',cat:c2,cls:'is-rank2'}].forEach(function(o){const el=document.createElement('article');el.className='rec-card '+o.cls;el.innerHTML='<div class="rank"><span class="rank-num">'+o.num+'</span><span>'+o.rank+'</span><span class="rank-line"></span></div><div class="care-name">'+o.cat.label+'</div><div class="care-catch">'+o.cat.catch+'</div><p class="care-reason">'+o.cat.reasonRec+'</p>';recList.appendChild(el);});const avoidList=$('#avoidList');avoidList.innerHTML='';const ae=document.createElement('article');ae.className='rec-card is-avoid';ae.innerHTML='<div class="rank"><span class="rank-num">×</span><span>TODAY · AVOID</span><span class="rank-line"></span></div><div class="care-name">'+cAvoid.label+(type.forbidden==='limit_inverse'?' の不足':'')+'</div><div class="care-catch">'+(type.forbidden==='limit_inverse'?'入れすぎ・休みすぎに注意':cAvoid.catch)+'</div><p class="care-reason">'+r.avoidReason+'</p>';avoidList.appendChild(ae);const actionList=$('#actionList');actionList.innerHTML='';state.done=[false,false,false];r.actions.forEach(function(act,i){const a=document.createElement('button');a.type='button';a.className='action-card';a.setAttribute('aria-pressed','false');a.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+act.text+'</span><span class="tag'+(act.isFood?' food':'')+'">'+act.tag+'</span>';a.addEventListener('click',function(){state.done[i]=!state.done[i];a.classList.toggle('is-done',state.done[i]);a.setAttribute('aria-pressed',state.done[i]?'true':'false');if(state.done[i]){showToast('A SMALL STEP, NOTED');saveToday();}});actionList.appendChild(a);});const reason=$('#reasonBody');reason.innerHTML=type.longReason.map(function(t){return'<p>'+t+'</p>';}).join('');$('#reasonToggle').setAttribute('aria-expanded','false');reason.classList.remove('is-open');}
+function renderReview(){const opts=['やった','少しやった','できなかった'];const wrap=$('#reviewOptions');wrap.innerHTML='';opts.forEach(function(label){const b=document.createElement('button');b.type='button';b.className='review-option';b.setAttribute('aria-pressed','false');b.textContent=label;b.addEventListener('click',function(){$$('.review-option').forEach(function(x){x.classList.remove('is-on');x.setAttribute('aria-pressed','false');});b.classList.add('is-on');b.setAttribute('aria-pressed','true');state.review=label;saveToday();showToast('NOTED');});wrap.appendChild(b);});$('#previewText').textContent=PREVIEW_TEXT[state.type]||'';const day=state.day;const closing=DAY_CLOSING[day.display];$('#s4-title').innerHTML=closing.h1;$('#dayCloseLede').textContent=closing.lede||'';$('#reviewBadge').textContent=closing.eyebrowEn||'REFLECT';if(day.showOffer){$('#tomokoCloseEyebrow').textContent='A FINAL NOTE';$('#tomokoClose').textContent=TYPES[state.type].tomokoClose;$('#nextCard').style.display='';$('#offerSection').style.display='';$('#dayFoot').style.display='none';}else{$('#tomokoCloseEyebrow').textContent=closing.eyebrowEn||'';$('#tomokoClose').textContent=closing.msg;$('#nextCard').style.display='none';$('#offerSection').style.display='none';$('#dayFoot').style.display='';$('#dayFootLabel').textContent=closing.footLabel||'';$('#dayFootMsg').textContent=closing.footMsg||'';$('#dayFootSub').textContent=closing.footSub||'';$('#dayFootTeaser').textContent=closing.footTeaser||'';}}
+function wire(){$('#toScreen2').addEventListener('click',function(){if(!state.type)return;goScreen(2);});$('#skipChips').addEventListener('click',function(){compute();renderResult();goScreen(3);});$('#toScreen3').addEventListener('click',function(){compute();renderResult();goScreen(3);});$('#toScreen4').addEventListener('click',function(){saveToday();renderReview();goScreen(4);maybeAutoPopup();});$('#reasonToggle').addEventListener('click',function(e){const btn=e.currentTarget;const open=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!open));$('#reasonBody').classList.toggle('is-open',!open);});$('#restartBtn').addEventListener('click',function(){state.tags=[];state.done=[false,false,false];state.review=null;state.result=null;$$('.chip').forEach(function(c){c.classList.remove('is-on');c.setAttribute('aria-pressed','false');});$('#chipCount').textContent='0';goScreen(1);});function handleZoom(e){const url=e.currentTarget.dataset.zoomUrl;if(!url||url==='#'){e.preventDefault();showToast('SESSION URL · TBD',2400);}}$('#zoomCta').addEventListener('click',handleZoom);$('#offerPopupCta').addEventListener('click',handleZoom);$('#offerPopupClose').addEventListener('click',hideOfferPopup);$('#offerPopupLater').addEventListener('click',hideOfferPopup);$('#offerOverlay').addEventListener('click',function(e){if(e.target.id==='offerOverlay')hideOfferPopup();});document.addEventListener('keydown',function(e){if(e.key==='Escape')hideOfferPopup();});}
+function init(){state.day=computeDay();const stored=getStored();if(stored.type)state.type=stored.type;const pill=$('#dayPill');pill.innerHTML='DAY <span class="mono">'+pad2(state.day.display)+'</span> <span class="sep">/</span> <span class="mono">03</span>';if(state.day.display===TOTAL_DAYS)pill.classList.add('is-final');renderTypes();if(state.type){$$('.type-card').forEach(function(c){const on=c.dataset.id===state.type;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});}renderChips();wire();renderWelcome();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>
