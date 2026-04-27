@@ -8910,9 +8910,28 @@ body.has-quest-dock { padding-bottom: 96px; }
 
     function _applyRemoteUserData(remoteData){
       if(!remoteData || typeof remoteData !== 'object') return;
+      // 重要：単純な D[k] = remoteData[k] では、初期化時に固定された参照
+      // （例：const PRI_TASKS = D.tasks）が古い配列を指したまま残る。
+      // 配列・オブジェクトは「中身を入れ替え」することで既存の参照を保持する。
       Object.keys(remoteData).forEach(k => {
         if(SYNC_DENY_FIELDS.indexOf(k) >= 0) return;
-        D[k] = remoteData[k];
+        const incoming = remoteData[k];
+        const current  = D[k];
+        if(Array.isArray(incoming) && Array.isArray(current)){
+          // 配列は in-place で再構成（参照保持）
+          current.length = 0;
+          for(let i = 0; i < incoming.length; i++) current.push(incoming[i]);
+        } else if(
+          incoming && typeof incoming === 'object' && !Array.isArray(incoming)
+          && current  && typeof current  === 'object' && !Array.isArray(current)
+        ){
+          // 既存オブジェクトはキーを総取り替え（参照保持）
+          Object.keys(current).forEach(kk => { delete current[kk]; });
+          Object.assign(current, incoming);
+        } else {
+          // プリミティブ／型不一致／新規キー → 単純代入
+          D[k] = incoming;
+        }
       });
     }
 
