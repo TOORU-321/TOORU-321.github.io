@@ -4121,7 +4121,14 @@ function load(){
   }
   catch(e){ return defData(); }
 }
-function save(){ localStorage.setItem(SK, JSON.stringify(D)); }
+function save(){
+  try { D._localChangedAt = Date.now(); } catch(_){}
+  localStorage.setItem(SK, JSON.stringify(D));
+  // ログイン中（Google連携時）はクラウドへも push（4秒デバウンス）
+  if(typeof tcSchedulePushUserData === 'function' && typeof fbUid !== 'undefined' && fbUid && !fbIsAnonymous){
+    tcSchedulePushUserData(4000);
+  }
+}
 let D = load();
 let filter = 'all';
 let showDone = false;
@@ -4384,6 +4391,15 @@ function fbInit(){
           if(nk) nk.value = D.nickname;
         }
         updateAuthUI();
+        // ログイン直後：Google 連携時のみクラウド同期（pull/初回 push）
+        if(!user.isAnonymous){
+          setTimeout(() => {
+            try { if(typeof tcSyncUserDataOnLogin === 'function') tcSyncUserDataOnLogin(); } catch(_){}
+          }, 600);
+        } else {
+          // 匿名へ戻った場合は同期状態をリセット（次回ログインで pull し直し）
+          try { if(typeof _tcResetUserDataSync === 'function') _tcResetUserDataSync(); } catch(_){}
+        }
         scheduleUpload(500);
         setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
       } else {
@@ -4421,6 +4437,12 @@ function fbInit(){
           if(nk) nk.value = D.nickname;
         }
         try { updateAuthUI(); } catch(e){ console.warn('[fb] updateAuthUI onIdToken', e); }
+        // 匿名 → Google 連携時にクラウド同期を起動（linkWithPopup 経由のケース）
+        if(!user.isAnonymous){
+          setTimeout(() => {
+            try { if(typeof tcSyncUserDataOnLogin === 'function') tcSyncUserDataOnLogin(); } catch(_){}
+          }, 600);
+        }
         scheduleUpload(500);
         setTimeout(() => { try { renderMiniLeader(); } catch(e){} }, 800);
       }
@@ -4957,6 +4979,132 @@ function uploadMyScore(){
     return Promise.resolve();
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────
+// ✦ User Data Cross-Device Sync — 端末間でタスク・スコアを同期
+// ─────────────────────────────────────────────────────────────────────
+// Google ログイン中ユーザーの状態（タスク・履歴・streak 等）を
+// Firestore: task_coach_user_data/{uid} に保存し、別端末でログイン
+// したときに復元する。匿名ログインのときはクラウドに送信しない。
+// 同期しないフィールド: user / _lastSyncAt / _localChangedAt
+const TC_SYNC_DENY_FIELDS = ['user', '_lastSyncAt', '_localChangedAt'];
+const TC_USER_DATA_VERSION = 1;
+const TC_USER_DATA_COLLECTION = 'task_coach_user_data';
+let _tcUserDataPushTimer = null;
+let _tcUserDataSyncing = false;
+let _tcUserDataInitialSyncDone = false;
+
+function _tcUserDataSnapshot(){
+  let snap;
+  try { snap = JSON.parse(JSON.stringify(D)); }
+  catch(_){ snap = {}; }
+  TC_SYNC_DENY_FIELDS.forEach(k => { delete snap[k]; });
+  return snap;
+}
+
+function _tcApplyRemoteUserData(remoteData){
+  if(!remoteData || typeof remoteData !== 'object') return;
+  // 配列・オブジェクトは中身を入れ替えて既存参照を保持（PWA 同期で参照ロスト回避）
+  Object.keys(remoteData).forEach(k => {
+    if(TC_SYNC_DENY_FIELDS.indexOf(k) >= 0) return;
+    const incoming = remoteData[k];
+    const current  = D[k];
+    if(Array.isArray(incoming) && Array.isArray(current)){
+      current.length = 0;
+      for(let i = 0; i < incoming.length; i++) current.push(incoming[i]);
+    } else if(
+      incoming && typeof incoming === 'object' && !Array.isArray(incoming)
+      && current  && typeof current  === 'object' && !Array.isArray(current)
+    ){
+      Object.keys(current).forEach(kk => { delete current[kk]; });
+      Object.assign(current, incoming);
+    } else {
+      D[k] = incoming;
+    }
+  });
+}
+
+// localStorage 直接書き込み（save() 経由のスケジュール再帰を防ぐ）
+function _tcSaveDirect(){
+  try { localStorage.setItem(SK, JSON.stringify(D)); }
+  catch(e){ console.warn('[tc-sync] saveDirect', e); }
+}
+
+async function tcPushUserData(){
+  if(!fbDb || !fbUid || fbIsAnonymous) return;
+  if(_tcUserDataSyncing) return;
+  _tcUserDataSyncing = true;
+  try {
+    const payload = {
+      data: _tcUserDataSnapshot(),
+      version: TC_USER_DATA_VERSION,
+      serverModifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      clientModifiedAt: Date.now(),
+    };
+    await fbDb.collection(TC_USER_DATA_COLLECTION).doc(fbUid).set(payload, { merge: true });
+    D._lastSyncAt = Date.now();
+    _tcSaveDirect();
+  } catch(e){
+    console.warn('[fb] tcPushUserData', e);
+  } finally {
+    _tcUserDataSyncing = false;
+  }
+}
+
+function tcSchedulePushUserData(delayMs){
+  if(!fbUid || fbIsAnonymous) return;
+  if(_tcUserDataPushTimer) clearTimeout(_tcUserDataPushTimer);
+  _tcUserDataPushTimer = setTimeout(() => {
+    _tcUserDataPushTimer = null;
+    tcPushUserData().catch(e => console.warn('[fb] tcSchedulePush', e));
+  }, delayMs || 4000);
+}
+
+async function tcPullUserData(){
+  if(!fbDb || !fbUid || fbIsAnonymous) return null;
+  try {
+    const doc = await fbDb.collection(TC_USER_DATA_COLLECTION).doc(fbUid).get();
+    if(!doc.exists) return null;
+    return doc.data();
+  } catch(e){
+    console.warn('[fb] tcPullUserData', e);
+    return null;
+  }
+}
+
+async function tcSyncUserDataOnLogin(){
+  if(!fbDb || !fbUid || fbIsAnonymous) return;
+  if(_tcUserDataInitialSyncDone) return;
+  _tcUserDataInitialSyncDone = true;
+  try {
+    const remote = await tcPullUserData();
+    if(remote && remote.data){
+      _tcApplyRemoteUserData(remote.data);
+      D._lastSyncAt = Date.now();
+      _tcSaveDirect();
+      try { if(typeof renderAll === 'function') renderAll(); } catch(_){}
+      try { if(typeof renderMiniLeader === 'function') renderMiniLeader(); } catch(_){}
+      try { if(typeof updateAuthUI === 'function') updateAuthUI(); } catch(_){}
+      if(typeof showToast === 'function'){
+        showToast('クラウドから記録を復元しました');
+      }
+    } else {
+      await tcPushUserData();
+      if(typeof showToast === 'function'){
+        showToast('この端末をクラウドに登録しました');
+      }
+    }
+  } catch(e){
+    console.warn('[fb] tcSyncUserDataOnLogin', e);
+  }
+}
+
+function _tcResetUserDataSync(){
+  if(_tcUserDataPushTimer){ clearTimeout(_tcUserDataPushTimer); _tcUserDataPushTimer = null; }
+  _tcUserDataInitialSyncDone = false;
+  _tcUserDataSyncing = false;
+}
+
 function fetchRanking(kind, limit){
   if(!fbReady || !fbDb) return Promise.resolve([]);
   const orderField = kind || 'yesterdayScore';
