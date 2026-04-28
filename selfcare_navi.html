@@ -147,7 +147,13 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 .tomoko-card{background:var(--paper);border:1px solid var(--hairline);padding:24px 22px 22px;margin-top:6px;position:relative}
 .tomoko-card::before{content:'';position:absolute;top:0;left:0;width:48px;height:2px;background:var(--accent)}
 .tomoko-card .head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--hairline-2)}
-.tomoko-avatar{width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--accent-soft);background:var(--paper);color:var(--accent)}
+.tomoko-avatar{width:54px;height:54px;flex-shrink:0;border-radius:50%;overflow:hidden;border:1px solid var(--accent-soft);background:radial-gradient(circle at 50% 60%,var(--paper-warm),var(--ivory) 80%)}
+.tomoko-avatar img{width:108%;height:108%;margin:-4%;object-fit:contain;display:block}
+.welcome-illust{margin:30px 0 4px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.welcome-illust .frame{width:172px;height:200px;display:flex;align-items:flex-end;justify-content:center;position:relative}
+.welcome-illust .frame::before{content:'';position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:120px;height:8px;background:radial-gradient(ellipse at center,rgba(40,30,20,.08),transparent 70%);filter:blur(2px)}
+.welcome-illust .frame img{width:100%;height:100%;object-fit:contain;display:block;position:relative}
+.welcome-illust .caption{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;font-weight:600}
 .tomoko-card .who{flex:1;min-width:0}
 .tomoko-card .who .role{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);font-weight:600;text-transform:uppercase;display:block}
 .tomoko-card .who .name{font-family:var(--font-serif);font-size:14px;color:var(--ink);font-weight:500;letter-spacing:.06em;margin-top:3px;display:block}
@@ -272,6 +278,10 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
         <em id="welcomeTitleAccent">迷わず選べる地図。</em>
       </h1>
       <p class="hero-meta" id="welcomeSub">3 MIN ／ 3 DAYS LIMITED</p>
+      <div class="welcome-illust">
+        <div class="frame"><img id="welcomeIllust" src="assets/tomoko/chibi_day1.png" alt="ともこ先生"></div>
+        <div class="caption" id="welcomeIllustCaption">YOUR GUIDE · DAY 01</div>
+      </div>
       <div class="welcome-recap" id="welcomeRecap" style="display:none">
         <div class="recap-head"><span class="label">3-Day Footprint</span><span class="stat" id="recapStat">2 of 3</span></div>
         <div class="timeline" id="timeline"></div>
@@ -316,7 +326,7 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
         <div class="tomoko-card">
           <div class="head">
             <div class="tomoko-avatar" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C 12 15, 8 12, 7 7 C 12 8, 14 11, 13 21"/><path d="M13 16 C 14 13, 16 11, 19 10"/></svg>
+              <img src="assets/tomoko/chibi_avatar.png" alt="ともこ先生">
             </div>
             <div class="who"><span class="role">A note from</span><span class="name">ともこ <em id="resultTypeSub">— —</em></span></div>
           </div>
@@ -371,7 +381,7 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
         <div class="tomoko-card">
           <div class="head">
             <div class="tomoko-avatar" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21 C 12 15, 8 12, 7 7 C 12 8, 14 11, 13 21"/><path d="M13 16 C 14 13, 16 11, 19 10"/></svg>
+              <img src="assets/tomoko/chibi_avatar.png" alt="ともこ先生">
             </div>
             <div class="who"><span class="role" id="tomokoCloseEyebrow">A FINAL NOTE</span><span class="name">ともこ</span></div>
           </div>
@@ -445,7 +455,7 @@ function dateKeyOffset(baseKey,offsetDays){const base=new Date(baseKey+'T00:00:0
 function getOverride(){const params=new URLSearchParams(location.search);const d=parseInt(params.get('day'),10);if(d>=1&&d<=5)return d;return null;}
 function computeDay(){const override=getOverride();const stored=getStored();const first=new Date(stored.firstVisitKey+'T00:00:00');const today=new Date(todayKey()+'T00:00:00');const dayNumber=Math.max(1,Math.floor((today-first)/86400000)+1);const effective=override||dayNumber;return{actual:dayNumber,effective:effective,display:Math.min(effective,TOTAL_DAYS),showOffer:effective>=TOTAL_DAYS,isOverride:!!override};}
 function pad2(n){return String(n).padStart(2,'0');}
-function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+typeName+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+typeName+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまのあなたに合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='001';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent='今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML='ようこそ。腸活ダイエットコーチのともこです。<br>ここまで一緒に進んでくださって、本当にありがとうございます。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今のあなたに合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
+function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;const dayNum=day.display;$('#welcomeIllust').src='assets/tomoko/chibi_day'+dayNum+'.png';$('#welcomeIllustCaption').textContent='YOUR GUIDE · DAY '+pad2(dayNum);if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+typeName+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+typeName+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまのあなたに合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='001';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent='今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML='ようこそ。腸活ダイエットコーチのともこです。<br>ここまで一緒に進んでくださって、本当にありがとうございます。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今のあなたに合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
 function renderRecap(){const stored=getStored();const day=state.day;$('#recapStat').textContent=(day.display-1)+' OF 3 COMPLETED';const tl=$('#timeline');tl.innerHTML='';for(let i=1;i<=3;i++){const node=document.createElement('span');node.className='timeline-node';const dot=document.createElement('span');dot.className='timeline-dot'+(i<day.display?' is-done':i===day.display?' is-current':'');dot.textContent=i<day.display?'✓':pad2(i);if(i<day.display)dot.textContent='✓';const lbl=document.createElement('span');lbl.className='timeline-label';lbl.textContent='DAY '+pad2(i);node.appendChild(dot);node.appendChild(lbl);tl.appendChild(node);if(i<3){const ln=document.createElement('span');ln.className='timeline-line'+(i<day.display?' is-done':'');tl.appendChild(ln);}}const rows=$('#recapRows');rows.innerHTML='';const firstKey=stored.firstVisitKey;for(let i=1;i<=3;i++){const row=document.createElement('div');let choice='',cls='';if(i<day.display){const targetKey=dateKeyOffset(firstKey,i-1);const dd=stored.history&&stored.history[targetKey];if(dd&&dd.rec1){const rev=dd.review?'・'+dd.review:'';choice=(CATEGORIES[dd.rec1]?CATEGORIES[dd.rec1].label:dd.rec1)+rev;}else{choice='— 未完了';}}else if(i===day.display){choice=i===3?'今日が最終日':'今日のあなたを聞かせて';cls='is-current';}else{choice=i===3?'最終日 · 3日間の振り返り':'まだ未来';cls='is-future';}row.className='recap-row '+cls;row.innerHTML='<span class="day">DAY '+pad2(i)+'</span><span class="choice">'+choice+'</span>';rows.appendChild(row);}}
 function showOfferPopup(){const ov=$('#offerOverlay');ov.classList.add('is-show');ov.setAttribute('aria-hidden','false');}
 function hideOfferPopup(){const ov=$('#offerOverlay');ov.classList.remove('is-show');ov.setAttribute('aria-hidden','true');}
