@@ -2827,6 +2827,68 @@ img.bestiary-entry__illus {
   justify-content: flex-end;
 }
 
+/* Ranking Celebration Modal — トップ10入り祝福 */
+.rank-celebrate-body {
+  padding: 0.6rem 1.4rem 0.4rem;
+}
+.rank-celebrate-lede {
+  font-family: var(--font-cjk);
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--color-ivory);
+  margin-bottom: 1.1rem;
+}
+.rank-celebrate-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 1rem;
+}
+.rank-celebrate-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 4px;
+  margin-bottom: 0.55rem;
+  background: linear-gradient(135deg, rgba(201, 169, 97, 0.10), rgba(168, 51, 77, 0.06));
+}
+.rank-celebrate-axis {
+  font-family: var(--font-cjk);
+  color: var(--color-ivory);
+  font-size: 0.92rem;
+}
+.rank-celebrate-rank {
+  font-family: var(--font-display);
+  color: var(--color-gold);
+  font-size: 1.08rem;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.rank-celebrate-rank.is-top3 {
+  color: #FFD88E;
+  text-shadow: 0 0 14px rgba(255, 216, 142, 0.45);
+}
+.rank-celebrate-foot {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-ivory-muted);
+  font-family: var(--font-cjk);
+  font-style: italic;
+  margin: 0.4rem 0 0.2rem;
+}
+.rank-celebrate-actions {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.4rem 1.4rem 1.4rem;
+  flex-wrap: wrap;
+}
+.rank-celebrate-actions > button { flex: 1 1 auto; }
+@media (max-width: 480px) {
+  .rank-celebrate-actions { flex-direction: column; }
+}
+
 /* Stage Up 祝福モーダル */
 .stageup-modal {
   text-align: center;
@@ -5133,7 +5195,7 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
       <div class="wb-row">
         <span class="wb-num">IV</span>
-        <span><b>Googleログイン</b>で実行意図・モチベ設計・週次ランキング・<b>端末間同期</b>が解放（レイドボス戦は近日開放予定）<span class="wb-hint">匿名のまま閉じても記録は消えません／ログイン中の進捗は他端末でも続きから遊べます</span></span>
+        <span><b>Googleログイン</b>で実行意図・モチベ設計・週次ランキング・<b>端末間同期</b>が解放。<b style="color:var(--color-jewel-red);">5月8日 レイド戦 開戦</b> ── それまでに戦力を高めて、仲間を募りましょう。<span class="wb-hint">匿名のまま閉じても記録は消えません／ログイン中の進捗は他端末でも続きから遊べます</span></span>
       </div>
     </div>
     <div class="welcome-actions">
@@ -5402,6 +5464,32 @@ body.has-quest-dock { padding-bottom: 96px; }
       一日ずつの積み重ねが、確かに姿に宿っています。
     </div>
     <button class="app-btn--primary" id="stageup-ok" type="button">✦ 冒険を続ける</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     ✦ Ranking Celebration Modal — その日の初回起動時にトップ10入りを祝福
+     ============================================================ -->
+<div class="app-ov" id="rank-celebrate-ov">
+  <div class="app-modal">
+    <div class="app-modal__head">
+      <span>
+        <span class="app-modal__kicker">Glory · 栄誉</span>
+        <h2 class="app-modal__title">✨ おめでとうございます</h2>
+      </span>
+      <button class="app-modal__close" id="rank-celebrate-close" aria-label="閉じる">×</button>
+    </div>
+    <div class="rank-celebrate-body">
+      <p class="rank-celebrate-lede" id="rank-celebrate-lede">
+        あなたは現在、<br><b>冒険者ギルドのランキング上位</b>に名を連ねています。
+      </p>
+      <ul class="rank-celebrate-list" id="rank-celebrate-list"></ul>
+      <p class="rank-celebrate-foot">この勢いで今週も、共に。</p>
+    </div>
+    <div class="rank-celebrate-actions">
+      <button class="app-btn--primary" id="rank-celebrate-show" type="button">📊 ランキングを見る</button>
+      <button class="app-btn--ghost" id="rank-celebrate-ok" type="button">引き続き冒険する</button>
+    </div>
   </div>
 </div>
 
@@ -6019,24 +6107,31 @@ body.has-quest-dock { padding-bottom: 96px; }
     const TOS_VERSION = '2026-04-26';
 
     // =====================================================================
-    // === ✦ Raid Release Switch — 「準備中 / 解放」 切替フラグ ===
+    // === ✦ Raid Release Switch — 「準備中 / 告知 / 解放」 切替フラグ ===
     // =====================================================================
-    // β 期間は 'preparing'（ギルド戦準備中表示）にしておき、
-    // 合図に合わせて 'open' に変えてデプロイし直すだけで完全解放される。
+    // 3 つの状態を切り替えてデプロイし直すだけでレイド戦の表示が変わる。
     //
-    //   'preparing' — レイド戦シーンのみ「最終調整中」表示にする
-    //                 （ログイン・週次ランキング・タスク機能は通常運用）
-    //   'open'      — レイド戦も含めて通常運用
+    //   'preparing'  — 「最終調整中」表示（β初期、開戦日未確定の段階）
+    //   'announcing' — 「5月8日 開戦」カウントダウン表示（戦力アップ・仲間集めを訴求）
+    //   'open'       — レイド戦も含めて通常運用（開戦後）
     //
-    // URL パラメータでテスト上書き可能：?raid=preparing もしくは ?raid=open
+    // URL パラメータでテスト上書き可能：?raid=preparing|announcing|open
     // =====================================================================
-    const RAID_RELEASE_STATE = 'preparing';   // ← β中は 'preparing'、ギルド戦解放時に 'open' へ
+    const RAID_RELEASE_STATE = 'announcing';  // ← 5/8 開戦告知中
+    const RAID_OPEN_DATE = new Date('2026-05-08T00:00:00+09:00'); // JST
     const _raidParam = (typeof URLSearchParams === 'function')
       ? new URLSearchParams(location.search).get('raid')
       : null;
-    const RAID_STATE = (_raidParam === 'preparing' || _raidParam === 'open')
+    const RAID_STATE = (_raidParam === 'preparing' || _raidParam === 'announcing' || _raidParam === 'open')
       ? _raidParam
       : RAID_RELEASE_STATE;
+
+    // 開戦までの残り日数（負数の場合は当日 or 経過済み）
+    function raidDaysUntilOpen(){
+      const now = new Date();
+      const ms  = RAID_OPEN_DATE.getTime() - now.getTime();
+      return Math.ceil(ms / (1000 * 60 * 60 * 24));
+    }
 
     function loadD(){
       try {
@@ -7442,8 +7537,8 @@ body.has-quest-dock { padding-bottom: 96px; }
       const isAuthed = !!(D.user && D.user.uid);
       const releaseState = (typeof RAID_STATE === 'string') ? RAID_STATE : 'open';
       if(sceneEl){
-        if(releaseState === 'preparing'){
-          // 準備中モード：認証状態によらず常にロック表示
+        if(releaseState === 'preparing' || releaseState === 'announcing'){
+          // 準備中・告知中モード：認証状態によらず常にロック表示
           sceneEl.classList.add('is-locked');
         } else {
           // 通常モード：未ログインのみロック
@@ -7460,6 +7555,30 @@ body.has-quest-dock { padding-bottom: 96px; }
           gKicker.textContent = 'Coming Soon · 準備中';
           gTitle.innerHTML    = 'レイド戦は<br>最終調整中です';
           gLead.innerHTML     = '近日、冒険者の皆さまに開放します。<br>もうしばらくお待ちください。';
+          gCta.style.display  = 'none';
+        } else if(releaseState === 'announcing'){
+          // 告知モード：5/8 開戦カウントダウン＋戦力アップ・仲間募集の訴求
+          const daysLeft = (typeof raidDaysUntilOpen === 'function') ? raidDaysUntilOpen() : null;
+          let countdownText = '';
+          if(daysLeft === null){
+            countdownText = '';
+          } else if(daysLeft > 1){
+            countdownText = `<b style="color:var(--color-jewel-red);">残り ${daysLeft} 日</b>`;
+          } else if(daysLeft === 1){
+            countdownText = `<b style="color:var(--color-jewel-red);">明日、開戦</b>`;
+          } else if(daysLeft === 0){
+            countdownText = `<b style="color:var(--color-jewel-red);">本日、開戦</b>`;
+          } else {
+            countdownText = `<b style="color:var(--color-gold);">開戦済み</b>`;
+          }
+          gKicker.textContent = 'Coming · 開戦告知';
+          gTitle.innerHTML    = '5 月 8 日、<br>レイド戦 開戦';
+          gLead.innerHTML     = `${countdownText}<br><br>` +
+            '巨大なる古代の竜が、開戦の朝を待っている。<br>' +
+            '<b>それまでに、戦力を高めよう。</b><br>' +
+            'タスクを倒し、Lv を上げ、Stage を進化させて。<br><br>' +
+            '<b>仲間を募ろう。</b><br>' +
+            '冒険は、ひとりより共に。';
           gCta.style.display  = 'none';
         } else {
           gKicker.textContent = 'Locked · 冒険者の証が必要';
@@ -8567,6 +8686,15 @@ body.has-quest-dock { padding-bottom: 96px; }
               if(typeof loadLeaderboardForAxis === 'function'){
                 setTimeout(() => loadLeaderboardForAxis(LB_STATE.axis), 1500);
               }
+            } catch(_){}
+            // 朝の初回起動時、トップ10入りしていれば祝祭ポップアップを表示
+            // （自分のスコア upload とランキング fetch が落ち着いてから判定）
+            try {
+              setTimeout(() => {
+                if(typeof checkAndShowRankingCelebration === 'function'){
+                  checkAndShowRankingCelebration().catch(_ => {});
+                }
+              }, 5000);
             } catch(_){}
             // ?mod=1 で来た管理者は自動でパネル展開
             try { if(typeof _maybeOpenModeration === 'function') _maybeOpenModeration(); } catch(_){}
@@ -9940,13 +10068,115 @@ body.has-quest-dock { padding-bottom: 96px; }
     }
 
     // 全オーバーレイ共通：背景クリック＆ESCで閉じる
-    ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov','creator-ov'].forEach(id => {
+    ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov','creator-ov','rank-celebrate-ov'].forEach(id => {
       const ov = document.getElementById(id);
       if(!ov) return;
       ov.addEventListener('click', (e) => {
         if(e.target === ov) closeModal(id);
       });
     });
+
+    // ============================================================
+    // ✦ Ranking Celebration — その日の初回起動時にトップ10入りを祝福
+    // ============================================================
+    const RANK_AXIS_LABELS = {
+      damage: '総討伐力',
+      growth: '伸び率',
+      rookie: 'ルーキー枠',
+      knight: 'Knight 主導',
+      sage:   'Sage 主導',
+      ranger: 'Ranger 主導'
+    };
+
+    async function checkAndShowRankingCelebration(){
+      // 未ログインはスキップ
+      if(!fbDb || !fbUid) return;
+
+      // 今日すでに表示済み or 判定済みならスキップ
+      const today = todayKey();
+      if(D.lastRankingPopupDate === today) return;
+
+      // 当該週キー
+      let weekKey;
+      try { weekKey = _currentWeekKey(); } catch(_){ return; }
+      if(!weekKey) return;
+
+      // 6 軸を順次取得して自分の順位を確認
+      const axes = ['damage', 'growth', 'rookie', 'knight', 'sage', 'ranger'];
+      const ranks = [];
+      let anyAxisFetched = false;
+
+      for(const axis of axes){
+        try {
+          const rows = await fetchWeeklyLeaderboard(axis, weekKey);
+          if(rows && rows.length){
+            anyAxisFetched = true;
+            const idx = rows.findIndex(r => r && r.uid === fbUid);
+            if(idx >= 0 && idx < 10){
+              ranks.push({ axis, rank: idx + 1 });
+            }
+          }
+        } catch(e){
+          console.warn('[rank-celebrate] axis fetch failed', axis, e);
+        }
+      }
+
+      // すべての fetch が失敗 → 今日の判定マークしない（次回再試行）
+      if(!anyAxisFetched) return;
+
+      // 上位入りなし → 今日はもうチェックしない（無駄な fetch 回避）
+      if(ranks.length === 0){
+        D.lastRankingPopupDate = today;
+        try { saveD(); } catch(_){}
+        return;
+      }
+
+      // モーダル組み立て
+      const listEl = document.getElementById('rank-celebrate-list');
+      if(listEl){
+        ranks.sort((a, b) => a.rank - b.rank);
+        listEl.innerHTML = ranks.map(r => {
+          const label = RANK_AXIS_LABELS[r.axis] || r.axis;
+          const rankCls = r.rank <= 3 ? ' is-top3' : '';
+          let rankText;
+          if(r.rank === 1)      rankText = '🏆 第 I 位';
+          else if(r.rank === 2) rankText = '🥈 第 II 位';
+          else if(r.rank === 3) rankText = '🥉 第 III 位';
+          else                  rankText = `第 ${r.rank} 位`;
+          return `<li class="rank-celebrate-item">
+            <span class="rank-celebrate-axis">${label}</span>
+            <span class="rank-celebrate-rank${rankCls}">${rankText}</span>
+          </li>`;
+        }).join('');
+      }
+
+      // 表示
+      try { openModal('rank-celebrate-ov'); } catch(_){}
+
+      // 今日のマーク
+      D.lastRankingPopupDate = today;
+      try { saveD(); } catch(_){}
+    }
+
+    // モーダル内ボタン配線
+    (function wireRankCelebrate(){
+      const closeBtn = document.getElementById('rank-celebrate-close');
+      const okBtn    = document.getElementById('rank-celebrate-ok');
+      const showBtn  = document.getElementById('rank-celebrate-show');
+      if(closeBtn) closeBtn.addEventListener('click', () => closeModal('rank-celebrate-ov'));
+      if(okBtn)    okBtn.addEventListener('click',    () => closeModal('rank-celebrate-ov'));
+      if(showBtn)  showBtn.addEventListener('click', () => {
+        closeModal('rank-celebrate-ov');
+        // ランキング（レイドタブ）へ移動
+        try {
+          if(typeof switchScene === 'function') switchScene('raid');
+          else {
+            const tab = document.querySelector('.scene-tab[data-scene="raid"]');
+            if(tab) tab.click();
+          }
+        } catch(_){}
+      });
+    })();
     document.addEventListener('keydown', (e) => {
       if(e.key !== 'Escape') return;
       ['welcome-ov','manual-ov','tos-ov','stageup-ov','ranking-settings-ov','game-rules-ov','creator-ov'].forEach(id => {
