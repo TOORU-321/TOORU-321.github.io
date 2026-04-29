@@ -6190,19 +6190,10 @@ body.has-quest-dock { padding-bottom: 96px; }
       return Math.round((b - a) / 86400000);
     }
 
-    // シード（初回起動時のみ投入。既存ユーザーには触らない）
-    const SEED_TASKS = [
-      { id:'t1', title:'A社：提案書レビュー反映', cat:'クライアント', imp:true, urg:true, impactLevel:5, time:'2h',
-        deadline: todayISO(0), firstStep:'Keynoteを開いてP3を直す', done:false, exp:45 },
-      { id:'t2', title:'月次請求書の送付（3件）', cat:'事務', imp:false, urg:true, impactLevel:2, time:'30m',
-        deadline: todayISO(0), firstStep:'', done:true, exp:30 },
-      { id:'t3', title:'新サービスのランディング草案', cat:'開拓', imp:true, urg:false, impactLevel:4, time:'2h',
-        deadline: todayISO(4), firstStep:'参考サイトを3つ開く', done:false, exp:50 },
-      { id:'t4', title:'ストレッチ＆散歩15分', cat:'自分ごと', imp:false, urg:false, impactLevel:1, time:'15m',
-        deadline: null, firstStep:'', done:false, exp:20 },
-      { id:'t5', title:'B社キックオフ議事録まとめ', cat:'クライアント', imp:true, urg:true, impactLevel:3, time:'30m',
-        deadline: todayISO(1), firstStep:'録音を2倍速で聞く', done:false, exp:35 }
-    ];
+    // シード（初回起動時のみ投入）
+    // ※ サンプルタスクは混乱を招くため空配列に変更（2026-04-27）。
+    //   必要なら以前の配列を git history から復元可能。
+    const SEED_TASKS = [];
 
     const DEFAULT_D = {
       version: 1,
