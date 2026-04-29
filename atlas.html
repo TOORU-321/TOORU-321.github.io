@@ -10384,14 +10384,32 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
     }
 
-    // === 補助：時間表記 ===
-    function _gfAgo(ms){
-      const diff = Date.now() - ms;
-      if(diff < 60 * 1000)            return 'たった今';
-      if(diff < 60 * 60 * 1000)       return Math.floor(diff / 60000) + '分前';
-      if(diff < 24 * 60 * 60 * 1000)  return Math.floor(diff / 3600000) + '時間前';
-      return Math.floor(diff / 86400000) + '日前';
+    // === 補助：時刻表記（HH:MM 中心、日跨ぎは日付付き） ===
+    function _gfTime(ms){
+      const d   = new Date(ms);
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const hhmm = pad(d.getHours()) + ':' + pad(d.getMinutes());
+
+      // 同日 → "14:30"
+      const sameDay = (d.getFullYear() === now.getFullYear()
+                    && d.getMonth()    === now.getMonth()
+                    && d.getDate()     === now.getDate());
+      if(sameDay) return hhmm;
+
+      // 昨日 → "昨日 14:30"
+      const yest = new Date(now);
+      yest.setDate(yest.getDate() - 1);
+      const isYest = (d.getFullYear() === yest.getFullYear()
+                   && d.getMonth()    === yest.getMonth()
+                   && d.getDate()     === yest.getDate());
+      if(isYest) return '昨日 ' + hhmm;
+
+      // それ以前 → "4/26 14:30"
+      return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + hhmm;
     }
+    // 互換のため旧関数も残す（他で参照されていれば動くように）
+    function _gfAgo(ms){ return _gfTime(ms); }
 
     function _gfEsc(s){
       return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
@@ -10445,14 +10463,14 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
       const display = rows.slice(0, 10);
       listEl.innerHTML = display.map(r => {
-        const ago = _gfAgo(r.ms);
+        const timeText = _gfTime(r.ms);
         const isRecent = (Date.now() - r.ms) < 5 * 60 * 1000;
         const isSelf   = (fbUid && r.uid === fbUid);
         const cls = (isSelf ? ' is-self' : (isRecent ? ' is-recent' : ''));
         return `<div class="guild-feed__entry${cls}">
           ${_gfAvatar(r.photoURL)}
           <div class="guild-feed__text">${_gfText(r)}</div>
-          <div class="guild-feed__time">${ago}</div>
+          <div class="guild-feed__time">${timeText}</div>
         </div>`;
       }).join('');
     }
