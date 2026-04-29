@@ -2889,6 +2889,116 @@ img.bestiary-entry__illus {
   .rank-celebrate-actions { flex-direction: column; }
 }
 
+/* Guild Feed — ギルドの動向 アクティビティログ */
+.guild-feed {
+  margin-top: 1.2rem;
+  padding: 1rem 1.1rem;
+}
+.guild-feed__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+.guild-feed__title {
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  letter-spacing: 0.08em;
+}
+.guild-feed__refresh {
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  color: var(--color-ivory-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: color .2s, border-color .2s, transform .3s;
+}
+.guild-feed__refresh:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+.guild-feed__refresh.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+  animation: gf-spin 1s linear infinite;
+}
+@keyframes gf-spin { to { transform: rotate(360deg); } }
+.guild-feed__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.guild-feed__entry {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 4px;
+  background: rgba(201, 169, 97, 0.04);
+  font-size: 0.84rem;
+  font-family: var(--font-cjk);
+  line-height: 1.5;
+}
+.guild-feed__entry.is-recent {
+  background: rgba(168, 51, 77, 0.10);
+  border-color: var(--color-jewel-red-soft);
+}
+.guild-feed__entry.is-self {
+  background: rgba(201, 169, 97, 0.12);
+  border-color: var(--color-gold-soft);
+}
+.guild-feed__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-gold-dim);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guild-feed__avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.guild-feed__avatar svg {
+  width: 60%; height: 60%; color: var(--color-ivory-dim);
+}
+.guild-feed__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--color-ivory);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.guild-feed__text b { color: var(--color-gold); font-weight: 600; }
+.guild-feed__time {
+  font-size: 0.7rem;
+  color: var(--color-ivory-dim);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+}
+.guild-feed__empty {
+  color: var(--color-ivory-dim);
+  font-style: italic;
+  text-align: center;
+  padding: 1.4rem 0.5rem;
+  font-size: 0.85rem;
+  font-family: var(--font-cjk);
+}
+
 /* Stage Up 祝福モーダル */
 .stageup-modal {
   text-align: center;
@@ -4550,7 +4660,20 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
     </div>
 
-    <!-- ④ Googleでログイン（login-block） -->
+    <!-- ④ ギルドの動向 — リアルタイム・アクティビティログ -->
+    <div class="guild-feed card-frame" id="guild-feed">
+      <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
+      <span class="corner corner--bl"></span><span class="corner corner--br"></span>
+      <div class="guild-feed__head">
+        <h3 class="guild-feed__title">⚜︎ ギルドの動向</h3>
+        <button type="button" class="guild-feed__refresh" id="guild-feed-refresh" aria-label="更新" title="最新の動きに更新">↻</button>
+      </div>
+      <div class="guild-feed__list" id="guild-feed-list">
+        <div class="guild-feed__empty">読み込み中…</div>
+      </div>
+    </div>
+
+    <!-- ⑤ Googleでログイン（login-block） -->
     <div class="login-block card-frame">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
@@ -5756,6 +5879,17 @@ body.has-quest-dock { padding-bottom: 96px; }
           <span class="rank-switch__slider"></span>
         </label>
       </div>
+
+      <div class="rank-toggle-row">
+        <div class="rank-toggle-info">
+          <span class="rank-toggle-lbl">ギルドの動向に活動を表示</span>
+          <span class="rank-toggle-desc">OFFにすると、あなたが討伐・進化・レベルアップしてもホームの「ギルドの動向」に表示されなくなります。</span>
+        </div>
+        <label class="rank-switch">
+          <input type="checkbox" id="rank-show-feed">
+          <span class="rank-switch__slider"></span>
+        </label>
+      </div>
     </section>
 
     <section class="rank-section">
@@ -6304,6 +6438,12 @@ body.has-quest-dock { padding-bottom: 96px; }
           const stageName = (typeof STAGE_NAMES !== 'undefined' && STAGE_NAMES[newStage]) || ('Stage ' + newStage);
           logEvent('stage', `${stageName}の冒険者へ進化`);
         }
+        // ギルドの動向（アクティビティログ）へ記録
+        try {
+          if(typeof logActivity === 'function'){
+            logActivity('stage_evolve', { stage: newStage });
+          }
+        } catch(_){}
       }
 
       // ストリークバッジを更新
@@ -8453,6 +8593,19 @@ body.has-quest-dock { padding-bottom: 96px; }
         logEvent('bestiary', `討伐図鑑に「${mobName}」を記録`);
       }
 
+      // ギルドの動向（アクティビティログ）へ記録
+      try {
+        if(typeof logActivity === 'function'){
+          logActivity('mob_kill', { mobType: mobName, category: t.cat || '' });
+          if(leveledUp){
+            // mob_kill のスパム判定と分けるため少し遅らせて level_up を別エントリに
+            setTimeout(() => {
+              try { logActivity('level_up', { level: newLevel }); } catch(_){}
+            }, 1500);
+          }
+        }
+      } catch(_){}
+
       return { mobName, leveledUp, newLevel, firstMob };
     }
 
@@ -10158,6 +10311,192 @@ body.has-quest-dock { padding-bottom: 96px; }
       try { saveD(); } catch(_){}
     }
 
+    // ============================================================
+    // ✦ Guild Feed — ギルドの動向（リアルタイムアクティビティログ）
+    // ============================================================
+    const GUILD_FEED_LIMIT = 30;
+    const GUILD_FEED_TTL = 30 * 1000;             // 30 秒キャッシュ
+    const GUILD_FEED_AUTO_REFRESH_MS = 60 * 1000; // 1 分毎の自動更新
+    let _guildFeedCache = { ts: 0, data: [] };
+    let _guildFeedTimer = null;
+    let _activityWriteCooldown = { mob_kill: 0 }; // 連投スパム抑止
+
+    const GF_STAGE_NAMES = { 1: '駆け出し', 2: '熟練の冒険者', 3: '達人' };
+
+    // === 書き込み層 ===
+    async function logActivity(type, payload){
+      if(!fbDb || !fbUid) return;                                   // 未ログイン
+      if(D.privacy && D.privacy.showInActivityLog === false) return; // ユーザーが非公開設定
+      if(type === 'mob_kill'){
+        const now = Date.now();
+        if((_activityWriteCooldown.mob_kill || 0) > now) return;     // 60 秒以内の連投を抑止
+        _activityWriteCooldown.mob_kill = now + 60 * 1000;
+      }
+      try {
+        const wk = (typeof _currentWeekKey === 'function') ? _currentWeekKey() : '';
+        const doc = {
+          type: type,
+          uid: fbUid,
+          displayName: ((D.nickname || '').trim() || (D.user && D.user.displayName) || '冒険者').slice(0, 30),
+          photoURL: (D.user && D.user.photoURL) || '',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          weekKey: wk
+        };
+        if(payload){
+          if(payload.category) doc.category = String(payload.category).slice(0, 50);
+          if(payload.mobType)  doc.mobType  = String(payload.mobType).slice(0, 50);
+          if(typeof payload.level === 'number') doc.level = payload.level;
+          if(typeof payload.stage === 'number') doc.stage = payload.stage;
+        }
+        await fbDb.collection('atlas_activity_log').add(doc);
+        _guildFeedCache.ts = 0; // 自分の書込み後はキャッシュ無効化
+      } catch(e){
+        console.warn('[fb] logActivity', e);
+      }
+    }
+    window.logActivity = logActivity;
+
+    // === 読み込み層 ===
+    async function fetchActivityLog(){
+      if(!fbDb) return [];
+      const now = Date.now();
+      if(_guildFeedCache.data.length && (now - _guildFeedCache.ts) < GUILD_FEED_TTL){
+        return _guildFeedCache.data;
+      }
+      try {
+        const snap = await fbDb.collection('atlas_activity_log')
+          .orderBy('createdAt', 'desc')
+          .limit(GUILD_FEED_LIMIT)
+          .get();
+        const rows = [];
+        snap.forEach(d => {
+          const data = d.data() || {};
+          const ms = (data.createdAt && data.createdAt.toMillis)
+            ? data.createdAt.toMillis()
+            : Date.now();
+          rows.push({ id: d.id, ms: ms, ...data });
+        });
+        _guildFeedCache = { ts: now, data: rows };
+        return rows;
+      } catch(e){
+        console.warn('[fb] fetchActivityLog', e);
+        return _guildFeedCache.data || [];
+      }
+    }
+
+    // === 補助：時間表記 ===
+    function _gfAgo(ms){
+      const diff = Date.now() - ms;
+      if(diff < 60 * 1000)            return 'たった今';
+      if(diff < 60 * 60 * 1000)       return Math.floor(diff / 60000) + '分前';
+      if(diff < 24 * 60 * 60 * 1000)  return Math.floor(diff / 3600000) + '時間前';
+      return Math.floor(diff / 86400000) + '日前';
+    }
+
+    function _gfEsc(s){
+      return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+    }
+
+    function _gfAvatar(photoURL){
+      if(photoURL && /^https?:\/\//.test(photoURL)){
+        return `<div class="guild-feed__avatar"><img src="${_gfEsc(photoURL)}" alt="" loading="lazy" decoding="async"></div>`;
+      }
+      return `<div class="guild-feed__avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="9" r="3.5"/>
+        <path d="M5 21c0-3.5 3-6 7-6s7 2.5 7 6"/>
+      </svg></div>`;
+    }
+
+    function _gfText(row){
+      const name = _gfEsc((row.displayName || '冒険者'));
+      if(row.type === 'mob_kill'){
+        const mob = _gfEsc(row.mobType || '今日の獣');
+        return `<b>${name}</b>さん が <b>${mob}</b> を撃破`;
+      }
+      if(row.type === 'level_up'){
+        const lv = (typeof row.level === 'number') ? row.level : '?';
+        return `<b>${name}</b>さん が <b>Lv.${lv}</b> に到達`;
+      }
+      if(row.type === 'stage_evolve'){
+        const sname = GF_STAGE_NAMES[row.stage] || ('Stage ' + row.stage);
+        return `<b>${name}</b>さん が <b>${sname}</b> へ進化`;
+      }
+      if(row.type === 'task_done'){
+        const cat = _gfEsc(row.category || 'クエスト');
+        return `<b>${name}</b>さん が <b>${cat}</b> を完了`;
+      }
+      return `<b>${name}</b>さん`;
+    }
+
+    // === 描画 ===
+    async function renderGuildFeed(){
+      const listEl = document.getElementById('guild-feed-list');
+      if(!listEl) return;
+      const refreshBtn = document.getElementById('guild-feed-refresh');
+      if(refreshBtn) refreshBtn.classList.add('is-loading');
+
+      const rows = await fetchActivityLog();
+
+      if(refreshBtn) refreshBtn.classList.remove('is-loading');
+
+      if(!rows || !rows.length){
+        listEl.innerHTML = '<div class="guild-feed__empty">まだ動きはありません。<br>あなたの一手から、ギルドが動き始めます。</div>';
+        return;
+      }
+      const display = rows.slice(0, 10);
+      listEl.innerHTML = display.map(r => {
+        const ago = _gfAgo(r.ms);
+        const isRecent = (Date.now() - r.ms) < 5 * 60 * 1000;
+        const isSelf   = (fbUid && r.uid === fbUid);
+        const cls = (isSelf ? ' is-self' : (isRecent ? ' is-recent' : ''));
+        return `<div class="guild-feed__entry${cls}">
+          ${_gfAvatar(r.photoURL)}
+          <div class="guild-feed__text">${_gfText(r)}</div>
+          <div class="guild-feed__time">${ago}</div>
+        </div>`;
+      }).join('');
+    }
+    window.renderGuildFeed = renderGuildFeed;
+
+    // === 自動更新 ===
+    function startGuildFeedAutoRefresh(){
+      if(_guildFeedTimer) clearInterval(_guildFeedTimer);
+      _guildFeedTimer = setInterval(() => {
+        const homeEl = document.getElementById('scene-home');
+        const homeActive = homeEl && homeEl.classList.contains('is-active');
+        if(homeActive && document.visibilityState === 'visible'){
+          _guildFeedCache.ts = 0;
+          renderGuildFeed().catch(_ => {});
+        }
+      }, GUILD_FEED_AUTO_REFRESH_MS);
+    }
+
+    // === 配線 ===
+    (function wireGuildFeed(){
+      const refreshBtn = document.getElementById('guild-feed-refresh');
+      if(refreshBtn){
+        refreshBtn.addEventListener('click', () => {
+          _guildFeedCache.ts = 0;
+          renderGuildFeed().catch(_ => {});
+        });
+      }
+      // 初回描画は SDK 初期化を待って遅延
+      setTimeout(() => {
+        renderGuildFeed().catch(_ => {});
+        startGuildFeedAutoRefresh();
+      }, 1800);
+      // ページが visible に戻ったタイミングで1回更新
+      document.addEventListener('visibilitychange', () => {
+        if(document.visibilityState === 'visible'){
+          const homeEl = document.getElementById('scene-home');
+          if(homeEl && homeEl.classList.contains('is-active')){
+            _guildFeedCache.ts = 0;
+            renderGuildFeed().catch(_ => {});
+          }
+        }
+      });
+    })();
+
     // モーダル内ボタン配線
     (function wireRankCelebrate(){
       const closeBtn = document.getElementById('rank-celebrate-close');
@@ -10418,12 +10757,14 @@ body.has-quest-dock { padding-bottom: 96px; }
       const tgBio = document.getElementById('rank-show-bio');
       const tgSns = document.getElementById('rank-show-sns');
       const tgCls = document.getElementById('rank-show-class');
+      const tgFeed = document.getElementById('rank-show-feed');
       if(input) input.value = D.nickname || '';
       if(bioIn) bioIn.value = D.bio || '';
-      if(tgAva) tgAva.checked = !(D.privacy && D.privacy.showAvatar === false);
-      if(tgBio) tgBio.checked = !(D.privacy && D.privacy.showBio    === false);
-      if(tgSns) tgSns.checked = !(D.privacy && D.privacy.showSns    === false);
-      if(tgCls) tgCls.checked = !(D.privacy && D.privacy.showClass  === false);
+      if(tgAva)  tgAva.checked  = !(D.privacy && D.privacy.showAvatar          === false);
+      if(tgBio)  tgBio.checked  = !(D.privacy && D.privacy.showBio             === false);
+      if(tgSns)  tgSns.checked  = !(D.privacy && D.privacy.showSns             === false);
+      if(tgCls)  tgCls.checked  = !(D.privacy && D.privacy.showClass           === false);
+      if(tgFeed) tgFeed.checked = !(D.privacy && D.privacy.showInActivityLog   === false);
       // 既存の SNS リンクを各 input に流し込み
       const links = Array.isArray(D.snsLinks) ? D.snsLinks : [];
       ['x','threads','instagram','note','site'].forEach(t => {
@@ -10438,10 +10779,11 @@ body.has-quest-dock { padding-bottom: 96px; }
     function saveRankingSettings(){
       const input = document.getElementById('rank-nickname');
       const bioIn = document.getElementById('rank-bio');
-      const tgAva = document.getElementById('rank-show-avatar');
-      const tgBio = document.getElementById('rank-show-bio');
-      const tgSns = document.getElementById('rank-show-sns');
-      const tgCls = document.getElementById('rank-show-class');
+      const tgAva  = document.getElementById('rank-show-avatar');
+      const tgBio  = document.getElementById('rank-show-bio');
+      const tgSns  = document.getElementById('rank-show-sns');
+      const tgCls  = document.getElementById('rank-show-class');
+      const tgFeed = document.getElementById('rank-show-feed');
 
       // 一言メッセージのコンテンツ検証（URL 添付・投資勧誘等は拒否）
       const bioRaw = bioIn ? bioIn.value.trim().slice(0, 50) : (D.bio || '');
@@ -10455,10 +10797,11 @@ body.has-quest-dock { padding-bottom: 96px; }
       D.nickname = input ? input.value.trim().slice(0, 20) : D.nickname;
       D.bio      = bioRaw;
       if(!D.privacy) D.privacy = {};
-      D.privacy.showAvatar = !!(tgAva && tgAva.checked);
-      D.privacy.showBio    = !!(tgBio && tgBio.checked);
-      D.privacy.showSns    = !!(tgSns && tgSns.checked);
-      D.privacy.showClass  = !!(tgCls && tgCls.checked);
+      D.privacy.showAvatar        = !!(tgAva  && tgAva.checked);
+      D.privacy.showBio           = !!(tgBio  && tgBio.checked);
+      D.privacy.showSns           = !!(tgSns  && tgSns.checked);
+      D.privacy.showClass         = !!(tgCls  && tgCls.checked);
+      D.privacy.showInActivityLog = !!(tgFeed && tgFeed.checked);
       // SNS リンク収集（各 input → ホワイトリスト検証 → 通ったものだけ保存）
       const validLinks = [];
       const rejected = [];
