@@ -4237,6 +4237,45 @@ body.has-quest-dock { padding-bottom: 96px; }
 .rank-input::placeholder { color: rgba(232, 225, 204, 0.35); }
 
 /* SNS rows in ranking settings */
+/* 肖像（性別）選択 */
+.rank-gender-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.rank-gender-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  background: rgba(232, 225, 204, 0.04);
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 4px;
+  color: var(--color-ivory-muted);
+  font-family: var(--font-cjk);
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s, transform .2s;
+}
+.rank-gender-btn:hover {
+  border-color: var(--color-gold);
+  color: var(--color-ivory);
+}
+.rank-gender-btn.is-active {
+  border-color: var(--color-gold);
+  background: rgba(201, 169, 97, 0.14);
+  color: var(--color-gold);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 14px rgba(201, 169, 97, 0.18);
+}
+.rank-gender-btn__icon {
+  font-size: 1.15rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
 .rank-sns-grid {
   display: flex;
   flex-direction: column;
@@ -5744,7 +5783,25 @@ body.has-quest-dock { padding-bottom: 96px; }
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">II</span>一言メッセージ（任意）</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">II</span>肖像（冒険者の姿）</h3>
+      <p class="rank-sec-desc">
+        ランキング・ホーム・ギルドの動向に表示される肖像の性別を選びます。<br>
+        クラス（Knight／Sage／Ranger）と Stage（駆け出し／熟練／達人）は、あなたの活動から自動で決まります。
+      </p>
+      <div class="rank-gender-grid">
+        <button type="button" class="rank-gender-btn" data-rank-gender="m">
+          <span class="rank-gender-btn__icon">♂</span>
+          <span class="rank-gender-btn__label">男性型</span>
+        </button>
+        <button type="button" class="rank-gender-btn" data-rank-gender="f">
+          <span class="rank-gender-btn__icon">♀</span>
+          <span class="rank-gender-btn__label">女性型</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="rank-section">
+      <h3 class="rank-sec-head"><span class="rank-no">III</span>一言メッセージ（任意）</h3>
       <p class="rank-sec-desc">
         ランキングカードに表示される自己紹介。<br>
         ※ <b>30 種類のプリセットから選択</b>する方式です（自由記述は不可）。安全・健全なランキング運営のため、運営側で文言を厳選しています。
@@ -5796,7 +5853,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">III</span>SNS リンク（任意）</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">IV</span>SNS リンク（任意）</h3>
       <p class="rank-sec-desc">
         他の冒険者から繋がれるよう、自分の SNS を任意で公開できます。<br>
         対応：X / Threads / Instagram / Note / 自分のサイト
@@ -5833,7 +5890,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">IV</span>プライバシー設定</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">V</span>プライバシー設定</h3>
       <p class="rank-sec-desc">ランキングに公開する情報を選べます。OFF にするといつでも非公開に戻せます。</p>
 
       <div class="rank-toggle-row">
@@ -5893,7 +5950,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     </section>
 
     <section class="rank-section">
-      <h3 class="rank-sec-head"><span class="rank-no">V</span>現在のランキング表示</h3>
+      <h3 class="rank-sec-head"><span class="rank-no">VI</span>現在のランキング表示</h3>
       <p class="rank-sec-desc">保存後、冒険者ギルドの週次レポートに反映されます。</p>
 
       <div class="rank-preview">
@@ -6208,7 +6265,8 @@ body.has-quest-dock { padding-bottom: 96px; }
         lastFreezeWeek: null     // YYYY-Www（週次でリセット）
       },
       nickname: '',
-      bio: '',                    // 一言メッセージ（最大50字）
+      gender: 'm',                // 肖像の性別 'm'|'f'（ユーザー選択、設定→肖像 から変更）
+      bio: '',                    // 一言メッセージ（プリセット選択式）
       snsLinks: [],               // [{type:'x'|'threads'|'instagram'|'note'|'site', url}]
       privacy: {                  // ランキング表示制御（4トグル・全ON既定）
         showAvatar: true,
@@ -6337,6 +6395,12 @@ body.has-quest-dock { padding-bottom: 96px; }
     if(D.tasks === null){
       D.tasks = JSON.parse(JSON.stringify(SEED_TASKS));
       saveD();
+    }
+
+    // 肖像の性別を D から ps に同期（永続化された設定を反映）
+    if(D.gender === 'f' || D.gender === 'm'){
+      ps.gender = D.gender;
+      try { if(typeof applyPortrait === 'function') applyPortrait(); } catch(_){}
     }
 
     // PRI_TASKS は D.tasks の別名（既存コードと互換を保つため）
@@ -10774,6 +10838,10 @@ body.has-quest-dock { padding-bottom: 96px; }
       if(tgSns)  tgSns.checked  = !(D.privacy && D.privacy.showSns             === false);
       if(tgCls)  tgCls.checked  = !(D.privacy && D.privacy.showClass           === false);
       if(tgFeed) tgFeed.checked = !(D.privacy && D.privacy.showInActivityLog   === false);
+      // 肖像（性別）選択：現在の D.gender を視覚反映
+      const curG = (D.gender === 'f') ? 'f' : 'm';
+      document.querySelectorAll('.rank-gender-btn').forEach(b =>
+        b.classList.toggle('is-active', b.dataset.rankGender === curG));
       // 既存の SNS リンクを各 input に流し込み
       const links = Array.isArray(D.snsLinks) ? D.snsLinks : [];
       ['x','threads','instagram','note','site'].forEach(t => {
@@ -10854,6 +10922,23 @@ body.has-quest-dock { padding-bottom: 96px; }
     if(rankSettingsSave)   rankSettingsSave.addEventListener('click', saveRankingSettings);
     if(rankNickIn) rankNickIn.addEventListener('input', updateRankingPreview);
     if(rankAvaTg)  rankAvaTg.addEventListener('change', updateRankingPreview);
+
+    // 肖像（性別）選択：クリックで即時反映＆永続化
+    document.querySelectorAll('.rank-gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const g = btn.dataset.rankGender;
+        if(g !== 'm' && g !== 'f') return;
+        ps.gender = g;
+        D.gender = g;
+        try { saveD(); } catch(_){}
+        try { applyPortrait(); } catch(_){}
+        // 視覚状態を更新
+        document.querySelectorAll('.rank-gender-btn').forEach(b =>
+          b.classList.toggle('is-active', b.dataset.rankGender === g));
+        // ランキングプレビューにも反映
+        try { if(typeof updateRankingPreview === 'function') updateRankingPreview(); } catch(_){}
+      });
+    });
 
     // =====================================================================
     // === ✦ ゲームルールモーダル ===
