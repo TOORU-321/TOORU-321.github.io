@@ -497,6 +497,32 @@ nav.tabs {
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+.status-settings-btn {
+  margin-left: auto;
+  align-self: center;
+  width: 32px; height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--color-gold-dim);
+  border-radius: 50%;
+  color: var(--color-ivory-muted);
+  cursor: pointer;
+  transition: color .25s, border-color .25s, background .25s, transform .4s;
+}
+.status-settings-btn svg { width: 16px; height: 16px; }
+.status-settings-btn:hover {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  background: rgba(201, 169, 97, 0.08);
+  transform: rotate(45deg);
+}
+.status-settings-btn:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
 .status-name {
   font-family: var(--font-cjk);
   font-size: 1.05rem;
@@ -4669,6 +4695,12 @@ body.has-quest-dock { padding-bottom: 96px; }
         <div class="status-row1">
           <h2 class="status-name" id="status-name">冒険者</h2>
           <span class="status-class" id="status-class">駆け出し — 今週の姿</span>
+          <button type="button" class="status-settings-btn" id="status-settings-btn" aria-label="ランキング設定を開く" title="名前・肖像・SNSなどを設定">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
         </div>
 
         <div class="exp-wrap">
@@ -10922,6 +10954,14 @@ body.has-quest-dock { padding-bottom: 96px; }
     if(rankSettingsSave)   rankSettingsSave.addEventListener('click', saveRankingSettings);
     if(rankNickIn) rankNickIn.addEventListener('input', updateRankingPreview);
     if(rankAvaTg)  rankAvaTg.addEventListener('change', updateRankingPreview);
+
+    // ホーム status-card の⚙ボタン → ランキング設定モーダルを開く
+    const statusSettingsBtn = document.getElementById('status-settings-btn');
+    if(statusSettingsBtn){
+      statusSettingsBtn.addEventListener('click', () => {
+        try { openRankingSettings(); } catch(_){}
+      });
+    }
 
     // 肖像（性別）選択：クリックで即時反映＆永続化
     document.querySelectorAll('.rank-gender-btn').forEach(btn => {
