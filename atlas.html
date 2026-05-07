@@ -3195,6 +3195,53 @@ img.bestiary-entry__illus {
   margin: 0;
   padding: 0;
 }
+.mod-btn--danger {
+  border-color: var(--color-jewel-red);
+  color: var(--color-jewel-red);
+}
+.mod-btn--danger:hover {
+  background: rgba(168, 51, 77, 0.18);
+  color: var(--color-ivory);
+}
+.mod-dummies {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px dashed var(--color-gold-dim);
+}
+.mod-dummies__title {
+  font-family: var(--font-cjk);
+  font-size: 0.95rem;
+  color: var(--color-gold);
+  margin-bottom: 0.4rem;
+}
+.mod-dummies__desc {
+  font-size: 0.78rem;
+  color: var(--color-ivory-muted);
+  font-family: var(--font-cjk);
+  line-height: 1.7;
+  margin: 0 0 0.7rem;
+}
+.mod-dummies__desc code {
+  font-family: var(--font-display);
+  background: rgba(201, 169, 97, 0.1);
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  color: var(--color-gold);
+}
+.mod-dummies__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mod-dummies__status {
+  font-size: 0.78rem;
+  color: var(--color-ivory-dim);
+  font-family: var(--font-cjk);
+  margin-top: 0.6rem;
+  font-style: italic;
+}
+.mod-dummies__status.is-error { color: var(--color-jewel-red); }
+.mod-dummies__status.is-ok    { color: var(--color-gold); }
 .mod-entry {
   border: 1px solid var(--color-gold-dim);
   background: rgba(15, 20, 40, 0.4);
@@ -5707,6 +5754,19 @@ body.has-quest-dock { padding-bottom: 96px; }
     <ul class="mod-list" id="mod-list">
       <!-- 動的描画 -->
     </ul>
+    <!-- ダミー参加者シード（admin専用ツール） -->
+    <div class="mod-dummies">
+      <h3 class="mod-dummies__title">🎭 ダミー参加者管理</h3>
+      <p class="mod-dummies__desc">
+        β初期のランキングに「人がいる感」を出すための運営シード。<code>dummy_*</code> プレフィックスの UID で書き込まれ、誰でも識別可能です。
+      </p>
+      <div class="mod-dummies__btns">
+        <button type="button" class="mod-btn" id="mod-seed-dummies-btn">🎭 ダミー15名を今週分シード</button>
+        <button type="button" class="mod-btn" id="mod-seed-activity-btn">⚜︎ ダミー活動ログを投入（過去12h分散）</button>
+        <button type="button" class="mod-btn mod-btn--danger" id="mod-clear-dummies-btn">🗑 全ダミーを削除（今週分＋活動ログ）</button>
+      </div>
+      <p class="mod-dummies__status" id="mod-dummies-status"></p>
+    </div>
   </div>
 </div>
 
@@ -9854,6 +9914,253 @@ body.has-quest-dock { padding-bottom: 96px; }
       }
     }
     window._maybeOpenModeration = _maybeOpenModeration;
+
+    // ============================================================
+    // ✦ Dummy Seed — admin 専用：β初期のランキングに参加感を出す
+    // ============================================================
+    // 15 名のダミー参加者を atlas_weekly_scores に投入する。
+    // UID は dummy_* プレフィックスで実ユーザーと衝突せず、
+    // Firestore Rules でも admin のみ書込み許可される構造。
+    // β人数が増えてきたらこの仕組みを撤去する想定。
+    // ============================================================
+    const DUMMY_PROFILES = [
+      // [name, cls, gender, level, stage, weeklyDamage, weeklyKills, streakDays, joinedWeeksAgo, bio]
+      // 上位（heavy users 帯）
+      { name:'カイト',   cls:'knight', gender:'m', level:42, stage:3, weeklyDamage:34800, weeklyKills:62, streakDays: 9, joinAgo:5, bio:'コツコツ型' },
+      { name:'ユメ',     cls:'sage',   gender:'f', level:38, stage:3, weeklyDamage:28400, weeklyKills:48, streakDays:11, joinAgo:6, bio:'夜の薬草調合師' },
+      // 中上位
+      { name:'ソウマ',   cls:'ranger', gender:'m', level:31, stage:2, weeklyDamage:18200, weeklyKills:35, streakDays: 5, joinAgo:3, bio:'スプリント型' },
+      { name:'アヤノ',   cls:'sage',   gender:'f', level:28, stage:2, weeklyDamage:14600, weeklyKills:30, streakDays: 4, joinAgo:3, bio:'静かな探求者' },
+      { name:'タイガ',   cls:'knight', gender:'m', level:26, stage:2, weeklyDamage:12300, weeklyKills:24, streakDays: 6, joinAgo:4, bio:'集中型' },
+      // 中位
+      { name:'ノエル',   cls:'ranger', gender:'f', level:22, stage:2, weeklyDamage: 8900, weeklyKills:18, streakDays: 3, joinAgo:2, bio:'マイペース派' },
+      { name:'キョウ',   cls:'knight', gender:'m', level:20, stage:2, weeklyDamage: 7400, weeklyKills:15, streakDays: 4, joinAgo:2, bio:'朝活派' },
+      { name:'リオ',     cls:'sage',   gender:'f', level:18, stage:1, weeklyDamage: 6100, weeklyKills:14, streakDays: 2, joinAgo:1, bio:'学び続ける冒険者' },
+      { name:'ハルカ',   cls:'sage',   gender:'f', level:17, stage:1, weeklyDamage: 5400, weeklyKills:11, streakDays: 2, joinAgo:1, bio:'整理整頓家' },
+      { name:'ミナト',   cls:'ranger', gender:'m', level:15, stage:1, weeklyDamage: 4200, weeklyKills: 9, streakDays: 3, joinAgo:1, bio:'光を追う者' },
+      // 下位（rookie 帯：今週参加）
+      { name:'アスカ',   cls:'knight', gender:'f', level:11, stage:1, weeklyDamage: 2600, weeklyKills: 6, streakDays: 2, joinAgo:0, bio:'冒険を楽しむ派' },
+      { name:'セナ',     cls:'sage',   gender:'f', level: 9, stage:1, weeklyDamage: 1800, weeklyKills: 4, streakDays: 1, joinAgo:0, bio:'一歩ずつ前へ' },
+      { name:'ナギ',     cls:'ranger', gender:'m', level: 7, stage:1, weeklyDamage: 1200, weeklyKills: 3, streakDays: 1, joinAgo:0, bio:'静寂の地図描き' },
+      { name:'レナ',     cls:'knight', gender:'f', level: 6, stage:1, weeklyDamage:  900, weeklyKills: 3, streakDays: 1, joinAgo:0, bio:'小さな積み重ね派' },
+      { name:'ヒロ',     cls:'ranger', gender:'m', level: 4, stage:1, weeklyDamage:  500, weeklyKills: 2, streakDays: 1, joinAgo:0, bio:'失敗も冒険のうち' }
+    ];
+
+    // ISO週キーから N 週前の週キーを生成（簡易：今日から-7N日した日のISO週）
+    function _weekKeyFromOffset(weeksAgo){
+      try {
+        const d = new Date();
+        d.setDate(d.getDate() - 7 * (weeksAgo || 0));
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return isoWeek(`${y}-${m}-${day}`);
+      } catch(_){ return _currentWeekKey(); }
+    }
+
+    function _setSeedStatus(msg, kind){
+      const el = document.getElementById('mod-dummies-status');
+      if(!el) return;
+      el.textContent = msg || '';
+      el.classList.remove('is-error', 'is-ok');
+      if(kind) el.classList.add('is-' + kind);
+    }
+
+    async function seedDummiesNow(){
+      if(!isAdmin()){ _setSeedStatus('管理者専用機能です', 'error'); return; }
+      if(!fbDb || !fbUid){ _setSeedStatus('Firebase 未準備', 'error'); return; }
+      if(!confirm(`ダミー ${DUMMY_PROFILES.length} 名を atlas_weekly_scores（今週分）にシードします。よろしいですか？`)) return;
+
+      _setSeedStatus('書き込み中…');
+      const weekKey = _currentWeekKey();
+      let ok = 0, fail = 0;
+      const errors = [];
+
+      for(const p of DUMMY_PROFILES){
+        const uid = 'dummy_' + p.name;
+        const joinedWk = _weekKeyFromOffset(p.joinAgo);
+        const cw = (p.cls === 'knight') ? { knight: 0.7, sage: 0.15, ranger: 0.15 }
+                 : (p.cls === 'sage')   ? { knight: 0.15, sage: 0.7,  ranger: 0.15 }
+                 :                        { knight: 0.15, sage: 0.15, ranger: 0.7 };
+        const doc = {
+          uid: uid,
+          weekKey: weekKey,
+          displayName: p.name,
+          photoURL: '',
+          portrait: { cls: p.cls, gender: p.gender, stage: p.stage },
+          bio: p.bio || '',
+          snsLinks: [],
+          weeklyDamage: p.weeklyDamage,
+          weeklyKills:  p.weeklyKills,
+          level:        p.level,
+          stage:        p.stage,
+          streakDays:   p.streakDays,
+          classWeights: cw,
+          dominantClass: p.cls,
+          joinedWeekKey: joinedWk,
+          topBadges: [],
+          prevWeekDamage: Math.floor(p.weeklyDamage * (0.4 + Math.random() * 0.5)),
+          privacy: { showAvatar: true, showBio: true, showSns: true, showClass: true },
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        try {
+          await fbDb.collection('atlas_weekly_scores').doc(weekKey).collection('players').doc(uid).set(doc);
+          ok++;
+        } catch(e){
+          fail++;
+          errors.push(p.name + ': ' + (e.message || e.code || 'unknown'));
+          console.warn('[seed]', p.name, e);
+        }
+      }
+
+      // ランキングのキャッシュをクリアして再描画
+      try { Object.keys(_leaderboardCache).forEach(k => delete _leaderboardCache[k]); } catch(_){}
+      try { if(typeof loadLeaderboardForAxis === 'function') loadLeaderboardForAxis(LB_STATE.axis); } catch(_){}
+
+      if(fail === 0){
+        _setSeedStatus(`✓ ${ok} 名のダミーを今週分（${weekKey}）にシード完了`, 'ok');
+      } else {
+        _setSeedStatus(`成功 ${ok} / 失敗 ${fail}：${errors[0] || ''}`, 'error');
+      }
+    }
+
+    async function seedDummyActivityNow(){
+      if(!isAdmin()){ _setSeedStatus('管理者専用機能です', 'error'); return; }
+      if(!fbDb || !fbUid){ _setSeedStatus('Firebase 未準備', 'error'); return; }
+      if(!confirm('ダミー活動ログを atlas_activity_log に投入します（過去12時間に分散）')) return;
+
+      _setSeedStatus('活動ログ書き込み中…');
+      const weekKey = _currentWeekKey();
+      const mobNames = ['期日竜ノ子','請求書スライム','怠惰グール','迷いゴブリン','月末ワイバーン','先延ばしトロル'];
+      const cats     = ['クライアントワーク','クリエイティブ','事務','学習','マーケティング'];
+      const stageMap = { 1: 1, 2: 2, 3: 3 };
+      const now = Date.now();
+
+      let ok = 0, fail = 0;
+      const events = [];
+
+      DUMMY_PROFILES.forEach(p => {
+        // 各ダミーが 1〜4 件のイベント
+        const eventCount = 1 + Math.floor(Math.random() * 4);
+        for(let i = 0; i < eventCount; i++){
+          const minsAgo = Math.floor(Math.random() * 720); // 過去12時間以内
+          const ts = firebase.firestore.Timestamp.fromMillis(now - minsAgo * 60 * 1000);
+          // 80% mob_kill / 15% level_up / 5% stage_evolve
+          const r = Math.random();
+          let evt;
+          if(r < 0.80){
+            evt = {
+              type: 'mob_kill',
+              uid: 'dummy_' + p.name,
+              displayName: p.name,
+              photoURL: '',
+              mobType: mobNames[Math.floor(Math.random() * mobNames.length)],
+              category: cats[Math.floor(Math.random() * cats.length)],
+              createdAt: ts,
+              weekKey: weekKey
+            };
+          } else if(r < 0.95){
+            evt = {
+              type: 'level_up',
+              uid: 'dummy_' + p.name,
+              displayName: p.name,
+              photoURL: '',
+              level: p.level,
+              createdAt: ts,
+              weekKey: weekKey
+            };
+          } else {
+            evt = {
+              type: 'stage_evolve',
+              uid: 'dummy_' + p.name,
+              displayName: p.name,
+              photoURL: '',
+              stage: p.stage,
+              createdAt: ts,
+              weekKey: weekKey
+            };
+          }
+          events.push(evt);
+        }
+      });
+
+      for(const e of events){
+        try {
+          await fbDb.collection('atlas_activity_log').add(e);
+          ok++;
+        } catch(err){
+          fail++;
+          console.warn('[seed-activity]', err);
+        }
+      }
+
+      // ギルドの動向のキャッシュをクリアして再描画
+      try { _guildFeedCache.ts = 0; } catch(_){}
+      try { if(typeof renderGuildFeed === 'function') renderGuildFeed().catch(_=>{}); } catch(_){}
+
+      if(fail === 0){
+        _setSeedStatus(`✓ 活動ログ ${ok} 件を投入完了`, 'ok');
+      } else {
+        _setSeedStatus(`活動ログ：成功 ${ok} / 失敗 ${fail}`, 'error');
+      }
+    }
+
+    async function clearAllDummies(){
+      if(!isAdmin()){ _setSeedStatus('管理者専用機能です', 'error'); return; }
+      if(!fbDb || !fbUid){ _setSeedStatus('Firebase 未準備', 'error'); return; }
+      if(!confirm('全ダミー（dummy_* uid）の今週分ランキング＋活動ログを削除します。よろしいですか？')) return;
+
+      _setSeedStatus('削除中…');
+      let okScores = 0, failScores = 0;
+      let okLogs = 0,   failLogs = 0;
+
+      // ① 今週分ランキングから削除
+      const weekKey = _currentWeekKey();
+      for(const p of DUMMY_PROFILES){
+        const uid = 'dummy_' + p.name;
+        try {
+          await fbDb.collection('atlas_weekly_scores').doc(weekKey).collection('players').doc(uid).delete();
+          okScores++;
+        } catch(e){ failScores++; }
+      }
+
+      // ② 活動ログから dummy_* を抽出して削除（最新200件まで取得して該当削除）
+      try {
+        const snap = await fbDb.collection('atlas_activity_log')
+          .orderBy('createdAt', 'desc')
+          .limit(200)
+          .get();
+        const targets = [];
+        snap.forEach(d => {
+          const data = d.data() || {};
+          if(typeof data.uid === 'string' && data.uid.indexOf('dummy_') === 0){
+            targets.push(d.ref);
+          }
+        });
+        for(const ref of targets){
+          try { await ref.delete(); okLogs++; }
+          catch(e){ failLogs++; }
+        }
+      } catch(e){ console.warn('[clear] activity scan', e); }
+
+      // キャッシュクリア
+      try { Object.keys(_leaderboardCache).forEach(k => delete _leaderboardCache[k]); } catch(_){}
+      try { _guildFeedCache.ts = 0; } catch(_){}
+      try { if(typeof loadLeaderboardForAxis === 'function') loadLeaderboardForAxis(LB_STATE.axis); } catch(_){}
+      try { if(typeof renderGuildFeed === 'function') renderGuildFeed().catch(_=>{}); } catch(_){}
+
+      _setSeedStatus(`✓ ランキング ${okScores}/${DUMMY_PROFILES.length} 削除、活動ログ ${okLogs} 削除`, 'ok');
+    }
+
+    // ボタン配線
+    (function wireDummyButtons(){
+      const seed   = document.getElementById('mod-seed-dummies-btn');
+      const seedAc = document.getElementById('mod-seed-activity-btn');
+      const clear  = document.getElementById('mod-clear-dummies-btn');
+      if(seed)   seed.addEventListener('click',   () => seedDummiesNow().catch(e => _setSeedStatus(e.message || 'error', 'error')));
+      if(seedAc) seedAc.addEventListener('click', () => seedDummyActivityNow().catch(e => _setSeedStatus(e.message || 'error', 'error')));
+      if(clear)  clear.addEventListener('click',  () => clearAllDummies().catch(e => _setSeedStatus(e.message || 'error', 'error')));
+    })();
 
     // 起動時に init を試みる（SDK ロード済みなら即座、未ロードならポーリング）
     (function bootFirebase(){
