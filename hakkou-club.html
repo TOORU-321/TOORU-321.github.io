@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#F5A623">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ハッコウクラブ">
+<meta name="robots" content="noindex,nofollow">
+<title>かよママのハッコウクラブ | 麹レッスン1ヶ月サポート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='55' r='35' fill='%23FFE7B0'/%3E%3Ccircle cx='50' cy='55' r='15' fill='%23F5A623'/%3E%3C/svg%3E">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;background:#FFFCF5;color:#3A2E1F;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{padding-bottom:env(safe-area-inset-bottom);max-width:480px;margin:0 auto;position:relative;background:#FFFCF5}
+button,input,select,textarea{font-family:inherit;color:inherit;outline:none}
+button{cursor:pointer;border:none;background:none}
+
+/* Header */
+header{position:sticky;top:0;background:linear-gradient(180deg,#FFFCF5 0%,#FFF6E5 100%);z-index:30;border-bottom:1px solid rgba(245,166,35,.12);padding:env(safe-area-inset-top) 0 0}
+.head-row{display:flex;align-items:center;padding:10px 14px 8px;gap:8px}
+.head-row .title{font-family:'Klee One',serif;font-size:16px;font-weight:600;color:#B3631A;flex:1;letter-spacing:.04em}
+.head-row .title .emoji{font-size:18px;margin-right:3px}
+.head-row .countdown{font-size:11px;color:#8C7A6A;background:#FFF4DC;padding:3px 9px;border-radius:999px;border:1px solid #F5E0B5}
+.head-row .ham{width:32px;height:32px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px}
+.head-row .ham span{display:block;width:18px;height:2px;background:#B3631A;border-radius:1px;transition:transform .2s}
+.subhead{display:flex;align-items:center;padding:0 14px 8px;gap:8px;flex-wrap:wrap}
+.subhead .date{font-size:13px;color:#5A4A3A;font-weight:500}
+.subhead .today-badge{background:#FFE7B0;color:#B3631A;padding:1px 7px;border-radius:8px;font-weight:700;font-size:10px;margin-left:4px}
+.streak-pill{display:inline-flex;align-items:center;gap:3px;background:#FFF4DC;color:#C16B1A;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid #F5E0B5}
+.streak-pill .flame{font-size:13px;animation:flicker 1.6s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.phase-pill{font-size:10.5px;color:#7A5A2A;background:#FFF8E7;padding:2px 9px;border-radius:999px;border:1px solid #F5CF8E;font-weight:700;letter-spacing:.04em}
+
+/* Main */
+main{padding:0 14px 80px}
+.main-view.off{display:none}
+
+/* Banners */
+.banner{display:flex;align-items:center;gap:8px;border-radius:12px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5}
+.banner .ico{font-size:18px;flex-shrink:0}
+.banner.lucky{background:linear-gradient(90deg,#FFE7B0 0%,#FFC56B 50%,#FFE7B0 100%);background-size:200% 100%;animation:luckyShimmer 4s linear infinite;border:1px solid #F5A623;color:#8C4A0D;font-weight:700;box-shadow:0 2px 6px rgba(245,166,35,.25)}
+.banner.lucky small{display:block;font-size:10px;color:#A06B1F;font-weight:500;margin-top:1px}
+.banner.read-only{background:linear-gradient(135deg,#FFF4DC 0%,#FFE7B0 100%);border:1px solid #F5CF8E;color:#7A5A2A}
+.banner.read-only b{color:#B3631A}
+.banner.pre-launch{background:#F0F8F0;border:1px solid #C4DBC4;color:#3F6F3F}
+@keyframes luckyShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Onboarding & Add-Koji selection */
+.modal-bg{position:fixed;inset:0;background:rgba(60,40,20,.45);display:none;align-items:center;justify-content:center;z-index:50;animation:fadeIn .25s ease-out;padding:20px}
+.modal-bg.on{display:flex}
+.modal{background:#FFFCF5;border-radius:18px;max-width:380px;width:100%;max-height:90vh;overflow-y:auto;padding:22px 20px 18px;animation:slideUp .35s ease-out}
+.modal h2{font-family:'Klee One',serif;font-size:19px;color:#C16B1A;margin-bottom:8px;text-align:center;letter-spacing:.05em}
+.modal .sub{font-size:13px;color:#6A5A4A;line-height:1.7;text-align:center;margin-bottom:14px}
+.modal .modal-hero{text-align:center;margin-bottom:8px}
+.modal-hero .emoji{font-size:24px;display:inline-block;margin-top:4px}
+.kayo-illust{display:block;margin:0 auto 4px;max-width:100%;height:auto;filter:drop-shadow(0 3px 8px rgba(193,107,26,.15))}
+.kayo-illust.onboard{width:140px}
+.kayo-illust.farewell{width:128px;margin-bottom:0}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* Koji selection grid */
+.koji-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.koji-pick label{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 6px;border:2px solid #F5E0B5;border-radius:12px;cursor:pointer;background:#FFFDF7;transition:all .15s;position:relative}
+.koji-pick label:hover{border-color:#F5A623}
+.koji-pick label input{position:absolute;opacity:0;pointer-events:none}
+.koji-pick label.checked{background:linear-gradient(135deg,#FFFCF0 0%,#FFF4D8 100%);border-color:#F5A623;box-shadow:0 2px 8px rgba(245,166,35,.18)}
+.koji-pick label.checked::before{content:'✓';position:absolute;top:4px;right:6px;color:#F5A623;font-weight:700;font-size:13px}
+.koji-pick .ke{font-size:26px}
+.koji-pick .kn{font-size:13px;font-weight:700;color:#5A4A3A}
+.koji-pick .kt{font-size:10px;color:#8C7A6A;line-height:1.4;text-align:center}
+.koji-pick label.disabled{opacity:.45;cursor:not-allowed;background:#F5EDD8}
+.koji-pick label.disabled::after{content:'選択済';position:absolute;top:4px;right:6px;font-size:9px;color:#8C7A6A;background:#fff;padding:1px 5px;border-radius:6px}
+
+/* Buttons */
+.btn{display:block;width:100%;padding:13px;border-radius:12px;font-weight:700;font-size:14px;text-align:center;border:none;font-family:inherit;cursor:pointer;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;box-shadow:0 3px 10px rgba(245,166,35,.3)}
+.btn.sec{background:#FFFDF7;color:#B3631A;border:1px solid #F5CF8E}
+.btn:disabled{opacity:.45;cursor:not-allowed;background:#E5DDD0;box-shadow:none}
+
+/* Koji cards */
+.koji-cards{display:flex;flex-direction:column;gap:10px;margin:10px 0}
+.koji-card{background:#FFFDF8;border:1px solid #F5E0B5;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;position:relative}
+.koji-card:active{transform:scale(.98)}
+.koji-card .kc-ico{font-size:34px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFFAE5 0%,#FFE7B0 100%);border-radius:14px;flex-shrink:0;border:1px solid #F5CF8E}
+.koji-card .kc-info{flex:1;min-width:0}
+.koji-card .kc-name{font-family:'Klee One',serif;font-size:15px;color:#B3631A;font-weight:700;display:flex;align-items:center;gap:8px}
+.koji-card .kc-name .stage{font-size:9.5px;color:#fff;background:#F5A623;padding:1px 7px;border-radius:999px;letter-spacing:.04em}
+.koji-card .kc-meta{font-size:11px;color:#8C7A6A;margin-top:3px}
+.koji-card .kc-meta b{color:#B3631A}
+.koji-card .kc-bar{margin-top:6px;height:5px;background:#F5EAD0;border-radius:3px;overflow:hidden}
+.koji-card .kc-bar .fill{height:100%;background:linear-gradient(90deg,#FFC56B 0%,#F5A623 100%);border-radius:3px;transition:width .3s}
+.koji-card .kc-arrow{color:#C2B39B;font-size:18px;flex-shrink:0}
+.koji-card.completed{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border-color:#A8C97A}
+.koji-card.completed .kc-name{color:#3B6D11}
+.koji-card.completed .kc-ico{background:linear-gradient(135deg,#E8F4D9 0%,#C8E0A0 100%);border-color:#A8C97A}
+.koji-card.resting{opacity:.55;background:#F5F0E5}
+.koji-card.resting::after{content:'お休み中';position:absolute;top:6px;right:8px;font-size:9px;color:#8C7A6A;background:#fff;padding:1px 6px;border-radius:6px;border:1px solid #D9D0BC}
+
+/* Add-koji button */
+.add-koji-btn{width:100%;padding:11px;border-radius:12px;background:transparent;border:2px dashed #F5CF8E;color:#B3631A;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
+.add-koji-btn:active{background:#FFF4DC}
+
+/* Empty state */
+.empty-state{text-align:center;padding:30px 16px;color:#8C7A6A;font-size:13px;line-height:1.7}
+.empty-state .ico{font-size:42px;margin-bottom:8px}
+
+/* Check-in modal */
+.checkin-form{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.checkin-form .field{display:flex;flex-direction:column;gap:4px}
+.checkin-form .field label{font-size:12px;font-weight:700;color:#B3631A}
+.checkin-form .field .opts{display:flex;flex-wrap:wrap;gap:5px}
+.checkin-form .field .opt-btn{flex:1;min-width:60px;padding:7px 8px;border:1px solid #F5E0B5;background:#FFFDF7;color:#5A4A3A;font-size:11.5px;border-radius:8px;font-weight:600;cursor:pointer}
+.checkin-form .field .opt-btn.on{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border-color:#C8810F}
+.checkin-form textarea{padding:9px 11px;border:1px solid #F5E0B5;border-radius:8px;font-size:13px;background:#FFFDF7;resize:vertical;min-height:50px;font-family:inherit}
+.checkin-form textarea:focus{border-color:#F5A623}
+.day-guide{background:linear-gradient(135deg,#FFF8E7 0%,#FFEFC5 100%);border:1px solid #F5CF8E;border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.6;color:#7A5A2A}
+.day-guide b{color:#B3631A}
+
+/* Completion modal */
+.compl-list{display:flex;flex-direction:column;gap:7px;margin:12px 0}
+.compl-list .item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:#FFFDF7;border:1px solid #F5E0B5;border-radius:10px;font-size:13px;cursor:pointer;color:#5A4A3A;line-height:1.4}
+.compl-list .item.checked{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border-color:#A8C97A;color:#3B6D11}
+.compl-list .item .chk{width:20px;height:20px;border-radius:5px;border:2px solid #C2B39B;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;background:#fff}
+.compl-list .item.checked .chk{background:#3B6D11;border-color:#3B6D11}
+
+/* Drawer */
+.drawer-bg{position:fixed;inset:0;background:rgba(60,40,20,.4);display:none;z-index:60}
+.drawer-bg.on{display:block}
+.drawer{position:fixed;top:0;right:0;width:280px;max-width:85vw;height:100vh;background:#FFFCF5;z-index:70;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
+.drawer.on{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid #F5E0B5}
+.drawer-head .d-title{font-family:'Klee One',serif;font-size:16px;color:#B3631A;flex:1}
+.drawer-head .drawer-close{font-size:22px;color:#8C7A6A;background:none;border:none;cursor:pointer;padding:0 4px}
+.drawer-list{flex:1;overflow-y:auto;padding:8px 0}
+.drawer-item{display:flex;align-items:center;width:100%;padding:13px 18px;font-size:14px;color:#3A2E1F;background:none;border:none;text-align:left;text-decoration:none;font-family:inherit}
+.drawer-item:active{background:#FFF1D8}
+.drawer-item .ico{font-size:17px;width:22px;text-align:center;flex-shrink:0;margin-right:10px}
+.drawer-item .arrow{margin-left:auto;color:#C2B39B;font-size:14px}
+.drawer-item.danger{color:#B55F3A}
+.drawer-divider{height:1px;background:#F5E0B5;margin:6px 16px}
+.drawer-foot{padding:14px 18px;border-top:1px solid #F5E0B5;font-size:11px;color:#8C7A6A;line-height:1.6}
+.drawer-foot .beta{display:inline-block;background:#FFE7B0;color:#B3631A;padding:1px 7px;border-radius:8px;font-weight:700;margin-bottom:4px;font-size:10px}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(60,40,20,.92);color:#FFFCF5;padding:11px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;text-align:center;max-width:90vw}
+.toast.show{opacity:1}
+
+/* Title section (称号) */
+.title-section{background:linear-gradient(180deg,#FFF8E7 0%,#FFF1CF 100%);border:1px solid #F5CF8E;border-radius:12px;padding:10px 12px;margin-top:8px}
+.title-section .ts-head{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.title-section .ts-head .ts-title{font-family:'Klee One',serif;font-size:12px;color:#B3631A;font-weight:700}
+.title-section .ts-head .ts-count{margin-left:auto;font-size:10px;color:#8C7A6A;background:#fff;border-radius:999px;padding:2px 8px;border:1px solid #F5E0B5}
+.title-grid{display:flex;flex-wrap:wrap;gap:5px}
+.title-chip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;padding:3px 8px;border-radius:999px;font-weight:700}
+.title-chip.tier1{background:#FFF4E5;color:#A05A1A;border:1px solid #F5C78A}
+.title-chip.tier2{background:#FFE8BE;color:#8C4A0D;border:1px solid #E9AF5C}
+.title-chip.tier3{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border:1px solid #C8810F}
+.title-chip.locked{background:#F5ECD8;color:#BCA88A;border:1px dashed #D9C4A0;opacity:.75}
+
+/* Phase 2 / Recipes */
+.phase2-card{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border:1px solid #A8C97A;border-radius:14px;padding:14px;margin-top:14px}
+.phase2-card h3{font-family:'Klee One',serif;font-size:14px;color:#3B6D11;margin-bottom:6px}
+.phase2-card .stat{font-size:13px;color:#3B6D11;font-weight:700;margin-bottom:8px}
+.phase2-card .recipe-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.recipe-row{display:flex;align-items:center;gap:8px;padding:8px 11px;background:#fff;border:1px solid #C4DBC4;border-radius:10px;font-size:12px}
+.recipe-row .rl-name{flex:1;color:#3A2E1F;font-weight:600}
+.recipe-row .rl-tag{font-size:9.5px;color:#3B6D11;background:#F4F8E8;padding:1px 6px;border-radius:6px;border:1px solid #A8C97A}
+.recipe-row .rl-btn{font-size:11px;padding:4px 9px;border-radius:6px;border:1px solid #A8C97A;background:#fff;color:#3B6D11;font-weight:700;cursor:pointer}
+.recipe-row.done{opacity:.6}
+.recipe-row.done .rl-btn{background:#3B6D11;color:#fff;border-color:#3B6D11}
+
+/* Farewell modal (final) */
+.farewell-bg{position:fixed;inset:0;background:rgba(80,50,20,.55);display:none;align-items:center;justify-content:center;z-index:80;padding:14px}
+.farewell-bg.on{display:flex}
+.farewell-card{background:linear-gradient(180deg,#FFFCF5 0%,#FFF4DC 100%);border-radius:20px;max-width:340px;width:100%;padding:22px 18px 18px;text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.2);animation:slideUp .45s ease-out;max-height:90vh;overflow-y:auto}
+.farewell-card .sakura{font-size:26px;display:inline-block;animation:floatSakura 3.2s ease-in-out infinite}
+@keyframes floatSakura{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.farewell-card h2{font-family:'Klee One',serif;font-size:18px;color:#C16B1A;margin:6px 0 6px}
+.final-eval{background:linear-gradient(180deg,#FFF8E7 0%,#FFEFC5 100%);border:1px solid #F5CF8E;border-radius:14px;padding:14px 12px;margin:14px 0 8px}
+.final-eval .eval-title{font-family:'Klee One',serif;font-size:13px;color:#C16B1A;font-weight:700;text-align:center;margin-bottom:10px}
+.final-eval .eval-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.final-eval .eval-item{background:#fff;border-radius:8px;padding:8px 4px;text-align:center;border:1px solid #FAE0B5}
+.final-eval .eval-item .val{font-family:'Klee One',serif;font-size:18px;font-weight:700;color:#B3631A;line-height:1.1}
+.final-eval .eval-item .lbl{font-size:10px;color:#8C7A6A;margin-top:3px}
+.final-eval .eval-badge{background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;border-radius:999px;padding:7px 14px;text-align:center;font-family:'Klee One',serif;font-size:13px;font-weight:700;margin-bottom:6px}
+.farewell-card .msg{font-size:13px;color:#5A4A3A;line-height:1.95;margin:14px 4px;text-align:left;white-space:pre-line}
+.farewell-card .msg b{color:#B3631A}
+.next-step{background:linear-gradient(180deg,#FFFCF5 0%,#FDF3E0 100%);border:1px dashed #E8B976;border-radius:14px;padding:13px 14px 12px;margin:10px 0}
+.next-step .ns-title{font-size:12px;color:#8C7A6A;text-align:center;margin-bottom:10px;line-height:1.5}
+.next-step .ns-title b{color:#B3631A;font-size:13px}
+.next-step .ns-item{display:flex;align-items:flex-start;gap:10px;background:#fff;border-radius:10px;padding:10px 12px;border:1px solid #F5A623;background:linear-gradient(90deg,#FFFCF0 0%,#FFF4D8 100%);box-shadow:0 2px 6px rgba(245,166,35,.12)}
+.next-step .ns-ico{font-size:22px;flex-shrink:0;margin-top:1px}
+.next-step .ns-text{font-size:12px;color:#5A4A3A;line-height:1.55;flex:1;text-align:left}
+.next-step .ns-text b{color:#B3631A}
+.next-step .ns-cta{font-size:11.5px;color:#8C7A6A;text-align:center;margin-top:8px;line-height:1.65}
+.next-step .ns-cta b{color:#B3631A}
+.farewell-card .signature{font-family:'Klee One',serif;font-size:14px;color:#C16B1A;text-align:right;margin:8px 6px 12px;font-weight:700}
+.farewell-card .ig-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFC56B 0%,#F5A623 100%);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;font-size:13px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 3px 10px rgba(245,166,35,.3);font-family:inherit}
+.farewell-card .close-btn{display:block;margin:14px auto 0;background:none;border:none;color:#8C7A6A;font-size:12px;cursor:pointer;padding:8px 16px;text-decoration:underline}
+
+/* Read-only mode (after expire) */
+body.read-only .koji-card,body.read-only .add-koji-btn,body.read-only .recipe-row .rl-btn{pointer-events:none;opacity:.85}
+body.read-only .add-koji-btn{opacity:.4}
+
+/* Bottom nav */
+.bot-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#FFFCF5;border-top:1px solid #F5E0B5;padding:6px 0 calc(env(safe-area-inset-bottom) + 6px);display:flex;z-index:25}
+.bot-btn{flex:1;background:none;border:none;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10.5px;color:#8C7A6A;font-family:inherit;cursor:pointer}
+.bot-btn .ico{font-size:18px}
+.bot-btn.active{color:#B3631A;font-weight:700}
+
+/* Phase indicator */
+.phase-indicator{padding:10px 12px;background:linear-gradient(90deg,#FFF8E7 0%,#FFEFC5 100%);border-radius:12px;border:1px solid #F5CF8E;margin-top:8px;display:flex;align-items:center;gap:10px}
+.phase-indicator .pi-ico{font-size:22px}
+.phase-indicator .pi-text{flex:1;font-size:12px;color:#7A5A2A;line-height:1.5}
+.phase-indicator .pi-text b{color:#B3631A;font-size:13px;display:block;margin-bottom:1px}
+
+/* Daily kayomama greeting */
+.daily-greet{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FFFDF8 0%,#FFF4DC 100%);border:1px solid #F5E0B5;border-radius:14px;padding:9px 12px;margin-top:8px}
+.daily-greet img{width:54px;height:54px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(193,107,26,.12))}
+.daily-greet .dg-msg{flex:1;font-size:12px;color:#5A4A3A;line-height:1.55}
+.daily-greet .dg-msg b{color:#B3631A;font-size:13px}
+
+/* === 不安解消パッケージ === */
+
+/* ① 即時判定オーバーレイ */
+.judge-bg{position:fixed;inset:0;background:rgba(60,40,20,.5);display:none;align-items:center;justify-content:center;z-index:90;padding:18px;animation:fadeIn .25s ease-out}
+.judge-bg.on{display:flex}
+.judge-card{background:#FFFCF5;border-radius:18px;max-width:340px;width:100%;padding:22px 20px 18px;text-align:center;animation:slideUp .35s ease-out}
+.judge-card .badge{display:inline-flex;align-items:center;gap:6px;font-family:'Klee One',serif;font-size:18px;font-weight:700;padding:8px 18px;border-radius:999px;margin-bottom:10px;letter-spacing:.04em}
+.judge-card .badge.green{background:linear-gradient(135deg,#A8D88A 0%,#7AB85A 100%);color:#fff;box-shadow:0 3px 8px rgba(122,184,90,.3)}
+.judge-card .badge.yellow{background:linear-gradient(135deg,#FFD580 0%,#F5A623 100%);color:#fff;box-shadow:0 3px 8px rgba(245,166,35,.3)}
+.judge-card .badge.red{background:linear-gradient(135deg,#F7AAAA 0%,#E25C5C 100%);color:#fff;box-shadow:0 3px 8px rgba(226,92,92,.35)}
+.judge-card .kayo-judge{display:block;width:96px;margin:0 auto 4px;filter:drop-shadow(0 3px 8px rgba(193,107,26,.18))}
+.judge-card .reasons{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.judge-card .reasons .r{font-size:12.5px;line-height:1.65;padding:9px 12px;border-radius:10px;text-align:left;background:#FFFDF7;border:1px solid #F5E0B5;color:#5A4A3A}
+.judge-card.green .reasons .r{border-color:#A8D88A;background:#F4F8E8;color:#3B6D11}
+.judge-card.yellow .reasons .r{border-color:#F5CF8E;background:#FFF8E7;color:#7A5A2A}
+.judge-card.red .reasons .r{border-color:#F0A0A0;background:#FFF0F0;color:#993333}
+.judge-card .btn{margin-top:8px}
+
+/* ② 成功保護スコア */
+.protect-card{background:linear-gradient(135deg,#FFF8E7 0%,#FFEFC5 100%);border:1px solid #F5CF8E;border-radius:14px;padding:11px 14px;margin-top:8px;display:flex;align-items:center;gap:12px}
+.protect-card .pc-ico{font-size:28px;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(193,107,26,.15))}
+.protect-card .pc-info{flex:1;min-width:0}
+.protect-card .pc-label{font-size:10.5px;color:#8C7A6A;font-weight:700;letter-spacing:.04em;margin-bottom:1px}
+.protect-card .pc-value{font-family:'Klee One',serif;font-size:14px;color:#B3631A;font-weight:700;line-height:1.4}
+.protect-card .pc-value b{color:#C16B1A;font-size:16px}
+.protect-card .pc-msg{font-size:11px;color:#7A5A2A;margin-top:3px;line-height:1.4}
+
+/* ③ 不安カレンダー（Day 4-5などに自動表示） */
+.anxiety-card{background:linear-gradient(135deg,#FFF8E7 0%,#FFEED0 100%);border:1px solid #E8B976;border-radius:14px;padding:11px 14px;margin-top:8px;display:flex;align-items:flex-start;gap:10px}
+.anxiety-card .ax-ico{font-size:22px;flex-shrink:0;margin-top:2px}
+.anxiety-card .ax-text{flex:1;font-size:12px;line-height:1.6;color:#7A5A2A}
+.anxiety-card .ax-text b{color:#B3631A;font-size:13px}
+
+/* ⑤ SOS ボタン＆モーダル */
+.sos-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;margin-top:10px;background:linear-gradient(135deg,#FFE0E0 0%,#FFCBCB 100%);color:#A03333;border:1px solid #E8A0A0;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.sos-btn:active{transform:scale(.97)}
+.sos-modal-card .sos-msg{font-size:13px;line-height:1.85;color:#5A4A3A;text-align:left;background:#FFFDF7;border:1px solid #F5E0B5;border-radius:10px;padding:11px 13px;margin:10px 0}
+.sos-modal-card .sos-msg b{color:#B3631A}
+.sos-modal-card .sos-tips{font-size:11.5px;color:#8C7A6A;line-height:1.7;margin:8px 0}
+.sos-modal-card .sos-tips li{margin-left:14px;margin-bottom:3px}
+
+/* === 豆知識システム === */
+/* 今日の豆知識カード */
+.knowledge-today{background:linear-gradient(135deg,#FFFCF0 0%,#FFF4D8 100%);border:1px solid #F5CF8E;border-radius:14px;padding:11px 14px;margin-top:8px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .12s}
+.knowledge-today:active{transform:scale(.98)}
+.knowledge-today .kt-ico{font-size:24px;flex-shrink:0;width:40px;height:40px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px solid #F5CF8E}
+.knowledge-today .kt-info{flex:1;min-width:0}
+.knowledge-today .kt-meta{font-size:10px;color:#8C7A6A;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:5px}
+.knowledge-today .kt-meta .badge{background:#F5A623;color:#fff;padding:1px 5px;border-radius:6px;font-size:9px}
+.knowledge-today .kt-meta .read{color:#3B6D11}
+.knowledge-today .kt-title{font-family:'Klee One',serif;font-size:14px;color:#B3631A;font-weight:700;margin-top:2px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.knowledge-today .kt-arrow{color:#C2B39B;font-size:18px;flex-shrink:0}
+
+/* 麹図書館モーダル */
+.lib-bg{position:fixed;inset:0;background:rgba(60,40,20,.5);display:none;align-items:center;justify-content:center;z-index:65;padding:14px}
+.lib-bg.on{display:flex}
+.lib-card{background:#FFFCF5;border-radius:16px;max-width:380px;width:100%;max-height:90vh;display:flex;flex-direction:column;animation:slideUp .35s ease-out}
+.lib-head{padding:16px 18px 8px;border-bottom:1px solid #F5E0B5;display:flex;align-items:center;gap:10px}
+.lib-head h2{font-family:'Klee One',serif;font-size:16px;color:#B3631A;flex:1}
+.lib-head .progress{font-size:11px;color:#8C7A6A;background:#FFF4DC;padding:2px 8px;border-radius:999px;border:1px solid #F5E0B5;font-weight:700}
+.lib-head .close-x{background:none;border:none;font-size:20px;color:#8C7A6A;cursor:pointer;padding:0 4px}
+.lib-body{flex:1;overflow-y:auto;padding:8px 4px 12px}
+.lib-cat{padding:8px 16px}
+.lib-cat-head{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#B3631A;padding:6px 0;border-bottom:1px solid #F5E0B5}
+.lib-cat-head .count{margin-left:auto;font-size:10.5px;color:#8C7A6A;font-weight:500}
+.lib-list{display:flex;flex-direction:column;gap:2px;margin-top:5px}
+.lib-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#FFFDF8;border:1px solid #F5E0B5;border-radius:8px;cursor:pointer;font-size:12.5px;color:#5A4A3A;line-height:1.4}
+.lib-row.read{background:#F4F8E8;border-color:#A8C97A;color:#3B6D11}
+.lib-row .chk{width:16px;height:16px;border-radius:4px;border:1.5px solid #C2B39B;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;color:#fff;font-size:10px;font-weight:700}
+.lib-row.read .chk{background:#3B6D11;border-color:#3B6D11}
+.lib-row .row-title{flex:1;min-width:0}
+.lib-row .arr{color:#C2B39B}
+
+/* 記事閲覧モーダル */
+.article-bg{position:fixed;inset:0;background:rgba(60,40,20,.55);display:none;align-items:flex-start;justify-content:center;z-index:75;padding:14px;overflow-y:auto}
+.article-bg.on{display:flex}
+.article-card{background:#FFFCF5;border-radius:16px;max-width:380px;width:100%;padding:18px 18px 14px;margin:auto;animation:slideUp .35s ease-out}
+.article-meta{display:flex;align-items:center;gap:6px;font-size:10.5px;color:#8C7A6A;font-weight:700;letter-spacing:.04em;margin-bottom:6px}
+.article-meta .cat-pill{background:#FFE7B0;color:#B3631A;padding:1px 7px;border-radius:6px;font-size:10px}
+.article-card h2{font-family:'Klee One',serif;font-size:18px;color:#B3631A;line-height:1.5;margin-bottom:10px}
+.article-body{font-size:13.5px;color:#3A2E1F;line-height:1.95;white-space:pre-line;background:#FFFDF8;border:1px solid #F5E0B5;border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.article-body b{color:#B3631A}
+.article-actions{display:flex;gap:8px}
+
+/* FAQモーダル */
+.faq-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:60vh;overflow-y:auto}
+.faq-item{background:#FFFDF8;border:1px solid #F5E0B5;border-radius:10px;overflow:hidden}
+.faq-q{padding:10px 12px;font-size:12.5px;font-weight:700;color:#B3631A;cursor:pointer;display:flex;align-items:center;gap:6px;line-height:1.5}
+.faq-q::before{content:'❓';font-size:13px;flex-shrink:0}
+.faq-q .arr{margin-left:auto;color:#C2B39B;transition:transform .2s}
+.faq-item.on .faq-q .arr{transform:rotate(90deg)}
+.faq-a{display:none;padding:0 12px 12px;font-size:12.5px;color:#5A4A3A;line-height:1.85;border-top:1px solid #F5E0B5}
+.faq-item.on .faq-a{display:block;padding-top:8px}
+.faq-a b{color:#B3631A}
+
+/* クイズモーダル */
+.quiz-q{font-family:'Klee One',serif;font-size:16px;color:#B3631A;line-height:1.6;margin:10px 0 12px;background:#FFF8E7;border:1px solid #F5CF8E;border-radius:10px;padding:11px 14px;text-align:center}
+.quiz-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:8px}
+.quiz-opt{padding:11px 13px;background:#FFFDF8;border:1px solid #F5E0B5;border-radius:10px;font-size:13px;color:#5A4A3A;text-align:left;cursor:pointer;font-family:inherit}
+.quiz-opt:active{transform:scale(.98)}
+.quiz-opt.correct{background:linear-gradient(135deg,#A8D88A 0%,#7AB85A 100%);color:#fff;border-color:#3B6D11;font-weight:700}
+.quiz-opt.wrong{background:linear-gradient(135deg,#F7AAAA 0%,#E25C5C 100%);color:#fff;border-color:#993333;font-weight:700}
+.quiz-opt.disabled{opacity:.5;pointer-events:none}
+.quiz-result{font-size:12.5px;line-height:1.7;background:#FFF8E7;border:1px solid #F5CF8E;border-radius:10px;padding:11px 13px;color:#7A5A2A;display:none}
+.quiz-result.on{display:block}
+.quiz-result b{color:#B3631A}
+
+/* シクレ豆知識ハイライト */
+.lib-row.secret{background:linear-gradient(135deg,#FFF4DC 0%,#FFE7B0 100%);border-color:#F5A623}
+.lib-row.locked{background:#F5ECD8;color:#BCA88A;cursor:not-allowed}
+.lib-row.locked .row-title::before{content:'🔒 ';font-size:12px}
+
+/* Helper */
+.center{text-align:center}
+.muted{color:#8C7A6A}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <span class="title"><span class="emoji">🍶</span>かよママのハッコウクラブ</span>
+    <span class="countdown" id="countdown">準備中</span>
+    <button class="ham" id="hamBtn" aria-label="メニュー"><span></span><span></span><span></span></button>
+  </div>
+  <div class="subhead">
+    <span class="date" id="currentDate"></span>
+    <span id="streakPill"></span>
+    <span class="phase-pill" id="phasePill"></span>
+  </div>
+</header>
+
+<main>
+  <section class="main-view" id="mainView">
+    <div id="luckyBanner"></div>
+    <div id="readOnlyBanner"></div>
+    <div id="preLaunchBanner"></div>
+    <div id="phaseIndicator"></div>
+    <div id="dailyGreet"></div>
+    <div id="anxietyCard"></div>
+    <div id="protectCard"></div>
+    <div id="todayKnowledge"></div>
+    <div id="titleSection"></div>
+    <div class="koji-cards" id="kojiCards"></div>
+    <button class="add-koji-btn" id="addKojiBtn" style="display:none">＋ 麹を追加する</button>
+    <div id="phase2Section"></div>
+  </section>
+</main>
+
+<nav class="bot-nav">
+  <button class="bot-btn active" id="navHome"><span class="ico">🍶</span>ホーム</button>
+  <button class="bot-btn" id="navManual"><span class="ico">📖</span>使い方</button>
+</nav>
+
+<!-- Onboarding Modal -->
+<div class="modal-bg" id="onboardModal">
+  <div class="modal">
+    <div class="modal-hero">
+      <img src="assets/chars/kayo4.png" alt="かよママ" class="kayo-illust onboard" onerror="this.style.display='none'">
+    </div>
+    <h2>ハッコウクラブへようこそ！</h2>
+    <p class="sub">かよママの麹レッスン参加者向け<br>1ヶ月伴走サポートアプリです🌾</p>
+    <div style="background:#FFF8E7;border:1px solid #F5CF8E;border-radius:10px;padding:11px 13px;font-size:12px;color:#7A5A2A;line-height:1.7;margin-bottom:12px">
+      <b style="color:#B3631A">どの麹を作りますか？</b><br>
+      複数選択OK・あとから追加もできます
+    </div>
+    <div class="koji-pick" id="kojiPickGrid"></div>
+    <button class="btn pri" id="onboardStart" disabled>選んだ麹で始める</button>
+    <p class="sub muted" style="font-size:10.5px;margin-top:8px">いつでも増減できるので気軽に！</p>
+  </div>
+</div>
+
+<!-- Add Koji Modal -->
+<div class="modal-bg" id="addKojiModal">
+  <div class="modal">
+    <h2>🌱 麹を追加する</h2>
+    <p class="sub">挑戦したい麹を選んでください<br>（既に作っているものは選択できません）</p>
+    <div class="koji-pick" id="addKojiGrid"></div>
+    <button class="btn pri" id="addKojiConfirm" disabled style="margin-bottom:6px">追加する</button>
+    <button class="btn sec" id="addKojiCancel">キャンセル</button>
+  </div>
+</div>
+
+<!-- Check-in Modal -->
+<div class="modal-bg" id="checkinModal">
+  <div class="modal">
+    <h2 id="ciTitle">今日のチェックイン</h2>
+    <p class="sub" id="ciSub"></p>
+    <div class="day-guide" id="ciGuide"></div>
+    <div class="checkin-form" id="ciForm"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn sec" id="ciCancel" style="flex:1">キャンセル</button>
+      <button class="btn pri" id="ciSave" style="flex:2">記録する</button>
+    </div>
+    <button class="btn sec" id="ciJudge" style="margin-top:8px;display:none">完成したかも？判定する</button>
+    <button class="sos-btn" id="ciSos">😰 ちょっと不安…かよママに相談</button>
+    <button class="btn sec" id="ciFaq" style="margin-top:6px;font-size:12px;padding:8px">💡 よくある質問・困り事を見る</button>
+    <button class="btn sec" id="ciRest" style="margin-top:6px;font-size:11px;padding:8px;color:#8C7A6A">この麹を「お休み中」にする</button>
+  </div>
+</div>
+
+<!-- 即時判定オーバーレイ -->
+<div class="judge-bg" id="judgeOverlay">
+  <div class="judge-card" id="judgeCard">
+    <img id="judgeKayo" src="" alt="かよママ" class="kayo-judge" onerror="this.style.display='none'">
+    <div class="badge" id="judgeBadge"></div>
+    <div class="reasons" id="judgeReasons"></div>
+    <button class="btn pri" id="judgeOk">OK！</button>
+  </div>
+</div>
+
+<!-- 麹図書館 -->
+<div class="lib-bg" id="libModal">
+  <div class="lib-card">
+    <div class="lib-head">
+      <h2>📚 麹図書館</h2>
+      <span class="progress" id="libProgress">0/0</span>
+      <button class="close-x" id="libClose">×</button>
+    </div>
+    <div class="lib-body" id="libBody"></div>
+  </div>
+</div>
+
+<!-- 記事閲覧モーダル -->
+<div class="article-bg" id="articleModal">
+  <div class="article-card">
+    <div class="article-meta" id="articleMeta"></div>
+    <h2 id="articleTitle"></h2>
+    <div class="article-body" id="articleBody"></div>
+    <div class="article-actions">
+      <button class="btn sec" id="articleBack" style="flex:1">閉じる</button>
+      <button class="btn pri" id="articleNext" style="flex:2">次の記事へ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQモーダル -->
+<div class="modal-bg" id="faqModal">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <h2>❓ よくある質問</h2>
+    <p class="sub">困った時はまずここを見てみてください</p>
+    <div class="faq-list" id="faqList"></div>
+    <button class="btn sec" id="faqClose" style="margin-top:12px">閉じる</button>
+  </div>
+</div>
+
+<!-- クイズモーダル -->
+<div class="modal-bg" id="quizModal">
+  <div class="modal">
+    <h2>🎲 今日の麹クイズ</h2>
+    <p class="sub" id="quizSub">3択クイズに挑戦！</p>
+    <div class="quiz-q" id="quizQ"></div>
+    <div class="quiz-opts" id="quizOpts"></div>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="btn sec" id="quizClose" style="margin-top:8px">閉じる</button>
+  </div>
+</div>
+
+<!-- SOSモーダル -->
+<div class="modal-bg" id="sosModal">
+  <div class="modal sos-modal-card">
+    <img src="assets/chars/kayo3.png" alt="かよママ" style="display:block;width:110px;margin:0 auto 4px;filter:drop-shadow(0 3px 8px rgba(193,107,26,.15))" onerror="this.style.display='none'">
+    <h2 style="color:#A03333">🌷 大丈夫、ひとりじゃないよ</h2>
+    <div class="sos-msg">
+      麹作りで不安になるのは、<b>ちゃんと観察してる証拠</b>です。<br><br>
+      気になることがあれば、<b>かよママにLINEで気軽に相談</b>してください。写真と一緒に「Day ◯の塩麹、こんな感じです」と送ってもらえるとアドバイスしやすいです🌾
+    </div>
+    <ul class="sos-tips">
+      <li>気泡がない？水分が多い／少ない？</li>
+      <li>色が想像と違う？匂いが気になる？</li>
+      <li>「これって正常？」と思ったら即連絡を</li>
+    </ul>
+    <a class="btn pri" id="sosLineBtn" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">💬 かよママに相談する</a>
+    <button class="btn sec" id="sosClose" style="margin-top:6px">閉じる</button>
+  </div>
+</div>
+
+<!-- Completion Modal -->
+<div class="modal-bg" id="completionModal">
+  <div class="modal">
+    <h2>🎉 完成判定</h2>
+    <p class="sub" id="cpSub">セルフチェックでご確認ください</p>
+    <div class="compl-list" id="cpList"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn sec" id="cpBack" style="flex:1">もう少し</button>
+      <button class="btn pri" id="cpDone" style="flex:2" disabled>完成！</button>
+    </div>
+  </div>
+</div>
+
+<!-- Manual Modal -->
+<div class="modal-bg" id="manualModal">
+  <div class="modal">
+    <h2>📖 ハッコウクラブの使い方</h2>
+    <div style="font-size:13px;line-height:1.85;color:#5A4A3A">
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">📅 期間</b><br>5/23 麹レッスン日に開始 → 6/23 まで1ヶ月のサポート期間</p>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">🌾 Phase 1（〜6/6）：作る期</b><br>選んだ麹を毎日見守ります。1日1回タップで状態をチェックイン。</p>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">🍱 Phase 2（6/7〜）：使う期</b><br>完成した麹で作れるレシピが表示されます。「〜だけシリーズ」50品。</p>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">💡 困ったら</b><br>不安なときはLINEでかよママに相談してOK！1人じゃないから成功率アップ✨</p>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">🎁 おまけ</b><br>連続記録ストリーク、称号、ラッキーデイ、隠れキャラなど隠し要素もあるよ。</p>
+    </div>
+    <button class="btn pri" id="manualClose" style="margin-top:12px">閉じる</button>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="drawer-bg" id="drawerBg"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <span class="d-title">🍶 メニュー</span>
+    <button class="drawer-close" id="drawerClose">×</button>
+  </div>
+  <div class="drawer-list">
+    <button class="drawer-item" data-act="manual"><span class="ico">📖</span>使い方を見る<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="library"><span class="ico">📚</span>麹図書館<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="faq"><span class="ico">❓</span>よくある質問<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="quiz"><span class="ico">🎲</span>麹クイズ<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="addKoji"><span class="ico">➕</span>麹を追加する<span class="arrow">›</span></button>
+    <div class="drawer-divider"></div>
+    <a class="drawer-item" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
+      <span class="ico">💬</span>かよママ Instagram<span class="arrow">↗</span>
+    </a>
+    <div class="drawer-divider"></div>
+    <button class="drawer-item danger" data-act="reset"><span class="ico">🔄</span>データをリセット</button>
+  </div>
+  <div class="drawer-foot">
+    <span class="beta">β版</span><br>
+    2026-05-23 〜 2026-06-23<br>
+    監修：かよママ（料理講師）<br>
+    <span style="display:block;margin-top:6px;font-size:10px;color:#B0A090">作成：とーる｜行動経済アナリスト</span>
+  </div>
+</aside>
+
+<!-- Farewell Modal -->
+<div class="farewell-bg" id="farewellModal">
+  <div class="farewell-card">
+    <span class="sakura">🌾</span>
+    <img src="assets/chars/kayo3.png" alt="かよママ" class="kayo-illust farewell" onerror="this.style.display='none'">
+    <h2>1ヶ月、おつかれさまでした！</h2>
+
+    <div class="final-eval" id="finalEval">
+      <div class="eval-title">🏆 あなたの1ヶ月の記録</div>
+      <div class="eval-grid" id="finalEvalGrid"></div>
+      <div class="eval-badge" id="finalEvalBadge">麹デビュー！</div>
+    </div>
+
+    <div class="msg">麹レッスンから1ヶ月、<br>毎日のかき混ぜ、観察、味見──<br>本当によく頑張ってくれました🌾<br><br>
+冷蔵庫にできた<b>麹のお守り</b>は、これからの<br>毎日の料理を変えてくれます。<br><br>
+さて、麹で「味付け」が変わったら、次は<br><b>「献立」</b>そのものをラクにしませんか？</div>
+
+    <div class="next-step" id="nextStep">
+      <div class="ns-title"><b>次のかよママ企画</b><br>👇 ご案内です</div>
+      <div class="ns-item">
+        <div class="ns-ico">🍳</div>
+        <div class="ns-text"><b>献立勉強会</b><br><span style="color:#8C7A6A">毎日の「今日なに作ろう…」を解決する、かよママ式の献立組み立て術。麹も使いこなせる方なら相性ばっちりです</span></div>
+      </div>
+      <div class="ns-cta">気になる方は <b>かよママまでお気軽に</b> 声をかけてくださいね 🌸</div>
+    </div>
+
+    <div class="signature">— かよママ より</div>
+    <a class="ig-btn" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
+      かよママInstagramをフォロー
+    </a>
+    <button class="close-btn" id="farewellClose">閉じる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ======== Config ========
+const STORAGE_KEY='hakkou-club-state-v1';
+const ONBOARD_KEY='hakkou-club-onboarded-v1';
+const FAREWELL_SEEN_KEY='hakkou-club-farewell-v1';
+
+// =========================================================================
+// 🚀 リリース手順（リリース時のみ実施）:
+//    1. TEST_MODE を false に変更
+//    2. 必要なら START_AT / EXPIRE_AT / PHASE2_AT を実際の日付に調整
+// テスト中:
+//   ・期間ガードがすべて無効（pre-launch / read-only バナー出ない）
+//   ・カウントダウンは「テスト中」表示
+//   ・Phase 2 は「完成麹が出たら」自動で開く
+//   ・お別れポップアップは ?preview=farewell でのみ表示
+// =========================================================================
+const TEST_MODE=true;
+
+// 期間定数（TEST_MODE=false 時に有効）
+const START_AT=new Date('2026-05-23T00:00:00+09:00');
+const PHASE2_AT=new Date('2026-06-07T00:00:00+09:00');
+const EXPIRE_AT=new Date('2026-06-23T15:00:00.000Z'); // 6/24 0:00 JST
+
+// 6種類の麹
+const KOJI=[
+  {k:'shio',  n:'塩麹',     emoji:'🧂', tagline:'初心者おすすめ', days:7},
+  {k:'shoyu', n:'醤油麹',   emoji:'🍶', tagline:'万能調味料',     days:7},
+  {k:'tama',  n:'玉ねぎ麹', emoji:'🧅', tagline:'旨味爆発',       days:10},
+  {k:'chu',   n:'中華麹',   emoji:'🥢', tagline:'中華の素卒業',   days:10},
+  {k:'sho',   n:'生姜麹',   emoji:'🌿', tagline:'チューブ卒業',   days:7},
+  {k:'nin',   n:'にんにく麹', emoji:'🧄', tagline:'チューブ卒業',  days:7}
+];
+
+// Day別の見守りガイド
+const DAY_GUIDES={
+  1:'<b>仕込み完了！</b>清潔な瓶に入れて常温へ。明日から1日1回かき混ぜてあげてくださいね',
+  2:'フタを開けてしっかり混ぜましょう。<b>ガス抜きが大事</b>。混ぜる時に空気を入れる感覚で',
+  3:'少しずつ水分が出始める頃。混ぜたら密閉して常温キープ',
+  4:'<b>気泡チェック！</b>ぷくぷく出てきたら大成功サイン✨ まだなら明日まで様子見',
+  5:'匂いの変化に注目。米の甘さから<b>まろやか発酵香</b>に変わってきます',
+  6:'色がほんのりベージュ〜薄茶に。順調に発酵中の証拠',
+  7:'<b>塩麹・醤油麹・生姜麹・にんにく麹はそろそろ完成判定OK</b>。味見してみて',
+  8:'中華麹・玉ねぎ麹はもう少し。じっくり育てて深みを出しましょう',
+  9:'残り少し。今日もかき混ぜを忘れずに',
+  10:'<b>完成判定の最終日！</b>セルフチェックで確認しましょう'
+};
+
+// チェックイン項目
+const CHECKIN_FIELDS=[
+  {k:'color',   label:'色',     opts:['白','ベージュ','薄茶','茶']},
+  {k:'smell',   label:'香り',   opts:['米','甘い','発酵香','酸っぱい']},
+  {k:'moisture',label:'水分',   opts:['乾き気味','適度','しっとり','水分多め']},
+  {k:'bubble',  label:'気泡',   opts:['なし','少し','出てる','よく出る']},
+  {k:'temp',    label:'温度感', opts:['ひんやり','ふつう','あったか']}
+];
+
+const COMPL_CHECKS=[
+  '色が白〜ベージュ〜薄茶に変化した',
+  '甘い発酵の香りがする',
+  '気泡やふつふつ感があった',
+  '塩や醤油・素材との一体感がある',
+  'ペースト状〜とろみが出た',
+  'カビ・異臭などの異変はない'
+];
+
+// レシピ（〜だけシリーズ・サンプル30件・後日かよママから50件で差替）
+const RECIPES=[
+  {id:'r01',n:'塩麹キャベツ',uses:['shio'],tag:'漬けるだけ'},
+  {id:'r02',n:'塩麹のおかゆ',uses:['shio'],tag:'お湯に溶かすだけ'},
+  {id:'r03',n:'塩麹ドレッシング',uses:['shio'],tag:'混ぜるだけ'},
+  {id:'r04',n:'塩麹ゆで卵漬け',uses:['shio'],tag:'漬けるだけ'},
+  {id:'r05',n:'塩麹豚肉ソテー',uses:['shio'],tag:'味付けるだけ'},
+  {id:'r06',n:'醤油麹冷奴',uses:['shoyu'],tag:'かけるだけ'},
+  {id:'r07',n:'醤油麹卵かけご飯',uses:['shoyu'],tag:'かけるだけ'},
+  {id:'r08',n:'醤油麹照り焼き',uses:['shoyu'],tag:'味付けるだけ'},
+  {id:'r09',n:'醤油麹おにぎり',uses:['shoyu'],tag:'混ぜるだけ'},
+  {id:'r10',n:'醤油麹トマト和え',uses:['shoyu'],tag:'混ぜるだけ'},
+  {id:'r11',n:'玉ねぎ麹オムレツ',uses:['tama'],tag:'混ぜるだけ'},
+  {id:'r12',n:'玉ねぎ麹コンソメ風スープ',uses:['tama'],tag:'お湯に溶かすだけ'},
+  {id:'r13',n:'玉ねぎ麹トマトソース',uses:['tama'],tag:'混ぜるだけ'},
+  {id:'r14',n:'玉ねぎ麹マリネ',uses:['tama'],tag:'漬けるだけ'},
+  {id:'r15',n:'中華麹チャーハン',uses:['chu'],tag:'味付けるだけ'},
+  {id:'r16',n:'中華麹スープ',uses:['chu'],tag:'お湯に溶かすだけ'},
+  {id:'r17',n:'中華麹麻婆豆腐',uses:['chu'],tag:'味付けるだけ'},
+  {id:'r18',n:'中華麹野菜炒め',uses:['chu'],tag:'味付けるだけ'},
+  {id:'r19',n:'生姜麹冷奴',uses:['sho'],tag:'かけるだけ'},
+  {id:'r20',n:'生姜麹豚バラ巻き',uses:['sho'],tag:'味付けるだけ'},
+  {id:'r21',n:'生姜麹サバの煮付け',uses:['sho'],tag:'味付けるだけ'},
+  {id:'r22',n:'にんにく麹アヒージョ',uses:['nin'],tag:'味付けるだけ'},
+  {id:'r23',n:'にんにく麹ステーキ',uses:['nin'],tag:'味付けるだけ'},
+  {id:'r24',n:'にんにく麹パスタ',uses:['nin'],tag:'味付けるだけ'},
+  // 組み合わせレシピ
+  {id:'r25',n:'万能から揚げ',uses:['shoyu','sho','nin'],tag:'漬けるだけ'},
+  {id:'r26',n:'チャプチェ風',uses:['shoyu','tama','nin'],tag:'味付けるだけ'},
+  {id:'r27',n:'ラーメンスープ',uses:['shoyu','chu','nin'],tag:'お湯に溶かすだけ'},
+  {id:'r28',n:'手作りドレッシング',uses:['shio','tama'],tag:'混ぜるだけ'},
+  {id:'r29',n:'豚キムチ風',uses:['chu','nin'],tag:'味付けるだけ'},
+  {id:'r30',n:'うま塩スープ',uses:['shio','tama'],tag:'お湯に溶かすだけ'}
+];
+
+// ======== Date override (テスト用・stateより先に宣言) ========
+let _DATE_OVERRIDE=null;
+
+// ======== State ========
+let state={
+  selectedKoji:[],   // ['shio','tama']
+  kojiData:{},       // {shio:{startDate,isResting,completedDate,checkins:{}}}
+  recipesUsed:{},    // {r01:'2026-06-08'}
+  view:'main',
+  date:today()       // 表示中の日付
+};
+
+function load(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){const o=JSON.parse(raw);state=Object.assign(state,o);}
+  }catch(e){}
+}
+function save(){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}
+}
+
+// ======== Date utils ========
+function _now(){return _DATE_OVERRIDE?new Date(_DATE_OVERRIDE):new Date()}
+function today(){
+  const d=_now();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){return String(n).padStart(2,'0')}
+function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+function daysBetween(s1,s2){return Math.round((parseDate(s2)-parseDate(s1))/86400000)}
+function fmtJP(s){
+  const[y,m,d]=s.split('-').map(Number);
+  const wn=['日','月','火','水','木','金','土'];
+  const dt=new Date(y,m-1,d);
+  return y+'年'+m+'月'+d+'日('+wn[dt.getDay()]+')';
+}
+
+// ======== Phase / Mode ========
+function isPreLaunch(){if(TEST_MODE)return false;return _now()<START_AT}
+function isReadOnly(){if(TEST_MODE)return false;return _now()>=EXPIRE_AT}
+function isPhase2Started(){
+  // TEST_MODE：完成麹が1つでもあれば Phase 2 入り
+  const hasCompleted=state.kojiData?Object.values(state.kojiData).some(k=>k&&k.completedDate):false;
+  if(TEST_MODE)return hasCompleted;
+  return _now()>=PHASE2_AT||hasCompleted;
+}
+function isToday(s){return s===today()}
+function getKoji(k){return KOJI.find(x=>x.k===k)}
+
+function dayOfKoji(kk){
+  const kd=state.kojiData[kk];
+  if(!kd||!kd.startDate)return 0;
+  const d=daysBetween(kd.startDate,today())+1;
+  return Math.max(0,d); // 0 = まだ始まってない
+}
+function stageOfKoji(kk){
+  const d=dayOfKoji(kk);
+  const k=getKoji(kk);
+  if(d<=2)return {n:1,name:'仕込み期'};
+  if(d<=Math.floor(k.days*0.7))return {n:2,name:'発酵期'};
+  if(d<=k.days)return {n:3,name:'完成期'};
+  return {n:3,name:'熟成期'};
+}
+function isCompletable(kk){
+  const kd=state.kojiData[kk];
+  if(!kd||kd.completedDate||kd.isResting)return false;
+  const k=getKoji(kk);
+  return dayOfKoji(kk)>=k.days;
+}
+
+// ======== Streak ========
+function streak(){
+  // 直近の連続「いずれかの麹をチェックインした日」
+  let s=0,d=today();
+  while(true){
+    if(parseDate(d)<parseDate('2026-05-23'))break;
+    let any=false;
+    for(const k in state.kojiData){
+      const ci=state.kojiData[k].checkins||{};
+      if(ci[d]){any=true;break;}
+    }
+    if(!any)break;
+    s++;d=shiftDate(d,-1);
+  }
+  return s;
+}
+function shiftDate(s,n){
+  const d=parseDate(s);d.setUTCDate(d.getUTCDate()+n);
+  return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
+}
+
+// ======== Lucky Day ========
+function isLuckyDay(s){let h=17;for(let i=0;i<s.length;i++){h=((h*37)+s.charCodeAt(i))|0;}return ((h>>>0)%100)<20;}
+
+// ======== Daily kayomama greeting (Day-aware版) ========
+// Day範囲指定があれば優先。育成中の麹のうち最大Dayで判定
+const DAILY_GREETS=[
+  // Day別（優先・不安に寄り添う）
+  {dayMin:1,dayMax:3,ki:'kayo4',msg:'仕込みおつかれさま！焦らずゆっくり見守ろうね🌾'},
+  {dayMin:4,dayMax:5,ki:'kayo3',msg:'<b>Day 4-5は不安になる人が一番多い時期</b>。あなたも？大丈夫、私も初めての時はそうでした🌱'},
+  {dayMin:6,dayMax:7,ki:'kayo2',msg:'発酵真っ盛り！毎日のかき混ぜが効いてきます💪'},
+  {dayMin:8,dayMax:10,ki:'kayo1',msg:'もうすぐ完成！自信もって判定してみてね✨'},
+  // 一般（フォールバック）
+  {ki:'kayo4',msg:'今日も麹の様子、見にきてくれてありがとう🌾'},
+  {ki:'kayo3',msg:'順調順調！その調子です💕'},
+  {ki:'kayo3',msg:'不安なときは1人で抱えないで。LINEでいつでも声かけて'},
+  {ki:'kayo2',msg:'発酵は焦らず・ゆっくり・観察するのが大事'}
+];
+function maxOngoingDay(){
+  let max=0;
+  for(const k of state.selectedKoji){
+    const kd=state.kojiData[k];
+    if(!kd||kd.completedDate||kd.isResting)continue;
+    const d=dayOfKoji(k);
+    if(d>max)max=d;
+  }
+  return max;
+}
+function pickGreet(s){
+  const day=maxOngoingDay();
+  // Day別マッチを最優先
+  const dayMatched=DAILY_GREETS.filter(g=>g.dayMin&&day>=g.dayMin&&day<=g.dayMax);
+  if(dayMatched.length){
+    let h=11;for(let i=0;i<s.length;i++)h=((h*31)+s.charCodeAt(i))|0;
+    return dayMatched[(h>>>0)%dayMatched.length];
+  }
+  const generic=DAILY_GREETS.filter(g=>!g.dayMin);
+  let h=11;for(let i=0;i<s.length;i++)h=((h*31)+s.charCodeAt(i))|0;
+  return generic[(h>>>0)%generic.length];
+}
+
+// ======== ① 即時判定（行動経済学：Ambiguity Aversion完全解消）========
+// 状態の組み合わせから 緑/黄/赤 で即座に「正常／要注意／要相談」を判定
+function judgeState(c, day, kojiKey){
+  const reasons=[];
+  let level='green';
+  // 🔴 酸っぱい匂い：早すぎる発酵 or 失敗の兆候
+  if(c.smell==='酸っぱい'){
+    if(day<7){level='red';reasons.push('🔴 酸っぱい匂いが早く出ているのは発酵が進みすぎ or 失敗の兆候かも。すぐにかよママへ相談を');}
+    else{level='yellow';reasons.push('🟡 酸味強め。完成判定を急ぎ気味のサイン。今日明日には完成判定OK');}
+  }
+  // 🟡 気泡なし at Day 5以降：温度低めの可能性
+  if(c.bubble==='なし'&&day>=5){
+    if(level==='green')level='yellow';
+    reasons.push('🟡 Day '+day+'で気泡なしは温度低めの可能性。冷暗所でも常温（20℃前後）キープを意識');
+  }
+  // 🟡 乾き気味
+  if(c.moisture==='乾き気味'){
+    if(level==='green')level='yellow';
+    reasons.push('🟡 水分少なめ。今日のかき混ぜでしっかり全体をなじませて');
+  }
+  // 🟡 早すぎる茶色
+  if(c.color==='茶'&&day<5){
+    if(level==='green')level='yellow';
+    reasons.push('🟡 色が早く濃くなりすぎた可能性。塩分濃度や温度が影響したかも');
+  }
+  // 🟢 順調（緑）の場合のフィードバック
+  if(level==='green'){
+    if(day<=3){
+      reasons.push('🟢 仕込み直後は変化少なめが普通。順調です');
+    }else if(day<=7){
+      if(c.bubble==='出てる'||c.bubble==='よく出る'){
+        reasons.push('🟢 気泡しっかり出ていて発酵バッチリ！理想的な状態です');
+      }else{
+        reasons.push('🟢 発酵中、いい感じ！毎日のかき混ぜを忘れずに');
+      }
+    }else{
+      reasons.push('🟢 完成間近！もう少し見守って、明日にも完成判定してみよう');
+    }
+  }
+  // 香りポジティブフィードバック
+  if(c.smell==='発酵香'&&level!=='red'){
+    reasons.push('✨ 発酵香はベストサイン！麹がよく育っています');
+  }
+  return {level, reasons};
+}
+function showJudgement(j){
+  const card=$('judgeCard');
+  card.classList.remove('green','yellow','red');
+  card.classList.add(j.level);
+  // かよママのアイコン（判定レベルに応じて表情を変える）
+  const kayoMap={green:'kayo1',yellow:'kayo4',red:'kayo3'};
+  const kayoEl=$('judgeKayo');
+  kayoEl.src='assets/chars/'+kayoMap[j.level]+'.png';
+  kayoEl.style.display='';
+  const badge=$('judgeBadge');
+  badge.classList.remove('green','yellow','red');
+  badge.classList.add(j.level);
+  const labels={green:'🟢 順調です！',yellow:'🟡 もう少し様子見',red:'🔴 要相談'};
+  badge.textContent=labels[j.level];
+  $('judgeReasons').innerHTML=j.reasons.map(r=>'<div class="r">'+r+'</div>').join('');
+  $('judgeOverlay').classList.add('on');
+}
+function hideJudgement(){$('judgeOverlay').classList.remove('on')}
+
+// ======== ② 成功保護スコア（Sunk Cost反転）========
+function renderProtectCard(){
+  const el=$('protectCard');
+  if(state.selectedKoji.length===0||isPreLaunch()||isReadOnly()){el.innerHTML='';return}
+  const stats=computeStats();
+  const ongoing=state.selectedKoji.filter(k=>state.kojiData[k]&&!state.kojiData[k].completedDate&&!state.kojiData[k].isResting).length;
+  const completed=stats.completedCount;
+  let msg='';
+  if(stats.totalCheckins===0){msg='今日からスタート！毎日のチェックインが「無駄ゼロ」の積み重ねに🌱';}
+  else if(completed>0){msg='🌟 '+completed+'種完成済み。あなたの冷蔵庫に料理のお守りが増えました';}
+  else if(stats.totalCheckins>=10){msg='ここまでの観察、ぜんぶ価値あります。あと数日で完成 ✨';}
+  else if(stats.totalCheckins>=5){msg='見守りの努力が麹を育てています。続きが楽しみ';}
+  else{msg='見守るほどに「自分の麹」になっていきます';}
+  el.innerHTML='<div class="protect-card">'+
+    '<div class="pc-ico">🛡️</div>'+
+    '<div class="pc-info">'+
+      '<div class="pc-label">あなたの麹資産</div>'+
+      '<div class="pc-value"><b>'+stats.totalCheckins+'</b>回見守り完了 ／ <b>'+ongoing+'</b>種類育成中'+(completed>0?' ／ <b>'+completed+'</b>種完成':'')+'</div>'+
+      '<div class="pc-msg">'+msg+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ======== ③ 不安の正常化カレンダー（Cognitive Reappraisal）========
+// 育成中の麹のうち最大Dayが特定範囲（4-5, 7-8）のとき表示
+function renderAnxietyCard(){
+  const el=$('anxietyCard');
+  if(isPreLaunch()||isReadOnly()){el.innerHTML='';return}
+  const day=maxOngoingDay();
+  if(day===0){el.innerHTML='';return}
+  let txt=null;
+  if(day>=4&&day<=5){
+    txt={ico:'🌷',title:'Day 4-5：不安になる時期',body:'実は<b>この時期に「失敗かも？」と不安になる人が一番多い</b>です。あなただけじゃないし、それは「ちゃんと観察してる」証拠です🌱'};
+  }else if(day>=7&&day<=8){
+    txt={ico:'🌟',title:'Day 7-8：完成判定が始まる時期',body:'塩麹・醤油麹・生姜麹・にんにく麹は<b>そろそろ完成判定OK</b>。判定で「もう少し」と出ても普通なので焦らず✨'};
+  }
+  if(!txt){el.innerHTML='';return}
+  el.innerHTML='<div class="anxiety-card"><div class="ax-ico">'+txt.ico+'</div><div class="ax-text"><b>'+txt.title+'</b><br>'+txt.body+'</div></div>';
+}
+
+// ======== ⑤ SOS モーダル ========
+function openSos(){$('sosModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeSos(){$('sosModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== 📚 豆知識データ（合計50件） ========
+const CATS={basic:{ico:'🌱',name:'発酵の基本'},type:{ico:'🧂',name:'6種類の特徴'},trouble:{ico:'⚠️',name:'よくある悩み'},tips:{ico:'💡',name:'使いこなしコツ'},history:{ico:'📜',name:'文化・歴史'},recipe:{ico:'🍽️',name:'アレンジ術'}};
+const KNOWLEDGE=[
+// 🌱 発酵の基本（10）
+{id:'k01',cat:'basic',title:'麹菌（こうじきん）って何者？',body:'麹菌は学名「アスペルギルス・オリゼー」というカビの一種。実は<b>日本固有の微生物</b>で、2006年に<b>日本の「国菌」</b>に認定されたほど。お米のデンプンを甘く、タンパク質を旨味に変えてくれる、超優秀な働き者です🌾'},
+{id:'k02',cat:'basic',title:'米麹と麦麹の違い',body:'<b>米麹</b>はお米で育てた麹。甘みが強く、塩麹・甘酒・味噌の主役。<b>麦麹</b>は麦で育てた麹。香ばしい風味で、九州の麦味噌や麦焼酎に。今回のレッスンは<b>米麹</b>がベースです✨'},
+{id:'k03',cat:'basic',title:'なぜ常温で発酵するの？',body:'麹菌が活発に働くのは<b>20〜30℃</b>。冷蔵庫だと寒すぎて止まってしまうんです🌡️ 5月後半は気温がちょうどよく、<b>初心者向きの発酵シーズン</b>。次のシーズンは10月です'},
+{id:'k04',cat:'basic',title:'塩を入れても発酵が止まらない理由',body:'塩麹に塩を入れるのは、<b>雑菌の繁殖を抑える</b>ため。麹菌は塩に強いので、塩のおかげで他の菌が死んで麹菌だけが活躍できる環境になるんです🛡️'},
+{id:'k05',cat:'basic',title:'発酵と腐敗、実は同じプロセス',body:'微生物が食べ物を分解するのは同じ。<b>人間に有用な変化なら「発酵」</b>、害があれば「腐敗」と呼ぶだけ。麹菌は人間の味方なので、麹を使った発酵食品はすべて発酵側です😊'},
+{id:'k06',cat:'basic',title:'麹の白い粉、これが命',body:'米粒の表面についてる白い粉は<b>麹菌の胞子</b>。これがあるからお米が「米麹」として生きてるんです。仕込み中、白いふわふわが見えるのは順調なサイン✨'},
+{id:'k07',cat:'basic',title:'旨味の正体・グルタミン酸',body:'麹菌はタンパク質分解酵素を出して、お米や食材の中のタンパク質を<b>グルタミン酸（旨味成分）</b>に変えます。これが「ただの塩より塩麹のほうが美味しい」理由です🍱'},
+{id:'k08',cat:'basic',title:'麹は1年中作れる？季節のベスト',body:'技術的には1年中可能。でも<b>5月後半と10月が初心者向き</b>。真夏は急発酵、真冬は変化が遅すぎる。今回のタイミング、<b>かよママさんが選んだのには理由があります</b>🌸'},
+{id:'k09',cat:'basic',title:'温度と発酵時間の関係',body:'<b>25℃なら7日</b>、<b>20℃なら10日</b>が目安。家の中の温度差で完成日が変わるので、毎日の観察が大事。だからこのアプリも「Day制」なんです📅'},
+{id:'k10',cat:'basic',title:'麹で料理が美味しくなる科学的理由',body:'麹の酵素が肉や魚のタンパク質を分解→<b>柔らかく</b>、デンプンを糖に分解→<b>ほのかな甘み</b>、旨味成分を生成→<b>味の深み</b>。3つの効果が同時に起きるから魔法みたいに美味しい✨'},
+// 🧂 6種類の特徴（18）
+{id:'k11',cat:'type',title:'塩麹の歴史は意外と古い',body:'塩麹のルーツは<b>平安時代の漬物</b>といわれます。お米と塩を混ぜて漬けたのが始まり。一気にメジャーになったのは2010年代の発酵ブーム。<b>千年越しの調味料</b>です🌾'},
+{id:'k12',cat:'type',title:'塩麹が万能と呼ばれる理由',body:'肉・魚・野菜のすべてに合う＋<b>下味も付くし、柔らかくもなる</b>＋塩の代わりに使えるシンプルさ。「塩麹さえあれば」と言われる理由です🧂'},
+{id:'k13',cat:'type',title:'塩麹の保存方法',body:'完成後は<b>冷蔵庫で半年</b>OK。冷凍なら1年。発酵がゆっくり進むので、時間が経つほど色が濃くなって旨味も増します。古いほど美味しい✨'},
+{id:'k14',cat:'type',title:'醤油麹の歴史と徳川家康',body:'<b>戦国時代から愛用</b>されていた発酵調味料。徳川家康も健康のために好んで食べていたという説も。お醤油の旨味と麹の旨味が合わさった、贅沢な調味料です🍶'},
+{id:'k15',cat:'type',title:'醤油麹の使い方',body:'普通の醤油の代わりに使うだけで<b>旨味が10倍</b>。卵かけご飯、冷奴、おひたし、漬け焼き…万能。少しずつ使っても十分美味しさを感じられます✨'},
+{id:'k16',cat:'type',title:'醤油麹の保存',body:'<b>冷蔵庫で半年</b>OK。塩麹同様、時間が経つほど色が深くなり旨味が増します。常備しておくと毎日の料理が一段格上げ'},
+{id:'k17',cat:'type',title:'玉ねぎ麹は新しい仲間',body:'<b>2020年代に SNS で広がった新顔</b>の発酵調味料。塩麹に玉ねぎを加えた感じ。コンソメやブイヨンの代わりとして大人気で、洋食派にも刺さりました🧅'},
+{id:'k18',cat:'type',title:'玉ねぎ麹の便利さ',body:'<b>コンソメ・中華の素を完全に置換</b>できます。スープ、炒め物、ハンバーグの下味…洋食和食中華すべてOK。市販調味料の卒業がぐっと近づきます'},
+{id:'k19',cat:'type',title:'玉ねぎ麹の保存',body:'生の玉ねぎを使うので<b>冷蔵で1ヶ月</b>が目安。塩麹より短いです。早めに使い切るのがコツ。冷凍なら3ヶ月OK'},
+{id:'k20',cat:'type',title:'中華麹の特徴',body:'玉ねぎ麹のさらに進化形。にんにくや生姜、香味野菜を加えた発酵調味料。<b>中華料理の素を完全置換</b>できる優秀さで、麻婆豆腐もチャーハンもこれ1つでOK🥢'},
+{id:'k21',cat:'type',title:'中華麹の使い方',body:'炒め物の下味、スープの素、餃子のたれ…<b>中華料理屋の味が家で再現</b>できる秘密兵器。化学調味料に頼らずに本格的な味が出せます'},
+{id:'k22',cat:'type',title:'中華麹の保存',body:'生の野菜を使うので<b>冷蔵で1ヶ月</b>。冷凍3ヶ月。早めに使い切る分、料理が一気にレベルアップする頻度が高くなります'},
+{id:'k23',cat:'type',title:'生姜麹のぽかぽか効果',body:'生姜の<b>ジンゲロール（体を温める成分）</b>と麹の旨味が合わさった調味料。冷え性さんにおすすめ。豚バラ巻きや煮魚に使うと体ぽかぽか🌿'},
+{id:'k24',cat:'type',title:'生姜麹でチューブ卒業',body:'チューブ生姜より<b>香りが格段に良い</b>＋保存料なし＋旨味も加わる。料理の格が上がるので、チューブから卒業する方がたくさんいます'},
+{id:'k25',cat:'type',title:'生姜麹の保存',body:'<b>冷蔵で2-3ヶ月</b>。生姜の抗菌作用があるので、玉ねぎ麹より長持ちします。色が濃くなっても問題なし'},
+{id:'k26',cat:'type',title:'にんにく麹のパンチと深み',body:'生にんにくの<b>強烈なパンチ</b>と発酵による<b>深みのある旨味</b>を両立。アヒージョ、ステーキ、パスタに最強。ガーリック好きにはたまらない調味料🧄'},
+{id:'k27',cat:'type',title:'にんにく麹でチューブ卒業',body:'チューブにんにくとは<b>香りの厚みが全然違います</b>。少量で十分強い風味が出るので、料理が一段プロっぽい味に'},
+{id:'k28',cat:'type',title:'にんにく麹の保存',body:'<b>冷蔵で2-3ヶ月</b>。にんにくの抗菌作用で長持ち。冷凍なら半年OK。少量を毎日使うのがコツ'},
+// ⚠️ よくある悩み（10）
+{id:'k29',cat:'trouble',title:'白い膜が出てきた！',body:'<b>産膜酵母</b>という酵母の一種で、<b>無害</b>です。混ぜれば消えます。心配なら表面だけスプーンで取って、しっかりかき混ぜれば問題なし✨'},
+{id:'k30',cat:'trouble',title:'酸っぱい匂いが強い',body:'発酵が<b>進みすぎ</b>のサイン。Day 7前なら冷蔵庫に移して様子見。Day 7以降なら<b>もう完成</b>かも。ヨーグルトのような穏やかな酸味は正常、刺激的な酸味はNG'},
+{id:'k31',cat:'trouble',title:'気泡が全然出ない',body:'<b>温度が低い</b>可能性大。20℃を下回ると麹菌の活動が鈍くなります。寒い部屋なら暖かい場所へ。混ぜを増やすのも◎'},
+{id:'k32',cat:'trouble',title:'色が想像と違う',body:'<b>濃い茶色＝塩分が低い or 温度が高い</b>。<b>白いまま＝発酵が進んでいない</b>。色は環境で変わるので、香りと気泡もチェック'},
+{id:'k33',cat:'trouble',title:'水分が出すぎ',body:'<b>これは正常</b>です。麹は水分を出すもの。むしろ水分が出始めたら発酵が進んでる証拠。混ぜれば全体になじみます'},
+{id:'k34',cat:'trouble',title:'水分が足りない',body:'<b>混ぜ不足</b>か<b>容器が乾燥しすぎ</b>。今日からしっかり混ぜて、密閉容器に。それでも乾く場合は少し水を足してOK'},
+{id:'k35',cat:'trouble',title:'黒い斑点がある',body:'<b>残念ながらNG</b>。黒カビの可能性が高いです。捨てて作り直しましょう。原因は容器の衛生不足、温度管理ミスが多い'},
+{id:'k36',cat:'trouble',title:'ピンク色になった',body:'<b>雑菌混入</b>のサインで、これも残念ながらNG。破棄して作り直しを。次回は容器を熱湯消毒してから始めると安心'},
+{id:'k37',cat:'trouble',title:'完成かどうか分からない',body:'チェックポイント：<b>①米粒がペースト状</b>、<b>②甘い発酵の香り</b>、<b>③気泡やふつふつ感</b>、<b>④全体に一体感</b>。3つ揃えば完成サインです✨'},
+{id:'k38',cat:'trouble',title:'失敗してる気がする',body:'<b>「失敗かも？」と感じる人ほど真剣に観察してる</b>証拠です。アプリの判定機能を使って、それでも不安ならLINEで写真と一緒にかよママに相談してくださいね🌷'},
+// 💡 使いこなしコツ（5）
+{id:'k39',cat:'tips',title:'容器の選び方',body:'<b>ガラスかホーロー</b>がおすすめ。プラスチックはニオイ移りや雑菌の問題で避けたほうが◎。煮沸消毒できるものを選ぶと長く使えます'},
+{id:'k40',cat:'tips',title:'混ぜる頻度の目安',body:'<b>1日1回でOK</b>。やりすぎると麹菌が落ち着かず、発酵が遅くなることも。朝のルーティンに組み込むと続けやすいです🌅'},
+{id:'k41',cat:'tips',title:'漬けるコツ：食材重量の10%',body:'肉や魚を漬ける時は<b>食材重量の10%の塩麹</b>が黄金比。鶏むね肉300gなら塩麹大さじ2杯程度。30分〜一晩で柔らかく旨味アップ✨'},
+{id:'k42',cat:'tips',title:'加熱で旨味は変わる？',body:'酵素は60℃以上で失活しますが、<b>旨味成分は残ります</b>。下味として使うのが一番効果的。生のまま使うと酵素も摂取できます'},
+{id:'k43',cat:'tips',title:'冷凍保存もできる',body:'<b>1年OK</b>。製氷皿で小分け冷凍が便利。使う分だけ取り出せて、使い忘れも防げる。離乳食の小分け冷凍と同じ感覚で'},
+// 📜 文化・歴史（4）
+{id:'k44',cat:'history',title:'2000年続く日本の発酵文化',body:'醤油・味噌・酒・酢…<b>日本の伝統調味料はほぼすべて麹由来</b>。縄文時代の土器からも発酵の痕跡が見つかっており、麹は日本人のDNAレベルの食文化です🌾'},
+{id:'k45',cat:'history',title:'世界の発酵食品マップ',body:'チーズ（ヨーロッパ）、ザワークラウト（ドイツ）、キムチ（韓国）、ナンプラー（タイ）…<b>世界中に発酵文化</b>がありますが、麹菌を使うのは<b>日本独自</b>'},
+{id:'k46',cat:'history',title:'2006年、麹が「国菌」に',body:'日本醸造学会が2006年に<b>「国菌」として正式認定</b>。植物の桜、鳥のキジ、虫の蝶（仮）に並んで、菌の代表として麹菌が選ばれました🇯🇵'},
+{id:'k47',cat:'history',title:'江戸時代の麹文化',body:'江戸時代、麹は<b>庶民の調味料の中心</b>でした。各家庭で味噌や醤油を作る「我が家の味」文化があり、嫁入り道具として「麹のレシピ」が伝わったとも'},
+// 🍽️ アレンジ術（3）
+{id:'k48',cat:'recipe',title:'お弁当活用：塩麹鶏ハム',body:'<b>鶏むね肉に塩麹を塗って一晩→低温で蒸す</b>だけ。しっとり柔らかい鶏ハムが完成。薄くスライスしてサンドイッチやサラダに。お弁当の救世主✨'},
+{id:'k49',cat:'recipe',title:'子ども向け：玉ねぎ麹オムライス',body:'ケチャップ控えめでも、<b>玉ねぎ麹を加えるだけで旨味たっぷり</b>のチキンライス。子どもがパクパク食べる魔法のレシピです🍳'},
+{id:'k50',cat:'recipe',title:'次の挑戦：味噌作り',body:'麹をマスターしたら次は<b>手作り味噌</b>。米麹＋大豆＋塩で半年〜1年寝かせれば、世界で1つのオリジナル味噌が完成。麹の世界はまだまだ広い🌾'}
+];
+const FAQS=[
+{q:'白い膜が出てきました、これって失敗？',a:'<b>産膜酵母という無害な酵母</b>です。混ぜれば消えます。表面だけスプーンですくって取り除き、しっかりかき混ぜれば問題なく続けられます'},
+{q:'酸っぱい匂いがしますが大丈夫？',a:'タイミングによって意味が変わります。<b>Day 7以降ならまもなく完成のサイン</b>。Day 7前で強い酸味なら、温度が高すぎたか発酵進みすぎ。冷蔵庫に移してかよママに写真で相談を'},
+{q:'気泡が全然出ません',a:'<b>温度が低い可能性</b>。20℃を下回ると麹菌の活動が鈍くなります。暖かい場所へ移動して、毎日のかき混ぜを欠かさず。Day 5以降で出てこない場合はLINEで相談を'},
+{q:'水分が多すぎる気がします',a:'<b>これは正常</b>です。麹は水分を出すもの。混ぜれば全体になじみます。逆に乾いている場合のほうが要注意です'},
+{q:'黒い斑点・ピンク色のものが見えます',a:'<b>残念ながらカビ・雑菌の混入</b>です。破棄して作り直してください。次回は容器を熱湯消毒してから始めると安心です'},
+{q:'完成判定したいけど自信がない',a:'<b>セルフチェックの6項目</b>を確認。「色がベージュ〜薄茶」「甘い発酵の香り」「ペースト状」「気泡やふつふつ感」「異臭・カビなし」「素材との一体感」。3つ以上揃えば完成圏内です'},
+{q:'忙しくて1日かき混ぜを忘れた',a:'<b>1日くらいは大丈夫</b>です。気づいた時にしっかり混ぜれば問題なく続けられます。お休み機能を使えばストリークも切れません'},
+{q:'家が涼しい時期、発酵が進まない',a:'<b>暖かい場所</b>（リビング・キッチンの上）へ移動。冷暖房の風が直接当たらない場所がベスト。それでもダメな時は完成日を1-2日延ばす感覚で'},
+{q:'完成した麹はどう保存？',a:'<b>清潔な瓶で冷蔵庫へ</b>。塩麹・醤油麹は半年、玉ねぎ麹・中華麹は1ヶ月、生姜麹・にんにく麹は2-3ヶ月が目安です'},
+{q:'子どもや赤ちゃんに食べさせていい？',a:'<b>1歳以降から少量ずつ</b>がおすすめ。塩分が含まれるので、量に注意。子ども向けレシピは図書館の「アレンジ術」を参考に'}
+];
+const QUIZZES=[
+{q:'麹菌は2006年に何に認定された？',opts:['日本の国宝','日本の国菌','日本の国花'],a:1,expl:'日本醸造学会が「国菌」として正式認定。日本固有の微生物として、文化的にも科学的にも特別な存在です'},
+{q:'麹菌の活発な温度帯は？',opts:['10〜15℃','20〜30℃','40〜50℃'],a:1,expl:'20〜30℃が最も活発。だから5月後半と10月が初心者向きの発酵シーズンなんです'},
+{q:'塩麹を肉に漬ける目安は食材重量の何%？',opts:['1%','5%','10%'],a:2,expl:'10%が黄金比。鶏むね肉300gなら塩麹大さじ2杯くらい。柔らかく旨味アップします'},
+{q:'白い膜が出てきた時、正しい対処は？',opts:['捨てる','混ぜれば消える','水を足す'],a:1,expl:'産膜酵母という無害な酵母です。混ぜれば消えます。心配なら表面だけ取り除いてOK'},
+{q:'麹の旨味成分の正体は？',opts:['イノシン酸','グルタミン酸','コハク酸'],a:1,expl:'グルタミン酸が旨味の主役。麹菌のタンパク質分解酵素が生み出します'},
+{q:'醤油麹を愛用していたとされる戦国武将は？',opts:['織田信長','豊臣秀吉','徳川家康'],a:2,expl:'徳川家康。健康のために発酵食品を好んで食べていたといわれています'}
+];
+// シークレット豆知識（条件解放型・Variable Reward）
+const SECRET_KN=[
+{id:'sk01',title:'🔓 裏技：塩麹×米油で究極ドレッシング',body:'塩麹大さじ1＋米油大さじ2＋酢小さじ1＋黒胡椒。<b>市販ドレッシングが買えなくなる</b>レベルの美味しさ。連続3日記録の達人だけが知る秘伝',unlock:'streak3'},
+{id:'sk02',title:'🔓 奥義：玉ねぎ麹×トマトジュース',body:'玉ねぎ麹大さじ1をトマトジュース200mlに溶かすだけで<b>本格イタリアンスープ</b>。旨味の重ね技で5分で完成、コンソメ不要。連続5日達成者向け',unlock:'streak5'},
+{id:'sk03',title:'🔓 達人技：麹オイル漬け',body:'にんにく麹をオリーブオイルに溶かして、ハーブと一緒に瓶詰め。<b>1週間で香り華やかな魔法のオイル</b>に。料理にひとかけで一気に格上げ。完成1個達成者の特典',unlock:'completed1'},
+{id:'sk04',title:'🔓 究極：麹トリオでつくる「魔法の調味料」',body:'塩麹・醤油麹・玉ねぎ麹を1:1:1で混ぜると、<b>炒め物・煮物・汁物すべてに使える万能調味料</b>に。プロの味、家庭で再現。完成3個達成者向け',unlock:'completed3'},
+{id:'sk05',title:'🔓 神秘：6種ブレンドの黄金比',body:'6種すべて完成した猛者だけが知る黄金比：塩麹4・醤油麹2・玉ねぎ麹2・中華麹1・生姜麹0.5・にんにく麹0.5。<b>これさえあれば外食卒業</b>。全6種コンプ者の最終特典',unlock:'completed6'}
+];
+
+function _hashStr(s){let h=11;for(let i=0;i<s.length;i++)h=((h*31)+s.charCodeAt(i))|0;return h>>>0}
+
+// ======== 今日の豆知識（Day連動＋日付ハッシュで決定）========
+function todaysKnowledge(){
+  // Day連動マッチがあれば優先候補に。それ以外は全件から日付ハッシュで選定
+  const day=maxOngoingDay();
+  let candidates=KNOWLEDGE.filter(k=>k.dayMin&&day>=k.dayMin&&day<=k.dayMax);
+  if(!candidates.length)candidates=KNOWLEDGE;
+  return candidates[_hashStr(state.date)%candidates.length];
+}
+function isReadKnowledge(id){return !!(state.readKnowledge&&state.readKnowledge[id])}
+function markRead(id){
+  if(!state.readKnowledge)state.readKnowledge={};
+  state.readKnowledge[id]=Date.now();
+  save();
+}
+function readCount(){return Object.keys(state.readKnowledge||{}).length}
+
+function renderTodayKnowledge(){
+  const el=$('todayKnowledge');
+  if(state.selectedKoji.length===0){el.innerHTML='';return}
+  const k=todaysKnowledge();
+  const cat=CATS[k.cat];
+  const read=isReadKnowledge(k.id);
+  el.innerHTML='<div class="knowledge-today" data-knowledge-id="'+k.id+'">'+
+    '<div class="kt-ico">'+cat.ico+'</div>'+
+    '<div class="kt-info">'+
+      '<div class="kt-meta"><span class="badge">今日の豆知識</span>'+(read?'<span class="read">✓ 既読</span>':'<span>未読</span>')+'</div>'+
+      '<div class="kt-title">'+k.title+'</div>'+
+    '</div>'+
+    '<div class="kt-arrow">›</div>'+
+  '</div>';
+}
+
+// ======== 麹図書館 ========
+function isSecretUnlocked(sk){
+  const stats=computeStats();
+  if(sk.unlock==='streak3')return stats.maxStreak>=3;
+  if(sk.unlock==='streak5')return stats.maxStreak>=5;
+  if(sk.unlock==='completed1')return stats.completedCount>=1;
+  if(sk.unlock==='completed3')return stats.completedCount>=3;
+  if(sk.unlock==='completed6')return stats.completedCount>=6;
+  return false;
+}
+function openLibrary(){
+  const totalReadable=KNOWLEDGE.length+SECRET_KN.filter(sk=>isSecretUnlocked(sk)).length;
+  const read=readCount();
+  $('libProgress').textContent=read+'/'+totalReadable+' 読破';
+  // カテゴリ別に並べる
+  let html='';
+  for(const ckey in CATS){
+    const items=KNOWLEDGE.filter(k=>k.cat===ckey);
+    if(!items.length)continue;
+    html+='<div class="lib-cat"><div class="lib-cat-head">'+CATS[ckey].ico+' '+CATS[ckey].name+'<span class="count">'+items.filter(i=>isReadKnowledge(i.id)).length+'/'+items.length+'</span></div><div class="lib-list">'+
+      items.map(i=>'<div class="lib-row '+(isReadKnowledge(i.id)?'read':'')+'" data-knowledge-id="'+i.id+'"><span class="chk">'+(isReadKnowledge(i.id)?'✓':'')+'</span><span class="row-title">'+i.title+'</span><span class="arr">›</span></div>').join('')+
+    '</div></div>';
+  }
+  // シークレット
+  html+='<div class="lib-cat"><div class="lib-cat-head">🎁 シークレット豆知識<span class="count">'+SECRET_KN.filter(sk=>isSecretUnlocked(sk)&&isReadKnowledge(sk.id)).length+'/'+SECRET_KN.length+'</span></div><div class="lib-list">'+
+    SECRET_KN.map(sk=>{
+      const unlocked=isSecretUnlocked(sk);
+      if(!unlocked)return '<div class="lib-row locked"><span class="chk"></span><span class="row-title">'+sk.title.replace('🔓 ','')+'</span><span class="arr">'+({streak3:'連続3日で',streak5:'連続5日で',completed1:'1個完成で',completed3:'3個完成で',completed6:'6種制覇で'}[sk.unlock])+'</span></div>';
+      return '<div class="lib-row secret '+(isReadKnowledge(sk.id)?'read':'')+'" data-knowledge-id="'+sk.id+'"><span class="chk">'+(isReadKnowledge(sk.id)?'✓':'')+'</span><span class="row-title">'+sk.title+'</span><span class="arr">›</span></div>';
+    }).join('')+
+  '</div></div>';
+  $('libBody').innerHTML=html;
+  $('libModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeLibrary(){$('libModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== 記事閲覧モーダル ========
+let _curArticleId=null;
+function findArticle(id){
+  return KNOWLEDGE.find(k=>k.id===id)||SECRET_KN.find(k=>k.id===id);
+}
+function openArticle(id){
+  const a=findArticle(id);if(!a)return;
+  _curArticleId=id;
+  const cat=a.cat?CATS[a.cat]:{ico:'🎁',name:'シークレット'};
+  const idx=KNOWLEDGE.indexOf(a);
+  $('articleMeta').innerHTML='<span class="cat-pill">'+cat.ico+' '+cat.name+'</span>'+(idx>=0?' #'+(idx+1)+' / '+KNOWLEDGE.length:'');
+  $('articleTitle').textContent=a.title;
+  $('articleBody').innerHTML=a.body;
+  markRead(id);
+  $('articleModal').classList.add('on');
+  document.body.style.overflow='hidden';
+  render(); // 既読マーク反映
+}
+function closeArticle(){$('articleModal').classList.remove('on');document.body.style.overflow='';_curArticleId=null}
+function nextArticle(){
+  if(!_curArticleId)return;
+  const i=KNOWLEDGE.findIndex(k=>k.id===_curArticleId);
+  if(i<0||i>=KNOWLEDGE.length-1){closeArticle();return}
+  openArticle(KNOWLEDGE[i+1].id);
+}
+
+// ======== FAQ ========
+function openFaq(){
+  $('faqList').innerHTML=FAQS.map((f,i)=>'<div class="faq-item" data-faq-i="'+i+'"><div class="faq-q">'+f.q+'<span class="arr">›</span></div><div class="faq-a">'+f.a+'</div></div>').join('');
+  $('faqModal').classList.add('on');document.body.style.overflow='hidden';
+}
+function closeFaq(){$('faqModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== クイズ ========
+let _curQuiz=null;
+function openQuiz(){
+  // 日付ハッシュで本日の問題を選定
+  _curQuiz=QUIZZES[_hashStr(state.date+'q')%QUIZZES.length];
+  $('quizSub').textContent='3択で答えてみよう！';
+  $('quizQ').textContent=_curQuiz.q;
+  $('quizOpts').innerHTML=_curQuiz.opts.map((o,i)=>'<button class="quiz-opt" data-quiz-opt="'+i+'">'+(['A','B','C'][i])+'. '+o+'</button>').join('');
+  $('quizResult').classList.remove('on');
+  $('quizResult').innerHTML='';
+  $('quizModal').classList.add('on');document.body.style.overflow='hidden';
+}
+function answerQuiz(idx){
+  if(!_curQuiz)return;
+  const correct=idx===_curQuiz.a;
+  document.querySelectorAll('.quiz-opt').forEach((b,i)=>{
+    b.classList.add('disabled');
+    if(i===_curQuiz.a)b.classList.add('correct');
+    else if(i===idx)b.classList.add('wrong');
+  });
+  if(!state.quizResults)state.quizResults={};
+  state.quizResults[_curQuiz.q]={correct:correct,at:Date.now()};
+  save();
+  $('quizResult').innerHTML=(correct?'<b>🎉 正解！</b><br>':'<b>残念！正解は '+(['A','B','C'][_curQuiz.a])+'</b><br>')+_curQuiz.expl;
+  $('quizResult').classList.add('on');
+}
+function closeQuiz(){$('quizModal').classList.remove('on');document.body.style.overflow='';_curQuiz=null}
+
+// ======== Titles (称号) ========
+const TITLES=[
+  {id:'t-start',tier:1,name:'はじめの一歩',ico:'🌱',check:s=>s.totalCheckins>=1},
+  {id:'t-c10',  tier:1,name:'10回チェックイン',ico:'📋',check:s=>s.totalCheckins>=10},
+  {id:'t-c30',  tier:2,name:'30回見守り',ico:'🎖️',check:s=>s.totalCheckins>=30},
+  {id:'t-c60',  tier:3,name:'60回の達人',ico:'🏅',check:s=>s.totalCheckins>=60},
+  {id:'s-streak3',tier:1,name:'3日連続',ico:'🔥',check:s=>s.maxStreak>=3},
+  {id:'s-streak7',tier:2,name:'1週間戦士',ico:'💪',check:s=>s.maxStreak>=7},
+  {id:'s-streak14',tier:3,name:'2週間の覇者',ico:'🏆',check:s=>s.maxStreak>=14},
+  {id:'a-c1',  tier:2,name:'初めての完成',ico:'⭐',check:s=>s.completedCount>=1},
+  {id:'a-c3',  tier:3,name:'3種マスター',ico:'🌟',check:s=>s.completedCount>=3},
+  {id:'a-call',tier:3,name:'全6種制覇',ico:'👑',check:s=>s.completedCount>=6},
+  {id:'r-r5', tier:2,name:'レシピ5品',ico:'🍱',check:s=>s.recipesCount>=5},
+  {id:'r-r15',tier:3,name:'レシピ15品',ico:'🌈',check:s=>s.recipesCount>=15},
+  {id:'r-rmax',tier:3,name:'卒業認定',ico:'🎓',check:s=>s.recipesCount>=30}
+];
+function computeStats(){
+  let totalCheckins=0,maxStreak=0,curStreak=0,prev=null;
+  let completedCount=0;
+  // 累計チェックインと最長ストリーク
+  const allDates=new Set();
+  for(const k in state.kojiData){
+    const kd=state.kojiData[k];
+    if(kd.completedDate)completedCount++;
+    for(const d in (kd.checkins||{})){
+      totalCheckins++;allDates.add(d);
+    }
+  }
+  const sorted=Array.from(allDates).sort();
+  for(const d of sorted){
+    if(prev){
+      const diff=daysBetween(prev,d);
+      curStreak=(diff===1)?curStreak+1:1;
+    }else curStreak=1;
+    if(curStreak>maxStreak)maxStreak=curStreak;
+    prev=d;
+  }
+  const recipesCount=Object.keys(state.recipesUsed||{}).length;
+  return {totalCheckins,maxStreak,completedCount,recipesCount};
+}
+
+// ======== Render helpers ========
+const $=id=>document.getElementById(id);
+function showToast(t){const e=$('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700);}
+
+// ======== Render: Header / Date / Streak / Phase ========
+function renderHeader(){
+  $('currentDate').innerHTML=fmtJP(state.date)+(isToday(state.date)?' <span class="today-badge">今日</span>':'');
+  // countdown
+  if(TEST_MODE){
+    $('countdown').textContent='テスト中';
+  }else{
+    const now=_now();
+    if(now<START_AT){
+      const ms=START_AT-now;const d=Math.floor(ms/86400000);
+      $('countdown').textContent=d>0?'開始まで'+d+'日':'まもなく開始';
+    }else if(now<EXPIRE_AT){
+      const ms=EXPIRE_AT-now;const d=Math.floor(ms/86400000);
+      $('countdown').textContent='あと'+d+'日';
+    }else{
+      $('countdown').textContent='終了';
+    }
+  }
+  // streak
+  const s=streak();
+  $('streakPill').innerHTML=s>=2?'<span class="streak-pill"><span class="flame">🔥</span>'+s+'日連続</span>':'';
+  // phase
+  if(TEST_MODE)$('phasePill').textContent='テスト・'+(isPhase2Started()?'Phase 2':'Phase 1');
+  else if(isPreLaunch())$('phasePill').textContent='開始前';
+  else if(isReadOnly())$('phasePill').textContent='アーカイブ';
+  else if(isPhase2Started())$('phasePill').textContent='Phase 2 活用期';
+  else $('phasePill').textContent='Phase 1 育成期';
+}
+
+function renderLuckyBanner(){
+  const el=$('luckyBanner');
+  if(isReadOnly()||isPreLaunch()){el.innerHTML='';return}
+  if(!isLuckyDay(state.date)||!isToday(state.date)){el.innerHTML='';return}
+  el.innerHTML='<div class="banner lucky"><span class="ico">🌟</span><div class="txt">今日はラッキーデイ！<small>麹がすくすく育つ予感です🎁</small></div></div>';
+}
+
+function renderReadOnlyBanner(){
+  const el=$('readOnlyBanner');
+  if(!isReadOnly()){el.innerHTML='';return}
+  el.innerHTML='<div class="banner read-only"><span class="ico">🌾</span><div><b>サポート期間が終了しました</b><br>これまでの記録はそのまま閲覧できます。お疲れさまでした！</div></div>';
+}
+
+function renderPreLaunchBanner(){
+  const el=$('preLaunchBanner');
+  if(!isPreLaunch()){el.innerHTML='';return}
+  el.innerHTML='<div class="banner pre-launch"><span class="ico">🌱</span><div><b>5/23のレッスン日からスタート！</b><br>レッスン後にこのアプリで麹を見守りましょう</div></div>';
+}
+
+function renderPhaseIndicator(){
+  const el=$('phaseIndicator');
+  if(isPreLaunch()||isReadOnly()){el.innerHTML='';return}
+  if(isPhase2Started()){
+    el.innerHTML='<div class="phase-indicator"><span class="pi-ico">🍱</span><div class="pi-text"><b>Phase 2：使う期</b>完成した麹でレシピをチャレンジしましょう</div></div>';
+  }else{
+    if(TEST_MODE){
+      el.innerHTML='<div class="phase-indicator"><span class="pi-ico">🌾</span><div class="pi-text"><b>Phase 1：作る期</b>毎日のチェックインで麹を見守って！麹を完成させるとPhase 2が開きます</div></div>';
+    }else{
+      const ms=PHASE2_AT-_now();const d=Math.floor(ms/86400000);
+      el.innerHTML='<div class="phase-indicator"><span class="pi-ico">🌾</span><div class="pi-text"><b>Phase 1：作る期</b>毎日のチェックインで麹を見守って！Phase 2まであと'+Math.max(0,d)+'日</div></div>';
+    }
+  }
+}
+
+function renderDailyGreet(){
+  const el=$('dailyGreet');
+  if(isPreLaunch()||isReadOnly()){el.innerHTML='';return}
+  if(state.selectedKoji.length===0){el.innerHTML='';return}
+  const g=pickGreet(state.date);
+  el.innerHTML='<div class="daily-greet"><img src="assets/chars/'+g.ki+'.png" alt="かよママ" onerror="this.style.display=\'none\'"><div class="dg-msg"><b>かよママ</b><br>'+g.msg+'</div></div>';
+}
+
+function renderTitleSection(){
+  const el=$('titleSection');
+  const stats=computeStats();
+  const earned=TITLES.filter(t=>t.check(stats));
+  if(!earned.length){el.innerHTML='';return}
+  const sorted=earned.slice().sort((a,b)=>b.tier-a.tier);
+  const chips=sorted.map(t=>'<span class="title-chip tier'+t.tier+'">'+t.ico+' '+t.name+'</span>').join('');
+  el.innerHTML='<div class="title-section"><div class="ts-head"><span class="ts-title">🏅 称号</span><span class="ts-count">'+earned.length+'/'+TITLES.length+'</span></div><div class="title-grid">'+chips+'</div></div>';
+}
+
+// ======== Render: Koji cards ========
+function renderKojiCards(){
+  const el=$('kojiCards');
+  if(state.selectedKoji.length===0){
+    el.innerHTML='<div class="empty-state"><div class="ico">🌱</div>麹を選んでスタートしましょう</div>';
+    $('addKojiBtn').style.display='none';
+    return;
+  }
+  el.innerHTML=state.selectedKoji.map(kk=>{
+    const k=getKoji(kk);
+    const kd=state.kojiData[kk]||{};
+    const completed=!!kd.completedDate;
+    const resting=!!kd.isResting;
+    const day=dayOfKoji(kk);
+    const stage=stageOfKoji(kk);
+    const pct=Math.min(100,Math.round((day/k.days)*100));
+    let statusText='';
+    if(completed)statusText='✨ <b>完成済み</b> ('+kd.completedDate+')';
+    else if(resting)statusText='お休み中';
+    else if(day===0){
+      const wait=Math.max(0,daysBetween(today(),kd.startDate));
+      statusText='🌱 <b>'+kd.startDate+'から</b>（あと'+wait+'日）';
+    }
+    else if(day>=k.days)statusText='<b>完成判定OK！</b>タップして判定';
+    else statusText='Day '+day+' / '+k.days+' ・ '+stage.name;
+    return '<div class="koji-card '+(completed?'completed':'')+(resting?' resting':'')+'" data-koji="'+kk+'">'+
+      '<div class="kc-ico">'+k.emoji+'</div>'+
+      '<div class="kc-info">'+
+        '<div class="kc-name">'+k.n+(completed?' <span class="stage" style="background:#3B6D11">完成</span>':'<span class="stage">Stage '+stage.n+'</span>')+'</div>'+
+        '<div class="kc-meta">'+statusText+'</div>'+
+        (!completed&&!resting?'<div class="kc-bar"><div class="fill" style="width:'+pct+'%"></div></div>':'')+
+      '</div>'+
+      '<div class="kc-arrow">›</div>'+
+    '</div>';
+  }).join('');
+  // 追加ボタンの可否
+  const remaining=KOJI.filter(k=>!state.selectedKoji.includes(k.k)).length;
+  $('addKojiBtn').style.display=(remaining>0&&!isReadOnly()&&!isPreLaunch())?'flex':'none';
+}
+
+// ======== Render: Phase 2 Recipes ========
+function renderPhase2(){
+  const el=$('phase2Section');
+  if(!isPhase2Started()&&Object.values(state.kojiData).filter(k=>k.completedDate).length===0){
+    el.innerHTML='';return;
+  }
+  // どの麹が完成済みか
+  const completed=Object.entries(state.kojiData).filter(([_,kd])=>kd.completedDate).map(([k])=>k);
+  if(completed.length===0){
+    el.innerHTML='<div class="phase2-card"><h3>🍱 完成麹×レシピ</h3><div style="font-size:12px;color:#3B6D11">まだ完成麹がありません。Phase 1を頑張りましょう！</div></div>';
+    return;
+  }
+  // 作れるレシピ
+  const usable=RECIPES.filter(r=>r.uses.every(u=>completed.includes(u)));
+  const used=Object.keys(state.recipesUsed||{}).length;
+  el.innerHTML='<div class="phase2-card">'+
+    '<h3>🍱 完成麹×レシピ</h3>'+
+    '<div class="stat">作れるレシピ：'+usable.length+'品 ／ 全'+RECIPES.length+'品中（消化済み '+used+' 品）</div>'+
+    '<div class="recipe-list">'+
+      usable.slice(0,8).map(r=>{
+        const done=!!(state.recipesUsed&&state.recipesUsed[r.id]);
+        return '<div class="recipe-row '+(done?'done':'')+'" data-recipe="'+r.id+'">'+
+          '<div class="rl-name">'+r.n+'</div>'+
+          '<div class="rl-tag">'+r.tag+'</div>'+
+          '<button class="rl-btn" data-recipe-toggle="'+r.id+'">'+(done?'✓':'作った')+'</button>'+
+        '</div>';
+      }).join('')+
+      (usable.length>8?'<div style="text-align:center;font-size:11px;color:#3B6D11;margin-top:6px">他 '+(usable.length-8)+'品</div>':'')+
+    '</div>'+
+  '</div>';
+}
+
+// ======== Render orchestrator ========
+function render(){
+  renderHeader();
+  renderLuckyBanner();
+  renderReadOnlyBanner();
+  renderPreLaunchBanner();
+  renderPhaseIndicator();
+  renderDailyGreet();
+  renderAnxietyCard();
+  renderProtectCard();
+  renderTodayKnowledge();
+  renderTitleSection();
+  renderKojiCards();
+  renderPhase2();
+}
+
+// ======== Onboarding ========
+function renderOnboardKojiPick(){
+  $('kojiPickGrid').innerHTML=KOJI.map(k=>
+    '<label data-k="'+k.k+'"><input type="checkbox" value="'+k.k+'"><span class="ke">'+k.emoji+'</span><span class="kn">'+k.n+'</span><span class="kt">'+k.tagline+'</span></label>'
+  ).join('');
+}
+function maybeShowOnboard(){
+  let seen=false;try{seen=!!localStorage.getItem(ONBOARD_KEY)}catch(e){}
+  if(seen)return;
+  renderOnboardKojiPick();
+  $('onboardModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function bindOnboardLabels(){
+  $('kojiPickGrid').addEventListener('click',e=>{
+    const lbl=e.target.closest('label');if(!lbl)return;
+    const cb=lbl.querySelector('input');
+    cb.checked=!cb.checked;
+    lbl.classList.toggle('checked',cb.checked);
+    const any=$('kojiPickGrid').querySelectorAll('input:checked').length>0;
+    $('onboardStart').disabled=!any;
+  });
+}
+function startOnboard(){
+  const picked=Array.from($('kojiPickGrid').querySelectorAll('input:checked')).map(i=>i.value);
+  if(!picked.length)return;
+  state.selectedKoji=picked;
+  state.kojiData={};
+  // 開始日：TEST_MODEなら今日、本番開始前なら START_AT を使う
+  const sd=(TEST_MODE||!isPreLaunch())?today():'2026-05-23';
+  picked.forEach(k=>{
+    state.kojiData[k]={startDate:sd,isResting:false,completedDate:null,checkins:{}};
+  });
+  save();
+  try{localStorage.setItem(ONBOARD_KEY,'1')}catch(e){}
+  $('onboardModal').classList.remove('on');
+  document.body.style.overflow='';
+  render();
+  showToast('スタート！'+picked.length+'種類の麹を見守ります🌾');
+}
+
+// ======== Add Koji Modal ========
+function openAddKoji(){
+  const remaining=KOJI.filter(k=>!state.selectedKoji.includes(k.k));
+  if(!remaining.length){showToast('全6種選択済みです🌾');return}
+  $('addKojiGrid').innerHTML=KOJI.map(k=>{
+    const dis=state.selectedKoji.includes(k.k);
+    return '<label data-k="'+k.k+'" class="'+(dis?'disabled':'')+'"><input type="checkbox" value="'+k.k+'" '+(dis?'disabled':'')+'><span class="ke">'+k.emoji+'</span><span class="kn">'+k.n+'</span><span class="kt">'+k.tagline+'</span></label>';
+  }).join('');
+  $('addKojiConfirm').disabled=true;
+  $('addKojiModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function bindAddKojiLabels(){
+  $('addKojiGrid').addEventListener('click',e=>{
+    const lbl=e.target.closest('label');if(!lbl||lbl.classList.contains('disabled'))return;
+    const cb=lbl.querySelector('input');
+    cb.checked=!cb.checked;
+    lbl.classList.toggle('checked',cb.checked);
+    const any=$('addKojiGrid').querySelectorAll('input:checked:not(:disabled)').length>0;
+    $('addKojiConfirm').disabled=!any;
+  });
+}
+function confirmAddKoji(){
+  const picked=Array.from($('addKojiGrid').querySelectorAll('input:checked:not(:disabled)')).map(i=>i.value);
+  if(!picked.length)return;
+  const sd=today();
+  picked.forEach(k=>{
+    if(!state.selectedKoji.includes(k))state.selectedKoji.push(k);
+    state.kojiData[k]={startDate:sd,isResting:false,completedDate:null,checkins:{}};
+  });
+  save();
+  $('addKojiModal').classList.remove('on');
+  document.body.style.overflow='';
+  render();
+  showToast(picked.length+'種類追加しました🌱');
+}
+
+// ======== Check-in Modal ========
+let _curKoji=null;let _ciState={};
+function openCheckin(kk){
+  _curKoji=kk;
+  const k=getKoji(kk);
+  const kd=state.kojiData[kk];
+  if(kd.completedDate){
+    showCompletedDetail(kk);return;
+  }
+  if(kd.isResting){
+    if(confirm(k.n+'のお休みを解除しますか？')){
+      kd.isResting=false;save();render();showToast(k.n+'を再開しました🌾');
+    }
+    return;
+  }
+  const day=dayOfKoji(kk);
+  const stage=stageOfKoji(kk);
+  $('ciTitle').textContent=k.emoji+' '+k.n+' Day '+day;
+  $('ciSub').innerHTML=stage.name+' ・ <b>'+k.n+'</b>を見守り中';
+  const guide=DAY_GUIDES[Math.min(10,day)]||'今日もしっかり観察してくださいね';
+  $('ciGuide').innerHTML='<b>📌 Day '+day+'のポイント</b><br>'+guide;
+  // 既存記録ロード
+  const existing=(kd.checkins&&kd.checkins[today()])||{};
+  _ciState=Object.assign({},existing);
+  // フォーム描画
+  $('ciForm').innerHTML=CHECKIN_FIELDS.map(f=>
+    '<div class="field"><label>'+f.label+'</label><div class="opts">'+
+      f.opts.map(o=>'<button type="button" class="opt-btn'+(_ciState[f.k]===o?' on':'')+'" data-field="'+f.k+'" data-val="'+o+'">'+o+'</button>').join('')+
+    '</div></div>'
+  ).join('')+
+  '<div class="field"><label>メモ（任意）</label><textarea id="ciNotes" placeholder="気づいたこと・写真の代わりに...">'+(_ciState.notes||'')+'</textarea></div>';
+  $('ciJudge').style.display=(day>=k.days)?'block':'none';
+  $('checkinModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function showCompletedDetail(kk){
+  const k=getKoji(kk);
+  const kd=state.kojiData[kk];
+  const days=Object.keys(kd.checkins||{}).length;
+  showToast(k.n+'は'+kd.completedDate+'に完成・記録'+days+'日');
+}
+function bindCheckinForm(){
+  $('ciForm').addEventListener('click',e=>{
+    const b=e.target.closest('.opt-btn');if(!b)return;
+    const f=b.dataset.field,v=b.dataset.val;
+    _ciState[f]=v;
+    $('ciForm').querySelectorAll('[data-field="'+f+'"]').forEach(x=>x.classList.toggle('on',x.dataset.val===v));
+  });
+}
+function saveCheckin(){
+  if(!_curKoji)return;
+  const kk=_curKoji;
+  const kd=state.kojiData[kk];
+  if(!kd.checkins)kd.checkins={};
+  const notes=document.getElementById('ciNotes')?document.getElementById('ciNotes').value:'';
+  kd.checkins[today()]=Object.assign({},_ciState,{notes:notes,at:Date.now()});
+  save();
+  closeCheckin();
+  render();
+  // 入力5項目すべて埋まっていれば即時判定を表示
+  const filled=CHECKIN_FIELDS.every(f=>_ciState[f.k]);
+  if(filled){
+    const day=dayOfKoji(kk);
+    const judgement=judgeState(_ciState,day,kk);
+    setTimeout(()=>showJudgement(judgement),250);
+  }else{
+    showToast('記録しました📝（全項目入力すると判定が出ます）');
+  }
+}
+function closeCheckin(){$('checkinModal').classList.remove('on');document.body.style.overflow='';_curKoji=null}
+
+function restCurrentKoji(){
+  if(!_curKoji)return;
+  const k=getKoji(_curKoji);
+  if(!confirm(k.n+'を「お休み中」にしますか？\n（記録は残ります、後で再開可能）'))return;
+  state.kojiData[_curKoji].isResting=true;save();
+  closeCheckin();render();
+  showToast(k.n+'をお休み中にしました🌙');
+}
+
+// ======== Completion Modal ========
+let _cpChecks=new Set();
+function openCompletion(kk){
+  _curKoji=kk;
+  _cpChecks=new Set();
+  const k=getKoji(kk);
+  $('cpSub').textContent=k.n+'：6項目すべてOKなら完成です';
+  $('cpList').innerHTML=COMPL_CHECKS.map((c,i)=>'<div class="item" data-idx="'+i+'"><span class="chk"></span><span>'+c+'</span></div>').join('');
+  $('cpDone').disabled=true;
+  $('completionModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function bindCompletionList(){
+  $('cpList').addEventListener('click',e=>{
+    const it=e.target.closest('.item');if(!it)return;
+    const idx=Number(it.dataset.idx);
+    if(_cpChecks.has(idx)){_cpChecks.delete(idx);it.classList.remove('checked');it.querySelector('.chk').textContent='';}
+    else{_cpChecks.add(idx);it.classList.add('checked');it.querySelector('.chk').textContent='✓';}
+    $('cpDone').disabled=_cpChecks.size<6;
+  });
+}
+function confirmCompletion(){
+  if(!_curKoji||_cpChecks.size<6)return;
+  state.kojiData[_curKoji].completedDate=today();
+  save();
+  $('completionModal').classList.remove('on');
+  document.body.style.overflow='';
+  const k=getKoji(_curKoji);
+  render();
+  showToast('🎉 '+k.n+'完成！おめでとうございます！');
+  _curKoji=null;
+}
+function backToCheckin(){$('completionModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== Drawer ========
+function openDrawer(){$('drawer').classList.add('on');$('drawerBg').classList.add('on')}
+function closeDrawer(){$('drawer').classList.remove('on');$('drawerBg').classList.remove('on')}
+
+// ======== Reset ========
+function resetAll(){
+  if(!confirm('すべての記録を削除しますか？\n（やり直せません）'))return;
+  try{
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ONBOARD_KEY);
+    localStorage.removeItem(FAREWELL_SEEN_KEY);
+  }catch(e){}
+  location.reload();
+}
+
+// ======== Manual ========
+function openManual(){$('manualModal').classList.add('on');document.body.style.overflow='hidden'}
+function closeManual(){$('manualModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== Farewell ========
+function computeFinalStats(){
+  const stats=computeStats();
+  return {
+    totalCheckins:stats.totalCheckins,
+    completedCount:stats.completedCount,
+    recipesCount:stats.recipesCount,
+    maxStreak:stats.maxStreak
+  };
+}
+function diagnoseType(s){
+  if(s.completedCount>=6)return '👑 全6種マスター';
+  if(s.completedCount>=3)return '🌟 麹マイスター';
+  if(s.maxStreak>=14)return '🏆 2週間の覇者';
+  if(s.completedCount>=1)return '🌾 麹デビュー！';
+  if(s.totalCheckins>=10)return '📋 見守り上手';
+  return '🌱 これから伸びる人';
+}
+function openFarewell(){
+  const s=computeFinalStats();
+  $('finalEvalGrid').innerHTML=
+    '<div class="eval-item"><div class="val">'+s.completedCount+'/'+state.selectedKoji.length+'</div><div class="lbl">完成麹</div></div>'+
+    '<div class="eval-item"><div class="val">'+s.totalCheckins+'</div><div class="lbl">記録回数</div></div>'+
+    '<div class="eval-item"><div class="val">'+s.recipesCount+'</div><div class="lbl">レシピ消化</div></div>';
+  $('finalEvalBadge').textContent=diagnoseType(s);
+  $('farewellModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeFarewell(){
+  $('farewellModal').classList.remove('on');document.body.style.overflow='';
+  try{localStorage.setItem(FAREWELL_SEEN_KEY,'1')}catch(e){}
+}
+function maybeShowFarewell(){
+  if(TEST_MODE)return; // テスト中は ?preview=farewell でのみ表示
+  if(!isReadOnly())return;
+  let seen=false;try{seen=!!localStorage.getItem(FAREWELL_SEEN_KEY)}catch(e){}
+  if(seen)return;
+  setTimeout(openFarewell,500);
+}
+
+// ======== Read-only mode ========
+function applyReadOnly(){document.body.classList.toggle('read-only',isReadOnly())}
+
+// ======== Event delegation ========
+document.addEventListener('click',e=>{
+  // Drawer
+  if(e.target.closest('#hamBtn')){openDrawer();return}
+  if(e.target.closest('#drawerClose')||e.target.id==='drawerBg'){closeDrawer();return}
+  const drawerItem=e.target.closest('.drawer-item');
+  if(drawerItem&&drawerItem.dataset.act){
+    const act=drawerItem.dataset.act;
+    closeDrawer();
+    if(act==='manual')openManual();
+    else if(act==='library')openLibrary();
+    else if(act==='faq')openFaq();
+    else if(act==='quiz')openQuiz();
+    else if(act==='addKoji')openAddKoji();
+    else if(act==='reset')resetAll();
+    return;
+  }
+  // Bottom nav
+  if(e.target.closest('#navManual')){openManual();return}
+  if(e.target.closest('#navHome')){window.scrollTo({top:0,behavior:'smooth'});return}
+  // Manual
+  if(e.target.closest('#manualClose')||(e.target.id==='manualModal')){closeManual();return}
+  // Onboarding
+  if(e.target.closest('#onboardStart')){startOnboard();return}
+  // Add Koji
+  if(e.target.closest('#addKojiCancel')||(e.target.id==='addKojiModal')){$('addKojiModal').classList.remove('on');document.body.style.overflow='';return}
+  if(e.target.closest('#addKojiConfirm')){confirmAddKoji();return}
+  if(e.target.closest('#addKojiBtn')){openAddKoji();return}
+  // Koji card
+  const card=e.target.closest('.koji-card');
+  if(card){
+    const kk=card.dataset.koji;
+    const kd=state.kojiData[kk]||{};
+    if(isReadOnly()){showToast('🌾 期間が終了しました（閲覧のみ）');return}
+    const day=dayOfKoji(kk);
+    if(day===0){
+      const k=getKoji(kk);
+      showToast('🌱 '+k.n+'は'+kd.startDate+'からスタート！');
+      return;
+    }
+    if(kd.completedDate){
+      showToast(getKoji(kk).n+' は '+kd.completedDate+' に完成済み');
+      return;
+    }
+    if(isCompletable(kk))openCompletion(kk);
+    else openCheckin(kk);
+    return;
+  }
+  // Check-in modal
+  if(e.target.closest('#ciCancel')||(e.target.id==='checkinModal')){closeCheckin();return}
+  if(e.target.closest('#ciSave')){saveCheckin();return}
+  if(e.target.closest('#ciJudge')){closeCheckin();openCompletion(_curKoji);return}
+  if(e.target.closest('#ciRest')){restCurrentKoji();return}
+  if(e.target.closest('#ciSos')){openSos();return}
+  // Judgement overlay
+  if(e.target.closest('#judgeOk')||(e.target.id==='judgeOverlay')){hideJudgement();return}
+  // SOS modal
+  if(e.target.closest('#sosClose')||(e.target.id==='sosModal')){closeSos();return}
+  // Completion
+  if(e.target.closest('#cpBack')||(e.target.id==='completionModal')){backToCheckin();return}
+  if(e.target.closest('#cpDone')){confirmCompletion();return}
+  // Recipe toggle
+  const rt=e.target.closest('[data-recipe-toggle]');
+  if(rt&&!isReadOnly()){
+    const rid=rt.dataset.recipeToggle;
+    if(!state.recipesUsed)state.recipesUsed={};
+    if(state.recipesUsed[rid])delete state.recipesUsed[rid];
+    else state.recipesUsed[rid]=today();
+    save();render();
+    return;
+  }
+  // Farewell
+  if(e.target.closest('#farewellClose')){closeFarewell();return}
+  // ----- 豆知識システム -----
+  // 今日の豆知識カード or 図書館 or 記事をタップ
+  const knowItem=e.target.closest('[data-knowledge-id]');
+  if(knowItem){const id=knowItem.dataset.knowledgeId;openArticle(id);return}
+  // 図書館 close / FAQ close / quiz close
+  if(e.target.closest('#libClose')||e.target.id==='libModal'){closeLibrary();return}
+  if(e.target.closest('#articleBack')||e.target.id==='articleModal'){closeArticle();return}
+  if(e.target.closest('#articleNext')){nextArticle();return}
+  if(e.target.closest('#faqClose')||e.target.id==='faqModal'){closeFaq();return}
+  if(e.target.closest('#quizClose')||e.target.id==='quizModal'){closeQuiz();return}
+  // FAQ accordion
+  const faqQ=e.target.closest('.faq-q');
+  if(faqQ){faqQ.parentElement.classList.toggle('on');return}
+  // Quiz answer
+  const quizOpt=e.target.closest('.quiz-opt');
+  if(quizOpt&&!quizOpt.classList.contains('disabled')){answerQuiz(Number(quizOpt.dataset.quizOpt));return}
+  // Check-in modal: FAQ button
+  if(e.target.closest('#ciFaq')){closeCheckin();openFaq();return}
+});
+
+// ======== Init ========
+function init(){
+  // ?date=YYYY-MM-DD or ?preview=running|phase2|end で日付仮想化（テスト用）
+  const params=new URLSearchParams(location.search);
+  if(params.has('date')){_DATE_OVERRIDE=params.get('date')+'T03:00:00.000Z'}
+  else if(params.has('preview')){
+    const p=params.get('preview');
+    if(p==='running')_DATE_OVERRIDE='2026-05-30T03:00:00.000Z';   // Day 8相当
+    else if(p==='phase2')_DATE_OVERRIDE='2026-06-10T03:00:00.000Z'; // Phase 2
+    else if(p==='end')_DATE_OVERRIDE='2026-06-25T03:00:00.000Z';    // 終了後
+  }
+  load();
+  // Migration: if no kojiData but selectedKoji exists, build defaults
+  state.selectedKoji.forEach(k=>{
+    if(!state.kojiData[k])state.kojiData[k]={startDate:today(),isResting:false,completedDate:null,checkins:{}};
+  });
+  // Bindings
+  bindOnboardLabels();
+  bindAddKojiLabels();
+  bindCheckinForm();
+  bindCompletionList();
+  // Render + maybe show modals
+  applyReadOnly();
+  render();
+  maybeShowOnboard();
+  maybeShowFarewell();
+  // 1分ごとに更新
+  setInterval(()=>{renderHeader();applyReadOnly();renderLuckyBanner();renderReadOnlyBanner()},60000);
+  // URL preview triggers (testing用)
+  if(location.search.includes('preview=farewell'))openFarewell();
+  if(location.search.includes('preview=onboard')){try{localStorage.removeItem(ONBOARD_KEY)}catch(e){}maybeShowOnboard();}
+}
+init();
+
+})();
+</script>
+</body>
+</html>
