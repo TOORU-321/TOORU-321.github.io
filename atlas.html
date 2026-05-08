@@ -6392,7 +6392,7 @@ body.has-quest-dock { padding-bottom: 96px; }
     //
     // URL パラメータでテスト上書き可能：?raid=preparing|announcing|open
     // =====================================================================
-    const RAID_RELEASE_STATE = 'announcing';  // ← 5/8 開戦告知中
+    const RAID_RELEASE_STATE = 'open';  // ← 5/8 開戦完了！通常運用へ
     const RAID_OPEN_DATE = new Date('2026-05-08T00:00:00+09:00'); // JST
     const _raidParam = (typeof URLSearchParams === 'function')
       ? new URLSearchParams(location.search).get('raid')
