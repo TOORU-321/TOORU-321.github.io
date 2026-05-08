@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#f7f3ec" />
+  <title>ねこ詰め — Nekozume</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__kanji">ねこ詰め</span>
+        <span class="brand__sub">NEKOZUME</span>
+      </div>
+      <div class="scores">
+        <div class="score">
+          <span class="score__label">SCORE</span>
+          <span class="score__value" id="score">0</span>
+        </div>
+        <div class="score score--hi">
+          <span class="score__label">BEST</span>
+          <span class="score__value" id="hiscore">0</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="next">
+        <span class="next__label">NEXT</span>
+        <canvas id="next-canvas" width="64" height="64" aria-hidden="true"></canvas>
+      </div>
+      <div class="board" id="board">
+        <canvas id="game-canvas" aria-label="ねこ詰めのプレイエリア"></canvas>
+        <div class="dangerline" aria-hidden="true"></div>
+        <div class="hint" id="hint">タップ または クリックで落とす</div>
+      </div>
+      <div class="evolution" aria-label="進化図">
+        <div class="evolution__title">進化図</div>
+        <ol class="evolution__list" id="evolution-list"></ol>
+      </div>
+    </main>
+
+    <div class="modal" id="modal" hidden>
+      <div class="modal__panel">
+        <div class="modal__title">GAME OVER</div>
+        <div class="modal__score">
+          <div class="modal__row"><span>SCORE</span><span id="final-score">0</span></div>
+          <div class="modal__row"><span>BEST</span><span id="final-hiscore">0</span></div>
+        </div>
+        <button class="btn" id="restart">もう一度</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <script src="game.js" defer></script>
+</body>
+</html>
