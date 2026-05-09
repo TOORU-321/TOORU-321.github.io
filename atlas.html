@@ -1994,6 +1994,14 @@ nav.tabs {
   font-size: 0.92rem;
   font-weight: 500;
 }
+.log-item.is-self {
+  background: rgba(201, 169, 97, 0.08);
+  border-radius: 3px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin: 0 -0.5rem;
+}
+.log-item.is-self .log-item__name { color: var(--color-gold); }
 
 /* Ranking tabs */
 .rank-tabs {
@@ -4947,11 +4955,11 @@ body.has-quest-dock { padding-bottom: 96px; }
       </div>
     </div>
 
-    <!-- Damage log — あなたの直近7日の攻撃記録 -->
+    <!-- Damage log — みんなの攻撃ログ（直近のmob_kill アクティビティから） -->
     <div class="info-section card-frame">
       <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
       <span class="corner corner--bl"></span><span class="corner corner--br"></span>
-      <h3 class="info-section__title">あなたの攻撃記録・直近7日</h3>
+      <h3 class="info-section__title">⚔︎ ギルドの攻撃ログ・直近</h3>
       <ul class="log-list" id="raid-log-list">
         <!-- 動的に描画 -->
       </ul>
@@ -7345,32 +7353,57 @@ body.has-quest-dock { padding-bottom: 96px; }
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wireRaidShare);
     else wireRaidShare();
 
-    // 直近7日の自分の攻撃記録を描画（dailyExp からビルド）
-    function renderRaidLog(){
+    // ギルド全体の攻撃ログを描画（atlas_activity_log の mob_kill から）
+    async function renderRaidLog(){
       const listEl = document.getElementById('raid-log-list');
       if(!listEl) return;
-      const dailyExp = (D && D.dailyExp) || {};
-      const dates = Object.keys(dailyExp).filter(k => (dailyExp[k] || 0) > 0).sort().reverse(); // 新しい順
-      if(!dates.length){
+
+      // ローディング初期表示
+      if(!listEl.dataset.loaded){
+        listEl.innerHTML =
+          '<li class="log-item" style="opacity:.5;">' +
+            '<span class="log-item__time">—</span>' +
+            '<span class="log-item__name">読み込み中…</span>' +
+            '<span class="log-item__dmg">—</span>' +
+          '</li>';
+      }
+
+      let rows = [];
+      try {
+        if(typeof fetchActivityLog === 'function'){
+          rows = await fetchActivityLog();
+        }
+      } catch(e){ console.warn('[raid-log]', e); }
+
+      // mob_kill のみを抽出（攻撃ログ）
+      const attacks = (rows || []).filter(r => r && r.type === 'mob_kill').slice(0, 12);
+
+      listEl.dataset.loaded = '1';
+
+      if(!attacks.length){
         listEl.innerHTML =
           '<li class="log-item" style="opacity:.7;">' +
             '<span class="log-item__time">—</span>' +
-            '<span class="log-item__name">まだ攻撃の記録は残っていない。クエストを1つ討伐すれば、ここに剣の跡が刻まれる。</span>' +
+            '<span class="log-item__name">まだ攻撃の記録は残っていない。最初の一手は、あなたから。</span>' +
             '<span class="log-item__dmg">—</span>' +
           '</li>';
         return;
       }
-      const last7 = dates.slice(0, 7);
-      listEl.innerHTML = last7.map(iso => {
-        const dmg = dailyExp[iso] || 0;
-        const label = (typeof formatEventDate === 'function') ? formatEventDate(iso) : iso;
-        // クラス推定：その日の攻撃を「おそらく」どのクラスで行ったか（簡易：ダメージ規模で表現）
-        const tone = dmg >= 150 ? '— 全力討伐' : dmg >= 80 ? '— 安定攻撃' : '— 偵察級';
+
+      const esc = s => String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+
+      listEl.innerHTML = attacks.map(r => {
+        const time   = (typeof _gfTime === 'function') ? _gfTime(r.ms) : '';
+        const name   = esc(r.displayName || '冒険者');
+        const mob    = esc(r.mobType || '');
+        const isSelf = !!(typeof fbUid !== 'undefined' && fbUid && r.uid === fbUid);
         return (
-          '<li class="log-item">' +
-            '<span class="log-item__time">' + label + '</span>' +
-            '<span class="log-item__name">あなた<span class="log-item__name-role">' + tone + '</span></span>' +
-            '<span class="log-item__dmg">+' + dmg.toLocaleString('en-US') + '</span>' +
+          '<li class="log-item' + (isSelf ? ' is-self' : '') + '">' +
+            '<span class="log-item__time">' + time + '</span>' +
+            '<span class="log-item__name">' + (isSelf ? 'あなた' : name) +
+              (mob ? '<span class="log-item__name-role">— ' + mob + '</span>' : '') +
+            '</span>' +
+            '<span class="log-item__dmg">⚔︎</span>' +
           '</li>'
         );
       }).join('');
