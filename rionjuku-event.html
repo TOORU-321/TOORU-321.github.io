@@ -184,13 +184,13 @@
 <div class="wrap">
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-total">-</div><div class="stat-label">申込者数</div></div>
-    <div class="stat"><div class="stat-num" id="s-paid" style="color:var(--green)">-</div><div class="stat-label">決済完了</div></div>
-
-
     <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
     <div class="stat"><div class="stat-num" id="s-both">-</div><div class="stat-label">両方参加</div></div>
     <div class="stat"><div class="stat-num" id="s-part1">-</div><div class="stat-label">第一部のみ</div></div>
     <div class="stat"><div class="stat-num" id="s-part2">-</div><div class="stat-label">第二部のみ</div></div>
+    <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第一部 子ども</div></div>
+    <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第二部 子ども</div></div>
+    <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
   </div>
 
   <div class="filters">
@@ -295,7 +295,7 @@ const PAYMENTS_URL = 'payments.json';
 
 const CAT_ORDER = {'実行委員':0, 'サロン生':1, '卒業生':2, '一般':3};
 const CAT_MAP = {
-  '運営':'実行委員', 'プロデューサー':'実行委員', '実行委員':'実行委員',
+  '運営':'実行委員', '実行委員':'実行委員',
   'サロン生':'サロン生', '卒業生':'卒業生'
 };
 
@@ -438,6 +438,8 @@ function mergeData(survey, roster, payments) {
     if(!uid&&!em) continue;
     seenUids.add(uid); if(em) seenEmails.add(em);
     const ro = rosterByUid[uid] || rosterByEmail[em] || {};
+    // Skip プロデューサー (non-participant staff)
+    if((ro['カテゴリー']||'')==='プロデューサー') continue;
     const pay = payments.byUid[uid] || (em && payments.byEmail[em] ? payments.byUid[payments.byEmail[em]] : null);
     rows.push(buildRow(uid, sv, ro, pay));
   }
@@ -445,6 +447,8 @@ function mergeData(survey, roster, payments) {
   for (const ro of roster) {
     const uid=(ro['uid']||'').trim(), em=(ro['メールアドレス']||'').trim().toLowerCase();
     if((uid&&seenUids.has(uid))||(em&&seenEmails.has(em))) continue;
+    // Skip プロデューサー (non-participant staff)
+    if((ro['カテゴリー']||'')==='プロデューサー') continue;
     if(uid) seenUids.add(uid); if(em) seenEmails.add(em);
     const payUid = payments.byEmail[em];
     rows.push(buildRow(uid, {}, ro, payUid ? payments.byUid[payUid] : null));
@@ -487,6 +491,14 @@ function buildRow(uid, sv, ro, pay) {
   const surveyNum=sv['参加する合計人数']||'';
   const surveyChild=sv['参加する子ども']||'';
   const bu = surveyBu||'';
+
+  // Parse child types from survey checkboxes
+  const hasPreschool = surveyChild.includes('未就学');
+  const hasElementary = surveyChild.includes('小学');
+  const hasMiddle = surveyChild.includes('中学') || surveyChild.includes('中高');
+  // Which parts this person attends
+  const attendsP1 = bu.includes('両方') || bu.includes('第一部');
+  const attendsP2 = bu.includes('両方') || bu.includes('第二部');
   const hasSurvey = !!(sv['お名前']||sv['uid']);
   const hasPayment = !!pay;
 
@@ -516,6 +528,7 @@ function buildRow(uid, sv, ro, pay) {
     category, kiseig: ro['〇期生']||ro['期生']||'', email,
     area: sv['お住まいのエリア']||ro['お住まいのエリア']||ro['お住まい']||'',
     surveyBu, surveyNum, surveyChild, bu,
+    hasPreschool, hasElementary, hasMiddle, attendsP1, attendsP2,
     payDetail, payNinzu, payTotal,
     issue,
     allergy: sv['アレルギー']||ro['アレルギー']||'',
@@ -642,18 +655,33 @@ function renderTable(){
 
 function updateStats(filtered){
   const total=filtered.length;
-  const paid=filtered.filter(r=>r.hasPayment).length;
   const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
   const both=filtered.filter(r=>r.bu==='両方参加').length;
   const p1=filtered.filter(r=>r.bu==='第一部のみ').length;
   const p2=filtered.filter(r=>r.bu==='第二部のみ').length;
 
+  // Child counts per part
+  let k1Elem=0,k1Mid=0,k2Elem=0,k2Mid=0,preschool=0;
+  for(const r of filtered){
+    if(r.hasPreschool) preschool++;
+    if(r.attendsP1){
+      if(r.hasElementary) k1Elem++;
+      if(r.hasMiddle) k1Mid++;
+    }
+    if(r.attendsP2){
+      if(r.hasElementary) k2Elem++;
+      if(r.hasMiddle) k2Mid++;
+    }
+  }
+
   document.getElementById('s-total').textContent=total;
-  document.getElementById('s-paid').textContent=paid;
   document.getElementById('s-people').textContent=people;
   document.getElementById('s-both').textContent=both;
   document.getElementById('s-part1').textContent=p1;
   document.getElementById('s-part2').textContent=p2;
+  document.getElementById('s-kid1').textContent=`小${k1Elem} 中${k1Mid}`;
+  document.getElementById('s-kid2').textContent=`小${k2Elem} 中${k2Mid}`;
+  document.getElementById('s-preschool').textContent=preschool;
 }
 
 function onMemo(key,val){
