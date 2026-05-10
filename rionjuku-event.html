@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>参加者管理 | 凛穏塾 大同窓会 2026.7.23</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f2ef; --paper: #fff; --text: #2c2622; --sub: #7a6e63;
+    --line: #e8ddd1; --accent: #8b6344; --accent2: #c4956b; --accent-light: #f5e8d8;
+    --green: #2a7d6a; --green-light: #e8f4f0;
+    --red: #c0392b; --red-light: #fdeaea;
+    --blue: #2c5282; --blue-light: #ebf4ff;
+    --purple: #7b1fa2; --purple-light: #f3e5f5;
+    --orange: #e65100; --orange-light: #fff3e0;
+    --sans: 'Noto Sans JP', sans-serif;
+    --radius: 14px; --shadow: 0 2px 12px rgba(62,40,24,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.6; }
+
+  .app-header {
+    background: linear-gradient(135deg, #3d3028 0%, #5a4639 100%);
+    color: #fff; padding: 18px 16px; text-align: center;
+  }
+  .app-header h1 { font-size: 20px; font-weight: 800; letter-spacing: 0.04em; }
+  .app-header p { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .header-meta {
+    display: flex; justify-content: center; gap: 16px; align-items: center;
+    margin-top: 8px; flex-wrap: wrap;
+  }
+  .header-meta .date-info { font-size: 10px; opacity: 0.6; }
+  .header-meta .date-info span { opacity: 1; color: #fdd835; }
+  .btn-reload {
+    font-family: var(--sans); font-size: 11px; padding: 4px 14px;
+    border: 1px solid rgba(255,255,255,0.3); border-radius: 20px;
+    background: rgba(255,255,255,0.1); color: #fff; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reload:hover { background: rgba(255,255,255,0.25); border-color: rgba(255,255,255,0.5); }
+
+  .wrap { max-width: 1600px; margin: 0 auto; padding: 16px 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 7px; margin-bottom: 12px; }
+  .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 8px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.2; }
+  .stat-label { font-size: 9px; color: var(--sub); }
+
+  .filters {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 10px 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+  .filter-group { display: flex; align-items: center; gap: 4px; }
+  .filter-group label { font-size: 10px; font-weight: 700; color: var(--sub); white-space: nowrap; }
+  .filter-group select, .search-input {
+    font-family: var(--sans); font-size: 11px; padding: 4px 6px;
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+    color: var(--text); outline: none;
+  }
+  .search-input { flex: 1; min-width: 140px; }
+  .filter-reset, .btn-action {
+    font-family: var(--sans); font-size: 10px; padding: 4px 10px;
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+    color: var(--sub); cursor: pointer; white-space: nowrap;
+  }
+  .filter-reset:hover, .btn-action:hover { background: var(--accent-light); color: var(--accent); }
+  .btn-action { border-color: var(--accent2); color: var(--accent); }
+
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 6px;
+  }
+  .toolbar-left { display: flex; gap: 6px; align-items: center; }
+  .toolbar-right { display: flex; gap: 6px; align-items: center; }
+  .legend {
+    display: flex; gap: 10px; align-items: center; font-size: 9px; color: var(--sub);
+  }
+  .legend-item { display: flex; align-items: center; gap: 3px; }
+  .legend-box { width: 12px; height: 12px; border-radius: 3px; border: 1px solid #ddd; }
+
+  .table-section {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .table-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px; border-bottom: 1px solid var(--line); background: #faf8f5;
+  }
+  .table-bar .count { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    background: #3d3028; color: #fff; font-weight: 700; font-size: 9px;
+    padding: 7px 5px; text-align: left; white-space: nowrap; letter-spacing: 0.03em;
+    cursor: pointer; user-select: none;
+  }
+  th:hover { background: #5a4639; }
+  th.col-survey { background: #276749; }
+  th.col-survey:hover { background: #2f855a; }
+  th.col-pay { background: #975a16; }
+  th.col-pay:hover { background: #b7791f; }
+  th.col-check { background: #4a148c; cursor: default; }
+  td { padding: 4px 5px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  td.col-survey { background: #f0fff4; }
+  td.col-pay { background: #fffff0; }
+  td.col-check { background: #faf5ff; text-align: center; }
+  tr:hover td { background: #faf6f1; }
+  tr:hover td.col-survey { background: #e6f7ed; }
+  tr:hover td.col-pay { background: #fefce8; }
+  tr:hover td.col-check { background: #f3e8ff; }
+  tr.row-checked td { opacity: 0.6; }
+  tr.row-checked td.col-check { opacity: 1; }
+
+  .cell-select {
+    font-family: var(--sans); font-size: 10px; padding: 1px 2px;
+    border: 1px solid transparent; border-radius: 5px; background: transparent;
+    cursor: pointer; color: inherit; width: 100%;
+  }
+  .cell-select:hover { border-color: var(--accent2); background: #fff; }
+  .cell-select:focus { border-color: var(--accent); background: #fff; outline: none; }
+  .cell-select.edited { background: #fffde7; border-color: #fdd835; }
+
+  .memo-input {
+    font-family: var(--sans); font-size: 10px; padding: 2px 4px;
+    border: 1px solid transparent; border-radius: 5px; background: transparent;
+    color: var(--text); width: 100%; min-width: 100px;
+  }
+  .memo-input:hover { border-color: var(--line); background: #fff; }
+  .memo-input:focus { border-color: var(--accent); background: #fff; outline: none; }
+  .memo-input.has-value { background: #fffde7; border-color: #fff3bf; }
+
+  .check-box {
+    width: 16px; height: 16px; cursor: pointer; accent-color: var(--green);
+  }
+
+  .pay-ok { color: var(--green); font-weight: 700; }
+  .pay-ng { color: var(--red); font-size: 10px; }
+  .survey-ok { color: var(--green); font-weight: 700; }
+  .survey-ng { color: var(--red); }
+  .issue-text { color: var(--red); font-size: 9px; font-weight: 700; }
+  .amount { font-weight: 700; white-space: nowrap; }
+  .detail-text { font-size: 10px; color: var(--sub); max-width: 180px; }
+  .name-cell { font-weight: 700; white-space: nowrap; }
+
+  .loading { text-align: center; padding: 60px 20px; color: var(--sub); }
+  .loading .spinner {
+    width: 32px; height: 32px; border: 3px solid var(--line);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .footer { text-align: center; font-size: 10px; color: #c4b8ab; padding: 16px 0; }
+
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .filters { flex-direction: column; }
+    .filter-group { width: 100%; }
+    .filter-group select, .search-input { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>大同窓会 参加者管理</h1>
+  <p>凛穏塾記念式典 2026.7.23</p>
+  <div class="header-meta">
+    <div class="date-info">アンケート: <span>リアルタイム</span></div>
+    <div class="date-info">Stripe決済: <span id="stripeDate">読込中...</span></div>
+    <button class="btn-reload" onclick="reloadAll()">&#x21bb; データ更新</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="s-total">-</div><div class="stat-label">申込者数</div></div>
+    <div class="stat"><div class="stat-num" id="s-paid" style="color:var(--green)">-</div><div class="stat-label">決済完了</div></div>
+    <div class="stat"><div class="stat-num" id="s-unpaid" style="color:var(--red)">-</div><div class="stat-label">未決済</div></div>
+    <div class="stat"><div class="stat-num" id="s-revenue">-</div><div class="stat-label">決済合計</div></div>
+    <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
+    <div class="stat"><div class="stat-num" id="s-both">-</div><div class="stat-label">両方参加</div></div>
+    <div class="stat"><div class="stat-num" id="s-part1">-</div><div class="stat-label">第一部のみ</div></div>
+    <div class="stat"><div class="stat-num" id="s-part2">-</div><div class="stat-label">第二部のみ</div></div>
+    <div class="stat"><div class="stat-num" id="s-checked" style="color:var(--green)">-</div><div class="stat-label">確認済み</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>カテゴリー</label>
+      <select id="f-cat"><option value="">すべて</option></select>
+    </div>
+    <div class="filter-group">
+      <label>参加する部</label>
+      <select id="f-bu"><option value="">すべて</option></select>
+    </div>
+    <div class="filter-group">
+      <label>エリア</label>
+      <select id="f-area"><option value="">すべて</option></select>
+    </div>
+    <div class="filter-group">
+      <label>決済</label>
+      <select id="f-pay">
+        <option value="">すべて</option>
+        <option value="paid">決済済み</option>
+        <option value="unpaid">未決済</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>整合性</label>
+      <select id="f-issue">
+        <option value="">すべて</option>
+        <option value="has">要確認のみ</option>
+        <option value="ok">問題なし</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>確認</label>
+      <select id="f-check">
+        <option value="">すべて</option>
+        <option value="done">確認済み</option>
+        <option value="undone">未確認</option>
+      </select>
+    </div>
+    <input type="text" class="search-input" id="f-search" placeholder="名前・メールで検索...">
+    <button class="filter-reset" onclick="resetFilters()">リセット</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-box" style="background:#faf5ff;border-color:#ce93d8"></div>確認</div>
+        <div class="legend-item"><div class="legend-box" style="background:#f0fff4"></div>申告</div>
+        <div class="legend-item"><div class="legend-box" style="background:#fffff0"></div>決済</div>
+        <div class="legend-item"><div class="legend-box" style="background:#fffde7;border-color:#fdd835"></div>手動変更</div>
+      </div>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn-action" onclick="exportCSV()">CSV出力</button>
+      <button class="btn-action" onclick="exportForSheet()">スプレッドシート用コピー</button>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <div class="table-bar">
+      <span class="count" id="rowCount">-</span>
+      <span style="font-size:9px;color:var(--sub)">カテゴリー・参加する部はクリックで変更可</span>
+    </div>
+    <div class="table-wrap">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>データを読み込んでいます...</div>
+      </div>
+      <table id="mainTable" style="display:none">
+        <thead>
+          <tr>
+            <th onclick="sortBy('index')">#</th>
+            <th class="col-check">確認</th>
+            <th onclick="sortBy('name')">お名前</th>
+            <th onclick="sortBy('category')">カテゴリー</th>
+            <th onclick="sortBy('kiseig')">期生</th>
+            <th onclick="sortBy('area')">エリア</th>
+            <th onclick="sortBy('bu')" class="col-survey">参加する部(申告)</th>
+            <th onclick="sortBy('peopleCount')" class="col-survey">人数</th>
+            <th onclick="sortBy('children')" class="col-survey">子ども</th>
+            <th onclick="sortBy('payDetail')" class="col-pay">決済商品</th>
+            <th onclick="sortBy('payNinzu')" class="col-pay">決済人数</th>
+            <th onclick="sortBy('payTotal')" class="col-pay">決済金額</th>
+            <th onclick="sortBy('issue')">整合性</th>
+            <th>アレルギー</th>
+            <th onclick="sortBy('leader')">リーダー</th>
+            <th>回答</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="footer" id="footer"></p>
+</div>
+
+<script>
+// ===== CONFIG =====
+const SHEET_ID = '1MwcfCpp4g1EHind2Seo-1UEBKKGxmr33i1ciqviXZRI';
+const PAYMENTS_URL = 'payments.json';
+
+const CAT_ORDER = {'実行委員':0, 'サロン生':1, '卒業生':2, '一般':3};
+const CAT_OPTIONS = ['', '実行委員', 'サロン生', '卒業生', '一般'];
+const BU_OPTIONS = ['', '両方参加', '第一部のみ', '第二部のみ'];
+const CAT_MAP = {
+  '運営':'実行委員', 'プロデューサー':'実行委員', '実行委員':'実行委員',
+  'サロン生':'サロン生', '卒業生':'卒業生'
+};
+
+function ticketSortKey(t) {
+  let p = 3, a = 3;
+  if (t.includes('記念式典')) p = 0;
+  else if (t.includes('第1部+第2部')) p = 1;
+  else if (t.includes('懇親会')) p = 2;
+  if (t.includes('大人')) a = 0;
+  else if (t.includes('中高生')) a = 1;
+  else if (t.includes('小学生')) a = 2;
+  return p * 10 + a;
+}
+
+// ===== STATE =====
+let allRows = [];
+let sortCol = 'category';
+let sortAsc = true;
+let overrides = JSON.parse(localStorage.getItem('dousoukai_overrides') || '{}');
+let checks = JSON.parse(localStorage.getItem('dousoukai_checks') || '{}');
+let memos = JSON.parse(localStorage.getItem('dousoukai_memos') || '{}');
+let stripeUpdated = '';
+
+// ===== DATA LOADING =====
+async function loadData() {
+  try {
+    const [surveyData, rosterData, paymentData] = await Promise.all([
+      fetchSheet('form_35：大同窓総会参加アンケート'),
+      fetchSheet('大同窓総会参加＿名簿'),
+      fetch(PAYMENTS_URL + '?t=' + Date.now()).then(r => r.json()).catch(() => ({byUid:{}, byEmail:{}, updated:''}))
+    ]);
+
+    stripeUpdated = paymentData.updated || '不明';
+    allRows = mergeData(surveyData, rosterData, paymentData);
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('mainTable').style.display = 'table';
+    document.getElementById('stripeDate').textContent = stripeUpdated;
+    document.getElementById('footer').textContent =
+      `アンケートはGoogleスプレッドシートから自動取得（更新ボタンで最新化） ｜ 決済データ: ${stripeUpdated} 時点`;
+
+    populateFilters();
+    renderTable();
+  } catch (err) {
+    document.getElementById('loading').innerHTML =
+      `<div style="color:var(--red)">読み込み失敗<br><small>${err.message}</small><br><br>
+      <small>Googleスプレッドシートの「ウェブに公開」設定を確認してください</small></div>`;
+    console.error(err);
+  }
+}
+
+function reloadAll() {
+  document.getElementById('mainTable').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('loading').innerHTML =
+    '<div class="spinner"></div><div>データを更新中...</div>';
+  loadData();
+}
+
+async function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`シート「${sheetName}」取得失敗 (${res.status})`);
+  return Papa.parse(await res.text(), { header: true, skipEmptyLines: true }).data;
+}
+
+function mergeData(survey, roster, payments) {
+  const rows = [];
+  const seenUids = new Set(), seenEmails = new Set();
+
+  const rosterByUid = {}, rosterByEmail = {};
+  for (const r of roster) {
+    const uid = (r['uid']||'').trim();
+    const em = (r['メールアドレス']||'').trim().toLowerCase();
+    if (uid) rosterByUid[uid] = r;
+    if (em) rosterByEmail[em] = r;
+  }
+
+  for (const sv of survey) {
+    const uid = (sv['uid']||'').trim();
+    const em = (sv['メールアドレス']||'').trim().toLowerCase();
+    if (!uid && !em) continue;
+    seenUids.add(uid); if (em) seenEmails.add(em);
+    const ro = rosterByUid[uid] || rosterByEmail[em] || {};
+    const pay = payments.byUid[uid] || (em && payments.byEmail[em] ? payments.byUid[payments.byEmail[em]] : null);
+    rows.push(buildRow(uid, sv, ro, pay));
+  }
+
+  for (const ro of roster) {
+    const uid = (ro['uid']||'').trim();
+    const em = (ro['メールアドレス']||'').trim().toLowerCase();
+    if ((uid && seenUids.has(uid)) || (em && seenEmails.has(em))) continue;
+    if (uid) seenUids.add(uid); if (em) seenEmails.add(em);
+    const payUid = payments.byEmail[em];
+    rows.push(buildRow(uid, {}, ro, payUid ? payments.byUid[payUid] : null));
+  }
+  return rows;
+}
+
+function buildRow(uid, sv, ro, pay) {
+  const email = (sv['メールアドレス']||ro['メールアドレス']||'').trim().toLowerCase();
+  const key = uid || email;
+  const ov = overrides[key] || {};
+
+  const rawCat = ro['カテゴリー'] || '';
+  const mappedCat = CAT_MAP[rawCat] || rawCat || '';
+  const category = ov.category || mappedCat;
+
+  let payDetail='', payNinzu='', payTotal=0, payHasP1=false, payHasP2=false;
+  if (pay) {
+    const items = [...pay.items].sort((a,b) => ticketSortKey(a)-ticketSortKey(b));
+    payDetail = items.join(' / ');
+    payTotal = pay.total;
+    let adultN=0; const cp=[];
+    for (const t of items) {
+      const n = t.includes('2人')?2:(t.includes('3人')?3:1);
+      if (t.includes('大人')) adultN+=n;
+      else if (t.includes('中高生')) cp.push('中高生'+n);
+      else if (t.includes('小学生')) cp.push('小学生'+n);
+      if (t.includes('記念式典')||t.includes('第1部+第2部')) payHasP1=true;
+      if (t.includes('懇親会')||t.includes('第1部+第2部')) payHasP2=true;
+    }
+    const pp=[]; if(adultN) pp.push('大人'+adultN); pp.push(...cp);
+    payNinzu = pp.join('+');
+  }
+
+  const surveyBu = sv['参加する部']||'';
+  const surveyNum = sv['参加する合計人数']||'';
+  const surveyChild = sv['参加する子ども']||'';
+  const bu = ov.bu || surveyBu || '';
+
+  // === Smart consistency check ===
+  let issue = '';
+  const hasSurvey = !!(sv['お名前']||sv['uid']);
+  const hasPayment = !!pay;
+
+  if (hasSurvey && !hasPayment) {
+    // No payment: OK if 実行委員(both free) or need to check
+    if (category === '実行委員') {
+      issue = ''; // 両方無料 → OK
+    } else if (category === 'サロン生' && surveyBu && !surveyBu.includes('両方')) {
+      // サロン生 attending only 第2部 → free, OK
+      issue = '';
+    } else {
+      issue = '未決済';
+    }
+  }
+  if (hasSurvey && hasPayment) {
+    if (surveyBu.includes('両方') && payHasP1 && !payHasP2) {
+      // Bought only part 1: OK if サロン生(2部無料) or 実行委員
+      if (category === 'サロン生' || category === '実行委員') {
+        issue = ''; // free ticket for part 2
+      } else {
+        issue = '第2部未購入';
+      }
+    } else if (surveyBu.includes('両方') && !payHasP1 && payHasP2) {
+      if (category === '実行委員') {
+        issue = '';
+      } else {
+        issue = '第1部未購入';
+      }
+    }
+  }
+  if (hasPayment && !hasSurvey) {
+    issue = 'アンケート未回答';
+  }
+
+  return {
+    key, uid,
+    name: sv['お名前']||ro['お名前']||'',
+    category, kiseig: ro['〇期生']||ro['期生']||'', email,
+    area: sv['お住まいのエリア']||ro['お住まいのエリア']||ro['お住まい']||'',
+    surveyBu, surveyNum, surveyChild, bu,
+    payDetail, payNinzu, payTotal,
+    issue,
+    allergy: sv['アレルギー']||ro['アレルギー']||'',
+    leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
+    hasSurvey, hasPayment,
+    _catEdited: !!ov.category, _buEdited: !!ov.bu,
+    checked: !!checks[key],
+    memo: memos[key] || '',
+  };
+}
+
+// ===== FILTERS =====
+function populateFilters() {
+  const cats=new Set(), areas=new Set(), bus=new Set();
+  for (const r of allRows) {
+    if(r.category) cats.add(r.category);
+    if(r.area) areas.add(r.area);
+    if(r.bu) bus.add(r.bu);
+  }
+  fillSelect('f-cat', [...cats].sort((a,b)=>(CAT_ORDER[a]??9)-(CAT_ORDER[b]??9)));
+  fillSelect('f-area', [...areas].sort());
+  fillSelect('f-bu', [...bus].sort());
+}
+
+function fillSelect(id, options) {
+  const sel=document.getElementById(id); const cur=sel.value;
+  while(sel.options.length>1) sel.remove(1);
+  for(const o of options){const opt=document.createElement('option');opt.value=o;opt.textContent=o;sel.appendChild(opt);}
+  sel.value=cur;
+}
+
+function getFiltered() {
+  const fCat=document.getElementById('f-cat').value;
+  const fBu=document.getElementById('f-bu').value;
+  const fArea=document.getElementById('f-area').value;
+  const fPay=document.getElementById('f-pay').value;
+  const fIssue=document.getElementById('f-issue').value;
+  const fCheck=document.getElementById('f-check').value;
+  const fSearch=document.getElementById('f-search').value.toLowerCase().trim();
+
+  return allRows.filter(r => {
+    if(fCat && r.category!==fCat) return false;
+    if(fBu && r.bu!==fBu) return false;
+    if(fArea && r.area!==fArea) return false;
+    if(fPay==='paid' && !r.hasPayment) return false;
+    if(fPay==='unpaid' && r.hasPayment) return false;
+    if(fIssue==='has' && !r.issue) return false;
+    if(fIssue==='ok' && r.issue) return false;
+    if(fCheck==='done' && !r.checked) return false;
+    if(fCheck==='undone' && r.checked) return false;
+    if(fSearch && !(r.name.toLowerCase().includes(fSearch)||r.email.includes(fSearch))) return false;
+    return true;
+  });
+}
+
+function resetFilters() {
+  ['f-cat','f-bu','f-area','f-pay','f-issue','f-check'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-search').value='';
+  renderTable();
+}
+
+// ===== SORTING =====
+function sortBy(col) {
+  if(sortCol===col) sortAsc=!sortAsc;
+  else { sortCol=col; sortAsc=true; }
+  renderTable();
+}
+
+function compareRows(a,b) {
+  let va,vb;
+  switch(sortCol){
+    case 'index': return 0;
+    case 'name': va=a.name;vb=b.name;break;
+    case 'category': va=CAT_ORDER[a.category]??9;vb=CAT_ORDER[b.category]??9; return sortAsc?va-vb:vb-va;
+    case 'kiseig': va=a.kiseig;vb=b.kiseig;break;
+    case 'area': va=a.area;vb=b.area;break;
+    case 'bu': va=a.bu;vb=b.bu;break;
+    case 'peopleCount': va=parseInt(a.surveyNum)||0;vb=parseInt(b.surveyNum)||0; return sortAsc?va-vb:vb-va;
+    case 'children': va=a.surveyChild;vb=b.surveyChild;break;
+    case 'payDetail': va=a.payDetail;vb=b.payDetail;break;
+    case 'payNinzu': va=a.payNinzu;vb=b.payNinzu;break;
+    case 'payTotal': return sortAsc?a.payTotal-b.payTotal:b.payTotal-a.payTotal;
+    case 'issue': va=a.issue;vb=b.issue;break;
+    case 'leader': va=a.leader;vb=b.leader;break;
+    default: return 0;
+  }
+  va=va||'';vb=vb||'';
+  return sortAsc?va.localeCompare(vb,'ja'):vb.localeCompare(va,'ja');
+}
+
+// ===== RENDERING =====
+function renderTable() {
+  const filtered=getFiltered();
+  filtered.sort(compareRows);
+  updateStats(filtered);
+
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML='';
+
+  for(let i=0;i<filtered.length;i++){
+    const r=filtered[i];
+    const tr=document.createElement('tr');
+    if(r.checked) tr.className='row-checked';
+
+    tr.innerHTML=`
+      <td>${i+1}</td>
+      <td class="col-check"><input type="checkbox" class="check-box" ${r.checked?'checked':''} onchange="onCheck('${escAttr(r.key)}',this.checked)"></td>
+      <td class="name-cell">${esc(r.name)||'—'}</td>
+      <td>${makeSelect(r.key,'category',r.category,CAT_OPTIONS,r._catEdited)}</td>
+      <td style="font-size:10px">${esc(r.kiseig)||'—'}</td>
+      <td style="font-size:10px">${esc(r.area)||'—'}</td>
+      <td class="col-survey">${makeSelect(r.key,'bu',r.bu,BU_OPTIONS,r._buEdited)}</td>
+      <td class="col-survey" style="text-align:center">${esc(r.surveyNum)||'—'}</td>
+      <td class="col-survey" style="font-size:10px">${esc(r.surveyChild)||'—'}</td>
+      <td class="col-pay detail-text">${r.payDetail?esc(r.payDetail):'<span class="pay-ng">—</span>'}</td>
+      <td class="col-pay" style="text-align:center;font-size:10px">${esc(r.payNinzu)||'—'}</td>
+      <td class="col-pay ${r.payTotal>0?'pay-ok amount':'pay-ng'}">${r.payTotal>0?'¥'+r.payTotal.toLocaleString():'—'}</td>
+      <td>${r.issue?'<span class="issue-text">'+esc(r.issue)+'</span>':'<span style="color:var(--green);font-size:9px">OK</span>'}</td>
+      <td style="font-size:10px">${esc(r.allergy)||'—'}</td>
+      <td style="font-size:10px">${esc(r.leader)||'—'}</td>
+      <td class="${r.hasSurvey?'survey-ok':'survey-ng'}">${r.hasSurvey?'○':'×'}</td>
+      <td><input type="text" class="memo-input${r.memo?' has-value':''}" value="${escAttr(r.memo)}" placeholder="メモ..." onchange="onMemo('${escAttr(r.key)}',this.value)" onblur="onMemo('${escAttr(r.key)}',this.value)"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  document.getElementById('rowCount').textContent=`${filtered.length}件表示 / 全${allRows.length}件`;
+}
+
+function makeSelect(key,field,value,options,isEdited){
+  const cls=isEdited?'cell-select edited':'cell-select';
+  let h=`<select class="${cls}" onchange="onCellEdit('${escAttr(key)}','${field}',this.value)">`;
+  for(const o of options){h+=`<option value="${escAttr(o)}"${o===value?' selected':''}>${esc(o)||'—'}</option>`;}
+  return h+'</select>';
+}
+
+function updateStats(filtered){
+  const total=filtered.length;
+  const paid=filtered.filter(r=>r.hasPayment).length;
+  const revenue=filtered.reduce((s,r)=>s+r.payTotal,0);
+  const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
+  const both=filtered.filter(r=>r.bu==='両方参加').length;
+  const p1=filtered.filter(r=>r.bu==='第一部のみ').length;
+  const p2=filtered.filter(r=>r.bu==='第二部のみ').length;
+  const checked=filtered.filter(r=>r.checked).length;
+
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-paid').textContent=paid;
+  document.getElementById('s-unpaid').textContent=total-paid;
+  document.getElementById('s-revenue').textContent='¥'+revenue.toLocaleString();
+  document.getElementById('s-people').textContent=people;
+  document.getElementById('s-both').textContent=both;
+  document.getElementById('s-part1').textContent=p1;
+  document.getElementById('s-part2').textContent=p2;
+  document.getElementById('s-checked').textContent=checked+'/'+total;
+}
+
+// ===== EDITING =====
+function onCellEdit(key,field,value){
+  if(!overrides[key]) overrides[key]={};
+  overrides[key][field]=value;
+  const row=allRows.find(r=>r.key===key);
+  if(!row) return;
+  if(field==='category'){row.category=value;row._catEdited=true; recalcIssue(row);}
+  if(field==='bu'){row.bu=value;row._buEdited=true; recalcIssue(row);}
+  localStorage.setItem('dousoukai_overrides',JSON.stringify(overrides));
+  renderTable();
+}
+
+function recalcIssue(r){
+  // Recalculate issue based on new category
+  r.issue='';
+  const payHasP1=r.payDetail.includes('記念式典')||r.payDetail.includes('第1部+第2部');
+  const payHasP2=r.payDetail.includes('懇親会')||r.payDetail.includes('第1部+第2部');
+
+  if(r.hasSurvey && !r.hasPayment){
+    if(r.category==='実行委員') r.issue='';
+    else if(r.category==='サロン生' && r.surveyBu && !r.surveyBu.includes('両方')) r.issue='';
+    else r.issue='未決済';
+  }
+  if(r.hasSurvey && r.hasPayment){
+    if(r.surveyBu.includes('両方') && payHasP1 && !payHasP2){
+      if(r.category==='サロン生'||r.category==='実行委員') r.issue='';
+      else r.issue='第2部未購入';
+    } else if(r.surveyBu.includes('両方') && !payHasP1 && payHasP2){
+      if(r.category==='実行委員') r.issue='';
+      else r.issue='第1部未購入';
+    }
+  }
+  if(r.hasPayment && !r.hasSurvey) r.issue='アンケート未回答';
+}
+
+function onCheck(key,val){
+  checks[key]=val;
+  if(!val) delete checks[key];
+  localStorage.setItem('dousoukai_checks',JSON.stringify(checks));
+  const row=allRows.find(r=>r.key===key);
+  if(row) row.checked=val;
+  renderTable();
+}
+
+function onMemo(key,val){
+  val=val.trim();
+  if(val) memos[key]=val; else delete memos[key];
+  localStorage.setItem('dousoukai_memos',JSON.stringify(memos));
+  const row=allRows.find(r=>r.key===key);
+  if(row) row.memo=val;
+}
+
+// ===== EXPORT =====
+function exportCSV(){
+  const filtered=getFiltered();
+  filtered.sort(compareRows);
+  const headers=['#','確認','お名前','カテゴリー','期生','エリア','参加する部(申告)','参加人数(申告)','子ども(申告)','決済商品','決済人数','決済金額','整合性','アレルギー','リーダー','アンケート回答','備考','メール'];
+  const csvRows=[headers.join(',')];
+  for(let i=0;i<filtered.length;i++){
+    const r=filtered[i];
+    const row=[
+      i+1, r.checked?'○':'', q(r.name), q(r.category), q(r.kiseig), q(r.area),
+      q(r.surveyBu), r.surveyNum, q(r.surveyChild),
+      q(r.payDetail), q(r.payNinzu), r.payTotal, q(r.issue),
+      q(r.allergy), q(r.leader), r.hasSurvey?'○':'×', q(r.memo), q(r.email)
+    ];
+    csvRows.push(row.join(','));
+  }
+  const bom='﻿';
+  const blob=new Blob([bom+csvRows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`大同窓会_参加者一覧_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function exportForSheet(){
+  const filtered=getFiltered();
+  filtered.sort(compareRows);
+  const headers=['#','確認','お名前','カテゴリー','期生','エリア','参加する部(申告)','参加人数','子ども','決済商品','決済人数','決済金額','整合性','アレルギー','リーダー','回答','備考','メール'];
+  const lines=[headers.join('\t')];
+  for(let i=0;i<filtered.length;i++){
+    const r=filtered[i];
+    lines.push([i+1,r.checked?'○':'',r.name,r.category,r.kiseig,r.area,
+      r.surveyBu,r.surveyNum,r.surveyChild,r.payDetail,r.payNinzu,r.payTotal,
+      r.issue,r.allergy,r.leader,r.hasSurvey?'○':'×',r.memo,r.email].join('\t'));
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(()=>{
+    alert('クリップボードにコピーしました！\nGoogleスプレッドシートに貼り付けできます。');
+  }).catch(()=>{
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=lines.join('\n');
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('クリップボードにコピーしました！');
+  });
+}
+
+function q(s){
+  if(!s) return '';
+  s=String(s);
+  if(s.includes(',')||s.includes('"')||s.includes('\n')) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+
+// ===== UTILS =====
+function esc(s){
+  if(!s)return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s){ return esc(s).replace(/'/g,'&#39;'); }
+
+// ===== EVENT LISTENERS =====
+['f-cat','f-bu','f-area','f-pay','f-issue','f-check'].forEach(id=>
+  document.getElementById(id).addEventListener('change',renderTable));
+document.getElementById('f-search').addEventListener('input',renderTable);
+
+// ===== INIT =====
+loadData();
+</script>
+
+</body>
+</html>
