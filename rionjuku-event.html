@@ -48,6 +48,11 @@
   .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 8px; text-align: center; }
   .stat-num { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.2; }
   .stat-label { font-size: 9px; color: var(--sub); }
+  .stats-sub { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .stats-sub-group { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .stats-sub-title { font-size: 10px; font-weight: 700; color: var(--accent); margin-right: 2px; }
+  .stats-sub-item { font-size: 11px; color: var(--text); background: #f5f0eb; border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+  .stats-sub-item b { font-weight: 800; color: var(--accent); }
 
   .filters {
     background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
@@ -191,6 +196,19 @@
     <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第一部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第二部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
+  </div>
+  <div class="stats-sub">
+    <div class="stats-sub-group">
+      <span class="stats-sub-title">カテゴリ</span>
+      <span class="stats-sub-item" id="s-cat-exec">実行委員 -</span>
+      <span class="stats-sub-item" id="s-cat-salon">サロン生 -</span>
+      <span class="stats-sub-item" id="s-cat-grad">卒業生 -</span>
+      <span class="stats-sub-item" id="s-cat-other">一般・未設定 -</span>
+    </div>
+    <div class="stats-sub-group">
+      <span class="stats-sub-title">エリア</span>
+      <span id="s-areas" style="display:contents"></span>
+    </div>
   </div>
 
   <div class="filters">
@@ -674,6 +692,24 @@ function updateStats(filtered){
     }
   }
 
+  // Category counts
+  const catExec=filtered.filter(r=>r.category==='実行委員').length;
+  const catSalon=filtered.filter(r=>r.category==='サロン生').length;
+  const catGrad=filtered.filter(r=>r.category==='卒業生').length;
+  const catOther=total-catExec-catSalon-catGrad;
+
+  // Area counts
+  const areaCounts={};
+  for(const r of filtered){
+    const a=r.area||'未設定';
+    areaCounts[a]=(areaCounts[a]||0)+1;
+  }
+  const AREA_ORDER=['北海道・東北','関東','中部','関西','中国・四国','九州・沖縄','未設定'];
+  const areaSorted=Object.entries(areaCounts).sort((a,b)=>{
+    const ia=AREA_ORDER.indexOf(a[0]),ib=AREA_ORDER.indexOf(b[0]);
+    return (ia<0?99:ia)-(ib<0?99:ib);
+  });
+
   document.getElementById('s-total').textContent=total;
   document.getElementById('s-people').textContent=people;
   document.getElementById('s-both').textContent=both;
@@ -682,6 +718,11 @@ function updateStats(filtered){
   document.getElementById('s-kid1').textContent=`小${k1Elem} 中${k1Mid}`;
   document.getElementById('s-kid2').textContent=`小${k2Elem} 中${k2Mid}`;
   document.getElementById('s-preschool').textContent=preschool;
+  document.getElementById('s-cat-exec').innerHTML=`実行委員 <b>${catExec}</b>`;
+  document.getElementById('s-cat-salon').innerHTML=`サロン生 <b>${catSalon}</b>`;
+  document.getElementById('s-cat-grad').innerHTML=`卒業生 <b>${catGrad}</b>`;
+  document.getElementById('s-cat-other').innerHTML=`一般・未設定 <b>${catOther}</b>`;
+  document.getElementById('s-areas').innerHTML=areaSorted.map(([a,n])=>`<span class="stats-sub-item">${a} <b>${n}</b></span>`).join('');
 }
 
 function onMemo(key,val){
