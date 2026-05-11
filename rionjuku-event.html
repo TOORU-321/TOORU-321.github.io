@@ -189,6 +189,7 @@
 <div class="wrap">
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-total">-</div><div class="stat-label">申込者数</div></div>
+    <div class="stat"><div class="stat-num" id="s-paidPeople" style="color:var(--green)">-</div><div class="stat-label">有料決済人数</div></div>
     <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
     <div class="stat"><div class="stat-num" id="s-both">-</div><div class="stat-label">両方参加</div></div>
     <div class="stat"><div class="stat-num" id="s-part1">-</div><div class="stat-label">第一部のみ</div></div>
@@ -488,20 +489,25 @@ function buildRow(uid, sv, ro, pay) {
   const rawCat = ro['カテゴリー']||'';
   const category = CAT_MAP[rawCat]||rawCat||'';
 
-  let payDetail='',payNinzu='',payTotal=0,payHasP1=false,payHasP2=false;
+  let payDetail='',payNinzu='',payTotal=0,payHasP1=false,payHasP2=false,payPeopleN=0;
   if(pay){
     const items=[...pay.items].sort((a,b)=>ticketSortKey(a)-ticketSortKey(b));
     payDetail=items.join(' / '); payTotal=pay.total;
-    let adultN=0; const cp=[];
+    // Count unique paid people per type (dedup across parts)
+    let p1Adult=0,p1Mid=0,p1Elem=0,p2Adult=0,p2Mid=0,p2Elem=0;
     for(const t of items){
       const n=t.includes('2人')?2:(t.includes('3人')?3:1);
-      if(t.includes('大人'))adultN+=n;
-      else if(t.includes('中高生'))cp.push('中高生'+n);
-      else if(t.includes('小学生'))cp.push('小学生'+n);
-      if(t.includes('記念式典')||t.includes('第1部+第2部'))payHasP1=true;
-      if(t.includes('懇親会')||t.includes('第1部+第2部'))payHasP2=true;
+      const isP1=t.includes('記念式典'); const isP2=t.includes('懇親会'); const isBoth=t.includes('第1部+第2部');
+      if(isP1||isBoth) payHasP1=true;
+      if(isP2||isBoth) payHasP2=true;
+      if(t.includes('大人')){if(isP1)p1Adult+=n;else if(isP2)p2Adult+=n;else if(isBoth){p1Adult+=n;p2Adult+=n;}}
+      else if(t.includes('中高生')){if(isP1)p1Mid+=n;else if(isP2)p2Mid+=n;else if(isBoth){p1Mid+=n;p2Mid+=n;}}
+      else if(t.includes('小学生')){if(isP1)p1Elem+=n;else if(isP2)p2Elem+=n;else if(isBoth){p1Elem+=n;p2Elem+=n;}}
     }
-    const pp=[]; if(adultN)pp.push('大人'+adultN); pp.push(...cp);
+    // Unique people = max of P1 vs P2 per type (same person attending both parts)
+    const uAdult=Math.max(p1Adult,p2Adult), uMid=Math.max(p1Mid,p2Mid), uElem=Math.max(p1Elem,p2Elem);
+    payPeopleN=uAdult+uMid+uElem;
+    const pp=[]; if(uAdult)pp.push('大人'+uAdult); if(uMid)pp.push('中高生'+uMid); if(uElem)pp.push('小学生'+uElem);
     payNinzu=pp.join('+');
   }
 
@@ -547,7 +553,7 @@ function buildRow(uid, sv, ro, pay) {
     area: sv['お住まいのエリア']||ro['お住まいのエリア']||ro['お住まい']||'',
     surveyBu, surveyNum, surveyChild, bu,
     hasPreschool, hasElementary, hasMiddle, attendsP1, attendsP2,
-    payDetail, payNinzu, payTotal,
+    payDetail, payNinzu, payTotal, payPeopleN,
     issue,
     allergy: sv['アレルギー']||ro['アレルギー']||'',
     leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
@@ -710,7 +716,10 @@ function updateStats(filtered){
     return (ia<0?99:ia)-(ib<0?99:ib);
   });
 
+  const paidPeople=filtered.reduce((s,r)=>s+r.payPeopleN,0);
+
   document.getElementById('s-total').textContent=total;
+  document.getElementById('s-paidPeople').textContent=paidPeople;
   document.getElementById('s-people').textContent=people;
   document.getElementById('s-both').textContent=both;
   document.getElementById('s-part1').textContent=p1;
