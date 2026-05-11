@@ -632,6 +632,54 @@
       "total": 16000,
       "email": "middle_mika@yahoo.co.jp",
       "details": "第1部+第2部 小学生2人"
+    },
+    "khptyn": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "machiyoyoyoyo0701@gmail.com",
+      "details": "記念式典 大人1人"
+    },
+    "zropsh": {
+      "items": [
+        "第1部+第2部 大人1人"
+      ],
+      "total": 27000,
+      "email": "teruyuki.yoshiike@gmail.com",
+      "details": "第1部+第2部 大人1人"
+    },
+    "kholpa": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "18mkosnd23230890@gmail.com",
+      "details": "記念式典 大人1人"
+    },
+    "cyiqem": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "babowaku@gmail.com",
+      "details": "記念式典 大人1人"
+    },
+    "uytsoi": {
+      "items": [
+        "第1部+第2部 大人1人"
+      ],
+      "total": 27000,
+      "email": "yukkin2721@yahoo.co.jp",
+      "details": "第1部+第2部 大人1人"
+    },
+    "rvijxc": {
+      "items": [
+        "第1部+第2部 大人1人"
+      ],
+      "total": 27000,
+      "email": "megu.maaya7@gmail.com",
+      "details": "第1部+第2部 大人1人"
     }
   },
   "byEmail": {
@@ -710,6 +758,12 @@
     "chika_4221@icloud.com": "kswima",
     "spiel.rugandleather.works@gmail.com": "vgnszb",
     "s.hi.maw1016@gmail.com": "yvehxj",
-    "middle_mika@yahoo.co.jp": "dctqof"
+    "middle_mika@yahoo.co.jp": "dctqof",
+    "machiyoyoyoyo0701@gmail.com": "khptyn",
+    "teruyuki.yoshiike@gmail.com": "zropsh",
+    "18mkosnd23230890@gmail.com": "kholpa",
+    "babowaku@gmail.com": "cyiqem",
+    "yukkin2721@yahoo.co.jp": "uytsoi",
+    "megu.maaya7@gmail.com": "rvijxc"
   }
 }
