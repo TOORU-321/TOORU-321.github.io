@@ -48,6 +48,7 @@
   .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 10px 8px; text-align: center; }
   .stat-num { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.2; }
   .stat-label { font-size: 9px; color: var(--sub); }
+  .stat-sub { font-size: 10px; color: var(--green); font-weight: 700; margin-top: 2px; }
   .stats-sub { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .stats-sub-group { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
   .stats-sub-title { font-size: 10px; font-weight: 700; color: var(--accent); margin-right: 2px; }
@@ -189,13 +190,11 @@
 <div class="wrap">
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-total">-</div><div class="stat-label">申込者数</div></div>
-    <div class="stat"><div class="stat-num" id="s-paidPeople" style="color:var(--green)">-</div><div class="stat-label">有料決済人数</div></div>
     <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
-    <div class="stat"><div class="stat-num" id="s-both">-</div><div class="stat-label">両方参加</div></div>
-    <div class="stat"><div class="stat-num" id="s-part1">-</div><div class="stat-label">第一部のみ</div></div>
-    <div class="stat"><div class="stat-num" id="s-part2">-</div><div class="stat-label">第二部のみ</div></div>
-    <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第一部 子ども</div></div>
-    <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第二部 子ども</div></div>
+    <div class="stat"><div class="stat-num" id="s-p1total">-</div><div class="stat-label">第1部 参加人数</div><div class="stat-sub" id="s-p1paid"></div></div>
+    <div class="stat"><div class="stat-num" id="s-p2total">-</div><div class="stat-label">第2部 参加人数</div><div class="stat-sub" id="s-p2paid"></div></div>
+    <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第1部 子ども</div></div>
+    <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第2部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
   </div>
   <div class="stats-sub">
@@ -489,7 +488,7 @@ function buildRow(uid, sv, ro, pay) {
   const rawCat = ro['カテゴリー']||'';
   const category = CAT_MAP[rawCat]||rawCat||'';
 
-  let payDetail='',payNinzu='',payTotal=0,payHasP1=false,payHasP2=false,payPeopleN=0;
+  let payDetail='',payNinzu='',payTotal=0,payHasP1=false,payHasP2=false,payPeopleN=0,payP1N=0,payP2N=0;
   if(pay){
     const items=[...pay.items].sort((a,b)=>ticketSortKey(a)-ticketSortKey(b));
     payDetail=items.join(' / '); payTotal=pay.total;
@@ -507,6 +506,8 @@ function buildRow(uid, sv, ro, pay) {
     // Unique people = max of P1 vs P2 per type (same person attending both parts)
     const uAdult=Math.max(p1Adult,p2Adult), uMid=Math.max(p1Mid,p2Mid), uElem=Math.max(p1Elem,p2Elem);
     payPeopleN=uAdult+uMid+uElem;
+    payP1N=p1Adult+p1Mid+p1Elem;
+    payP2N=p2Adult+p2Mid+p2Elem;
     const pp=[]; if(uAdult)pp.push('大人'+uAdult); if(uMid)pp.push('中高生'+uMid); if(uElem)pp.push('小学生'+uElem);
     payNinzu=pp.join('+');
   }
@@ -553,7 +554,7 @@ function buildRow(uid, sv, ro, pay) {
     area: sv['お住まいのエリア']||ro['お住まいのエリア']||ro['お住まい']||'',
     surveyBu, surveyNum, surveyChild, bu,
     hasPreschool, hasElementary, hasMiddle, attendsP1, attendsP2,
-    payDetail, payNinzu, payTotal, payPeopleN,
+    payDetail, payNinzu, payTotal, payPeopleN, payP1N, payP2N,
     issue,
     allergy: sv['アレルギー']||ro['アレルギー']||'',
     leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
@@ -680,9 +681,11 @@ function renderTable(){
 function updateStats(filtered){
   const total=filtered.length;
   const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
-  const both=filtered.filter(r=>r.bu==='両方参加').length;
-  const p1=filtered.filter(r=>r.bu==='第一部のみ').length;
-  const p2=filtered.filter(r=>r.bu==='第二部のみ').length;
+  // Part totals (attendees, not headcount)
+  const p1Total=filtered.filter(r=>r.attendsP1).length;
+  const p2Total=filtered.filter(r=>r.attendsP2).length;
+  const p1Paid=filtered.reduce((s,r)=>s+r.payP1N,0);
+  const p2Paid=filtered.reduce((s,r)=>s+r.payP2N,0);
 
   // Child counts per part
   let k1Elem=0,k1Mid=0,k2Elem=0,k2Mid=0,preschool=0;
@@ -716,14 +719,12 @@ function updateStats(filtered){
     return (ia<0?99:ia)-(ib<0?99:ib);
   });
 
-  const paidPeople=filtered.reduce((s,r)=>s+r.payPeopleN,0);
-
   document.getElementById('s-total').textContent=total;
-  document.getElementById('s-paidPeople').textContent=paidPeople;
   document.getElementById('s-people').textContent=people;
-  document.getElementById('s-both').textContent=both;
-  document.getElementById('s-part1').textContent=p1;
-  document.getElementById('s-part2').textContent=p2;
+  document.getElementById('s-p1total').textContent=p1Total;
+  document.getElementById('s-p1paid').textContent=`有料 ${p1Paid}人`;
+  document.getElementById('s-p2total').textContent=p2Total;
+  document.getElementById('s-p2paid').textContent=`有料 ${p2Paid}人`;
   document.getElementById('s-kid1').textContent=`小${k1Elem} 中${k1Mid}`;
   document.getElementById('s-kid2').textContent=`小${k2Elem} 中${k2Mid}`;
   document.getElementById('s-preschool').textContent=preschool;
