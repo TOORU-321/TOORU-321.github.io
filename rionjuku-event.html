@@ -681,9 +681,9 @@ function renderTable(){
 function updateStats(filtered){
   const total=filtered.length;
   const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
-  // Part totals (attendees, not headcount)
-  const p1Total=filtered.filter(r=>r.attendsP1).length;
-  const p2Total=filtered.filter(r=>r.attendsP2).length;
+  // Part totals (headcount: surveyNum per person attending that part)
+  const p1Total=filtered.filter(r=>r.attendsP1).reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
+  const p2Total=filtered.filter(r=>r.attendsP2).reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
   const p1Paid=filtered.reduce((s,r)=>s+r.payP1N,0);
   const p2Paid=filtered.reduce((s,r)=>s+r.payP2N,0);
 
