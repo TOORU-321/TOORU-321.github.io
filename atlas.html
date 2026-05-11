@@ -7397,13 +7397,17 @@ body.has-quest-dock { padding-bottom: 96px; }
         const name   = esc(r.displayName || '冒険者');
         const mob    = esc(r.mobType || '');
         const isSelf = !!(typeof fbUid !== 'undefined' && fbUid && r.uid === fbUid);
+        // damage が記録されていれば数値表示、無ければ ⚔︎
+        const dmgHtml = (typeof r.damage === 'number' && r.damage > 0)
+          ? '+' + r.damage.toLocaleString('en-US')
+          : '⚔︎';
         return (
           '<li class="log-item' + (isSelf ? ' is-self' : '') + '">' +
             '<span class="log-item__time">' + time + '</span>' +
             '<span class="log-item__name">' + (isSelf ? 'あなた' : name) +
               (mob ? '<span class="log-item__name-role">— ' + mob + '</span>' : '') +
             '</span>' +
-            '<span class="log-item__dmg">⚔︎</span>' +
+            '<span class="log-item__dmg">' + dmgHtml + '</span>' +
           '</li>'
         );
       }).join('');
@@ -8776,7 +8780,9 @@ body.has-quest-dock { padding-bottom: 96px; }
       // ギルドの動向（アクティビティログ）へ記録
       try {
         if(typeof logActivity === 'function'){
-          logActivity('mob_kill', { mobType: mobName, category: t.cat || '' });
+          // 与えたダメージ＝そのクエストの EXP 値（t.exp）。レイドへの寄与と一致。
+          const dmg = Math.max(0, Math.min(1000, parseInt(t.exp, 10) || 20));
+          logActivity('mob_kill', { mobType: mobName, category: t.cat || '', damage: dmg });
           if(leveledUp){
             // mob_kill のスパム判定と分けるため少し遅らせて level_up を別エントリに
             setTimeout(() => {
@@ -9634,9 +9640,9 @@ body.has-quest-dock { padding-bottom: 96px; }
             .limit(LEADERBOARD_LIMIT)
             .get();
         } else if(axis === 'knight' || axis === 'sage' || axis === 'ranger'){
-          // クラス別：dominantClass がそのクラスのユーザーを damage 降順で
+          // クラス別：複合インデックス（dominantClass + weeklyDamage）を避けるため、
+          // damage 降順で全件取得 → クライアント側で dominantClass フィルタ
           snap = await col
-            .where('dominantClass', '==', axis)
             .orderBy('weeklyDamage', 'desc')
             .limit(LEADERBOARD_LIMIT)
             .get();
@@ -9664,6 +9670,9 @@ body.has-quest-dock { padding-bottom: 96px; }
       } else if(axis === 'rookie'){
         // joinedWeekKey 順で取った後、damage 降順に再ソート（複合インデックス不要のため）
         rows.sort((a,b) => (b.weeklyDamage || 0) - (a.weeklyDamage || 0));
+      } else if(axis === 'knight' || axis === 'sage' || axis === 'ranger'){
+        // dominantClass フィルタをクライアント側で適用
+        rows = rows.filter(r => r && r.dominantClass === axis);
       }
 
       _leaderboardCache[ck] = { ts: Date.now(), data: rows };
@@ -10082,6 +10091,9 @@ body.has-quest-dock { padding-bottom: 96px; }
           const r = Math.random();
           let evt;
           if(r < 0.80){
+            // ダミーのダメージは Lv に応じて 30〜180 で揺らす（リアリティを出す）
+            const baseDmg = 30 + p.level * 12;
+            const dmg = Math.max(20, Math.floor(baseDmg + (Math.random() * 80 - 40)));
             evt = {
               type: 'mob_kill',
               uid: 'dummy_' + p.name,
@@ -10089,6 +10101,7 @@ body.has-quest-dock { padding-bottom: 96px; }
               photoURL: '',
               mobType: mobNames[Math.floor(Math.random() * mobNames.length)],
               category: cats[Math.floor(Math.random() * cats.length)],
+              damage: dmg,
               createdAt: ts,
               weekKey: weekKey
             };
@@ -10774,6 +10787,8 @@ body.has-quest-dock { padding-bottom: 96px; }
           if(payload.mobType)  doc.mobType  = String(payload.mobType).slice(0, 50);
           if(typeof payload.level === 'number') doc.level = payload.level;
           if(typeof payload.stage === 'number') doc.stage = payload.stage;
+          // mob_kill のときは damage（その撃破で与えた値）を保存
+          if(typeof payload.damage === 'number' && payload.damage >= 0) doc.damage = payload.damage;
         }
         await fbDb.collection('atlas_activity_log').add(doc);
         _guildFeedCache.ts = 0; // 自分の書込み後はキャッシュ無効化
