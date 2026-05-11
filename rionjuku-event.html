@@ -193,6 +193,7 @@
     <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
     <div class="stat"><div class="stat-num" id="s-p1total">-</div><div class="stat-label">第1部 参加人数</div><div class="stat-sub" id="s-p1paid"></div></div>
     <div class="stat"><div class="stat-num" id="s-p2total">-</div><div class="stat-label">第2部 参加人数</div><div class="stat-sub" id="s-p2paid"></div></div>
+    <div class="stat"><div class="stat-num" id="s-revenue" style="font-size:16px;color:var(--green)">-</div><div class="stat-label">決済合計金額</div></div>
     <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第1部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第2部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
@@ -719,8 +720,11 @@ function updateStats(filtered){
     return (ia<0?99:ia)-(ib<0?99:ib);
   });
 
+  const revenue=filtered.reduce((s,r)=>s+r.payTotal,0);
+
   document.getElementById('s-total').textContent=total;
   document.getElementById('s-people').textContent=people;
+  document.getElementById('s-revenue').textContent='¥'+revenue.toLocaleString();
   document.getElementById('s-p1total').textContent=p1Total;
   document.getElementById('s-p1paid').textContent=`有料 ${p1Paid}人`;
   document.getElementById('s-p2total').textContent=p2Total;
