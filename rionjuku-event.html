@@ -49,6 +49,7 @@
   .stat-num { font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1.2; }
   .stat-label { font-size: 9px; color: var(--sub); }
   .stat-sub { font-size: 10px; color: var(--green); font-weight: 700; margin-top: 2px; }
+  .stat-sub2 { font-size: 9px; color: var(--sub); margin-top: 1px; }
   .stats-sub { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
   .stats-sub-group { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
   .stats-sub-title { font-size: 10px; font-weight: 700; color: var(--accent); margin-right: 2px; }
@@ -191,11 +192,9 @@
   <div class="stats">
     <div class="stat"><div class="stat-num" id="s-total">-</div><div class="stat-label">申込者数</div></div>
     <div class="stat"><div class="stat-num" id="s-people">-</div><div class="stat-label">参加予定総人数</div></div>
-    <div class="stat"><div class="stat-num" id="s-p1total">-</div><div class="stat-label">第1部 参加人数</div><div class="stat-sub" id="s-p1paid"></div></div>
-    <div class="stat"><div class="stat-num" id="s-p2total">-</div><div class="stat-label">第2部 参加人数</div><div class="stat-sub" id="s-p2paid"></div></div>
+    <div class="stat"><div class="stat-num" id="s-p1total">-</div><div class="stat-label">第1部 参加人数</div><div class="stat-sub" id="s-p1paid"></div><div class="stat-sub2" id="s-p1kids"></div></div>
+    <div class="stat"><div class="stat-num" id="s-p2total">-</div><div class="stat-label">第2部 参加人数</div><div class="stat-sub" id="s-p2paid"></div><div class="stat-sub2" id="s-p2kids"></div></div>
     <div class="stat"><div class="stat-num" id="s-revenue" style="font-size:16px;color:var(--green)">-</div><div class="stat-label">決済合計金額</div></div>
-    <div class="stat"><div class="stat-num" id="s-kid1" style="font-size:13px">-</div><div class="stat-label">第1部 子ども</div></div>
-    <div class="stat"><div class="stat-num" id="s-kid2" style="font-size:13px">-</div><div class="stat-label">第2部 子ども</div></div>
     <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
   </div>
   <div class="stats-sub">
@@ -727,10 +726,10 @@ function updateStats(filtered){
   document.getElementById('s-revenue').textContent='¥'+revenue.toLocaleString();
   document.getElementById('s-p1total').textContent=p1Total;
   document.getElementById('s-p1paid').textContent=`有料 ${p1Paid}人`;
+  document.getElementById('s-p1kids').textContent=`子ども：小${k1Elem} 中${k1Mid}`;
   document.getElementById('s-p2total').textContent=p2Total;
   document.getElementById('s-p2paid').textContent=`有料 ${p2Paid}人`;
-  document.getElementById('s-kid1').textContent=`小${k1Elem} 中${k1Mid}`;
-  document.getElementById('s-kid2').textContent=`小${k2Elem} 中${k2Mid}`;
+  document.getElementById('s-p2kids').textContent=`子ども：小${k2Elem} 中${k2Mid}`;
   document.getElementById('s-preschool').textContent=preschool;
   document.getElementById('s-cat-exec').innerHTML=`実行委員 <b>${catExec}</b>`;
   document.getElementById('s-cat-salon').innerHTML=`サロン生 <b>${catSalon}</b>`;
