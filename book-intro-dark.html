@@ -73,6 +73,41 @@
     letter-spacing: 0.08em;
   }
 
+  /* ====== Writing Section (Hero copy) ====== */
+  .writing-section {
+    padding: 80px 24px 60px;
+    text-align: center;
+    background: var(--bg);
+  }
+  .writing-section .lead {
+    font-size: 22px;
+    line-height: 1.9;
+    color: var(--accent);
+    margin-bottom: 32px;
+    letter-spacing: 0.06em;
+  }
+  .writing-section .body-text {
+    max-width: 560px;
+    margin: 0 auto 24px;
+    font-size: 16px;
+    line-height: 2.1;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+  .writing-section .body-text em {
+    font-style: normal;
+    color: var(--accent-light);
+  }
+  .writing-section .closing {
+    margin-top: 40px;
+    font-size: 15px;
+    line-height: 2.0;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   /* ====== Image Section ====== */
   .image-section {
     width: 100%;
@@ -82,11 +117,24 @@
   }
   .image-section img {
     width: 100%;
-    max-width: 1280px;
+    max-width: 480px;
     height: auto;
     display: block;
     margin: 0 auto;
     box-shadow: 0 8px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ====== Book Cover in Info Section ====== */
+  .cover-thumb {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .cover-thumb img {
+    max-width: 240px;
+    width: 60%;
+    height: auto;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-radius: 2px;
   }
 
   /* ====== Divider ====== */
@@ -329,36 +377,64 @@
   </div>
 </header>
 
-<!-- ====== HERO IMAGE ====== -->
+<!-- ====== WRITING (Hero Copy) ====== -->
+<section class="writing-section">
+  <p class="lead">あなたの財布の、その十円玉も——</p>
+
+  <p class="body-text">
+    昭和三十三年、大阪造幣局。<br>
+    一枚のギザ十が、世に出ました。
+  </p>
+
+  <p class="body-text">
+    駄菓子屋の少年、失恋した青年、初恋の電話を勇気を出してかけた小学生、<br>
+    結婚指輪の振込が、十円足りなかった男、夏祭りの夜にないしょの願いをした女の子、<br>
+    認知症のおじいちゃん、雪の夜に形見を手放した二十歳の女の子——
+  </p>
+
+  <p class="body-text">
+    十七年で、七人の手を渡るうちに、<br>
+    <em>この十円玉だけが、知っていること。</em>
+  </p>
+
+  <p class="closing">
+    読み終わったあと、<br>
+    ふと、財布の中のちいさな十円玉を、<br>
+    いつもと、すこしちがう目で、<br>
+    見てみたくなる物語。
+  </p>
+</section>
+
+<div class="divider"><span class="divider-symbol">◇</span></div>
+
+<!-- ====== IMAGE 1 ====== -->
 <section class="image-section">
   <img src="/assets/gizajyu/03_intro.png" alt="ギザ十、昭和三十三年生まれ。 10円玉は知っている 1巻 — 昭和100年記念小説">
 </section>
 
 <div class="divider"><span class="divider-symbol">◇</span></div>
 
-<!-- ====== STORY IMAGE ====== -->
+<!-- ====== IMAGE 2 ====== -->
 <section class="image-section">
   <img src="/assets/gizajyu/01_top.png" alt="一枚のギザ十が、時代と心をめぐっていく。願い・勇気・やさしさ・記憶">
 </section>
 
 <div class="divider"><span class="divider-symbol">◇</span></div>
 
-<!-- ====== TARGET READER IMAGE ====== -->
+<!-- ====== IMAGE 3 ====== -->
 <section class="image-section">
   <img src="/assets/gizajyu/02_target.png" alt="こんな物語を、探している方へ。">
-</section>
-
-<div class="divider"><span class="divider-symbol">◇</span></div>
-
-<!-- ====== COVER IMAGE ====== -->
-<section class="image-section">
-  <img src="/assets/gizajyu/04_cover.png" alt="ギザ十、昭和三十三年生まれ。 表紙 — 著者 〆sai">
 </section>
 
 <!-- ====== BOOK INFO ====== -->
 <section class="info-section">
   <div class="info-inner">
     <h2>書籍情報</h2>
+
+    <div class="cover-thumb">
+      <img src="/assets/gizajyu/04_cover.png" alt="ギザ十、昭和三十三年生まれ。 表紙 — 著者 〆sai">
+    </div>
+
     <div class="info-grid">
       <div class="info-row">
         <div class="label">タイトル</div>
