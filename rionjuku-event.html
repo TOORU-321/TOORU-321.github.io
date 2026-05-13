@@ -195,6 +195,7 @@
     <div class="stat"><div class="stat-num" id="s-p1total">-</div><div class="stat-label">第1部 参加人数</div><div class="stat-sub" id="s-p1paid"></div><div class="stat-sub2" id="s-p1kids"></div></div>
     <div class="stat"><div class="stat-num" id="s-p2total">-</div><div class="stat-label">第2部 参加人数</div><div class="stat-sub" id="s-p2paid"></div><div class="stat-sub2" id="s-p2kids"></div></div>
     <div class="stat"><div class="stat-num" id="s-revenue" style="font-size:16px;color:var(--green)">-</div><div class="stat-label">決済合計金額</div></div>
+    <div class="stat"><div class="stat-num" id="s-unmatched" style="color:var(--orange)">-</div><div class="stat-label">Stripe未照合</div></div>
     <div class="stat"><div class="stat-num" id="s-preschool">-</div><div class="stat-label">未就学児</div></div>
   </div>
   <div class="stats-sub">
@@ -237,6 +238,7 @@
       <select id="f-issue">
         <option value="">すべて</option>
         <option value="has">要確認のみ</option>
+        <option value="stripe">Stripe未照合のみ</option>
         <option value="ok">問題なし</option>
       </select>
     </div>
@@ -341,7 +343,7 @@ const COLUMNS = [
 
 function ticketSortKey(t) {
   let p=3,a=3;
-  if(t.includes('記念式典'))p=0;else if(t.includes('第1部+第2部'))p=1;else if(t.includes('懇親会'))p=2;
+  if(t.includes('記念式典'))p=0;else if(t.includes('第1部+第2部'))p=1;else if(t.includes('第2部'))p=2;
   if(t.includes('大人'))a=0;else if(t.includes('中高生'))a=1;else if(t.includes('小学生'))a=2;
   return p*10+a;
 }
@@ -496,7 +498,7 @@ function buildRow(uid, sv, ro, pay) {
     let p1Adult=0,p1Mid=0,p1Elem=0,p2Adult=0,p2Mid=0,p2Elem=0;
     for(const t of items){
       const n=t.includes('2人')?2:(t.includes('3人')?3:1);
-      const isP1=t.includes('記念式典'); const isP2=t.includes('懇親会'); const isBoth=t.includes('第1部+第2部');
+      const isBoth=t.includes('第1部+第2部'); const isP1=!isBoth&&t.includes('記念式典'); const isP2=!isBoth&&t.includes('第2部');
       if(isP1||isBoth) payHasP1=true;
       if(isP2||isBoth) payHasP2=true;
       if(t.includes('大人')){if(isP1)p1Adult+=n;else if(isP2)p2Adult+=n;else if(isBoth){p1Adult+=n;p2Adult+=n;}}
@@ -529,10 +531,11 @@ function buildRow(uid, sv, ro, pay) {
 
   // Smart consistency
   let issue='';
+  const salonSelfP2Only = category==='サロン生' && surveyBu && surveyBu.includes('第二部') && !surveyBu.includes('両方');
   if(hasSurvey && !hasPayment){
     if(category==='実行委員') issue='';
-    else if(category==='サロン生' && surveyBu && !surveyBu.includes('両方')) issue='';
-    else issue='未決済';
+    else if(salonSelfP2Only) issue='';
+    else issue='Stripe未照合';
   }
   if(hasSurvey && hasPayment){
     if(surveyBu.includes('両方') && payHasP1 && !payHasP2){
@@ -596,6 +599,7 @@ function getFiltered(){
     if(fPay==='paid'&&!r.hasPayment)return false;
     if(fPay==='unpaid'&&r.hasPayment)return false;
     if(fIssue==='has'&&!r.issue)return false;
+    if(fIssue==='stripe'&&r.issue!=='Stripe未照合')return false;
     if(fIssue==='ok'&&r.issue)return false;
     if(fSearch&&!(r.name.toLowerCase().includes(fSearch)||r.email.includes(fSearch)))return false;
     return true;
@@ -665,7 +669,7 @@ function renderTable(){
       <td data-col="payDetail" class="col-pay detail-text">${r.payDetail?esc(r.payDetail):'<span class="pay-ng">—</span>'}</td>
       <td data-col="payNinzu" class="col-pay" style="text-align:center;font-size:10px">${esc(r.payNinzu)||'—'}</td>
       <td data-col="payTotal" class="col-pay ${r.payTotal>0?'pay-ok amount':'pay-ng'}">${r.payTotal>0?'¥'+r.payTotal.toLocaleString():'—'}</td>
-      <td data-col="issue">${r.issue?'<span class="issue-text">'+esc(r.issue)+'</span>':'<span style="color:var(--green);font-size:9px">OK</span>'}</td>
+      <td data-col="issue">${r.issue==='Stripe未照合'?'<span style="color:var(--orange);font-size:9px;font-weight:700">'+esc(r.issue)+'</span>':r.issue?'<span class="issue-text">'+esc(r.issue)+'</span>':'<span style="color:var(--green);font-size:9px">OK</span>'}</td>
       <td data-col="allergy" style="font-size:10px">${esc(r.allergy)||'—'}</td>
       <td data-col="leader" style="font-size:10px">${esc(r.leader)||'—'}</td>
       <td data-col="survey" class="${r.hasSurvey?'survey-ok':'survey-ng'}">${r.hasSurvey?'○':'×'}</td>
@@ -730,6 +734,8 @@ function updateStats(filtered){
   document.getElementById('s-p2total').textContent=p2Total;
   document.getElementById('s-p2paid').textContent=`有料 ${p2Paid}人`;
   document.getElementById('s-p2kids').textContent=`子ども：小${k2Elem} 中${k2Mid}`;
+  const unmatched=filtered.filter(r=>r.issue==='Stripe未照合').length;
+  document.getElementById('s-unmatched').textContent=unmatched;
   document.getElementById('s-preschool').textContent=preschool;
   document.getElementById('s-cat-exec').innerHTML=`実行委員 <b>${catExec}</b>`;
   document.getElementById('s-cat-salon').innerHTML=`サロン生 <b>${catSalon}</b>`;
