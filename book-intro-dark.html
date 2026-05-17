@@ -73,6 +73,40 @@
     letter-spacing: 0.08em;
   }
 
+  /* ====== Cover Ranking (in Info Section) ====== */
+  .cover-ranking {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .cover-ranking .main-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+  }
+  .cover-ranking .main-title .em {
+    color: var(--accent-light);
+    font-size: 22px;
+    margin: 0 2px;
+  }
+  .cover-ranking .details {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+    letter-spacing: 0.05em;
+  }
+  .cover-ranking .details .date {
+    color: var(--ink-soft);
+    opacity: 0.7;
+  }
+  @media (min-width: 600px) {
+    .cover-ranking .main-title { font-size: 22px; }
+    .cover-ranking .main-title .em { font-size: 26px; }
+    .cover-ranking .details { font-size: 12px; }
+  }
+
   /* ====== Writing Section (Hero copy) ====== */
   .writing-section {
     padding: 80px 24px 60px;
@@ -281,6 +315,13 @@
     color: var(--ink-soft);
     line-height: 1.9;
   }
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
   .cta-button {
     display: inline-block;
     padding: 18px 48px;
@@ -293,16 +334,34 @@
     border-radius: 2px;
     box-shadow: var(--shadow);
     transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 280px;
+    text-align: center;
   }
   .cta-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 40px rgba(212, 165, 92, 0.4);
     background: var(--accent-light);
   }
+  .cta-button.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-weight: 500;
+  }
+  .cta-button.secondary:hover {
+    background: var(--accent);
+    color: #0d0a08;
+  }
   .cta-note {
     margin-top: 16px;
     font-size: 13px;
     color: var(--ink-soft);
+  }
+  @media (min-width: 600px) {
+    .cta-buttons {
+      flex-direction: row;
+      gap: 20px;
+    }
   }
 
   /* ====== Footer ====== */
@@ -431,6 +490,19 @@
   <div class="info-inner">
     <h2>書籍情報</h2>
 
+    <div class="cover-ranking">
+      <div class="main-title">
+        Amazon Kindle 売れ筋ランキング<br>
+        <span class="em">2部門</span> 1位 獲得<span class="em">‼</span>
+      </div>
+      <div class="details">
+        👑 文化教育法に関する電子書籍部門：1位<br>
+        👑 コミュニティ・隣人に関する電子書籍部門：1位<br>
+        👑 最新リリース書籍ランキング カテゴリ：1位<br>
+        <span class="date">（2026/05/15）</span>
+      </div>
+    </div>
+
     <div class="cover-thumb">
       <img src="/assets/gizajyu/04_cover.png" alt="ギザ十、昭和三十三年生まれ。 表紙 — 著者 〆sai">
     </div>
@@ -532,12 +604,17 @@
     すでに、見てきているかもしれません。
   </p>
 
-  <a href="https://amzn.asia/d/09mHErCy" class="cta-button" target="_blank" rel="noopener">
-    Amazon Kindleで見る
-  </a>
+  <div class="cta-buttons">
+    <a href="https://note.com/tooru_novel/n/nb711531b9309?sub_rt=share_sb" class="cta-button secondary" target="_blank" rel="noopener">
+      noteで試し読みする
+    </a>
+    <a href="https://amzn.asia/d/09mHErCy" class="cta-button" target="_blank" rel="noopener">
+      Amazon Kindleで見る
+    </a>
+  </div>
 
   <div class="cta-note">
-    Kindleストアへ移動します
+    試し読みは無料、本編はAmazon Kindleで
   </div>
 </section>
 
