@@ -27,7 +27,7 @@ body{
 #frame{
   width:100%;max-width:440px;min-height:100vh;background:var(--bg);
   position:relative;box-shadow:0 0 50px rgba(95,82,60,.18);
-  display:flex;flex-direction:column;overflow:hidden;
+  display:flex;flex-direction:column;
 }
 
 /* ===== オンボーディング ===== */
@@ -237,6 +237,8 @@ textarea:focus{outline:none;border-color:var(--sage);}
 #toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:13px;padding:11px 20px;border-radius:24px;opacity:0;transition:.3s;z-index:400;pointer-events:none;white-space:nowrap;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .loading{text-align:center;padding:40px 0;color:var(--ink-soft);font-size:13px;}
+.spin{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--sage);border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -299,7 +301,7 @@ textarea:focus{outline:none;border-color:var(--sage);}
 
   <!-- ===== アプリ ===== -->
   <div id="app">
-    <div class="view active" id="view-home"><div class="loading">よみこみ中…</div></div>
+    <div class="view active" id="view-home"><div class="loading"><div class="spin"></div>記録をよみこみ中…<br><span style="font-size:11px;opacity:.8;">サーバーから集めています</span></div></div>
     <div class="view" id="view-feed"></div>
     <div class="view" id="view-level"></div>
     <div class="view" id="view-group"></div>
@@ -530,8 +532,7 @@ function startApp(firstTime){
 /* ====================== データ取得＋集計 ====================== */
 async function refresh(){
   try{
-    const s=await api.summary(TODAY.label);
-    const st=await api.summary(TMRW.label);
+    const [s,st]=await Promise.all([api.summary(TODAY.label),api.summary(TMRW.label)]);
     state.todayRows=s.today||[];
     state.totals=s.totals||{};
     state.grandTotal=s.grandTotal||0;
