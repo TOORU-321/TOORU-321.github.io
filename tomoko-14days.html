@@ -242,7 +242,7 @@ textarea:focus{outline:none;border-color:var(--sage);}
    Apps Script の「ウェブアプリ」URL をここに貼ると本番モードになります。
    空のままだとデモモード（スプレッドシート不要・仮データで動作）。
    ============================================================ */
-const ENDPOINT = '';                 // ← 例: 'https://script.google.com/macros/s/AKfy.../exec'
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxk7WVzG0_E8ePSkpGhPTTFIUu9InBZROTmWZ0-86ObTJXVYDQ2hHhVSSdeVZ_7tZUh/exec';  // Apps Script ウェブアプリURL
 const START_DATE = '2026-06-09';      // 企画DAY1
 /* ▲▲▲ 設定ここまで ▲▲▲ */
 
@@ -728,10 +728,4 @@ async function confirmDeclare(){
   await refresh();
   toast('あしたの宣言を保存しました 🌱');
 }
-$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeDeclare();});
-
-/* 起動 */
-boot();
-</script>
-</body>
-</html>
+$('modal').addEventListener('click',e=>{if(e.target.id==='mo
