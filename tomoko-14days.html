@@ -728,4 +728,10 @@ async function confirmDeclare(){
   await refresh();
   toast('あしたの宣言を保存しました 🌱');
 }
-$('modal').addEventListener('click',e=>{if(e.target.id==='mo
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeDeclare();});
+
+/* 起動 */
+boot();
+</script>
+</body>
+</html>
