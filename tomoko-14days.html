@@ -253,6 +253,13 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .dev-act.a1{background:var(--sage);color:#fff;}
 .dev-act.a2{background:var(--terra-l);color:var(--terra-d);}
 .dev-act.a3{background:var(--bg);color:var(--ink-soft);}
+#afterModal{display:none;position:fixed;inset:0;z-index:300;background:rgba(61,58,52,.45);justify-content:center;align-items:flex-end;}
+#afterModal.open{display:flex;}
+.after-row{margin-bottom:14px;}
+.after-row .arl{font-size:12px;font-weight:700;margin-bottom:6px;color:var(--sage-d);}
+.after-selects{display:flex;gap:8px;}
+.after-selects select{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:10px 8px;font-family:inherit;font-size:13px;color:var(--ink);}
+.after-selects select:focus{outline:none;border-color:var(--sage);}
 </style>
 </head>
 <body>
@@ -358,6 +365,18 @@ textarea:focus{outline:none;border-color:var(--sage);}
 
 <button id="devBtn" onclick="openDev()">🛠</button>
 <div id="devPanel"><div class="dev-box" id="devBox"></div></div>
+<div id="afterModal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 class="serif">🗓 アフター個別会の希望</h3>
+      <p>企画のあと、ともこさんとの個別ZOOMがあります。希望の日時を3つ教えてください。ともこさんが調整します。</p>
+    </div>
+    <div class="sheet-body" id="afterBody"></div>
+    <div class="sheet-foot">
+      <button class="btn btn-main" onclick="submitAfter()">この希望を送信する</button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -436,7 +455,7 @@ const HAS_TMRW = (CUR<1) || (CUR>=1 && CUR<14);
 /* ====================== 状態 ====================== */
 let myName='';
 let state={todayRows:[],totals:{},grandTotal:0,byDay:{},
-           me:{declared:[],checked:[],mood:'',note:''},tomorrowMine:[]};
+           me:{declared:[],checked:[],mood:'',note:''},tomorrowMine:[],afterMine:[]};
 let stats={total:0,streak:0,best:0,level:1,activeDays:0,cur:Math.max(0,CUR),badges:[]};
 let curView='home', declarePick=[], feedIdx=Math.min(14,Math.max(1,CUR)), feedRows=[];
 let shareCard='decl';
@@ -454,6 +473,7 @@ function levelOf(p){let c=LEVELS[0];for(const l of LEVELS)if(p>=l.min)c=l;return
 
 /* ====================== デモ用データ ====================== */
 let mockDB={}, mockTotals={'みき':31,'さやこ':8,'ゆかり':52,'なおみ':21,'あいこ':13,'りえ':44};
+let mockAfter=[];
 (function(){
   function mk(n,c,m,note,t){return {name:n,declared:c,checked:c,count:splitList(c).length,mood:m,note:note,updated:t};}
   mockDB[dayByIndex(5).label]=[
@@ -472,6 +492,7 @@ function demoSummary(label){
   return {ok:true,today:(mockDB[label]||[]).slice(),totals:totals,grandTotal:grand,byDay:byDay};
 }
 function demoSave(p){
+  if(p.type==='after'){var ar=mockAfter.find(r=>r.name===p.name);const cc=p.choices||[];if(!ar){ar={name:p.name};mockAfter.push(ar);}ar.c1=cc[0]||'';ar.c2=cc[1]||'';ar.c3=cc[2]||'';ar.updated='now';return;}
   if(!mockDB[p.day])mockDB[p.day]=[];
   let row=mockDB[p.day].find(r=>r.name===p.name);
   const dc=(p.declared||[]).join(' / '),ck=(p.checked||[]).join(' / '),cnt=(p.checked||[]).length;
@@ -496,6 +517,11 @@ const api={
   async save(p){
     if(DEMO){demoSave(p);return {ok:true};}
     const r=await fetch(ENDPOINT,{method:'POST',body:JSON.stringify(p)});
+    return await r.json();
+  },
+  async after(){
+    if(DEMO)return {ok:true,after:mockAfter.slice()};
+    const r=await fetch(ENDPOINT+'?action=after');
     return await r.json();
   }
 };
@@ -563,6 +589,7 @@ async function refresh(){
     state.me.note    =mine?(mine.note||''):'';
     const myTom=(st.today||[]).find(r=>r.name===myName);
     state.tomorrowMine=myTom?splitList(myTom.declared):[];
+    if(CUR>=11){ try{ const af=await api.after(); state.afterMine=afMine(af.after||[]); }catch(e){} }
     computeStats();
     if(feedIdx===Math.min(14,Math.max(1,CUR))) feedRows=state.todayRows;
     checkCelebrate();
@@ -661,7 +688,8 @@ function renderHome(){
        <h2 class="serif" style="justify-content:center;">14日間、おつかれさまでした</h2>
        <div class="cap" style="text-align:center;">ここまで積み上げたあなたの軌跡を、<br>ぜひシェアで振り返ってみてください。</div>
        <button class="btn btn-share" onclick="goView('share')">📸 わたしの軌跡を見る</button>
-     </div>`;
+     </div>
+     ${afterCardHTML()}`;
     return;
   }
   const dec=state.me.declared,chk=state.me.checked;
@@ -707,6 +735,7 @@ function renderHome(){
      <h2>✨ あしたの宣言</h2>
      ${declaredCardInner()}
    </div>
+   ${afterCardHTML()}
    <button class="btn btn-share" onclick="goView('share')">📸 今日をシェアする</button>`;
 }
 function declaredCardInner(){
@@ -990,6 +1019,73 @@ function devReset(){
   }
 }
 document.getElementById('devPanel').addEventListener('click',function(e){if(e.target.id==='devPanel')closeDev();});
+
+/* ===== アフター個別会 日程希望 ===== */
+function afMine(rows){
+  const r=rows.find(x=>x.name===myName);
+  return r?[r.c1,r.c2,r.c3].filter(Boolean):[];
+}
+function afterDateOptions(sel){
+  let o='<option value="">日付をえらぶ</option>';
+  const wd=['日','月','火','水','木','金','土'];
+  for(let d=23;d<=30;d++){
+    const dt=new Date(2026,5,d);
+    const v='6/'+d+'('+wd[dt.getDay()]+')';
+    o+=`<option value="${v}" ${v===sel?'selected':''}>6月${d}日(${wd[dt.getDay()]})</option>`;
+  }
+  return o;
+}
+function afterCardHTML(){
+  if(CUR<11) return '';
+  if(state.afterMine && state.afterMine.length){
+    return `<div class="card"><h2>🗓 アフター個別会</h2>
+      <div class="cap">希望は送信ずみです。ともこさんが日程を調整します。</div>
+      <div class="declared-list">${state.afterMine.map(c=>`<span class="dchip">${c}</span>`).join('')}</div>
+      <button class="btn btn-sub" onclick="openAfter()">出し直す</button></div>`;
+  }
+  return `<div class="card"><h2>🗓 アフター個別会の希望</h2>
+    <div class="cap">企画のあと（6/23〜30）に、ともこさんとの個別ZOOMがあります。希望の日時を出しておきましょう。</div>
+    <button class="btn btn-main" onclick="openAfter()">希望日時を出す</button></div>`;
+}
+function openAfter(){
+  const cur=state.afterMine||[];
+  const labels=['第1希望','第2希望','第3希望'];
+  let body='';
+  for(let i=0;i<3;i++){
+    const parts=(cur[i]||'').split(' ');
+    const d=parts[0]||'',t=parts[1]||'';
+    body+=`<div class="after-row">
+      <div class="arl">${labels[i]}${i===0?'（必須）':'（任意）'}</div>
+      <div class="after-selects">
+        <select id="afD${i}">${afterDateOptions(d)}</select>
+        <select id="afT${i}">
+          <option value="">時間帯</option>
+          <option ${t==='午前'?'selected':''}>午前</option>
+          <option ${t==='午後'?'selected':''}>午後</option>
+          <option ${t==='夜'?'selected':''}>夜</option>
+        </select>
+      </div></div>`;
+  }
+  $('afterBody').innerHTML=body;
+  $('afterModal').classList.add('open');
+}
+function closeAfter(){$('afterModal').classList.remove('open');}
+async function submitAfter(){
+  const ch=[],labels=['第1希望','第2希望','第3希望'];
+  for(let i=0;i<3;i++){
+    const d=$('afD'+i).value,t=$('afT'+i).value;
+    if(d&&t)ch.push(d+' '+t);
+    else if(d||t){toast(labels[i]+'は日付と時間帯の両方をえらんでください');return;}
+  }
+  if(ch.length===0){toast('第1希望だけでも入れてください');return;}
+  closeAfter();
+  const r=await api.save({type:'after',name:myName,choices:ch});
+  if(!r.ok){toast('送信に失敗しました');return;}
+  state.afterMine=ch;
+  renderHome();
+  toast('希望日時を送信しました 🗓');
+}
+document.getElementById('afterModal').addEventListener('click',function(e){if(e.target.id==='afterModal')closeAfter();});
 
 boot();
 </script>
