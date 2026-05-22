@@ -195,6 +195,7 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .scard .s-row b{font-family:'Noto Serif JP',serif;font-size:16px;}
 .scard .s-foot{font-size:10.5px;opacity:.8;margin-top:16px;text-align:center;}
 .share-hint{font-size:12px;color:var(--ink-soft);line-height:1.8;text-align:center;margin:14px 6px 0;}
+.credit{font-size:10px;color:var(--ink-soft);text-align:center;opacity:.5;margin-top:22px;letter-spacing:.04em;}
 
 #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#fff;border-top:1px solid var(--line);display:flex;padding:7px 0 9px;z-index:120;}
 .nav-i{flex:1;background:none;border:none;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-soft);font-size:9.5px;}
@@ -857,7 +858,8 @@ function renderShare(){
    <p class="feed-sub">この画面を<b>スクショ</b>して、専用オープンチャットに投稿しよう🌿</p>
    <div class="share-switch">${sw}</div>
    ${shareCardHTML()}
-   <p class="share-hint">📱 スマホの画面ショット機能で、上のカードを撮って投稿してください。<br>みんなの宣言や達成が並ぶと、オープンチャットが盛り上がります。</p>`;
+   <p class="share-hint">📱 スマホの画面ショット機能で、上のカードを撮って投稿してください。<br>みんなの宣言や達成が並ぶと、オープンチャットが盛り上がります。</p>
+   <p class="credit">監修：ともこ ／ 制作：とーる</p>`;
 }
 function shareCardHTML(){
   const {cur}=levelOf(stats.total);
