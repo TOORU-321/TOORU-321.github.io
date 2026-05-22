@@ -195,7 +195,8 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .scard .s-row b{font-family:'Noto Serif JP',serif;font-size:16px;}
 .scard .s-foot{font-size:10.5px;opacity:.8;margin-top:16px;text-align:center;}
 .share-hint{font-size:12px;color:var(--ink-soft);line-height:1.8;text-align:center;margin:14px 6px 0;}
-.credit{font-size:10px;color:var(--ink-soft);text-align:center;opacity:.5;margin-top:22px;letter-spacing:.04em;}
+.credit{font-size:10px;color:var(--ink-soft);text-align:center;margin-top:22px;letter-spacing:.04em;}
+.credit a{color:var(--terra-d);text-decoration:underline;}
 #finale{display:none;position:fixed;inset:0;z-index:550;background:rgba(61,58,52,.6);justify-content:center;align-items:center;overflow:hidden;padding:24px;}
 #finale.show{display:flex;}
 .finale-box{background:#fff;border-radius:24px;padding:30px 26px;text-align:center;max-width:330px;animation:pop .45s ease;z-index:2;}
@@ -878,11 +879,11 @@ function renderShare(){
   const sw=tabs.map(([k,l])=>`<button class="${shareCard===k?'on':''}" onclick="setShareCard('${k}')">${l}</button>`).join('');
   $('view-share').innerHTML=`
    <div class="topbar"><div class="greet"><b>📸 シェア</b></div></div>
-   <p class="feed-sub">この画面を<b>スクショ</b>して、専用オープンチャットに投稿しよう🌿</p>
+   <p class="feed-sub">この画面を<b>スクショ</b>して、専用オープンチャットや Instagram ストーリーズでシェアしよう🌿</p>
    <div class="share-switch">${sw}</div>
    ${shareCardHTML()}
-   <p class="share-hint">📱 スマホの画面ショット機能で、上のカードを撮って投稿してください。<br>みんなの宣言や達成が並ぶと、オープンチャットが盛り上がります。</p>
-   <p class="credit">監修：ともこ ／ 制作：とーる</p>`;
+   <p class="share-hint">📱 スマホの画面ショットで上のカードを撮って、専用オープンチャットや Instagram ストーリーズに投稿してみてください。<br>シェアするほど、続ける力になります。</p>
+   <p class="credit">監修：<a href="https://www.instagram.com/tomoko_happy_diet?igsh=cDdjNGpwamI5cjk4" target="_blank" rel="noopener">ともこ</a> ／ 制作：とーる</p>`;
 }
 function shareCardHTML(){
   const {cur}=levelOf(stats.total);
