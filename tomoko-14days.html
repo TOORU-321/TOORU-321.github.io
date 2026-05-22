@@ -196,6 +196,15 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .scard .s-foot{font-size:10.5px;opacity:.8;margin-top:16px;text-align:center;}
 .share-hint{font-size:12px;color:var(--ink-soft);line-height:1.8;text-align:center;margin:14px 6px 0;}
 .credit{font-size:10px;color:var(--ink-soft);text-align:center;opacity:.5;margin-top:22px;letter-spacing:.04em;}
+#finale{display:none;position:fixed;inset:0;z-index:550;background:rgba(61,58,52,.6);justify-content:center;align-items:center;overflow:hidden;padding:24px;}
+#finale.show{display:flex;}
+.finale-box{background:#fff;border-radius:24px;padding:30px 26px;text-align:center;max-width:330px;animation:pop .45s ease;z-index:2;}
+.finale-chibi{width:104px;height:104px;object-fit:contain;margin:0 auto 6px;}
+.finale-ttl{font-family:'Noto Serif JP',serif;font-size:20px;font-weight:600;margin-bottom:10px;}
+.finale-msg{font-size:13px;color:var(--ink);line-height:1.9;}
+.finale-msg2{font-size:12px;color:var(--ink-soft);line-height:1.85;background:var(--sage-l);border-radius:11px;padding:10px 12px;margin-top:12px;}
+.finale-btn1{width:100%;background:var(--tan);color:#fff;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px;}
+.finale-btn2{width:100%;background:none;color:var(--ink-soft);border:none;padding:10px;font-size:12px;cursor:pointer;font-family:inherit;margin-top:4px;text-decoration:underline;}
 
 #nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:#fff;border-top:1px solid var(--line);display:flex;padding:7px 0 9px;z-index:120;}
 .nav-i{flex:1;background:none;border:none;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-soft);font-size:9.5px;}
@@ -378,6 +387,16 @@ textarea:focus{outline:none;border-color:var(--sage);}
     </div>
   </div>
 </div>
+<div id="finale">
+  <div class="finale-box">
+    <img class="finale-chibi" id="finaleChibi" alt="">
+    <div class="finale-ttl">14日間、おつかれさまでした！</div>
+    <div class="finale-msg">毎日ひとつ、自分のための行動を積み重ねたあなたは、もう昨日までのあなたとは違います。<br>その変化を、どうか誇りに思ってください🌿</div>
+    <div class="finale-msg2">よかったら、この2週間の感想を専用オープンチャットでシェアしていただけると嬉しいです。あなたの言葉が、次の誰かの一歩になります。</div>
+    <button class="finale-btn1" onclick="finaleShare()">📸 わたしの軌跡をシェアする</button>
+    <button class="finale-btn2" onclick="closeFinale()">とじる</button>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -531,6 +550,7 @@ const api={
 function boot(){
   $('obChibi').src=CHIBI_AVATAR;
   $('chibiMark').src=CHIBI_AVATAR;
+  $('finaleChibi').src=CHIBI_AVATAR;
   $('obDots').innerHTML=Array.from({length:6},(_,i)=>`<span class="${i===0?'on':''}"></span>`).join('');
   if(DEV) document.getElementById('devBtn').style.display='flex';
   const name=localStorage.getItem('app_username');
@@ -571,6 +591,9 @@ function startApp(firstTime){
   refresh().then(()=>{
     if(firstTime && !localStorage.getItem('app_kickoff_done')){
       setTimeout(()=>openDeclare(true),500);
+    }
+    if(CUR>=14 && !localStorage.getItem('app_final_seen')){
+      setTimeout(showFinalCelebration,700);
     }
   });
 }
@@ -996,6 +1019,7 @@ function openDev(){
     <div class="dev-info">名前：${myName||'(未設定)'}<br>表示中：DAY ${CUR}（${ph}）</div>
     <div class="dev-sec">📖 オンボーディング</div>
     <button class="dev-act a1" onclick="devManual()">使い方マニュアルをもう一度見る</button>
+    <button class="dev-act a1" onclick="devFinale()">最終日のお祝いを表示する</button>
     <div class="dev-sec">🗓 DAYを切り替え（日程外でも確認できます）</div>
     <div class="dev-days">${days}</div>
     <div class="dev-sec">♻️ リセット</div>
@@ -1017,6 +1041,7 @@ function devReset(){
     localStorage.removeItem('app_username');
     localStorage.removeItem('app_onboarded');
     localStorage.removeItem('app_kickoff_done');
+    localStorage.removeItem('app_final_seen');
     location.href=location.pathname+'?dev=1';
   }
 }
@@ -1088,6 +1113,30 @@ async function submitAfter(){
   toast('希望日時を送信しました 🗓');
 }
 document.getElementById('afterModal').addEventListener('click',function(e){if(e.target.id==='afterModal')closeAfter();});
+
+/* ===== 最終日のお祝い ===== */
+function showFinalCelebration(){
+  localStorage.setItem('app_final_seen','1');
+  $('finale').classList.add('show');
+  const cols=['#6B8E7F','#D4A574','#C17A5B','#E8D9C0','#8FA88C'];
+  for(let i=0;i<44;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'%';
+    c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(1.6+Math.random()*1.8)+'s';
+    c.style.animationDelay=(Math.random()*0.6)+'s';
+    $('finale').appendChild(c);
+  }
+}
+function closeFinale(){
+  $('finale').classList.remove('show');
+  $('finale').querySelectorAll('.confetti').forEach(c=>c.remove());
+}
+function finaleShare(){
+  closeFinale(); shareCard='trace'; renderShare(); goView('share');
+}
+function devFinale(){ closeDev(); showFinalCelebration(); }
 
 boot();
 </script>
