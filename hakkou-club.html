@@ -80,6 +80,8 @@ main{padding:0 14px 80px}
 .koji-pick .kt{font-size:10px;color:#8C7A6A;line-height:1.4;text-align:center}
 .koji-pick label.disabled{opacity:.45;cursor:not-allowed;background:#F5EDD8}
 .koji-pick label.disabled::after{content:'選択済';position:absolute;top:4px;right:6px;font-size:9px;color:#8C7A6A;background:#fff;padding:1px 5px;border-radius:6px}
+/* 奇数（7種目）のとき、最後の1枚を中央寄せ */
+.koji-pick label:last-child:nth-child(odd){grid-column:1 / -1;justify-self:center;width:calc(50% - 4px)}
 
 /* Buttons */
 .btn{display:block;width:100%;padding:13px;border-radius:12px;font-weight:700;font-size:14px;text-align:center;border:none;font-family:inherit;cursor:pointer;transition:transform .12s}
@@ -219,6 +221,19 @@ body.read-only .add-koji-btn{opacity:.4}
 .bot-btn .ico{font-size:18px}
 .bot-btn.active{color:#B3631A;font-weight:700}
 
+/* 管理者テストバー（?admin のときのみ） */
+.admin-bar{display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:66px;background:#2D2A26;z-index:35;flex-direction:column;gap:4px;padding:7px 8px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+body.admin .admin-bar{display:flex}
+body.admin{padding-top:66px}
+body.admin header{top:66px}
+.admin-bar .ab-row{display:flex;align-items:center;gap:5px}
+.admin-bar .ab-ctrl{overflow-x:auto}
+.admin-bar .ab-tag{font-size:10px;font-weight:700;color:#2D2A26;background:#F5A623;padding:2px 7px;border-radius:5px;flex-shrink:0;letter-spacing:.05em}
+.admin-bar .ab-info{font-size:11.5px;font-weight:700;color:#FFE7B0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-bar button{background:#4A453E;color:#FFE7B0;border:1px solid #6A6258;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:inherit}
+.admin-bar button:active{background:#F5A623;color:#2D2A26}
+.admin-bar .ab-date{background:#4A453E;color:#fff;border:1px solid #6A6258;border-radius:6px;padding:4px 6px;font-size:11px;flex-shrink:0;font-family:inherit}
+
 /* Phase indicator */
 .phase-indicator{padding:10px 12px;background:linear-gradient(90deg,#FFF8E7 0%,#FFEFC5 100%);border-radius:12px;border:1px solid #F5CF8E;margin-top:8px;display:flex;align-items:center;gap:10px}
 .phase-indicator .pi-ico{font-size:22px}
@@ -316,7 +331,7 @@ body.read-only .add-koji-btn{opacity:.4}
 .article-actions{display:flex;gap:8px}
 
 /* FAQモーダル */
-.faq-list{display:flex;flex-direction:column;gap:8px;margin-top:10px;max-height:60vh;overflow-y:auto}
+.faq-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .faq-item{background:#FFFDF8;border:1px solid #F5E0B5;border-radius:10px;overflow:hidden}
 .faq-q{padding:10px 12px;font-size:12.5px;font-weight:700;color:#B3631A;cursor:pointer;display:flex;align-items:center;gap:6px;line-height:1.5}
 .faq-q::before{content:'❓';font-size:13px;flex-shrink:0}
@@ -349,6 +364,25 @@ body.read-only .add-koji-btn{opacity:.4}
 </style>
 </head>
 <body>
+
+<!-- 管理者テストバー（URLに ?admin を付けたときのみ表示） -->
+<div class="admin-bar" id="adminBar">
+  <div class="ab-row">
+    <span class="ab-tag">🛠 ADMIN</span>
+    <span class="ab-info" id="abInfo">—</span>
+  </div>
+  <div class="ab-row ab-ctrl">
+    <button id="abPrev">◀前日</button>
+    <button id="abNext">翌日▶</button>
+    <input type="date" id="abJump" class="ab-date">
+    <button data-scn="seed">仕込日</button>
+    <button data-scn="ferment">発酵中</button>
+    <button data-scn="phase2">Phase2</button>
+    <button data-scn="end">終了後</button>
+    <button id="abReal">実日付</button>
+    <button id="abReset">初期化</button>
+  </div>
+</div>
 
 <header>
   <div class="head-row">
@@ -526,9 +560,16 @@ body.read-only .add-koji-btn{opacity:.4}
   <div class="modal">
     <h2>📖 ハッコウクラブの使い方</h2>
     <div style="font-size:13px;line-height:1.85;color:#5A4A3A">
-      <p style="margin:10px 0 6px"><b style="color:#B3631A">📅 期間</b><br>5/23 麹レッスン日に開始 → 6/23 まで1ヶ月のサポート期間</p>
-      <p style="margin:10px 0 6px"><b style="color:#B3631A">🌾 Phase 1（〜6/6）：作る期</b><br>選んだ麹を毎日見守ります。1日1回タップで状態をチェックイン。</p>
-      <p style="margin:10px 0 6px"><b style="color:#B3631A">🍱 Phase 2（6/7〜）：使う期</b><br>完成した麹で作れるレシピが表示されます。「〜だけシリーズ」50品。</p>
+      <p style="margin:10px 0 4px"><b style="color:#B3631A">📅 レッスン＆サポート日程</b></p>
+      <div style="background:#FFF8E7;border:1px solid #F5CF8E;border-radius:10px;padding:10px 12px;margin:4px 0 8px;font-size:12.5px;line-height:1.85">
+        <div>🗓 <b style="color:#B3631A">5/30</b>　レッスン①（麹の選び方・材料の説明）</div>
+        <div>🗓 <b style="color:#B3631A">6/5</b>　レッスン②（麹調味料を仕込む＝発酵スタート）</div>
+        <div>⏳ <b style="color:#B3631A">発酵期間</b>　仕込みから7〜10日が目安</div>
+        <div>💬 <b style="color:#B3631A">サポート期間</b>　6/20まで（かよママに相談OK）</div>
+        <div>📱 <b style="color:#B3631A">アプリ利用</b>　6月末まで使えます</div>
+      </div>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">🌾 Phase 1：作る期</b><br>選んだ麹を毎日見守ります。1日1回タップで状態をチェックイン。</p>
+      <p style="margin:10px 0 6px"><b style="color:#B3631A">🍱 Phase 2：使う期</b><br>麹が完成すると、作れるレシピが表示されます。「〜だけシリーズ」。</p>
       <p style="margin:10px 0 6px"><b style="color:#B3631A">💡 困ったら</b><br>不安なときはLINEでかよママに相談してOK！1人じゃないから成功率アップ✨</p>
       <p style="margin:10px 0 6px"><b style="color:#B3631A">🎁 おまけ</b><br>連続記録ストリーク、称号、ラッキーデイ、隠れキャラなど隠し要素もあるよ。</p>
     </div>
@@ -558,7 +599,7 @@ body.read-only .add-koji-btn{opacity:.4}
   </div>
   <div class="drawer-foot">
     <span class="beta">β版</span><br>
-    2026-05-23 〜 2026-06-23<br>
+    2026-06-05 〜 2026-06-30<br>
     監修：かよママ（料理講師）<br>
     <span style="display:block;margin-top:6px;font-size:10px;color:#B0A090">作成：とーる｜行動経済アナリスト</span>
   </div>
@@ -622,18 +663,20 @@ const FAREWELL_SEEN_KEY='hakkou-club-farewell-v1';
 const TEST_MODE=true;
 
 // 期間定数（TEST_MODE=false 時に有効）
-const START_AT=new Date('2026-05-23T00:00:00+09:00');
-const PHASE2_AT=new Date('2026-06-07T00:00:00+09:00');
-const EXPIRE_AT=new Date('2026-06-23T15:00:00.000Z'); // 6/24 0:00 JST
+// レッスン①5/30（麹選び）→ レッスン②6/5（仕込み＝Day1）→ 発酵7〜10日 → サポート6/20まで → アプリは6月末まで利用可
+const START_AT=new Date('2026-06-05T00:00:00+09:00');  // 仕込み日（アプリのDay 1）
+const PHASE2_AT=new Date('2026-06-15T00:00:00+09:00'); // 発酵完了の目安・使う期へ
+const EXPIRE_AT=new Date('2026-06-30T15:00:00.000Z');  // 7/1 0:00 JST（6月末まで利用可）
 
-// 6種類の麹
+// 7種類の麹
 const KOJI=[
   {k:'shio',  n:'塩麹',     emoji:'🧂', tagline:'初心者おすすめ', days:7},
   {k:'shoyu', n:'醤油麹',   emoji:'🍶', tagline:'万能調味料',     days:7},
   {k:'tama',  n:'玉ねぎ麹', emoji:'🧅', tagline:'旨味爆発',       days:10},
   {k:'chu',   n:'中華麹',   emoji:'🥢', tagline:'中華の素卒業',   days:10},
   {k:'sho',   n:'生姜麹',   emoji:'🌿', tagline:'チューブ卒業',   days:7},
-  {k:'nin',   n:'にんにく麹', emoji:'🧄', tagline:'チューブ卒業',  days:7}
+  {k:'nin',   n:'にんにく麹', emoji:'🧄', tagline:'チューブ卒業',  days:7},
+  {k:'yaki',  n:'焼肉のたれ麹', emoji:'🍖', tagline:'たれ卒業',   days:10}
 ];
 
 // Day別の見守りガイド
@@ -645,7 +688,7 @@ const DAY_GUIDES={
   5:'匂いの変化に注目。米の甘さから<b>まろやか発酵香</b>に変わってきます',
   6:'色がほんのりベージュ〜薄茶に。順調に発酵中の証拠',
   7:'<b>塩麹・醤油麹・生姜麹・にんにく麹はそろそろ完成判定OK</b>。味見してみて',
-  8:'中華麹・玉ねぎ麹はもう少し。じっくり育てて深みを出しましょう',
+  8:'中華麹・玉ねぎ麹・焼肉のたれ麹はもう少し。じっくり育てて深みを出しましょう',
   9:'残り少し。今日もかき混ぜを忘れずに',
   10:'<b>完成判定の最終日！</b>セルフチェックで確認しましょう'
 };
@@ -700,11 +743,18 @@ const RECIPES=[
   {id:'r27',n:'ラーメンスープ',uses:['shoyu','chu','nin'],tag:'お湯に溶かすだけ'},
   {id:'r28',n:'手作りドレッシング',uses:['shio','tama'],tag:'混ぜるだけ'},
   {id:'r29',n:'豚キムチ風',uses:['chu','nin'],tag:'味付けるだけ'},
-  {id:'r30',n:'うま塩スープ',uses:['shio','tama'],tag:'お湯に溶かすだけ'}
+  {id:'r30',n:'うま塩スープ',uses:['shio','tama'],tag:'お湯に溶かすだけ'},
+  // 焼肉のたれ麹（サンプル・後日かよママから差替）
+  {id:'r31',n:'焼肉のたれ麹で野菜炒め',uses:['yaki'],tag:'味付けるだけ'},
+  {id:'r32',n:'焼肉のたれ麹の漬け込み肉',uses:['yaki'],tag:'漬けるだけ'},
+  {id:'r33',n:'焼肉のたれ麹チャーハン',uses:['yaki'],tag:'味付けるだけ'},
+  {id:'r34',n:'焼肉のたれ麹おにぎり',uses:['yaki'],tag:'混ぜるだけ'}
 ];
 
 // ======== Date override (テスト用・stateより先に宣言) ========
 let _DATE_OVERRIDE=null;
+let ADMIN=false;                                  // ?admin で true
+const ADMIN_DATE_KEY='hakkou-club-admin-date-v1'; // 管理者モードの仮想日付保存
 
 // ======== State ========
 let state={
@@ -742,12 +792,13 @@ function fmtJP(s){
 }
 
 // ======== Phase / Mode ========
-function isPreLaunch(){if(TEST_MODE)return false;return _now()<START_AT}
-function isReadOnly(){if(TEST_MODE)return false;return _now()>=EXPIRE_AT}
+// ADMIN モードでは TEST_MODE でも日付ガードを有効化し、ライフサイクル全体をテスト可能にする
+function isPreLaunch(){if(TEST_MODE&&!ADMIN)return false;return _now()<START_AT}
+function isReadOnly(){if(TEST_MODE&&!ADMIN)return false;return _now()>=EXPIRE_AT}
 function isPhase2Started(){
-  // TEST_MODE：完成麹が1つでもあれば Phase 2 入り
+  // 完成麹が1つでもあれば Phase 2 入り
   const hasCompleted=state.kojiData?Object.values(state.kojiData).some(k=>k&&k.completedDate):false;
-  if(TEST_MODE)return hasCompleted;
+  if(TEST_MODE&&!ADMIN)return hasCompleted;
   return _now()>=PHASE2_AT||hasCompleted;
 }
 function isToday(s){return s===today()}
@@ -779,7 +830,7 @@ function streak(){
   // 直近の連続「いずれかの麹をチェックインした日」
   let s=0,d=today();
   while(true){
-    if(parseDate(d)<parseDate('2026-05-23'))break;
+    if(parseDate(d)<parseDate('2026-06-05'))break;
     let any=false;
     for(const k in state.kojiData){
       const ci=state.kojiData[k].checkins||{};
@@ -953,7 +1004,7 @@ const KNOWLEDGE=[
 {id:'k04',cat:'basic',title:'塩を入れても発酵が止まらない理由',body:'塩麹に塩を入れるのは、<b>雑菌の繁殖を抑える</b>ため。麹菌は塩に強いので、塩のおかげで他の菌が死んで麹菌だけが活躍できる環境になるんです🛡️'},
 {id:'k05',cat:'basic',title:'発酵と腐敗、実は同じプロセス',body:'微生物が食べ物を分解するのは同じ。<b>人間に有用な変化なら「発酵」</b>、害があれば「腐敗」と呼ぶだけ。麹菌は人間の味方なので、麹を使った発酵食品はすべて発酵側です😊'},
 {id:'k06',cat:'basic',title:'麹の白い粉、これが命',body:'米粒の表面についてる白い粉は<b>麹菌の胞子</b>。これがあるからお米が「米麹」として生きてるんです。仕込み中、白いふわふわが見えるのは順調なサイン✨'},
-{id:'k07',cat:'basic',title:'旨味の正体・グルタミン酸',body:'麹菌はタンパク質分解酵素を出して、お米や食材の中のタンパク質を<b>グルタミン酸（旨味成分）</b>に変えます。これが「ただの塩より塩麹のほうが美味しい」理由です🍱'},
+{id:'k07',cat:'basic',title:'旨味の正体・グルタミン酸',body:'麹菌はタンパク質分解酵素を出して、お米や食材の中のタンパク質を<b>グルタミン酸（旨味成分）</b>に変えます。これが「ただの塩より塩麹の方が旨味を感じる」理由です🍱'},
 {id:'k08',cat:'basic',title:'麹は1年中作れる？季節のベスト',body:'技術的には1年中可能。でも<b>5月後半と10月が初心者向き</b>。真夏は急発酵、真冬は変化が遅すぎる。今回のタイミング、<b>かよママさんが選んだのには理由があります</b>🌸'},
 {id:'k09',cat:'basic',title:'温度と発酵時間の関係',body:'<b>25℃なら7日</b>、<b>20℃なら10日</b>が目安。家の中の温度差で完成日が変わるので、毎日の観察が大事。だからこのアプリも「Day制」なんです📅'},
 {id:'k10',cat:'basic',title:'麹で料理が美味しくなる科学的理由',body:'麹の酵素が肉や魚のタンパク質を分解→<b>柔らかく</b>、デンプンを糖に分解→<b>ほのかな甘み</b>、旨味成分を生成→<b>味の深み</b>。3つの効果が同時に起きるから魔法みたいに美味しい✨'},
@@ -965,41 +1016,41 @@ const KNOWLEDGE=[
 {id:'k15',cat:'type',title:'醤油麹の使い方',body:'普通の醤油の代わりに使うだけで<b>旨味が10倍</b>。卵かけご飯、冷奴、おひたし、漬け焼き…万能。少しずつ使っても十分美味しさを感じられます✨'},
 {id:'k16',cat:'type',title:'醤油麹の保存',body:'<b>冷蔵庫で半年</b>OK。塩麹同様、時間が経つほど色が深くなり旨味が増します。常備しておくと毎日の料理が一段格上げ'},
 {id:'k17',cat:'type',title:'玉ねぎ麹は新しい仲間',body:'<b>2020年代に SNS で広がった新顔</b>の発酵調味料。塩麹に玉ねぎを加えた感じ。コンソメやブイヨンの代わりとして大人気で、洋食派にも刺さりました🧅'},
-{id:'k18',cat:'type',title:'玉ねぎ麹の便利さ',body:'<b>コンソメ・中華の素を完全に置換</b>できます。スープ、炒め物、ハンバーグの下味…洋食和食中華すべてOK。市販調味料の卒業がぐっと近づきます'},
-{id:'k19',cat:'type',title:'玉ねぎ麹の保存',body:'生の玉ねぎを使うので<b>冷蔵で1ヶ月</b>が目安。塩麹より短いです。早めに使い切るのがコツ。冷凍なら3ヶ月OK'},
+{id:'k18',cat:'type',title:'玉ねぎ麹の便利さ',body:'<b>顆粒コンソメを置き換え</b>できます。スープ、炒め物、ハンバーグの下味…洋食和食中華すべてOK。市販調味料の卒業がぐっと近づきます'},
+{id:'k19',cat:'type',title:'玉ねぎ麹の保存',body:'生の玉ねぎを使うので<b>冷蔵で3ヶ月</b>が目安。ただ、風味が一番いいのは最初の1ヶ月くらいです。冷凍なら半年OK'},
 {id:'k20',cat:'type',title:'中華麹の特徴',body:'玉ねぎ麹のさらに進化形。にんにくや生姜、香味野菜を加えた発酵調味料。<b>中華料理の素を完全置換</b>できる優秀さで、麻婆豆腐もチャーハンもこれ1つでOK🥢'},
-{id:'k21',cat:'type',title:'中華麹の使い方',body:'炒め物の下味、スープの素、餃子のたれ…<b>中華料理屋の味が家で再現</b>できる秘密兵器。化学調味料に頼らずに本格的な味が出せます'},
-{id:'k22',cat:'type',title:'中華麹の保存',body:'生の野菜を使うので<b>冷蔵で1ヶ月</b>。冷凍3ヶ月。早めに使い切る分、料理が一気にレベルアップする頻度が高くなります'},
-{id:'k23',cat:'type',title:'生姜麹のぽかぽか効果',body:'生姜の<b>ジンゲロール（体を温める成分）</b>と麹の旨味が合わさった調味料。冷え性さんにおすすめ。豚バラ巻きや煮魚に使うと体ぽかぽか🌿'},
+{id:'k21',cat:'type',title:'中華麹の使い方',body:'炒め物の下味、スープの素、餃子の餡…<b>中華料理屋の味が家で再現</b>できる秘密兵器。化学調味料に頼らずに本格的な味が出せます'},
+{id:'k22',cat:'type',title:'中華麹の保存',body:'生の野菜を使うので<b>冷蔵で3ヶ月</b>が目安。ただ、風味が一番いいのは最初の1ヶ月くらいです。冷凍なら半年OK'},
+{id:'k23',cat:'type',title:'生姜麹のぽかぽか効果',body:'生姜の<b>ジンゲロール（体を温める成分）</b>と麹の旨味が合わさった調味料。冷え性さんにおすすめ。温かい料理に使うと体ぽかぽか🌿'},
 {id:'k24',cat:'type',title:'生姜麹でチューブ卒業',body:'チューブ生姜より<b>香りが格段に良い</b>＋保存料なし＋旨味も加わる。料理の格が上がるので、チューブから卒業する方がたくさんいます'},
-{id:'k25',cat:'type',title:'生姜麹の保存',body:'<b>冷蔵で2-3ヶ月</b>。生姜の抗菌作用があるので、玉ねぎ麹より長持ちします。色が濃くなっても問題なし'},
+{id:'k25',cat:'type',title:'生姜麹の保存',body:'<b>冷蔵で3-4ヶ月</b>。生姜の抗菌作用があるので、玉ねぎ麹より長持ちします。色が濃くなっても問題なし'},
 {id:'k26',cat:'type',title:'にんにく麹のパンチと深み',body:'生にんにくの<b>強烈なパンチ</b>と発酵による<b>深みのある旨味</b>を両立。アヒージョ、ステーキ、パスタに最強。ガーリック好きにはたまらない調味料🧄'},
 {id:'k27',cat:'type',title:'にんにく麹でチューブ卒業',body:'チューブにんにくとは<b>香りの厚みが全然違います</b>。少量で十分強い風味が出るので、料理が一段プロっぽい味に'},
-{id:'k28',cat:'type',title:'にんにく麹の保存',body:'<b>冷蔵で2-3ヶ月</b>。にんにくの抗菌作用で長持ち。冷凍なら半年OK。少量を毎日使うのがコツ'},
+{id:'k28',cat:'type',title:'にんにく麹の保存',body:'<b>冷蔵で3-4ヶ月</b>。にんにくの抗菌作用で長持ち。冷凍なら半年OK。少量を毎日使うのがコツ'},
 // ⚠️ よくある悩み（10）
 {id:'k29',cat:'trouble',title:'白い膜が出てきた！',body:'<b>産膜酵母</b>という酵母の一種で、<b>無害</b>です。混ぜれば消えます。心配なら表面だけスプーンで取って、しっかりかき混ぜれば問題なし✨'},
 {id:'k30',cat:'trouble',title:'酸っぱい匂いが強い',body:'発酵が<b>進みすぎ</b>のサイン。Day 7前なら冷蔵庫に移して様子見。Day 7以降なら<b>もう完成</b>かも。ヨーグルトのような穏やかな酸味は正常、刺激的な酸味はNG'},
 {id:'k31',cat:'trouble',title:'気泡が全然出ない',body:'<b>温度が低い</b>可能性大。20℃を下回ると麹菌の活動が鈍くなります。寒い部屋なら暖かい場所へ。混ぜを増やすのも◎'},
 {id:'k32',cat:'trouble',title:'色が想像と違う',body:'<b>濃い茶色＝塩分が低い or 温度が高い</b>。<b>白いまま＝発酵が進んでいない</b>。色は環境で変わるので、香りと気泡もチェック'},
 {id:'k33',cat:'trouble',title:'水分が出すぎ',body:'<b>これは正常</b>です。麹は水分を出すもの。むしろ水分が出始めたら発酵が進んでる証拠。混ぜれば全体になじみます'},
-{id:'k34',cat:'trouble',title:'水分が足りない',body:'<b>混ぜ不足</b>か<b>容器が乾燥しすぎ</b>。今日からしっかり混ぜて、密閉容器に。それでも乾く場合は少し水を足してOK'},
+{id:'k34',cat:'trouble',title:'水分が足りない',body:'<b>混ぜ不足</b>か<b>容器が乾燥しすぎ</b>。今日からしっかり混ぜて、フタは軽く閉める（少し空気が抜ける状態に）。それでも乾く場合は少し水を足してOK'},
 {id:'k35',cat:'trouble',title:'黒い斑点がある',body:'<b>残念ながらNG</b>。黒カビの可能性が高いです。捨てて作り直しましょう。原因は容器の衛生不足、温度管理ミスが多い'},
-{id:'k36',cat:'trouble',title:'ピンク色になった',body:'<b>雑菌混入</b>のサインで、これも残念ながらNG。破棄して作り直しを。次回は容器を熱湯消毒してから始めると安心'},
-{id:'k37',cat:'trouble',title:'完成かどうか分からない',body:'チェックポイント：<b>①米粒がペースト状</b>、<b>②甘い発酵の香り</b>、<b>③気泡やふつふつ感</b>、<b>④全体に一体感</b>。3つ揃えば完成サインです✨'},
+{id:'k36',cat:'trouble',title:'ピンク色になった',body:'<b>雑菌混入</b>のサインで、これも残念ながらNG。破棄して作り直しを。次回は容器を熱湯消毒してから始めると安心。ただし、ピンクソルト（岩塩）などピンク色の塩を使った場合は、ピンクになっても問題ありません'},
+{id:'k37',cat:'trouble',title:'完成かどうか分からない',body:'チェックポイント：<b>①米粒が指で簡単につぶれる</b>、<b>②甘い発酵の香り</b>、<b>③全体に一体感</b>。3つ揃えば完成サインです✨'},
 {id:'k38',cat:'trouble',title:'失敗してる気がする',body:'<b>「失敗かも？」と感じる人ほど真剣に観察してる</b>証拠です。アプリの判定機能を使って、それでも不安ならLINEで写真と一緒にかよママに相談してくださいね🌷'},
 // 💡 使いこなしコツ（5）
 {id:'k39',cat:'tips',title:'容器の選び方',body:'<b>ガラスかホーロー</b>がおすすめ。プラスチックはニオイ移りや雑菌の問題で避けたほうが◎。煮沸消毒できるものを選ぶと長く使えます'},
 {id:'k40',cat:'tips',title:'混ぜる頻度の目安',body:'<b>1日1回でOK</b>。やりすぎると麹菌が落ち着かず、発酵が遅くなることも。朝のルーティンに組み込むと続けやすいです🌅'},
 {id:'k41',cat:'tips',title:'漬けるコツ：食材重量の10%',body:'肉や魚を漬ける時は<b>食材重量の10%の塩麹</b>が黄金比。鶏むね肉300gなら塩麹大さじ2杯程度。30分〜一晩で柔らかく旨味アップ✨'},
-{id:'k42',cat:'tips',title:'加熱で旨味は変わる？',body:'酵素は60℃以上で失活しますが、<b>旨味成分は残ります</b>。下味として使うのが一番効果的。生のまま使うと酵素も摂取できます'},
-{id:'k43',cat:'tips',title:'冷凍保存もできる',body:'<b>1年OK</b>。製氷皿で小分け冷凍が便利。使う分だけ取り出せて、使い忘れも防げる。離乳食の小分け冷凍と同じ感覚で'},
+{id:'k42',cat:'tips',title:'加熱で旨味は変わる？',body:'酵素は70℃以上で失活しますが、<b>旨味成分は残ります</b>。下味として使うのが一番効果的。生のまま使うと酵素も摂取できます'},
+{id:'k43',cat:'tips',title:'冷凍保存もできる',body:'<b>1年OK</b>。ジップロックで冷凍が便利。麹の種類と日付を表に書いておくと安心'},
 // 📜 文化・歴史（4）
 {id:'k44',cat:'history',title:'2000年続く日本の発酵文化',body:'醤油・味噌・酒・酢…<b>日本の伝統調味料はほぼすべて麹由来</b>。縄文時代の土器からも発酵の痕跡が見つかっており、麹は日本人のDNAレベルの食文化です🌾'},
 {id:'k45',cat:'history',title:'世界の発酵食品マップ',body:'チーズ（ヨーロッパ）、ザワークラウト（ドイツ）、キムチ（韓国）、ナンプラー（タイ）…<b>世界中に発酵文化</b>がありますが、麹菌を使うのは<b>日本独自</b>'},
 {id:'k46',cat:'history',title:'2006年、麹が「国菌」に',body:'日本醸造学会が2006年に<b>「国菌」として正式認定</b>。植物の桜、鳥のキジ、虫の蝶（仮）に並んで、菌の代表として麹菌が選ばれました🇯🇵'},
 {id:'k47',cat:'history',title:'江戸時代の麹文化',body:'江戸時代、麹は<b>庶民の調味料の中心</b>でした。各家庭で味噌や醤油を作る「我が家の味」文化があり、嫁入り道具として「麹のレシピ」が伝わったとも'},
 // 🍽️ アレンジ術（3）
-{id:'k48',cat:'recipe',title:'お弁当活用：塩麹鶏ハム',body:'<b>鶏むね肉に塩麹を塗って一晩→低温で蒸す</b>だけ。しっとり柔らかい鶏ハムが完成。薄くスライスしてサンドイッチやサラダに。お弁当の救世主✨'},
+{id:'k48',cat:'recipe',title:'お弁当活用：塩麹鶏ハム',body:'<b>鶏むね肉に塩麹を塗って一晩→低温で湯せんする</b>だけ。しっとり柔らかい鶏ハムが完成。薄くスライスしてサンドイッチやサラダに。お弁当の救世主✨'},
 {id:'k49',cat:'recipe',title:'子ども向け：玉ねぎ麹オムライス',body:'ケチャップ控えめでも、<b>玉ねぎ麹を加えるだけで旨味たっぷり</b>のチキンライス。子どもがパクパク食べる魔法のレシピです🍳'},
 {id:'k50',cat:'recipe',title:'次の挑戦：味噌作り',body:'麹をマスターしたら次は<b>手作り味噌</b>。米麹＋大豆＋塩で半年〜1年寝かせれば、世界で1つのオリジナル味噌が完成。麹の世界はまだまだ広い🌾'}
 ];
@@ -1012,7 +1063,7 @@ const FAQS=[
 {q:'完成判定したいけど自信がない',a:'<b>セルフチェックの6項目</b>を確認。「色がベージュ〜薄茶」「甘い発酵の香り」「ペースト状」「気泡やふつふつ感」「異臭・カビなし」「素材との一体感」。3つ以上揃えば完成圏内です'},
 {q:'忙しくて1日かき混ぜを忘れた',a:'<b>1日くらいは大丈夫</b>です。気づいた時にしっかり混ぜれば問題なく続けられます。お休み機能を使えばストリークも切れません'},
 {q:'家が涼しい時期、発酵が進まない',a:'<b>暖かい場所</b>（リビング・キッチンの上）へ移動。冷暖房の風が直接当たらない場所がベスト。それでもダメな時は完成日を1-2日延ばす感覚で'},
-{q:'完成した麹はどう保存？',a:'<b>清潔な瓶で冷蔵庫へ</b>。塩麹・醤油麹は半年、玉ねぎ麹・中華麹は1ヶ月、生姜麹・にんにく麹は2-3ヶ月が目安です'},
+{q:'完成した麹はどう保存？',a:'<b>清潔な瓶で冷蔵庫へ</b>。塩麹・醤油麹は半年、玉ねぎ麹・中華麹は3ヶ月、生姜麹・にんにく麹は3-4ヶ月が目安です'},
 {q:'子どもや赤ちゃんに食べさせていい？',a:'<b>1歳以降から少量ずつ</b>がおすすめ。塩分が含まれるので、量に注意。子ども向けレシピは図書館の「アレンジ術」を参考に'}
 ];
 const QUIZZES=[
@@ -1068,6 +1119,7 @@ function renderTodayKnowledge(){
 
 // ======== 麹図書館 ========
 function isSecretUnlocked(sk){
+  if(TEST_MODE)return true; // テスト中はシクレ豆知識をすべて解放（添削・動作確認用）
   const stats=computeStats();
   if(sk.unlock==='streak3')return stats.maxStreak>=3;
   if(sk.unlock==='streak5')return stats.maxStreak>=5;
@@ -1175,7 +1227,7 @@ const TITLES=[
   {id:'s-streak14',tier:3,name:'2週間の覇者',ico:'🏆',check:s=>s.maxStreak>=14},
   {id:'a-c1',  tier:2,name:'初めての完成',ico:'⭐',check:s=>s.completedCount>=1},
   {id:'a-c3',  tier:3,name:'3種マスター',ico:'🌟',check:s=>s.completedCount>=3},
-  {id:'a-call',tier:3,name:'全6種制覇',ico:'👑',check:s=>s.completedCount>=6},
+  {id:'a-call',tier:3,name:'全7種制覇',ico:'👑',check:s=>s.completedCount>=7},
   {id:'r-r5', tier:2,name:'レシピ5品',ico:'🍱',check:s=>s.recipesCount>=5},
   {id:'r-r15',tier:3,name:'レシピ15品',ico:'🌈',check:s=>s.recipesCount>=15},
   {id:'r-rmax',tier:3,name:'卒業認定',ico:'🎓',check:s=>s.recipesCount>=30}
@@ -1213,7 +1265,7 @@ function showToast(t){const e=$('toast');e.textContent=t;e.classList.add('show')
 function renderHeader(){
   $('currentDate').innerHTML=fmtJP(state.date)+(isToday(state.date)?' <span class="today-badge">今日</span>':'');
   // countdown
-  if(TEST_MODE){
+  if(TEST_MODE&&!ADMIN){
     $('countdown').textContent='テスト中';
   }else{
     const now=_now();
@@ -1231,7 +1283,7 @@ function renderHeader(){
   const s=streak();
   $('streakPill').innerHTML=s>=2?'<span class="streak-pill"><span class="flame">🔥</span>'+s+'日連続</span>':'';
   // phase
-  if(TEST_MODE)$('phasePill').textContent='テスト・'+(isPhase2Started()?'Phase 2':'Phase 1');
+  if(TEST_MODE&&!ADMIN)$('phasePill').textContent='テスト・'+(isPhase2Started()?'Phase 2':'Phase 1');
   else if(isPreLaunch())$('phasePill').textContent='開始前';
   else if(isReadOnly())$('phasePill').textContent='アーカイブ';
   else if(isPhase2Started())$('phasePill').textContent='Phase 2 活用期';
@@ -1254,7 +1306,7 @@ function renderReadOnlyBanner(){
 function renderPreLaunchBanner(){
   const el=$('preLaunchBanner');
   if(!isPreLaunch()){el.innerHTML='';return}
-  el.innerHTML='<div class="banner pre-launch"><span class="ico">🌱</span><div><b>5/23のレッスン日からスタート！</b><br>レッスン後にこのアプリで麹を見守りましょう</div></div>';
+  el.innerHTML='<div class="banner pre-launch"><span class="ico">🌱</span><div><b>6/5の仕込みからスタート！</b><br>レッスン②で麹を仕込んだら、このアプリで毎日見守りましょう</div></div>';
 }
 
 function renderPhaseIndicator(){
@@ -1263,7 +1315,7 @@ function renderPhaseIndicator(){
   if(isPhase2Started()){
     el.innerHTML='<div class="phase-indicator"><span class="pi-ico">🍱</span><div class="pi-text"><b>Phase 2：使う期</b>完成した麹でレシピをチャレンジしましょう</div></div>';
   }else{
-    if(TEST_MODE){
+    if(TEST_MODE&&!ADMIN){
       el.innerHTML='<div class="phase-indicator"><span class="pi-ico">🌾</span><div class="pi-text"><b>Phase 1：作る期</b>毎日のチェックインで麹を見守って！麹を完成させるとPhase 2が開きます</div></div>';
     }else{
       const ms=PHASE2_AT-_now();const d=Math.floor(ms/86400000);
@@ -1376,6 +1428,7 @@ function render(){
   renderTitleSection();
   renderKojiCards();
   renderPhase2();
+  if(ADMIN)renderAdminBar();
 }
 
 // ======== Onboarding ========
@@ -1407,7 +1460,7 @@ function startOnboard(){
   state.selectedKoji=picked;
   state.kojiData={};
   // 開始日：TEST_MODEなら今日、本番開始前なら START_AT を使う
-  const sd=(TEST_MODE||!isPreLaunch())?today():'2026-05-23';
+  const sd=(TEST_MODE||!isPreLaunch())?today():'2026-06-05';
   picked.forEach(k=>{
     state.kojiData[k]={startDate:sd,isResting:false,completedDate:null,checkins:{}};
   });
@@ -1422,7 +1475,7 @@ function startOnboard(){
 // ======== Add Koji Modal ========
 function openAddKoji(){
   const remaining=KOJI.filter(k=>!state.selectedKoji.includes(k.k));
-  if(!remaining.length){showToast('全6種選択済みです🌾');return}
+  if(!remaining.length){showToast('全7種選択済みです🌾');return}
   $('addKojiGrid').innerHTML=KOJI.map(k=>{
     const dis=state.selectedKoji.includes(k.k);
     return '<label data-k="'+k.k+'" class="'+(dis?'disabled':'')+'"><input type="checkbox" value="'+k.k+'" '+(dis?'disabled':'')+'><span class="ke">'+k.emoji+'</span><span class="kn">'+k.n+'</span><span class="kt">'+k.tagline+'</span></label>';
@@ -1600,7 +1653,7 @@ function computeFinalStats(){
   };
 }
 function diagnoseType(s){
-  if(s.completedCount>=6)return '👑 全6種マスター';
+  if(s.completedCount>=7)return '👑 全7種マスター';
   if(s.completedCount>=3)return '🌟 麹マイスター';
   if(s.maxStreak>=14)return '🏆 2週間の覇者';
   if(s.completedCount>=1)return '🌾 麹デビュー！';
@@ -1622,7 +1675,7 @@ function closeFarewell(){
   try{localStorage.setItem(FAREWELL_SEEN_KEY,'1')}catch(e){}
 }
 function maybeShowFarewell(){
-  if(TEST_MODE)return; // テスト中は ?preview=farewell でのみ表示
+  if(TEST_MODE&&!ADMIN)return; // 通常テスト中は ?preview=farewell のみ／admin は日付で表示
   if(!isReadOnly())return;
   let seen=false;try{seen=!!localStorage.getItem(FAREWELL_SEEN_KEY)}catch(e){}
   if(seen)return;
@@ -1631,6 +1684,46 @@ function maybeShowFarewell(){
 
 // ======== Read-only mode ========
 function applyReadOnly(){document.body.classList.toggle('read-only',isReadOnly())}
+
+// ======== 管理者テストモード（?admin）========
+// 仮想日付を移動して、開始前〜発酵〜Phase2〜終了後まで動作確認できる
+function adminSetVirtualDate(s){
+  if(s){
+    _DATE_OVERRIDE=s+'T03:00:00.000Z';
+    try{localStorage.setItem(ADMIN_DATE_KEY,s)}catch(e){}
+  }else{
+    _DATE_OVERRIDE=null;
+    try{localStorage.removeItem(ADMIN_DATE_KEY)}catch(e){}
+  }
+  state.date=today();
+  save();
+  applyReadOnly();
+  render();
+  const j=$('abJump');if(j)j.value=today();
+}
+function adminShift(n){adminSetVirtualDate(shiftDate(today(),n))}
+function renderAdminBar(){
+  const el=$('abInfo');if(!el)return;
+  const d=today();
+  const day=maxOngoingDay();
+  const phase=isPreLaunch()?'開始前':isReadOnly()?'終了後（閲覧）':isPhase2Started()?'Phase 2 使う期':'Phase 1 作る期';
+  el.textContent=fmtJP(d)+'　['+phase+(day>0?' / Day '+day:'')+']';
+}
+function bindAdmin(){
+  const j=$('abJump');if(j)j.value=today();
+  $('abPrev').addEventListener('click',()=>adminShift(-1));
+  $('abNext').addEventListener('click',()=>adminShift(1));
+  $('abReal').addEventListener('click',()=>adminSetVirtualDate(null));
+  $('abReset').addEventListener('click',resetAll);
+  if(j)j.addEventListener('change',e=>{if(e.target.value)adminSetVirtualDate(e.target.value)});
+  document.querySelectorAll('#adminBar [data-scn]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const map={seed:'2026-06-05',ferment:'2026-06-10',phase2:'2026-06-16',end:'2026-07-02'};
+      adminSetVirtualDate(map[b.dataset.scn]);
+      if(b.dataset.scn==='end')setTimeout(openFarewell,400);
+    });
+  });
+}
 
 // ======== Event delegation ========
 document.addEventListener('click',e=>{
@@ -1717,7 +1810,13 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#quizClose')||e.target.id==='quizModal'){closeQuiz();return}
   // FAQ accordion
   const faqQ=e.target.closest('.faq-q');
-  if(faqQ){faqQ.parentElement.classList.toggle('on');return}
+  if(faqQ){
+    const item=faqQ.parentElement;
+    item.classList.toggle('on');
+    // 開いたとき、回答が最後まで見えるようスクロール
+    if(item.classList.contains('on'))setTimeout(()=>item.scrollIntoView({block:'nearest',behavior:'smooth'}),80);
+    return;
+  }
   // Quiz answer
   const quizOpt=e.target.closest('.quiz-opt');
   if(quizOpt&&!quizOpt.classList.contains('disabled')){answerQuiz(Number(quizOpt.dataset.quizOpt));return}
@@ -1727,16 +1826,26 @@ document.addEventListener('click',e=>{
 
 // ======== Init ========
 function init(){
-  // ?date=YYYY-MM-DD or ?preview=running|phase2|end で日付仮想化（テスト用）
+  // ?date / ?preview で日付仮想化、?admin で管理者テストモード
   const params=new URLSearchParams(location.search);
+  ADMIN=params.has('admin');
   if(params.has('date')){_DATE_OVERRIDE=params.get('date')+'T03:00:00.000Z'}
   else if(params.has('preview')){
     const p=params.get('preview');
-    if(p==='running')_DATE_OVERRIDE='2026-05-30T03:00:00.000Z';   // Day 8相当
-    else if(p==='phase2')_DATE_OVERRIDE='2026-06-10T03:00:00.000Z'; // Phase 2
-    else if(p==='end')_DATE_OVERRIDE='2026-06-25T03:00:00.000Z';    // 終了後
+    if(p==='running')_DATE_OVERRIDE='2026-06-11T03:00:00.000Z';   // 発酵中
+    else if(p==='phase2')_DATE_OVERRIDE='2026-06-18T03:00:00.000Z'; // Phase 2
+    else if(p==='end')_DATE_OVERRIDE='2026-07-02T03:00:00.000Z';    // 終了後
+  }
+  if(ADMIN){
+    document.body.classList.add('admin');
+    // ?date/?preview 指定が無ければ、前回の仮想日付を復元
+    if(!_DATE_OVERRIDE){
+      let sd=null;try{sd=localStorage.getItem(ADMIN_DATE_KEY)}catch(e){}
+      if(sd)_DATE_OVERRIDE=sd+'T03:00:00.000Z';
+    }
   }
   load();
+  state.date=today(); // 仮想日付に合わせて表示日を同期
   // Migration: if no kojiData but selectedKoji exists, build defaults
   state.selectedKoji.forEach(k=>{
     if(!state.kojiData[k])state.kojiData[k]={startDate:today(),isResting:false,completedDate:null,checkins:{}};
@@ -1746,6 +1855,7 @@ function init(){
   bindAddKojiLabels();
   bindCheckinForm();
   bindCompletionList();
+  if(ADMIN)bindAdmin();
   // Render + maybe show modals
   applyReadOnly();
   render();
