@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-13",
+  "updated": "2026-05-25",
   "byUid": {
     "ulikda": {
       "items": [
@@ -698,6 +698,14 @@
       "total": 16000,
       "email": "middle_mika@yahoo.co.jp",
       "details": "第1部+第2部 小学生2人"
+    },
+    "besakc": {
+      "items": [
+        "記念式典 大人2人"
+      ],
+      "total": 30000,
+      "email": "kimiko8167@gmail.com",
+      "details": "記念式典 大人2人"
     }
   },
   "byEmail": {
