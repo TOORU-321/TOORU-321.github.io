@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>みんなのワーク | 2days実践講座</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   Variables & Reset
+   ======================================== */
+:root {
+  --plum: #8b5a6b;
+  --plum-light: #a87389;
+  --plum-pale: #f5eef1;
+  --plum-bg: #faf6f8;
+  --gold: #c4a265;
+  --gold-light: #e8d5a8;
+  --cream: #fdfbf7;
+  --warm-gray: #6b5e5e;
+  --text: #3d2e2e;
+  --text-light: #7a6a6a;
+  --border: #e8ddd5;
+  --success: #6ba37a;
+  --success-light: #e8f5ec;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(100, 60, 70, 0.08);
+  --shadow-lg: 0 4px 24px rgba(100, 60, 70, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-mincho: 'Shippori Mincho', 'Noto Serif JP', serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-mincho);
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   共通
+   ======================================== */
+.screen { display: none; min-height: 100dvh; padding-bottom: 40px; }
+.screen.active { display: block; }
+
+.app-header {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 20px 16px 18px;
+}
+.app-header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+}
+.app-header .subtitle {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 3px;
+  letter-spacing: 0.06em;
+}
+
+.container { max-width: 560px; margin: 0 auto; padding: 0 16px; }
+
+/* ========================================
+   ログイン
+   ======================================== */
+#login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
+  padding: 20px 16px;
+}
+#login-screen.active { display: flex; }
+
+.login-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 36px 28px 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.login-logo {
+  font-size: 13px;
+  color: var(--plum);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.login-deco {
+  width: 40px;
+  height: 1px;
+  background: var(--gold-light);
+  margin: 12px auto 16px;
+}
+.login-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+.login-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+.input-group { text-align: left; margin-bottom: 16px; }
+.input-group label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 5px;
+  letter-spacing: 0.05em;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mincho);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cream);
+  transition: border-color 0.25s;
+  outline: none;
+}
+.input-group input:focus { border-color: var(--plum-light); background: var(--white); }
+.input-group input::placeholder { color: #c0b0b0; }
+
+.login-error {
+  display: none;
+  background: #fdf0f0;
+  color: #b44;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.login-error.show { display: block; }
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 13px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.06em;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  box-shadow: 0 3px 12px rgba(139, 90, 107, 0.3);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4); }
+
+.login-note {
+  font-size: 10.5px;
+  color: var(--text-light);
+  margin-top: 14px;
+  line-height: 1.7;
+  opacity: 0.7;
+}
+
+/* ========================================
+   Day タブナビ
+   ======================================== */
+.day-tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.day-tabs::-webkit-scrollbar { display: none; }
+.day-tab {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  font-family: var(--font-mincho);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.day-tab.active {
+  color: var(--plum);
+  border-bottom-color: var(--plum);
+}
+.day-tab:hover { color: var(--text); }
+.day-tab .tab-count {
+  display: inline-block;
+  background: var(--plum-pale);
+  color: var(--plum);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  font-weight: 600;
+}
+.day-tab.active .tab-count {
+  background: var(--plum);
+  color: var(--white);
+}
+
+/* ========================================
+   統計ヘッダー
+   ======================================== */
+.board-stats {
+  display: flex;
+  gap: 10px;
+  padding: 16px 16px 0;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.board-stat {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.board-stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--plum);
+  line-height: 1;
+}
+.board-stat-label {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 3px;
+}
+
+/* ========================================
+   提出カード
+   ======================================== */
+.submissions-area {
+  padding: 16px 16px 0;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.day-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.day-section-theme {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.submission-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.submission-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.submission-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--plum-pale) 0%, var(--gold-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--plum);
+  flex-shrink: 0;
+}
+.submission-meta {
+  flex: 1;
+  min-width: 0;
+}
+.submission-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.submission-date {
+  font-size: 10.5px;
+  color: var(--text-light);
+  margin-top: 1px;
+}
+
+.submission-body {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 14px 16px;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--plum-pale);
+}
+
+/* 折りたたみ */
+.submission-body.collapsed {
+  max-height: 160px;
+  overflow: hidden;
+  position: relative;
+}
+.submission-body.collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(transparent, var(--cream));
+}
+.toggle-expand {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--plum);
+  font-family: var(--font-mincho);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0 0;
+  transition: opacity 0.2s;
+}
+.toggle-expand:hover { opacity: 0.7; }
+.toggle-expand.show { display: block; }
+
+/* ========================================
+   空状態
+   ======================================== */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-light);
+}
+.empty-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+  opacity: 0.35;
+}
+.empty-text {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* ========================================
+   ユーザーバー
+   ======================================== */
+.user-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.user-bar-name {
+  font-size: 12px;
+  color: var(--text-light);
+}
+.user-bar-name strong { color: var(--text); font-weight: 600; }
+.user-bar-logout {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: var(--font-mincho);
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.user-bar-logout:hover { opacity: 1; }
+
+/* ========================================
+   ローディング
+   ======================================== */
+.spinner-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.spinner-overlay.show { display: flex; }
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--plum-pale);
+  border-top-color: var(--plum);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========================================
+   トースト
+   ======================================== */
+.toast {
+  position: fixed;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--white);
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-family: var(--font-mincho);
+  box-shadow: var(--shadow-lg);
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+  white-space: nowrap;
+}
+.toast.show { bottom: 28px; }
+
+/* ========================================
+   レスポンシブ
+   ======================================== */
+@media (max-width: 360px) {
+  .login-card { padding: 28px 20px 24px; }
+  .board-stats { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================
+     ログイン画面
+     ============================ -->
+<div id="login-screen" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">凛穏塾</div>
+    <div class="login-deco"></div>
+    <h1 class="login-title">みんなのワーク</h1>
+    <p class="login-sub">2days実践講座 〜実践型プログラム〜<br>参加者のワーク提出内容を共有するページです</p>
+
+    <div class="input-group">
+      <label for="email-input">メールアドレス</label>
+      <input type="email" id="email-input" placeholder="お申し込み時のメールアドレス" autocomplete="email">
+    </div>
+
+    <div id="login-error" class="login-error">登録されていないメールアドレスです。</div>
+
+    <button class="btn btn-primary" onclick="handleLogin()">みんなのワークを見る</button>
+
+    <p class="login-note">※ お申し込み時のメールアドレスでログインしてください</p>
+  </div>
+</div>
+
+<!-- ============================
+     共有ボード
+     ============================ -->
+<div id="board-screen" class="screen">
+  <div class="app-header">
+    <h1>みんなのワーク</h1>
+    <div class="subtitle">2days実践講座 〜実践型プログラム〜</div>
+  </div>
+
+  <div class="user-bar">
+    <div class="user-bar-name"><strong id="user-name-display">ゲスト</strong> としてログイン中</div>
+    <button class="user-bar-logout" onclick="handleLogout()">ログアウト</button>
+  </div>
+
+  <!-- Day タブ -->
+  <div class="day-tabs" id="day-tabs"></div>
+
+  <!-- 統計 -->
+  <div class="board-stats">
+    <div class="board-stat">
+      <div class="board-stat-num" id="stat-members">0</div>
+      <div class="board-stat-label">参加者</div>
+    </div>
+    <div class="board-stat">
+      <div class="board-stat-num" id="stat-day-submissions">0</div>
+      <div class="board-stat-label">このDayの提出</div>
+    </div>
+    <div class="board-stat">
+      <div class="board-stat-num" id="stat-total">0</div>
+      <div class="board-stat-label">全体の提出数</div>
+    </div>
+  </div>
+
+  <!-- 提出一覧 -->
+  <div class="submissions-area" id="submissions-area"></div>
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast"></div>
+
+<!-- ローディング -->
+<div id="spinner" class="spinner-overlay">
+  <div class="spinner"></div>
+</div>
+
+<script>
+/* =============================================
+   設定
+   ============================================= */
+const CONFIG = {
+  GAS_URL: null,
+  TOTAL_DAYS: 12,
+  COLLAPSE_THRESHOLD: 200, // この文字数を超えたら折りたたみ
+};
+
+const state = {
+  email: null,
+  userName: null,
+  currentDay: 1,
+  members: [],
+  dayConfigs: [],
+  allSubmissions: {},  // { email: { 1: {text, date}, ... } }
+};
+
+/* =============================================
+   ストレージ連携（管理者ページと共有）
+   ============================================= */
+const Store = {
+  getMembers() {
+    return JSON.parse(localStorage.getItem('work_admin_members') || '[]');
+  },
+  getDayConfigs() {
+    return JSON.parse(localStorage.getItem('work_admin_dayConfigs') || 'null');
+  },
+  getRegisteredEmails() {
+    return JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
+  },
+  getSubmissions(email) {
+    const saved = localStorage.getItem(`work_submissions_${email}`);
+    return saved ? JSON.parse(saved) : {};
+  }
+};
+
+/* =============================================
+   ユーティリティ
+   ============================================= */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showToast(msg, dur = 2200) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+function showSpinner() { document.getElementById('spinner').classList.add('show'); }
+function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getInitial(name) {
+  if (!name) return '?';
+  // 日本語名の場合は最初の1文字
+  return name.charAt(0).toUpperCase();
+}
+
+/* =============================================
+   ログイン
+   ============================================= */
+async function handleLogin() {
+  const emailInput = document.getElementById('email-input');
+  const email = emailInput.value.trim().toLowerCase();
+  const errorEl = document.getElementById('login-error');
+
+  if (!email || !email.includes('@')) {
+    errorEl.textContent = 'メールアドレスを正しく入力してください。';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  errorEl.classList.remove('show');
+  showSpinner();
+  await sleep(400);
+
+  // 認証チェック（管理者の登録リストから）
+  const members = Store.getMembers();
+  const registered = Store.getRegisteredEmails();
+  const member = members.find(m => m.email === email);
+
+  if (member || registered.includes(email)) {
+    state.email = email;
+    state.userName = member ? (member.name || email.split('@')[0]) : email.split('@')[0];
+    localStorage.setItem('work_board_email', email);
+    localStorage.setItem('work_board_name', state.userName);
+    loadBoard();
+  } else {
+    errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
+    errorEl.classList.add('show');
+    emailInput.focus();
+  }
+
+  hideSpinner();
+}
+
+function handleLogout() {
+  localStorage.removeItem('work_board_email');
+  localStorage.removeItem('work_board_name');
+  state.email = null;
+  state.userName = null;
+  document.getElementById('email-input').value = '';
+  showScreen('login-screen');
+}
+
+document.getElementById('email-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+/* =============================================
+   ボード読み込み
+   ============================================= */
+function loadBoard() {
+  // 参加者一覧
+  state.members = Store.getMembers();
+
+  // Day設定
+  const adminConfigs = Store.getDayConfigs();
+  if (adminConfigs) {
+    state.dayConfigs = adminConfigs;
+  } else {
+    state.dayConfigs = [];
+    for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+      state.dayConfigs.push({ day: i, theme: `Day ${i} のワーク`, description: '', open: false });
+    }
+  }
+
+  // 全参加者の提出データを読み込み
+  state.allSubmissions = {};
+  const registered = Store.getRegisteredEmails();
+  const allEmails = [...new Set([...state.members.map(m => m.email), ...registered])];
+  allEmails.forEach(email => {
+    state.allSubmissions[email] = Store.getSubmissions(email);
+  });
+
+  // UI更新
+  document.getElementById('user-name-display').textContent = state.userName;
+
+  // 開放済みの最初のDayを選択
+  const openDays = state.dayConfigs.filter(c => c.open);
+  state.currentDay = openDays.length > 0 ? openDays[openDays.length - 1].day : 1;
+
+  renderDayTabs();
+  renderSubmissions();
+  showScreen('board-screen');
+}
+
+/* =============================================
+   Dayタブ
+   ============================================= */
+function renderDayTabs() {
+  const tabs = document.getElementById('day-tabs');
+  const openDays = state.dayConfigs.filter(c => c.open);
+
+  if (openDays.length === 0) {
+    tabs.innerHTML = '<div style="padding:12px 16px; font-size:12px; color:#999;">まだ開放されたDayがありません</div>';
+    return;
+  }
+
+  tabs.innerHTML = openDays.map(c => {
+    // このDayの提出数を数える
+    let count = 0;
+    Object.values(state.allSubmissions).forEach(subs => {
+      if (subs[c.day]) count++;
+    });
+
+    return `<button class="day-tab${c.day === state.currentDay ? ' active' : ''}"
+                    onclick="selectDay(${c.day})">
+      Day ${c.day}
+      <span class="tab-count">${count}</span>
+    </button>`;
+  }).join('');
+
+  // アクティブタブが見えるようにスクロール
+  setTimeout(() => {
+    const active = tabs.querySelector('.day-tab.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 100);
+}
+
+function selectDay(day) {
+  state.currentDay = day;
+  renderDayTabs();
+  renderSubmissions();
+}
+
+/* =============================================
+   提出一覧
+   ============================================= */
+function renderSubmissions() {
+  const area = document.getElementById('submissions-area');
+  const config = state.dayConfigs.find(c => c.day === state.currentDay) || {};
+
+  // 統計
+  const allEmails = Object.keys(state.allSubmissions);
+  const totalMembers = allEmails.length;
+  let daySubCount = 0;
+  let totalSubCount = 0;
+
+  const daySubmissions = []; // [{name, email, text, date}]
+
+  allEmails.forEach(email => {
+    const subs = state.allSubmissions[email] || {};
+    Object.keys(subs).forEach(() => totalSubCount++);
+    if (subs[state.currentDay]) {
+      daySubCount++;
+      const member = state.members.find(m => m.email === email);
+      daySubmissions.push({
+        name: member ? (member.name || email.split('@')[0]) : email.split('@')[0],
+        email,
+        text: subs[state.currentDay].text,
+        date: subs[state.currentDay].date,
+      });
+    }
+  });
+
+  document.getElementById('stat-members').textContent = totalMembers;
+  document.getElementById('stat-day-submissions').textContent = daySubCount;
+  document.getElementById('stat-total').textContent = totalSubCount;
+
+  // 提出内容表示
+  if (!config.open) {
+    area.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🔒</div>
+      <div class="empty-text">このDayはまだ開放されていません</div>
+    </div>`;
+    return;
+  }
+
+  let html = `<div class="day-section-title">DAY ${state.currentDay}</div>`;
+  html += `<div class="day-section-theme">${escHtml(config.theme || '')}</div>`;
+
+  if (daySubmissions.length === 0) {
+    html += `<div class="empty-state">
+      <div class="empty-icon">📝</div>
+      <div class="empty-text">まだ提出がありません<br>最初の一歩を踏み出しましょう！</div>
+    </div>`;
+  } else {
+    // 提出日時の新しい順
+    daySubmissions.sort((a, b) => {
+      if (a.date && b.date) return b.date.localeCompare(a.date);
+      return 0;
+    });
+
+    daySubmissions.forEach((sub, idx) => {
+      const isLong = sub.text.length > CONFIG.COLLAPSE_THRESHOLD;
+      const isMine = sub.email === state.email;
+
+      html += `
+        <div class="submission-card" ${isMine ? 'style="border-left: 3px solid var(--plum);"' : ''}>
+          <div class="submission-card-header">
+            <div class="submission-avatar">${escHtml(getInitial(sub.name))}</div>
+            <div class="submission-meta">
+              <div class="submission-name">${escHtml(sub.name)}${isMine ? ' <span style="font-size:10px; color:var(--plum); font-weight:400;">（自分）</span>' : ''}</div>
+              <div class="submission-date">${escHtml(sub.date || '')}</div>
+            </div>
+          </div>
+          <div class="submission-body${isLong ? ' collapsed' : ''}" id="body-${state.currentDay}-${idx}">
+            ${escHtml(sub.text)}
+          </div>
+          ${isLong ? `<button class="toggle-expand show" onclick="toggleExpand(${state.currentDay}, ${idx}, this)">もっと読む</button>` : ''}
+        </div>`;
+    });
+  }
+
+  area.innerHTML = html;
+}
+
+function toggleExpand(day, idx, btn) {
+  const body = document.getElementById(`body-${day}-${idx}`);
+  if (body.classList.contains('collapsed')) {
+    body.classList.remove('collapsed');
+    btn.textContent = '閉じる';
+  } else {
+    body.classList.add('collapsed');
+    btn.textContent = 'もっと読む';
+  }
+}
+
+/* =============================================
+   初期化（自動ログイン）
+   ============================================= */
+(function init() {
+  const savedEmail = localStorage.getItem('work_board_email');
+  const savedName = localStorage.getItem('work_board_name');
+  if (savedEmail) {
+    // 登録リストに存在するか再確認
+    const members = Store.getMembers();
+    const registered = Store.getRegisteredEmails();
+    const member = members.find(m => m.email === savedEmail);
+    if (member || registered.includes(savedEmail)) {
+      state.email = savedEmail;
+      state.userName = savedName || savedEmail.split('@')[0];
+      loadBoard();
+    } else {
+      localStorage.removeItem('work_board_email');
+      localStorage.removeItem('work_board_name');
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
