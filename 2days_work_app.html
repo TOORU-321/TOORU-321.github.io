@@ -50,20 +50,26 @@ body {
   display: none;
   min-height: 100dvh;
   padding-bottom: 40px;
-  opacity: 0;
-  transition: opacity 0.35s ease;
 }
 .screen.active { display: block; }
-.screen.active.visible { opacity: 1; }
 /* ログイン後の画面はボトムナビ分の余白 */
 .screen.has-nav { padding-bottom: calc(var(--bottom-nav-h) + 24px); }
 
-/* ログイン → 次画面のスライドアップ */
-.screen.slide-up {
-  animation: slideUpIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+/* フェードアウト（ログイン画面が消える） */
+.screen.fade-out {
+  animation: fadeOut 0.3s ease forwards;
 }
-@keyframes slideUpIn {
-  from { opacity: 0; transform: translateY(30px); }
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* スライドアップ（次の画面が出る） */
+.screen.slide-in {
+  animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(40px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -200,9 +206,8 @@ body {
   min-height: 100dvh;
   background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
   padding: 20px 16px;
-  opacity: 1;
 }
-#login-screen.active { display: flex; opacity: 1; }
+#login-screen.active { display: flex; }
 
 .login-card {
   background: var(--white);
@@ -673,27 +678,26 @@ function showScreen(id, animate = false) {
   const next = document.getElementById(id);
   if (prev === next) return;
 
-  // 前の画面をフェードアウト
-  if (prev) {
-    prev.classList.remove('visible', 'slide-up');
-    // display:none にする前に少し待つ（フェードアウト）
-    setTimeout(() => prev.classList.remove('active'), animate ? 200 : 0);
-  }
-
-  setTimeout(() => {
-    next.classList.add('active');
-    window.scrollTo(0, 0);
-    // 少し待ってからアニメーション開始
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (animate) {
-          next.classList.add('slide-up');
-        } else {
-          next.classList.add('visible');
-        }
+  if (animate && prev) {
+    // ① 前の画面をフェードアウト
+    prev.classList.add('fade-out');
+    prev.addEventListener('animationend', function onEnd() {
+      prev.removeEventListener('animationend', onEnd);
+      prev.classList.remove('active', 'fade-out');
+      // ② 次の画面をスライドインで表示
+      next.classList.add('active', 'slide-in');
+      window.scrollTo(0, 0);
+      next.addEventListener('animationend', function onIn() {
+        next.removeEventListener('animationend', onIn);
+        next.classList.remove('slide-in');
       });
     });
-  }, animate ? 250 : 0);
+  } else {
+    // アニメーションなし（通常の画面切り替え）
+    if (prev) prev.classList.remove('active');
+    next.classList.add('active');
+    window.scrollTo(0, 0);
+  }
 }
 
 function showToast(message, duration = 2500) {
