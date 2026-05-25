@@ -30,11 +30,10 @@
   --radius: 12px;
   --radius-sm: 8px;
   --font-mincho: 'Shippori Mincho', 'Noto Serif JP', serif;
+  --bottom-nav-h: 60px;
 }
 
-*, *::before, *::after {
-  margin: 0; padding: 0; box-sizing: border-box;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: var(--font-mincho);
@@ -53,6 +52,8 @@ body {
   padding-bottom: 40px;
 }
 .screen.active { display: block; }
+/* ログイン後の画面はボトムナビ分の余白 */
+.screen.has-nav { padding-bottom: calc(var(--bottom-nav-h) + 24px); }
 
 .app-header {
   background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
@@ -89,11 +90,7 @@ body {
 }
 .header-back:hover { opacity: 1; }
 
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
+.container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
 
 .btn {
   display: block;
@@ -113,26 +110,72 @@ body {
   color: var(--white);
   box-shadow: 0 3px 12px rgba(139, 90, 107, 0.3);
 }
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4);
-}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4); }
 .btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ========================================
+   ボトムナビ
+   ======================================== */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  z-index: 900;
+  justify-content: center;
+  align-items: stretch;
+  box-shadow: 0 -2px 12px rgba(100, 60, 70, 0.06);
+}
+.bottom-nav.show { display: flex; }
+
+.nav-item {
+  flex: 1;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: color 0.2s;
+  font-family: var(--font-mincho);
+  position: relative;
+}
+.nav-item:hover { color: var(--text); }
+.nav-item.active { color: var(--plum); }
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2.5px;
+  background: var(--plum);
+  border-radius: 0 0 2px 2px;
 }
 
-.btn-secondary {
-  background: var(--white);
-  color: var(--plum);
-  border: 1.5px solid var(--border);
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn-secondary:hover {
-  border-color: var(--plum-light);
-  background: var(--plum-pale);
+.nav-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
 /* ========================================
@@ -157,404 +200,223 @@ body {
   box-shadow: var(--shadow-lg);
   text-align: center;
 }
-.login-logo {
-  font-size: 13px;
-  color: var(--plum);
-  letter-spacing: 0.15em;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-.login-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-  line-height: 1.5;
-}
-.login-sub {
-  font-size: 12px;
-  color: var(--text-light);
-  margin-bottom: 32px;
-  line-height: 1.7;
-}
-.login-deco {
-  width: 40px;
-  height: 1px;
-  background: var(--gold-light);
-  margin: 16px auto 20px;
-}
+.login-logo { font-size: 13px; color: var(--plum); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 500; }
+.login-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
+.login-sub { font-size: 12px; color: var(--text-light); margin-bottom: 32px; line-height: 1.7; }
+.login-deco { width: 40px; height: 1px; background: var(--gold-light); margin: 16px auto 20px; }
 
-.input-group {
-  text-align: left;
-  margin-bottom: 20px;
-}
-.input-group label {
-  display: block;
-  font-size: 12px;
-  color: var(--text-light);
-  margin-bottom: 6px;
-  letter-spacing: 0.05em;
-}
+.input-group { text-align: left; margin-bottom: 20px; }
+.input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 6px; letter-spacing: 0.05em; }
 .input-group input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mincho);
-  font-size: 15px;
-  color: var(--text);
-  background: var(--cream);
-  transition: border-color 0.25s;
-  outline: none;
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font-mincho); font-size: 15px; color: var(--text); background: var(--cream);
+  transition: border-color 0.25s; outline: none;
 }
-.input-group input:focus {
-  border-color: var(--plum-light);
-  background: var(--white);
-}
-.input-group input::placeholder {
-  color: #c0b0b0;
-}
+.input-group input:focus { border-color: var(--plum-light); background: var(--white); }
+.input-group input::placeholder { color: #c0b0b0; }
 
-.login-error {
-  display: none;
-  background: #fdf0f0;
-  color: #b44;
-  font-size: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 16px;
-  line-height: 1.6;
-}
+.login-error { display: none; background: #fdf0f0; color: #b44; font-size: 12px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; line-height: 1.6; }
 .login-error.show { display: block; }
-
-.login-note {
-  font-size: 10.5px;
-  color: var(--text-light);
-  margin-top: 16px;
-  line-height: 1.7;
-  opacity: 0.7;
-}
+.login-note { font-size: 10.5px; color: var(--text-light); margin-top: 16px; line-height: 1.7; opacity: 0.7; }
 
 /* ========================================
    ダッシュボード
    ======================================== */
-.welcome-section {
-  background: var(--white);
-  padding: 20px;
-  margin: 20px 16px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  text-align: center;
-}
-.welcome-name {
-  font-size: 14px;
-  color: var(--plum);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.welcome-msg {
-  font-size: 12px;
-  color: var(--text-light);
-  line-height: 1.7;
-}
+.welcome-section { background: var(--white); padding: 20px; margin: 20px 16px; border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
+.welcome-name { font-size: 14px; color: var(--plum); font-weight: 600; margin-bottom: 4px; }
+.welcome-msg { font-size: 12px; color: var(--text-light); line-height: 1.7; }
 
-.progress-bar-wrap {
-  background: var(--white);
-  margin: 0 16px 20px;
-  padding: 16px 20px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-.progress-label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-light);
-  margin-bottom: 8px;
-}
-.progress-count {
-  color: var(--plum);
-  font-weight: 600;
-}
-.progress-track {
-  height: 6px;
-  background: var(--plum-pale);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--plum) 0%, var(--plum-light) 100%);
-  border-radius: 3px;
-  transition: width 0.5s ease;
-  width: 0%;
-}
+.progress-bar-wrap { background: var(--white); margin: 0 16px 20px; padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+.progress-count { color: var(--plum); font-weight: 600; }
+.progress-track { height: 6px; background: var(--plum-pale); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--plum) 0%, var(--plum-light) 100%); border-radius: 3px; transition: width 0.5s ease; width: 0%; }
 
-.day-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 16px;
-  margin-bottom: 24px;
-}
+.day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; margin-bottom: 24px; }
 
 .day-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 18px 16px;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: all 0.25s;
-  position: relative;
-  border: 1.5px solid transparent;
+  background: var(--white); border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--shadow);
+  cursor: pointer; transition: all 0.25s; position: relative; border: 1.5px solid transparent;
 }
-.day-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--plum-pale);
-}
+.day-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--plum-pale); }
 .day-card:active { transform: translateY(0); }
+.day-card.submitted { border-color: var(--success-light); background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%); }
+.day-card.locked { opacity: 0.5; cursor: default; pointer-events: none; }
 
-.day-card.submitted {
-  border-color: var(--success-light);
-  background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%);
-}
-.day-card.locked {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
-}
+.day-number { font-size: 11px; color: var(--text-light); letter-spacing: 0.08em; margin-bottom: 4px; }
+.day-theme { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; min-height: 40px; }
+.day-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; margin-top: 10px; padding: 3px 8px; border-radius: 20px; }
+.day-status.done { background: var(--success-light); color: var(--success); }
+.day-status.todo { background: var(--plum-pale); color: var(--plum); }
+.day-status.locked-label { background: #f0eded; color: #aaa; }
+.day-check { position: absolute; top: 10px; right: 12px; font-size: 16px; }
 
-.day-number {
-  font-size: 11px;
-  color: var(--text-light);
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-.day-theme {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.5;
-  min-height: 40px;
-}
-.day-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  margin-top: 10px;
-  padding: 3px 8px;
-  border-radius: 20px;
-}
-.day-status.done {
-  background: var(--success-light);
-  color: var(--success);
-}
-.day-status.todo {
-  background: var(--plum-pale);
-  color: var(--plum);
-}
-.day-status.locked-label {
-  background: #f0eded;
-  color: #aaa;
-}
-
-.day-check {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 16px;
-}
-
-.logout-link {
-  display: block;
-  text-align: center;
-  font-size: 11px;
-  color: var(--text-light);
-  margin: 24px 0 0;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-  text-decoration: none;
-}
+.logout-link { display: block; text-align: center; font-size: 11px; color: var(--text-light); margin: 24px 0 0; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; text-decoration: none; }
 .logout-link:hover { opacity: 1; }
 
 /* ========================================
    ワーク提出画面
    ======================================== */
-.work-header-info {
-  background: var(--white);
-  margin: 20px 16px;
-  padding: 20px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-.work-day-label {
-  font-size: 11px;
-  color: var(--plum);
-  letter-spacing: 0.1em;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-.work-theme-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-.work-description {
-  font-size: 13px;
-  color: var(--text-light);
-  line-height: 1.8;
-}
+.work-header-info { background: var(--white); margin: 20px 16px; padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.work-day-label { font-size: 11px; color: var(--plum); letter-spacing: 0.1em; margin-bottom: 4px; font-weight: 500; }
+.work-theme-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
+.work-description { font-size: 13px; color: var(--text-light); line-height: 1.8; }
 
-.work-form-area {
-  margin: 0 16px;
-  padding: 20px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-.work-form-area label {
-  display: block;
-  font-size: 13px;
-  color: var(--text);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
+.work-form-area { margin: 0 16px; padding: 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+.work-form-area label { display: block; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px; }
 .work-textarea {
-  width: 100%;
-  min-height: 200px;
-  padding: 14px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mincho);
-  font-size: 14px;
-  color: var(--text);
-  background: var(--cream);
-  resize: vertical;
-  outline: none;
-  line-height: 1.8;
-  transition: border-color 0.25s;
+  width: 100%; min-height: 200px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font-mincho); font-size: 14px; color: var(--text); background: var(--cream);
+  resize: vertical; outline: none; line-height: 1.8; transition: border-color 0.25s;
 }
-.work-textarea:focus {
-  border-color: var(--plum-light);
-  background: var(--white);
-}
-.work-textarea::placeholder {
-  color: #c0b0b0;
-}
-.char-count {
-  text-align: right;
-  font-size: 11px;
-  color: var(--text-light);
-  margin-top: 6px;
-  opacity: 0.6;
-}
+.work-textarea:focus { border-color: var(--plum-light); background: var(--white); }
+.work-textarea::placeholder { color: #c0b0b0; }
+.char-count { text-align: right; font-size: 11px; color: var(--text-light); margin-top: 6px; opacity: 0.6; }
+.submit-area { margin: 20px 16px 0; }
 
-.submit-area {
-  margin: 20px 16px 0;
-}
-
-.submitted-banner {
-  display: none;
-  background: var(--success-light);
-  border: 1.5px solid var(--success);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  margin: 0 16px 16px;
-  text-align: center;
-}
+.submitted-banner { display: none; background: var(--success-light); border: 1.5px solid var(--success); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; text-align: center; }
 .submitted-banner.show { display: block; }
-.submitted-banner .check-icon {
-  font-size: 24px;
-  margin-bottom: 4px;
-}
-.submitted-banner .banner-text {
-  font-size: 13px;
-  color: var(--success);
-  font-weight: 600;
-}
-.submitted-banner .banner-date {
-  font-size: 11px;
-  color: var(--text-light);
-  margin-top: 4px;
-}
+.submitted-banner .check-icon { font-size: 24px; margin-bottom: 4px; }
+.submitted-banner .banner-text { font-size: 13px; color: var(--success); font-weight: 600; }
+.submitted-banner .banner-date { font-size: 11px; color: var(--text-light); margin-top: 4px; }
 
-.prev-submission {
-  display: none;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 20px;
-  margin: 0 16px 16px;
-}
+.prev-submission { display: none; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; }
 .prev-submission.show { display: block; }
-.prev-submission-label {
-  font-size: 11px;
-  color: var(--text-light);
-  margin-bottom: 8px;
-  letter-spacing: 0.05em;
-}
-.prev-submission-text {
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
+.prev-submission-label { font-size: 11px; color: var(--text-light); margin-bottom: 8px; letter-spacing: 0.05em; }
+.prev-submission-text { font-size: 13px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
 
 /* ========================================
-   トースト通知
+   みんなのワーク（ボード画面）
    ======================================== */
-.toast {
-  position: fixed;
-  bottom: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--text);
-  color: var(--white);
-  padding: 12px 24px;
-  border-radius: 30px;
-  font-size: 13px;
+.board-day-tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.board-day-tabs::-webkit-scrollbar { display: none; }
+.board-day-tab {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
   font-family: var(--font-mincho);
-  box-shadow: var(--shadow-lg);
-  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 1000;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
   white-space: nowrap;
 }
-.toast.show { bottom: 30px; }
+.board-day-tab.active { color: var(--plum); border-bottom-color: var(--plum); }
+.board-day-tab:hover { color: var(--text); }
+.board-day-tab .tab-count {
+  display: inline-block;
+  background: var(--plum-pale);
+  color: var(--plum);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  font-weight: 600;
+}
+.board-day-tab.active .tab-count { background: var(--plum); color: var(--white); }
+
+.board-stats {
+  display: flex;
+  gap: 10px;
+  padding: 16px 16px 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.board-stat {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.board-stat-num { font-size: 22px; font-weight: 700; color: var(--plum); line-height: 1; }
+.board-stat-label { font-size: 10px; color: var(--text-light); margin-top: 3px; }
+
+.board-submissions-area { padding: 16px 16px 0; max-width: 480px; margin: 0 auto; }
+.board-day-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.board-day-theme { font-size: 12px; color: var(--text-light); margin-bottom: 16px; line-height: 1.6; }
+
+.submission-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.submission-card.mine { border-left: 3px solid var(--plum); }
+.submission-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.submission-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--plum-pale) 0%, var(--gold-light) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--plum); flex-shrink: 0;
+}
+.submission-meta { flex: 1; min-width: 0; }
+.submission-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.submission-name .me-tag { font-size: 10px; color: var(--plum); font-weight: 400; }
+.submission-date { font-size: 10.5px; color: var(--text-light); margin-top: 1px; }
+
+.submission-body {
+  font-size: 13.5px; color: var(--text); line-height: 1.9; white-space: pre-wrap; word-break: break-word;
+  padding: 14px 16px; background: var(--cream); border-radius: var(--radius-sm); border-left: 3px solid var(--plum-pale);
+}
+.submission-body.collapsed { max-height: 160px; overflow: hidden; position: relative; }
+.submission-body.collapsed::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+  background: linear-gradient(transparent, var(--cream));
+}
+.toggle-expand {
+  display: none; background: none; border: none; color: var(--plum); font-family: var(--font-mincho);
+  font-size: 12px; font-weight: 600; cursor: pointer; padding: 8px 0 0; transition: opacity 0.2s;
+}
+.toggle-expand:hover { opacity: 0.7; }
+.toggle-expand.show { display: block; }
+
+.board-empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-light);
+}
+.board-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
+.board-empty-text { font-size: 13px; line-height: 1.8; }
 
 /* ========================================
-   ローディング
+   トースト・ローディング
    ======================================== */
+.toast {
+  position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--white); padding: 12px 24px; border-radius: 30px;
+  font-size: 13px; font-family: var(--font-mincho); box-shadow: var(--shadow-lg);
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1000; white-space: nowrap;
+}
+.toast.show { bottom: calc(var(--bottom-nav-h) + 16px); }
+
 .spinner-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(255,255,255,0.7);
-  z-index: 999;
-  align-items: center;
-  justify-content: center;
+  display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 999;
+  align-items: center; justify-content: center;
 }
 .spinner-overlay.show { display: flex; }
-.spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--plum-pale);
-  border-top-color: var(--plum);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+.spinner { width: 36px; height: 36px; border: 3px solid var(--plum-pale); border-top-color: var(--plum); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ========================================
-   レスポンシブ微調整
+   レスポンシブ
    ======================================== */
 @media (max-width: 360px) {
   .day-grid { grid-template-columns: 1fr; }
   .login-card { padding: 32px 20px 28px; }
+  .board-stats { flex-direction: column; }
 }
 </style>
 </head>
@@ -569,36 +431,28 @@ body {
     <div class="login-deco"></div>
     <h1 class="login-title">2days実践講座<br>ワーク提出</h1>
     <p class="login-sub">〜実践型プログラム〜<br>お申し込み時のメールアドレスでログインしてください</p>
-
     <div class="input-group">
       <label for="email-input">メールアドレス</label>
       <input type="email" id="email-input" placeholder="example@email.com" autocomplete="email">
     </div>
-
-    <div id="login-error" class="login-error">
-      登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。
-    </div>
-
-    <button class="btn btn-primary" id="login-btn" onclick="handleLogin()">ログイン</button>
-
+    <div id="login-error" class="login-error">登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。</div>
+    <button class="btn btn-primary" onclick="handleLogin()">ログイン</button>
     <p class="login-note">※ 次回からは自動ログインされます</p>
   </div>
 </div>
 
 <!-- ============================
-     ダッシュボード
+     ダッシュボード（マイワーク）
      ============================ -->
-<div id="dashboard-screen" class="screen">
+<div id="dashboard-screen" class="screen has-nav">
   <div class="app-header">
     <h1>2days実践講座<br>ワーク提出</h1>
     <div class="subtitle">〜実践型プログラム〜</div>
   </div>
-
   <div class="welcome-section">
     <div class="welcome-name" id="welcome-name">ようこそ</div>
     <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
   </div>
-
   <div class="progress-bar-wrap">
     <div class="progress-label">
       <span>提出状況</span>
@@ -608,166 +462,157 @@ body {
       <div class="progress-fill" id="progress-fill"></div>
     </div>
   </div>
-
-  <div class="day-grid" id="day-grid">
-    <!-- JS で Day1〜12 のカードを生成 -->
-  </div>
-
-  <div style="padding: 0 16px;">
-    <a class="logout-link" onclick="handleLogout()">ログアウト</a>
-  </div>
+  <div class="day-grid" id="day-grid"></div>
+  <div style="padding: 0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
 </div>
 
 <!-- ============================
      ワーク提出画面
      ============================ -->
-<div id="work-screen" class="screen">
+<div id="work-screen" class="screen has-nav">
   <div class="app-header">
     <button class="header-back" onclick="goToDashboard()">‹</button>
     <h1 id="work-screen-title">Day 1 ワーク</h1>
   </div>
-
   <div id="submitted-banner" class="submitted-banner">
     <div class="check-icon">✓</div>
     <div class="banner-text">提出済みです</div>
     <div class="banner-date" id="submitted-date"></div>
   </div>
-
   <div class="work-header-info">
     <div class="work-day-label" id="work-day-label">DAY 1</div>
     <div class="work-theme-title" id="work-theme-title">テーマ</div>
     <div class="work-description" id="work-description">ワークの説明が入ります</div>
   </div>
-
   <div id="prev-submission" class="prev-submission">
     <div class="prev-submission-label">前回の提出内容</div>
     <div class="prev-submission-text" id="prev-submission-text"></div>
   </div>
-
-  <div class="work-form-area" id="work-form-area">
+  <div class="work-form-area">
     <label for="work-input">あなたの回答</label>
     <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
     <div class="char-count"><span id="char-count">0</span>文字</div>
   </div>
-
   <div class="submit-area">
     <button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">提出する</button>
   </div>
 </div>
 
+<!-- ============================
+     みんなのワーク（ボード画面）
+     ============================ -->
+<div id="board-screen" class="screen has-nav">
+  <div class="app-header">
+    <h1>みんなのワーク</h1>
+    <div class="subtitle">仲間の提出内容を読んでみましょう</div>
+  </div>
+  <div class="board-day-tabs" id="board-day-tabs"></div>
+  <div class="board-stats">
+    <div class="board-stat">
+      <div class="board-stat-num" id="b-stat-members">0</div>
+      <div class="board-stat-label">参加者</div>
+    </div>
+    <div class="board-stat">
+      <div class="board-stat-num" id="b-stat-day">0</div>
+      <div class="board-stat-label">このDayの提出</div>
+    </div>
+    <div class="board-stat">
+      <div class="board-stat-num" id="b-stat-total">0</div>
+      <div class="board-stat-label">全体の提出数</div>
+    </div>
+  </div>
+  <div class="board-submissions-area" id="board-submissions-area"></div>
+</div>
+
+<!-- ============================
+     ボトムナビゲーション
+     ============================ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    </div>
+    <span class="nav-label">マイワーク</span>
+  </button>
+  <button class="nav-item" id="nav-board" onclick="switchNav('board')">
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    </div>
+    <span class="nav-label">みんなのワーク</span>
+  </button>
+</nav>
+
 <!-- トースト -->
 <div id="toast" class="toast"></div>
 
 <!-- ローディング -->
-<div id="spinner" class="spinner-overlay">
-  <div class="spinner"></div>
-</div>
+<div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
 
 <script>
 /* =============================================
    設定 & 状態管理
    ============================================= */
-
-// ★ GAS連携時にここを書き換えるだけ
 const CONFIG = {
-  // Google Apps Script のデプロイURL（後で設定）
   GAS_URL: null,
-
-  // 日数
   TOTAL_DAYS: 12,
-
-  // デモモード（GAS未接続時はtrue）
   DEMO_MODE: true,
+  COLLAPSE_THRESHOLD: 200,
 };
 
-// アプリ状態
 const state = {
   email: null,
   userName: null,
   currentDay: null,
-  submissions: {},   // { 1: { text: '...', date: '2026-06-01' }, 2: ... }
-  dayConfigs: [],     // [{ day:1, theme:'...', description:'...' }, ...]
+  submissions: {},
+  dayConfigs: [],
+  // ボード用
+  boardDay: 1,
+  allMembers: [],
+  allSubmissions: {},
+  activeNav: 'mywork', // 'mywork' | 'board'
 };
 
 /* =============================================
    API スタブ（GAS連携用）
    ============================================= */
-
 const API = {
-  /**
-   * メールアドレスの認証
-   * @param {string} email
-   * @returns {Promise<{ok: boolean, name?: string}>}
-   */
   async verifyEmail(email) {
     if (CONFIG.GAS_URL) {
-      // ★ GAS連携時
       const res = await fetch(`${CONFIG.GAS_URL}?action=verify&email=${encodeURIComponent(email)}`);
       return await res.json();
     }
-    // デモモード：管理者が登録したメールアドレスで認証
     await sleep(600);
     const adminMembers = JSON.parse(localStorage.getItem('work_admin_members') || '[]');
     const registered = JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
     const member = adminMembers.find(m => m.email === email);
-    if (member) {
-      return { ok: true, name: member.name || email.split('@')[0] + 'さん' };
-    }
-    if (registered.includes(email)) {
-      return { ok: true, name: email.split('@')[0] + 'さん' };
-    }
+    if (member) return { ok: true, name: member.name || email.split('@')[0] + 'さん' };
+    if (registered.includes(email)) return { ok: true, name: email.split('@')[0] + 'さん' };
     return { ok: false };
   },
 
-  /**
-   * ワーク設定（テーマ・説明）を取得
-   * @returns {Promise<Array>}
-   */
   async getDayConfigs() {
     if (CONFIG.GAS_URL) {
       const res = await fetch(`${CONFIG.GAS_URL}?action=configs`);
       return await res.json();
     }
-    // デモモード：管理者が設定したDay情報を読み込み
     const adminConfigs = JSON.parse(localStorage.getItem('work_admin_dayConfigs') || 'null');
-    if (adminConfigs) {
-      return adminConfigs;
-    }
-    // フォールバック：デフォルト
+    if (adminConfigs) return adminConfigs;
     const demos = [];
     for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
-      demos.push({
-        day: i,
-        theme: `Day ${i} のワーク`,
-        description: 'ワーク内容は後日設定されます。お楽しみに！',
-        open: false
-      });
+      demos.push({ day: i, theme: `Day ${i} のワーク`, description: 'ワーク内容は後日設定されます。お楽しみに！', open: false });
     }
     return demos;
   },
 
-  /**
-   * 提出済みデータを取得
-   * @param {string} email
-   * @returns {Promise<Object>} { 1: {text, date}, ... }
-   */
   async getSubmissions(email) {
     if (CONFIG.GAS_URL) {
       const res = await fetch(`${CONFIG.GAS_URL}?action=submissions&email=${encodeURIComponent(email)}`);
       return await res.json();
     }
-    // デモモード：ローカルストレージ
     const saved = localStorage.getItem(`work_submissions_${email}`);
     return saved ? JSON.parse(saved) : {};
   },
 
-  /**
-   * ワークを提出
-   * @param {string} email
-   * @param {number} day
-   * @param {string} text
-   * @returns {Promise<{ok: boolean}>}
-   */
   async submitWork(email, day, text) {
     if (CONFIG.GAS_URL) {
       const res = await fetch(CONFIG.GAS_URL, {
@@ -777,16 +622,31 @@ const API = {
       });
       return await res.json();
     }
-    // デモモード：ローカルストレージに保存
     await sleep(500);
     const saved = localStorage.getItem(`work_submissions_${email}`);
     const data = saved ? JSON.parse(saved) : {};
-    data[day] = {
-      text,
-      date: new Date().toLocaleDateString('ja-JP')
-    };
+    data[day] = { text, date: new Date().toLocaleDateString('ja-JP') };
     localStorage.setItem(`work_submissions_${email}`, JSON.stringify(data));
     return { ok: true };
+  },
+
+  // ボード用：全参加者の提出を取得
+  getAllMembers() {
+    return JSON.parse(localStorage.getItem('work_admin_members') || '[]');
+  },
+  getAllRegisteredEmails() {
+    return JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
+  },
+  getAllSubmissions() {
+    const members = this.getAllMembers();
+    const registered = this.getAllRegisteredEmails();
+    const allEmails = [...new Set([...members.map(m => m.email), ...registered])];
+    const result = {};
+    allEmails.forEach(email => {
+      const saved = localStorage.getItem(`work_submissions_${email}`);
+      result[email] = saved ? JSON.parse(saved) : {};
+    });
+    return result;
   },
 };
 
@@ -811,6 +671,32 @@ function showToast(message, duration = 2500) {
 function showSpinner() { document.getElementById('spinner').classList.add('show'); }
 function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
 
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getInitial(name) {
+  return name ? name.charAt(0).toUpperCase() : '?';
+}
+
+/* =============================================
+   ボトムナビ
+   ============================================= */
+function showNav() { document.getElementById('bottom-nav').classList.add('show'); }
+function hideNav() { document.getElementById('bottom-nav').classList.remove('show'); }
+
+function switchNav(tab) {
+  state.activeNav = tab;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${tab}`).classList.add('active');
+
+  if (tab === 'mywork') {
+    loadDashboard();
+  } else if (tab === 'board') {
+    loadBoard();
+  }
+}
+
 /* =============================================
    ログイン
    ============================================= */
@@ -833,9 +719,9 @@ async function handleLogin() {
     if (result.ok) {
       state.email = email;
       state.userName = result.name || email;
-      // ブラウザに記憶
       localStorage.setItem('work_app_email', email);
       localStorage.setItem('work_app_name', state.userName);
+      showNav();
       await loadDashboard();
     } else {
       errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
@@ -858,38 +744,30 @@ function handleLogout() {
   state.userName = null;
   state.submissions = {};
   document.getElementById('email-input').value = '';
+  hideNav();
   showScreen('login-screen');
 }
 
-// エンターキーでログイン
 document.getElementById('email-input').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') handleLogin();
 });
 
 /* =============================================
-   ダッシュボード
+   ダッシュボード（マイワーク）
    ============================================= */
 async function loadDashboard() {
   showSpinner();
   try {
-    // 並列で取得
     const [configs, submissions] = await Promise.all([
       API.getDayConfigs(),
       API.getSubmissions(state.email)
     ]);
-
     state.dayConfigs = configs;
     state.submissions = submissions;
 
-    // 名前表示
     document.getElementById('welcome-name').textContent = state.userName;
-
-    // カード生成
     renderDayCards();
-
-    // 進捗更新
     updateProgress();
-
     showScreen('dashboard-screen');
   } catch (e) {
     showToast('読み込みに失敗しました');
@@ -907,25 +785,21 @@ function renderDayCards() {
     const config = state.dayConfigs.find(c => c.day === i) || {};
     const submission = state.submissions[i];
     const isSubmitted = !!submission;
-    const isOpen = config.open !== false; // open未設定(旧データ)はtrueとみなす
+    const isOpen = config.open !== false;
 
     const card = document.createElement('div');
     card.className = `day-card${isSubmitted ? ' submitted' : ''}${!isOpen ? ' locked' : ''}`;
-    if (isOpen) {
-      card.onclick = () => openWork(i);
-    }
+    if (isOpen) card.onclick = () => openWork(i);
 
     card.innerHTML = `
       <div class="day-number">DAY ${i}</div>
       <div class="day-theme">${config.theme || `Day ${i}`}</div>
       ${isSubmitted
-        ? `<span class="day-check">✓</span>
-           <span class="day-status done">提出済み</span>`
+        ? `<span class="day-check">✓</span><span class="day-status done">提出済み</span>`
         : isOpen
           ? `<span class="day-status todo">未提出</span>`
           : `<span class="day-status locked-label">準備中</span>`
-      }
-    `;
+      }`;
     grid.appendChild(card);
   }
 }
@@ -946,16 +820,13 @@ function openWork(day) {
   const config = state.dayConfigs.find(c => c.day === day) || {};
   const submission = state.submissions[day];
 
-  // ヘッダー
   document.getElementById('work-screen-title').textContent = `Day ${day} ワーク`;
   document.getElementById('work-day-label').textContent = `DAY ${day}`;
   document.getElementById('work-theme-title').textContent = config.theme || `Day ${day}`;
   document.getElementById('work-description').textContent = config.description || '';
 
-  // 提出済みバナー
   const banner = document.getElementById('submitted-banner');
   const prevArea = document.getElementById('prev-submission');
-
   if (submission) {
     banner.classList.add('show');
     document.getElementById('submitted-date').textContent = `提出日: ${submission.date}`;
@@ -966,25 +837,19 @@ function openWork(day) {
     prevArea.classList.remove('show');
   }
 
-  // テキストエリア
   document.getElementById('work-input').value = '';
   document.getElementById('char-count').textContent = '0';
   document.getElementById('submit-btn').textContent = submission ? '再提出する' : '提出する';
-
   showScreen('work-screen');
 }
 
 function updateCharCount() {
-  const len = document.getElementById('work-input').value.length;
-  document.getElementById('char-count').textContent = len;
+  document.getElementById('char-count').textContent = document.getElementById('work-input').value.length;
 }
 
 async function handleSubmit() {
   const text = document.getElementById('work-input').value.trim();
-  if (!text) {
-    showToast('回答を入力してください');
-    return;
-  }
+  if (!text) { showToast('回答を入力してください'); return; }
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
@@ -993,11 +858,7 @@ async function handleSubmit() {
   try {
     const result = await API.submitWork(state.email, state.currentDay, text);
     if (result.ok) {
-      // ローカル状態を更新
-      state.submissions[state.currentDay] = {
-        text,
-        date: new Date().toLocaleDateString('ja-JP')
-      };
+      state.submissions[state.currentDay] = { text, date: new Date().toLocaleDateString('ja-JP') };
       showToast('提出しました！お疲れさまです ✓');
       await sleep(800);
       await loadDashboard();
@@ -1013,8 +874,129 @@ async function handleSubmit() {
   }
 }
 
-function goToDashboard() {
-  loadDashboard();
+function goToDashboard() { loadDashboard(); }
+
+/* =============================================
+   みんなのワーク（ボード）
+   ============================================= */
+function loadBoard() {
+  state.allMembers = API.getAllMembers();
+  state.allSubmissions = API.getAllSubmissions();
+
+  // 開放済みの最新Dayを選択
+  const openDays = state.dayConfigs.filter(c => c.open);
+  if (openDays.length > 0 && !openDays.find(c => c.day === state.boardDay)) {
+    state.boardDay = openDays[openDays.length - 1].day;
+  }
+
+  renderBoardTabs();
+  renderBoardSubmissions();
+  showScreen('board-screen');
+}
+
+function renderBoardTabs() {
+  const tabs = document.getElementById('board-day-tabs');
+  const openDays = state.dayConfigs.filter(c => c.open);
+
+  if (openDays.length === 0) {
+    tabs.innerHTML = '<div style="padding:12px 16px; font-size:12px; color:#999;">まだ開放されたDayがありません</div>';
+    return;
+  }
+
+  tabs.innerHTML = openDays.map(c => {
+    let count = 0;
+    Object.values(state.allSubmissions).forEach(subs => { if (subs[c.day]) count++; });
+    return `<button class="board-day-tab${c.day === state.boardDay ? ' active' : ''}" onclick="selectBoardDay(${c.day})">
+      Day ${c.day}<span class="tab-count">${count}</span>
+    </button>`;
+  }).join('');
+
+  setTimeout(() => {
+    const active = tabs.querySelector('.board-day-tab.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 100);
+}
+
+function selectBoardDay(day) {
+  state.boardDay = day;
+  renderBoardTabs();
+  renderBoardSubmissions();
+}
+
+function renderBoardSubmissions() {
+  const area = document.getElementById('board-submissions-area');
+  const config = state.dayConfigs.find(c => c.day === state.boardDay) || {};
+
+  const allEmails = Object.keys(state.allSubmissions);
+  let daySubCount = 0;
+  let totalSubCount = 0;
+  const daySubmissions = [];
+
+  allEmails.forEach(email => {
+    const subs = state.allSubmissions[email] || {};
+    Object.keys(subs).forEach(() => totalSubCount++);
+    if (subs[state.boardDay]) {
+      daySubCount++;
+      const member = state.allMembers.find(m => m.email === email);
+      daySubmissions.push({
+        name: member ? (member.name || email.split('@')[0]) : email.split('@')[0],
+        email,
+        text: subs[state.boardDay].text,
+        date: subs[state.boardDay].date,
+      });
+    }
+  });
+
+  document.getElementById('b-stat-members').textContent = allEmails.length;
+  document.getElementById('b-stat-day').textContent = daySubCount;
+  document.getElementById('b-stat-total').textContent = totalSubCount;
+
+  if (!config.open) {
+    area.innerHTML = '<div class="board-empty"><div class="board-empty-icon">🔒</div><div class="board-empty-text">このDayはまだ開放されていません</div></div>';
+    return;
+  }
+
+  let html = `<div class="board-day-title">DAY ${state.boardDay}</div>`;
+  html += `<div class="board-day-theme">${escHtml(config.theme || '')}</div>`;
+
+  if (daySubmissions.length === 0) {
+    html += '<div class="board-empty"><div class="board-empty-icon">📝</div><div class="board-empty-text">まだ提出がありません<br>最初の一歩を踏み出しましょう！</div></div>';
+  } else {
+    daySubmissions.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+    daySubmissions.forEach((sub, idx) => {
+      const isLong = sub.text.length > CONFIG.COLLAPSE_THRESHOLD;
+      const isMine = sub.email === state.email;
+
+      html += `
+        <div class="submission-card${isMine ? ' mine' : ''}">
+          <div class="submission-card-header">
+            <div class="submission-avatar">${escHtml(getInitial(sub.name))}</div>
+            <div class="submission-meta">
+              <div class="submission-name">${escHtml(sub.name)}${isMine ? ' <span class="me-tag">（自分）</span>' : ''}</div>
+              <div class="submission-date">${escHtml(sub.date || '')}</div>
+            </div>
+          </div>
+          <div class="submission-body${isLong ? ' collapsed' : ''}" id="board-body-${state.boardDay}-${idx}">
+            ${escHtml(sub.text)}
+          </div>
+          ${isLong ? `<button class="toggle-expand show" onclick="toggleBoardExpand(${state.boardDay}, ${idx}, this)">もっと読む</button>` : ''}
+        </div>`;
+    });
+  }
+
+  area.innerHTML = html;
+}
+
+function toggleBoardExpand(day, idx, btn) {
+  const body = document.getElementById(`board-body-${day}-${idx}`);
+  if (body.classList.contains('collapsed')) {
+    body.classList.remove('collapsed');
+    btn.textContent = '閉じる';
+  } else {
+    body.classList.add('collapsed');
+    btn.textContent = 'もっと読む';
+  }
 }
 
 /* =============================================
@@ -1023,10 +1005,10 @@ function goToDashboard() {
 (async function init() {
   const savedEmail = localStorage.getItem('work_app_email');
   const savedName = localStorage.getItem('work_app_name');
-
   if (savedEmail) {
     state.email = savedEmail;
     state.userName = savedName || savedEmail;
+    showNav();
     await loadDashboard();
   }
 })();
