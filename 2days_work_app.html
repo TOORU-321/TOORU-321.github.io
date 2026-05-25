@@ -678,10 +678,6 @@ const CONFIG = {
 
   // デモモード（GAS未接続時はtrue）
   DEMO_MODE: true,
-
-  // デモ用の登録メールアドレス一覧
-  // GAS連携後はスプシから取得するため不要
-  DEMO_EMAILS: ['test@example.com', 'demo@example.com'],
 };
 
 // アプリ状態
@@ -709,9 +705,15 @@ const API = {
       const res = await fetch(`${CONFIG.GAS_URL}?action=verify&email=${encodeURIComponent(email)}`);
       return await res.json();
     }
-    // デモモード
+    // デモモード：管理者が登録したメールアドレスで認証
     await sleep(600);
-    if (CONFIG.DEMO_EMAILS.includes(email)) {
+    const adminMembers = JSON.parse(localStorage.getItem('work_admin_members') || '[]');
+    const registered = JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
+    const member = adminMembers.find(m => m.email === email);
+    if (member) {
+      return { ok: true, name: member.name || email.split('@')[0] + 'さん' };
+    }
+    if (registered.includes(email)) {
       return { ok: true, name: email.split('@')[0] + 'さん' };
     }
     return { ok: false };
@@ -726,13 +728,19 @@ const API = {
       const res = await fetch(`${CONFIG.GAS_URL}?action=configs`);
       return await res.json();
     }
-    // デモモード：仮テーマ
+    // デモモード：管理者が設定したDay情報を読み込み
+    const adminConfigs = JSON.parse(localStorage.getItem('work_admin_dayConfigs') || 'null');
+    if (adminConfigs) {
+      return adminConfigs;
+    }
+    // フォールバック：デフォルト
     const demos = [];
     for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
       demos.push({
         day: i,
         theme: `Day ${i} のワーク`,
-        description: 'ワーク内容は後日設定されます。お楽しみに！'
+        description: 'ワーク内容は後日設定されます。お楽しみに！',
+        open: false
       });
     }
     return demos;
@@ -899,10 +907,13 @@ function renderDayCards() {
     const config = state.dayConfigs.find(c => c.day === i) || {};
     const submission = state.submissions[i];
     const isSubmitted = !!submission;
+    const isOpen = config.open !== false; // open未設定(旧データ)はtrueとみなす
 
     const card = document.createElement('div');
-    card.className = `day-card${isSubmitted ? ' submitted' : ''}`;
-    card.onclick = () => openWork(i);
+    card.className = `day-card${isSubmitted ? ' submitted' : ''}${!isOpen ? ' locked' : ''}`;
+    if (isOpen) {
+      card.onclick = () => openWork(i);
+    }
 
     card.innerHTML = `
       <div class="day-number">DAY ${i}</div>
@@ -910,7 +921,9 @@ function renderDayCards() {
       ${isSubmitted
         ? `<span class="day-check">✓</span>
            <span class="day-status done">提出済み</span>`
-        : `<span class="day-status todo">未提出</span>`
+        : isOpen
+          ? `<span class="day-status todo">未提出</span>`
+          : `<span class="day-status locked-label">準備中</span>`
       }
     `;
     grid.appendChild(card);
@@ -918,8 +931,9 @@ function renderDayCards() {
 }
 
 function updateProgress() {
+  const openDays = state.dayConfigs.filter(c => c.open !== false);
   const done = Object.keys(state.submissions).length;
-  const total = CONFIG.TOTAL_DAYS;
+  const total = openDays.length || CONFIG.TOTAL_DAYS;
   document.getElementById('progress-text').textContent = `${done} / ${total}`;
   document.getElementById('progress-fill').style.width = `${(done / total) * 100}%`;
 }
