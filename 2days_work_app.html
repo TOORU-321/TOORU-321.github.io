@@ -46,32 +46,35 @@ body {
 /* ========================================
    共通コンポーネント
    ======================================== */
-.screen {
+/* ── ログインオーバーレイ（最前面） ── */
+#login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
+  padding: 20px 16px;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+#login-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── メインアプリ（ログイン後に見える） ── */
+.main-app { display: none; }
+.main-app.show { display: block; }
+
+/* ── ビュー切り替え（タブ内） ── */
+.view {
   display: none;
   min-height: 100dvh;
-  padding-bottom: 40px;
+  padding-bottom: calc(var(--bottom-nav-h) + 24px);
 }
-.screen.active { display: block; }
-/* ログイン後の画面はボトムナビ分の余白 */
-.screen.has-nav { padding-bottom: calc(var(--bottom-nav-h) + 24px); }
-
-/* フェードアウト（ログイン画面が消える） */
-.screen.fade-out {
-  animation: fadeOut 0.3s ease forwards;
-}
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-/* スライドアップ（次の画面が出る） */
-.screen.slide-in {
-  animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(40px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.view.active { display: block; }
 
 .app-header {
   background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
@@ -136,7 +139,6 @@ body {
    ボトムナビ
    ======================================== */
 .bottom-nav {
-  display: none;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -144,12 +146,12 @@ body {
   height: var(--bottom-nav-h);
   background: var(--white);
   border-top: 1px solid var(--border);
-  z-index: 900;
+  z-index: 100;
+  display: flex;
   justify-content: center;
   align-items: stretch;
   box-shadow: 0 -2px 12px rgba(100, 60, 70, 0.06);
 }
-.bottom-nav.show { display: flex; }
 
 .nav-item {
   flex: 1;
@@ -199,15 +201,7 @@ body {
 /* ========================================
    ログイン画面
    ======================================== */
-#login-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
-  padding: 20px 16px;
-}
-#login-screen.active { display: flex; }
+/* ログインカードのスタイルは #login-overlay で制御 */
 
 .login-card {
   background: var(--white);
@@ -440,10 +434,10 @@ body {
 </head>
 <body>
 
-<!-- ============================
-     ログイン画面
-     ============================ -->
-<div id="login-screen" class="screen active">
+<!-- ==========================================
+     レイヤー1: ログイン画面（最前面、ログイン後に消える）
+     ========================================== -->
+<div id="login-overlay">
   <div class="login-card">
     <div class="login-logo">凛穏塾</div>
     <div class="login-deco"></div>
@@ -459,106 +453,104 @@ body {
   </div>
 </div>
 
-<!-- ============================
-     ダッシュボード（マイワーク）
-     ============================ -->
-<div id="dashboard-screen" class="screen has-nav">
-  <div class="app-header">
-    <h1>2days実践講座<br>ワーク提出</h1>
-    <div class="subtitle">〜実践型プログラム〜</div>
-  </div>
-  <div class="welcome-section">
-    <div class="welcome-name" id="welcome-name">ようこそ</div>
-    <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
-  </div>
-  <div class="progress-bar-wrap">
-    <div class="progress-label">
-      <span>提出状況</span>
-      <span class="progress-count" id="progress-text">0 / 12</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-  </div>
-  <div class="day-grid" id="day-grid"></div>
-  <div style="padding: 0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
-</div>
+<!-- ==========================================
+     レイヤー2: メインアプリ（ログイン後に表示）
+     ========================================== -->
+<div id="main-app" class="main-app">
 
-<!-- ============================
-     ワーク提出画面
-     ============================ -->
-<div id="work-screen" class="screen has-nav">
-  <div class="app-header">
-    <button class="header-back" onclick="goToDashboard()">‹</button>
-    <h1 id="work-screen-title">Day 1 ワーク</h1>
+  <!-- ビュー: マイワーク（ダッシュボード） -->
+  <div id="view-dashboard" class="view active">
+    <div class="app-header">
+      <h1>2days実践講座<br>ワーク提出</h1>
+      <div class="subtitle">〜実践型プログラム〜</div>
+    </div>
+    <div class="welcome-section">
+      <div class="welcome-name" id="welcome-name">ようこそ</div>
+      <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>提出状況</span>
+        <span class="progress-count" id="progress-text">0 / 12</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+    <div class="day-grid" id="day-grid"></div>
+    <div style="padding: 0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
   </div>
-  <div id="submitted-banner" class="submitted-banner">
-    <div class="check-icon">✓</div>
-    <div class="banner-text">提出済みです</div>
-    <div class="banner-date" id="submitted-date"></div>
-  </div>
-  <div class="work-header-info">
-    <div class="work-day-label" id="work-day-label">DAY 1</div>
-    <div class="work-theme-title" id="work-theme-title">テーマ</div>
-    <div class="work-description" id="work-description">ワークの説明が入ります</div>
-  </div>
-  <div id="prev-submission" class="prev-submission">
-    <div class="prev-submission-label">前回の提出内容</div>
-    <div class="prev-submission-text" id="prev-submission-text"></div>
-  </div>
-  <div class="work-form-area">
-    <label for="work-input">あなたの回答</label>
-    <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
-    <div class="char-count"><span id="char-count">0</span>文字</div>
-  </div>
-  <div class="submit-area">
-    <button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">提出する</button>
-  </div>
-</div>
 
-<!-- ============================
-     みんなのワーク（ボード画面）
-     ============================ -->
-<div id="board-screen" class="screen has-nav">
-  <div class="app-header">
-    <h1>みんなのワーク</h1>
-    <div class="subtitle">仲間の提出内容を読んでみましょう</div>
+  <!-- ビュー: ワーク提出 -->
+  <div id="view-work" class="view">
+    <div class="app-header">
+      <button class="header-back" onclick="goToDashboard()">‹</button>
+      <h1 id="work-screen-title">Day 1 ワーク</h1>
+    </div>
+    <div id="submitted-banner" class="submitted-banner">
+      <div class="check-icon">✓</div>
+      <div class="banner-text">提出済みです</div>
+      <div class="banner-date" id="submitted-date"></div>
+    </div>
+    <div class="work-header-info">
+      <div class="work-day-label" id="work-day-label">DAY 1</div>
+      <div class="work-theme-title" id="work-theme-title">テーマ</div>
+      <div class="work-description" id="work-description">ワークの説明が入ります</div>
+    </div>
+    <div id="prev-submission" class="prev-submission">
+      <div class="prev-submission-label">前回の提出内容</div>
+      <div class="prev-submission-text" id="prev-submission-text"></div>
+    </div>
+    <div class="work-form-area">
+      <label for="work-input">あなたの回答</label>
+      <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
+      <div class="char-count"><span id="char-count">0</span>文字</div>
+    </div>
+    <div class="submit-area">
+      <button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">提出する</button>
+    </div>
   </div>
-  <div class="board-day-tabs" id="board-day-tabs"></div>
-  <div class="board-stats">
-    <div class="board-stat">
-      <div class="board-stat-num" id="b-stat-members">0</div>
-      <div class="board-stat-label">参加者</div>
-    </div>
-    <div class="board-stat">
-      <div class="board-stat-num" id="b-stat-day">0</div>
-      <div class="board-stat-label">このDayの提出</div>
-    </div>
-    <div class="board-stat">
-      <div class="board-stat-num" id="b-stat-total">0</div>
-      <div class="board-stat-label">全体の提出数</div>
-    </div>
-  </div>
-  <div class="board-submissions-area" id="board-submissions-area"></div>
-</div>
 
-<!-- ============================
-     ボトムナビゲーション
-     ============================ -->
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
-    <div class="nav-icon">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+  <!-- ビュー: みんなのワーク -->
+  <div id="view-board" class="view">
+    <div class="app-header">
+      <h1>みんなのワーク</h1>
+      <div class="subtitle">仲間の提出内容を読んでみましょう</div>
     </div>
-    <span class="nav-label">マイワーク</span>
-  </button>
-  <button class="nav-item" id="nav-board" onclick="switchNav('board')">
-    <div class="nav-icon">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div class="board-day-tabs" id="board-day-tabs"></div>
+    <div class="board-stats">
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-members">0</div>
+        <div class="board-stat-label">参加者</div>
+      </div>
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-day">0</div>
+        <div class="board-stat-label">このDayの提出</div>
+      </div>
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-total">0</div>
+        <div class="board-stat-label">全体の提出数</div>
+      </div>
     </div>
-    <span class="nav-label">みんなのワーク</span>
-  </button>
-</nav>
+    <div class="board-submissions-area" id="board-submissions-area"></div>
+  </div>
+
+  <!-- ボトムナビゲーション -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <span class="nav-label">マイワーク</span>
+    </button>
+    <button class="nav-item" id="nav-board" onclick="switchNav('board')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="nav-label">みんなのワーク</span>
+    </button>
+  </nav>
+</div>
 
 <!-- トースト -->
 <div id="toast" class="toast"></div>
@@ -673,31 +665,23 @@ const API = {
    ============================================= */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function showScreen(id, animate = false) {
-  const prev = document.querySelector('.screen.active');
-  const next = document.getElementById(id);
-  if (prev === next) return;
+// ログイン画面を消してメインアプリを表示
+function enterApp() {
+  document.getElementById('main-app').classList.add('show');
+  document.getElementById('login-overlay').classList.add('hidden');
+}
 
-  if (animate && prev) {
-    // ① 前の画面をフェードアウト
-    prev.classList.add('fade-out');
-    prev.addEventListener('animationend', function onEnd() {
-      prev.removeEventListener('animationend', onEnd);
-      prev.classList.remove('active', 'fade-out');
-      // ② 次の画面をスライドインで表示
-      next.classList.add('active', 'slide-in');
-      window.scrollTo(0, 0);
-      next.addEventListener('animationend', function onIn() {
-        next.removeEventListener('animationend', onIn);
-        next.classList.remove('slide-in');
-      });
-    });
-  } else {
-    // アニメーションなし（通常の画面切り替え）
-    if (prev) prev.classList.remove('active');
-    next.classList.add('active');
-    window.scrollTo(0, 0);
-  }
+// ログイン画面に戻す
+function exitApp() {
+  document.getElementById('main-app').classList.remove('show');
+  document.getElementById('login-overlay').classList.remove('hidden');
+}
+
+// メインアプリ内のビュー切り替え（ログイン画面は触らない）
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
 }
 
 function showToast(message, duration = 2500) {
@@ -721,9 +705,6 @@ function getInitial(name) {
 /* =============================================
    ボトムナビ
    ============================================= */
-function showNav() { document.getElementById('bottom-nav').classList.add('show'); }
-function hideNav() { document.getElementById('bottom-nav').classList.remove('show'); }
-
 function switchNav(tab) {
   state.activeNav = tab;
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -750,8 +731,8 @@ async function handleLogin() {
     state.userName = 'プレビューユーザー';
     localStorage.setItem('work_app_email', state.email);
     localStorage.setItem('work_app_name', state.userName);
-    showNav();
-    await loadDashboard(true);
+    await loadDashboard();
+    enterApp();
     return;
   }
 
@@ -771,8 +752,8 @@ async function handleLogin() {
       state.userName = result.name || email;
       localStorage.setItem('work_app_email', email);
       localStorage.setItem('work_app_name', state.userName);
-      showNav();
-      await loadDashboard(true);
+      await loadDashboard();
+      enterApp();
     } else {
       errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
       errorEl.classList.add('show');
@@ -794,8 +775,7 @@ function handleLogout() {
   state.userName = null;
   state.submissions = {};
   document.getElementById('email-input').value = '';
-  hideNav();
-  showScreen('login-screen');
+  exitApp();
 }
 
 document.getElementById('email-input').addEventListener('keydown', function(e) {
@@ -805,7 +785,7 @@ document.getElementById('email-input').addEventListener('keydown', function(e) {
 /* =============================================
    ダッシュボード（マイワーク）
    ============================================= */
-async function loadDashboard(fromLogin = false) {
+async function loadDashboard() {
   showSpinner();
   try {
     const [configs, submissions] = await Promise.all([
@@ -818,7 +798,7 @@ async function loadDashboard(fromLogin = false) {
     document.getElementById('welcome-name').textContent = state.userName;
     renderDayCards();
     updateProgress();
-    showScreen('dashboard-screen', fromLogin);
+    showView('view-dashboard');
   } catch (e) {
     showToast('読み込みに失敗しました');
     console.error(e);
@@ -890,7 +870,7 @@ function openWork(day) {
   document.getElementById('work-input').value = '';
   document.getElementById('char-count').textContent = '0';
   document.getElementById('submit-btn').textContent = submission ? '再提出する' : '提出する';
-  showScreen('work-screen');
+  showView('view-work');
 }
 
 function updateCharCount() {
@@ -941,7 +921,7 @@ function loadBoard() {
 
   renderBoardTabs();
   renderBoardSubmissions();
-  showScreen('board-screen');
+  showView('view-board');
 }
 
 function renderBoardTabs() {
@@ -1058,8 +1038,8 @@ function toggleBoardExpand(day, idx, btn) {
   if (savedEmail) {
     state.email = savedEmail;
     state.userName = savedName || savedEmail;
-    showNav();
     await loadDashboard();
+    enterApp();
   }
 })();
 </script>
