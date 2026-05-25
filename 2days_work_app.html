@@ -705,6 +705,17 @@ async function handleLogin() {
   const email = emailInput.value.trim().toLowerCase();
   const errorEl = document.getElementById('login-error');
 
+  // ★ 仮ログイン（確認用）
+  if (email === 'aaa') {
+    state.email = 'preview@demo.local';
+    state.userName = 'プレビューユーザー';
+    localStorage.setItem('work_app_email', state.email);
+    localStorage.setItem('work_app_name', state.userName);
+    showNav();
+    await loadDashboard();
+    return;
+  }
+
   if (!email || !email.includes('@')) {
     errorEl.textContent = 'メールアドレスを正しく入力してください。';
     errorEl.classList.add('show');
