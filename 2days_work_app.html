@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>2days実践講座 ワーク提出</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   CSS Variables & Reset
+   ======================================== */
+:root {
+  --plum: #8b5a6b;
+  --plum-light: #a87389;
+  --plum-pale: #f5eef1;
+  --plum-bg: #faf6f8;
+  --gold: #c4a265;
+  --gold-light: #e8d5a8;
+  --cream: #fdfbf7;
+  --warm-gray: #6b5e5e;
+  --text: #3d2e2e;
+  --text-light: #7a6a6a;
+  --border: #e8ddd5;
+  --success: #6ba37a;
+  --success-light: #e8f5ec;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(100, 60, 70, 0.08);
+  --shadow-lg: 0 4px 24px rgba(100, 60, 70, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-mincho: 'Shippori Mincho', 'Noto Serif JP', serif;
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-mincho);
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   共通コンポーネント
+   ======================================== */
+.screen {
+  display: none;
+  min-height: 100dvh;
+  padding-bottom: 40px;
+}
+.screen.active { display: block; }
+
+.app-header {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 20px 16px 18px;
+  position: relative;
+}
+.app-header h1 {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.6;
+}
+.app-header .subtitle {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+.header-back {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 8px;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.header-back:hover { opacity: 1; }
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.06em;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  box-shadow: 0 3px 12px rgba(139, 90, 107, 0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--plum);
+  border: 1.5px solid var(--border);
+}
+.btn-secondary:hover {
+  border-color: var(--plum-light);
+  background: var(--plum-pale);
+}
+
+/* ========================================
+   ログイン画面
+   ======================================== */
+#login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
+  padding: 20px 16px;
+}
+#login-screen.active { display: flex; }
+
+.login-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 28px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.login-logo {
+  font-size: 13px;
+  color: var(--plum);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.login-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+.login-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+.login-deco {
+  width: 40px;
+  height: 1px;
+  background: var(--gold-light);
+  margin: 16px auto 20px;
+}
+
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+.input-group label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mincho);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cream);
+  transition: border-color 0.25s;
+  outline: none;
+}
+.input-group input:focus {
+  border-color: var(--plum-light);
+  background: var(--white);
+}
+.input-group input::placeholder {
+  color: #c0b0b0;
+}
+
+.login-error {
+  display: none;
+  background: #fdf0f0;
+  color: #b44;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.login-error.show { display: block; }
+
+.login-note {
+  font-size: 10.5px;
+  color: var(--text-light);
+  margin-top: 16px;
+  line-height: 1.7;
+  opacity: 0.7;
+}
+
+/* ========================================
+   ダッシュボード
+   ======================================== */
+.welcome-section {
+  background: var(--white);
+  padding: 20px;
+  margin: 20px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.welcome-name {
+  font-size: 14px;
+  color: var(--plum);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.welcome-msg {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.progress-bar-wrap {
+  background: var(--white);
+  margin: 0 16px 20px;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.progress-count {
+  color: var(--plum);
+  font-weight: 600;
+}
+.progress-track {
+  height: 6px;
+  background: var(--plum-pale);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--plum) 0%, var(--plum-light) 100%);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+.day-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px;
+  margin-bottom: 24px;
+}
+
+.day-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  border: 1.5px solid transparent;
+}
+.day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--plum-pale);
+}
+.day-card:active { transform: translateY(0); }
+
+.day-card.submitted {
+  border-color: var(--success-light);
+  background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%);
+}
+.day-card.locked {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.day-number {
+  font-size: 11px;
+  color: var(--text-light);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.day-theme {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 40px;
+}
+.day-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  margin-top: 10px;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+.day-status.done {
+  background: var(--success-light);
+  color: var(--success);
+}
+.day-status.todo {
+  background: var(--plum-pale);
+  color: var(--plum);
+}
+.day-status.locked-label {
+  background: #f0eded;
+  color: #aaa;
+}
+
+.day-check {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 16px;
+}
+
+.logout-link {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-light);
+  margin: 24px 0 0;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  text-decoration: none;
+}
+.logout-link:hover { opacity: 1; }
+
+/* ========================================
+   ワーク提出画面
+   ======================================== */
+.work-header-info {
+  background: var(--white);
+  margin: 20px 16px;
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.work-day-label {
+  font-size: 11px;
+  color: var(--plum);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.work-theme-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.work-description {
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.8;
+}
+
+.work-form-area {
+  margin: 0 16px;
+  padding: 20px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.work-form-area label {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.work-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mincho);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--cream);
+  resize: vertical;
+  outline: none;
+  line-height: 1.8;
+  transition: border-color 0.25s;
+}
+.work-textarea:focus {
+  border-color: var(--plum-light);
+  background: var(--white);
+}
+.work-textarea::placeholder {
+  color: #c0b0b0;
+}
+.char-count {
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 6px;
+  opacity: 0.6;
+}
+
+.submit-area {
+  margin: 20px 16px 0;
+}
+
+.submitted-banner {
+  display: none;
+  background: var(--success-light);
+  border: 1.5px solid var(--success);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 0 16px 16px;
+  text-align: center;
+}
+.submitted-banner.show { display: block; }
+.submitted-banner .check-icon {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+.submitted-banner .banner-text {
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 600;
+}
+.submitted-banner .banner-date {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.prev-submission {
+  display: none;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 0 16px 16px;
+}
+.prev-submission.show { display: block; }
+.prev-submission-label {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+.prev-submission-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* ========================================
+   トースト通知
+   ======================================== */
+.toast {
+  position: fixed;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-family: var(--font-mincho);
+  box-shadow: var(--shadow-lg);
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1000;
+  white-space: nowrap;
+}
+.toast.show { bottom: 30px; }
+
+/* ========================================
+   ローディング
+   ======================================== */
+.spinner-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,0.7);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.spinner-overlay.show { display: flex; }
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--plum-pale);
+  border-top-color: var(--plum);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========================================
+   レスポンシブ微調整
+   ======================================== */
+@media (max-width: 360px) {
+  .day-grid { grid-template-columns: 1fr; }
+  .login-card { padding: 32px 20px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================
+     ログイン画面
+     ============================ -->
+<div id="login-screen" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">凛穏塾</div>
+    <div class="login-deco"></div>
+    <h1 class="login-title">2days実践講座<br>ワーク提出</h1>
+    <p class="login-sub">〜実践型プログラム〜<br>お申し込み時のメールアドレスでログインしてください</p>
+
+    <div class="input-group">
+      <label for="email-input">メールアドレス</label>
+      <input type="email" id="email-input" placeholder="example@email.com" autocomplete="email">
+    </div>
+
+    <div id="login-error" class="login-error">
+      登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。
+    </div>
+
+    <button class="btn btn-primary" id="login-btn" onclick="handleLogin()">ログイン</button>
+
+    <p class="login-note">※ 次回からは自動ログインされます</p>
+  </div>
+</div>
+
+<!-- ============================
+     ダッシュボード
+     ============================ -->
+<div id="dashboard-screen" class="screen">
+  <div class="app-header">
+    <h1>2days実践講座<br>ワーク提出</h1>
+    <div class="subtitle">〜実践型プログラム〜</div>
+  </div>
+
+  <div class="welcome-section">
+    <div class="welcome-name" id="welcome-name">ようこそ</div>
+    <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>提出状況</span>
+      <span class="progress-count" id="progress-text">0 / 12</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="day-grid" id="day-grid">
+    <!-- JS で Day1〜12 のカードを生成 -->
+  </div>
+
+  <div style="padding: 0 16px;">
+    <a class="logout-link" onclick="handleLogout()">ログアウト</a>
+  </div>
+</div>
+
+<!-- ============================
+     ワーク提出画面
+     ============================ -->
+<div id="work-screen" class="screen">
+  <div class="app-header">
+    <button class="header-back" onclick="goToDashboard()">‹</button>
+    <h1 id="work-screen-title">Day 1 ワーク</h1>
+  </div>
+
+  <div id="submitted-banner" class="submitted-banner">
+    <div class="check-icon">✓</div>
+    <div class="banner-text">提出済みです</div>
+    <div class="banner-date" id="submitted-date"></div>
+  </div>
+
+  <div class="work-header-info">
+    <div class="work-day-label" id="work-day-label">DAY 1</div>
+    <div class="work-theme-title" id="work-theme-title">テーマ</div>
+    <div class="work-description" id="work-description">ワークの説明が入ります</div>
+  </div>
+
+  <div id="prev-submission" class="prev-submission">
+    <div class="prev-submission-label">前回の提出内容</div>
+    <div class="prev-submission-text" id="prev-submission-text"></div>
+  </div>
+
+  <div class="work-form-area" id="work-form-area">
+    <label for="work-input">あなたの回答</label>
+    <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
+    <div class="char-count"><span id="char-count">0</span>文字</div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn btn-primary" id="submit-btn" onclick="handleSubmit()">提出する</button>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast"></div>
+
+<!-- ローディング -->
+<div id="spinner" class="spinner-overlay">
+  <div class="spinner"></div>
+</div>
+
+<script>
+/* =============================================
+   設定 & 状態管理
+   ============================================= */
+
+// ★ GAS連携時にここを書き換えるだけ
+const CONFIG = {
+  // Google Apps Script のデプロイURL（後で設定）
+  GAS_URL: null,
+
+  // 日数
+  TOTAL_DAYS: 12,
+
+  // デモモード（GAS未接続時はtrue）
+  DEMO_MODE: true,
+
+  // デモ用の登録メールアドレス一覧
+  // GAS連携後はスプシから取得するため不要
+  DEMO_EMAILS: ['test@example.com', 'demo@example.com'],
+};
+
+// アプリ状態
+const state = {
+  email: null,
+  userName: null,
+  currentDay: null,
+  submissions: {},   // { 1: { text: '...', date: '2026-06-01' }, 2: ... }
+  dayConfigs: [],     // [{ day:1, theme:'...', description:'...' }, ...]
+};
+
+/* =============================================
+   API スタブ（GAS連携用）
+   ============================================= */
+
+const API = {
+  /**
+   * メールアドレスの認証
+   * @param {string} email
+   * @returns {Promise<{ok: boolean, name?: string}>}
+   */
+  async verifyEmail(email) {
+    if (CONFIG.GAS_URL) {
+      // ★ GAS連携時
+      const res = await fetch(`${CONFIG.GAS_URL}?action=verify&email=${encodeURIComponent(email)}`);
+      return await res.json();
+    }
+    // デモモード
+    await sleep(600);
+    if (CONFIG.DEMO_EMAILS.includes(email)) {
+      return { ok: true, name: email.split('@')[0] + 'さん' };
+    }
+    return { ok: false };
+  },
+
+  /**
+   * ワーク設定（テーマ・説明）を取得
+   * @returns {Promise<Array>}
+   */
+  async getDayConfigs() {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(`${CONFIG.GAS_URL}?action=configs`);
+      return await res.json();
+    }
+    // デモモード：仮テーマ
+    const demos = [];
+    for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+      demos.push({
+        day: i,
+        theme: `Day ${i} のワーク`,
+        description: 'ワーク内容は後日設定されます。お楽しみに！'
+      });
+    }
+    return demos;
+  },
+
+  /**
+   * 提出済みデータを取得
+   * @param {string} email
+   * @returns {Promise<Object>} { 1: {text, date}, ... }
+   */
+  async getSubmissions(email) {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(`${CONFIG.GAS_URL}?action=submissions&email=${encodeURIComponent(email)}`);
+      return await res.json();
+    }
+    // デモモード：ローカルストレージ
+    const saved = localStorage.getItem(`work_submissions_${email}`);
+    return saved ? JSON.parse(saved) : {};
+  },
+
+  /**
+   * ワークを提出
+   * @param {string} email
+   * @param {number} day
+   * @param {string} text
+   * @returns {Promise<{ok: boolean}>}
+   */
+  async submitWork(email, day, text) {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(CONFIG.GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'submit', email, day, text })
+      });
+      return await res.json();
+    }
+    // デモモード：ローカルストレージに保存
+    await sleep(500);
+    const saved = localStorage.getItem(`work_submissions_${email}`);
+    const data = saved ? JSON.parse(saved) : {};
+    data[day] = {
+      text,
+      date: new Date().toLocaleDateString('ja-JP')
+    };
+    localStorage.setItem(`work_submissions_${email}`, JSON.stringify(data));
+    return { ok: true };
+  },
+};
+
+/* =============================================
+   ユーティリティ
+   ============================================= */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showToast(message, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = message;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function showSpinner() { document.getElementById('spinner').classList.add('show'); }
+function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
+
+/* =============================================
+   ログイン
+   ============================================= */
+async function handleLogin() {
+  const emailInput = document.getElementById('email-input');
+  const email = emailInput.value.trim().toLowerCase();
+  const errorEl = document.getElementById('login-error');
+
+  if (!email || !email.includes('@')) {
+    errorEl.textContent = 'メールアドレスを正しく入力してください。';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  errorEl.classList.remove('show');
+  showSpinner();
+
+  try {
+    const result = await API.verifyEmail(email);
+    if (result.ok) {
+      state.email = email;
+      state.userName = result.name || email;
+      // ブラウザに記憶
+      localStorage.setItem('work_app_email', email);
+      localStorage.setItem('work_app_name', state.userName);
+      await loadDashboard();
+    } else {
+      errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
+      errorEl.classList.add('show');
+      emailInput.focus();
+    }
+  } catch (e) {
+    errorEl.textContent = '通信エラーが発生しました。もう一度お試しください。';
+    errorEl.classList.add('show');
+    console.error(e);
+  } finally {
+    hideSpinner();
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('work_app_email');
+  localStorage.removeItem('work_app_name');
+  state.email = null;
+  state.userName = null;
+  state.submissions = {};
+  document.getElementById('email-input').value = '';
+  showScreen('login-screen');
+}
+
+// エンターキーでログイン
+document.getElementById('email-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
+
+/* =============================================
+   ダッシュボード
+   ============================================= */
+async function loadDashboard() {
+  showSpinner();
+  try {
+    // 並列で取得
+    const [configs, submissions] = await Promise.all([
+      API.getDayConfigs(),
+      API.getSubmissions(state.email)
+    ]);
+
+    state.dayConfigs = configs;
+    state.submissions = submissions;
+
+    // 名前表示
+    document.getElementById('welcome-name').textContent = state.userName;
+
+    // カード生成
+    renderDayCards();
+
+    // 進捗更新
+    updateProgress();
+
+    showScreen('dashboard-screen');
+  } catch (e) {
+    showToast('読み込みに失敗しました');
+    console.error(e);
+  } finally {
+    hideSpinner();
+  }
+}
+
+function renderDayCards() {
+  const grid = document.getElementById('day-grid');
+  grid.innerHTML = '';
+
+  for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+    const config = state.dayConfigs.find(c => c.day === i) || {};
+    const submission = state.submissions[i];
+    const isSubmitted = !!submission;
+
+    const card = document.createElement('div');
+    card.className = `day-card${isSubmitted ? ' submitted' : ''}`;
+    card.onclick = () => openWork(i);
+
+    card.innerHTML = `
+      <div class="day-number">DAY ${i}</div>
+      <div class="day-theme">${config.theme || `Day ${i}`}</div>
+      ${isSubmitted
+        ? `<span class="day-check">✓</span>
+           <span class="day-status done">提出済み</span>`
+        : `<span class="day-status todo">未提出</span>`
+      }
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function updateProgress() {
+  const done = Object.keys(state.submissions).length;
+  const total = CONFIG.TOTAL_DAYS;
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${(done / total) * 100}%`;
+}
+
+/* =============================================
+   ワーク提出
+   ============================================= */
+function openWork(day) {
+  state.currentDay = day;
+  const config = state.dayConfigs.find(c => c.day === day) || {};
+  const submission = state.submissions[day];
+
+  // ヘッダー
+  document.getElementById('work-screen-title').textContent = `Day ${day} ワーク`;
+  document.getElementById('work-day-label').textContent = `DAY ${day}`;
+  document.getElementById('work-theme-title').textContent = config.theme || `Day ${day}`;
+  document.getElementById('work-description').textContent = config.description || '';
+
+  // 提出済みバナー
+  const banner = document.getElementById('submitted-banner');
+  const prevArea = document.getElementById('prev-submission');
+
+  if (submission) {
+    banner.classList.add('show');
+    document.getElementById('submitted-date').textContent = `提出日: ${submission.date}`;
+    prevArea.classList.add('show');
+    document.getElementById('prev-submission-text').textContent = submission.text;
+  } else {
+    banner.classList.remove('show');
+    prevArea.classList.remove('show');
+  }
+
+  // テキストエリア
+  document.getElementById('work-input').value = '';
+  document.getElementById('char-count').textContent = '0';
+  document.getElementById('submit-btn').textContent = submission ? '再提出する' : '提出する';
+
+  showScreen('work-screen');
+}
+
+function updateCharCount() {
+  const len = document.getElementById('work-input').value.length;
+  document.getElementById('char-count').textContent = len;
+}
+
+async function handleSubmit() {
+  const text = document.getElementById('work-input').value.trim();
+  if (!text) {
+    showToast('回答を入力してください');
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  showSpinner();
+
+  try {
+    const result = await API.submitWork(state.email, state.currentDay, text);
+    if (result.ok) {
+      // ローカル状態を更新
+      state.submissions[state.currentDay] = {
+        text,
+        date: new Date().toLocaleDateString('ja-JP')
+      };
+      showToast('提出しました！お疲れさまです ✓');
+      await sleep(800);
+      await loadDashboard();
+    } else {
+      showToast('提出に失敗しました。もう一度お試しください');
+    }
+  } catch (e) {
+    showToast('通信エラーが発生しました');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    hideSpinner();
+  }
+}
+
+function goToDashboard() {
+  loadDashboard();
+}
+
+/* =============================================
+   自動ログイン（初期化）
+   ============================================= */
+(async function init() {
+  const savedEmail = localStorage.getItem('work_app_email');
+  const savedName = localStorage.getItem('work_app_name');
+
+  if (savedEmail) {
+    state.email = savedEmail;
+    state.userName = savedName || savedEmail;
+    await loadDashboard();
+  }
+})();
+</script>
+
+</body>
+</html>
