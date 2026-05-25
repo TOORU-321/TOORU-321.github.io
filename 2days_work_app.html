@@ -50,10 +50,22 @@ body {
   display: none;
   min-height: 100dvh;
   padding-bottom: 40px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
 .screen.active { display: block; }
+.screen.active.visible { opacity: 1; }
 /* ログイン後の画面はボトムナビ分の余白 */
 .screen.has-nav { padding-bottom: calc(var(--bottom-nav-h) + 24px); }
+
+/* ログイン → 次画面のスライドアップ */
+.screen.slide-up {
+  animation: slideUpIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes slideUpIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .app-header {
   background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
@@ -188,8 +200,9 @@ body {
   min-height: 100dvh;
   background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
   padding: 20px 16px;
+  opacity: 1;
 }
-#login-screen.active { display: flex; }
+#login-screen.active { display: flex; opacity: 1; }
 
 .login-card {
   background: var(--white);
@@ -655,10 +668,32 @@ const API = {
    ============================================= */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
+function showScreen(id, animate = false) {
+  const prev = document.querySelector('.screen.active');
+  const next = document.getElementById(id);
+  if (prev === next) return;
+
+  // 前の画面をフェードアウト
+  if (prev) {
+    prev.classList.remove('visible', 'slide-up');
+    // display:none にする前に少し待つ（フェードアウト）
+    setTimeout(() => prev.classList.remove('active'), animate ? 200 : 0);
+  }
+
+  setTimeout(() => {
+    next.classList.add('active');
+    window.scrollTo(0, 0);
+    // 少し待ってからアニメーション開始
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (animate) {
+          next.classList.add('slide-up');
+        } else {
+          next.classList.add('visible');
+        }
+      });
+    });
+  }, animate ? 250 : 0);
 }
 
 function showToast(message, duration = 2500) {
@@ -712,7 +747,7 @@ async function handleLogin() {
     localStorage.setItem('work_app_email', state.email);
     localStorage.setItem('work_app_name', state.userName);
     showNav();
-    await loadDashboard();
+    await loadDashboard(true);
     return;
   }
 
@@ -733,7 +768,7 @@ async function handleLogin() {
       localStorage.setItem('work_app_email', email);
       localStorage.setItem('work_app_name', state.userName);
       showNav();
-      await loadDashboard();
+      await loadDashboard(true);
     } else {
       errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
       errorEl.classList.add('show');
@@ -766,7 +801,7 @@ document.getElementById('email-input').addEventListener('keydown', function(e) {
 /* =============================================
    ダッシュボード（マイワーク）
    ============================================= */
-async function loadDashboard() {
+async function loadDashboard(fromLogin = false) {
   showSpinner();
   try {
     const [configs, submissions] = await Promise.all([
@@ -779,7 +814,7 @@ async function loadDashboard() {
     document.getElementById('welcome-name').textContent = state.userName;
     renderDayCards();
     updateProgress();
-    showScreen('dashboard-screen');
+    showScreen('dashboard-screen', fromLogin);
   } catch (e) {
     showToast('読み込みに失敗しました');
     console.error(e);
