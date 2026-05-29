@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-28",
+  "updated": "2026-05-30",
   "byUid": {
     "ulikda": {
       "items": [
@@ -706,6 +706,14 @@
       "total": 30000,
       "email": "kimiko8167@gmail.com",
       "details": "記念式典 大人2人"
+    },
+    "hxajps": {
+      "items": [
+        "一般 記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "ka.mayuchi.ko.0304@icloud.com",
+      "details": "一般 記念式典 大人1人"
     }
   },
   "byEmail": {
@@ -792,6 +800,7 @@
     "chika_4221@icloud.com": "kswima",
     "spiel.rugandleather.works@gmail.com": "vgnszb",
     "s.hi.maw1016@gmail.com": "yvehxj",
-    "middle_mika@yahoo.co.jp": "dctqof"
+    "middle_mika@yahoo.co.jp": "dctqof",
+    "ka.mayuchi.ko.0304@icloud.com": "hxajps"
   }
 }
