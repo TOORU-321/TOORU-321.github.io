@@ -535,6 +535,54 @@ body {
     <div class="board-submissions-area" id="board-submissions-area"></div>
   </div>
 
+  <!-- 特典動画ページ -->
+  <div id="view-tokuten" class="view">
+    <div class="app-header">
+      <h1>参加特典動画</h1>
+      <div class="subtitle">Special Gift for Participants</div>
+    </div>
+    <div style="padding:0 16px 24px">
+      <div id="tokuten-video-card" style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden">
+        <div style="padding:18px 18px 12px;border-bottom:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--plum);letter-spacing:0.15em;font-weight:600;margin-bottom:4px">SPECIAL VIDEO</div>
+          <div style="font-size:16px;font-weight:700;line-height:1.6">東洋哲学の概論<br>運と徳の法則</div>
+        </div>
+        <div id="tokuten-video-area" style="position:relative;padding:56.25% 0 0 0;background:#1a1a1a">
+          <iframe src="https://player.vimeo.com/video/1119403217?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            title="東洋哲学の概論 運と徳の法則"></iframe>
+        </div>
+        <div style="padding:14px 18px;background:var(--cream);display:flex;align-items:center;gap:8px">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#8b5a6b" stroke-width="1.2"/><path d="M8 4v4.5l3 1.5" stroke="#8b5a6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span style="font-size:12px;color:var(--text-light)">視聴期限：<strong style="color:var(--plum)">2026年6月28日（日）</strong>まで</span>
+        </div>
+        <div id="tokuten-countdown" style="background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);padding:16px 18px;text-align:center">
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:0.15em;margin-bottom:8px">視聴可能 残り時間</div>
+          <div style="display:flex;justify-content:center;gap:6px;align-items:baseline">
+            <div style="text-align:center;min-width:44px"><span id="tk-days" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">日</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-hours" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">時間</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-min" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">分</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-sec" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">秒</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--plum);margin-bottom:8px">ご視聴にあたって</div>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>本動画は2days実践講座の参加特典です</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>視聴期限を過ぎると再生できなくなります</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>動画の録画・転載・共有はご遠慮ください</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>Wi-Fi環境での視聴をおすすめします</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <!-- ボトムナビゲーション -->
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
@@ -548,6 +596,12 @@ body {
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <span class="nav-label">みんなのワーク</span>
+    </button>
+    <button class="nav-item" id="nav-tokuten" onclick="switchNav('tokuten')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-label">特典動画</span>
     </button>
   </nav>
 </div>
@@ -714,6 +768,9 @@ function switchNav(tab) {
     loadDashboard();
   } else if (tab === 'board') {
     loadBoard();
+  } else if (tab === 'tokuten') {
+    showView('view-tokuten');
+    initTokutenCountdown();
   }
 }
 
@@ -1042,7 +1099,51 @@ function toggleBoardExpand(day, idx, btn) {
     enterApp();
   }
 })();
+
+/* =============================================
+   特典動画 カウントダウン & 期限切れ
+   ============================================= */
+const TOKUTEN_DEADLINE = new Date('2026-06-28T23:59:59+09:00');
+let tokutenTimer = null;
+
+function initTokutenCountdown() {
+  if (tokutenTimer) clearInterval(tokutenTimer);
+  checkTokutenExpiry();
+  updateTokutenCountdown();
+  tokutenTimer = setInterval(updateTokutenCountdown, 1000);
+}
+
+function checkTokutenExpiry() {
+  if (new Date() > TOKUTEN_DEADLINE) {
+    const card = document.getElementById('tokuten-video-card');
+    card.innerHTML = `
+      <div style="padding:60px 24px;text-align:center;background:var(--cream);">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin-bottom:16px;opacity:0.5">
+          <circle cx="24" cy="24" r="22" stroke="#8b5a6b" stroke-width="1.5"/>
+          <path d="M24 12v13l8 4" stroke="#8b5a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="14" y1="14" x2="34" y2="34" stroke="#a87389" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">視聴期限が終了しました</p>
+        <p style="font-size:13px;color:var(--text-light);line-height:1.8">この動画の視聴期限は<br><strong style="color:var(--plum)">2026年6月28日</strong>をもって<br>終了いたしました。</p>
+      </div>`;
+    if (tokutenTimer) { clearInterval(tokutenTimer); tokutenTimer = null; }
+  }
+}
+
+function updateTokutenCountdown() {
+  const diff = TOKUTEN_DEADLINE - new Date();
+  if (diff <= 0) { checkTokutenExpiry(); return; }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('tk-days').textContent = d;
+  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
+  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
+  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
+}
 </script>
+<script src="https://player.vimeo.com/api/player.js"></script>
 
 </body>
 </html>
