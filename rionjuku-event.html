@@ -407,7 +407,7 @@ async function loadData() {
   try {
     const [surveyData, rosterData, paymentData] = await Promise.all([
       fetchSheet('form_35：大同窓総会参加アンケート'),
-      fetchSheet('大同窓総会参加＿名簿'),
+      fetchSheet('大同窓総会参加＿名簿 決済確認'),
       fetch(PAYMENTS_URL + '?t=' + Date.now()).then(r => r.json()).catch(() => ({byUid:{}, byEmail:{}, updated:''}))
     ]);
 
@@ -820,3 +820,4 @@ loadData();
 
 </body>
 </html>
+
