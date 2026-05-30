@@ -524,7 +524,7 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
   }
 
   const surveyBu=sv['参加する部']||'';
-  const surveyNum=sv['参加する合計人数']||'';
+  const surveyNum=(pay&&pay.surveyNumOverride)||sv['参加する合計人数']||'';
   const surveyChild=sv['参加する子ども']||'';
   const bu = surveyBu||'';
 
