@@ -571,7 +571,7 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
     allergy: sv['アレルギー']||ro['アレルギー']||'',
     leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
     hasSurvey, hasPayment,
-    memo: memos[key]||'',
+    memo: memos[key]||(pay&&pay.memo)||'',
   };
 }
 
