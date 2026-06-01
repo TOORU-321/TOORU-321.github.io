@@ -1,402 +1,808 @@
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エルラボ2.0 サポート：決済</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .pm2 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: #0b0e13;
+      color: #e8e8e8;
+      line-height: 1.8;
+      min-height: 100vh;
+    }
 
-  .pm2 { background: #0b0e13; color: #e8e8e8; line-height: 1.8; padding-bottom: 20px; }
+    /* ── ヘッダー ── */
+    .page-header {
+      background: linear-gradient(135deg, #0b0e13 0%, #141a24 100%);
+      border-bottom: 2px solid #e6b425;
+      padding: 36px 20px 32px;
+      text-align: center;
+    }
+    .page-header .label {
+      display: inline-block;
+      background: #e6b425;
+      color: #0b0e13;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    .page-header h1 {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+    .page-header p {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #aaa;
+    }
 
-  /* ヘッダー */
-  .pm2-header { background: linear-gradient(135deg, #0b0e13 0%, #141a24 100%); border-bottom: 2px solid #e6b425; padding: 32px 20px 28px; text-align: center; }
-  .pm2-badge { display: inline-block; background: #e6b425; color: #0b0e13; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; padding: 3px 12px; border-radius: 20px; margin-bottom: 12px; }
-  .pm2-header h2 { font-size: clamp(18px, 4vw, 24px); font-weight: 700; color: #fff; letter-spacing: 0.05em; }
-  .pm2-header p { margin-top: 8px; font-size: 12px; color: #aaa; }
+    /* ── コンテナ ── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
 
+    /* ── セクション共通 ── */
+    .section {
+      background: #141a24;
+      border: 1px solid #1e2d42;
+      border-radius: 16px;
+      padding: 32px 36px;
+      margin-top: 32px;
+    }
+    @media(max-width:600px){ .section { padding: 24px 18px; } }
 
-  /* コンテナ */
-  .pm2-container { max-width: 720px; margin: 0 auto; padding: 0 16px 20px; }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e6b425;
+      letter-spacing: 0.1em;
+      border-left: 3px solid #e6b425;
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
 
-  /* セクション */
-  .pm2-section { background: #141a24; border: 1px solid #1e2d42; border-radius: 14px; padding: 28px 28px; margin-top: 24px; }
-  @media(max-width:600px){ .pm2-section { padding: 20px 16px; } }
-  .pm2-section-title { font-size: 13px; font-weight: 700; color: #e6b425; letter-spacing: 0.1em; border-left: 3px solid #e6b425; padding-left: 10px; margin-bottom: 18px; }
+    /* ── サービス確認 ── */
+    .service-link-box {
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .service-link-box p {
+      font-size: 13px;
+      color: #bbb;
+    }
+    .service-link-box a {
+      display: inline-block;
+      background: #e6b425;
+      color: #0b0e13;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .service-link-box a:hover { opacity: 0.85; }
 
-  /* サービスリンク */
-  .pm2-service-box { background: #0d1420; border: 1px solid #2a3d55; border-radius: 10px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-  .pm2-service-box p { font-size: 12px; color: #bbb; }
-  .pm2-service-box a { display: inline-block; background: #e6b425; color: #0b0e13; font-weight: 700; font-size: 12px; text-decoration: none; padding: 8px 18px; border-radius: 8px; white-space: nowrap; }
+    /* ── 利用規約 ── */
+    .terms-scroll {
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 10px;
+      padding: 20px;
+      max-height: 280px;
+      overflow-y: auto;
+      font-size: 12.5px;
+      color: #ccc;
+      line-height: 1.9;
+      scroll-behavior: smooth;
+    }
+    .terms-scroll::-webkit-scrollbar { width: 5px; }
+    .terms-scroll::-webkit-scrollbar-track { background: #0b0e13; }
+    .terms-scroll::-webkit-scrollbar-thumb { background: #e6b425; border-radius: 4px; }
 
-  /* 利用規約スクロール */
-  .pm2-terms { background: #0d1420; border: 1px solid #2a3d55; border-radius: 10px; padding: 18px; max-height: 260px; overflow-y: auto; font-size: 12px; color: #ccc; line-height: 1.9; }
-  .pm2-terms::-webkit-scrollbar { width: 4px; }
-  .pm2-terms::-webkit-scrollbar-track { background: #0b0e13; }
-  .pm2-terms::-webkit-scrollbar-thumb { background: #e6b425; border-radius: 4px; }
-  .pm2-terms h3 { font-size: 13px; font-weight: 700; color: #fff; margin: 16px 0 5px; }
-  .pm2-terms h3:first-child { margin-top: 0; }
-  .pm2-terms p { margin-bottom: 5px; }
-  .pm2-terms ul { padding-left: 16px; margin-bottom: 6px; }
-  .pm2-terms ul li { margin-bottom: 3px; }
-  .pm2-terms-note { font-size: 11px; color: #777; margin-top: 6px; text-align: right; }
+    .terms-scroll h2 { font-size: 14px; font-weight: 700; color: #fff; margin: 18px 0 6px; }
+    .terms-scroll h2:first-child { margin-top: 0; }
+    .terms-scroll p { margin-bottom: 6px; }
+    .terms-scroll ul { padding-left: 18px; margin-bottom: 8px; }
+    .terms-scroll ul li { margin-bottom: 4px; }
 
-  /* フォームUI */
-  .pm2-form-group { margin-bottom: 20px; }
-  .pm2-label { display: block; font-size: 12px; font-weight: 500; color: #ddd; margin-bottom: 7px; }
-  .pm2-req { color: #e6b425; font-size: 10px; font-weight: 700; margin-left: 6px; background: rgba(230,180,37,0.15); padding: 1px 5px; border-radius: 3px; }
-  .pm2-input { width: 100%; background: #0d1420; border: 1px solid #2a3d55; border-radius: 8px; padding: 11px 14px; font-size: 13px; color: #fff; font-family: 'Noto Sans JP', sans-serif; outline: none; transition: border-color 0.2s; }
-  .pm2-input:focus { border-color: #e6b425; }
-  .pm2-input::placeholder { color: #555; }
+    .terms-note {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+      text-align: right;
+    }
 
-  /* チェックボックス */
-  .pm2-checks { display: flex; flex-direction: column; gap: 10px; }
-  .pm2-check-item { display: flex; align-items: flex-start; gap: 10px; background: #0d1420; border: 1px solid #2a3d55; border-radius: 8px; padding: 13px 15px; cursor: pointer; transition: border-color 0.2s; }
-  .pm2-check-item:hover { border-color: #e6b425; }
-  .pm2-check-item input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; accent-color: #e6b425; cursor: pointer; }
-  .pm2-check-text { font-size: 12px; color: #ddd; line-height: 1.6; }
-  .pm2-check-item.pm2-checked { border-color: #e6b425; background: rgba(230,180,37,0.06); }
+    /* ── フォーム ── */
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #ddd;
+      margin-bottom: 8px;
+    }
+    .form-group label .req {
+      color: #e6b425;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 6px;
+      background: rgba(230,180,37,0.15);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .form-group input[type="text"] {
+      width: 100%;
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input[type="text"]:focus {
+      border-color: #e6b425;
+    }
+    .form-group input[type="text"]::placeholder {
+      color: #555;
+    }
 
-  /* プラン選択 */
-  .pm2-select-wrap { position: relative; }
-  .pm2-select { width: 100%; background: #0d1420; border: 1px solid #2a3d55; border-radius: 8px; padding: 11px 36px 11px 14px; font-size: 13px; color: #fff; font-family: 'Noto Sans JP', sans-serif; cursor: pointer; appearance: none; outline: none; transition: border-color 0.2s; }
-  .pm2-select:focus { border-color: #e6b425; }
-  .pm2-select-arrow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #e6b425; font-size: 10px; pointer-events: none; }
-  .pm2-plan-detail { background: #0d1420; border: 1px solid #e6b425; border-radius: 10px; padding: 16px 18px; margin-top: 12px; }
-  .pm2-plan-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 5px; }
-  .pm2-plan-price { font-size: 12px; color: #bbb; }
-  .pm2-plan-price strong { color: #e6b425; font-size: 22px; font-weight: 700; }
+    /* チェックボックス */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 8px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .checkbox-item:hover { border-color: #e6b425; }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      accent-color: #e6b425;
+      cursor: pointer;
+    }
+    .checkbox-item .check-label {
+      font-size: 13px;
+      color: #ddd;
+      line-height: 1.6;
+    }
+    .checkbox-item.checked {
+      border-color: #e6b425;
+      background: rgba(230,180,37,0.06);
+    }
 
-  /* 決済エリア */
-  .pm2-payment-area { margin-top: 24px; text-align: center; }
-  .pm2-payment-note { font-size: 11px; color: #777; margin-bottom: 14px; }
-  .pm2-lock-box { background: #0d1420; border: 1px solid #2a3d55; border-radius: 12px; padding: 22px 20px; }
-  .pm2-lock-icon { font-size: 22px; margin-bottom: 8px; }
-  .pm2-lock-box p { font-size: 12px; color: #666; }
+    /* プラン選択 */
+    .plan-select-wrap {
+      position: relative;
+    }
+    .plan-select-wrap select {
+      width: 100%;
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 8px;
+      padding: 12px 40px 12px 16px;
+      font-size: 14px;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      cursor: pointer;
+      appearance: none;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .plan-select-wrap select:focus { border-color: #e6b425; }
+    .plan-select-wrap::after {
+      content: '▼';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #e6b425;
+      font-size: 11px;
+      pointer-events: none;
+    }
 
-  /* フッター */
-  .pm2-footer { border-top: 1px solid #1e2d42; padding: 24px 20px; text-align: center; margin-top: 24px; }
-  .pm2-footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 20px; margin-bottom: 12px; }
-  .pm2-footer-links a { color: #777; text-decoration: none; font-size: 11px; }
-  .pm2-footer-links a:hover { color: #e6b425; }
-  .pm2-footer-copy { font-size: 10px; color: #444; }
+    /* プラン詳細 */
+    .plan-detail {
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-top: 14px;
+    }
+    .plan-detail .plan-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .plan-detail .plan-price {
+      font-size: 13px;
+      color: #bbb;
+    }
+    .plan-detail .plan-price strong {
+      color: #e6b425;
+      font-size: 20px;
+    }
+    .plan-detail .plan-price .unit {
+      font-size: 13px;
+      color: #bbb;
+    }
 
-  /* サブスク注意書き */
-  .pm2-subscription-notice { background: rgba(230,180,37,0.08); border: 1px solid rgba(230,180,37,0.4); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
-  .pm2-subscription-notice p { font-size: 12px; color: #e6b425; line-height: 1.8; }
-  .pm2-subscription-notice p strong { font-weight: 700; }
+    /* 決済ボタンエリア */
+    .payment-area {
+      margin-top: 28px;
+      text-align: center;
+    }
+    .payment-area .payment-note {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 16px;
+    }
 
-  /* 非表示フォーム */
-  .pm2-hidden { display: none !important; }
-  .pm2-pay-btn { display: none; }
-  .pm2-pay-btn.pm2-active { display: block; }
-</style>
+    /* 無効時のオーバーレイ */
+    .payment-disabled-overlay {
+      background: #0d1420;
+      border: 1px solid #2a3d55;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .payment-disabled-overlay p {
+      font-size: 13px;
+      color: #666;
+    }
+    .payment-disabled-overlay .lock-icon { font-size: 24px; margin-bottom: 8px; }
 
-<div class="pm2">
+    /* ── フッター ── */
+    footer {
+      background: #0b0e13;
+      border-top: 1px solid #1e2d42;
+      padding: 32px 20px;
+      text-align: center;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px 24px;
+      margin-bottom: 16px;
+    }
+    .footer-links a {
+      color: #888;
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #e6b425; }
+    .footer-copy {
+      font-size: 11px;
+      color: #555;
+    }
 
-  <!-- ヘッダー -->
-  <div class="pm2-header">
-    <div class="pm2-badge">PAYMENT</div>
-    <h2>エルラボ2.0 サポート：決済</h2>
-    <p>以下の内容をご確認のうえ、お申し込みへお進みください</p>
+    /* ステップ表示 */
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 24px 0 0;
+      flex-wrap: wrap;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #555;
+    }
+    .step.active { color: #e6b425; }
+    .step .num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e2d42;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .step.active .num { background: #e6b425; color: #0b0e13; }
+    .step-arrow {
+      width: 32px;
+      height: 1px;
+      background: #1e2d42;
+      margin-bottom: 14px;
+    }
+
+    /* 非表示の決済フォーム（AutoSNS埋め込み） */
+    .hidden-form { display: none; }
+    .payment-buttons { margin-top: 0; }
+    .payment-buttons .plan-payment { display: none; }
+    .payment-buttons .plan-payment.active { display: block; }
+
+    /* 決済ボタン画像レスポンシブ */
+    .payment-buttons input[type="image"] { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+    /* ── スマホ最適化 ── */
+    @media (max-width: 480px) {
+      /* ヘッダー */
+      .page-header { padding: 22px 14px 20px; }
+      .page-header .label { font-size: 9px; padding: 2px 10px; }
+      .page-header h1 { font-size: 17px; }
+      .page-header > p { font-size: 11px; }
+
+      /* コンテナ */
+      .container { padding: 0 10px 20px; }
+
+      /* セクション */
+      .section { padding: 18px 14px; margin-top: 16px; border-radius: 10px; }
+      .section-title { font-size: 12px; }
+
+      /* サービスリンク：縦並び */
+      .service-link-box { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; }
+      .service-link-box p { font-size: 12px; }
+      .service-link-box a { text-align: center; padding: 11px 14px; font-size: 13px; }
+
+      /* フォーム - iOSズーム防止に16px */
+      .form-group input[type="text"] { font-size: 16px; padding: 13px 14px; }
+      .form-label { font-size: 13px; }
+
+      /* チェックボックス：タップ領域拡大 */
+      .checkbox-item { min-height: 52px; padding: 14px 14px; }
+      .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; }
+      .checkbox-item .check-label { font-size: 13px; }
+
+      /* プラン選択 */
+      .plan-select-wrap select { font-size: 16px; padding: 13px 40px 13px 14px; }
+      .plan-detail { padding: 14px 16px; }
+      .plan-detail .plan-name { font-size: 13px; }
+      .plan-detail .plan-price strong { font-size: 26px; }
+
+      /* 決済エリア */
+      .payment-area { margin-top: 20px; }
+      .payment-area .payment-note { font-size: 11px; }
+      .payment-disabled-overlay { padding: 20px 14px; }
+      .payment-disabled-overlay p { font-size: 13px; }
+
+      /* フッター */
+      footer { padding: 22px 14px; }
+      .footer-links { flex-direction: column; align-items: center; gap: 4px; }
+      .footer-links a { padding: 7px 10px; font-size: 12px; min-height: 40px; display: inline-flex; align-items: center; }
+      .footer-copy { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="page-header">
+  <div class="label">PAYMENT</div>
+  <h1>エルラボ2.0 サポート：決済</h1>
+  <p>以下の内容をご確認のうえ、お申し込みへお進みください</p>
+  <div class="steps">
+    <div class="step active">
+      <div class="num">1</div>
+      <span>規約確認</span>
+    </div>
+    <div class="step-arrow"></div>
+    <div class="step active">
+      <div class="num">2</div>
+      <span>情報入力</span>
+    </div>
+    <div class="step-arrow"></div>
+    <div class="step">
+      <div class="num">3</div>
+      <span>決済</span>
+    </div>
+    <div class="step-arrow"></div>
+    <div class="step">
+      <div class="num">4</div>
+      <span>完了</span>
+    </div>
   </div>
-
-  <div class="pm2-container">
-
-    <!-- サービス確認 -->
-    <div class="pm2-section">
-      <div class="pm2-section-title">サービス内容の確認</div>
-      <div class="pm2-service-box">
-        <p>お申し込み前に、サービスの詳細内容をご確認ください。</p>
-        <a href="https://l-mine.com/l-mine-2.0" target="_blank">サービス詳細を見る →</a>
-      </div>
-    </div>
-
-    <!-- 利用規約 -->
-    <div class="pm2-section">
-      <div class="pm2-section-title">利用規約</div>
-      <div class="pm2-terms" id="pm2TermsBox">
-        <h3>利用規約について</h3>
-        <p>この利用規約（以下、「本規約」といいます。）は、L-MINE（エルマイン）（以下、「当社」といいます。）がこのウェブサイト上で提供するサービス（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さまには、本規約に従って、本サービスをご利用いただきます。</p>
-        <h3>第1条（適用）</h3>
-        <p>本規約は、ユーザーと当社との間の本サービスの利用に関わる一切の関係に適用されるものとします。</p>
-        <p>当社は本サービスに関し、本規約のほか、個別規定をすることがあります。本規約の規定が個別規定と矛盾する場合には、個別規定において特段の定めなき限り、個別規定が優先されます。</p>
-        <h3>第2条（利用登録）</h3>
-        <p>登録希望者が本規約に同意の上、当社の定める方法によって利用登録を申請し、当社がこれを承認することによって、利用登録が完了するものとします。以下の事由がある場合、登録を承認しないことがあります。</p>
-        <ul>
-          <li>利用登録の申請に際して虚偽の事項を届け出た場合</li>
-          <li>本規約に違反したことがある者からの申請である場合</li>
-          <li>その他、当社が利用登録を相当でないと判断した場合</li>
-        </ul>
-        <h3>第3条（ユーザーIDおよびパスワードの管理）</h3>
-        <p>ユーザーは、自己の責任において、ユーザーIDおよびパスワードを適切に管理するものとします。第三者への譲渡・貸与・共用はできません。第三者によって使用されたことによって生じた損害は、当社に故意又は重大な過失がある場合を除き、当社は責任を負いません。</p>
-        <h3>第4条（利用料金および支払方法）</h3>
-        <p>ユーザーは、本サービスの有料部分の対価として、当社が別途定める利用料金を、当社が指定する方法により支払うものとします。利用料金の支払を遅滞した場合には、予告なく退会の手続きを取る場合があります。</p>
-        <h3>第5条（成果報酬について）</h3>
-        <p>1. サポートにおける初回販売（初回ローンチ）で得られた売上の一部を、成果報酬（マージン）として当社に支払うものとします。</p>
-        <p>2. マージンの対象は、初回販売によって得られた売上に限られ、2回目以降の販売には適用されません。</p>
-        <p>3. マージンの割合・上限額・詳細条件は、各サービスの案内ページ等により定められ、ユーザーは申込時点でこれに同意したものとみなします。</p>
-        <p>4. 当社が導線設計・販売戦略・心理設計・オファー設計等に関与していない売上については、マージンは発生しません。</p>
-        <p>5. ユーザーは、初回販売の売上実績および計算に必要な情報を、当社の求めに応じて正確に開示するものとします。</p>
-        <h3>第6条（禁止事項）</h3>
-        <ul>
-          <li>法令または公序良俗に違反する行為</li>
-          <li>犯罪行為に関連する行為</li>
-          <li>著作権、商標権ほか知的財産権を侵害する行為</li>
-          <li>サーバーまたはネットワークの機能を破壊・妨害する行為</li>
-          <li>本サービスによって得られた情報を商業的に利用する行為</li>
-          <li>不正アクセスをし、またはこれを試みる行為</li>
-          <li>他のユーザーに関する個人情報等を収集または蓄積する行為</li>
-          <li>他のユーザーまたは第三者に不利益、損害、不快感を与える行為</li>
-          <li>当社が許諾しない宣伝、広告、勧誘、または営業行為</li>
-          <li>反社会的勢力に対して直接または間接に利益を供与する行為</li>
-          <li>その他、当社が不適切と判断する行為</li>
-        </ul>
-        <h3>第7条（本サービスの提供の停止等）</h3>
-        <p>当社は、システム保守・天災・事故等の事由がある場合、事前通知なく本サービスの全部または一部を停止・中断できるものとします。これによりユーザーまたは第三者が被った損害について、当社は責任を負いません。</p>
-        <h3>第8条（利用制限および登録抹消）</h3>
-        <p>本規約違反・虚偽登録・料金不履行・長期未利用等の場合、当社は事前通知なくサービス利用制限または登録抹消できるものとします。これによりユーザーに生じた損害について、当社は責任を負いません。</p>
-        <h3>第9条（保証の否認および免責事項）</h3>
-        <p>当社は、本サービスに瑕疵がないことを保証しておりません。本サービスに起因してユーザーに生じた損害について一切の責任を負いません（消費者契約法が適用される場合を除く）。</p>
-        <h3>第10条（サービス内容の変更等）</h3>
-        <p>当社は、ユーザーに通知することなく本サービスの内容を変更または提供を中止できるものとし、これによってユーザーに生じた損害について責任を負いません。</p>
-        <h3>第11条（利用規約の変更）</h3>
-        <p>当社は、必要と判断した場合にはいつでも本規約を変更できるものとします。変更後に本サービスの利用を開始した場合、変更後の規約に同意したものとみなします。</p>
-        <h3>第12条（個人情報の取扱い）</h3>
-        <p>当社は、本サービスの利用によって取得する個人情報については、当社「プライバシーポリシー」に従い適切に取り扱うものとします。</p>
-        <h3>第13条（通知または連絡）</h3>
-        <p>ユーザーと当社との間の通知または連絡は、当社の定める方法によって行うものとします。変更届け出がない限り、現在登録されている連絡先へ発信時に到達したものとみなします。</p>
-        <h3>第14条（権利義務の譲渡の禁止）</h3>
-        <p>ユーザーは、当社の書面による事前の承諾なく、利用契約上の地位または本規約に基づく権利もしくは義務を第三者に譲渡し、または担保に供することはできません。</p>
-        <h3>第15条（準拠法・裁判管轄）</h3>
-        <p>本規約の解釈にあたっては、日本法を準拠法とします。</p>
-      </div>
-      <p class="pm2-terms-note">↑ スクロールして全文をご確認ください</p>
-    </div>
-
-    <!-- フォーム & 決済 -->
-    <div class="pm2-section">
-      <div class="pm2-section-title">お申し込み情報の入力</div>
-
-      <!-- 非表示AutoSNSフォーム -->
-      <form action="https://vjbsvali.autosns.app/fm/mNkjYEqfBL" class="frmSubmit pm2-hidden" data-form-id="mNkjYEqfBL" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="uid" id="pm2UserId" value="[[uid]]">
-        <input id="pm2TxtName" name="txt[NqALyt9JKM]" class="form-data validate[required] full-width" type="text" value="" data-reserved-field-name="LAST_NAME" />
-        <input type="hidden" name="txt[DV8CiugkRh][checkbox_empty]" value="checkbox_empty">
-        <input id="pm2CbTerms" name="txt[DV8CiugkRh][]" class="form-data validate[required]" type="checkbox" value="はい、同意します。" />
-        <input type="hidden" name="txt[HxAOz4JXh2][checkbox_empty]" value="checkbox_empty">
-        <input id="pm2CbService" name="txt[HxAOz4JXh2][]" class="form-data validate[required]" type="checkbox" value="はい、理解しました。" />
-        <input type="hidden" name="txt[w3pmJu6CQ8][checkbox_empty]" value="checkbox_empty">
-        <input id="pm2CbPrice" name="txt[w3pmJu6CQ8][]" class="form-data validate[required]" type="checkbox" value="はい、同意します。" />
-        <input id="pm2TxtContractor" name="txt[dX0cZrtqLJ]" class="form-data validate[required] full-width" type="text" value="" />
-      </form>
-
-      <!-- お名前 -->
-      <div class="pm2-form-group">
-        <label class="pm2-label">お名前（姓またはフルネーム）<span class="pm2-req">必須</span></label>
-        <input type="text" class="pm2-input" id="pm2UiName" placeholder="例：山田　太郎" />
-      </div>
-
-      <!-- 契約者名 -->
-      <div class="pm2-form-group">
-        <label class="pm2-label">契約者名<span class="pm2-req">必須</span></label>
-        <input type="text" class="pm2-input" id="pm2UiContractor" placeholder="例：山田　太郎" />
-      </div>
-
-      <!-- 確認事項 -->
-      <div class="pm2-form-group">
-        <label class="pm2-label">確認事項<span class="pm2-req">必須・全項目チェック</span></label>
-        <div class="pm2-checks">
-          <label class="pm2-check-item" id="pm2LabelTerms">
-            <input type="checkbox" id="pm2UiTerms" />
-            <span class="pm2-check-text">利用規約を読み、内容に同意します</span>
-          </label>
-          <label class="pm2-check-item" id="pm2LabelService">
-            <input type="checkbox" id="pm2UiService" />
-            <span class="pm2-check-text">サービス内容を理解しました</span>
-          </label>
-          <label class="pm2-check-item" id="pm2LabelPrice">
-            <input type="checkbox" id="pm2UiPrice" />
-            <span class="pm2-check-text">料金・支払条件に同意します</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- プラン選択 -->
-      <div class="pm2-form-group">
-        <label class="pm2-label">プランを選択してください<span class="pm2-req">必須</span></label>
-        <div class="pm2-select-wrap">
-          <select class="pm2-select" id="pm2UiPlan">
-            <option value="0">【基本】コンサルティングサポート</option>
-            <option value="1">【基本】顧問プランサポート</option>
-            <option value="2">まとめて支払い【基本】コンサルティングサポート（年間）</option>
-            <option value="3">【基本：特別】ライトプランサポート</option>
-          </select>
-          <span class="pm2-select-arrow">▼</span>
-        </div>
-        <div class="pm2-plan-detail">
-          <div class="pm2-plan-name" id="pm2PlanName">【基本】コンサルティングサポート</div>
-          <div class="pm2-plan-price" id="pm2PlanPrice"><strong>27,500</strong><span>円（税込）/ 月</span></div>
-        </div>
-      </div>
-
-      <!-- サブスク注意書き -->
-      <div class="pm2-subscription-notice">
-        <p>⚠️ <strong>【自動継続課金について】</strong><br>
-        本サービスはサブスクリプション（自動継続課金）型です。<br>
-        決済完了日を基準に、<strong>毎月同日に自動で決済</strong>が行われます。<br>
-        解約をご希望の場合は、次回決済日の前日までにご連絡ください。</p>
-      </div>
-
-      <!-- 決済エリア -->
-      <div class="pm2-payment-area">
-        <p class="pm2-payment-note">※ 全項目のご入力・ご確認後、決済ボタンが表示されます</p>
-
-        <!-- ロック中 -->
-        <div class="pm2-lock-box" id="pm2LockBox">
-          <div class="pm2-lock-icon">🔒</div>
-          <p>上記の情報をすべて入力・同意すると<br>決済ボタンが表示されます</p>
-        </div>
-
-        <!-- 決済ボタン群 -->
-        <div id="pm2PayBtns" style="display:none;">
-          <div class="pm2-pay-btn pm2-active" id="pm2Pay0">
-            <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/DIdeG3iwY4" class="stripe_submit_button" method="POST" data-unique-id="_0" data-form-id="mNkjYEqfBL">
-              <input type="hidden" name="uid" value="[[uid]]">
-              <input type="hidden" name="prid" value="DIdeG3iwY4">
-              <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqfBL/fSA69qTgMK">
-              <input type="hidden" name="fmid" value="mNkjYEqfBL">
-              <input type="image" src="https://autosns.jp/images/paypal/button_paypal_4.png" width="320" name="submit" />
-            </form>
-          </div>
-          <div class="pm2-pay-btn" id="pm2Pay1">
-            <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/lTzIRS9sEA" class="stripe_submit_button" method="POST" data-unique-id="_1" data-form-id="mNkjYEqfBL">
-              <input type="hidden" name="uid" value="[[uid]]">
-              <input type="hidden" name="prid" value="lTzIRS9sEA">
-              <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqfBL/fSA69qTgMK">
-              <input type="hidden" name="fmid" value="mNkjYEqfBL">
-              <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="320" name="submit" />
-            </form>
-          </div>
-          <div class="pm2-pay-btn" id="pm2Pay2">
-            <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/kCgkhjZJ1d" class="stripe_submit_button" method="POST" data-unique-id="_2" data-form-id="mNkjYEqfBL">
-              <input type="hidden" name="uid" value="[[uid]]">
-              <input type="hidden" name="prid" value="kCgkhjZJ1d">
-              <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqfBL/fSA69qTgMK">
-              <input type="hidden" name="fmid" value="mNkjYEqfBL">
-              <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="320" name="submit" />
-            </form>
-          </div>
-          <div class="pm2-pay-btn" id="pm2Pay3">
-            <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/WxU0YVXl1g" class="stripe_submit_button" method="POST" data-unique-id="_3" data-form-id="mNkjYEqfBL">
-              <input type="hidden" name="uid" value="[[uid]]">
-              <input type="hidden" name="prid" value="WxU0YVXl1g">
-              <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqfBL/fSA69qTgMK">
-              <input type="hidden" name="fmid" value="mNkjYEqfBL">
-              <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="320" name="submit" />
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- フッター -->
-  <div class="pm2-footer">
-    <div class="pm2-footer-links">
-      <a href="https://l-mine.com/l-mine-2.0" target="_blank">商品・サービスページ</a>
-      <a href="https://l-mine.com/about" target="_blank">特定商取引法に基づく表示</a>
-      <a href="https://l-mine.com/privacy" target="_blank">個人情報保護方針・プライバシーポリシー</a>
-      <a href="https://l-mine.com/mensekizikou" target="_blank">免責事項</a>
-    </div>
-    <p class="pm2-footer-copy">© L-MINE（エルマイン）All Rights Reserved.</p>
-  </div>
-
 </div>
 
+<div class="container">
+
+  <!-- ① サービス確認 -->
+  <div class="section">
+    <div class="section-title">サービス内容の確認</div>
+    <div class="service-link-box">
+      <p>お申し込み前に、サービスの詳細内容をご確認ください。</p>
+      <a href="https://l-mine.com/l-mine-2.0" target="_blank">サービス詳細を見る →</a>
+    </div>
+  </div>
+
+  <!-- ② 利用規約 -->
+  <div class="section">
+    <div class="section-title">利用規約</div>
+    <div class="terms-scroll" id="termsBox">
+      <h2>利用規約について</h2>
+      <p>この利用規約（以下、「本規約」といいます。）は、L-MINE（エルマイン）（以下、「当社」といいます。）がこのウェブサイト上で提供するサービス（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。</p>
+
+      <h2>第1条（適用）</h2>
+      <p>本規約は、ユーザーと当社との間の本サービスの利用に関わる一切の関係に適用されるものとします。</p>
+      <p>当社は本サービスに関し、本規約のほか、ご利用にあたってのルール等、各種の定め（以下、「個別規定」といいます。）をすることがあります。これら個別規定はその名称のいかんに関わらず、本規約の一部を構成するものとします。本規約の規定が前条の個別規定の規定と矛盾する場合には、個別規定において特段の定めなき限り、個別規定の規定が優先されるものとします。</p>
+
+      <h2>第2条（利用登録）</h2>
+      <p>本サービスにおいては、登録希望者が本規約に同意の上、当社の定める方法によって利用登録を申請し、当社がこれを承認することによって、利用登録が完了するものとします。</p>
+      <p>当社は、利用登録の申請者に以下の事由があると判断した場合、利用登録の申請を承認しないことがあり、その理由については一切の開示義務を負わないものとします。</p>
+      <ul>
+        <li>利用登録の申請に際して虚偽の事項を届け出た場合</li>
+        <li>本規約に違反したことがある者からの申請である場合</li>
+        <li>その他、当社が利用登録を相当でないと判断した場合</li>
+      </ul>
+
+      <h2>第3条（ユーザーIDおよびパスワードの管理）</h2>
+      <p>ユーザーは、自己の責任において、本サービスのユーザーIDおよびパスワードを適切に管理するものとします。</p>
+      <p>ユーザーは、いかなる場合にも、ユーザーIDおよびパスワードを第三者に譲渡または貸与し、もしくは第三者と共用することはできません。当社は、ユーザーIDとパスワードの組み合わせが登録情報と一致してログインされた場合には、そのユーザーIDを登録しているユーザー自身による利用とみなします。</p>
+      <p>ユーザーID及びパスワードが第三者によって使用されたことによって生じた損害は、当社に故意又は重大な過失がある場合を除き、当社は一切の責任を負わないものとします。</p>
+
+      <h2>第4条（利用料金および支払方法）</h2>
+      <p>ユーザーは、本サービスの有料部分の対価として、当社が別途定め、本ウェブサイトに表示する利用料金を、当社が指定する方法により支払うものとします。</p>
+      <p>ユーザーが利用料金の支払を遅滞した場合には、予告なく退会の手続きを取る場合があります。</p>
+
+      <h2>第5条（成果報酬について）</h2>
+      <p>1. 当社が提供するサポートにおいては、サポートにおける初回販売（初回ローンチ）で得られた売上の一部を、成果報酬（以下「マージン」といいます。）として当社に支払うものとします。</p>
+      <p>2. マージンの対象は、「ユーザーが本サービスを用いて作成した商品・講座等の初回販売によって得られた売上」に限られ、2回目以降の販売には適用されません。</p>
+      <p>3. マージンの割合、上限額、その他の詳細条件は、当社が提示する各サービスの案内ページ、申込ページ、または本サービス内の表示により定められ、ユーザーは申込時点でこれに同意したものとみなします。</p>
+      <p>4. 当社が導線設計、販売戦略、心理設計、オファー設計等に関与していない売上については、本条に基づくマージンは発生しません。</p>
+      <p>5. ユーザーは、初回販売の売上実績および計算に必要な情報を、当社の求めに応じて正確に開示するものとします。</p>
+
+      <h2>第6条（禁止事項）</h2>
+      <p>ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません。</p>
+      <ul>
+        <li>法令または公序良俗に違反する行為</li>
+        <li>犯罪行為に関連する行為</li>
+        <li>本サービスの内容等、本サービスに含まれる著作権、商標権ほか知的財産権を侵害する行為</li>
+        <li>当社、ほかのユーザー、またはその他第三者のサーバーまたはネットワークの機能を破壊したり、妨害したりする行為</li>
+        <li>本サービスによって得られた情報を商業的に利用する行為</li>
+        <li>当社のサービスの運営を妨害するおそれのある行為</li>
+        <li>不正アクセスをし、またはこれを試みる行為</li>
+        <li>他のユーザーに関する個人情報等を収集または蓄積する行為</li>
+        <li>不正な目的を持って本サービスを利用する行為</li>
+        <li>本サービスの他のユーザーまたはその他の第三者に不利益、損害、不快感を与える行為</li>
+        <li>他のユーザーに成りすます行為</li>
+        <li>当社が許諾しない本サービス上での宣伝、広告、勧誘、または営業行為</li>
+        <li>面識のない異性との出会いを目的とした行為</li>
+        <li>当社のサービスに関連して、反社会的勢力に対して直接または間接に利益を供与する行為</li>
+        <li>その他、当社が不適切と判断する行為</li>
+      </ul>
+
+      <h2>第7条（本サービスの提供の停止等）</h2>
+      <p>当社は、以下のいずれかの事由があると判断した場合、ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。</p>
+      <ul>
+        <li>本サービスにかかるコンピュータシステムの保守点検または更新を行う場合</li>
+        <li>地震、落雷、火災、停電、疫病または天災などの不可抗力により、本サービスの提供が困難となった場合</li>
+        <li>コンピュータまたは通信回線等が事故により停止した場合</li>
+        <li>その他、当社が本サービスの提供が困難と判断した場合</li>
+      </ul>
+      <p>当社は、本サービスの提供の停止または中断により、ユーザーまたは第三者が被ったいかなる不利益または損害についても、一切の責任を負わないものとします。</p>
+
+      <h2>第8条（利用制限および登録抹消）</h2>
+      <p>当社は、ユーザーが以下のいずれかに該当する場合には、事前の通知なくユーザーに対して、本サービスの全部もしくは一部の利用を制限し、またはユーザーとしての登録を抹消することができるものとします。</p>
+      <ul>
+        <li>本規約のいずれかの条項に違反した場合</li>
+        <li>登録事項に虚偽の事実があることが判明した場合</li>
+        <li>料金等の支払債務の不履行があった場合</li>
+        <li>当社からの連絡に対し、一定期間返答がない場合</li>
+        <li>本サービスについて、最終の利用から一定期間利用がない場合</li>
+        <li>その他、当社が本サービスの利用を適当でないと判断した場合</li>
+      </ul>
+      <p>当社は、本条に基づき当社が行った行為によりユーザーに生じた損害について、一切の責任を負いません。</p>
+
+      <h2>第9条（保証の否認および免責事項）</h2>
+      <p>当社は、本サービスに事実上または法律上の瑕疵がないことを明示的にも黙示的にも保証しておりません。</p>
+      <p>当社は、本サービスに起因してユーザーに生じたあらゆる損害について一切の責任を負いません。ただし、消費者契約法に定める消費者契約となる場合、この免責規定は適用されません。</p>
+
+      <h2>第10条（サービス内容の変更等）</h2>
+      <p>当社は、ユーザーに通知することなく、本サービスの内容を変更しまたは本サービスの提供を中止することができるものとし、これによってユーザーに生じた損害について一切の責任を負いません。</p>
+
+      <h2>第11条（利用規約の変更）</h2>
+      <p>当社は、必要と判断した場合には、ユーザーに通知することなくいつでも本規約を変更することができるものとします。本規約の変更後、本サービスの利用を開始した場合には、当該ユーザーは変更後の規約に同意したものとみなします。</p>
+
+      <h2>第12条（個人情報の取扱い）</h2>
+      <p>当社は、本サービスの利用によって取得する個人情報については、当社「プライバシーポリシー」に従い適切に取り扱うものとします。</p>
+
+      <h2>第13条（通知または連絡）</h2>
+      <p>ユーザーと当社との間の通知または連絡は、当社の定める方法によって行うものとします。当社は、ユーザーから変更届け出がない限り、現在登録されている連絡先が有効なものとみなして連絡を行い、これらは発信時にユーザーへ到達したものとみなします。</p>
+
+      <h2>第14条（権利義務の譲渡の禁止）</h2>
+      <p>ユーザーは、当社の書面による事前の承諾なく、利用契約上の地位または本規約に基づく権利もしくは義務を第三者に譲渡し、または担保に供することはできません。</p>
+
+      <h2>第15条（準拠法・裁判管轄）</h2>
+      <p>本規約の解釈にあたっては、日本法を準拠法とします。</p>
+    </div>
+    <p class="terms-note">↑ スクロールして全文をご確認ください</p>
+  </div>
+
+  <!-- ③ お申し込みフォーム & 決済 -->
+  <div class="section">
+    <div class="section-title">お申し込み情報の入力</div>
+
+    <!-- 非表示のAutoSNSフォーム本体 -->
+    <form action="https://vjbsvali.autosns.app/fm/mNkjYEqfBL" class="frmSubmit hidden-form" data-form-id="mNkjYEqfBL" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="uid" id="user_id" value="[[uid]]">
+      <input id="txtNqALyt9JKM" name="txt[NqALyt9JKM]" class="form-data validate[required] full-width" type="text" value="" placeholder="姓(またはフルネーム)" data-reserved-field-name="LAST_NAME" />
+      <input type="hidden" name="txt[DV8CiugkRh][checkbox_empty]" value="checkbox_empty">
+      <input id="txtDV8CiugkRh-0" name="txt[DV8CiugkRh][]" class="form-data validate[required]" type="checkbox" value="はい、同意します。" />
+      <input type="hidden" name="txt[HxAOz4JXh2][checkbox_empty]" value="checkbox_empty">
+      <input id="txtHxAOz4JXh2-0" name="txt[HxAOz4JXh2][]" class="form-data validate[required]" type="checkbox" value="はい、理解しました。" />
+      <input type="hidden" name="txt[w3pmJu6CQ8][checkbox_empty]" value="checkbox_empty">
+      <input id="txtw3pmJu6CQ8-0" name="txt[w3pmJu6CQ8][]" class="form-data validate[required]" type="checkbox" value="はい、同意します。" />
+      <input id="txtdX0cZrtqLJ" name="txt[dX0cZrtqLJ]" class="form-data validate[required] full-width" type="text" value="" placeholder="契約者名" />
+    </form>
+
+    <!-- 表示用フォームUI -->
+    <div class="form-group">
+      <label>お名前（姓またはフルネーム）<span class="req">必須</span></label>
+      <input type="text" id="ui_name" placeholder="例：山田　太郎" />
+    </div>
+
+    <div class="form-group">
+      <label>契約者名<span class="req">必須</span></label>
+      <input type="text" id="ui_contractor" placeholder="例：山田　太郎" />
+    </div>
+
+    <div class="form-group">
+      <label>確認事項<span class="req">必須・全項目チェック</span></label>
+      <div class="checkbox-group">
+        <label class="checkbox-item" id="cb_terms_label">
+          <input type="checkbox" id="cb_terms" />
+          <span class="check-label">利用規約を読み、内容に同意します</span>
+        </label>
+        <label class="checkbox-item" id="cb_service_label">
+          <input type="checkbox" id="cb_service" />
+          <span class="check-label">サービス内容を理解しました</span>
+        </label>
+        <label class="checkbox-item" id="cb_price_label">
+          <input type="checkbox" id="cb_price" />
+          <span class="check-label">料金・支払条件に同意します</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>プランを選択してください<span class="req">必須</span></label>
+      <div class="plan-select-wrap">
+        <select id="ui_plan">
+          <option value="0">【基本】コンサルティングサポート</option>
+          <option value="1">【基本】顧問プランサポート</option>
+          <option value="2">まとめて支払い【基本】コンサルティングサポート（年間）</option>
+          <option value="3">【基本：特別】ライトプランサポート</option>
+        </select>
+      </div>
+      <!-- プラン詳細表示 -->
+      <div class="plan-detail" id="plan_detail">
+        <div class="plan-name" id="plan_name">【基本】コンサルティングサポート</div>
+        <div class="plan-price" id="plan_price"><strong>27,500</strong><span class="unit">円（税込）/ 月</span></div>
+      </div>
+    </div>
+
+    <!-- 決済エリア -->
+    <div class="payment-area">
+      <p class="payment-note">※ 全項目のご入力・ご確認後、決済ボタンが有効になります</p>
+
+      <!-- ロック中表示 -->
+      <div class="payment-disabled-overlay" id="payment_locked">
+        <div class="lock-icon">🔒</div>
+        <p>上記の情報をすべて入力・同意すると<br>決済ボタンが表示されます</p>
+      </div>
+
+      <!-- 決済ボタン（AutoSNS埋め込み） -->
+      <div class="payment-buttons" id="payment_buttons" style="display:none;">
+
+        <!-- プラン0 -->
+        <div class="plan-payment" id="pay_0">
+          <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/DIdeG3iwY4" class="stripe_submit_button" method="POST" data-unique-id="_0" data-form-id="mNkjYEqfBL">
+            <input type="hidden" name="uid" value="[[uid]]">
+            <input type="hidden" name="prid" value="DIdeG3iwY4">
+            <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqfBL/fSA69qTgMK">
+            <input type="hidden" name="fmid" value="mNkjYEqfBL">
+            <input type="image" src="https://autosns.jp/images/paypal/button_paypal_4.png" width="350" name="submit" id="stripe_checkout_button_0" />
+          </form>
+        </div>
+
+        <!-- プラン1 -->
+        <div class="plan-payment" id="pay_1">
+          <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/lTzIRS9sEA" class="stripe_submit_button" method="POST" data-unique-id="_1" data-form-id="mNkjYEqfBL">
+            <input type="hidden" name="uid" value="[[uid]]">
+            <input type="hidden" name="prid" value="lTzIRS9sEA">
+            <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqMK">
+            <input type="hidden" name="fmid" value="mNkjYEqfBL">
+            <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="350" name="submit" id="stripe_checkout_button_1" />
+          </form>
+        </div>
+
+        <!-- プラン2 -->
+        <div class="plan-payment" id="pay_2">
+          <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/kCgkhjZJ1d" class="stripe_submit_button" method="POST" data-unique-id="_2" data-form-id="mNkjYEqfBL">
+            <input type="hidden" name="uid" value="[[uid]]">
+            <input type="hidden" name="prid" value="kCgkhjZJ1d">
+            <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqMK">
+            <input type="hidden" name="fmid" value="mNkjYEqfBL">
+            <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="350" name="submit" id="stripe_checkout_button_2" />
+          </form>
+        </div>
+
+        <!-- プラン3 -->
+        <div class="plan-payment" id="pay_3">
+          <form action="https://vjbsvali.autosns.app/api/stripe/create-checkout-session/WxU0YVXl1g" class="stripe_submit_button" method="POST" data-unique-id="_3" data-form-id="mNkjYEqfBL">
+            <input type="hidden" name="uid" value="[[uid]]">
+            <input type="hidden" name="prid" value="WxU0YVXl1g">
+            <input type="hidden" name="cancel_url" value="https://autosns.jp/forms/mNkjYEqMK">
+            <input type="hidden" name="fmid" value="mNkjYEqfBL">
+            <input type="image" src="https://autosns.jp/images/paypal/button_paypal_14.png" width="350" name="submit" id="stripe_checkout_button_3" />
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- フッター -->
+<footer>
+  <div class="footer-links">
+    <a href="https://l-mine.com/l-mine-2.0" target="_blank">商品・サービスページ</a>
+    <a href="https://l-mine.com/about" target="_blank">特定商取引法に基づく表示</a>
+    <a href="https://l-mine.com/privacy" target="_blank">個人情報保護方針・プライバシーポリシー</a>
+  </div>
+  <p class="footer-copy">© L-MINE（エルマイン）All Rights Reserved.</p>
+</footer>
+
+<!-- jQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <script>
-(function(){
-  var plans = [
-    { name:'【基本】コンサルティングサポート', price:'27,500', unit:'円（税込）/ 月' },
-    { name:'【基本】顧問プランサポート',        price:'52,250', unit:'円（税込）/ 月' },
-    { name:'まとめて支払い【基本】コンサルティングサポート（年間）', price:'280,500', unit:'円（税込）・一括' },
-    { name:'【基本：特別】ライトプランサポート', price:'15,000', unit:'円（税込）/ 月' }
-  ];
+// ── プランデータ ──
+const plans = [
+  { name: '【基本】コンサルティングサポート', price: '27,500', unit: '円（税込）/ 月' },
+  { name: '【基本】顧問プランサポート',       price: '52,250', unit: '円（税込）/ 月' },
+  { name: 'まとめて支払い【基本】コンサルティングサポート（年間）', price: '280,500', unit: '円（税込）・一括' },
+  { name: '【基本：特別】ライトプランサポート', price: '15,000', unit: '円（税込）/ 月' }
+];
 
-  function updatePlan(idx){
-    var p = plans[idx];
-    document.getElementById('pm2PlanName').textContent = p.name;
-    document.getElementById('pm2PlanPrice').innerHTML = '<strong>'+p.price+'</strong><span>'+p.unit+'</span>';
-    document.querySelectorAll('.pm2-pay-btn').forEach(function(el){ el.style.display='none'; });
-    var el = document.getElementById('pm2Pay'+idx);
-    if(el) el.style.display='block';
-  }
+// ── プラン切り替え ──
+function updatePlan(idx) {
+  const p = plans[idx];
+  document.getElementById('plan_name').textContent = p.name;
+  document.getElementById('plan_price').innerHTML = '<strong>' + p.price + '</strong><span class="unit">' + p.unit + '</span>';
+  document.querySelectorAll('.plan-payment').forEach(el => el.style.display = 'none');
+  const payEl = document.getElementById('pay_' + idx);
+  if (payEl) payEl.style.display = 'block';
+  // AutoSNSプルダウンも同期
+  document.getElementById('product_button_select_pulldown_') && (document.getElementById('product_button_select_pulldown_').selectedIndex = idx);
+}
 
-  function checkForm(){
-    var name = document.getElementById('pm2UiName').value.trim();
-    var cont = document.getElementById('pm2UiContractor').value.trim();
-    var t = document.getElementById('pm2UiTerms').checked;
-    var s = document.getElementById('pm2UiService').checked;
-    var pr = document.getElementById('pm2UiPrice').checked;
-    var ok = name && cont && t && s && pr;
+document.getElementById('ui_plan').addEventListener('change', function() {
+  updatePlan(this.value);
+});
 
-    // 非表示フォームに値を同期
-    document.getElementById('pm2TxtName').value = name;
-    document.getElementById('pm2TxtContractor').value = cont;
-    document.getElementById('pm2CbTerms').checked = t;
-    document.getElementById('pm2CbService').checked = s;
-    document.getElementById('pm2CbPrice').checked = pr;
+// ── バリデーション ──
+function checkAllFilled() {
+  const name = document.getElementById('ui_name').value.trim();
+  const contractor = document.getElementById('ui_contractor').value.trim();
+  const cbTerms = document.getElementById('cb_terms').checked;
+  const cbService = document.getElementById('cb_service').checked;
+  const cbPrice = document.getElementById('cb_price').checked;
 
-    document.getElementById('pm2LockBox').style.display = ok ? 'none' : 'block';
-    document.getElementById('pm2PayBtns').style.display = ok ? 'block' : 'none';
-  }
+  const allOk = name !== '' && contractor !== '' && cbTerms && cbService && cbPrice;
 
-  document.getElementById('pm2UiPlan').addEventListener('change', function(){ updatePlan(this.value); });
-  document.getElementById('pm2UiName').addEventListener('input', checkForm);
-  document.getElementById('pm2UiContractor').addEventListener('input', checkForm);
+  // AutoSNSフォームの非表示フィールドにも値をセット
+  document.getElementById('txtNqALyt9JKM').value = name;
+  document.getElementById('txtdX0cZrtqLJ').value = contractor;
+  document.getElementById('txtDV8CiugkRh-0').checked = cbTerms;
+  document.getElementById('txtHxAOz4JXh2-0').checked = cbService;
+  document.getElementById('txtw3pmJu6CQ8-0').checked = cbPrice;
 
-  ['pm2UiTerms','pm2UiService','pm2UiPrice'].forEach(function(id){
-    document.getElementById(id).addEventListener('change', function(){
-      var labelMap = { pm2UiTerms:'pm2LabelTerms', pm2UiService:'pm2LabelService', pm2UiPrice:'pm2LabelPrice' };
-      var lbl = document.getElementById(labelMap[id]);
-      if(lbl) lbl.classList.toggle('pm2-checked', this.checked);
-      checkForm();
+  document.getElementById('payment_locked').style.display = allOk ? 'none' : 'block';
+  document.getElementById('payment_buttons').style.display = allOk ? 'block' : 'none';
+}
+
+['ui_name', 'ui_contractor'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkAllFilled);
+});
+['cb_terms', 'cb_service', 'cb_price'].forEach(id => {
+  document.getElementById(id).addEventListener('change', function() {
+    const label = document.getElementById(id + '_label');
+    if (label) label.classList.toggle('checked', this.checked);
+    checkAllFilled();
+  });
+});
+
+// ── UID処理 ──
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+  const results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  updatePlan(0);
+
+  const param_user_id = getParameterByName('uid');
+  if (param_user_id) {
+    document.getElementById('user_id').value = param_user_id;
+    document.querySelectorAll('.stripe_submit_button input[name="uid"]').forEach(el => {
+      el.value = param_user_id;
     });
-  });
-
-  // UID処理
-  function getParam(name){
-    var regex = new RegExp('[?&]'+name.replace(/[\[\]]/g,'\\$&')+'(=([^&#]*)|&|#|$)');
-    var r = regex.exec(window.location.href);
-    if(!r) return null;
-    return r[2] ? decodeURIComponent(r[2].replace(/\+/g,' ')) : '';
   }
+});
 
-  document.addEventListener('DOMContentLoaded', function(){
-    updatePlan(0);
-    var uid = getParam('uid');
-    if(uid){
-      document.getElementById('pm2UserId').value = uid;
-      document.querySelectorAll('#pm2PayBtns input[name="uid"]').forEach(function(el){ el.value = uid; });
-    }
-  });
-
-  // 決済前フォーム送信
-  function postBeforePayment(that){
-    var $form = that.parents('form');
-    if($form.prop('disabled')) return false;
-    $form.prop('disabled', true);
-    var fid = $form.data('form-id') || '';
-    if(fid){
-      var $f = $('.frmSubmit[data-form-id="'+fid+'"]');
-      $.ajax({ url:$f.attr('action'), type:'POST', dataType:'html', data:$f.serializeArray(), async:false })
-       .done(function(){ $form.prop('disabled',false); $form.submit(); });
-    } else {
-      $form.prop('disabled',false); $form.submit();
-    }
+// ── 決済前フォーム送信（AutoSNS） ──
+function postFormBeforePayment(that) {
+  const $payment_form = that.parents('form');
+  if ($payment_form.prop('disabled')) return false;
+  $payment_form.prop('disabled', true);
+  const form_id = $payment_form.data('form-id') || '';
+  if (form_id) {
+    const $form = $('.frmSubmit[data-form-id="' + form_id + '"]');
+    $.ajax({
+      url: $form.attr('action'),
+      type: 'POST',
+      dataType: 'html',
+      data: $form.serializeArray(),
+      async: false
+    }).done(function() {
+      $payment_form.prop('disabled', false);
+      $payment_form.submit();
+    });
+  } else {
+    $payment_form.prop('disabled', false);
+    $payment_form.submit();
   }
+}
 
-  $(document).on('click','#pm2PayBtns .stripe_submit_button input[type="image"]',function(e){
-    e.preventDefault();
-    postBeforePayment($(this));
-  });
-})();
+$(document).on('click', '.stripe_submit_button input[type="image"]', function(e) {
+  e.preventDefault();
+  postFormBeforePayment($(this));
+});
 </script>
+
+</body>
+</html>
