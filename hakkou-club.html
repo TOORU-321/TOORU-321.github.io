@@ -792,6 +792,12 @@ function sendToSheet(event,data){
     fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).catch(function(){});
   }catch(e){}
 }
+// register 用ペイロード（全選択麹＋各麹の startDate＋最古日付）
+function buildRegisterPayload(){
+  const details=state.selectedKoji.map(function(k){return {k:k,startDate:(state.kojiData[k]||{}).startDate||''}});
+  const earliest=details.reduce(function(acc,d){return (!acc||(d.startDate&&d.startDate<acc))?d.startDate:acc},'');
+  return {koji:state.selectedKoji.slice(),kojiDetails:details,startDate:earliest||(new Date().toISOString().slice(0,10))};
+}
 
 // 期間定数（TEST_MODE=false 時に有効）
 // レッスン①5/30（麹選び）→ レッスン②6/5（仕込み＝Day1）→ 発酵7〜10日 → サポート6/20まで → アプリは6月末まで利用可
@@ -1762,7 +1768,7 @@ function startOnboard(){
   });
   save();
   try{localStorage.setItem(ONBOARD_KEY,'1')}catch(e){}
-  sendToSheet('register',{koji:picked,startDate:sd});
+  sendToSheet('register',buildRegisterPayload());
   $('onboardModal').classList.remove('on');
   document.body.style.overflow='';
   render();
@@ -1800,6 +1806,7 @@ function confirmAddKoji(){
     state.kojiData[k]={startDate:sd,isResting:false,completedDate:null,checkins:{}};
   });
   save();
+  sendToSheet('register',buildRegisterPayload());
   $('addKojiModal').classList.remove('on');
   document.body.style.overflow='';
   render();
