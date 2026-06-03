@@ -268,6 +268,21 @@ body.admin header{top:66px}
 .name-input{width:100%;padding:11px 13px;border:1.5px solid #F5CF8E;border-radius:10px;font-size:15px;background:#FFFDF7;font-family:inherit;text-align:center;color:#3A2E1F;letter-spacing:.04em}
 .name-input:focus{border-color:#F5A623;outline:none;box-shadow:0 0 0 3px rgba(245,166,35,.15)}
 
+/* 先行予約 */
+.preorder-hint{background:linear-gradient(135deg,#FFE7B0 0%,#FFC56B 100%);border:1px solid #F5A623;border-radius:12px;padding:11px 14px;margin:10px 0;text-align:center;font-size:13px;font-weight:700;color:#8C4A0D;cursor:pointer;box-shadow:0 2px 8px rgba(245,166,35,.22);line-height:1.55}
+.preorder-hint:active{transform:scale(.98)}
+.preorder-hint.done{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border-color:#A8C97A;color:#3B6D11;cursor:default;box-shadow:none}
+.preorder-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.preorder-item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:#FFFDF7;border:1.5px solid #F5E0B5;border-radius:12px;cursor:pointer;transition:all .15s}
+.preorder-item:active{transform:scale(.98)}
+.preorder-item.checked{background:linear-gradient(135deg,#FFFCF0 0%,#FFF4D8 100%);border-color:#F5A623;box-shadow:0 2px 8px rgba(245,166,35,.15)}
+.preorder-item input{margin-top:3px;width:18px;height:18px;accent-color:#F5A623;flex-shrink:0}
+.preorder-item .po-info{flex:1;min-width:0}
+.preorder-item .po-info b{display:block;font-size:14px;color:#B3631A;margin-bottom:3px}
+.preorder-item .po-info small{display:block;font-size:11px;color:#8C7A6A;line-height:1.55}
+.preorder-thanks{text-align:center;color:#3B6D11;font-weight:700;font-size:13px;margin-top:10px;padding:11px 13px;background:#F4F8E8;border:1px solid #A8C97A;border-radius:10px;line-height:1.7}
+.preorder-thanks b{color:#3B6D11}
+
 /* Phase indicator */
 .phase-indicator{padding:10px 12px;background:linear-gradient(90deg,#FFF8E7 0%,#FFEFC5 100%);border-radius:12px;border:1px solid #F5CF8E;margin-top:8px;display:flex;align-items:center;gap:10px}
 .phase-indicator .pi-ico{font-size:22px}
@@ -436,6 +451,7 @@ body.admin header{top:66px}
     <div id="luckyBanner"></div>
     <div id="readOnlyBanner"></div>
     <div id="preLaunchBanner"></div>
+    <div id="preorderHint"></div>
     <div id="phaseIndicator"></div>
     <div id="dailyGreet"></div>
     <div id="anxietyCard"></div>
@@ -617,6 +633,30 @@ body.admin header{top:66px}
   </div>
 </div>
 
+<!-- 先行予約モーダル -->
+<div class="modal-bg" id="preorderModal">
+  <div class="modal" style="max-width:380px;max-height:90vh;overflow-y:auto">
+    <div class="modal-hero">
+      <img src="assets/chars/kayo1.png" alt="かよママ" class="kayo-illust onboard" onerror="this.style.display='none'">
+    </div>
+    <h2>🌸 次の中規模企画 先行予約</h2>
+    <p class="sub">麹サポート受講者限定の特典です🌾<br>気になる企画にチェックを入れてください</p>
+    <div class="preorder-list" id="preorderList">
+      <label class="preorder-item">
+        <input type="checkbox" value="aji">
+        <span class="po-info"><b>🧂 味付けサポート</b><small>次回開催：<b>7月／11月／3月</b>（年3回・約3週間）</small></span>
+      </label>
+      <label class="preorder-item">
+        <input type="checkbox" value="kondate">
+        <span class="po-info"><b>🍱 献立サポート</b><small>次回開催：<b>9月／1月／5月</b>（年3回・約3週間）</small></span>
+      </label>
+    </div>
+    <button class="btn pri" id="preorderSubmit" style="margin-top:6px">先行予約する</button>
+    <button class="btn sec" id="preorderClose" style="margin-top:6px">あとで</button>
+    <div class="preorder-thanks" id="preorderThanks" style="display:none"></div>
+  </div>
+</div>
+
 <!-- バッジ画面モーダル -->
 <div class="modal-bg" id="badgesModal">
   <div class="modal" style="max-width:420px;max-height:90vh;overflow-y:auto">
@@ -663,6 +703,7 @@ body.admin header{top:66px}
     <button class="drawer-item" data-act="faq"><span class="ico">❓</span>よくある質問<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="quiz"><span class="ico">🎲</span>麹クイズ<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="addKoji"><span class="ico">➕</span>麹を追加する<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="preorder"><span class="ico">🌸</span>次の企画を予約<span class="arrow">›</span></button>
     <div class="drawer-divider"></div>
     <a class="drawer-item" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
       <span class="ico">💬</span>かよママ Instagram<span class="arrow">↗</span>
@@ -696,12 +737,12 @@ body.admin header{top:66px}
 さて、麹で「味付け」が変わったら、次は<br><b>「献立」</b>そのものをラクにしませんか？</div>
 
     <div class="next-step" id="nextStep">
-      <div class="ns-title"><b>次のかよママ企画</b><br>👇 ご案内です</div>
-      <div class="ns-item">
-        <div class="ns-ico">🍳</div>
-        <div class="ns-text"><b>献立勉強会</b><br><span style="color:#8C7A6A">毎日の「今日なに作ろう…」を解決する、かよママ式の献立組み立て術。麹も使いこなせる方なら相性ばっちりです</span></div>
+      <div class="ns-title"><b>次の中規模企画 先行予約</b><br>👇 麹サポート受講者限定の特典 🌸</div>
+      <div class="ns-item" id="preorderOpenBtn" style="cursor:pointer">
+        <div class="ns-ico">🌸</div>
+        <div class="ns-text"><b>味付け／献立サポート</b><br><span style="color:#8C7A6A">タップで先行予約フォームへ<br>味付け：7月／11月／3月、献立：9月／1月／5月</span></div>
       </div>
-      <div class="ns-cta">気になる方は <b>かよママまでお気軽に</b> 声をかけてくださいね 🌸</div>
+      <div class="ns-cta">予約すると、後日かよママから <b>個別にご案内</b> が届きます ✨</div>
     </div>
 
     <div class="signature">— かよママ より</div>
@@ -734,6 +775,23 @@ const FAREWELL_SEEN_KEY='hakkou-club-farewell-v1';
 //   ・お別れポップアップは ?preview=farewell でのみ表示
 // =========================================================================
 const TEST_MODE=true;
+
+// ======== Google Sheets 連携（GAS Web App） ========
+// セットアップ手順は GAS_セットアップ手順.md を参照
+// 設定済みなら GAS Web App URL を入れる、未設定（__から始まる）なら送信しない
+const GAS_ENDPOINT_DEFAULT='__SET_GAS_WEB_APP_URL_HERE__';
+function gasEndpoint(){
+  try{const o=localStorage.getItem('hakkou-club-gas-url');if(o)return o;}catch(e){}
+  return GAS_ENDPOINT_DEFAULT;
+}
+function sendToSheet(event,data){
+  const url=gasEndpoint();
+  if(!url||url.indexOf('__')===0)return;
+  const body=Object.assign({event:event,name:userName(),at:new Date().toISOString()},data||{});
+  try{
+    fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).catch(function(){});
+  }catch(e){}
+}
 
 // 期間定数（TEST_MODE=false 時に有効）
 // レッスン①5/30（麹選び）→ レッスン②6/5（仕込み＝Day1）→ 発酵7〜10日 → サポート6/20まで → アプリは6月末まで利用可
@@ -828,6 +886,7 @@ let state={
   selectedKoji:[],   // ['shio','tama']
   kojiData:{},       // {shio:{startDate,isResting,completedDate,checkins:{}}}
   recipesUsed:{},    // {r01:'2026-06-08'}
+  preorders:[],      // ['aji','kondate'] - 先行予約済みのサポート
   view:'main',
   date:today()       // 表示中の日付
 };
@@ -1282,6 +1341,52 @@ function openBadges(){
 }
 function closeBadges(){$('badgesModal').classList.remove('on');document.body.style.overflow=''}
 
+// ======== 先行予約 ========
+function openPreorder(){
+  // 既存予約をチェック状態に反映
+  const cur=Array.isArray(state.preorders)?state.preorders:[];
+  document.querySelectorAll('#preorderList .preorder-item').forEach(label=>{
+    const cb=label.querySelector('input');
+    cb.checked=cur.includes(cb.value);
+    label.classList.toggle('checked',cb.checked);
+  });
+  $('preorderThanks').style.display='none';
+  $('preorderSubmit').style.display='';
+  $('preorderModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closePreorder(){$('preorderModal').classList.remove('on');document.body.style.overflow=''}
+function submitPreorder(){
+  const picked=Array.from(document.querySelectorAll('#preorderList input:checked')).map(cb=>cb.value);
+  if(!picked.length){showToast('1つ以上選んでください🌸');return}
+  state.preorders=picked;
+  save();
+  sendToSheet('preorder',{supports:picked});
+  const labels={aji:'味付けサポート',kondate:'献立サポート'};
+  const msg=picked.map(p=>labels[p]||p).join('・');
+  $('preorderSubmit').style.display='none';
+  $('preorderThanks').style.display='';
+  $('preorderThanks').innerHTML='✨ 予約完了！<br><b>'+msg+'</b><br>後日かよママから個別にご案内します🌸';
+  setTimeout(()=>{showToast('先行予約しました！');render();},1800);
+}
+
+// ホーム画面の先行予約バナー（終了5日前から or 期間終了後）
+function renderPreorderHint(){
+  const el=$('preorderHint');if(!el)return;
+  if(isPreLaunch()||state.selectedKoji.length===0){el.innerHTML='';return}
+  const daysLeft=Math.floor((EXPIRE_AT-_now())/86400000);
+  const submitted=Array.isArray(state.preorders)&&state.preorders.length>0;
+  // 終了5日前 or 終了後のみ表示。ADMIN モードでは常に確認できるよう日付ガード緩和
+  if(!ADMIN&&daysLeft>5&&!isReadOnly()){el.innerHTML='';return}
+  if(submitted){
+    const labels={aji:'味付け',kondate:'献立'};
+    const names=state.preorders.map(p=>labels[p]||p).join('・');
+    el.innerHTML='<div class="preorder-hint done" id="preorderHintBtn">✅ 先行予約済み（'+names+'サポート）／後日かよママからご案内 🌸</div>';
+  }else{
+    el.innerHTML='<div class="preorder-hint" id="preorderHintBtn">🌸 次の企画の先行予約はこちら（麹サポート受講者限定）</div>';
+  }
+}
+
 // ======== クイズ ========
 let _curQuiz=null;
 function openQuiz(){
@@ -1567,6 +1672,7 @@ function render(){
   renderLuckyBanner();
   renderReadOnlyBanner();
   renderPreLaunchBanner();
+  renderPreorderHint();
   renderPhaseIndicator();
   renderDailyGreet();
   renderAnxietyCard();
@@ -1656,6 +1762,7 @@ function startOnboard(){
   });
   save();
   try{localStorage.setItem(ONBOARD_KEY,'1')}catch(e){}
+  sendToSheet('register',{koji:picked,startDate:sd});
   $('onboardModal').classList.remove('on');
   document.body.style.overflow='';
   render();
@@ -1756,6 +1863,11 @@ function saveCheckin(){
   const notes=document.getElementById('ciNotes')?document.getElementById('ciNotes').value:'';
   kd.checkins[today()]=Object.assign({},_ciState,{notes:notes,at:Date.now()});
   save();
+  // スプシ送信（全項目埋まっていれば判定もつける）
+  const _day=dayOfKoji(kk);
+  const _filled=CHECKIN_FIELDS.every(f=>_ciState[f.k]);
+  const _judge=_filled?judgeState(_ciState,_day,kk).level:'';
+  sendToSheet('checkin',{koji:kk,day:_day,color:_ciState.color||'',smell:_ciState.smell||'',moisture:_ciState.moisture||'',bubble:_ciState.bubble||'',temp:_ciState.temp||'',notes:notes,judgement:_judge});
   closeCheckin();
   render();
   // 入力5項目すべて埋まっていれば即時判定を表示
@@ -1804,6 +1916,7 @@ function confirmCompletion(){
   if(!_curKoji||_cpChecks.size<6)return;
   state.kojiData[_curKoji].completedDate=today();
   save();
+  sendToSheet('complete',{koji:_curKoji,day:dayOfKoji(_curKoji),completedDate:today()});
   $('completionModal').classList.remove('on');
   document.body.style.overflow='';
   const k=getKoji(_curKoji);
@@ -1930,6 +2043,7 @@ document.addEventListener('click',e=>{
     else if(act==='faq')openFaq();
     else if(act==='quiz')openQuiz();
     else if(act==='addKoji')openAddKoji();
+    else if(act==='preorder')openPreorder();
     else if(act==='reset')resetAll();
     return;
   }
@@ -1945,6 +2059,11 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#tutSkip')){skipTutorial();return}
   // 名前入力（バックドロップでは閉じない、保存で次へ）
   if(e.target.closest('#nameSave')){saveName();return}
+  // 先行予約
+  if(e.target.closest('#preorderClose')||e.target.id==='preorderModal'){closePreorder();return}
+  if(e.target.closest('#preorderSubmit')){submitPreorder();return}
+  if(e.target.closest('#preorderHintBtn')){if(!(Array.isArray(state.preorders)&&state.preorders.length))openPreorder();return}
+  if(e.target.closest('#preorderOpenBtn')){closeFarewell();setTimeout(openPreorder,180);return}
   // Manual
   if(e.target.closest('#manualClose')||(e.target.id==='manualModal')){closeManual();return}
   // Onboarding
@@ -2046,6 +2165,7 @@ function init(){
   }
   load();
   state.date=today(); // 仮想日付に合わせて表示日を同期
+  if(!Array.isArray(state.preorders))state.preorders=[];
   // Migration: if no kojiData but selectedKoji exists, build defaults
   state.selectedKoji.forEach(k=>{
     if(!state.kojiData[k])state.kojiData[k]={startDate:today(),isResting:false,completedDate:null,checkins:{}};
@@ -2058,6 +2178,8 @@ function init(){
   if(ADMIN)bindAdmin();
   // 名前入力でEnterキー → 保存
   const ni=$('nameInput');if(ni)ni.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveName();}});
+  // 先行予約のチェックボックス→ラベル装飾を同期
+  const pl=$('preorderList');if(pl)pl.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]')){e.target.closest('.preorder-item').classList.toggle('checked',e.target.checked);}});
   // Render + maybe show modals
   applyReadOnly();
   render();
