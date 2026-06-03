@@ -639,16 +639,16 @@ body.admin header{top:66px}
     <div class="modal-hero">
       <img src="assets/chars/kayo1.png" alt="かよママ" class="kayo-illust onboard" onerror="this.style.display='none'">
     </div>
-    <h2>🌸 次の中規模企画 先行予約</h2>
+    <h2>🌸 他サポートの先行予約</h2>
     <p class="sub">麹サポート受講者限定の特典です🌾<br>気になる企画にチェックを入れてください</p>
     <div class="preorder-list" id="preorderList">
       <label class="preorder-item">
         <input type="checkbox" value="aji">
-        <span class="po-info"><b>🧂 味付けサポート</b><small>次回開催：<b>7月／11月／3月</b>（年3回・約3週間）</small></span>
+        <span class="po-info"><b>🧂 味付けサポート</b><small>次回開催：<b>3月／7月／11月</b>（年3回・約3週間）</small></span>
       </label>
       <label class="preorder-item">
         <input type="checkbox" value="kondate">
-        <span class="po-info"><b>🍱 献立サポート</b><small>次回開催：<b>9月／1月／5月</b>（年3回・約3週間）</small></span>
+        <span class="po-info"><b>🍱 献立サポート</b><small>次回開催：<b>1月／5月／9月</b>（年3回・約3週間）</small></span>
       </label>
     </div>
     <button class="btn pri" id="preorderSubmit" style="margin-top:6px">先行予約する</button>
@@ -703,7 +703,6 @@ body.admin header{top:66px}
     <button class="drawer-item" data-act="faq"><span class="ico">❓</span>よくある質問<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="quiz"><span class="ico">🎲</span>麹クイズ<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="addKoji"><span class="ico">➕</span>麹を追加する<span class="arrow">›</span></button>
-    <button class="drawer-item" data-act="preorder"><span class="ico">🌸</span>次の企画を予約<span class="arrow">›</span></button>
     <div class="drawer-divider"></div>
     <a class="drawer-item" href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener noreferrer">
       <span class="ico">💬</span>かよママ Instagram<span class="arrow">↗</span>
@@ -737,10 +736,10 @@ body.admin header{top:66px}
 さて、麹で「味付け」が変わったら、次は<br><b>「献立」</b>そのものをラクにしませんか？</div>
 
     <div class="next-step" id="nextStep">
-      <div class="ns-title"><b>次の中規模企画 先行予約</b><br>👇 麹サポート受講者限定の特典 🌸</div>
+      <div class="ns-title"><b>他サポートの先行予約</b><br>👇 麹サポート受講者限定の特典 🌸</div>
       <div class="ns-item" id="preorderOpenBtn" style="cursor:pointer">
         <div class="ns-ico">🌸</div>
-        <div class="ns-text"><b>味付け／献立サポート</b><br><span style="color:#8C7A6A">タップで先行予約フォームへ<br>味付け：7月／11月／3月、献立：9月／1月／5月</span></div>
+        <div class="ns-text"><b>味付け／献立サポート</b><br><span style="color:#8C7A6A">タップで先行予約フォームへ<br>味付け：3月／7月／11月、献立：1月／5月／9月</span></div>
       </div>
       <div class="ns-cta">予約すると、後日かよママから <b>個別にご案内</b> が届きます ✨</div>
     </div>
@@ -1382,8 +1381,8 @@ function renderPreorderHint(){
   if(isPreLaunch()||state.selectedKoji.length===0){el.innerHTML='';return}
   const daysLeft=Math.floor((EXPIRE_AT-_now())/86400000);
   const submitted=Array.isArray(state.preorders)&&state.preorders.length>0;
-  // 終了5日前 or 終了後のみ表示。ADMIN モードでは常に確認できるよう日付ガード緩和
-  if(!ADMIN&&daysLeft>5&&!isReadOnly()){el.innerHTML='';return}
+  // 企画終了日（残り24時間以下）or 終了後のみ表示。ADMIN モードでは常に確認できる
+  if(!ADMIN&&daysLeft>0&&!isReadOnly()){el.innerHTML='';return}
   if(submitted){
     const labels={aji:'味付け',kondate:'献立'};
     const names=state.preorders.map(p=>labels[p]||p).join('・');
@@ -1987,7 +1986,8 @@ function closeFarewell(){
 }
 function maybeShowFarewell(){
   if(TEST_MODE&&!ADMIN)return; // 通常テスト中は ?preview=farewell のみ／admin は日付で表示
-  if(!isReadOnly())return;
+  // 企画終了日（残り24時間以下）or 期間終了後に自動表示
+  if((EXPIRE_AT-_now())>86400000)return;
   let seen=false;try{seen=!!localStorage.getItem(FAREWELL_SEEN_KEY)}catch(e){}
   if(seen)return;
   setTimeout(openFarewell,500);
@@ -2050,7 +2050,6 @@ document.addEventListener('click',e=>{
     else if(act==='faq')openFaq();
     else if(act==='quiz')openQuiz();
     else if(act==='addKoji')openAddKoji();
-    else if(act==='preorder')openPreorder();
     else if(act==='reset')resetAll();
     return;
   }
