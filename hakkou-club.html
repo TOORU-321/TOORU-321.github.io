@@ -250,6 +250,24 @@ body.admin header{top:66px}
 .badge.tier3.earned .b-name{color:#fff}
 .badge.tier3.earned .b-prog{color:#FFE7B0}
 
+/* 麹カードへのタップ誘導 */
+.koji-hint{background:linear-gradient(135deg,#FFF8E7 0%,#FFEFC5 100%);border:1px dashed #E8B976;border-radius:10px;padding:10px 12px;margin:10px 0 6px;text-align:center;font-size:12.5px;font-weight:700;color:#B3631A;line-height:1.5}
+.koji-hint.done{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border:1px solid #A8C97A;border-style:solid;color:#3B6D11}
+
+/* チュートリアル（ページめくり式） */
+.tut-page{text-align:center;padding:4px 2px 0}
+.tut-page .tut-img{display:block;width:120px;margin:0 auto 6px;filter:drop-shadow(0 3px 8px rgba(193,107,26,.15))}
+.tut-page h3{font-family:'Klee One',serif;font-size:17px;color:#C16B1A;margin:6px 0 4px;letter-spacing:.04em}
+.tut-page .tut-body{font-size:13px;color:#5A4A3A;line-height:1.95;text-align:left;background:#FFFDF8;border:1px solid #F5E0B5;border-radius:10px;padding:11px 14px;margin-top:10px}
+.tut-page .tut-body b{color:#B3631A}
+.tut-dots{display:flex;justify-content:center;gap:6px;margin:12px 0 2px}
+.tut-dots .dot{width:7px;height:7px;border-radius:50%;background:#F5E0B5;transition:all .2s}
+.tut-dots .dot.active{background:#F5A623;transform:scale(1.3)}
+
+/* 名前入力 */
+.name-input{width:100%;padding:11px 13px;border:1.5px solid #F5CF8E;border-radius:10px;font-size:15px;background:#FFFDF7;font-family:inherit;text-align:center;color:#3A2E1F;letter-spacing:.04em}
+.name-input:focus{border-color:#F5A623;outline:none;box-shadow:0 0 0 3px rgba(245,166,35,.15)}
+
 /* Phase indicator */
 .phase-indicator{padding:10px 12px;background:linear-gradient(90deg,#FFF8E7 0%,#FFEFC5 100%);border-radius:12px;border:1px solid #F5CF8E;margin-top:8px;display:flex;align-items:center;gap:10px}
 .phase-indicator .pi-ico{font-size:22px}
@@ -424,6 +442,7 @@ body.admin header{top:66px}
     <div id="protectCard"></div>
     <div id="todayKnowledge"></div>
     <div id="titleSection"></div>
+    <div id="kojiHint"></div>
     <div class="koji-cards" id="kojiCards"></div>
     <button class="add-koji-btn" id="addKojiBtn" style="display:none">＋ 麹を追加する</button>
     <div id="phase2Section"></div>
@@ -435,6 +454,32 @@ body.admin header{top:66px}
   <button class="bot-btn" id="navBadges"><span class="ico">🏆</span>バッジ</button>
   <button class="bot-btn" id="navManual"><span class="ico">📖</span>使い方</button>
 </nav>
+
+<!-- 初回チュートリアル（ページめくり式） -->
+<div class="modal-bg" id="tutorialModal">
+  <div class="modal" style="max-width:380px">
+    <div id="tutorialContent"></div>
+    <div class="tut-dots" id="tutDots"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn sec" id="tutPrev" style="flex:1">← 前</button>
+      <button class="btn pri" id="tutNext" style="flex:2">次へ →</button>
+    </div>
+    <button id="tutSkip" style="display:block;margin:10px auto 0;background:none;border:none;color:#8C7A6A;font-size:11px;text-decoration:underline;cursor:pointer">スキップして始める</button>
+  </div>
+</div>
+
+<!-- 名前入力モーダル -->
+<div class="modal-bg" id="nameModal">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-hero">
+      <img src="assets/chars/kayo1.png" alt="かよママ" class="kayo-illust onboard" onerror="this.style.display='none'">
+    </div>
+    <h2>まずあなたの名前を教えてください！</h2>
+    <p class="sub">かよママから呼びかけるときに使います🌸<br>ニックネームでもOK</p>
+    <input type="text" id="nameInput" maxlength="20" placeholder="例：はなこ" class="name-input">
+    <button class="btn pri" id="nameSave" style="margin-top:12px">この名前で始める</button>
+  </div>
+</div>
 
 <!-- Onboarding Modal -->
 <div class="modal-bg" id="onboardModal">
@@ -638,7 +683,7 @@ body.admin header{top:66px}
   <div class="farewell-card">
     <span class="sakura">🌾</span>
     <img src="assets/chars/kayo3.png" alt="かよママ" class="kayo-illust farewell" onerror="this.style.display='none'">
-    <h2>1ヶ月、おつかれさまでした！</h2>
+    <h2 id="farewellTitle">1ヶ月、おつかれさまでした！</h2>
 
     <div class="final-eval" id="finalEval">
       <div class="eval-title">🏆 あなたの1ヶ月の記録</div>
@@ -804,6 +849,9 @@ function today(){
   return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 }
 function pad(n){return String(n).padStart(2,'0')}
+// ユーザー名ヘルパー（呼びかけ用）
+function userName(){return ((state.userName||'')+'').trim()}
+function nameAddr(){const n=userName();return n?n+'さん、':''}
 function parseDate(s){const[y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
 function daysBetween(s1,s2){return Math.round((parseDate(s2)-parseDate(s1))/86400000)}
 function fmtJP(s){
@@ -1214,7 +1262,8 @@ function closeFaq(){$('faqModal').classList.remove('on');document.body.style.ove
 function openBadges(){
   const s=computeStats();
   const totalEarned=BADGES.filter(b=>b.check(s)).length;
-  $('badgesSummary').innerHTML='獲得済 <b>'+totalEarned+'</b> / '+BADGES.length+' バッジ';
+  const _un=userName();
+  $('badgesSummary').innerHTML=(_un?_un+'さんの':'')+'獲得バッジ <b>'+totalEarned+'</b> / '+BADGES.length;
   let html='';
   for(const ckey in BADGE_CATS){
     const items=BADGES.filter(b=>b.cat===ckey);
@@ -1406,7 +1455,7 @@ function renderDailyGreet(){
   if(isPreLaunch()||isReadOnly()){el.innerHTML='';return}
   if(state.selectedKoji.length===0){el.innerHTML='';return}
   const g=pickGreet(state.date);
-  el.innerHTML='<div class="daily-greet"><img src="assets/chars/'+g.ki+'.png" alt="かよママ" onerror="this.style.display=\'none\'"><div class="dg-msg"><b>かよママ</b><br>'+g.msg+'</div></div>';
+  el.innerHTML='<div class="daily-greet"><img src="assets/chars/'+g.ki+'.png" alt="かよママ" onerror="this.style.display=\'none\'"><div class="dg-msg"><b>かよママ</b><br>'+nameAddr()+g.msg+'</div></div>';
 }
 
 function renderTitleSection(){
@@ -1417,6 +1466,27 @@ function renderTitleSection(){
   const sorted=earned.slice().sort((a,b)=>b.tier-a.tier);
   const chips=sorted.map(t=>'<span class="title-chip tier'+t.tier+'">'+t.ico+' '+t.name+'</span>').join('');
   el.innerHTML='<div class="title-section"><div class="ts-head"><span class="ts-title">🏆 獲得バッジ</span><span class="ts-count">'+earned.length+'/'+BADGES.length+'</span></div><div class="title-grid">'+chips+'</div></div>';
+}
+
+// ======== 麹カードへのタップ誘導（行動を明示） ========
+function renderKojiHint(){
+  const el=$('kojiHint');if(!el)return;
+  if(isPreLaunch()||isReadOnly()||state.selectedKoji.length===0){el.innerHTML='';return}
+  const td=today();
+  const active=state.selectedKoji.filter(k=>{
+    const kd=state.kojiData[k];
+    return kd&&!kd.completedDate&&!kd.isResting&&dayOfKoji(k)>=1;
+  });
+  if(!active.length){el.innerHTML='';return}
+  const allDone=active.every(k=>{
+    const kd=state.kojiData[k];
+    return kd.checkins&&kd.checkins[td];
+  });
+  if(allDone){
+    el.innerHTML='<div class="koji-hint done">✨ 今日のチェックイン完了！ また明日見守ってね🌾</div>';
+  }else{
+    el.innerHTML='<div class="koji-hint">👇 タップして今日の様子を記録しましょう</div>';
+  }
 }
 
 // ======== Render: Koji cards ========
@@ -1503,9 +1573,53 @@ function render(){
   renderProtectCard();
   renderTodayKnowledge();
   renderTitleSection();
+  renderKojiHint();
   renderKojiCards();
   renderPhase2();
   if(ADMIN)renderAdminBar();
+}
+
+// ======== チュートリアル（初回6ページ） ========
+const TUTORIAL_PAGES=[
+  {img:'kayo4',title:'ハッコウクラブへようこそ',body:'かよママの<b>麹レッスン1ヶ月サポート</b>を、アプリで毎日見守るための伴走アプリです🌾<br><br>3週間で「作る→使う」のリズムが身につきます'},
+  {img:'kayo2',title:'📅 期間とスケジュール',body:'<b>5/30</b>　レッスン①（材料説明）<br><b>6/5</b>　レッスン②（仕込み＝Day 1）<br><b>発酵</b>　仕込みから7〜10日<br><br>サポートは <b>6/20まで</b>、アプリは <b>6月末</b> まで使えます'},
+  {img:'kayo4',title:'🌾 Phase 1：作る期',body:'選んだ麹を <b>毎日1回タップ</b> でチェックイン。色・香り・気泡などを記録して、麹の様子をやさしく見守ります🌱'},
+  {img:'kayo1',title:'🍱 Phase 2：使う期',body:'麹が完成すると、できた麹で <b>作れるレシピ</b>が表示されます。「〜だけシリーズ」で気軽に使いこなしましょう✨'},
+  {img:'kayo3',title:'💡 困ったとき・バッジ',body:'不安なときは <b>「😰 相談」</b> ボタンでかよママへ。<br><br>続けるほどに <b>🏆 バッジ</b> が集まります！ 画面下の「バッジ」ボタンから確認できます'},
+  {img:'kayo1',title:'はじめましょう！',body:'準備OKです🌸<br>次に <b>あなたの名前</b> を教えてください。アプリのいろんな場面でかよママから呼びかけに使います'}
+];
+let _tutPage=0;
+function openTutorial(){_tutPage=0;renderTutPage();$('tutorialModal').classList.add('on');document.body.style.overflow='hidden'}
+function renderTutPage(){
+  const p=TUTORIAL_PAGES[_tutPage];
+  const isLast=_tutPage===TUTORIAL_PAGES.length-1;
+  $('tutorialContent').innerHTML='<div class="tut-page"><img class="tut-img" src="assets/chars/'+p.img+'.png" alt="" onerror="this.style.display=\'none\'"><h3>'+p.title+'</h3><div class="tut-body">'+p.body+'</div></div>';
+  $('tutDots').innerHTML=TUTORIAL_PAGES.map((_,i)=>'<span class="dot'+(i===_tutPage?' active':'')+'"></span>').join('');
+  $('tutPrev').style.visibility=_tutPage>0?'visible':'hidden';
+  $('tutNext').textContent=isLast?'名前を入れる →':'次へ →';
+}
+function nextTutPage(){
+  if(_tutPage<TUTORIAL_PAGES.length-1){_tutPage++;renderTutPage();}
+  else{closeTutorial();openNameInput();}
+}
+function prevTutPage(){if(_tutPage>0){_tutPage--;renderTutPage();}}
+function closeTutorial(){$('tutorialModal').classList.remove('on');document.body.style.overflow=''}
+function skipTutorial(){closeTutorial();openNameInput();}
+
+// ======== 名前入力 ========
+function openNameInput(){
+  $('nameModal').classList.add('on');document.body.style.overflow='hidden';
+  setTimeout(()=>{const el=$('nameInput');if(el)el.focus();},120);
+}
+function saveName(){
+  const v=($('nameInput')?$('nameInput').value:'').trim();
+  if(!v){showToast('名前を入力してください🌸');return}
+  state.userName=v.slice(0,20);
+  save();
+  $('nameModal').classList.remove('on');document.body.style.overflow='';
+  // 続けて麹選択（既存のオンボード）
+  renderOnboardKojiPick();
+  $('onboardModal').classList.add('on');document.body.style.overflow='hidden';
 }
 
 // ======== Onboarding ========
@@ -1517,9 +1631,8 @@ function renderOnboardKojiPick(){
 function maybeShowOnboard(){
   let seen=false;try{seen=!!localStorage.getItem(ONBOARD_KEY)}catch(e){}
   if(seen)return;
-  renderOnboardKojiPick();
-  $('onboardModal').classList.add('on');
-  document.body.style.overflow='hidden';
+  // 初回フロー：チュートリアル → 名前入力 → 麹選択
+  openTutorial();
 }
 function bindOnboardLabels(){
   $('kojiPickGrid').addEventListener('click',e=>{
@@ -1546,7 +1659,7 @@ function startOnboard(){
   $('onboardModal').classList.remove('on');
   document.body.style.overflow='';
   render();
-  showToast('スタート！'+picked.length+'種類の麹を見守ります🌾');
+  showToast(nameAddr()+'スタート！'+picked.length+'種類の麹を見守ります🌾');
 }
 
 // ======== Add Koji Modal ========
@@ -1695,7 +1808,7 @@ function confirmCompletion(){
   document.body.style.overflow='';
   const k=getKoji(_curKoji);
   render();
-  showToast('🎉 '+k.n+'完成！おめでとうございます！');
+  showToast('🎉 '+nameAddr()+k.n+'完成！おめでとうございます！');
   _curKoji=null;
 }
 function backToCheckin(){$('completionModal').classList.remove('on');document.body.style.overflow=''}
@@ -1744,6 +1857,7 @@ function openFarewell(){
     '<div class="eval-item"><div class="val">'+s.totalCheckins+'</div><div class="lbl">記録回数</div></div>'+
     '<div class="eval-item"><div class="val">'+s.recipesCount+'</div><div class="lbl">レシピ消化</div></div>';
   $('finalEvalBadge').textContent=diagnoseType(s);
+  $('farewellTitle').textContent=nameAddr()+'1ヶ月、おつかれさまでした！';
   $('farewellModal').classList.add('on');
   document.body.style.overflow='hidden';
 }
@@ -1825,6 +1939,12 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#navHome')){window.scrollTo({top:0,behavior:'smooth'});return}
   // バッジ画面
   if(e.target.closest('#badgesClose')||e.target.id==='badgesModal'){closeBadges();return}
+  // チュートリアル（バックドロップでは閉じない、スキップボタンで終了可）
+  if(e.target.closest('#tutPrev')){prevTutPage();return}
+  if(e.target.closest('#tutNext')){nextTutPage();return}
+  if(e.target.closest('#tutSkip')){skipTutorial();return}
+  // 名前入力（バックドロップでは閉じない、保存で次へ）
+  if(e.target.closest('#nameSave')){saveName();return}
   // Manual
   if(e.target.closest('#manualClose')||(e.target.id==='manualModal')){closeManual();return}
   // Onboarding
@@ -1936,6 +2056,8 @@ function init(){
   bindCheckinForm();
   bindCompletionList();
   if(ADMIN)bindAdmin();
+  // 名前入力でEnterキー → 保存
+  const ni=$('nameInput');if(ni)ni.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveName();}});
   // Render + maybe show modals
   applyReadOnly();
   render();
