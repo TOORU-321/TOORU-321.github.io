@@ -779,7 +779,7 @@ const TEST_MODE=true;
 // ======== Google Sheets 連携（GAS Web App） ========
 // セットアップ手順は GAS_セットアップ手順.md を参照
 // 設定済みなら GAS Web App URL を入れる、未設定（__から始まる）なら送信しない
-const GAS_ENDPOINT_DEFAULT='__SET_GAS_WEB_APP_URL_HERE__';
+const GAS_ENDPOINT_DEFAULT='https://script.google.com/macros/s/AKfycbx5qfUrwVTVQm9NNvFMuZtU1Z3mCwHA9cHQeGCVhYXUl2KYyLxbBfh5Ev_dbdWlT8dt/exec';
 function gasEndpoint(){
   try{const o=localStorage.getItem('hakkou-club-gas-url');if(o)return o;}catch(e){}
   return GAS_ENDPOINT_DEFAULT;
