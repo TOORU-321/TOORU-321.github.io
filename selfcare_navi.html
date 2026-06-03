@@ -147,6 +147,24 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 .tomoko-card{background:var(--paper);border:1px solid var(--hairline);padding:24px 22px 22px;margin-top:6px;position:relative}
 .tomoko-card::before{content:'';position:absolute;top:0;left:0;width:48px;height:2px;background:var(--accent)}
 .tomoko-card .head{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--hairline-2)}
+.admin-bar{position:sticky;top:0;z-index:50;background:#2A2520;color:#FAF6EE;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;padding:9px 20px;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;font-weight:600;flex-wrap:wrap;gap:8px}
+.admin-bar .admin-label b{color:#ECDDD3}
+.admin-bar .admin-controls{display:inline-flex;border:1px solid rgba(229,220,204,.3)}
+.admin-bar .admin-controls button{border:0;background:transparent;color:inherit;font-family:inherit;font-size:inherit;letter-spacing:inherit;padding:5px 10px;border-right:1px solid rgba(229,220,204,.2);cursor:pointer;text-transform:uppercase;font-weight:inherit}
+.admin-bar .admin-controls button:last-child{border-right:0}
+.admin-bar .admin-controls button:hover{background:rgba(229,220,204,.1)}
+.admin-bar .admin-controls .reset{color:#BFB7AC}
+.manual-list{list-style:none;padding:0;margin:18px 0 0;border-top:1px solid var(--hairline)}
+.manual-list li{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--hairline);align-items:flex-start}
+.manual-num{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;color:var(--accent);font-weight:700;flex-shrink:0;padding-top:3px;min-width:24px}
+.manual-list h3{font-family:var(--font-serif);font-size:15.5px;color:var(--ink);font-weight:500;letter-spacing:.04em;margin-bottom:6px}
+.manual-list p{font-size:13px;line-height:1.85;color:var(--ink-2);letter-spacing:.03em;margin:0}
+.name-input-wrap{display:flex;align-items:baseline;border:1px solid var(--hairline);background:var(--paper);padding:20px 22px;margin-top:14px;font-family:var(--font-serif)}
+.name-input-wrap input{flex:1;border:0;background:transparent;outline:none;font-family:var(--font-serif);font-size:24px;color:var(--ink);letter-spacing:.06em;font-weight:500;padding:0;line-height:1.3;min-width:0}
+.name-input-wrap input::placeholder{color:var(--ink-4);font-style:italic;font-size:18px}
+.name-input-wrap input:focus{outline:none}
+.name-suffix{font-family:var(--font-serif);font-size:19px;color:var(--accent);letter-spacing:.04em;margin-left:10px;font-weight:500;flex-shrink:0}
+.name-note{font-size:11.5px;color:var(--ink-3);margin-top:14px;letter-spacing:.04em;line-height:1.7;font-family:var(--font-serif)}
 .tomoko-avatar{width:54px;height:54px;flex-shrink:0;border-radius:50%;overflow:hidden;border:1px solid var(--accent-soft);background:radial-gradient(circle at 50% 60%,var(--paper-warm),var(--ivory) 80%)}
 .tomoko-avatar img{width:108%;height:108%;margin:-4%;object-fit:contain;display:block}
 .welcome-illust{margin:30px 0 4px;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -258,6 +276,15 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 </style>
 </head>
 <body>
+<div id="adminBar" class="admin-bar" style="display:none">
+  <span class="admin-label">ADMIN · <b>DEBUG MODE</b></span>
+  <span class="admin-controls">
+    <button onclick="window.__admin(1)">Day 01</button>
+    <button onclick="window.__admin(2)">Day 02</button>
+    <button onclick="window.__admin(3)">Day 03</button>
+    <button class="reset" onclick="window.__admin('reset')">Reset</button>
+  </span>
+</div>
 <div id="app" role="main">
   <header class="app-header">
     <div class="brand">
@@ -271,8 +298,48 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
   </header>
 
   <main>
-    <section class="screen is-active" id="screen1" aria-labelledby="s1-title">
-      <div class="eyebrow"><span class="num" id="welcomeNum">001</span><span class="line"></span><span class="label" id="welcomeBadge">A TOKEN FROM TOMOKO</span></div>
+    <section class="screen is-active" id="screen0"
+ aria-labelledby="s0-title">
+      <div class="eyebrow"><span class="num">000</span><span class="line"></span><span class="label">WELCOME</span></div>
+      <h1 class="hero-title" id="s0-title">あなただけの<br><em>3日間が、始まります。</em></h1>
+      <p class="hero-meta">3 MIN ／ 3 DAYS LIMITED</p>
+      <aside class="pullquote">
+        <span class="pullquote-mark">«</span>
+        <div class="pullquote-body">
+          <p>ようこそ。<br>腸活ダイエットコーチのともこです。</p>
+          <p>このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>合いやすいケアの方向性</strong>を選ぶ、3日間のあなた専用の地図です。</p>
+          <p>完璧でなくて大丈夫。<em>あなたのペース</em>で、今日からスタートしてください。</p>
+        </div>
+        <div class="pullquote-attr">— 腸活ダイエットコーチ <em>ともこ</em></div>
+      </aside>
+      <div class="section">
+        <div class="eyebrow"><span class="num">001</span><span class="line"></span><span class="label">HOW TO USE</span></div>
+        <ol class="manual-list">
+          <li><span class="manual-num">01</span><div><h3>あなたの体質タイプを選ぶ</h3><p>診断LPで分かった6タイプから、自分のタイプを選んでください。一度選んだら3日間は記憶されます。</p></div></li>
+          <li><span class="manual-num">02</span><div><h3>今日の体感を、3〜5つ選ぶ</h3><p>「疲れやすい」「冷えている」など、今日のあなたに近い感覚を直感で選びます。正解はありません。</p></div></li>
+          <li><span class="manual-num">03</span><div><h3>合うケアと、控えたいことを確認</h3><p>あなたのタイプ × 今日の状態から、合いやすい方向性と、控えたいことが表示されます。</p></div></li>
+          <li><span class="manual-num">04</span><div><h3>3つの小さな一歩を、できる範囲で</h3><p>具体的な行動が3つ出ます。完璧でなくて大丈夫。1つでも触れたら今日はOKです。</p></div></li>
+        </ol>
+      </div>
+      <div class="cta"><button class="btn btn-primary" id="toScreenName" type="button">お名前を教えてください<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button></div>
+    </section>
+
+    <section class="screen" id="screenName" aria-labelledby="sn-title">
+      <div class="eyebrow"><span class="num">002</span><span class="line"></span><span class="label">YOUR NAME</span></div>
+      <h1 class="hero-title" id="sn-title">あなたのこと、<br><em>なんてお呼びすればいい？</em></h1>
+      <p>ニックネームでもOKです。<br>これから3日間、この名前で一緒に進みます。</p>
+      <div class="section">
+        <label class="name-input-wrap">
+          <input type="text" id="nameInput" placeholder="例：ひろこ／みさき" maxlength="20" autocomplete="off" inputmode="text">
+          <span class="name-suffix">さん</span>
+        </label>
+        <p class="name-note">入力したお名前は、このアプリ内であなたへの呼びかけに使われます。<br>後から変更はできないので、今のお気持ちでお選びください。</p>
+      </div>
+      <div class="cta"><button class="btn btn-primary" id="confirmName" type="button" disabled>はじめる<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button></div>
+    </section>
+
+    <section class="screen" id="screen1" aria-labelledby="s1-title">
+      <div class="eyebrow"><span class="num" id="welcomeNum">003</span><span class="line"></span><span class="label" id="welcomeBadge">A TOKEN FROM TOMOKO</span></div>
       <h1 class="hero-title" id="s1-title">
         <span id="welcomeTitleText">今日の自分に合うケアを、</span><br>
         <em id="welcomeTitleAccent">迷わず選べる地図。</em>
@@ -440,7 +507,23 @@ const CATEGORIES={warm:{label:'温めるケア',catch:'冷やさない / Warm',r
 const STATE_TAGS=[{id:'tired',label:'疲れやすい',score:{warm:1,flow:0,rest:2,limit:1,relax:0}},{id:'cold',label:'冷えている',score:{warm:2,flow:1,rest:0,limit:0,relax:0}},{id:'swollen',label:'むくみが気になる',score:{warm:0,flow:2,rest:0,limit:1,relax:0}},{id:'heavy',label:'重だるい',score:{warm:0,flow:2,rest:1,limit:0,relax:0}},{id:'irritated',label:'イライラしやすい',score:{warm:0,flow:1,rest:0,limit:0,relax:2}},{id:'sweet',label:'甘いものが欲しい',score:{warm:1,flow:0,rest:1,limit:2,relax:0}},{id:'headheavy',label:'頭が重い',score:{warm:0,flow:1,rest:1,limit:0,relax:2}},{id:'fullgut',label:'食後が重い',score:{warm:0,flow:1,rest:0,limit:2,relax:0}},{id:'lowmood',label:'やる気が出ない',score:{warm:1,flow:0,rest:2,limit:0,relax:1}}];
 const PREVIEW_TEXT={guttari:'この調子で数日、消耗を増やさない選択を続けると、朝の重さや日中のエネルギー切れが少し軽くなる感覚に出会いやすくなります。「頑張る」を別の言葉に置き換える、その練習です。',moyamoya:'数日、こまめに巡らせる選択を続けると、頭のもやと食後の重さがふっと抜ける瞬間に気づきやすくなります。「我慢で抑える」より「軽く動かす」が解になりやすいタイプです。',furafura:'数日、温めて満たす選択を続けると、立ち上がりのフラつきや午後の冷えが少しやわらいでいく感覚を持ちやすくなります。減らすより、満たすに寄せる練習です。',pochapocha:'数日、軽く流して入れすぎない選択を続けると、朝のむくみや夕方の重さが少し抜ける感覚に出会えます。出すより、入れすぎないが先です。',doyon:'数日、温めながら巡らせる選択を続けると、肩や腰のこわばり、午後のだるさがほどける瞬間が増えます。動と温は、組み合わせて初めて効きやすくなります。',karakara:'数日、熱を抜きながら潤いを残す選択を続けると、寝つきの悪さや口の渇きが少し変わる感覚を持ちやすくなります。発散より、鎮めるを先に置く練習です。'};
 const DAY_CLOSING={1:{h1:'今日の自分への、<br><em>小さなねぎらいを。</em>',lede:'完璧でなくて大丈夫。少し触れたかどうか、感覚でお選びください。',eyebrowEn:'TO BE CONTINUED',msg:'今日は、最初の一歩。\nここまで来てくれて、ありがとうございます。\n明日も同じように、今日のあなたに合うケアを選びにきてください。\n3日続けてみると、合う方向性がもう少し見えてきます。',footLabel:'TO BE CONTINUED',footMsg:'また明日、ここで会いましょう。',footSub:'今日感じたことを、明日のあなたに渡してあげてください。',footTeaser:'TOMORROW · DAY 02'},2:{h1:'また会えて、<br><em>嬉しいです。</em>',lede:'今日も、感覚に近いものでお選びください。完璧でなくて大丈夫です。',eyebrowEn:'ONE MORE DAY',msg:'今日も来てくれてありがとうございます。\n明日が3日目、ひとまずの最終日です。\n今日感じた体の声を、明日まで覚えておいてくださいね。',footLabel:'TOMORROW IS THE FINAL DAY',footMsg:'明日、3日目に会いましょう。',footSub:'明日は、3日間で見えてきた地図を一緒に振り返ります。',footTeaser:'TOMORROW · DAY 03 · FINAL'},3:{h1:'3日間、<br><em>お疲れさまでした。</em>',lede:'最後の日です。完璧でなくて大丈夫。少し触れたかどうかで結構です。',eyebrowEn:'A FINAL NOTE'}};
-const state={type:null,tags:[],done:[false,false,false],review:null,result:null,day:null};
+const state={type:null,tags:[],done:[false,false,false],review:null,result:null,day:null,name:null};
+function persistName(n){const d=getStored();d.name=n;saveStored(d);}
+function wireOnboarding(){
+  const next=document.getElementById('toScreenName');
+  if(next)next.addEventListener('click',function(){goScreen('Name');setTimeout(function(){const i=document.getElementById('nameInput');if(i)i.focus();},250);});
+  const inp=document.getElementById('nameInput');
+  const btn=document.getElementById('confirmName');
+  if(inp&&btn){
+    inp.addEventListener('input',function(){btn.disabled=inp.value.trim().length===0;});
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!btn.disabled){btn.click();}});
+    btn.addEventListener('click',function(){
+      const v=inp.value.trim();if(!v)return;
+      state.name=v;persistName(v);
+      goScreen(1);renderWelcome();
+    });
+  }
+}
 const $=sel=>document.querySelector(sel);
 const $$=sel=>Array.from(document.querySelectorAll(sel));
 function showToast(msg,ms){ms=ms||1600;const t=$('#toast');t.textContent=msg;t.classList.add('is-show');clearTimeout(showToast._t);showToast._t=setTimeout(function(){t.classList.remove('is-show');},ms);}
@@ -455,7 +538,7 @@ function dateKeyOffset(baseKey,offsetDays){const base=new Date(baseKey+'T00:00:0
 function getOverride(){const params=new URLSearchParams(location.search);const d=parseInt(params.get('day'),10);if(d>=1&&d<=5)return d;return null;}
 function computeDay(){const override=getOverride();const stored=getStored();const first=new Date(stored.firstVisitKey+'T00:00:00');const today=new Date(todayKey()+'T00:00:00');const dayNumber=Math.max(1,Math.floor((today-first)/86400000)+1);const effective=override||dayNumber;return{actual:dayNumber,effective:effective,display:Math.min(effective,TOTAL_DAYS),showOffer:effective>=TOTAL_DAYS,isOverride:!!override};}
 function pad2(n){return String(n).padStart(2,'0');}
-function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;const dayNum=day.display;$('#welcomeIllust').src=$('#welcomeIllust').dataset['day'+dayNum]||$('#welcomeIllust').dataset.day1;$('#welcomeIllustCaption').textContent='YOUR GUIDE · DAY '+pad2(dayNum);if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+typeName+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+typeName+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまのあなたに合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='001';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent='今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML='ようこそ。腸活ダイエットコーチのともこです。<br>ここまで一緒に進んでくださって、本当にありがとうございます。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今のあなたに合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
+function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;const dayNum=day.display;$('#welcomeIllust').src=$('#welcomeIllust').dataset['day'+dayNum]||$('#welcomeIllust').dataset.day1;$('#welcomeIllustCaption').textContent='YOUR GUIDE · DAY '+pad2(dayNum);if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';const addr=state.name?state.name+'さん':typeName;$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+addr+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+addr+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまの'+(state.name?state.name+'さん':'あなた')+'に合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='003';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent=state.name?state.name+'さんに合うケアを、':'今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML=state.name?'<strong>'+state.name+'さん</strong>、よろしくお願いします。<br>これからの3日間、丁寧にお供させてくださいね。':'ようこそ。腸活ダイエットコーチのともこです。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今の'+(state.name?state.name+'さん':'あなた')+'に合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
 function renderRecap(){const stored=getStored();const day=state.day;$('#recapStat').textContent=(day.display-1)+' OF 3 COMPLETED';const tl=$('#timeline');tl.innerHTML='';for(let i=1;i<=3;i++){const node=document.createElement('span');node.className='timeline-node';const dot=document.createElement('span');dot.className='timeline-dot'+(i<day.display?' is-done':i===day.display?' is-current':'');dot.textContent=i<day.display?'✓':pad2(i);if(i<day.display)dot.textContent='✓';const lbl=document.createElement('span');lbl.className='timeline-label';lbl.textContent='DAY '+pad2(i);node.appendChild(dot);node.appendChild(lbl);tl.appendChild(node);if(i<3){const ln=document.createElement('span');ln.className='timeline-line'+(i<day.display?' is-done':'');tl.appendChild(ln);}}const rows=$('#recapRows');rows.innerHTML='';const firstKey=stored.firstVisitKey;for(let i=1;i<=3;i++){const row=document.createElement('div');let choice='',cls='';if(i<day.display){const targetKey=dateKeyOffset(firstKey,i-1);const dd=stored.history&&stored.history[targetKey];if(dd&&dd.rec1){const rev=dd.review?'・'+dd.review:'';choice=(CATEGORIES[dd.rec1]?CATEGORIES[dd.rec1].label:dd.rec1)+rev;}else{choice='— 未完了';}}else if(i===day.display){choice=i===3?'今日が最終日':'今日のあなたを聞かせて';cls='is-current';}else{choice=i===3?'最終日 · 3日間の振り返り':'まだ未来';cls='is-future';}row.className='recap-row '+cls;row.innerHTML='<span class="day">DAY '+pad2(i)+'</span><span class="choice">'+choice+'</span>';rows.appendChild(row);}}
 function showOfferPopup(){const ov=$('#offerOverlay');ov.classList.add('is-show');ov.setAttribute('aria-hidden','false');}
 function hideOfferPopup(){const ov=$('#offerOverlay');ov.classList.remove('is-show');ov.setAttribute('aria-hidden','true');}
@@ -465,10 +548,33 @@ function selectType(id){state.type=id;persistType(id);$$('.type-card').forEach(f
 function renderChips(){const wrap=$('#stateChips');wrap.innerHTML='';STATE_TAGS.forEach(function(t){const b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed','false');b.dataset.id=t.id;b.textContent=t.label;b.addEventListener('click',function(){toggleChip(t.id,b);});wrap.appendChild(b);});}
 function toggleChip(id,el){const idx=state.tags.indexOf(id);if(idx>=0){state.tags.splice(idx,1);el.classList.remove('is-on');el.setAttribute('aria-pressed','false');}else{if(state.tags.length>=5){showToast('5つまでに絞ると見やすいです');return;}state.tags.push(id);el.classList.add('is-on');el.setAttribute('aria-pressed','true');}$('#chipCount').textContent=state.tags.length;}
 function compute(){const type=TYPES[state.type];const score={warm:0,flow:0,rest:0,limit:0,relax:0};Object.keys(score).forEach(function(k){score[k]=type.base[k];});state.tags.forEach(function(id){const tag=STATE_TAGS.find(function(t){return t.id===id;});if(!tag)return;Object.keys(score).forEach(function(k){score[k]+=tag.score[k]||0;});});const avoidCat=type.forbiddenLabel||type.forbidden;const candidates=Object.entries(score).filter(function(e){return e[0]!==avoidCat;}).sort(function(a,b){if(b[1]!==a[1])return b[1]-a[1];return type.base[b[0]]-type.base[a[0]];});const rec1=candidates[0][0];const rec2=candidates[1][0];const cat=CATEGORIES[avoidCat];const avoidReason=(cat.reasonAvoid&&cat.reasonAvoid[type.id])||cat.reasonAvoid.default;const tagLabels=state.tags.map(function(id){return(STATE_TAGS.find(function(t){return t.id===id;})||{}).label;}).filter(Boolean);let summaryText;if(tagLabels.length===0){summaryText='今日は体調感覚を選んでいないので、<em>'+type.label+'</em> の基本傾向から方向性をご提案します。'+type.summarySpark+'。';}else if(tagLabels.length===1){summaryText='今日のあなたは、<em>「'+tagLabels[0]+'」</em> の感覚が少し強めです。'+type.summarySpark+'。';}else{summaryText='今日のあなたは、<em>「'+tagLabels[0]+'」</em> と <em>「'+tagLabels[1]+'」</em> の感覚が少し強めです。'+type.summarySpark+'。';}state.result={rec1:rec1,rec2:rec2,avoidCat:avoidCat,type:type,summaryText:summaryText,avoidReason:avoidReason,actions:[{text:CATEGORIES[rec1].actions[0],tag:'LIFE'},{text:type.foodAction,tag:'FOOD',isFood:true},{text:CATEGORIES[rec2].actions[0],tag:'LIFE'}]};saveToday();}
-function renderResult(){const r=state.result;const type=r.type;const c1=CATEGORIES[r.rec1];const c2=CATEGORIES[r.rec2];const cAvoid=CATEGORIES[r.avoidCat];$('#tomokoMsg').textContent=type.tomokoMsg;$('#resultTypeSub').textContent='· '+type.label;$('#summaryType').textContent=type.label;$('#summaryCk').textContent=type.tcm;$('#summaryText').innerHTML=r.summaryText;const recList=$('#recList');recList.innerHTML='';[{rank:'PRIORITY',num:'01',cat:c1,cls:''},{rank:'SECONDARY',num:'02',cat:c2,cls:'is-rank2'}].forEach(function(o){const el=document.createElement('article');el.className='rec-card '+o.cls;el.innerHTML='<div class="rank"><span class="rank-num">'+o.num+'</span><span>'+o.rank+'</span><span class="rank-line"></span></div><div class="care-name">'+o.cat.label+'</div><div class="care-catch">'+o.cat.catch+'</div><p class="care-reason">'+o.cat.reasonRec+'</p>';recList.appendChild(el);});const avoidList=$('#avoidList');avoidList.innerHTML='';const ae=document.createElement('article');ae.className='rec-card is-avoid';ae.innerHTML='<div class="rank"><span class="rank-num">×</span><span>TODAY · AVOID</span><span class="rank-line"></span></div><div class="care-name">'+cAvoid.label+(type.forbidden==='limit_inverse'?' の不足':'')+'</div><div class="care-catch">'+(type.forbidden==='limit_inverse'?'入れすぎ・休みすぎに注意':cAvoid.catch)+'</div><p class="care-reason">'+r.avoidReason+'</p>';avoidList.appendChild(ae);const actionList=$('#actionList');actionList.innerHTML='';state.done=[false,false,false];r.actions.forEach(function(act,i){const a=document.createElement('button');a.type='button';a.className='action-card';a.setAttribute('aria-pressed','false');a.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+act.text+'</span><span class="tag'+(act.isFood?' food':'')+'">'+act.tag+'</span>';a.addEventListener('click',function(){state.done[i]=!state.done[i];a.classList.toggle('is-done',state.done[i]);a.setAttribute('aria-pressed',state.done[i]?'true':'false');if(state.done[i]){showToast('A SMALL STEP, NOTED');saveToday();}});actionList.appendChild(a);});const reason=$('#reasonBody');reason.innerHTML=type.longReason.map(function(t){return'<p>'+t+'</p>';}).join('');$('#reasonToggle').setAttribute('aria-expanded','false');reason.classList.remove('is-open');}
-function renderReview(){const opts=['やった','少しやった','できなかった'];const wrap=$('#reviewOptions');wrap.innerHTML='';opts.forEach(function(label){const b=document.createElement('button');b.type='button';b.className='review-option';b.setAttribute('aria-pressed','false');b.textContent=label;b.addEventListener('click',function(){$$('.review-option').forEach(function(x){x.classList.remove('is-on');x.setAttribute('aria-pressed','false');});b.classList.add('is-on');b.setAttribute('aria-pressed','true');state.review=label;saveToday();showToast('NOTED');});wrap.appendChild(b);});$('#previewText').textContent=PREVIEW_TEXT[state.type]||'';const day=state.day;const closing=DAY_CLOSING[day.display];$('#s4-title').innerHTML=closing.h1;$('#dayCloseLede').textContent=closing.lede||'';$('#reviewBadge').textContent=closing.eyebrowEn||'REFLECT';if(day.showOffer){$('#tomokoCloseEyebrow').textContent='A FINAL NOTE';$('#tomokoClose').textContent=TYPES[state.type].tomokoClose;$('#nextCard').style.display='';$('#offerSection').style.display='';$('#dayFoot').style.display='none';}else{$('#tomokoCloseEyebrow').textContent=closing.eyebrowEn||'';$('#tomokoClose').textContent=closing.msg;$('#nextCard').style.display='none';$('#offerSection').style.display='none';$('#dayFoot').style.display='';$('#dayFootLabel').textContent=closing.footLabel||'';$('#dayFootMsg').textContent=closing.footMsg||'';$('#dayFootSub').textContent=closing.footSub||'';$('#dayFootTeaser').textContent=closing.footTeaser||'';}}
+function renderResult(){const r=state.result;const type=r.type;const c1=CATEGORIES[r.rec1];const c2=CATEGORIES[r.rec2];const cAvoid=CATEGORIES[r.avoidCat];$('#tomokoMsg').textContent=(state.name?state.name+'さん、':'')+type.tomokoMsg;$('#resultTypeSub').textContent='· '+type.label;$('#summaryType').textContent=type.label;$('#summaryCk').textContent=type.tcm;$('#summaryText').innerHTML=r.summaryText;const recList=$('#recList');recList.innerHTML='';[{rank:'PRIORITY',num:'01',cat:c1,cls:''},{rank:'SECONDARY',num:'02',cat:c2,cls:'is-rank2'}].forEach(function(o){const el=document.createElement('article');el.className='rec-card '+o.cls;el.innerHTML='<div class="rank"><span class="rank-num">'+o.num+'</span><span>'+o.rank+'</span><span class="rank-line"></span></div><div class="care-name">'+o.cat.label+'</div><div class="care-catch">'+o.cat.catch+'</div><p class="care-reason">'+o.cat.reasonRec+'</p>';recList.appendChild(el);});const avoidList=$('#avoidList');avoidList.innerHTML='';const ae=document.createElement('article');ae.className='rec-card is-avoid';ae.innerHTML='<div class="rank"><span class="rank-num">×</span><span>TODAY · AVOID</span><span class="rank-line"></span></div><div class="care-name">'+cAvoid.label+(type.forbidden==='limit_inverse'?' の不足':'')+'</div><div class="care-catch">'+(type.forbidden==='limit_inverse'?'入れすぎ・休みすぎに注意':cAvoid.catch)+'</div><p class="care-reason">'+r.avoidReason+'</p>';avoidList.appendChild(ae);const actionList=$('#actionList');actionList.innerHTML='';state.done=[false,false,false];r.actions.forEach(function(act,i){const a=document.createElement('button');a.type='button';a.className='action-card';a.setAttribute('aria-pressed','false');a.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+act.text+'</span><span class="tag'+(act.isFood?' food':'')+'">'+act.tag+'</span>';a.addEventListener('click',function(){state.done[i]=!state.done[i];a.classList.toggle('is-done',state.done[i]);a.setAttribute('aria-pressed',state.done[i]?'true':'false');if(state.done[i]){showToast('A SMALL STEP, NOTED');saveToday();}});actionList.appendChild(a);});const reason=$('#reasonBody');reason.innerHTML=type.longReason.map(function(t){return'<p>'+t+'</p>';}).join('');$('#reasonToggle').setAttribute('aria-expanded','false');reason.classList.remove('is-open');}
+function renderReview(){const opts=['やった','少しやった','できなかった'];const wrap=$('#reviewOptions');wrap.innerHTML='';opts.forEach(function(label){const b=document.createElement('button');b.type='button';b.className='review-option';b.setAttribute('aria-pressed','false');b.textContent=label;b.addEventListener('click',function(){$$('.review-option').forEach(function(x){x.classList.remove('is-on');x.setAttribute('aria-pressed','false');});b.classList.add('is-on');b.setAttribute('aria-pressed','true');state.review=label;saveToday();showToast('NOTED');});wrap.appendChild(b);});$('#previewText').textContent=PREVIEW_TEXT[state.type]||'';const day=state.day;const closing=DAY_CLOSING[day.display];$('#s4-title').innerHTML=closing.h1;$('#dayCloseLede').textContent=closing.lede||'';$('#reviewBadge').textContent=closing.eyebrowEn||'REFLECT';if(day.showOffer){$('#tomokoCloseEyebrow').textContent='A FINAL NOTE';$('#tomokoClose').textContent=(state.name?state.name+'さん、':'')+TYPES[state.type].tomokoClose;$('#nextCard').style.display='';$('#offerSection').style.display='';$('#dayFoot').style.display='none';}else{$('#tomokoCloseEyebrow').textContent=closing.eyebrowEn||'';$('#tomokoClose').textContent=(state.name?state.name+'さん、':'')+closing.msg;$('#nextCard').style.display='none';$('#offerSection').style.display='none';$('#dayFoot').style.display='';$('#dayFootLabel').textContent=closing.footLabel||'';$('#dayFootMsg').textContent=closing.footMsg||'';$('#dayFootSub').textContent=closing.footSub||'';$('#dayFootTeaser').textContent=closing.footTeaser||'';}}
 function wire(){$('#toScreen2').addEventListener('click',function(){if(!state.type)return;goScreen(2);});$('#skipChips').addEventListener('click',function(){compute();renderResult();goScreen(3);});$('#toScreen3').addEventListener('click',function(){compute();renderResult();goScreen(3);});$('#toScreen4').addEventListener('click',function(){saveToday();renderReview();goScreen(4);maybeAutoPopup();});$('#reasonToggle').addEventListener('click',function(e){const btn=e.currentTarget;const open=btn.getAttribute('aria-expanded')==='true';btn.setAttribute('aria-expanded',String(!open));$('#reasonBody').classList.toggle('is-open',!open);});$('#restartBtn').addEventListener('click',function(){state.tags=[];state.done=[false,false,false];state.review=null;state.result=null;$$('.chip').forEach(function(c){c.classList.remove('is-on');c.setAttribute('aria-pressed','false');});$('#chipCount').textContent='0';goScreen(1);});function handleZoom(e){const url=e.currentTarget.dataset.zoomUrl;if(!url||url==='#'){e.preventDefault();showToast('SESSION URL · TBD',2400);}}$('#zoomCta').addEventListener('click',handleZoom);$('#offerPopupCta').addEventListener('click',handleZoom);$('#offerPopupClose').addEventListener('click',hideOfferPopup);$('#offerPopupLater').addEventListener('click',hideOfferPopup);$('#offerOverlay').addEventListener('click',function(e){if(e.target.id==='offerOverlay')hideOfferPopup();});document.addEventListener('keydown',function(e){if(e.key==='Escape')hideOfferPopup();});}
-function init(){state.day=computeDay();const stored=getStored();if(stored.type)state.type=stored.type;const pill=$('#dayPill');pill.innerHTML='DAY <span class="mono">'+pad2(state.day.display)+'</span> <span class="sep">/</span> <span class="mono">03</span>';if(state.day.display===TOTAL_DAYS)pill.classList.add('is-final');renderTypes();if(state.type){$$('.type-card').forEach(function(c){const on=c.dataset.id===state.type;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});}renderChips();wire();renderWelcome();}
+function init(){state.day=computeDay();const stored=getStored();if(stored.type)state.type=stored.type;if(stored.name)state.name=stored.name;const pill=$('#dayPill');pill.innerHTML='DAY <span class="mono">'+pad2(state.day.display)+'</span> <span class="sep">/</span> <span class="mono">03</span>';if(state.day.display===TOTAL_DAYS)pill.classList.add('is-final');renderTypes();if(state.type){$$('.type-card').forEach(function(c){const on=c.dataset.id===state.type;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});}renderChips();wire();wireOnboarding();renderWelcome();if(state.name){goScreen(1);}}
+window.__admin=function(action){
+  const KEY='selfcareNavi_v4',POP='selfcareNavi_v4_popupShown';
+  if(action==='reset'||action===1){
+    try{localStorage.removeItem(KEY);sessionStorage.removeItem(POP);}catch(e){}
+  }else{
+    const d=parseInt(action,10);
+    if(d>=2&&d<=3){
+      const today=new Date();
+      const first=new Date(today.getTime()-(d-1)*86400000);
+      const fk=first.getFullYear()+'-'+String(first.getMonth()+1).padStart(2,'0')+'-'+String(first.getDate()).padStart(2,'0');
+      const data={firstVisitKey:fk,type:'guttari',name:'テスト',history:{}};
+      data.history[fk]={tags:['tired','cold'],rec1:'rest',rec2:'warm',avoidCat:'flow',done:[true,false,true],review:'やった'};
+      if(d>=3){
+        const d2=new Date(first.getTime()+86400000);
+        const d2k=d2.getFullYear()+'-'+String(d2.getMonth()+1).padStart(2,'0')+'-'+String(d2.getDate()).padStart(2,'0');
+        data.history[d2k]={tags:['heavy','sweet'],rec1:'rest',rec2:'warm',avoidCat:'flow',done:[true,true,false],review:'少しやった'};
+      }
+      try{localStorage.setItem(KEY,JSON.stringify(data));sessionStorage.removeItem(POP);}catch(e){}
+    }
+  }
+  const u=new URL(location.href);u.searchParams.set('admin','1');u.searchParams.delete('day');location.href=u.toString();
+};
+(function(){const p=new URLSearchParams(location.search);if(p.get('admin')==='1'){const b=document.getElementById('adminBar');if(b)b.style.display='flex';}})();
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 })();
 </script>
