@@ -567,6 +567,8 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
     surveyBu, surveyNum, surveyChild, bu,
     hasPreschool, hasElementary, hasMiddle, attendsP1, attendsP2,
     payDetail, payNinzu, payTotal, payPeopleN, payP1N, payP2N,
+    payP1Elem: pay?p1Elem:0, payP2Elem: pay?p2Elem:0,
+    payP1Mid: pay?p1Mid:0, payP2Mid: pay?p2Mid:0,
     issue,
     allergy: sv['アレルギー']||ro['アレルギー']||'',
     leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
@@ -709,18 +711,12 @@ function updateStats(filtered){
   const p1Paid=filtered.reduce((s,r)=>s+r.payP1N,0);
   const p2Paid=filtered.reduce((s,r)=>s+r.payP2N,0);
 
-  // Child counts per part
+  // Child counts per part (payment-based actual numbers)
   let k1Elem=0,k1Mid=0,k2Elem=0,k2Mid=0,preschool=0;
   for(const r of filtered){
     if(r.hasPreschool) preschool++;
-    if(r.attendsP1){
-      if(r.hasElementary) k1Elem++;
-      if(r.hasMiddle) k1Mid++;
-    }
-    if(r.attendsP2){
-      if(r.hasElementary) k2Elem++;
-      if(r.hasMiddle) k2Mid++;
-    }
+    k1Elem+=r.payP1Elem; k1Mid+=r.payP1Mid;
+    k2Elem+=r.payP2Elem; k2Mid+=r.payP2Mid;
   }
 
   // Category counts
