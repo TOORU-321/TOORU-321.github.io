@@ -500,11 +500,11 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
   const category = CAT_MAP[rawCat]||rawCat||'';
 
   let payDetail='',payNinzu='',payTotal=0,payHasP1=false,payHasP2=false,payPeopleN=0,payP1N=0,payP2N=0;
+  let p1Adult=0,p1Mid=0,p1Elem=0,p2Adult=0,p2Mid=0,p2Elem=0;
   if(pay){
     const items=[...pay.items].sort((a,b)=>ticketSortKey(a)-ticketSortKey(b));
     payDetail=items.join(' / '); payTotal=pay.total;
     // Count unique paid people per type (dedup across parts)
-    let p1Adult=0,p1Mid=0,p1Elem=0,p2Adult=0,p2Mid=0,p2Elem=0;
     for(const t of items){
       const n=t.includes('2人')?2:(t.includes('3人')?3:1);
       const isBoth=t.includes('第1部+第2部'); const isP1=!isBoth&&t.includes('記念式典'); const isP2=!isBoth&&t.includes('第2部');
@@ -567,8 +567,8 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
     surveyBu, surveyNum, surveyChild, bu,
     hasPreschool, hasElementary, hasMiddle, attendsP1, attendsP2,
     payDetail, payNinzu, payTotal, payPeopleN, payP1N, payP2N,
-    payP1Elem: pay?p1Elem:0, payP2Elem: pay?p2Elem:0,
-    payP1Mid: pay?p1Mid:0, payP2Mid: pay?p2Mid:0,
+    payP1Elem: p1Elem, payP2Elem: p2Elem,
+    payP1Mid: p1Mid, payP2Mid: p2Mid,
     issue,
     allergy: sv['アレルギー']||ro['アレルギー']||'',
     leader: sv['エリアリーダー希望']||ro['地域リーダー希望']||'',
