@@ -283,6 +283,11 @@ body.admin header{top:66px}
 .preorder-thanks{text-align:center;color:#3B6D11;font-weight:700;font-size:13px;margin-top:10px;padding:11px 13px;background:#F4F8E8;border:1px solid #A8C97A;border-radius:10px;line-height:1.7}
 .preorder-thanks b{color:#3B6D11}
 
+/* LINE内蔵ブラウザ警告 */
+.line-warning{background:linear-gradient(135deg,#FFE0E0 0%,#FFCBCB 100%);border:1px solid #E8A0A0;border-radius:10px;padding:11px 13px;margin:10px 0;font-size:12.5px;color:#993333;line-height:1.7;box-shadow:0 2px 6px rgba(160,51,51,.12)}
+.line-warning b{color:#A03333}
+.line-warning .lw-dismiss{display:block;margin-top:8px;font-size:11px;color:#7A5A2A;text-decoration:underline;cursor:pointer;text-align:right;font-weight:600}
+
 /* Phase indicator */
 .phase-indicator{padding:10px 12px;background:linear-gradient(90deg,#FFF8E7 0%,#FFEFC5 100%);border-radius:12px;border:1px solid #F5CF8E;margin-top:8px;display:flex;align-items:center;gap:10px}
 .phase-indicator .pi-ico{font-size:22px}
@@ -448,6 +453,7 @@ body.admin header{top:66px}
 
 <main>
   <section class="main-view" id="mainView">
+    <div id="lineWarning"></div>
     <div id="luckyBanner"></div>
     <div id="readOnlyBanner"></div>
     <div id="preLaunchBanner"></div>
@@ -1526,6 +1532,16 @@ function renderHeader(){
   else $('phasePill').textContent='Phase 1 育成期';
 }
 
+// LINE内蔵ブラウザを検出して警告（記録が他ブラウザと共有されないため）
+function isLineInAppBrowser(){return /Line\//i.test(navigator.userAgent||'')}
+function renderLineWarning(){
+  const el=$('lineWarning');if(!el)return;
+  if(!isLineInAppBrowser()){el.innerHTML='';return}
+  let dismissed=false;try{dismissed=!!localStorage.getItem('hakkou-club-line-warning-seen')}catch(e){}
+  if(dismissed){el.innerHTML='';return}
+  el.innerHTML='<div class="line-warning">⚠️ <b>LINEのブラウザで開いています</b><br>記録を確実に残すため、画面右上のメニュー（︙）から「<b>ブラウザで開く</b>」または「<b>Safariで開く</b>」を選んでください🌸<span class="lw-dismiss" id="lineWarningDismiss">このまま続ける</span></div>';
+}
+
 function renderLuckyBanner(){
   const el=$('luckyBanner');
   if(isReadOnly()||isPreLaunch()){el.innerHTML='';return}
@@ -1674,6 +1690,7 @@ function renderPhase2(){
 // ======== Render orchestrator ========
 function render(){
   renderHeader();
+  renderLineWarning();
   renderLuckyBanner();
   renderReadOnlyBanner();
   renderPreLaunchBanner();
@@ -2065,6 +2082,12 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#tutSkip')){skipTutorial();return}
   // 名前入力（バックドロップでは閉じない、保存で次へ）
   if(e.target.closest('#nameSave')){saveName();return}
+  // LINE警告バナー：「このまま続ける」で非表示化
+  if(e.target.closest('#lineWarningDismiss')){
+    try{localStorage.setItem('hakkou-club-line-warning-seen','1')}catch(_){}
+    renderLineWarning();
+    return;
+  }
   // 先行予約
   if(e.target.closest('#preorderClose')||e.target.id==='preorderModal'){closePreorder();return}
   if(e.target.closest('#preorderSubmit')){submitPreorder();return}
