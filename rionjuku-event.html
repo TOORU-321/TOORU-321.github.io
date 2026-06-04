@@ -532,9 +532,9 @@ function buildRow(uid, sv, ro, pay, stripeOnly) {
   const hasPreschool = surveyChild.includes('未就学');
   const hasElementary = surveyChild.includes('小学');
   const hasMiddle = surveyChild.includes('中学') || surveyChild.includes('中高');
-  // Which parts this person attends
-  const attendsP1 = bu.includes('両方') || bu.includes('第一部');
-  const attendsP2 = bu.includes('両方') || bu.includes('第二部');
+  // Which parts this person attends (fallback to payment data if no survey)
+  const attendsP1 = bu.includes('両方') || bu.includes('第一部') || (!bu && payHasP1);
+  const attendsP2 = bu.includes('両方') || bu.includes('第二部') || (!bu && payHasP2);
   const hasSurvey = !!(sv['お名前']||sv['uid']);
   const hasPayment = !!pay;
 
@@ -704,10 +704,10 @@ function renderTable(){
 
 function updateStats(filtered){
   const total=filtered.length;
-  const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
-  // Part totals (headcount: surveyNum per person attending that part)
-  const p1Total=filtered.filter(r=>r.attendsP1).reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
-  const p2Total=filtered.filter(r=>r.attendsP2).reduce((s,r)=>s+(parseInt(r.surveyNum)||1),0);
+  const people=filtered.reduce((s,r)=>s+(parseInt(r.surveyNum)||r.payPeopleN||1),0);
+  // Part totals (headcount: surveyNum per person, fallback to payPeopleN)
+  const p1Total=filtered.filter(r=>r.attendsP1).reduce((s,r)=>s+(parseInt(r.surveyNum)||r.payPeopleN||1),0);
+  const p2Total=filtered.filter(r=>r.attendsP2).reduce((s,r)=>s+(parseInt(r.surveyNum)||r.payPeopleN||1),0);
   const p1Paid=filtered.reduce((s,r)=>s+r.payP1N,0);
   const p2Paid=filtered.reduce((s,r)=>s+r.payP2N,0);
 
