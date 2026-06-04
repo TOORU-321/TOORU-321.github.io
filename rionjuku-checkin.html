@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>受付パス | 凛穏塾 大同窓会 2026.7.23</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f2ef; --paper: #fff; --text: #2c2622; --sub: #7a6e63;
+    --line: #e8ddd1; --accent: #8b6344; --accent2: #c4956b; --accent-light: #f5e8d8;
+    --green: #2a7d6a; --green-light: #e8f4f0;
+    --red: #c0392b; --red-light: #fdeaea;
+    --sans: 'Noto Sans JP', sans-serif;
+    --radius: 14px; --shadow: 0 2px 12px rgba(62,40,24,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100dvh; }
+
+  .app-header {
+    background: linear-gradient(135deg, #3d3028 0%, #5a4639 100%);
+    color: #fff; padding: 20px 16px; text-align: center;
+  }
+  .app-header h1 { font-size: 18px; font-weight: 800; letter-spacing: 0.04em; }
+  .app-header p { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 24px 16px; }
+
+  /* ===== LOGIN SCREEN ===== */
+  .login-card {
+    background: var(--paper); border-radius: var(--radius); box-shadow: var(--shadow);
+    border: 1px solid var(--line); padding: 32px 24px; text-align: center;
+  }
+  .login-card h2 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .login-card .sub { font-size: 12px; color: var(--sub); margin-bottom: 24px; }
+  .email-input {
+    width: 100%; padding: 14px 16px; font-size: 16px; font-family: var(--sans);
+    border: 2px solid var(--line); border-radius: 10px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .email-input:focus { border-color: var(--accent); }
+  .btn-login {
+    width: 100%; margin-top: 16px; padding: 14px; font-size: 15px; font-weight: 700;
+    font-family: var(--sans); color: #fff; border: none; border-radius: 10px; cursor: pointer;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    transition: opacity 0.2s;
+  }
+  .btn-login:hover { opacity: 0.9; }
+  .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+  .error-msg { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
+
+  /* ===== LOADING ===== */
+  .loading { text-align: center; padding: 60px 0; color: var(--sub); font-size: 13px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid var(--line); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== PASS CARD ===== */
+  .pass-card { display: none; }
+  .pass-card.show { display: block; }
+
+  .pass-number-section {
+    background: linear-gradient(135deg, #3d3028 0%, #5a4639 100%);
+    color: #fff; border-radius: var(--radius) var(--radius) 0 0;
+    padding: 24px 20px; text-align: center; position: relative;
+  }
+  .pass-number-section .label { font-size: 11px; opacity: 0.7; letter-spacing: 0.1em; }
+  .pass-number-section .number {
+    font-size: 72px; font-weight: 800; line-height: 1.1; letter-spacing: 0.02em;
+  }
+  .pass-number-section .name { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .pass-number-section .category {
+    display: inline-block; margin-top: 8px; padding: 3px 14px;
+    border-radius: 20px; font-size: 12px; font-weight: 700;
+    background: rgba(255,255,255,0.2); backdrop-filter: blur(4px);
+  }
+  .cat-salon { background: rgba(42,125,106,0.4); }
+  .cat-sotsugyou { background: rgba(44,82,130,0.4); }
+  .cat-ippan { background: rgba(123,31,162,0.4); }
+  .cat-iinkai { background: rgba(230,81,0,0.4); }
+
+  .pass-details {
+    background: var(--paper); border: 1px solid var(--line); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius); box-shadow: var(--shadow);
+    padding: 0;
+  }
+  .pass-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 20px; border-bottom: 1px solid var(--line);
+  }
+  .pass-row:last-child { border-bottom: none; }
+  .pass-row .label { font-size: 12px; color: var(--sub); font-weight: 500; white-space: nowrap; }
+  .pass-row .value { font-size: 14px; font-weight: 700; text-align: right; }
+
+  .pass-bu { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+  .bu-badge {
+    padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;
+  }
+  .bu-p1 { background: var(--accent-light); color: var(--accent); }
+  .bu-p2 { background: var(--green-light); color: var(--green); }
+
+  .pass-footer {
+    text-align: center; margin-top: 20px; font-size: 11px; color: var(--sub);
+  }
+  .pass-footer .event-date { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+
+  .btn-logout {
+    display: block; width: 100%; margin-top: 20px; padding: 12px;
+    font-size: 13px; font-weight: 500; font-family: var(--sans);
+    color: var(--sub); background: none; border: 1px solid var(--line);
+    border-radius: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-logout:hover { background: var(--paper); border-color: var(--accent); color: var(--accent); }
+
+  .issue-banner {
+    background: var(--red-light); color: var(--red); text-align: center;
+    padding: 10px 16px; font-size: 12px; font-weight: 700;
+    border-bottom: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>凛穏塾 大同窓総会</h1>
+  <p>受付パス</p>
+</div>
+
+<div class="container">
+  <!-- Loading -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div>データを読み込み中...</div>
+  </div>
+
+  <!-- Login -->
+  <div id="loginScreen" class="login-card" style="display:none">
+    <h2>受付パスを表示</h2>
+    <p class="sub">申込時のメールアドレスを入力してください</p>
+    <input type="email" id="emailInput" class="email-input" placeholder="example@mail.com"
+      autocomplete="email" inputmode="email" autocapitalize="off">
+    <button id="btnLogin" class="btn-login" onclick="lookup()">表示する</button>
+    <div id="errorMsg" class="error-msg"></div>
+  </div>
+
+  <!-- Pass -->
+  <div id="passCard" class="pass-card">
+    <div class="pass-number-section">
+      <div class="label">受付番号</div>
+      <div class="number" id="passNumber"></div>
+      <div class="name" id="passName"></div>
+      <span class="category" id="passCategory"></span>
+    </div>
+    <div class="pass-details">
+      <div id="issueBanner" class="issue-banner" style="display:none"></div>
+      <div class="pass-row">
+        <span class="label">参加する部</span>
+        <div class="pass-bu" id="passBu"></div>
+      </div>
+      <div class="pass-row">
+        <span class="label">参加人数</span>
+        <span class="value" id="passNum"></span>
+      </div>
+      <div class="pass-row">
+        <span class="label">決済チケット</span>
+        <span class="value" id="passTicket"></span>
+      </div>
+      <div class="pass-row">
+        <span class="label">決済金額</span>
+        <span class="value" id="passAmount"></span>
+      </div>
+      <div class="pass-row">
+        <span class="label">エリア</span>
+        <span class="value" id="passArea"></span>
+      </div>
+      <div id="memoRow" class="pass-row" style="display:none">
+        <span class="label">備考</span>
+        <span class="value" id="passMemo"></span>
+      </div>
+    </div>
+    <div class="pass-footer">
+      <div class="event-date">2026年7月23日（木）</div>
+      この画面を受付でご提示ください
+    </div>
+    <button class="btn-logout" onclick="logout()">別のメールアドレスで表示</button>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1MwcfCpp4g1EHind2Seo-1UEBKKGxmr33i1ciqviXZRI';
+const PAYMENTS_URL = 'payments.json';
+
+const CAT_MAP = {
+  '運営':'実行委員', '実行委員':'実行委員',
+  'サロン生':'サロン生', '卒業生':'卒業生'
+};
+
+let allRows = [];
+
+// ===== DATA LOADING =====
+async function fetchSheet(sheetName) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&t=${Date.now()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`シート取得失敗 (${res.status})`);
+  return Papa.parse(await res.text(), { header: true, skipEmptyLines: true }).data;
+}
+
+function ticketSortKey(t) {
+  let p=3,a=3;
+  if(t.includes('記念式典'))p=0;else if(t.includes('第1部+第2部'))p=1;else if(t.includes('第2部'))p=2;
+  if(t.includes('大人'))a=0;else if(t.includes('中高生'))a=1;else if(t.includes('小学生'))a=2;
+  return p*10+a;
+}
+
+function buildRow(uid, sv, ro, pay, stripeOnly) {
+  const email = (sv['メールアドレス']||ro['メールアドレス']||(pay&&pay.email)||'').trim().toLowerCase();
+  const rawCat = ro['カテゴリー']||'';
+  const category = CAT_MAP[rawCat]||rawCat||'';
+
+  let payDetail='', payTotal=0;
+  if(pay){
+    const items=[...pay.items].sort((a,b)=>ticketSortKey(a)-ticketSortKey(b));
+    payDetail=items.join(' / '); payTotal=pay.total;
+  }
+
+  const surveyBu = sv['参加する部']||'';
+  const surveyNum = (pay&&pay.surveyNumOverride)||sv['参加する合計人数']||'';
+  const name = sv['お名前']||ro['お名前']||'';
+  const area = sv['お住まいのエリア']||ro['お住まいのエリア']||ro['お住まい']||'';
+  const time = sv['受信日']||'';
+  const memo = (pay&&pay.memo)||'';
+
+  return { uid, email, name, category, surveyBu, surveyNum, payDetail, payTotal, area, time, stripeOnly: !!stripeOnly, memo };
+}
+
+function mergeData(survey, roster, payments) {
+  const rows = [];
+  const seenUids = new Set(), seenEmails = new Set();
+  const rosterByUid = {}, rosterByEmail = {};
+  for (const r of roster) {
+    const uid=(r['uid']||'').trim(), em=(r['メールアドレス']||'').trim().toLowerCase();
+    if(uid) rosterByUid[uid]=r; if(em) rosterByEmail[em]=r;
+  }
+  for (const sv of survey) {
+    const uid=(sv['uid']||'').trim(), em=(sv['メールアドレス']||'').trim().toLowerCase();
+    if(!uid&&!em) continue;
+    seenUids.add(uid); if(em) seenEmails.add(em);
+    const ro = rosterByUid[uid] || rosterByEmail[em] || {};
+    if((ro['カテゴリー']||'')==='プロデューサー') continue;
+    const pay = payments.byUid[uid] || (em && payments.byEmail[em] ? payments.byUid[payments.byEmail[em]] : null);
+    rows.push(buildRow(uid, sv, ro, pay));
+  }
+  for (const ro of roster) {
+    const uid=(ro['uid']||'').trim(), em=(ro['メールアドレス']||'').trim().toLowerCase();
+    if((uid&&seenUids.has(uid))||(em&&seenEmails.has(em))) continue;
+    if((ro['カテゴリー']||'')==='プロデューサー') continue;
+    if(uid) seenUids.add(uid); if(em) seenEmails.add(em);
+    const payUid = payments.byEmail[em];
+    rows.push(buildRow(uid, {}, ro, payUid ? payments.byUid[payUid] : null));
+  }
+  for (const [pUid, pData] of Object.entries(payments.byUid)) {
+    const em = (pData.email||'').trim().toLowerCase();
+    if ((pUid && seenUids.has(pUid)) || (em && seenEmails.has(em))) continue;
+    if (pUid) seenUids.add(pUid); if (em) seenEmails.add(em);
+    rows.push(buildRow(pUid, {}, {}, pData, true));
+  }
+  return rows;
+}
+
+async function loadData() {
+  try {
+    const [surveyData, rosterData, paymentData] = await Promise.all([
+      fetchSheet('form_35：大同窓総会参加アンケート'),
+      fetchSheet('大同窓総会参加＿名簿 決済確認'),
+      fetch(PAYMENTS_URL + '?t=' + Date.now()).then(r => r.json()).catch(() => ({byUid:{}, byEmail:{}, updated:''}))
+    ]);
+    allRows = mergeData(surveyData, rosterData, paymentData);
+    // Sort by registration time (same order as dashboard)
+    allRows.sort((a,b) => (a.time||'9999').localeCompare(b.time||'9999'));
+    // Assign sequential numbers
+    allRows.forEach((r, i) => r.index = i + 1);
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+
+    // Auto-fill if previously logged in
+    const saved = sessionStorage.getItem('checkin_email');
+    if (saved) {
+      document.getElementById('emailInput').value = saved;
+      lookup();
+    }
+
+    document.getElementById('emailInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') lookup();
+    });
+  } catch (err) {
+    document.getElementById('loading').innerHTML =
+      `<div style="color:var(--red)">読み込み失敗<br><small>${err.message}</small></div>`;
+  }
+}
+
+function lookup() {
+  const input = document.getElementById('emailInput').value.trim().toLowerCase();
+  if (!input) return;
+
+  const row = allRows.find(r => r.email === input);
+  if (!row) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = 'このメールアドレスの登録が見つかりません';
+    el.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('errorMsg').style.display = 'none';
+  sessionStorage.setItem('checkin_email', input);
+  showPass(row);
+}
+
+function showPass(r) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('passCard').classList.add('show');
+
+  // Number
+  document.getElementById('passNumber').textContent = String(r.index).padStart(3, '0');
+  // Name
+  document.getElementById('passName').textContent = r.name || '（名前未登録）';
+  // Category
+  const catEl = document.getElementById('passCategory');
+  catEl.textContent = r.category || '未分類';
+  catEl.className = 'category';
+  if (r.category === 'サロン生') catEl.classList.add('cat-salon');
+  else if (r.category === '卒業生') catEl.classList.add('cat-sotsugyou');
+  else if (r.category === '一般') catEl.classList.add('cat-ippan');
+  else if (r.category === '実行委員') catEl.classList.add('cat-iinkai');
+
+  // Parts (参加する部)
+  const buEl = document.getElementById('passBu');
+  buEl.innerHTML = '';
+  const bu = r.surveyBu || '';
+  if (bu.includes('両方') || (bu.includes('第一部') && bu.includes('第二部'))) {
+    buEl.innerHTML = '<span class="bu-badge bu-p1">第1部 記念式典</span><span class="bu-badge bu-p2">第2部 懇親会</span>';
+  } else if (bu.includes('第一部')) {
+    buEl.innerHTML = '<span class="bu-badge bu-p1">第1部 記念式典のみ</span>';
+  } else if (bu.includes('第二部')) {
+    buEl.innerHTML = '<span class="bu-badge bu-p2">第2部 懇親会のみ</span>';
+  } else if (r.payDetail) {
+    // Infer from payment
+    const d = r.payDetail;
+    const hasP1 = d.includes('記念式典') || d.includes('第1部+第2部');
+    const hasP2 = d.includes('第2部') || d.includes('第1部+第2部');
+    if (hasP1) buEl.innerHTML += '<span class="bu-badge bu-p1">第1部 記念式典</span>';
+    if (hasP2) buEl.innerHTML += '<span class="bu-badge bu-p2">第2部 懇親会</span>';
+  } else {
+    buEl.innerHTML = '<span style="color:var(--sub);font-size:13px">—</span>';
+  }
+
+  // Number of people
+  document.getElementById('passNum').textContent = r.surveyNum ? r.surveyNum + '名' : '—';
+  // Ticket
+  document.getElementById('passTicket').textContent = r.payDetail || '—';
+  // Amount
+  document.getElementById('passAmount').textContent = r.payTotal ? '¥' + r.payTotal.toLocaleString() : '—';
+  // Area
+  document.getElementById('passArea').textContent = r.area || '—';
+  // Memo
+  if (r.memo) {
+    document.getElementById('memoRow').style.display = 'flex';
+    document.getElementById('passMemo').textContent = r.memo;
+  } else {
+    document.getElementById('memoRow').style.display = 'none';
+  }
+
+  // Issue banner
+  const issueBanner = document.getElementById('issueBanner');
+  if (r.stripeOnly) {
+    issueBanner.textContent = '※ アンケート未回答（決済のみ確認済み）';
+    issueBanner.style.display = 'block';
+  } else if (!r.payDetail && r.category !== '実行委員') {
+    issueBanner.textContent = '※ 決済未確認 — 受付でご確認ください';
+    issueBanner.style.display = 'block';
+  } else {
+    issueBanner.style.display = 'none';
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('checkin_email');
+  document.getElementById('passCard').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'block';
+  document.getElementById('emailInput').value = '';
+  document.getElementById('emailInput').focus();
+}
+
+loadData();
+</script>
+</body>
+</html>
