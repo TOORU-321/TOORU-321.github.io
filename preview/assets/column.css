@@ -95,11 +95,11 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .swidget .cats a:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ===== 一覧 ===== */
-.page-head{max-width:1120px;margin:0 auto;padding:58px 28px 8px;text-align:center}
-.page-head .ey{font-family:var(--serif-en);font-size:15px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
-.page-head h1{font-family:var(--mincho);font-weight:800;font-size:32px;margin-top:8px;letter-spacing:.04em}
-.page-head p{color:var(--ink-soft);font-size:13px;margin-top:12px;letter-spacing:.02em}
-.page-head .hr{width:46px;height:2px;background:var(--gold);margin:20px auto 0}
+.page-head{position:relative;padding:80px 28px;text-align:center;background:linear-gradient(rgba(17,17,20,.55),rgba(17,17,20,.62)),url(columns-top.jpg) center/cover no-repeat;border-bottom:1px solid var(--line-2)}
+.page-head .ey{font-family:var(--serif-en);font-size:16px;letter-spacing:.34em;text-transform:uppercase;color:#e7c98e}
+.page-head h1{font-family:var(--mincho);font-weight:800;font-size:36px;margin-top:8px;letter-spacing:.06em;color:#fff}
+.page-head p{color:#edeae3;font-size:13.5px;margin-top:12px;letter-spacing:.02em}
+.page-head .hr{width:46px;height:2px;background:var(--gold-2);margin:22px auto 0}
 .wrap{max-width:1120px;margin:0 auto;padding:40px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}
 @media(max-width:900px){.wrap{grid-template-columns:1fr;gap:48px}}
 .feed{display:flex;flex-direction:column}
@@ -116,6 +116,9 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .post .ex{font-size:13px;color:var(--ink-2);line-height:1.9;margin-bottom:11px}
 .post .cat{font-size:11px;letter-spacing:.04em;color:var(--ink-soft)}
 .post .cat span{color:var(--gold)}
+.post .readmore{display:inline-block;margin-top:14px;font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));padding:10px 22px;border-radius:999px;letter-spacing:.04em}
+.post:hover .readmore{filter:brightness(1.05)}
+@media(max-width:560px){.post .readmore{display:block;text-align:center;margin-top:16px}}
 
 footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)}
 .foot-inner{max-width:1120px;margin:0 auto;padding:36px 28px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}

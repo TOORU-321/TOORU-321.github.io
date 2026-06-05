@@ -226,6 +226,7 @@ def render_index(cols):
         <h2>{html.escape(c["title"])}</h2>
         {ex_html}
         <div class="cat"><span>{html.escape(c["category"])}</span>{("／" + html.escape("／".join([t for t in c["tags"] if t != c["category"]][:2]))) if len(c["tags"])>1 else ""}</div>
+        <span class="readmore">本編を読む →</span>
       </div>
     </a>''')
     cats = "".join(f'<a href="#">{t}</a>' for t in CATS)
