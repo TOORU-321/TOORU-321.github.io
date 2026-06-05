@@ -218,12 +218,13 @@ def render_index(cols):
     for c in sorted(cols, key=lambda z: -z["number"]):
         n = c["number"]
         cat = "／".join([c["category"]] + [t for t in c["tags"] if t != c["category"]][:2])
+        ex_html = f'<p class="ex">{html.escape(c["excerpt"])}</p>' if c.get("excerpt") else ''
         posts.append(f'''    <a class="post" href="column{n}.html">
       {thumb_html(c, "thumb")}
       <div class="pbody">
         <div class="meta">No.{n} — {html.escape(c["date_disp_short"])}</div>
         <h2>{html.escape(c["title"])}</h2>
-        <p class="ex">{html.escape(c["excerpt"])}</p>
+        {ex_html}
         <div class="cat"><span>{html.escape(c["category"])}</span>{("／" + html.escape("／".join([t for t in c["tags"] if t != c["category"]][:2]))) if len(c["tags"])>1 else ""}</div>
       </div>
     </a>''')
