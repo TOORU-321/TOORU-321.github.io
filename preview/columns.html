@@ -8,98 +8,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#1a1a1a;--ink-2:#3d3d3d;--ink-soft:#6b6b6b;
-    --gold:#a8843f;--gold-2:#c2a35e;
-    --line:#e2ddd2;--line-2:#cfc8b8;
-    --paper:#ffffff;--card:#ffffff;
-    --mincho:'Shippori Mincho B1',serif;
-    --gothic:'Noto Sans JP',sans-serif;
-    --serif-en:'Cormorant Garamond',serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--gothic);color:var(--ink);background:var(--paper);line-height:1.85;font-size:16px;-webkit-font-smoothing:antialiased}
-  a{color:inherit;text-decoration:none}
-  .top-rule{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-2) 60%,transparent)}
-
-  .masthead{background:var(--paper);border-bottom:1px solid var(--line-2)}
-  .mast-inner{max-width:1120px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-  .brand{display:flex;align-items:center;gap:11px;min-height:34px}
-  .brand img.logo{height:38px;width:auto;display:block}
-  .brand .fb{display:flex;align-items:center;gap:9px}
-  .brand .fb .star{font-family:var(--serif-en);color:var(--gold);font-size:22px;line-height:1}
-  .brand .fb b{font-family:var(--mincho);font-size:18px;letter-spacing:.06em}
-  .brand .fb small{display:block;font-size:9px;letter-spacing:.22em;color:var(--ink-soft);margin-top:2px}
-  .nav{display:flex;gap:22px;font-size:12px;letter-spacing:.04em;color:var(--ink-2)}
-  .nav a{padding-bottom:2px;border-bottom:1px solid transparent;transition:.15s}
-  .nav a:hover{color:var(--gold);border-color:var(--gold)}
-  @media(max-width:900px){.nav{display:none}}
-
-  /* ページヘッド */
-  .page-head{max-width:1120px;margin:0 auto;padding:58px 28px 8px;text-align:center}
-  .page-head .ey{font-family:var(--serif-en);font-size:15px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
-  .page-head h1{font-family:var(--mincho);font-weight:800;font-size:32px;margin-top:8px;letter-spacing:.04em}
-  .page-head p{color:var(--ink-soft);font-size:13px;margin-top:12px;letter-spacing:.02em}
-  .page-head .hr{width:46px;height:2px;background:var(--gold);margin:20px auto 0}
-
-  .wrap{max-width:1120px;margin:0 auto;padding:40px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}
-  @media(max-width:900px){.wrap{grid-template-columns:1fr;gap:48px}}
-
-  /* リスト（カードを抑えて、記事一覧らしい罫線レイアウト寄りに） */
-  .feed{display:flex;flex-direction:column}
-  .post{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:30px 0;border-top:1px solid var(--line-2)}
-  .post:first-child{border-top:none;padding-top:0}
-  @media(max-width:560px){.post{grid-template-columns:1fr;gap:14px}}
-  .post .thumb{aspect-ratio:4/3;border:1px solid var(--line-2);background:#ece4d3;overflow:hidden;display:grid;place-items:center}
-  .post .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-  .post .thumb .fb{font-family:var(--serif-en);color:#b09a6e;font-size:12px;letter-spacing:.08em}
-  .post .body{min-width:0}
-  .post .meta{font-family:var(--serif-en);font-size:13px;letter-spacing:.08em;color:var(--gold);margin-bottom:7px}
-  .post h2{font-family:var(--mincho);font-size:20px;font-weight:700;line-height:1.5;margin-bottom:9px}
-  .post:hover h2{color:var(--gold)}
-  .post .ex{font-size:13px;color:var(--ink-2);line-height:1.9;margin-bottom:11px}
-  .post .cat{font-size:11px;letter-spacing:.04em;color:var(--ink-soft)}
-  .post .cat span{color:var(--gold)}
-
-  /* サイドバー */
-  .side{display:flex;flex-direction:column;gap:34px}
-  .contrib{border:1px solid var(--line-2);background:var(--card)}
-  .contrib .ph{aspect-ratio:1;overflow:hidden;background:#ece4d3;display:grid;place-items:center}
-  .contrib .ph img{width:100%;height:100%;object-fit:cover;display:block}
-  .contrib .ph .fb{font-family:var(--serif-en);color:#b09a6e;font-size:13px;letter-spacing:.08em}
-  .contrib .pad{padding:20px 20px 22px}
-  .contrib .lab{font-family:var(--serif-en);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-  .contrib h4{font-family:var(--mincho);font-size:18px;margin-bottom:3px}
-  .contrib .role{font-size:11px;color:var(--ink-soft);letter-spacing:.04em;margin-bottom:13px}
-  .contrib p{font-size:12px;color:var(--ink-2);line-height:1.95}
-  .contrib .links{display:flex;gap:8px;margin-top:15px}
-  .contrib .links a{font-size:11px;color:var(--ink-2);border-bottom:1px solid var(--line-2);padding-bottom:2px}
-  .contrib .links a:hover{color:var(--gold);border-color:var(--gold)}
-  .swidget h3{font-family:var(--serif-en);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);padding-bottom:9px;border-bottom:1px solid var(--gold);margin-bottom:4px}
-  .swidget .cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-  .swidget .cats a{font-size:12px;letter-spacing:.03em;border:1px solid var(--line-2);padding:6px 13px;color:var(--ink-2)}
-  .swidget .cats a:hover{border-color:var(--gold);color:var(--gold)}
-
-  footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)}
-  .foot-inner{max-width:1120px;margin:0 auto;padding:36px 28px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
-  .foot-links{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
-  .foot-links a:hover{color:var(--gold)}
-  .foot-cc{font-family:var(--serif-en);font-size:12px;letter-spacing:.05em;color:var(--ink-soft)}
-</style>
+<link rel="stylesheet" href="assets/column.css">
 </head>
 <body>
 <div class="top-rule"></div>
-
 <header class="masthead">
   <div class="mast-inner">
-    <a class="brand" href="https://l-mine.com/home">
-      <img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL">
-    </a>
+    <a class="brand" href="https://l-mine.com/home"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
     <nav class="nav">
       <a href="https://l-mine.com/home">ホーム</a>
       <a href="https://columns.l-mine.com/behavioral-economics-lp.html">行動経済学への想い</a>
-      <a href="columns.html" style="color:var(--gold);border-color:var(--gold)">コラム</a>
+      <a href="columns.html" class="active">コラム</a>
       <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
       <a href="https://columns.l-mine.com/book-intro-dark.html">KINDLE小説</a>
       <a href="https://l-mine.com/contact-us">お問い合わせ</a>
@@ -116,36 +35,45 @@
 
 <div class="wrap">
   <section class="feed">
-    <a class="post" href="#">
+    <a class="post" href="column81.html">
       <div class="thumb"><span class="fb">Illustration</span></div>
-      <div class="body">
+      <div class="pbody">
         <div class="meta">No.81 — 2026.05.25</div>
         <h2>「ゆとり」と「焦り」が、起業の質を決めてしまうという話</h2>
         <p class="ex">環境が意思決定を支配する「環境化」の仕組みと、焦りを取り除くための具体的な土台づくりを考えてみましょう。</p>
         <div class="cat"><span>マーケティング</span>／ビジネス／起業</div>
       </div>
     </a>
-    <a class="post" href="#">
+    <a class="post" href="column80.html">
       <div class="thumb"><span class="fb">Illustration</span></div>
-      <div class="body">
+      <div class="pbody">
         <div class="meta">No.80 — 2026.05.24</div>
         <h2>「0.1%」を上げてみる</h2>
         <p class="ex">成約率を「5%上げろ」は難しいが、「0.1%」なら誰でもやれる。小さな積み重ねが、フォロワーを増やすより大きく売上を動かす。</p>
         <div class="cat"><span>マーケティング</span>／コンテンツビジネス</div>
       </div>
     </a>
+    <a class="post" href="column79.html">
+      <div class="thumb"><span class="fb">Illustration</span></div>
+      <div class="pbody">
+        <div class="meta">No.79 — 2026.05.14</div>
+        <h2>「母数」か「率」か、SNS売り上げの2つの構造</h2>
+        <p class="ex">SNSの売り上げは「母数×率」の2変数。増やす戦略と上げる戦略、どちらを選ぶかで発信内容が全然変わる。</p>
+        <div class="cat"><span>マーケティング</span>／ビジネス</div>
+      </div>
+    </a>
     <a class="post" href="column78.html">
       <div class="thumb"><img src="assets/column78-hero.jpg" alt=""></div>
-      <div class="body">
+      <div class="pbody">
         <div class="meta">No.78 — 2026.05.08</div>
         <h2>情報過多の時代に、正しく悩める人だけが結果を出す</h2>
         <p class="ex">「フォロワーを増やさなきゃ」が本当の目的にすり替わっていませんか。行動経済学の「目的のすり替わり」で、失敗の本質が見えてきます。</p>
-        <div class="cat"><span>マーケティング</span>／ビジネス／起業</div>
+        <div class="cat"><span>マーケティング</span>／SNS／行動経済学</div>
       </div>
     </a>
-    <a class="post" href="#">
+    <a class="post" href="column77.html">
       <div class="thumb"><span class="fb">Illustration</span></div>
-      <div class="body">
+      <div class="pbody">
         <div class="meta">No.77 — 2026.04.28</div>
         <h2>「払った価値がありました！」は、値上げのサインじゃない</h2>
         <p class="ex">満足の声を値上げの根拠にすると足をすくわれる。価格と価値のほんとうの関係を、行動経済学から読み解きます。</p>
@@ -153,13 +81,9 @@
       </div>
     </a>
   </section>
-
   <aside class="side">
     <div class="contrib">
-      <div class="ph">
-        <img src="assets/toru.jpg" alt="とーる" onerror="this.remove();var f=document.getElementById('phFb');if(f)f.hidden=false">
-        <span class="fb" id="phFb" hidden>Portrait</span>
-      </div>
+      <div class="ph"><img src="assets/toru.jpg" alt="とーる"></div>
       <div class="pad">
         <div class="lab">Columnist</div>
         <h4>とーる</h4>
@@ -168,27 +92,10 @@
         <div class="links"><a href="https://www.instagram.com/tooru_lab/" target="_blank" rel="noopener">Instagram</a><a href="https://x.com/LMeta321" target="_blank" rel="noopener">X</a></div>
       </div>
     </div>
-    <div class="swidget">
-      <h3>Categories</h3>
-      <div class="cats">
-        <a href="#">SNS</a><a href="#">マーケティング</a><a href="#">行動経済学</a>
-        <a href="#">ビジネス</a><a href="#">コンテンツビジネス</a><a href="#">起業</a>
-      </div>
-    </div>
+    <div class="swidget"><h3>Categories</h3><div class="cats"><a href="#">SNS</a><a href="#">マーケティング</a><a href="#">行動経済学</a><a href="#">ビジネス</a><a href="#">コンテンツビジネス</a><a href="#">起業</a></div></div>
   </aside>
 </div>
 
-<footer>
-  <div class="foot-inner">
-    <div class="foot-links">
-      <a href="https://l-mine.com/term">利用規約</a>
-      <a href="https://l-mine.com/about">特定商取引法に基づく表示</a>
-      <a href="https://l-mine.com/privacy">プライバシーポリシー</a>
-      <a href="https://l-mine.com/mensekizikou">免責事項</a>
-    </div>
-    <div class="foot-cc">© 2026 L-MINE</div>
-  </div>
-</footer>
-
+<footer><div class="foot-inner"><div class="foot-links"><a href="https://l-mine.com/term">利用規約</a><a href="https://l-mine.com/about">特定商取引法に基づく表示</a><a href="https://l-mine.com/privacy">プライバシーポリシー</a><a href="https://l-mine.com/mensekizikou">免責事項</a></div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
 </body>
 </html>
