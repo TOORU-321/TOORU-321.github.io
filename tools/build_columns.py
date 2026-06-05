@@ -137,14 +137,15 @@ def thumb_html(c, cls):
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
-    nums = sorted([x["number"] for x in cols])
-    i = nums.index(n)
-    older = nums[i-1] if i > 0 else None         # 前の記事（番号小）
-    newer = nums[i+1] if i < len(nums)-1 else None  # 次の記事（番号大）
+    order = sorted(cols, key=lambda z: (z["date"], z["number"]))  # 日付昇順（古い→新しい）
+    ids = [x["number"] for x in order]
+    i = ids.index(n)
+    older = ids[i-1] if i > 0 else None            # 前の記事（日付が古い）
+    newer = ids[i+1] if i < len(ids)-1 else None   # 次の記事（日付が新しい）
     prev_html = f'<a class="prev" href="column{older}.html">&larr; 前の記事</a>' if older else '<span></span>'
     next_html = f'<a class="next" href="column{newer}.html">次の記事 &rarr;</a>' if newer else '<span></span>'
-    # 最近の記事（自分以外、番号降順4件）
-    recents = [x for x in sorted(cols, key=lambda z: -z["number"]) if x["number"] != n][:4]
+    # 最近の記事（自分以外、日付降順4件）
+    recents = [x for x in sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True) if x["number"] != n][:4]
     rec_html = "\n        ".join(
         f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">No.{r["number"]} — {r["date_disp_short"]}</span></a>'
         for r in recents)
@@ -307,7 +308,7 @@ def main():
     cols.sort(key=lambda z: z["number"])
     for c in cols:
         open(os.path.join(OUT, f'column{c["number"]}.html'), "w", encoding="utf-8").write(render_article(c, cols))
-    desc = sorted(cols, key=lambda z: -z["number"])
+    desc = sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True)
     PER = 12
     chunks = [desc[i:i+PER] for i in range(0, len(desc), PER)] or [[]]
     pages = len(chunks)
