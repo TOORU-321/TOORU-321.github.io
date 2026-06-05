@@ -213,9 +213,22 @@ def render_article(c, cols):
 </html>'''
 
 # ---------- 一覧ページ ----------
-def render_index(cols):
+def page_file(p):
+    return "columns.html" if p == 1 else f"columns-{p}.html"
+
+def pagination_html(page, pages):
+    if pages <= 1:
+        return ""
+    def num(p):
+        return f'<span class="pn-num current">{p}</span>' if p == page else f'<a class="pn-num" href="{page_file(p)}">{p}</a>'
+    prev = f'<a class="pn-side" href="{page_file(page-1)}">&larr; 前へ</a>' if page > 1 else '<span class="pn-side off">&larr; 前へ</span>'
+    nxt = f'<a class="pn-side" href="{page_file(page+1)}">次へ &rarr;</a>' if page < pages else '<span class="pn-side off">次へ &rarr;</span>'
+    nums = "".join(num(p) for p in range(1, pages + 1))
+    return f'<nav class="pagenav">{prev}<span class="pn-nums">{nums}</span>{nxt}</nav>'
+
+def render_index(page_cols, page, pages):
     posts = []
-    for c in sorted(cols, key=lambda z: -z["number"]):
+    for c in page_cols:
         n = c["number"]
         cat = "／".join([c["category"]] + [t for t in c["tags"] if t != c["category"]][:2])
         ex_html = f'<p class="ex">{html.escape(c["excerpt"])}</p>' if c.get("excerpt") else ''
@@ -254,16 +267,22 @@ def render_index(cols):
 </header>
 
 <div class="page-head">
-  <div class="ey">Column</div>
-  <h1>コラム</h1>
-  <p>行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴ります。</p>
-  <div class="hr"></div>
+  <img class="ph-bg" src="assets/columns-top.jpg" alt="">
+  <div class="ph-inner">
+    <div class="ey">Column</div>
+    <h1>コラム</h1>
+    <p>行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴ります。</p>
+    <div class="hr"></div>
+  </div>
 </div>
 
 <div class="wrap">
-  <section class="feed">
+  <div class="feedcol">
+    <section class="feed">
 {chr(10).join(posts)}
-  </section>
+    </section>
+    {pagination_html(page, pages)}
+  </div>
   <aside class="side">
 {contrib_html()}
     <div class="swidget"><h3>Categories</h3><div class="cats">{cats}</div></div>
@@ -285,8 +304,15 @@ def main():
     cols.sort(key=lambda z: z["number"])
     for c in cols:
         open(os.path.join(OUT, f'column{c["number"]}.html'), "w", encoding="utf-8").write(render_article(c, cols))
-    open(os.path.join(OUT, "columns.html"), "w", encoding="utf-8").write(render_index(cols))
-    print(f"生成完了: {len(cols)}記事 + 一覧 -> {OUT}")
+    desc = sorted(cols, key=lambda z: -z["number"])
+    PER = 12
+    chunks = [desc[i:i+PER] for i in range(0, len(desc), PER)] or [[]]
+    pages = len(chunks)
+    for f in glob.glob(os.path.join(OUT, "columns-*.html")):
+        os.remove(f)
+    for idx, chunk in enumerate(chunks):
+        open(os.path.join(OUT, page_file(idx+1)), "w", encoding="utf-8").write(render_index(chunk, idx+1, pages))
+    print(f"生成完了: {len(cols)}記事 + 一覧{pages}ページ -> {OUT}")
     for c in sorted(cols, key=lambda z:-z["number"]):
         print(f"  No.{c['number']:>3}  column{c['number']}.html  {c['title']}")
 

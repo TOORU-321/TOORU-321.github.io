@@ -95,11 +95,24 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .swidget .cats a:hover{border-color:var(--gold);color:var(--gold)}
 
 /* ===== 一覧 ===== */
-.page-head{position:relative;padding:80px 28px;text-align:center;background:linear-gradient(rgba(17,17,20,.55),rgba(17,17,20,.62)),url(columns-top.jpg) center/cover no-repeat;border-bottom:1px solid var(--line-2)}
+.page-head{position:relative;overflow:hidden;padding:82px 28px;text-align:center;border-bottom:1px solid var(--line-2)}
+.page-head .ph-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.page-head::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(17,17,20,.55),rgba(17,17,20,.64));z-index:1}
+.page-head .ph-inner{position:relative;z-index:2}
 .page-head .ey{font-family:var(--serif-en);font-size:16px;letter-spacing:.34em;text-transform:uppercase;color:#e7c98e}
 .page-head h1{font-family:var(--mincho);font-weight:800;font-size:36px;margin-top:8px;letter-spacing:.06em;color:#fff}
 .page-head p{color:#edeae3;font-size:13.5px;margin-top:12px;letter-spacing:.02em}
 .page-head .hr{width:46px;height:2px;background:var(--gold-2);margin:22px auto 0}
+
+/* ページネーション */
+.pagenav{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:44px 0 0;padding-top:30px;border-top:1px solid var(--line-2)}
+.pagenav .pn-side{font-family:var(--serif-en);font-size:13px;letter-spacing:.06em;color:var(--ink-2);padding:7px 14px}
+.pagenav .pn-side:hover{color:var(--gold)}
+.pagenav .pn-side.off{color:#c9c4b8;pointer-events:none}
+.pagenav .pn-nums{display:flex;gap:6px;margin:0 6px}
+.pagenav .pn-num{display:grid;place-items:center;min-width:34px;height:34px;padding:0 8px;font-family:var(--serif-en);font-size:14px;color:var(--ink-2);border:1px solid var(--line-2)}
+.pagenav .pn-num:hover{border-color:var(--gold);color:var(--gold)}
+.pagenav .pn-num.current{background:var(--ink);color:#fff;border-color:var(--ink)}
 .wrap{max-width:1120px;margin:0 auto;padding:40px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}
 @media(max-width:900px){.wrap{grid-template-columns:1fr;gap:48px}}
 .feed{display:flex;flex-direction:column}
