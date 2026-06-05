@@ -3,163 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>#コラム78：情報過多の時代に、正しく悩める人だけが結果を出す｜L-MINE</title>
+<title>情報過多の時代に、正しく悩める人だけが結果を出す｜L-MINE COLUMN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#16181d;--ink-soft:#4a4f57;--gold:#b8924d;--gold-soft:#c9a96a;
-    --line:#e7e3da;--paper:#fbfaf6;--card:#ffffff;
-    --mincho:'Shippori Mincho B1',serif;--gothic:'Noto Sans JP',sans-serif;
+    --ink:#1a1a1a;--ink-2:#3d3d3d;--ink-soft:#6b6b6b;
+    --gold:#a8843f;--gold-2:#c2a35e;
+    --line:#e2ddd2;--line-2:#cfc8b8;
+    --paper:#f7f5ef;--card:#fffdf8;
+    --mincho:'Shippori Mincho B1',serif;
+    --gothic:'Noto Sans JP',sans-serif;
+    --serif-en:'Cormorant Garamond',serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{font-family:var(--gothic);color:var(--ink);background:var(--paper);line-height:1.95;font-size:16px;-webkit-font-smoothing:antialiased}
+  body{font-family:var(--gothic);color:var(--ink);background:var(--paper);line-height:2.0;font-size:16px;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}
+  .top-rule{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-2) 60%,transparent)}
 
-  /* ヘッダー */
-  .site-head{position:sticky;top:0;z-index:20;background:rgba(251,250,246,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .head-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));display:grid;place-items:center;color:#fff;font-size:16px}
-  .brand b{font-family:var(--mincho);font-size:18px;letter-spacing:.04em}
-  .brand small{display:block;font-size:10px;letter-spacing:.18em;color:var(--ink-soft)}
-  .nav{display:flex;gap:20px;font-size:13px;color:var(--ink-soft)}
-  .nav a:hover{color:var(--gold)}
-  @media(max-width:880px){.nav{display:none}}
+  /* ===== マストヘッド ===== */
+  .masthead{background:var(--paper);border-bottom:1px solid var(--line-2)}
+  .mast-inner{max-width:1120px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .brand{display:flex;align-items:center;gap:11px;min-height:34px}
+  .brand img.logo{height:38px;width:auto;display:block}
+  .brand .fb{display:flex;align-items:center;gap:9px}
+  .brand .fb .star{font-family:var(--serif-en);color:var(--gold);font-size:22px;line-height:1}
+  .brand .fb b{font-family:var(--mincho);font-size:18px;letter-spacing:.06em}
+  .brand .fb small{display:block;font-size:9px;letter-spacing:.22em;color:var(--ink-soft);margin-top:2px}
+  .nav{display:flex;gap:22px;font-size:12px;letter-spacing:.04em;color:var(--ink-2)}
+  .nav a{padding-bottom:2px;border-bottom:1px solid transparent;transition:.15s}
+  .nav a:hover{color:var(--gold);border-color:var(--gold)}
+  @media(max-width:900px){.nav{display:none}}
 
-  /* 2カラムレイアウト */
-  .layout{max-width:1100px;margin:0 auto;padding:46px 24px 0;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px}
-  @media(max-width:880px){.layout{grid-template-columns:1fr;gap:0}}
+  /* ===== レイアウト ===== */
+  .layout{max-width:1120px;margin:0 auto;padding:52px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}
+  @media(max-width:900px){.layout{grid-template-columns:1fr;gap:0;padding-top:38px}}
+  .article{max-width:680px}
 
-  /* 記事本体 */
-  .article{max-width:720px}
-  .eyebrow{font-size:12px;letter-spacing:.16em;color:var(--gold);font-weight:700;margin-bottom:16px}
-  h1.title{font-family:var(--mincho);font-weight:800;font-size:clamp(25px,4.4vw,36px);line-height:1.5;margin-bottom:22px}
-  .byline{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--ink-soft);font-size:13px;padding-bottom:24px;border-bottom:1px solid var(--line)}
-  .byline .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#d9c7a3,var(--gold))}
-  .byline .cats span{color:var(--gold)}
-  .hero{margin:32px 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);aspect-ratio:16/8;background:radial-gradient(circle at 30% 30%,#f3efe4,transparent 60%),linear-gradient(135deg,#efece3,#f7f5ef);display:grid;place-items:center;color:#b3ac9b;font-size:13px}
-  .body{font-size:16.5px}
-  .body p{margin:0 0 1.6em}
-  .body h2{font-family:var(--mincho);font-weight:700;font-size:22px;line-height:1.6;margin:2.4em 0 1em;padding-left:14px;border-left:4px solid var(--gold)}
-  .body strong{font-weight:700;background:linear-gradient(transparent 65%,#f0e6cf 65%)}
-  .callout{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:1.8em 0}
-  .callout .step{font-family:var(--mincho);font-weight:700;color:var(--gold);font-size:15px;margin-bottom:6px}
-  .callout p:last-child{margin-bottom:0}
-  .tags{display:flex;gap:10px;flex-wrap:wrap;margin:38px 0 0;padding-top:26px;border-top:1px solid var(--line)}
-  .tags a{font-size:12px;color:var(--ink-soft);border:1px solid var(--line);padding:6px 14px;border-radius:999px;background:#fff}
-  .tags a:hover{border-color:var(--gold);color:var(--gold)}
+  /* キッカー＆タイトル */
+  .kicker{display:flex;align-items:center;gap:12px;font-family:var(--serif-en);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+  .kicker .no{font-weight:600}
+  .kicker .div{flex:1;height:1px;background:var(--line-2)}
+  .kicker .cat{font-family:var(--gothic);font-size:11px;letter-spacing:.12em;color:var(--ink-soft)}
+  h1.title{font-family:var(--mincho);font-weight:800;font-size:clamp(27px,4.3vw,40px);line-height:1.45;letter-spacing:.005em;color:var(--ink);margin-bottom:26px}
+  .dateline{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--ink-soft);font-size:12.5px;letter-spacing:.02em;padding-bottom:0}
+  .dateline b{color:var(--ink-2);font-weight:700}
+  .dateline .sep{width:3px;height:3px;border-radius:50%;background:var(--line-2)}
+  .rule{height:1px;background:var(--line-2);margin:22px 0 0}
 
-  /* CTA（旧メルマガ枠の差し替え） */
-  .cta-card{background:linear-gradient(135deg,#16181d,#22252c);color:#fff;border-radius:16px;padding:30px 28px;text-align:center;margin-top:40px}
-  .cta-card .k{font-family:var(--mincho);font-size:19px;margin-bottom:8px}
-  .cta-card p{color:#cfd2d8;font-size:13.5px;margin-bottom:18px}
-  .btn{display:inline-block;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#fff;font-weight:700;font-size:15px;padding:13px 32px;border-radius:999px}
-  .btn:hover{filter:brightness(1.05)}
+  /* ヒーロー */
+  figure.hero{margin:34px 0 6px}
+  figure.hero .frame{border:1px solid var(--line-2);background:var(--card);aspect-ratio:16/9;overflow:hidden;display:grid;place-items:center}
+  figure.hero img{width:100%;height:100%;object-fit:cover;display:block}
+  figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-spacing:.08em}
+  figure.hero figcaption{font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.04em}
+
+  /* 本文 */
+  .body{font-size:16.5px;color:var(--ink-2);margin-top:30px}
+  .body p{margin:0 0 1.55em}
+  .body>p:first-of-type::first-letter{float:left;font-family:var(--mincho);font-weight:700;color:var(--gold);font-size:3.1em;line-height:.82;padding:.04em .12em 0 0}
+  .body h2{font-family:var(--mincho);font-weight:700;font-size:21px;line-height:1.6;color:var(--ink);margin:2.6em 0 1.05em;position:relative;padding-left:0}
+  .body h2::before{content:"";display:block;width:34px;height:2px;background:var(--gold);margin-bottom:14px}
+  .body strong{font-weight:700;color:var(--ink);background:linear-gradient(transparent 62%,#eadcbb 62%)}
+  .body em{font-style:normal;color:var(--gold);font-weight:700}
+
+  /* STEP（カードをやめ、罫線＋大番号の編集的レイアウト） */
+  .step{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;border-top:1px solid var(--line-2);padding:18px 0 4px;margin:1.4em 0}
+  .step .n{font-family:var(--serif-en);font-size:34px;font-weight:600;color:var(--gold);line-height:.9}
+  .step .t{font-family:var(--mincho);font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px}
+  .step p{margin:0;font-size:15px;color:var(--ink-2)}
+
+  .pull{font-family:var(--mincho);font-weight:600;font-size:20px;line-height:1.85;color:var(--ink);border-left:2px solid var(--gold);padding:6px 0 6px 22px;margin:1.8em 0}
+
+  /* タグ */
+  .filed{margin:42px 0 0;padding-top:22px;border-top:1px solid var(--line-2);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .filed .lab{font-family:var(--serif-en);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .filed a{font-size:12px;color:var(--ink-2);letter-spacing:.03em}
+  .filed a:hover{color:var(--gold)}
 
   /* 前後動線 */
-  .pager{margin-top:40px;padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);font-size:14px}
-  .pager a{color:var(--ink-soft)}.pager a:hover{color:var(--gold)}
-  .pager .home{color:var(--gold);font-weight:700}
+  .pager{margin-top:40px;border-top:1px solid var(--line-2);display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding-top:20px;font-size:13px}
+  .pager a{color:var(--ink-soft)}
+  .pager a:hover{color:var(--gold)}
+  .pager .prev{text-align:left}.pager .next{text-align:right}
+  .pager .home{font-family:var(--serif-en);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-size:12px}
 
   /* ===== サイドバー ===== */
-  .side{position:sticky;top:84px;align-self:start;display:flex;flex-direction:column;gap:30px}
-  @media(max-width:880px){.side{position:static;margin:56px 0 0;border-top:1px solid var(--line);padding-top:40px}}
-  .profile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px 22px;text-align:center}
-  .profile .ph{width:92px;height:92px;border-radius:50%;margin:0 auto 14px;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.08);background:radial-gradient(circle at 50% 35%,#e9dcc2,#cdb487);display:grid;place-items:center;color:#8a774f;font-size:11px}
-  .profile h4{font-family:var(--mincho);font-size:18px;margin-bottom:4px}
-  .profile .role{font-size:11.5px;color:var(--gold);font-weight:700;letter-spacing:.04em;margin-bottom:14px}
-  .profile p{font-size:12.5px;color:var(--ink-soft);line-height:1.95;text-align:left}
-  .profile .sns{display:flex;justify-content:center;gap:10px;margin-top:16px}
-  .profile .sns a{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;color:var(--ink-soft)}
-  .profile .sns a:hover{border-color:var(--gold);color:var(--gold)}
-  .swidget h3{font-family:var(--mincho);font-size:15px;border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:6px;margin-bottom:12px}
-  .swidget .recent a{display:block;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
+  .side{position:sticky;top:28px;align-self:start;display:flex;flex-direction:column;gap:34px}
+  @media(max-width:900px){.side{position:static;margin:60px 0 0;border-top:1px solid var(--line-2);padding-top:44px}}
+  .contrib{border:1px solid var(--line-2);background:var(--card)}
+  .contrib .ph{aspect-ratio:1;overflow:hidden;background:#ece4d3;display:grid;place-items:center}
+  .contrib .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .contrib .ph .fb{font-family:var(--serif-en);color:#b09a6e;font-size:13px;letter-spacing:.08em}
+  .contrib .pad{padding:20px 20px 22px}
+  .contrib .lab{font-family:var(--serif-en);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .contrib h4{font-family:var(--mincho);font-size:18px;margin-bottom:3px}
+  .contrib .role{font-size:11px;color:var(--ink-soft);letter-spacing:.04em;margin-bottom:13px}
+  .contrib p{font-size:12px;color:var(--ink-2);line-height:1.95}
+  .contrib .links{display:flex;gap:8px;margin-top:15px}
+  .contrib .links a{font-size:11px;letter-spacing:.04em;color:var(--ink-2);border-bottom:1px solid var(--line-2);padding-bottom:2px}
+  .contrib .links a:hover{color:var(--gold);border-color:var(--gold)}
+  .swidget h3{font-family:var(--serif-en);font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);padding-bottom:9px;border-bottom:1px solid var(--gold);margin-bottom:4px}
+  .swidget .recent a{display:block;padding:13px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--ink-2)}
   .swidget .recent a:hover{color:var(--gold)}
-  .swidget .recent .d{display:block;font-size:11px;color:#aaa;margin-top:3px}
+  .swidget .recent .d{display:block;font-family:var(--serif-en);font-size:11px;letter-spacing:.06em;color:var(--ink-soft);margin-top:4px}
 
-  footer{margin-top:64px;border-top:1px solid var(--line);background:#fff}
-  .foot-inner{max-width:1100px;margin:0 auto;padding:34px 24px;color:var(--ink-soft);font-size:12.5px;text-align:center;line-height:2.2}
-  .foot-inner .links a{margin:0 10px}.foot-inner .links a:hover{color:var(--gold)}
-  .foot-inner .cc{margin-top:10px;color:#aaa}
+  /* フッター */
+  footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)}
+  .foot-inner{max-width:1120px;margin:0 auto;padding:36px 28px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+  .foot-links{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+  .foot-links a:hover{color:var(--gold)}
+  .foot-cc{font-family:var(--serif-en);font-size:12px;letter-spacing:.05em;color:var(--ink-soft)}
 </style>
 </head>
 <body>
+<div class="top-rule"></div>
 
-<header class="site-head">
-  <div class="head-inner">
-    <a class="brand" href="#"><span class="mark">★</span><span><b>L–MINE 2.0</b><small>L-MINE ON-LINE SCHOOL</small></span></a>
+<header class="masthead">
+  <div class="mast-inner">
+    <a class="brand" href="https://l-mine.com/home">
+      <img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL" onerror="this.remove();var f=document.getElementById('brandFb');if(f)f.hidden=false">
+      <span class="fb" id="brandFb" hidden><span class="star">&#9733;</span><span><b>L&ndash;MINE&nbsp;2.0</b><small>L-MINE ON-LINE SCHOOL</small></span></span>
+    </a>
     <nav class="nav">
-      <a href="#">ホーム</a><a href="#">行動経済学への想い</a>
-      <a href="#" style="color:var(--gold)">コラム</a>
-      <a href="#">オンラインコース一覧</a><a href="#">KINDLE小説</a><a href="#">お問い合わせ</a>
+      <a href="https://l-mine.com/home">ホーム</a>
+      <a href="https://columns.l-mine.com/behavioral-economics-lp.html">行動経済学への想い</a>
+      <a href="columns.html" style="color:var(--gold);border-color:var(--gold)">コラム</a>
+      <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
+      <a href="https://columns.l-mine.com/book-intro-dark.html">KINDLE小説</a>
+      <a href="https://l-mine.com/contact-us">お問い合わせ</a>
     </nav>
   </div>
 </header>
 
 <div class="layout">
-  <!-- 記事 -->
   <main class="article">
-    <div class="eyebrow">COLUMN #78 ・ マーケティング</div>
-    <h1 class="title">情報過多の時代に、<br>正しく悩める人だけが結果を出す</h1>
-    <div class="byline">
-      <span class="avatar"></span>
-      <div>
-        <div><strong style="background:none">とーる</strong>｜行動経済アナリスト</div>
-        <div class="cats"><span>マーケティング / ビジネス / コンテンツビジネス / 起業</span>　・　2026.05.08</div>
-      </div>
+    <div class="kicker">
+      <span class="no">No.78</span>
+      <span class="div"></span>
+      <span class="cat">マーケティング</span>
     </div>
+    <h1 class="title">情報過多の時代に、<br>正しく悩める人だけが結果を出す</h1>
+    <div class="dateline"><b>文・とーる</b><span class="sep"></span><span>行動経済アナリスト</span><span class="sep"></span><span>2026年5月8日</span></div>
+    <div class="rule"></div>
 
-    <div class="hero">［ 記事イメージ（線画イラスト等） ］</div>
+    <figure class="hero">
+      <div class="frame">
+        <img src="assets/column78-hero.jpg" alt="" onerror="this.remove();var p=document.getElementById('heroPh');if(p)p.hidden=false">
+        <span class="ph" id="heroPh" hidden>Illustration</span>
+      </div>
+      <figcaption>※ 記事のヒーロー画像（線画イラスト等／任意）</figcaption>
+    </figure>
 
     <div class="body">
-      <p>どーも、とーるです。</p>
-      <p>突然ですが、こんな経験ありませんか？</p>
-      <p>夏前に「なんかエアコン臭い、汚いかも」と感じた。で、スマホを開いて検索した。「エアコン　汚い　対処法」。検索結果には、プロの業者の記事がずらっと並んでいる。気づいたらあなたは、クリーニング業者の料金を比べている。</p>
-      <p>では、ここで一度整理してみます。あなたの本来の目的って、なんでしたっけ？ 「エアコンをきれいにしたい」「臭いをなんとかしたい」だったはず。それがいつの間にか、<strong>「エアコンクリーニングをすること」</strong>に置き換わっている。</p>
-      <p>これを行動経済学では、<strong>「目的のすり替わり」</strong>と呼びます。そしてSNS起業家の失敗の多くは、まさにこれが原因です。</p>
+      <p>どーも、とーるです。突然ですが、こんな経験ありませんか。夏前に「なんかエアコン臭い、汚いかも」と感じた。で、スマホを開いて検索した。「エアコン　汚い　対処法」。検索結果には、プロの業者の記事がずらっと並んでいる。気づいたらあなたは、クリーニング業者の料金を比べている。</p>
+      <p>では、ここで一度整理してみます。あなたの本来の目的って、なんでしたっけ。「エアコンをきれいにしたい」「臭いをなんとかしたい」だったはず。それがいつの間にか、<strong>「エアコンクリーニングをすること」</strong>に置き換わっている。</p>
+      <p>これを行動経済学では、<em>目的のすり替わり</em>と呼びます。そしてSNS起業家の失敗の多くは、まさにこれが原因です。</p>
 
       <h2>「悩み」の構造が、時代とともに変わってしまう</h2>
       <p>情報も商品も少なかった時代は、悩みとニーズがダイレクトにつながっていました。解決策の選択肢が少ないから、自分で考えて動くしかなかった。ニーズがそのまま「顕在」の状態で残っていたんです。</p>
       <p>でも今は違います。検索すれば、悩みに対する解決策（ウォンツ）が一瞬で手に入る。その解決策が世の中に広まって認知されると、いつの間にか<strong>ウォンツがニーズに変わってしまう</strong>。</p>
-      <p>SNSビジネスに置き換えると、こうです。「売上が欲しい（本来のニーズ）」→「SNSで集客すればいい」→「SNSで集客する」が常識化→気づいたら「SNSで集客する」がニーズに変わっている。本来は手段だったものが、いつの間にか目的になってしまうわけですね。</p>
+      <p class="pull">本来は手段だったものが、いつの間にか目的になってしまう。</p>
+      <p>SNSビジネスに置き換えると、こうです。「売上が欲しい（本来のニーズ）」から「SNSで集客すればいい」へ、そして「SNSで集客する」が常識化し、気づけば「SNSで集客すること」自体がニーズに変わっている。</p>
 
       <h2>「正しく悩む」という技術</h2>
-      <p>じゃあどうすればいいか。まず、<strong>手段から逆算するのをやめること</strong>です。「リールを作るべきか」じゃなくて、「自分のビジネスの課題はどこにあるか」から先に考える。具体的には、こんな手順を試してみてください。</p>
-      <div class="callout"><div class="step">STEP 1　本当に解決したいことを先に言語化する</div><p>検索する前に、紙かメモに一行書く。「私が本当に解決したいのは○○だ」と。これだけで、情報を見る前に自分の“問い”が固定されます。</p></div>
-      <div class="callout"><div class="step">STEP 2　手段と目的を分けて書き出す</div><p>リールを作る・フォロワーを増やす・毎日投稿する——これは全部「手段」。では本当の目的は？ ここを書き出すだけで、思考が整理されます。</p></div>
-      <div class="callout"><div class="step">STEP 3　別の手段で解決できないかを問う</div><p>その目的を達成するために、他にどんな方法があるか。固定化された選択肢から抜け出せます。</p></div>
-      <p>ビジネスの失敗は、「悩み方」から始まっている——。情報が多い時代だからこそ、正しく悩める人が、結果を出します。</p>
-      <p style="color:var(--ink-soft);font-size:14px">（※これはデザイン確認用の試作です。本文は一部抜粋／改行・装飾は仮置きです）</p>
+      <p>じゃあどうすればいいか。まず、<strong>手段から逆算するのをやめること</strong>です。「リールを作るべきか」ではなく、「自分のビジネスの課題はどこにあるか」から先に考える。具体的には、こんな手順を試してみてください。</p>
+
+      <div class="step"><div class="n">01</div><div><div class="t">本当に解決したいことを、先に言語化する</div><p>検索する前に、紙かメモに一行書く。「私が本当に解決したいのは○○だ」と。これだけで、情報を見る前に自分の“問い”が固定されます。</p></div></div>
+      <div class="step"><div class="n">02</div><div><div class="t">手段と目的を分けて書き出す</div><p>リールを作る・フォロワーを増やす・毎日投稿する——これは全部「手段」。では本当の目的は。ここを書き出すだけで、思考が整理されます。</p></div></div>
+      <div class="step"><div class="n">03</div><div><div class="t">別の手段で解決できないかを問う</div><p>その目的を達成するために、他にどんな方法があるか。固定化された選択肢から抜け出せます。</p></div></div>
+
+      <p>ビジネスの失敗は、「悩み方」から始まっている。情報が多い時代だからこそ、正しく悩める人が、結果を出します。</p>
+      <p style="color:var(--ink-soft);font-size:13.5px">（※デザイン確認用の試作。本文は一部抜粋です）</p>
     </div>
 
-    <div class="tags"><a href="#">＃SNS</a><a href="#">＃マーケティング</a><a href="#">＃行動経済学</a><a href="#">＃起業</a></div>
+    <div class="filed">
+      <span class="lab">Filed under</span>
+      <a href="#">SNS</a><a href="#">マーケティング</a><a href="#">行動経済学</a><a href="#">起業</a>
+    </div>
 
     <nav class="pager">
-      <a href="#">← 前のコラム（#77）</a>
-      <a class="home" href="columns.html">コラム一覧へ</a>
-      <a href="#">次のコラム（#79）→</a>
+      <a class="prev" href="#">&larr; 前の記事</a>
+      <a class="home" href="columns.html">Index</a>
+      <a class="next" href="#">次の記事 &rarr;</a>
     </nav>
   </main>
 
-  <!-- サイドバー：自己紹介 -->
   <aside class="side">
-    <div class="profile">
-      <div class="ph">［ 写真 ］</div>
-      <h4>とーる</h4>
-      <div class="role">行動経済アナリスト / デジタルクリエイター</div>
-      <p>1985年3月生まれ。愛知県名古屋市在住。大学ではビジネス学科を専攻。第1回行動経済学検定1級合格者で、日本営業科学協会認定の行動経済アナリスト。自分の知識を活かしてビジネスをする起業初心者の方を全般サポートしています。</p>
-      <div class="sns"><a href="#">Instagram</a><a href="#">LINE</a></div>
+    <div class="contrib">
+      <div class="ph">
+        <img src="assets/toru.jpg" alt="とーる" onerror="this.remove();var f=document.getElementById('phFb');if(f)f.hidden=false">
+        <span class="fb" id="phFb" hidden>Portrait</span>
+      </div>
+      <div class="pad">
+        <div class="lab">Columnist</div>
+        <h4>とーる</h4>
+        <div class="role">行動経済アナリスト / デジタルクリエイター</div>
+        <p>1985年生まれ、名古屋市在住。第1回行動経済学検定1級合格者で、日本営業科学協会認定の行動経済アナリスト。知識を活かしてビジネスをする起業初心者を全般サポートしています。</p>
+        <div class="links"><a href="https://note.com/tooru_column">note</a><a href="https://l-mine.com/contact-us">お問い合わせ</a></div>
+      </div>
     </div>
     <div class="swidget">
-      <h3>最近の記事</h3>
+      <h3>Recent</h3>
       <div class="recent">
-        <a href="#">#コラム81：「ゆとり」と「焦り」が、起業の質を決めてしまう<span class="d">2026.05.25</span></a>
-        <a href="#">#コラム80：「0.1%」を上げてみる<span class="d">2026.05.24</span></a>
-        <a href="#">#コラム79：「母数」か「率」か、SNS売り上げの2つの構造<span class="d">2026.05.14</span></a>
-        <a href="#">#コラム77：「払った価値がありました！」は値上げのサインじゃない<span class="d">2026.04.28</span></a>
+        <a href="#">「ゆとり」と「焦り」が、起業の質を決めてしまうという話<span class="d">No.81 — 2026.05.25</span></a>
+        <a href="#">「0.1%」を上げてみる<span class="d">No.80 — 2026.05.24</span></a>
+        <a href="#">「母数」か「率」か、SNS売り上げの2つの構造<span class="d">No.79 — 2026.05.14</span></a>
+        <a href="#">「払った価値がありました！」は、値上げのサインじゃない<span class="d">No.77 — 2026.04.28</span></a>
       </div>
     </div>
   </aside>
@@ -167,8 +219,13 @@
 
 <footer>
   <div class="foot-inner">
-    <div class="links"><a href="#">利用規約</a><a href="#">特定商取引法に基づく表示</a><a href="#">プライバシーポリシー</a><a href="#">免責事項</a></div>
-    <div class="cc">© 2026 L-MINE　無断複写・転載を禁じます。</div>
+    <div class="foot-links">
+      <a href="https://l-mine.com/term">利用規約</a>
+      <a href="https://l-mine.com/about">特定商取引法に基づく表示</a>
+      <a href="https://l-mine.com/privacy">プライバシーポリシー</a>
+      <a href="https://l-mine.com/mensekizikou">免責事項</a>
+    </div>
+    <div class="foot-cc">© 2026 L-MINE</div>
   </div>
 </footer>
 
