@@ -23,7 +23,6 @@
   a{color:inherit;text-decoration:none}
   .top-rule{height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-2) 60%,transparent)}
 
-  /* ===== マストヘッド ===== */
   .masthead{background:var(--paper);border-bottom:1px solid var(--line-2)}
   .mast-inner{max-width:1120px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px}
   .brand{display:flex;align-items:center;gap:11px;min-height:34px}
@@ -37,60 +36,54 @@
   .nav a:hover{color:var(--gold);border-color:var(--gold)}
   @media(max-width:900px){.nav{display:none}}
 
-  /* ===== レイアウト ===== */
   .layout{max-width:1120px;margin:0 auto;padding:52px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}
   @media(max-width:900px){.layout{grid-template-columns:1fr;gap:0;padding-top:38px}}
   .article{max-width:680px}
 
-  /* キッカー＆タイトル */
   .kicker{display:flex;align-items:center;gap:12px;font-family:var(--serif-en);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
   .kicker .no{font-weight:600}
   .kicker .div{flex:1;height:1px;background:var(--line-2)}
   .kicker .cat{font-family:var(--gothic);font-size:11px;letter-spacing:.12em;color:var(--ink-soft)}
   h1.title{font-family:var(--mincho);font-weight:800;font-size:clamp(27px,4.3vw,40px);line-height:1.45;letter-spacing:.005em;color:var(--ink);margin-bottom:26px}
-  .dateline{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--ink-soft);font-size:12.5px;letter-spacing:.02em;padding-bottom:0}
+  .dateline{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--ink-soft);font-size:12.5px;letter-spacing:.02em}
   .dateline b{color:var(--ink-2);font-weight:700}
   .dateline .sep{width:3px;height:3px;border-radius:50%;background:var(--line-2)}
   .rule{height:1px;background:var(--line-2);margin:22px 0 0}
 
-  /* ヒーロー */
   figure.hero{margin:34px 0 6px}
   figure.hero .frame{border:1px solid var(--line-2);background:var(--card);aspect-ratio:16/9;overflow:hidden;display:grid;place-items:center}
   figure.hero img{width:100%;height:100%;object-fit:cover;display:block}
   figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-spacing:.08em}
   figure.hero figcaption{font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.04em}
 
-  /* 本文 */
-  .body{font-size:16.5px;color:var(--ink-2);margin-top:30px}
-  .body p{margin:0 0 1.55em}
+  /* 本文（原文の改行・空白をそのまま再現） */
+  .body{font-size:16.5px;color:var(--ink-2);margin-top:30px;line-height:1.95}
+  .body p{margin:0 0 .72em}
   .body>p:first-of-type::first-letter{float:left;font-family:var(--mincho);font-weight:700;color:var(--gold);font-size:3.1em;line-height:.82;padding:.04em .12em 0 0}
-  .body h2{font-family:var(--mincho);font-weight:700;font-size:21px;line-height:1.6;color:var(--ink);margin:2.6em 0 1.05em;position:relative;padding-left:0}
+  .body h2{font-family:var(--mincho);font-weight:700;font-size:21px;line-height:1.6;color:var(--ink);margin:1.6em 0 1.05em;position:relative}
   .body h2::before{content:"";display:block;width:34px;height:2px;background:var(--gold);margin-bottom:14px}
-  .body strong{font-weight:700;color:var(--ink);background:linear-gradient(transparent 62%,#eadcbb 62%)}
+  .body strong{font-weight:700;color:var(--ink)}
   .body em{font-style:normal;color:var(--gold);font-weight:700}
+  .body ul{margin:.1em 0 .9em;padding-left:1.25em}
+  .body li{margin:.22em 0}
+  .body .flow{text-align:center;color:var(--gold);margin:.05em 0 .35em;font-size:14px;line-height:1.2}
+  .body .sec{text-align:center;color:var(--gold-2);letter-spacing:.5em;margin:2.2em 0 2em;font-size:12px}
+  .body .step-h{margin:1.5em 0 .35em;display:flex;gap:11px;align-items:baseline}
+  .body .step-h .lab{font-family:var(--serif-en);color:var(--gold);font-size:15px;letter-spacing:.08em;white-space:nowrap}
+  .body .step-h b{font-family:var(--mincho);font-weight:700;color:var(--ink)}
+  .body .sign{font-family:var(--mincho);color:var(--ink);margin-top:1.6em}
 
-  /* STEP（カードをやめ、罫線＋大番号の編集的レイアウト） */
-  .step{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;border-top:1px solid var(--line-2);padding:18px 0 4px;margin:1.4em 0}
-  .step .n{font-family:var(--serif-en);font-size:34px;font-weight:600;color:var(--gold);line-height:.9}
-  .step .t{font-family:var(--mincho);font-weight:700;font-size:16px;color:var(--ink);margin-bottom:6px}
-  .step p{margin:0;font-size:15px;color:var(--ink-2)}
-
-  .pull{font-family:var(--mincho);font-weight:600;font-size:20px;line-height:1.85;color:var(--ink);border-left:2px solid var(--gold);padding:6px 0 6px 22px;margin:1.8em 0}
-
-  /* タグ */
   .filed{margin:42px 0 0;padding-top:22px;border-top:1px solid var(--line-2);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .filed .lab{font-family:var(--serif-en);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
   .filed a{font-size:12px;color:var(--ink-2);letter-spacing:.03em}
   .filed a:hover{color:var(--gold)}
 
-  /* 前後動線 */
   .pager{margin-top:40px;border-top:1px solid var(--line-2);display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding-top:20px;font-size:13px}
   .pager a{color:var(--ink-soft)}
   .pager a:hover{color:var(--gold)}
   .pager .prev{text-align:left}.pager .next{text-align:right}
   .pager .home{font-family:var(--serif-en);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-size:12px}
 
-  /* ===== サイドバー ===== */
   .side{position:sticky;top:28px;align-self:start;display:flex;flex-direction:column;gap:34px}
   @media(max-width:900px){.side{position:static;margin:60px 0 0;border-top:1px solid var(--line-2);padding-top:44px}}
   .contrib{border:1px solid var(--line-2);background:var(--card)}
@@ -110,7 +103,6 @@
   .swidget .recent a:hover{color:var(--gold)}
   .swidget .recent .d{display:block;font-family:var(--serif-en);font-size:11px;letter-spacing:.06em;color:var(--ink-soft);margin-top:4px}
 
-  /* フッター */
   footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)}
   .foot-inner{max-width:1120px;margin:0 auto;padding:36px 28px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
   .foot-links{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
@@ -158,25 +150,168 @@
     </figure>
 
     <div class="body">
-      <p>どーも、とーるです。突然ですが、こんな経験ありませんか。夏前に「なんかエアコン臭い、汚いかも」と感じた。で、スマホを開いて検索した。「エアコン　汚い　対処法」。検索結果には、プロの業者の記事がずらっと並んでいる。気づいたらあなたは、クリーニング業者の料金を比べている。</p>
-      <p>では、ここで一度整理してみます。あなたの本来の目的って、なんでしたっけ。「エアコンをきれいにしたい」「臭いをなんとかしたい」だったはず。それがいつの間にか、<strong>「エアコンクリーニングをすること」</strong>に置き換わっている。</p>
-      <p>これを行動経済学では、<em>目的のすり替わり</em>と呼びます。そしてSNS起業家の失敗の多くは、まさにこれが原因です。</p>
+      <p>どーもとーるです。</p>
+      <p>突然ですが、こんな経験ありませんか？</p>
+      <p>夏前に「なんかエアコン臭い、汚いかも」と感じた。</p>
+      <p>で、スマホを開いて検索した。</p>
+      <p>「エアコン　汚い　対処法」</p>
+      <p>検索結果には、プロの業者の記事がずらっと並んでいる。</p>
+      <p>気づいたらあなたは、クリーニング業者の料金を比べている。</p>
+      <p>——でも、ここで一度立ち止まってほしいんです。</p>
+      <p>あなたの本来の目的って、なんでしたっけ？</p>
+      <p>「エアコンをきれいにしたい」というよりも、</p>
+      <p>「エアコンの臭いをなんとかしたい」だったはず。</p>
+      <p>それがいつの間にか、</p>
+      <p>「エアコンクリーニングをすること」に置き換わっている。</p>
+      <p>これを行動経済学では、</p>
+      <p><em>「目的のすり替わり（Goal Substitution）」</em>と呼びます。</p>
+      <p>そしてSNS起業家の失敗の多くは、</p>
+      <p>まさにこれが原因です。</p>
 
-      <h2>「悩み」の構造が、時代とともに変わってしまう</h2>
-      <p>情報も商品も少なかった時代は、悩みとニーズがダイレクトにつながっていました。解決策の選択肢が少ないから、自分で考えて動くしかなかった。ニーズがそのまま「顕在」の状態で残っていたんです。</p>
-      <p>でも今は違います。検索すれば、悩みに対する解決策（ウォンツ）が一瞬で手に入る。その解決策が世の中に広まって認知されると、いつの間にか<strong>ウォンツがニーズに変わってしまう</strong>。</p>
-      <p class="pull">本来は手段だったものが、いつの間にか目的になってしまう。</p>
-      <p>SNSビジネスに置き換えると、こうです。「売上が欲しい（本来のニーズ）」から「SNSで集客すればいい」へ、そして「SNSで集客する」が常識化し、気づけば「SNSで集客すること」自体がニーズに変わっている。</p>
+      <p class="sec">&#10022;</p>
+
+      <h2>「悩み」の構造が、時代とともに変わってしまった</h2>
+      <p>少し、時代の話をします。</p>
+      <p>情報も商品も少なかった時代は、</p>
+      <p>悩みとニーズがダイレクトにつながっていました。</p>
+      <p>「エアコンが臭い、どうしよう」</p>
+      <p>解決策の選択肢が少ないから、</p>
+      <p>自分で考えて動くしかなかった。</p>
+      <p>ニーズがそのまま「顕在」の状態で残っていた。</p>
+      <p>でも今は違います。</p>
+      <p>ネットで検索すれば、</p>
+      <p>悩みに対する解決策（ウォンツ）が</p>
+      <p>一瞬で手に入る時代です。</p>
+      <p>「エアコンが臭い」→「クリーニング業者に頼む」</p>
+      <p>ここまでは、まだわかる。</p>
+      <p>問題は、その次の段階です。</p>
+      <p>その「解決策（ウォンツ）」が</p>
+      <p>世の中に広まって、多くの人に認知されると——</p>
+      <p>いつの間にか、</p>
+      <p><strong>ウォンツがニーズに変わってしまう。</strong></p>
+      <p>「エアコンが臭い」という本来のニーズは潜在化して、</p>
+      <p>「エアコンクリーニングをしたい」という</p>
+      <p>ウォンツが顕在ニーズとして表に出てくる。</p>
+      <p>SNSビジネスに置き換えると、こうなります。</p>
+      <p>「売上が欲しい」（本来のニーズ）</p>
+      <p class="flow">&darr;</p>
+      <p>「SNSで集客すればいい」という解決策を知る</p>
+      <p class="flow">&darr;</p>
+      <p>「SNSで集客する」という概念が世に浸透する</p>
+      <p class="flow">&darr;</p>
+      <p>「売上が欲しいからSNSで集客する」が常識化</p>
+      <p class="flow">&darr;</p>
+      <p>気づいたら「SNSで集客する」がニーズに変わっている</p>
+      <p>本来は手段だったものが、</p>
+      <p>いつの間にか目的になってしまう。</p>
+      <p>そして多くのSNS起業家が</p>
+      <p>「SNSで集客できていない自分」を悩み始める。</p>
+      <p>でも本当に悩むべきは</p>
+      <p>「売上が上がっていない」ことだったはずです。</p>
+      <p>これが、情報過多の時代に起きている</p>
+      <p>「ニーズとウォンツの逆転」です。</p>
+
+      <p class="sec">&#10022;</p>
+
+      <h2>なぜ情報過多の時代に「本当の目的」を見失うのか</h2>
+      <p>原因はシンプルです。</p>
+      <p><strong>最初に見た解決策が、正しい解決策に見えてしまうから。</strong></p>
+      <p>エアコンの例なら、本当は：</p>
+      <ul>
+        <li>フィルター掃除だけで解決できたかもしれない</li>
+        <li>湿度設定が問題だったかもしれない</li>
+        <li>そもそも買い替え時だったかもしれない</li>
+      </ul>
+      <p>でも検索して最初に見えたのが「クリーニング業者」だったから、</p>
+      <p>その選択肢しか見えなくなった。</p>
+      <p>行動経済学の言葉で言えば、これは「フレーミング効果」と「利用可能性ヒューリスティック」が同時に起きている状態です。</p>
+      <p>難しい話じゃないです。要は——</p>
+      <p>「最初に見せられた枠組みで考えてしまう」</p>
+      <p>「目についたものを正しいと思いこむ」</p>
+      <p>というだけのこと。</p>
+      <p>で、これがSNS起業家の世界で起きると、どうなると思いますか？</p>
+
+      <p class="sec">&#10022;</p>
+
+      <h2>SNS起業家に起きている「目的のすり替わり」の実例</h2>
+      <p>ちょっと具体的な話をします。</p>
+      <p>以前、コンサルで関わったある方のケースです。</p>
+      <p>その方は「売上が伸び悩んでいる」という相談で来てくれたのですが、</p>
+      <p>最初の10分の会話で、ほぼ原因がわかりました。</p>
+      <p>本来の悩み：「売上が伸び悩んでいる」</p>
+      <p class="flow">&darr;</p>
+      <p>でも話の内容はずっと：「リールのクオリティを上げるにはどうすれば？」</p>
+      <p>本人の中では完全に、</p>
+      <p>「リールを改善すれば売上が上がる」という方程式が出来上がっていた。</p>
+      <p>だから、リール制作に毎月かなりの時間とお金をかけていた。</p>
+      <p>でも実際に話を掘り下げてみると、</p>
+      <p>問題はリールじゃなかった。</p>
+      <p>その方には既に十分な「温かいフォロワー」がいて、</p>
+      <p>問題は「商品が明確じゃない」ことだった。</p>
+      <p>リールをいくら磨いても、</p>
+      <p>買う理由が見えない商品では売れない。</p>
+      <p>ここで起きていたのがまさに目的のすり替わりです。</p>
+      <p>「売上を上げたい（本来の目的）」が、</p>
+      <p>「リールを改善すること（手段）」にすり替わっていた。</p>
+      <p>そしてこれは、珍しいケースじゃありません。</p>
+      <p>ほぼ全員がやっています。</p>
+
+      <p class="sec">&#10022;</p>
 
       <h2>「正しく悩む」という技術</h2>
-      <p>じゃあどうすればいいか。まず、<strong>手段から逆算するのをやめること</strong>です。「リールを作るべきか」ではなく、「自分のビジネスの課題はどこにあるか」から先に考える。具体的には、こんな手順を試してみてください。</p>
+      <p>じゃあどうすればいいか、という話です。</p>
+      <p>まず、<strong>手段から逆算するのをやめること</strong>です。</p>
+      <p>「リールを作るべきか」じゃなくて、</p>
+      <p>「自分のビジネスの課題はどこにあるか」から先に考える。</p>
+      <ul>
+        <li>認知がないのか</li>
+        <li>信頼が築けていないのか</li>
+        <li>商品設計の問題なのか</li>
+        <li>導線が機能していないのか</li>
+      </ul>
+      <p>ここを特定しないまま「リールを作る」をやっても、</p>
+      <p>全部無駄になります。</p>
+      <p>そして具体的には、こういう手順を試してみてください。</p>
 
-      <div class="step"><div class="n">01</div><div><div class="t">本当に解決したいことを、先に言語化する</div><p>検索する前に、紙かメモに一行書く。「私が本当に解決したいのは○○だ」と。これだけで、情報を見る前に自分の“問い”が固定されます。</p></div></div>
-      <div class="step"><div class="n">02</div><div><div class="t">手段と目的を分けて書き出す</div><p>リールを作る・フォロワーを増やす・毎日投稿する——これは全部「手段」。では本当の目的は。ここを書き出すだけで、思考が整理されます。</p></div></div>
-      <div class="step"><div class="n">03</div><div><div class="t">別の手段で解決できないかを問う</div><p>その目的を達成するために、他にどんな方法があるか。固定化された選択肢から抜け出せます。</p></div></div>
+      <p class="step-h"><span class="lab">STEP 1</span><b>「本当に解決したいことは何か」を先に言語化する</b></p>
+      <p>検索する前に、紙かメモアプリに一行書く。</p>
+      <p>「私が本当に解決したいのは○○だ」と。</p>
+      <p>これだけで、情報を見る前に自分の「問い」が固定されます。</p>
+      <p>固定されると、見えてくるものが全然変わります。</p>
 
-      <p>ビジネスの失敗は、「悩み方」から始まっている。情報が多い時代だからこそ、正しく悩める人が、結果を出します。</p>
-      <p style="color:var(--ink-soft);font-size:13.5px">（※デザイン確認用の試作。本文は一部抜粋です）</p>
+      <p class="step-h"><span class="lab">STEP 2</span><b>「手段と目的を分けて書き出す」</b></p>
+      <p>今やろうとしていることが「目的」か「手段」かを確認する。</p>
+      <p>リールを作る → 手段</p>
+      <p>フォロワーを増やす → 手段</p>
+      <p>毎日投稿する → 手段</p>
+      <p>では本当の目的は？</p>
+      <p>ここを書き出すだけで、自分の思考が整理されます。</p>
+
+      <p class="step-h"><span class="lab">STEP 3</span><b>「別の手段で解決できないか」を問う</b></p>
+      <p>その目的を達成するために、他にどんな方法があるか。</p>
+      <p>リール以外の方法は？</p>
+      <p>フォロワー増加以外の方法は？</p>
+      <p>これを考えることで、</p>
+      <p>固定化された選択肢から抜け出せます。</p>
+
+      <p class="sec">&#10022;</p>
+
+      <h2>ビジネスの失敗は、「悩み方」から始まっている</h2>
+      <p>ここまで読んでくれた人に、正直に言います。</p>
+      <p>SNSビジネスで行き詰まっている人の多くは、</p>
+      <p>戦略が間違っているんじゃなくて、</p>
+      <p><strong>悩みの設定が間違っています。</strong></p>
+      <p>正しい問いを立てれば、正しい答えが見える。</p>
+      <p>間違った問いを立てると、正しい答えを出しても意味がない。</p>
+      <p>「フォロワーを増やすにはどうすればいいか」という問いを立てている限り、</p>
+      <p>フォロワーを増やす答えしか出てこない。</p>
+      <p>「自分のビジネスで、次の1人のお客さんを獲得するには何が必要か」</p>
+      <p>この問いを立てると、全然違う答えが出てくることが多い。</p>
+      <p>エアコンの臭いが湿度設定の問題なのに、クリーニングをしても解決しない。</p>
+      <p>それと同じことが、ビジネスでも起きています。</p>
+      <p>あなたの本当の目的は何ですか？</p>
+      <p>その問いを、もう一度ゆっくり考えてみてください。</p>
+      <p class="sign">とーる｜行動経済アナリスト</p>
     </div>
 
     <div class="filed">
