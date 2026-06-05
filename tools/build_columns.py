@@ -148,11 +148,11 @@ def render_article(c, cols):
     rec_html = "\n        ".join(
         f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">No.{r["number"]} — {r["date_disp_short"]}</span></a>'
         for r in recents)
-    # ヒーロー
+    # ヒーロー（画像が無ければ枠ごと省略）
     if hero_exists(n):
-        hero = f'<img src="assets/column{n}-hero.jpg" alt="">'
+        hero_block = f'<figure class="hero"><div class="frame"><img src="assets/column{n}-hero.jpg" alt=""></div></figure>'
     else:
-        hero = '<span class="ph">Illustration</span>'
+        hero_block = ''
     tags = "".join(f'<a href="#">{t}</a>' for t in c["tags"])
     body = convert_body(c["body"], c.get("sign", ""))
     title_html = c.get("title_html", html.escape(c["title"]))
@@ -186,7 +186,7 @@ def render_article(c, cols):
     <div class="dateline"><b>文・とーる</b><span class="sep"></span><span>行動経済アナリスト</span><span class="sep"></span><span>{html.escape(c["date_disp"])}</span></div>
     <div class="rule"></div>
 
-    <figure class="hero"><div class="frame">{hero}</div></figure>
+    {hero_block}
 
     <div class="body">
       {body}
@@ -232,8 +232,11 @@ def render_index(page_cols, page, pages):
         n = c["number"]
         cat = "／".join([c["category"]] + [t for t in c["tags"] if t != c["category"]][:2])
         ex_html = f'<p class="ex">{html.escape(c["excerpt"])}</p>' if c.get("excerpt") else ''
-        posts.append(f'''    <a class="post" href="column{n}.html">
-      {thumb_html(c, "thumb")}
+        has_img = hero_exists(n)
+        cls = "post" if has_img else "post noimg"
+        thumb = f'<div class="thumb"><img src="assets/column{n}-hero.jpg" alt=""></div>' if has_img else ''
+        posts.append(f'''    <a class="{cls}" href="column{n}.html">
+      {thumb}
       <div class="pbody">
         <div class="meta">No.{n} — {html.escape(c["date_disp_short"])}</div>
         <h2>{html.escape(c["title"])}</h2>
