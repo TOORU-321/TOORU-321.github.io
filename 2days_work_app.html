@@ -184,7 +184,7 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
     </div>
     <div class="welcome-section">
       <div class="welcome-name" id="welcome-name">ようこそ</div>
-      <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
+      <div class="welcome-msg" id="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
     </div>
     <div class="progress-bar-wrap">
       <div class="progress-label"><span>提出状況</span><span class="progress-count" id="progress-text">0 / 12</span></div>
@@ -214,7 +214,7 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
       <div class="prev-submission-text" id="prev-submission-text"></div>
     </div>
     <div class="work-form-area">
-      <label for="work-input">あなたの回答</label>
+      <label for="work-input" id="work-form-label">あなたの回答</label>
       <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
       <div class="char-count"><span id="char-count">0</span>文字</div>
     </div>
@@ -441,7 +441,9 @@ async function loadDashboard() {
     var results = await Promise.all([API.getDayConfigs(), API.getSubmissions(state.email)]);
     state.dayConfigs = results[0];
     state.submissions = results[1];
-    document.getElementById('welcome-name').textContent = state.userName;
+    var n = state.userName || 'あなた';
+    document.getElementById('welcome-name').textContent = n + 'さん、こんにちは！';
+    document.getElementById('welcome-msg').textContent = n + 'さん専用の12日間ワーク提出アプリです';
     renderDayCards();
     updateProgress();
     showView('view-dashboard');
@@ -486,6 +488,8 @@ function openWork(day) {
   var submission = state.submissions[day];
   document.getElementById('work-screen-title').textContent = 'Day ' + day + ' ワーク';
   document.getElementById('work-day-label').textContent = 'DAY ' + day;
+  var lbl = document.getElementById('work-form-label');
+  if (lbl) lbl.textContent = (state.userName || 'あなた') + 'さんの回答';
   document.getElementById('work-theme-title').textContent = config.theme || ('Day ' + day);
   document.getElementById('work-description').textContent = config.description || '';
   var banner = document.getElementById('submitted-banner');
@@ -626,12 +630,4 @@ function updateTokutenCountdown() {
   var d = Math.floor(diff / 86400000);
   var h = Math.floor((diff % 86400000) / 3600000);
   var m = Math.floor((diff % 3600000) / 60000);
-  var s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('tk-days').textContent = d;
-  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
-  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
-  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
-}
-</script>
-</body>
-</html>
+  var s
