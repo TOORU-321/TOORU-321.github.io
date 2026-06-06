@@ -63,10 +63,30 @@ def contrib_html():
     </div>'''
 
 # ---------- 本文変換 ----------
+VALID_NUMS = set()  # 存在するコラム番号（main で投入）
+
 def inline(s):
     s = html.escape(s, quote=False)
+    stash = []
+    def hold(frag):
+        stash.append(frag)
+        return f'\x00{len(stash)-1}\x00'
+    # <url> の角括弧を除去
+    s = re.sub(r'&lt;(https?://[^&\s]+?)&gt;', r'\1', s)
+    # 生URL → リンク（プレースホルダに退避して bold/em の影響を受けないように）
+    s = re.sub(r'https?://[^\s<>「」（）、。&]+',
+               lambda m: hold(f'<a href="{m.group(0)}" target="_blank" rel="noopener">{m.group(0)}</a>'), s)
+    # コラム間参照 #NN / #コラムNN → 該当記事へリンク（存在する番号のみ・退避）
+    def xref(m, disp):
+        n = int(m.group(1))
+        return hold(f'<a href="column{n}.html">{disp}</a>') if n in VALID_NUMS else m.group(0)
+    s = re.sub(r'#コラム(\d+)', lambda m: xref(m, f'#コラム{m.group(1)}'), s)
+    s = re.sub(r'(?<![">\d\x00])#(\d+)', lambda m: xref(m, f'#{m.group(1)}'), s)
+    # 強調
     s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
     s = re.sub(r'_(.+?)_', r'<em>\1</em>', s)
+    # プレースホルダ復元
+    s = re.sub(r'\x00(\d+)\x00', lambda m: stash[int(m.group(1))], s)
     return s
 
 def convert_body(body, sign):
@@ -80,6 +100,10 @@ def convert_body(body, sign):
         # セクション区切り
         if raw == "***":
             out.append('<p class="sec">&#10022;</p>')
+            continue
+        # オプトイン準備中マーカー
+        if raw == "[準備中]":
+            out.append('<p class="prep">※ メルマガ・診断・特典などのご案内は、現在準備中です。公開までもうしばらくお待ちください。</p>')
             continue
         # 見出し
         if len(lines) == 1 and lines[0].startswith("## "):
@@ -312,6 +336,7 @@ def main():
         c["date_disp_short"] = f"{y}.{m}.{d}"
         cols.append(c)
     cols.sort(key=lambda z: z["number"])
+    VALID_NUMS.update(c["number"] for c in cols)  # コラム間リンク用
     for c in cols:
         open(os.path.join(OUT, f'column{c["number"]}.html'), "w", encoding="utf-8").write(render_article(c, cols))
     desc = sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True)

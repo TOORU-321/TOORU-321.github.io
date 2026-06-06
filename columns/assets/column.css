@@ -50,6 +50,9 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body h2::before{content:"";display:block;width:34px;height:2px;background:var(--gold);margin-bottom:14px}
 .body strong{font-weight:700;color:var(--ink)}
 .body em{font-style:normal;color:var(--gold);font-weight:700}
+.body a{color:var(--gold);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+.body a:hover{filter:brightness(.88)}
+.body .prep{margin:1.6em 0;padding:13px 18px;border:1px dashed var(--gold-2);background:#faf7ef;color:var(--ink-soft);font-size:13.5px;border-radius:5px;line-height:1.8}
 .body ul{margin:0 0 2.35em;padding-left:1.25em}
 .body li{margin:.25em 0;line-height:1.8}
 .body .flowbox{margin:0 0 2.35em}
