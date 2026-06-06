@@ -134,6 +134,11 @@ def thumb_html(c, cls):
         return f'<div class="{cls}"><img src="assets/column{n}-hero.jpg" alt=""></div>'
     return f'<div class="{cls}"><span class="fb">Illustration</span></div>'
 
+def label(c):
+    if c.get("series") == "Act":
+        return f'Act#{c.get("series_no", "")}'
+    return f'コラム＃{c["number"]}'
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -147,7 +152,7 @@ def render_article(c, cols):
     # 最近の記事（自分以外、日付降順4件）
     recents = [x for x in sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True) if x["number"] != n][:4]
     rec_html = "\n        ".join(
-        f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">No.{r["number"]} — {r["date_disp_short"]}</span></a>'
+        f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">{label(r)} — {r["date_disp_short"]}</span></a>'
         for r in recents)
     # ヒーロー（画像が無ければ枠ごと省略）
     if hero_exists(n):
@@ -182,7 +187,7 @@ def render_article(c, cols):
 
 <div class="layout">
   <main class="article">
-    <div class="kicker"><span class="no">No.{n}</span><span class="div"></span><span class="cat">{html.escape(c["category"])}</span></div>
+    <div class="kicker"><span class="no">{label(c)}</span><span class="div"></span><span class="cat">{html.escape(c["category"])}</span></div>
     <h1 class="title">{title_html}</h1>
     <div class="dateline"><b>文・とーる</b><span class="sep"></span><span>行動経済アナリスト</span><span class="sep"></span><span>{html.escape(c["date_disp"])}</span></div>
     <div class="rule"></div>
@@ -239,7 +244,7 @@ def render_index(page_cols, page, pages):
         posts.append(f'''    <a class="{cls}" href="column{n}.html">
       {thumb}
       <div class="pbody">
-        <div class="meta">No.{n} — {html.escape(c["date_disp_short"])}</div>
+        <div class="meta">{label(c)} — {html.escape(c["date_disp_short"])}</div>
         <h2>{html.escape(c["title"])}</h2>
         {ex_html}
         <div class="cat"><span>{html.escape(c["category"])}</span>{("／" + html.escape("／".join([t for t in c["tags"] if t != c["category"]][:2]))) if len(c["tags"])>1 else ""}</div>
