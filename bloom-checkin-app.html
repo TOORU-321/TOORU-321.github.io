@@ -174,7 +174,6 @@ auth.signInAnonymously().catch(function(e){
 auth.onAuthStateChanged(function(user){
   if(!user) return;
   state.uid=user.uid;
-  document.getElementById('uidlabel').textContent='UID: '+user.uid;
   boot();
 });
 
@@ -184,6 +183,9 @@ async function boot(){
     state.isCoach = roleDoc.exists && (roleDoc.data().uids||[]).indexOf(state.uid)>=0;
   }catch(e){ state.isCoach=false; }
   document.getElementById('roleseg').style.visibility = state.isCoach ? 'visible' : 'hidden';
+  // UIDは受講生には出さない。コーチ、または ?setup 付きURL（将来のコーチ登録用）のときだけ表示
+  var showUid = state.isCoach || /[?&]setup(\b|=)/.test(location.search);
+  document.getElementById('uidlabel').textContent = showUid ? ('UID: '+state.uid) : '';
 
   var prof=null;
   try{ var p=await db.doc('users/'+state.uid).get(); if(p.exists) prof=p.data(); }catch(e){ err(e); }
@@ -437,8 +439,4 @@ async function onbNext(){
 
 /* ===== ユーティリティ ===== */
 function timeAgo(ts){ if(!ts) return ''; var s=Math.floor((Date.now()-ts)/1000); if(s<60) return 'たった今'; if(s<3600) return Math.floor(s/60)+'分前'; if(s<86400) return Math.floor(s/3600)+'時間前'; return Math.floor(s/86400)+'日前'; }
-function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
-function copyUid(){ if(state.uid){ navigator.clipboard && navigator.clipboard.writeText(state.uid); toast('UIDをコピーしました'); } }
-</script>
-</body>
-</html>
+function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.
