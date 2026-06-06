@@ -295,12 +295,12 @@ async function gasGet(action, params) {
   var res = await fetch(url);
   return await res.json();
 }
+// CORS対策：書き込みもGETで送信（payloadにJSONエンコード）
 async function gasPost(data) {
-  var res = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
+  var action = data.action;
+  var payload = encodeURIComponent(JSON.stringify(data));
+  var url = GAS_URL + '?action=' + action + '&payload=' + payload;
+  var res = await fetch(url);
   return await res.json();
 }
 
@@ -512,11 +512,4 @@ function displaySubmissions() {
       + '<div class="sub-info">' + escHtml(e.email) + ' &nbsp;|&nbsp; ' + escHtml(e.date || '') + '</div></div>'
       + '<span class="sub-day-badge">Day ' + e.day + '</span>'
       + '</div>'
-      + '<div class="sub-text">' + escHtml(e.text) + '</div>'
-      + '</div>';
-  });
-  list.innerHTML = html;
-}
-</script>
-</body>
-</html>
+      + '<div class="s
