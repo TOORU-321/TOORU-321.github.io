@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bloom チェックイン</title>
+<style>
+  :root{
+    --bg:#F6F5FB; --card:#fff; --ink:#1E1B2E; --sub:#6B6880; --line:#E7E4F2;
+    --pp:#6C5CE7; --pp-d:#534AB7; --pp-l:#EEEDFE; --pp-mid:#AFA9EC;
+    --green:#1D9E75; --green-l:#E1F5EE; --amber:#D8861E; --amber-l:#FBF0DE;
+    --red:#D4537E; --red-l:#FBEAF0; --shadow:0 1px 3px rgba(40,30,80,.06),0 8px 24px rgba(40,30,80,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+  .topbar{position:sticky;top:0;z-index:40;background:#1E1B2E;color:#fff;display:flex;align-items:center;
+    justify-content:space-between;padding:8px 14px;font-size:13px;gap:10px}
+  .topbar .uid{font-size:10px;color:#9d97c0;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+  .seg{display:inline-flex;background:#37334d;border-radius:999px;padding:3px;gap:2px}
+  .seg button{border:0;background:transparent;color:#cfc9e6;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+  .seg button.on{background:#fff;color:#1E1B2E}
+  .wrap{max-width:440px;margin:0 auto;padding:16px 16px 96px}
+  .wrap.coach{max-width:900px}
+  .appbar{display:flex;align-items:center;gap:10px;margin:6px 2px 16px}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7F77DD,#534AB7);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
+  .appbar h1{font-size:18px;font-weight:800}.appbar small{display:block;color:var(--sub);font-size:11px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+  .card h2{font-size:15px;font-weight:800;margin-bottom:4px}
+  .muted{color:var(--sub);font-size:13px}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px}
+  .pill.pp{background:var(--pp-l);color:var(--pp-d)}.pill.gr{background:var(--green-l);color:var(--green)}.pill.rd{background:var(--red-l);color:var(--red)}
+  .btn{border:0;border-radius:12px;background:var(--pp);color:#fff;font-weight:700;font-size:14px;padding:12px 16px;cursor:pointer;font-family:inherit;width:100%}
+  .btn:active{transform:translateY(1px)}.btn.ghost{background:var(--pp-l);color:var(--pp-d)}.btn.sm{width:auto;padding:8px 14px;font-size:13px}
+  input,textarea,select{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;background:#fff;color:var(--ink)}
+  textarea{resize:vertical;min-height:64px}
+  label.fld{display:block;font-size:12px;font-weight:700;color:var(--sub);margin:0 0 6px 2px}
+  .row{display:flex;gap:12px}.row>*{flex:1}
+  .stat{background:var(--pp-l);border-radius:14px;padding:14px;text-align:center}
+  .stat .n{font-size:26px;font-weight:800;color:var(--pp-d);line-height:1.1}.stat .l{font-size:11px;font-weight:700;color:var(--pp-d);opacity:.8}
+  .ring{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;margin:0 auto 6px}
+  .ring .in{width:62px;height:62px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;color:var(--pp-d);font-size:18px}
+  .task{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff}
+  .task .q{font-size:10px;font-weight:800;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none}
+  .q.Q1{background:var(--red-l);color:var(--red)}.q.Q2{background:var(--pp);color:#fff}.q.Q3{background:var(--amber-l);color:var(--amber)}.q.Q4{background:#EEE;color:#999}
+  .task .t{flex:1;font-size:14px}.task.done .t{color:var(--sub);text-decoration:line-through}
+  .chk{width:24px;height:24px;border-radius:50%;border:2px solid var(--pp-mid);cursor:pointer;flex:none;display:grid;place-items:center;color:#fff;font-size:13px;font-weight:800}
+  .chk.on{background:var(--green);border-color:var(--green)}
+  .mtx{display:grid;grid-template-columns:20px 1fr 1fr;grid-template-rows:20px 1fr 1fr;gap:8px;margin-top:12px}
+  .ax{display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--sub)}.ax.v{writing-mode:vertical-rl;text-orientation:upright}
+  .qd2{border-radius:14px;padding:10px;min-height:110px;border:1.5px solid transparent}
+  .qd2.q1{background:#FEF3EF;border-color:#F0997B}.qd2.q2{background:#F1EFFE;border-color:var(--pp)}.qd2.q3{background:#FCF5E8;border-color:#E7C06A}.qd2.q4{background:#F4F4F2;border-color:#D7D5CD}
+  .qd2 .hd{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:800}.qd2 .cnt{margin-left:auto;font-size:11px;font-weight:800;background:#fff;border-radius:999px;padding:1px 8px;color:var(--sub)}
+  .qd2 .ax2{font-size:10px;color:var(--sub);font-weight:700;margin-bottom:8px}
+  .chip{display:flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:7px 9px;margin-bottom:6px;font-size:12.5px;box-shadow:0 1px 2px rgba(40,30,80,.07);cursor:pointer}
+  .chip .x{margin-left:auto;opacity:.4;font-weight:800;padding:0 2px}
+  .qd2 .empty{font-size:11px;color:var(--sub);opacity:.65;text-align:center;padding:12px 0}
+  .qsel{display:flex;gap:6px;margin-top:8px}
+  .qsel button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 4px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sub);line-height:1.3}
+  .qsel button.on{border-color:var(--pp);background:var(--pp-l);color:var(--pp-d)}
+  .badge-honmaru{font-size:9px;background:var(--pp);color:#fff;padding:2px 6px;border-radius:6px;margin-left:4px}
+  .hint{font-size:12px;color:var(--pp-d);background:var(--pp-l);border-radius:10px;padding:8px 11px;margin:8px 0}
+  .ksf-hero{background:linear-gradient(135deg,#534AB7,#7F77DD);color:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .ksf-hero .lbl{font-size:11px;font-weight:800;opacity:.9}.ksf-hero .goal{font-size:18px;font-weight:800;line-height:1.45;margin-top:5px}
+  .ksf-hero textarea{margin-top:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff}
+  .feed-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}.feed-item:last-child{border:0}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--pp-mid);margin-top:7px;flex:none}.feed-item time{color:var(--sub);font-size:11px;margin-left:auto;flex:none}
+  .sc{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;text-decoration:none;color:inherit;background:#fff}
+  .sc .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none}.sc .arr{margin-left:auto;color:var(--pp-mid);font-weight:800}
+  .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;max-width:440px;margin:0 auto;z-index:30}
+  .nav button{flex:1;border:0;background:transparent;padding:10px 0 12px;font-size:10px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
+  .nav button .i{display:block;font-size:19px;margin-bottom:2px}.nav button.on{color:var(--pp)}
+  table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  th{font-size:11px;color:var(--sub);font-weight:700}tr.stall{background:var(--red-l)}
+  .ov{position:fixed;inset:0;background:rgba(20,15,40,.45);display:none;place-items:center;z-index:60;padding:20px}.ov.on{display:grid}
+  .modal{background:#fff;border-radius:20px;max-width:380px;width:100%;padding:24px;box-shadow:var(--shadow)}
+  .modal .tag{font-size:11px;font-weight:800;color:var(--pp)}.modal h3{font-size:17px;font-weight:800;margin:6px 0 8px}
+  .onb{position:fixed;inset:0;background:#fff;z-index:80;display:none;flex-direction:column}.onb.on{display:flex}
+  .scroller{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth}.scroller::-webkit-scrollbar{display:none}
+  .panel{min-width:100%;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 32px;gap:14px}
+  .panel .em{width:96px;height:96px;border-radius:28px;display:grid;place-items:center;font-size:44px;background:var(--pp-l);box-shadow:var(--shadow)}
+  .panel h2{font-size:22px;font-weight:800}.panel p{color:var(--sub);font-size:15px;max-width:300px}.panel .step{font-size:12px;font-weight:800;color:var(--pp)}
+  .onb-foot{padding:18px 24px 28px;display:flex;flex-direction:column;gap:12px;align-items:center}
+  .dots{display:flex;gap:7px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--pp);width:22px;border-radius:5px}
+  .max{max-width:360px;width:100%}.hide{display:none!important}
+  .loading{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:90}
+  .spin{width:38px;height:38px;border-radius:50%;border:4px solid var(--pp-l);border-top-color:var(--pp);animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+  .banner{background:var(--amber-l);color:var(--amber);font-size:12px;font-weight:700;padding:8px 12px;border-radius:10px;margin-bottom:12px}
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading"><div class="spin"></div></div>
+
+<div class="topbar">
+  <span><b>Bloom チェックイン</b></span>
+  <span class="uid" id="uidlabel" title="クリックでUIDをコピー" onclick="copyUid()"></span>
+  <span class="seg" id="roleseg" style="visibility:hidden">
+    <button id="role-student" class="on" onclick="setRole('student')">受講生</button>
+    <button id="role-coach" onclick="setRole('coach')">コーチ</button>
+  </span>
+</div>
+
+<div id="student" class="wrap">
+  <div class="appbar"><div class="logo">B</div><div><h1>Bloom チェックイン</h1><small id="comm">とーるさんコミュニティ</small></div></div>
+  <div id="s-body"></div>
+</div>
+<div id="nav" class="nav">
+  <button data-tab="today" class="on" onclick="setTab('today')"><span class="i">✓</span>今日</button>
+  <button data-tab="plan" onclick="setTab('plan')"><span class="i">◎</span>設計</button>
+  <button data-tab="feed" onclick="setTab('feed')"><span class="i">◍</span>みんな</button>
+  <button data-tab="menu" onclick="setTab('menu')"><span class="i">≡</span>メニュー</button>
+</div>
+
+<div id="coach" class="wrap coach hide">
+  <div class="appbar"><div class="logo">B</div><div><h1>コーチ用ダッシュボード</h1><small>とーるさん</small></div></div>
+  <div id="c-body"></div>
+</div>
+
+<div id="onb" class="onb">
+  <div class="scroller" id="scroller" onscroll="onbScroll()">
+    <div class="panel"><div class="step">はじめに ①</div><div class="em">🎯</div><h2>まず「KSF」を決める</h2><p>月の成果の“要”を1〜2個に絞ります。これさえ効けば、を見つけるのがコツ。</p></div>
+    <div class="panel"><div class="step">はじめに ②</div><div class="em">🗂️</div><h2>タスクを行列で仕分け</h2><p>重要度×緊急度の4マスに。<b>第2象限（重要だけど急ぎでない）</b>が成果の本丸です。</p></div>
+    <div class="panel"><div class="step">はじめに ③</div><div class="em">✓</div><h2>毎日チェックイン</h2><p>今日やることを選んで、できた/まだを記録するだけ。続けるほど身につきます。</p></div>
+    <div class="panel"><div class="step">さいごに</div><div class="em">👤</div><h2>お名前を教えてください</h2><p>コーチに表示される名前です（みんなの動きには出ません）。</p><input class="max" id="onb-name" placeholder="例：とおる" onkeyup="onbValidate()"></div>
+  </div>
+  <div class="onb-foot"><div class="dots"><i class="on"></i><i></i><i></i><i></i></div><button class="btn max" id="onb-btn" onclick="onbNext()">次へ</button></div>
+</div>
+
+<div id="ov" class="ov"><div class="modal">
+  <div class="tag" id="ov-tag"></div><h3 id="ov-title"></h3><p class="muted" id="ov-body"></p>
+  <div style="height:14px"></div><button class="btn" id="ov-btn" onclick="closeOv()">確認しました</button>
+</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+/* ===== Firebase 初期化 ===== */
+var firebaseConfig = {
+  apiKey: "AIzaSyCOU1uTn74lN_BaykrC_a7nGWKYO2e66EI",
+  authDomain: "bloom-checkin-dd8ac.firebaseapp.com",
+  projectId: "bloom-checkin-dd8ac",
+  storageBucket: "bloom-checkin-dd8ac.firebasestorage.app",
+  messagingSenderId: "71718544832",
+  appId: "1:71718544832:web:37635a3b566b9a883d9425"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();
+
+/* ===== 定数 ===== */
+var COLUMN_URL='https://l-mine.com/column/page/1';
+var VIDEO_URL='https://l-mine.com/community/member_on-line_course';
+var ZOOM_URL='https://dn15jkbd.autosns.app/addfriend/s/aK6Cn5eBu8/@144htozo';
+var ZOOM_REMIND_DAYS=[10,20,30];
+var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
+
+/* ===== 状態 ===== */
+var state={ uid:null, isCoach:false, role:'student', tab:'today',
+  name:'', ksf:'', tasks:[], todayDone:{}, reflection:'',
+  announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
+  _newq:'Q2', _refl:'', popupQueue:[], coachStudents:[] };
+
+function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function monthKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+function err(e){ console.error(e); }
+
+/* ===== 認証 → ブート ===== */
+auth.signInAnonymously().catch(function(e){
+  document.getElementById('loading').innerHTML='<div class="card" style="max-width:340px">サインインに失敗しました。<br><span class="muted">'+esc(e.message)+'</span></div>';
+});
+auth.onAuthStateChanged(function(user){
+  if(!user) return;
+  state.uid=user.uid;
+  document.getElementById('uidlabel').textContent='UID: '+user.uid;
+  boot();
+});
+
+async function boot(){
+  try{
+    var roleDoc=await db.doc('roles/coach').get();
+    state.isCoach = roleDoc.exists && (roleDoc.data().uids||[]).indexOf(state.uid)>=0;
+  }catch(e){ state.isCoach=false; }
+  document.getElementById('roleseg').style.visibility = state.isCoach ? 'visible' : 'hidden';
+
+  var prof=null;
+  try{ var p=await db.doc('users/'+state.uid).get(); if(p.exists) prof=p.data(); }catch(e){ err(e); }
+  document.getElementById('loading').classList.add('hide');
+
+  if(prof && prof.name){
+    state.name=prof.name;
+    await loadStudent();
+    render();
+    buildPopups();
+  }else{
+    document.getElementById('onb').classList.add('on'); onbScroll();
+  }
+}
+
+/* ===== データ読み込み（受講生） ===== */
+async function loadStudent(){
+  try{
+    var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get();
+    state.ksf = kdoc.exists ? (kdoc.data().text||'') : '';
+  }catch(e){ err(e); }
+  try{
+    var tq=await db.collection('tasks').where('uid','==',state.uid).get();
+    state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q}); });
+  }catch(e){ err(e); }
+  try{
+    var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get();
+    if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; }
+  }catch(e){ err(e); }
+  await loadAnnouncements();
+  await loadActivity();
+  try{
+    var cc=await db.collection('checkins').where('uid','==',state.uid).get();
+    state.checkinDays=cc.size;
+  }catch(e){ state.checkinDays=0; }
+}
+async function loadAnnouncements(){
+  try{
+    var q=await db.collection('announcements').orderBy('publishedAt','desc').limit(20).get();
+    state.announcements=[]; q.forEach(function(d){ var x=d.data(); state.announcements.push({id:d.id,title:x.title,body:x.body,at:x.publishedAt}); });
+  }catch(e){ state.announcements=[]; }
+}
+async function loadActivity(){
+  try{
+    var q=await db.collection('activity').orderBy('at','desc').limit(30).get();
+    state.activity=[]; var t0=new Date(); t0.setHours(0,0,0,0); var cnt=0;
+    q.forEach(function(d){ var x=d.data(); state.activity.push(x); if(x.at && x.at>=t0.getTime() && x.type==='checkin') cnt++; });
+    state.todayCount=cnt;
+  }catch(e){ state.activity=[]; }
+}
+
+/* ===== 受講生：操作 ===== */
+function q2ratio(){
+  var done=state.tasks.filter(function(t){return state.todayDone[t.id];});
+  if(!done.length) return 0;
+  return Math.round(done.filter(function(t){return t.q==='Q2';}).length/done.length*100);
+}
+async function saveKsf(){
+  var e=document.getElementById('ksf'); if(!e) return; state.ksf=e.value;
+  try{ await db.doc('ksf/'+state.uid+'_'+monthKey()).set({uid:state.uid,month:monthKey(),text:state.ksf,updatedAt:Date.now()},{merge:true}); toast('KSFを保存しました'); }
+  catch(err2){ toast('保存に失敗: '+err2.code); }
+}
+function setNewQ(q){ state._newq=q; render(); }
+async function addTask(){
+  var ti=document.getElementById('newtask'); if(!ti||!ti.value.trim()) return;
+  var q=state._newq||'Q2'; var text=ti.value.trim();
+  try{
+    var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()});
+    state.tasks.push({id:ref.id,text:text,q:q}); render();
+  }catch(e){ toast('追加に失敗: '+e.code); }
+}
+async function cycleTask(id){
+  var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return;
+  t.q=order[(order.indexOf(t.q)+1)%4]; render();
+  try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); }
+}
+async function delTask(id){
+  state.tasks=state.tasks.filter(function(t){return t.id!==id;}); render();
+  try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); }
+}
+function toggleDone(id){ saveRefl(); state.todayDone[id]=!state.todayDone[id]; render(); }
+function saveRefl(){ var e=document.getElementById('refl'); if(e) state.reflection=e.value; }
+async function submitDay(){
+  saveRefl();
+  var items=todayTasks().map(function(t){return {id:t.id,text:t.text,q:t.q,done:!!state.todayDone[t.id]};});
+  var doneCount=items.filter(function(i){return i.done;}).length;
+  try{
+    await db.doc('checkins/'+state.uid+'_'+todayKey()).set({uid:state.uid,date:todayKey(),items:items,doneCount:doneCount,total:items.length,q2:q2ratio(),reflection:state.reflection,updatedAt:Date.now()},{merge:true});
+    await db.collection('activity').add({type:'checkin',at:Date.now()});
+    await loadActivity();
+    toast('今日の報告を送信しました！');
+    render();
+  }catch(e){ toast('送信に失敗: '+e.code); }
+}
+function restDay(){ alert('🌙 今日はお休みを記録しました。\nしっかり休むことも大切な選択です。よく休むと明日のクオリティも上がります。ゆっくりしてくださいね。'); }
+function todayTasks(){ return state.tasks.filter(function(t){return t.q==='Q1'||t.q==='Q2';}); }
+
+/* ===== 受講生：画面 ===== */
+function ring(p){ return '<div class="ring" style="background:conic-gradient(var(--pp) '+(p*3.6)+'deg,var(--pp-l) 0)"><div class="in">'+p+'%</div></div>'; }
+function viewToday(){
+  var todays=todayTasks();
+  var rows=todays.map(function(t){
+    var on=state.todayDone[t.id];
+    return '<div class="task '+(on?'done':'')+'"><span class="q '+t.q+'">'+t.q+'</span><span class="t">'+esc(t.text)+'</span><span class="chk '+(on?'on':'')+'" onclick="toggleDone(\''+t.id+'\')">'+(on?'✓':'')+'</span></div>';
+  }).join('');
+  var ann=state.announcements[0];
+  var hello=state.name?('こんにちは、'+esc(state.name)+'さん'):'こんにちは';
+  return ''+
+  '<div style="font-weight:800;font-size:16px;margin:0 2px 12px">'+hello+' 👋</div>'+
+  '<div class="card" style="background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div class="row" style="align-items:center">'+
+    '<div class="stat"><div class="n">'+state.checkinDays+'</div><div class="l">報告した日数</div></div>'+
+    '<div style="text-align:center">'+ring(q2ratio())+'<div class="l" style="font-size:11px;font-weight:700;color:var(--pp-d)">第2象限の割合</div></div>'+
+  '</div></div>'+
+  (ann?'<div class="card" style="border-left:4px solid var(--pp)"><div class="muted" style="font-weight:700;color:var(--pp-d)">📣 '+esc(ann.title)+'</div><div class="muted" style="margin-top:2px">'+esc(ann.body)+'</div></div>':'')+
+  '<div class="card"><h2>今日のチェックイン</h2>'+
+    '<p class="muted" style="margin-bottom:12px">「設計」で行列に置いた①②のタスクです。できたら ○ をタップ。</p>'+
+    (rows||'<p class="muted">「設計」タブでKSFとタスクを登録しましょう。</p>')+
+    '<div style="height:10px"></div><label class="fld">今日のふりかえり（任意）</label>'+
+    '<textarea id="refl" placeholder="気づき・うまくいったこと・つまずきを一言">'+esc(state.reflection)+'</textarea>'+
+    '<div style="height:12px"></div><button class="btn" onclick="submitDay()">今日の報告を送信する</button>'+
+    '<button class="btn ghost" style="margin-top:8px" onclick="restDay()">🌙 今日はお休みにする</button>'+
+  '</div>';
+}
+function quadBox(q){
+  var list=state.tasks.filter(function(t){return t.q===q;});
+  var chips=list.map(function(t){ return '<div class="chip" onclick="cycleTask(\''+t.id+'\')" title="タップで象限を移動"><span>'+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
+  var hi=q==='Q2';
+  return '<div class="qd2 '+QMETA[q].cl+'"><div class="hd">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'<span class="badge-honmaru">本丸</span>':'')+'<span class="cnt">'+list.length+'</span></div><div class="ax2">'+QMETA[q].axis+'</div>'+chips+'</div>';
+}
+function viewPlan(){
+  var nq=state._newq||'Q2';
+  var sel=['Q1','Q2','Q3','Q4'].map(function(q){ return '<button class="'+(nq===q?'on':'')+'" onclick="setNewQ(\''+q+'\')">'+QMETA[q].ic+'<br>'+QMETA[q].name+'</button>'; }).join('');
+  return ''+
+  '<div class="ksf-hero"><div class="lbl">🎯 '+monthKey()+' の要（KSF）</div><div class="goal">'+(state.ksf?esc(state.ksf):'まだ未設定')+'</div>'+
+    '<textarea id="ksf" placeholder="今月の要を1〜2個で…">'+esc(state.ksf)+'</textarea><div style="height:8px"></div>'+
+    '<button class="btn" style="background:#fff;color:var(--pp-d)" onclick="saveKsf()">KSFを保存する</button></div>'+
+  '<div class="card"><h2>今週のタスクを行列で仕分け</h2><p class="muted">マスをタップ＝象限を移動。<b>🌱第2象限（本丸）</b>を増やせるかが成果を分けます。</p>'+
+    '<div class="mtx"><div class="ax"></div><div class="ax">⏰ 緊急</div><div class="ax">緊急でない</div>'+
+      '<div class="ax v">重要</div>'+quadBox('Q1')+quadBox('Q2')+'<div class="ax v">重要でない</div>'+quadBox('Q3')+quadBox('Q4')+'</div>'+
+    '<div style="height:14px"></div><label class="fld">タスクを追加</label><input id="newtask" placeholder="やることを入力">'+
+    '<div class="qsel">'+sel+'</div><div style="height:10px"></div><button class="btn ghost" onclick="addTask()">＋ この象限に追加</button>'+
+    '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>';
+}
+function viewFeed(){
+  var items=state.activity.map(function(f){
+    var label=f.type==='checkin'?'別の方がタスクを提出しました':'コミュニティで動きがありました';
+    return '<div class="feed-item"><span class="dot"></span><span>'+label+'</span><time>'+timeAgo(f.at)+'</time></div>';
+  }).join('')||'<div class="muted">まだ動きがありません。最初の一歩を踏み出しましょう。</div>';
+  return ''+
+  '<div class="card" style="text-align:center;background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div style="font-size:30px;font-weight:800;color:var(--pp-d)">'+state.todayCount+'人</div><div class="muted" style="font-weight:700">が今日チェックインしました</div></div>'+
+  '<div class="card"><h2>みんなの動き</h2><p class="muted" style="margin-bottom:6px">※ 名前や内容は表示されません。仲間が動いている実感だけ共有します。</p>'+items+'</div>';
+}
+function viewMenu(){
+  var anns=state.announcements.map(function(a){ return '<div class="feed-item"><span class="dot"></span><span><b>'+esc(a.title)+'</b><br><span class="muted">'+esc(a.body)+'</span></span></div>'; }).join('')||'<div class="muted">お知らせはまだありません。</div>';
+  return ''+
+  '<div class="card"><h2>ショートカット</h2><p class="muted" style="margin-bottom:12px">とーるさんのコンテンツへ。</p>'+
+    '<a class="sc" href="'+COLUMN_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--pp-l)">📝</span><span><b>僕のコラム</b><br><span class="muted" style="font-size:12px">考え方を深める読みもの</span></span><span class="arr">→</span></a>'+
+    '<a class="sc" href="'+VIDEO_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--green-l)">▶</span><span><b>無料動画</b><br><span class="muted" style="font-size:12px">メンバー向けオンライン講座</span></span><span class="arr">→</span></a>'+
+    '<a class="sc" href="'+ZOOM_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:#E6F1FB">📅</span><span><b>ZOOMの予定を組む</b><br><span class="muted" style="font-size:12px">面談の予約はこちら</span></span><span class="arr">→</span></a></div>'+
+  '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>';
+}
+
+/* ===== コーチ ===== */
+async function loadCoach(){
+  state.coachStudents=[];
+  try{
+    var us=await db.collection('users').where('role','==','student').get();
+    var list=[]; us.forEach(function(d){ list.push(d.data()); });
+    for(var i=0;i<list.length;i++){
+      var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,reported:false,done:'—',q2:0,reflection:''};
+      try{ var c=await db.doc('checkins/'+s.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); rec.reported=true; rec.done=cd.doneCount+'/'+cd.total; rec.q2=cd.q2||0; rec.reflection=cd.reflection||''; } }catch(e){}
+      try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){ rec.ksf=''; }
+      state.coachStudents.push(rec);
+    }
+  }catch(e){ state.coachErr=e.code||e.message; }
+  await loadAnnouncements();
+}
+function coachView(){
+  if(state.coachErr){
+    return '<div class="banner">コーチ権限がまだありません。下記のUIDを Firestore の roles/coach ドキュメントの uids 配列に追加してください。</div>'+
+      '<div class="card"><h2>あなたのUID</h2><p style="font-family:monospace;font-size:13px;word-break:break-all">'+esc(state.uid)+'</p><p class="muted" style="margin-top:8px">追加後この画面を再読み込みすると、全員のデータが表示されます。</p></div>';
+  }
+  var ss=state.coachStudents;
+  var stalled=ss.filter(function(s){return !s.reported;}).length;
+  var sorted=ss.slice().sort(function(a,b){return (a.reported?1:0)-(b.reported?1:0);});
+  var rows=sorted.map(function(s){
+    return '<tr class="'+(!s.reported?'stall':'')+'"><td><b>'+esc(s.name)+'</b></td><td><span class="muted">'+esc(s.ksf||'—')+'</span></td>'+
+      '<td>'+(s.reported?'<span class="pill gr">提出</span>':'<span class="pill rd">未報告</span>')+'</td><td>'+esc(s.done)+'</td>'+
+      '<td>'+s.q2+'%</td><td><span class="muted">'+esc(s.reflection||'—')+'</span></td></tr>';
+  }).join('')||'<tr><td colspan="6" class="muted">まだ受講生がいません。</td></tr>';
+  return ''+
+  '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">未報告 '+stalled+'名</span><span class="muted">未報告の人を上に表示しています。</span></div>'+
+  '<div class="card"><h2>今日の一覧（'+ss.length+'名）</h2><div style="overflow-x:auto"><table><thead><tr><th>名前</th><th>今月のKSF</th><th>今日</th><th>達成</th><th>第2象限</th><th>ふりかえり</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
+  '<div class="card"><h2>お知らせを投稿</h2><label class="fld">タイトル</label><input id="an-title" placeholder="例：今週のテーマ"><div style="height:8px"></div>'+
+    '<label class="fld">本文</label><textarea id="an-body" placeholder="受講生へのメッセージ"></textarea><div style="height:12px"></div>'+
+    '<button class="btn" onclick="postAnnounce()">投稿する</button></div>';
+}
+async function postAnnounce(){
+  var t=document.getElementById('an-title'),b=document.getElementById('an-body');
+  if(!t.value.trim()){ toast('タイトルを入力してください'); return; }
+  try{ await db.collection('announcements').add({title:t.value.trim(),body:b.value.trim(),publishedAt:Date.now()}); toast('投稿しました'); await loadAnnouncements(); render(); }
+  catch(e){ toast('投稿に失敗: '+e.code); }
+}
+
+/* ===== ルーティング & レンダリング ===== */
+function setRole(r){
+  state.role=r;
+  document.getElementById('role-student').classList.toggle('on',r==='student');
+  document.getElementById('role-coach').classList.toggle('on',r==='coach');
+  document.getElementById('student').classList.toggle('hide',r!=='student');
+  document.getElementById('nav').classList.toggle('hide',r!=='student');
+  document.getElementById('coach').classList.toggle('hide',r!=='coach');
+  if(r==='coach'){ document.getElementById('c-body').innerHTML='<div class="card"><div class="spin"></div></div>'; loadCoach().then(render); }
+  else render();
+}
+function setTab(t){ state.tab=t; document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t);}); render(); }
+function render(){
+  if(state.role==='student'){
+    var v={today:viewToday,plan:viewPlan,feed:viewFeed,menu:viewMenu}[state.tab];
+    document.getElementById('s-body').innerHTML=v();
+  }else{
+    document.getElementById('c-body').innerHTML=coachView();
+  }
+}
+
+/* ===== ポップアップ ===== */
+function showOv(it){ document.getElementById('ov-tag').textContent=it.tag; document.getElementById('ov-title').textContent=it.title; document.getElementById('ov-body').textContent=it.body; document.getElementById('ov-btn').textContent=it.btn||'確認しました'; document.getElementById('ov').classList.add('on'); }
+function closeOv(){ document.getElementById('ov').classList.remove('on'); if(state.popupQueue.length) showOv(state.popupQueue.shift()); }
+function buildPopups(){
+  state.popupQueue=[];
+  if(state.announcements[0]){ var a=state.announcements[0]; state.popupQueue.push({tag:'📣 とーるさんからのお知らせ',title:a.title,body:a.body}); }
+  if(state.checkinDays>=5){ state.popupQueue.push({tag:'🌙 ひとやすみのご提案',title:state.checkinDays+'日報告、おつかれさまです！',body:'がんばり屋さんですね。でも大丈夫ですか？無理は禁物です。今日はしっかり休むのも立派な選択ですよ。',btn:'休むのも大事だね'}); }
+  if(ZOOM_REMIND_DAYS.indexOf(new Date().getDate())>=0){ state.popupQueue.push({tag:'📅 リマインド',title:'ZOOM予約してますか？',body:'今月の面談がまだの方は、メニューの「ZOOMの予定を組む」から予約しておきましょう。',btn:'メニューで予約する'}); }
+  if(state.popupQueue.length) showOv(state.popupQueue.shift());
+}
+
+/* ===== オンボーディング ===== */
+function curPanel(){ var s=document.getElementById('scroller'); return Math.round(s.scrollLeft/s.clientWidth); }
+function onbScroll(){ var i=curPanel(); document.querySelectorAll('.dots i').forEach(function(d,k){d.classList.toggle('on',k===i);}); document.getElementById('onb-btn').textContent=(i>=3?'はじめる':'次へ'); onbValidate(); }
+function onbValidate(){ var btn=document.getElementById('onb-btn'); if(curPanel()>=3){ var nm=(document.getElementById('onb-name').value||'').trim(); btn.disabled=!nm; btn.style.opacity=nm?1:.5; } else { btn.disabled=false; btn.style.opacity=1; } }
+async function onbNext(){
+  var s=document.getElementById('scroller'),i=curPanel();
+  if(i<3){ s.scrollTo({left:(i+1)*s.clientWidth,behavior:'smooth'}); return; }
+  var nm=(document.getElementById('onb-name').value||'').trim(); if(!nm){ alert('お名前を入力してください'); return; }
+  document.getElementById('onb-btn').disabled=true;
+  try{ await db.doc('users/'+state.uid).set({uid:state.uid,name:nm,role:'student',updatedAt:Date.now()},{merge:true}); state.name=nm; }
+  catch(e){ alert('保存に失敗しました: '+e.code); document.getElementById('onb-btn').disabled=false; return; }
+  document.getElementById('onb').classList.remove('on');
+  await loadStudent(); render(); buildPopups();
+}
+
+/* ===== ユーティリティ ===== */
+function timeAgo(ts){ if(!ts) return ''; var s=Math.floor((Date.now()-ts)/1000); if(s<60) return 'たった今'; if(s<3600) return Math.floor(s/60)+'分前'; if(s<86400) return Math.floor(s/3600)+'時間前'; return Math.floor(s/86400)+'日前'; }
+function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+function copyUid(){ if(state.uid){ navigator.clipboard && navigator.clipboard.writeText(state.uid); toast('UIDをコピーしました'); } }
+</script>
+</body>
+</html>
