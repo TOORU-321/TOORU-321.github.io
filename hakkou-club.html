@@ -781,7 +781,7 @@ const FAREWELL_SEEN_KEY='hakkou-club-farewell-v1';
 //   ・Phase 2 は「完成麹が出たら」自動で開く
 //   ・お別れポップアップは ?preview=farewell でのみ表示
 // =========================================================================
-const TEST_MODE=true;
+const TEST_MODE=false;
 
 // ======== Google Sheets 連携（GAS Web App） ========
 // セットアップ手順は GAS_セットアップ手順.md を参照
@@ -2210,6 +2210,10 @@ function init(){
   load();
   state.date=today(); // 仮想日付に合わせて表示日を同期
   if(!Array.isArray(state.preorders))state.preorders=[];
+  // 既存参加者の保険的な再登録：起動時に毎回 register を送って「参加者一覧」の行欠落と選択麹リストを同期
+  if(state.userName&&state.selectedKoji&&state.selectedKoji.length>0){
+    try{sendToSheet('register',buildRegisterPayload())}catch(_){}
+  }
   // Migration: if no kojiData but selectedKoji exists, build defaults
   state.selectedKoji.forEach(k=>{
     if(!state.kojiData[k])state.kojiData[k]={startDate:today(),isResting:false,completedDate:null,checkins:{}};
