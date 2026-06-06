@@ -38,6 +38,12 @@ FOOT_LINKS = [
 CATS = ["SNS", "マーケティング", "行動経済学", "ビジネス", "コンテンツビジネス", "起業"]
 INSTA = "https://www.instagram.com/tooru_lab/"
 X_URL = "https://x.com/LMeta321"
+LP_URL = "https://l-mine.com/business/the-3-2-1-lab"
+OPTIN_FOOTER = f'''    <aside class="optin">
+      <div class="optin-k">とーるの無料メルマガ『3-2-1ラボ』</div>
+      <p>行動経済学 × SNSビジネスの“本質”を、ここだけの実践編としてお届け。各メルマガ・無料講座のご案内もこちらから。</p>
+      <a class="optin-btn" href="{LP_URL}" target="_blank" rel="noopener">メルマガ・講座を見てみる →</a>
+    </aside>'''
 
 def nav_html():
     out = []
@@ -101,9 +107,9 @@ def convert_body(body, sign):
         if raw == "***":
             out.append('<p class="sec">&#10022;</p>')
             continue
-        # オプトイン準備中マーカー
+        # オプトイン案内マーカー → 集約LPへのリンク
         if raw == "[準備中]":
-            out.append('<p class="prep">※ メルマガ・診断・特典などのご案内は、現在準備中です。公開までもうしばらくお待ちください。</p>')
+            out.append(f'<p class="optin-inline"><a href="{LP_URL}" target="_blank" rel="noopener">▶ メルマガ・無料講座の詳細・ご登録はこちら（3-2-1ラボ）</a></p>')
             continue
         # 見出し
         if len(lines) == 1 and lines[0].startswith("## "):
@@ -221,6 +227,8 @@ def render_article(c, cols):
     <div class="body">
       {body}
     </div>
+
+{OPTIN_FOOTER}
 
     <div class="filed"><span class="lab">Filed under</span>{tags}</div>
 

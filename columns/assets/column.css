@@ -53,6 +53,14 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body a{color:var(--gold);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
 .body a:hover{filter:brightness(.88)}
 .body .prep{margin:1.6em 0;padding:13px 18px;border:1px dashed var(--gold-2);background:#faf7ef;color:var(--ink-soft);font-size:13.5px;border-radius:5px;line-height:1.8}
+.body .optin-inline{margin:1.5em 0}
+.body .optin-inline a{display:inline-block;color:var(--gold);font-weight:700;text-decoration:none;border-bottom:2px solid var(--gold-2);padding-bottom:1px}
+.body .optin-inline a:hover{filter:brightness(.9)}
+.optin{max-width:680px;margin:48px 0 0;padding:28px 28px;background:linear-gradient(135deg,#16181d,#23262d);color:#fff;border-radius:14px;text-align:center}
+.optin .optin-k{font-family:var(--mincho);font-size:19px;margin-bottom:9px;color:#fff}
+.optin p{font-size:13.5px;color:#d7dae0;line-height:1.9;margin-bottom:18px}
+.optin .optin-btn{display:inline-block;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#fff;font-weight:700;font-size:14px;padding:13px 32px;border-radius:999px;text-decoration:none;letter-spacing:.03em}
+.optin .optin-btn:hover{filter:brightness(1.06)}
 .body ul{margin:0 0 2.35em;padding-left:1.25em}
 .body li{margin:.25em 0;line-height:1.8}
 .body .flowbox{margin:0 0 2.35em}
