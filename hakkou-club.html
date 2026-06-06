@@ -251,8 +251,10 @@ body.admin header{top:66px}
 .badge.tier3.earned .b-prog{color:#FFE7B0}
 
 /* 麹カードへのタップ誘導 */
-.koji-hint{background:linear-gradient(135deg,#FFF8E7 0%,#FFEFC5 100%);border:1px dashed #E8B976;border-radius:10px;padding:10px 12px;margin:10px 0 6px;text-align:center;font-size:12.5px;font-weight:700;color:#B3631A;line-height:1.5}
-.koji-hint.done{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border:1px solid #A8C97A;border-style:solid;color:#3B6D11}
+.koji-hint{background:linear-gradient(135deg,#FFF8E7 0%,#FFEFC5 100%);border:1px dashed #E8B976;border-radius:10px;padding:11px 12px;margin:10px 0 6px;text-align:center;font-size:12.5px;font-weight:700;color:#B3631A;line-height:1.5;cursor:pointer;transition:transform .12s,box-shadow .15s}
+.koji-hint:active{transform:scale(.97);box-shadow:0 2px 6px rgba(245,166,35,.18)}
+.koji-hint.done{background:linear-gradient(135deg,#F4F8E8 0%,#E8F4D9 100%);border:1px solid #A8C97A;border-style:solid;color:#3B6D11;cursor:default}
+.koji-hint.done:active{transform:none;box-shadow:none}
 
 /* チュートリアル（ページめくり式） */
 .tut-page{text-align:center;padding:4px 2px 0}
@@ -1611,7 +1613,7 @@ function renderKojiHint(){
   if(allDone){
     el.innerHTML='<div class="koji-hint done">✨ 今日のチェックイン完了！ また明日見守ってね🌾</div>';
   }else{
-    el.innerHTML='<div class="koji-hint">👇 タップして今日の様子を記録しましょう</div>';
+    el.innerHTML='<div class="koji-hint" id="kojiHintBtn">👇 タップして今日の様子を記録しましょう</div>';
   }
 }
 
@@ -2101,6 +2103,19 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#addKojiCancel')||(e.target.id==='addKojiModal')){$('addKojiModal').classList.remove('on');document.body.style.overflow='';return}
   if(e.target.closest('#addKojiConfirm')){confirmAddKoji();return}
   if(e.target.closest('#addKojiBtn')){openAddKoji();return}
+  // 「タップして今日の様子を記録しましょう」ヒントバナー → 今日まだ未チェックインの麹を自動オープン
+  if(e.target.closest('#kojiHintBtn')){
+    const td=today();
+    const target=state.selectedKoji.find(k=>{
+      const kd=state.kojiData[k];
+      return kd&&!kd.completedDate&&!kd.isResting&&dayOfKoji(k)>=1&&!(kd.checkins&&kd.checkins[td]);
+    });
+    if(target){
+      if(isCompletable(target))openCompletion(target);
+      else openCheckin(target);
+    }
+    return;
+  }
   // Koji card
   const card=e.target.closest('.koji-card');
   if(card){
