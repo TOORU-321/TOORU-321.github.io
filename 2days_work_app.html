@@ -131,6 +131,12 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
 .spinner-overlay.show{display:flex;}
 .spinner{width:36px;height:36px;border:3px solid var(--plum-pale);border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+.busy-bar{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#fff3cd;border:1.5px solid #e8c84a;border-radius:var(--radius);padding:14px 20px;box-shadow:var(--shadow-lg);z-index:1000;min-width:280px;max-width:90vw;align-items:center;gap:12px;}
+.busy-bar.show{display:flex;}
+.busy-icon{font-size:22px;flex-shrink:0;}
+.busy-body{flex:1;}
+.busy-msg{font-size:13px;font-weight:600;color:#856404;margin-bottom:2px;}
+.busy-count{font-size:11px;color:#856404;opacity:.8;}
 @media(max-width:360px){.day-grid{grid-template-columns:1fr;}.login-card{padding:32px 20px 28px;}.board-stats{flex-direction:column;}}
 </style>
 </head>
@@ -271,6 +277,13 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
   </nav>
 </div>
 
+<div id="busy-bar" class="busy-bar">
+  <div class="busy-icon">&#x23F3;</div>
+  <div class="busy-body">
+    <div class="busy-msg">ただいま混雑しています。</div>
+    <div class="busy-count"></div>
+  </div>
+</div>
 <div id="toast" class="toast"></div>
 <div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
 
@@ -287,6 +300,33 @@ var state = {
 };
 
 function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+// 混雑エラー：メッセージ表示＋N秒後に自動再試行
+var retryTimer = null;
+function showBusy(msg, retryFn, sec) {
+  sec = sec || 8;
+  if (retryTimer) clearInterval(retryTimer);
+  var el = document.getElementById('busy-bar');
+  if (!el) return;
+  el.classList.add('show');
+  var left = sec;
+  el.querySelector('.busy-msg').textContent = msg;
+  el.querySelector('.busy-count').textContent = left + '秒後に自動で再試行します';
+  retryTimer = setInterval(function() {
+    left--;
+    el.querySelector('.busy-count').textContent = left + '秒後に自動で再試行します';
+    if (left <= 0) {
+      clearInterval(retryTimer);
+      el.classList.remove('show');
+      if (retryFn) retryFn();
+    }
+  }, 1000);
+}
+function hideBusy() {
+  if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
+  var el = document.getElementById('busy-bar');
+  if (el) el.classList.remove('show');
+}
 
 function enterApp() {
   document.getElementById('main-app').classList.add('show');
@@ -379,7 +419,7 @@ async function handleLogin() {
       emailInput.focus();
     }
   } catch(e) {
-    errorEl.textContent = '通信エラーが発生しました。もう一度お試しください。';
+    errorEl.textContent = 'ただいま混雑しています。少し時間をおいて再度お試しください。';
     errorEl.classList.add('show');
     console.error(e);
   } finally {
@@ -424,7 +464,7 @@ async function loadDashboard() {
     updateProgress();
     showView('view-dashboard');
   } catch(e) {
-    showToast('読み込みに失敗しました');
+    showBusy('ただいま混雑しています。', loadDashboard, 8);
     console.error(e);
   } finally {
     hideSpinner();
@@ -506,7 +546,7 @@ async function handleSubmit() {
       showToast('提出に失敗しました。もう一度お試しください');
     }
   } catch(e) {
-    showToast('通信エラーが発生しました');
+    showToast('ただいま混雑しています。少し時間をおいて再度提出してください。', 4000);
     console.error(e);
   } finally {
     btn.disabled = false; hideSpinner();
@@ -640,4 +680,4 @@ function updateTokutenCountdown() {
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                     
