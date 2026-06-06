@@ -216,6 +216,7 @@ body {
 .login-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
 .login-sub { font-size: 12px; color: var(--text-light); margin-bottom: 32px; line-height: 1.7; }
 .login-deco { width: 40px; height: 1px; background: var(--gold-light); margin: 16px auto 20px; }
+.login-privacy-note { font-size: 11px; color: var(--text-light); background: var(--plum-pale); border-radius: 8px; padding: 8px 12px; margin: -4px 0 16px; line-height: 1.7; text-align: left; }
 
 .input-group { text-align: left; margin-bottom: 20px; }
 .input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 6px; letter-spacing: 0.05em; }
@@ -447,6 +448,11 @@ body {
       <label for="email-input">メールアドレス</label>
       <input type="email" id="email-input" placeholder="example@email.com" autocomplete="email">
     </div>
+    <div class="input-group">
+      <label for="display-name-input">オープンチャットでのお名前</label>
+      <input type="text" id="display-name-input" placeholder="例）みこ、田中さん" autocomplete="nickname">
+    </div>
+    <p class="login-privacy-note">🔒 本名はお申し込み情報で把握しています。ここで入力した名前のみ掲示板に表示されます。</p>
     <div id="login-error" class="login-error">登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。</div>
     <button class="btn btn-primary" onclick="handleLogin()">ログイン</button>
     <p class="login-note">※ 次回からは自動ログインされます</p>
@@ -778,14 +784,23 @@ function switchNav(tab) {
    ログイン
    ============================================= */
 async function handleLogin() {
-  const emailInput = document.getElementById('email-input');
-  const email = emailInput.value.trim().toLowerCase();
+  const emailInput       = document.getElementById('email-input');
+  const displayNameInput = document.getElementById('display-name-input');
+  const email       = emailInput.value.trim().toLowerCase();
+  const displayName = displayNameInput.value.trim();
   const errorEl = document.getElementById('login-error');
+
+  if (!displayName) {
+    errorEl.textContent = 'オープンチャットでのお名前を入力してください。';
+    errorEl.classList.add('show');
+    displayNameInput.focus();
+    return;
+  }
 
   // ★ 仮ログイン（確認用）
   if (email === 'aaa') {
     state.email = 'preview@demo.local';
-    state.userName = 'プレビューユーザー';
+    state.userName = displayName || 'プレビューユーザー';
     localStorage.setItem('work_app_email', state.email);
     localStorage.setItem('work_app_name', state.userName);
     await loadDashboard();
@@ -806,9 +821,9 @@ async function handleLogin() {
     const result = await API.verifyEmail(email);
     if (result.ok) {
       state.email = email;
-      state.userName = result.name || email;
+      state.userName = displayName;
       localStorage.setItem('work_app_email', email);
-      localStorage.setItem('work_app_name', state.userName);
+      localStorage.setItem('work_app_name', displayName);
       await loadDashboard();
       enterApp();
     } else {
@@ -1124,26 +1139,4 @@ function checkTokutenExpiry() {
           <line x1="14" y1="14" x2="34" y2="34" stroke="#a87389" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
         <p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">視聴期限が終了しました</p>
-        <p style="font-size:13px;color:var(--text-light);line-height:1.8">この動画の視聴期限は<br><strong style="color:var(--plum)">2026年6月28日</strong>をもって<br>終了いたしました。</p>
-      </div>`;
-    if (tokutenTimer) { clearInterval(tokutenTimer); tokutenTimer = null; }
-  }
-}
-
-function updateTokutenCountdown() {
-  const diff = TOKUTEN_DEADLINE - new Date();
-  if (diff <= 0) { checkTokutenExpiry(); return; }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('tk-days').textContent = d;
-  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
-  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
-  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
-}
-</script>
-<script src="https://player.vimeo.com/api/player.js"></script>
-
-</body>
-</html>
+        <p style="font-size:13px;color:var(--text-light);line-height:1.
