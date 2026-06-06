@@ -18,13 +18,13 @@ import os, re, glob, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
-OUT  = os.path.join(ROOT, "preview")
+OUT  = os.path.join(ROOT, "columns")          # 公開フォルダ（他アプリと混ざらないよう独立）
 ASSETS = os.path.join(OUT, "assets")
 
 NAV = [
     ("ホーム", "https://l-mine.com/home", False),
     ("行動経済学への想い", "https://columns.l-mine.com/behavioral-economics-lp.html", False),
-    ("コラム", "columns.html", True),
+    ("コラム", "index.html", True),
     ("オンラインコース一覧", "https://l-mine.com/onlinecourse", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
     ("お問い合わせ", "https://l-mine.com/contact-us", False),
@@ -195,7 +195,7 @@ def render_article(c, cols):
 
     <div class="filed"><span class="lab">Filed under</span>{tags}</div>
 
-    <nav class="pager">{prev_html}<a class="home" href="columns.html">Index</a>{next_html}</nav>
+    <nav class="pager">{prev_html}<a class="home" href="index.html">Index</a>{next_html}</nav>
   </main>
 
   <aside class="side">
@@ -215,7 +215,7 @@ def render_article(c, cols):
 
 # ---------- 一覧ページ ----------
 def page_file(p):
-    return "columns.html" if p == 1 else f"columns-{p}.html"
+    return "index.html" if p == 1 else f"columns-{p}.html"
 
 def pagination_html(page, pages):
     if pages <= 1:
@@ -298,6 +298,7 @@ def render_index(page_cols, page, pages):
 </html>'''
 
 def main():
+    os.makedirs(OUT, exist_ok=True)
     cols = []
     for p in glob.glob(os.path.join(SRC, "*.md")):
         c = parse(p)
