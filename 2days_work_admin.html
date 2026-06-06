@@ -7,99 +7,87 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Shippori+Mincho:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --plum:#8b5a6b; --plum-light:#a87389; --plum-pale:#f5eef1;
-  --gold:#c4a265; --gold-light:#e8d5a8; --cream:#fdfbf7;
-  --text:#3d2e2e; --text-light:#7a6a6a; --border:#e8ddd5;
-  --success:#6ba37a; --success-light:#e8f5ec;
-  --danger:#c25555; --danger-light:#fdf0f0;
-  --white:#ffffff;
-  --dark:#2d3748; --accent:#4a5568;
+:root{
+  --plum:#8b5a6b;--plum-light:#a87389;--plum-pale:#f5eef1;
+  --gold:#c4a265;--gold-light:#e8d5a8;--cream:#fdfbf7;
+  --text:#3d2e2e;--text-light:#7a6a6a;--border:#e8ddd5;
+  --success:#6ba37a;--success-light:#e8f5ec;
+  --danger:#c25555;--danger-light:#fdf0f0;--white:#ffffff;
+  --dark:#2d3748;--accent:#4a5568;
   --shadow:0 2px 12px rgba(100,60,70,.08);
   --shadow-lg:0 4px 24px rgba(100,60,70,.12);
-  --radius:12px; --radius-sm:8px;
+  --radius:12px;--radius-sm:8px;
   --sans:'Noto Sans JP',sans-serif;
-  --mincho:'Shippori Mincho','Noto Serif JP',serif;
-  --nav-h:56px;
+  --mincho:'Shippori Mincho',serif;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:var(--sans);background:#f0ede8;color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;}
-
-/* ---- ログイン ---- */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100dvh;background:linear-gradient(160deg,var(--plum-pale) 0%,var(--cream) 60%,var(--plum-pale) 100%);padding:20px;}
 .login-card{background:var(--white);border-radius:20px;padding:40px 28px 36px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);text-align:center;}
 .login-badge{font-size:11px;color:var(--plum);letter-spacing:.15em;margin-bottom:6px;font-weight:600;}
+.login-deco{width:36px;height:1px;background:var(--gold-light);margin:12px auto 20px;}
 .login-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .login-sub{font-size:12px;color:var(--text-light);margin-bottom:28px;line-height:1.7;}
-.login-deco{width:36px;height:1px;background:var(--gold-light);margin:12px auto 20px;}
 .input-group{text-align:left;margin-bottom:16px;}
-.input-group label{display:block;font-size:12px;color:var(--text-light);margin-bottom:5px;letter-spacing:.04em;}
+.input-group label{display:block;font-size:12px;color:var(--text-light);margin-bottom:5px;}
 .input-group input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--sans);font-size:15px;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s;}
 .input-group input:focus{border-color:var(--plum-light);background:var(--white);}
-.btn-login{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--dark) 0%,var(--accent) 100%);color:var(--white);font-family:var(--sans);font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;}
-.btn-login:hover{opacity:.88;}
-.login-error{display:none;background:var(--danger-light);color:var(--danger);font-size:12px;padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.6;}
+.btn-login{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--dark) 0%,var(--accent) 100%);color:var(--white);font-family:var(--sans);font-size:15px;font-weight:600;cursor:pointer;}
+.login-error{display:none;background:var(--danger-light);color:var(--danger);font-size:12px;padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:12px;}
 .login-error.show{display:block;}
-
-/* ---- メインアプリ ---- */
 #main-app{display:none;}
 #main-app.show{display:block;}
-
 .admin-header{background:linear-gradient(135deg,var(--dark) 0%,var(--accent) 100%);color:var(--white);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .admin-header h1{font-size:13px;font-weight:600;letter-spacing:.06em;}
 .header-right{display:flex;align-items:center;gap:10px;}
-.admin-badge{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:20px;font-size:10px;letter-spacing:.08em;}
+.admin-badge{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:20px;font-size:10px;}
 .btn-logout{background:none;border:1px solid rgba(255,255,255,.3);color:var(--white);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--sans);}
-
-/* ---- タブナビ ---- */
 .tab-nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:46px;z-index:90;}
 .tab-nav::-webkit-scrollbar{display:none;}
-.tab-btn{flex-shrink:0;padding:12px 18px;background:none;border:none;border-bottom:2.5px solid transparent;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab-btn{flex-shrink:0;padding:12px 18px;background:none;border:none;border-bottom:2.5px solid transparent;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--text-light);cursor:pointer;white-space:nowrap;}
 .tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
-.tab-btn:hover{color:var(--text);}
-
-/* ---- タブコンテンツ ---- */
 .tab-pane{display:none;padding:16px 16px 80px;max-width:640px;margin:0 auto;}
 .tab-pane.active{display:block;}
-
-/* ---- カード共通 ---- */
 .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;}
 .card-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .card-title{font-size:13px;font-weight:700;color:var(--text);}
 .card-body{padding:14px 16px;}
-
-/* ---- Day カード ---- */
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.summary-card{background:var(--white);border-radius:var(--radius-sm);padding:14px 12px;text-align:center;box-shadow:var(--shadow);}
+.summary-num{font-size:26px;font-weight:700;color:var(--plum);line-height:1;}
+.summary-label{font-size:10px;color:var(--text-light);margin-top:4px;}
+.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.btn-quick{padding:8px 14px;border:none;border-radius:var(--radius-sm);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;}
+.btn-quick.primary{background:var(--dark);color:var(--white);}
+.btn-quick.danger{background:var(--danger-light);color:var(--danger);}
+.btn-quick.success{background:var(--success-light);color:var(--success);}
 .day-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;}
-.day-card-head{padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+.day-card-head{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
 .day-badge{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--dark) 0%,var(--accent) 100%);color:var(--white);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .day-badge.open{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);}
-.day-info{flex:1;}
-.day-num{font-size:10px;color:var(--text-light);letter-spacing:.06em;}
-.day-theme-preview{font-size:13px;font-weight:600;color:var(--text);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}
+.day-info{flex:1;min-width:0;}
+.day-num{font-size:10px;color:var(--text-light);}
+.day-theme-preview{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .day-status-badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:600;flex-shrink:0;}
 .day-status-badge.open{background:var(--success-light);color:var(--success);}
 .day-status-badge.closed{background:#f0eded;color:#aaa;}
-.day-toggle-btn{padding:5px 12px;border-radius:6px;border:none;font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.day-toggle-btn{padding:5px 12px;border-radius:6px;border:none;font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;}
 .day-toggle-btn.open-btn{background:var(--success-light);color:var(--success);}
 .day-toggle-btn.close-btn{background:var(--danger-light);color:var(--danger);}
 .day-card-body{padding:12px 16px;}
 .field-group{margin-bottom:12px;}
-.field-group:last-child{margin-bottom:0;}
-.field-label{font-size:11px;color:var(--text-light);margin-bottom:5px;display:block;letter-spacing:.04em;}
+.field-label{font-size:11px;color:var(--text-light);margin-bottom:5px;display:block;}
 .field-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--sans);font-size:13px;color:var(--text);background:var(--cream);outline:none;transition:border-color .2s;}
 .field-input:focus{border-color:var(--plum-light);background:var(--white);}
 .field-textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--mincho);font-size:13px;color:var(--text);background:var(--cream);outline:none;resize:vertical;min-height:80px;line-height:1.8;transition:border-color .2s;}
 .field-textarea:focus{border-color:var(--plum-light);background:var(--white);}
-.save-row{display:flex;justify-content:flex-end;margin-top:10px;}
-.btn-save{padding:7px 18px;border:none;border-radius:var(--radius-sm);background:var(--dark);color:var(--white);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s;}
-.btn-save:hover{opacity:.85;}
+.save-row{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:10px;}
+.btn-save{padding:7px 18px;border:none;border-radius:var(--radius-sm);background:var(--dark);color:var(--white);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;}
 .btn-save:disabled{opacity:.4;cursor:not-allowed;}
 .save-ok{font-size:11px;color:var(--success);font-weight:600;display:none;}
 .save-ok.show{display:inline;}
-
-/* ---- 提出データ ---- */
 .filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
-.filter-btn{flex-shrink:0;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--white);font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .2s;}
+.filter-btn{flex-shrink:0;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--white);font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text-light);cursor:pointer;}
 .filter-btn.active{background:var(--dark);color:var(--white);border-color:var(--dark);}
 .sub-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;}
 .sub-card-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -110,67 +98,46 @@ body{font-family:var(--sans);background:#f0ede8;color:var(--text);min-height:100
 .sub-day-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--plum-pale);color:var(--plum);font-weight:600;flex-shrink:0;}
 .sub-text{font-size:13px;color:var(--text);line-height:1.9;white-space:pre-wrap;padding:10px 12px;background:var(--cream);border-radius:var(--radius-sm);border-left:3px solid var(--plum-pale);font-family:var(--mincho);}
 .sub-empty{text-align:center;padding:40px 20px;color:var(--text-light);font-size:13px;}
-
-/* ---- クイックアクション ---- */
-.quick-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.btn-quick{padding:8px 14px;border:none;border-radius:var(--radius-sm);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-.btn-quick.primary{background:var(--dark);color:var(--white);}
-.btn-quick.danger{background:var(--danger-light);color:var(--danger);}
-.btn-quick.success{background:var(--success-light);color:var(--success);}
-
-/* ---- サマリ ---- */
-.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
-.summary-card{background:var(--white);border-radius:var(--radius-sm);padding:14px 12px;text-align:center;box-shadow:var(--shadow);}
-.summary-num{font-size:26px;font-weight:700;color:var(--plum);line-height:1;}
-.summary-label{font-size:10px;color:var(--text-light);margin-top:4px;}
-
-/* ---- トースト・スピナー ---- */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--white);padding:11px 22px;border-radius:30px;font-size:13px;font-family:var(--sans);box-shadow:var(--shadow-lg);transition:opacity .3s;z-index:1000;white-space:nowrap;opacity:0;pointer-events:none;}
 .toast.show{opacity:1;}
 .spinner-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:999;align-items:center;justify-content:center;}
 .spinner-overlay.show{display:flex;}
 .spinner{width:36px;height:36px;border:3px solid var(--plum-pale);border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
 .reload-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;color:var(--text-light);cursor:pointer;font-family:var(--sans);}
-.reload-btn:hover{background:var(--cream);}
 </style>
 </head>
 <body>
 
-<!-- ログイン画面 -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-badge">ADMIN</div>
     <div class="login-deco"></div>
     <h1 class="login-title">管理者ログイン</h1>
     <p class="login-sub">2days実践講座 管理パネル</p>
+    <div id="login-error" class="login-error">パスワードが違います</div>
     <div class="input-group">
       <label for="pw-input">管理者パスワード</label>
-      <input type="password" id="pw-input" placeholder="パスワードを入力" autocomplete="current-password">
+      <input type="password" id="pw-input" placeholder="パスワードを入力">
     </div>
-    <div id="login-error" class="login-error">パスワードが違います</div>
-    <button class="btn-login" onclick="handleLogin()">ログイン</button>
+    <button class="btn-login" id="login-btn">ログイン</button>
   </div>
 </div>
 
-<!-- メインアプリ -->
 <div id="main-app">
   <div class="admin-header">
-    <h1>&#x1F4CB; 2days 管理パネル</h1>
+    <h1>管理パネル | 2days実践講座</h1>
     <div class="header-right">
       <span class="admin-badge">ADMIN</span>
-      <button class="btn-logout" onclick="handleLogout()">ログアウト</button>
+      <button class="btn-logout" id="logout-btn">ログアウト</button>
     </div>
   </div>
-
   <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('dashboard')">&#x1F4CA; ダッシュボード</button>
-    <button class="tab-btn" onclick="switchTab('days')">&#x1F4DD; 課題管理</button>
-    <button class="tab-btn" onclick="switchTab('submissions')">&#x1F4E5; 提出データ</button>
+    <button class="tab-btn active" data-tab="dashboard">ダッシュボード</button>
+    <button class="tab-btn" data-tab="days">課題管理</button>
+    <button class="tab-btn" data-tab="submissions">提出データ</button>
   </div>
 
-  <!-- ダッシュボード -->
   <div id="tab-dashboard" class="tab-pane active">
     <div style="padding-top:4px"></div>
     <div class="summary-grid">
@@ -179,48 +146,39 @@ body{font-family:var(--sans);background:#f0ede8;color:var(--text);min-height:100
       <div class="summary-card"><div class="summary-num" id="s-open">-</div><div class="summary-label">公開Day数</div></div>
     </div>
     <div class="card">
-      <div class="card-header">
-        <span class="card-title">&#x26A1; クイック操作</span>
-      </div>
+      <div class="card-header"><span class="card-title">クイック操作</span></div>
       <div class="card-body">
         <div class="quick-row">
-          <button class="btn-quick primary" onclick="openNextDay()">次のDayを公開</button>
-          <button class="btn-quick success" onclick="switchTab('days')">課題を編集する</button>
-          <button class="btn-quick danger" onclick="closeAllDays()">全Day非公開に戻す</button>
+          <button class="btn-quick primary" id="btn-next-day">次のDayを公開</button>
+          <button class="btn-quick danger" id="btn-close-all">全Day非公開に戻す</button>
         </div>
-        <p style="font-size:11px;color:var(--text-light);line-height:1.8;">「次のDayを公開」を押すと、未公開のDayを順番に1つ開放します。</p>
+        <p style="font-size:11px;color:var(--text-light);line-height:1.8;">「次のDayを公開」を押すと未公開のDayを順番に1つ開放します。</p>
       </div>
     </div>
     <div class="card">
       <div class="card-header">
-        <span class="card-title">&#x1F4CB; Day 公開状況</span>
-        <button class="reload-btn" onclick="loadAll()">&#x21BB; 更新</button>
+        <span class="card-title">Day 公開状況</span>
+        <button class="reload-btn" id="btn-reload">&#x21BB; 更新</button>
       </div>
-      <div class="card-body" id="dash-day-list" style="padding:8px 0;">
-        <p style="font-size:12px;color:var(--text-light);padding:0 8px;">読み込み中…</p>
-      </div>
+      <div class="card-body" id="dash-day-list" style="padding:8px 0;">読み込み中…</div>
     </div>
   </div>
 
-  <!-- 課題管理 -->
   <div id="tab-days" class="tab-pane">
-    <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;line-height:1.8;">
-      &#x2139;&#xFE0F; ここで入力した内容はスプシにも自動保存されます。スプシを直接編集した場合は「&#x21BB; 更新」を押してください。
-    </p>
+    <p style="font-size:11px;color:var(--text-light);margin-bottom:12px;line-height:1.8;">ここで入力した内容はスプシにも自動保存されます。スプシを直接編集した場合は「再読み込み」を押してください。</p>
     <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-      <button class="reload-btn" onclick="loadAll()">&#x21BB; スプシから再読み込み</button>
+      <button class="reload-btn" id="btn-reload-days">&#x21BB; スプシから再読み込み</button>
     </div>
     <div id="day-list"></div>
   </div>
 
-  <!-- 提出データ -->
   <div id="tab-submissions" class="tab-pane">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <p style="font-size:11px;color:var(--text-light);">スプシの「提出データ」シートと同期しています</p>
-      <button class="reload-btn" onclick="loadAll()">&#x21BB; 更新</button>
+      <button class="reload-btn" id="btn-reload-subs">&#x21BB; 更新</button>
     </div>
     <div class="filter-row" id="sub-filter-row">
-      <button class="filter-btn active" onclick="filterSubs('all')" data-filter="all">全員</button>
+      <button class="filter-btn active" data-filter="all">全員</button>
     </div>
     <div id="sub-list"><p class="sub-empty">読み込み中…</p></div>
   </div>
@@ -230,286 +188,243 @@ body{font-family:var(--sans);background:#f0ede8;color:var(--text);min-height:100
 <div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
 
 <script>
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec';
-var ADMIN_PW = 'rion2025';
-var TOTAL_DAYS = 12;
+var GAS = 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec';
+var PW = 'rion2025';
+var TOTAL = 12;
+var st = { configs: [], members: [], subs: {}, subFilter: 'all' };
 
-var state = {
-  configs: [],
-  members: [],
-  submissions: {},
-  activeTab: 'dashboard',
-  subFilter: 'all'
-};
-
-// ===================== ユーティリティ =====================
-function showToast(msg, dur) {
-  dur = dur || 2500;
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toast(msg) {
   var el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(function() { el.classList.remove('show'); }, dur);
+  setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
-function showSpinner() { document.getElementById('spinner').classList.add('show'); }
-function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function spin(on) {
+  document.getElementById('spinner').classList.toggle('show', on);
 }
 
-// ===================== ログイン =====================
-function handleLogin() {
+// ログイン
+document.getElementById('login-btn').onclick = function() {
   var pw = document.getElementById('pw-input').value;
-  var err = document.getElementById('login-error');
-  if (pw === ADMIN_PW) {
-    err.classList.remove('show');
+  if (pw === PW) {
+    document.getElementById('login-error').classList.remove('show');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-app').classList.add('show');
     loadAll();
   } else {
-    err.classList.add('show');
+    document.getElementById('login-error').classList.add('show');
   }
-}
-function handleLogout() {
+};
+document.getElementById('pw-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+document.getElementById('logout-btn').onclick = function() {
   document.getElementById('main-app').classList.remove('show');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('pw-input').value = '';
-}
-document.getElementById('pw-input').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') handleLogin();
+};
+
+// タブ
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  };
 });
 
-// ===================== タブ =====================
-function switchTab(tab) {
-  state.activeTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
-  var btns = document.querySelectorAll('.tab-btn');
-  var tabs = ['dashboard','days','submissions'];
-  btns[tabs.indexOf(tab)].classList.add('active');
-  document.getElementById('tab-' + tab).classList.add('active');
-}
-
-// ===================== GAS API =====================
-async function gasGet(action, params) {
-  var url = GAS_URL + '?action=' + action + (params || '');
-  var res = await fetch(url);
+// GAS通信
+async function gasGet(action, extra) {
+  var res = await fetch(GAS + '?action=' + action + (extra || ''));
   return await res.json();
 }
-// CORS対策：書き込みもGETで送信（payloadにJSONエンコード）
-async function gasPost(data) {
-  var action = data.action;
+async function gasWrite(action, data) {
   var payload = encodeURIComponent(JSON.stringify(data));
-  var url = GAS_URL + '?action=' + action + '&payload=' + payload;
-  var res = await fetch(url);
+  var res = await fetch(GAS + '?action=' + action + '&payload=' + payload);
   return await res.json();
 }
 
-// ===================== 全データ読み込み =====================
+// 全データ読み込み
 async function loadAll() {
-  showSpinner();
+  spin(true);
   try {
     var r1 = await gasGet('configs');
     var r2 = await gasGet('allsubmissions');
-    state.configs = Array.isArray(r1) ? r1 : [];
-    if (r2.ok) {
-      state.members = r2.members || [];
-      state.submissions = r2.submissions || {};
-    }
-    renderDashboard();
-    renderDayList();
-    renderSubmissions();
+    st.configs = Array.isArray(r1) ? r1 : [];
+    if (r2 && r2.ok) { st.members = r2.members||[]; st.subs = r2.submissions||{}; }
+    renderDash();
+    renderDays();
+    renderSubs();
   } catch(e) {
-    showToast('読み込みエラー: ' + e.message);
-    console.error(e);
+    toast('読み込みエラー: ' + e.message);
   } finally {
-    hideSpinner();
+    spin(false);
   }
 }
 
-// ===================== ダッシュボード =====================
-function renderDashboard() {
-  var openCount = state.configs.filter(function(c) { return c.open; }).length;
-  var totalSubs = 0;
-  Object.values(state.submissions).forEach(function(s) { totalSubs += Object.keys(s).length; });
-  document.getElementById('s-members').textContent = state.members.length;
-  document.getElementById('s-submissions').textContent = totalSubs;
-  document.getElementById('s-open').textContent = openCount;
+// ボタン
+document.getElementById('btn-reload').onclick = loadAll;
+document.getElementById('btn-reload-days').onclick = loadAll;
+document.getElementById('btn-reload-subs').onclick = loadAll;
+document.getElementById('btn-next-day').onclick = openNextDay;
+document.getElementById('btn-close-all').onclick = closeAll;
+
+// ダッシュボード
+function renderDash() {
+  var open = st.configs.filter(function(c){ return c.open; }).length;
+  var total = 0;
+  Object.values(st.subs).forEach(function(s){ total += Object.keys(s).length; });
+  document.getElementById('s-members').textContent = st.members.length;
+  document.getElementById('s-submissions').textContent = total;
+  document.getElementById('s-open').textContent = open;
 
   var html = '';
-  state.configs.forEach(function(c) {
-    var isOpen = c.open;
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 8px;border-bottom:1px solid var(--border);">'
-      + '<div style="width:36px;height:36px;border-radius:50%;background:' + (isOpen ? 'linear-gradient(135deg,var(--plum),var(--plum-light))' : '#e0dbd5') + ';color:' + (isOpen ? 'var(--white)' : '#aaa') + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">D' + c.day + '</div>'
-      + '<div style="flex:1;font-size:13px;color:var(--text);">' + escHtml(c.theme || ('Day ' + c.day)) + '</div>'
-      + '<span style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;background:' + (isOpen ? 'var(--success-light)' : '#f0eded') + ';color:' + (isOpen ? 'var(--success)' : '#aaa') + ';">' + (isOpen ? '公開中' : '非公開') + '</span>'
+  for (var i = 1; i <= TOTAL; i++) {
+    var c = st.configs.find(function(x){ return x.day===i; }) || { day:i, open:false, theme:'' };
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid var(--border);">'
+      + '<div style="width:34px;height:34px;border-radius:50%;background:' + (c.open?'linear-gradient(135deg,var(--plum),var(--plum-light))':'#e0dbd5') + ';color:' + (c.open?'var(--white)':'#aaa') + ';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">D'+i+'</div>'
+      + '<div style="flex:1;font-size:13px;">' + esc(c.theme||('Day '+i)) + '</div>'
+      + '<span style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;background:' + (c.open?'var(--success-light)':'#f0eded') + ';color:' + (c.open?'var(--success)':'#aaa') + ';">' + (c.open?'公開中':'非公開') + '</span>'
       + '</div>';
-  });
-  document.getElementById('dash-day-list').innerHTML = html || '<p style="font-size:12px;color:var(--text-light);padding:8px;">データがありません</p>';
+  }
+  document.getElementById('dash-day-list').innerHTML = html;
 }
 
-// ===================== 課題管理 =====================
-function renderDayList() {
+// 課題管理
+function renderDays() {
   var html = '';
-  for (var i = 1; i <= TOTAL_DAYS; i++) {
-    var cfg = state.configs.find(function(c) { return c.day === i; }) || { day: i, theme: '', description: '', open: false };
-    var isOpen = cfg.open;
-    html += '<div class="day-card" id="day-card-' + i + '">'
+  for (var i = 1; i <= TOTAL; i++) {
+    var c = st.configs.find(function(x){ return x.day===i; }) || { day:i, theme:'', description:'', open:false };
+    var isOpen = c.open;
+    html += '<div class="day-card" id="dc-'+i+'">'
       + '<div class="day-card-head">'
-      + '<div class="day-badge' + (isOpen ? ' open' : '') + '">D' + i + '</div>'
-      + '<div class="day-info"><div class="day-num">DAY ' + i + '</div>'
-      + '<div class="day-theme-preview">' + escHtml(cfg.theme || '（テーマ未設定）') + '</div></div>'
-      + '<span class="day-status-badge ' + (isOpen ? 'open' : 'closed') + '">' + (isOpen ? '公開中' : '非公開') + '</span>'
-      + '<button class="day-toggle-btn ' + (isOpen ? 'close-btn' : 'open-btn') + '" onclick="toggleDay(' + i + ')">'
-      + (isOpen ? '非公開にする' : '公開する') + '</button>'
+      + '<div class="day-badge'+(isOpen?' open':'')+'">D'+i+'</div>'
+      + '<div class="day-info"><div class="day-num">DAY '+i+'</div>'
+      + '<div class="day-theme-preview">'+esc(c.theme||'（テーマ未設定）')+'</div></div>'
+      + '<span class="day-status-badge '+(isOpen?'open':'closed')+'">'+(isOpen?'公開中':'非公開')+'</span>'
+      + '<button class="day-toggle-btn '+(isOpen?'close-btn':'open-btn')+'" onclick="toggleDay('+i+')">'+(isOpen?'非公開にする':'公開する')+'</button>'
       + '</div>'
       + '<div class="day-card-body">'
       + '<div class="field-group"><label class="field-label">テーマ（タイトル）</label>'
-      + '<input class="field-input" id="theme-' + i + '" value="' + escHtml(cfg.theme || '') + '" placeholder="例）運を作る「根っこ」の話"></div>'
-      + '<div class="field-group"><label class="field-label">今日の問い（参加者に問いかける内容）</label>'
-      + '<textarea class="field-textarea" id="desc-' + i + '" placeholder="例）あなたが「このまま変われないかも」と感じた瞬間はいつですか？">' + escHtml(cfg.description || '') + '</textarea></div>'
-      + '<div class="save-row"><span class="save-ok" id="save-ok-' + i + '">&#x2713; 保存しました</span>'
-      + '<button class="btn-save" onclick="saveDay(' + i + ')">スプシに保存</button></div>'
-      + '</div>'
-      + '</div>';
+      + '<input class="field-input" id="th-'+i+'" value="'+esc(c.theme||'')+'" placeholder="例）運を作る根っこの話"></div>'
+      + '<div class="field-group"><label class="field-label">今日の問い</label>'
+      + '<textarea class="field-textarea" id="de-'+i+'" placeholder="参加者への問いかけ内容">'+esc(c.description||'')+'</textarea></div>'
+      + '<div class="save-row"><span class="save-ok" id="ok-'+i+'">&#x2713; 保存しました</span>'
+      + '<button class="btn-save" onclick="saveDay('+i+')">スプシに保存</button></div>'
+      + '</div></div>';
   }
   document.getElementById('day-list').innerHTML = html;
 }
 
 async function saveDay(day) {
-  var theme = document.getElementById('theme-' + day).value.trim();
-  var desc = document.getElementById('desc-' + day).value.trim();
-  var btn = document.querySelector('#day-card-' + day + ' .btn-save');
-  var okEl = document.getElementById('save-ok-' + day);
+  var theme = document.getElementById('th-'+day).value.trim();
+  var desc  = document.getElementById('de-'+day).value.trim();
+  var btn = document.querySelector('#dc-'+day+' .btn-save');
   btn.disabled = true;
+  var c = st.configs.find(function(x){ return x.day===day; });
+  if (c) { c.theme = theme; c.description = desc; }
+  else { st.configs.push({ day:day, theme:theme, description:desc, open:false }); }
   try {
-    // ローカルstateを更新
-    var cfg = state.configs.find(function(c) { return c.day === day; });
-    if (cfg) { cfg.theme = theme; cfg.description = desc; }
-    else { state.configs.push({ day: day, theme: theme, description: desc, open: false }); }
-    // GAS経由でスプシに保存
-    var result = await gasPost({ action: 'saveConfigs', configs: state.configs });
-    if (result.ok) {
-      okEl.classList.add('show');
-      setTimeout(function() { okEl.classList.remove('show'); }, 2500);
-      renderDashboard();
-    } else {
-      showToast('保存エラー: ' + (result.error || ''));
-    }
-  } catch(e) {
-    showToast('通信エラーが発生しました');
-    console.error(e);
-  } finally {
-    btn.disabled = false;
-  }
+    var r = await gasWrite('saveConfigs', { configs: st.configs });
+    if (r.ok) {
+      var ok = document.getElementById('ok-'+day);
+      ok.classList.add('show');
+      setTimeout(function(){ ok.classList.remove('show'); }, 2500);
+      renderDash();
+    } else { toast('保存エラー: ' + (r.error||'')); }
+  } catch(e) { toast('通信エラー: ' + e.message); }
+  finally { btn.disabled = false; }
 }
 
 async function toggleDay(day) {
-  var cfg = state.configs.find(function(c) { return c.day === day; });
-  var newOpen = cfg ? !cfg.open : true;
-  if (cfg) { cfg.open = newOpen; }
-  else { state.configs.push({ day: day, theme: '', description: '', open: newOpen }); }
-  showSpinner();
+  var c = st.configs.find(function(x){ return x.day===day; });
+  var newOpen = c ? !c.open : true;
+  if (c) { c.open = newOpen; }
+  else { st.configs.push({ day:day, theme:'', description:'', open:newOpen }); }
+  spin(true);
   try {
-    var result = await gasPost({ action: 'saveConfigs', configs: state.configs });
-    if (result.ok) {
-      showToast('Day ' + day + ' を' + (newOpen ? '公開' : '非公開に') + 'しました');
-      renderDayList();
-      renderDashboard();
-    } else {
-      showToast('保存エラー');
-    }
-  } catch(e) {
-    showToast('通信エラーが発生しました');
-    console.error(e);
-  } finally {
-    hideSpinner();
-  }
+    var r = await gasWrite('saveConfigs', { configs: st.configs });
+    if (r.ok) {
+      toast('Day '+day+' を'+(newOpen?'公開':'非公開に')+'しました');
+      renderDays(); renderDash();
+    } else { toast('保存エラー'); }
+  } catch(e) { toast('通信エラー'); }
+  finally { spin(false); }
 }
 
 async function openNextDay() {
-  var closed = state.configs.filter(function(c) { return !c.open; }).sort(function(a,b) { return a.day - b.day; });
-  if (closed.length === 0) { showToast('全てのDayが公開済みです'); return; }
-  var next = closed[0];
-  if (!confirm('Day ' + next.day + ' を公開しますか？')) return;
-  await toggleDay(next.day);
+  var closed = st.configs.filter(function(c){ return !c.open; }).sort(function(a,b){ return a.day-b.day; });
+  if (!closed.length) { toast('全てのDayが公開済みです'); return; }
+  if (!confirm('Day '+closed[0].day+' を公開しますか？')) return;
+  await toggleDay(closed[0].day);
 }
 
-async function closeAllDays() {
+async function closeAll() {
   if (!confirm('全てのDayを非公開に戻しますか？')) return;
-  state.configs.forEach(function(c) { c.open = false; });
-  showSpinner();
+  st.configs.forEach(function(c){ c.open = false; });
+  spin(true);
   try {
-    var result = await gasPost({ action: 'saveConfigs', configs: state.configs });
-    if (result.ok) {
-      showToast('全Dayを非公開にしました');
-      renderDayList();
-      renderDashboard();
-    }
-  } catch(e) {
-    showToast('通信エラーが発生しました');
-  } finally {
-    hideSpinner();
-  }
+    var r = await gasWrite('saveConfigs', { configs: st.configs });
+    if (r.ok) { toast('全Dayを非公開にしました'); renderDays(); renderDash(); }
+  } catch(e) { toast('通信エラー'); }
+  finally { spin(false); }
 }
 
-// ===================== 提出データ =====================
-function renderSubmissions() {
-  // フィルターボタン生成
-  var filterRow = document.getElementById('sub-filter-row');
-  var openDays = state.configs.filter(function(c) { return c.open; });
-  var btnHtml = '<button class="filter-btn' + (state.subFilter === 'all' ? ' active' : '') + '" onclick="filterSubs(\'all\')" data-filter="all">全員</button>';
-  openDays.forEach(function(c) {
-    btnHtml += '<button class="filter-btn' + (state.subFilter === String(c.day) ? ' active' : '') + '" onclick="filterSubs(\'' + c.day + '\')" data-filter="' + c.day + '">Day ' + c.day + '</button>';
+// 提出データ
+function renderSubs() {
+  var row = document.getElementById('sub-filter-row');
+  var opens = st.configs.filter(function(c){ return c.open; });
+  var fhtml = '<button class="filter-btn'+(st.subFilter==='all'?' active':'')+'" data-filter="all">全員</button>';
+  opens.forEach(function(c){
+    fhtml += '<button class="filter-btn'+(st.subFilter===String(c.day)?' active':'')+'" data-filter="'+c.day+'">Day '+c.day+'</button>';
   });
-  filterRow.innerHTML = btnHtml;
-  displaySubmissions();
-}
-
-function filterSubs(filter) {
-  state.subFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.filter === filter);
+  row.innerHTML = fhtml;
+  row.querySelectorAll('.filter-btn').forEach(function(b){
+    b.onclick = function(){
+      st.subFilter = b.dataset.filter;
+      renderSubs();
+    };
   });
-  displaySubmissions();
-}
 
-function displaySubmissions() {
-  var list = document.getElementById('sub-list');
-  var allEntries = [];
-
-  Object.keys(state.submissions).forEach(function(email) {
-    var subs = state.submissions[email] || {};
-    var member = state.members.find(function(m) { return m.email === email; });
-    var name = member ? (member.name || email) : email;
-    Object.keys(subs).forEach(function(day) {
-      allEntries.push({
-        email: email, name: name, day: Number(day),
-        text: subs[day].text, date: subs[day].date
-      });
+  var entries = [];
+  Object.keys(st.subs).forEach(function(email){
+    var s = st.subs[email]||{};
+    var m = st.members.find(function(x){ return x.email===email; });
+    var name = m ? (m.name||email) : email;
+    Object.keys(s).forEach(function(day){
+      entries.push({ email:email, name:name, day:Number(day), text:s[day].text, date:s[day].date });
     });
   });
 
-  // フィルター
-  if (state.subFilter !== 'all') {
-    var filterDay = Number(state.subFilter);
-    allEntries = allEntries.filter(function(e) { return e.day === filterDay; });
+  if (st.subFilter !== 'all') {
+    var fd = Number(st.subFilter);
+    entries = entries.filter(function(e){ return e.day===fd; });
   }
+  entries.sort(function(a,b){ return (b.date||'').localeCompare(a.date||'')||b.day-a.day; });
 
-  // 日付降順ソート
-  allEntries.sort(function(a, b) { return (b.date || '').localeCompare(a.date || '') || b.day - a.day; });
-
-  if (allEntries.length === 0) {
-    list.innerHTML = '<p class="sub-empty">提出データがありません</p>';
+  if (!entries.length) {
+    document.getElementById('sub-list').innerHTML = '<p class="sub-empty">提出データがありません</p>';
     return;
   }
-
   var html = '';
-  allEntries.forEach(function(e) {
+  entries.forEach(function(e){
     html += '<div class="sub-card">'
       + '<div class="sub-card-head">'
-      + '<div class="sub-avatar">' + escHtml((e.name || '?').charAt(0)) + '</div>'
-      + '<div class="sub-meta"><div class="sub-name">' + escHtml(e.name) + '</div>'
-      + '<div class="sub-info">' + escHtml(e.email) + ' &nbsp;|&nbsp; ' + escHtml(e.date || '') + '</div></div>'
-      + '<span class="sub-day-badge">Day ' + e.day + '</span>'
+      + '<div class="sub-avatar">'+esc((e.name||'?').charAt(0))+'</div>'
+      + '<div class="sub-meta"><div class="sub-name">'+esc(e.name)+'</div>'
+      + '<div class="sub-info">'+esc(e.email)+' | '+esc(e.date||'')+'</div></div>'
+      + '<span class="sub-day-badge">Day '+e.day+'</span>'
       + '</div>'
-      + '<div class="sub-te
+      + '<div class="sub-text">'+esc(e.text)+'</div>'
+      + '</div>';
+  });
+  document.getElementById('sub-list').innerHTML = html;
+}
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
