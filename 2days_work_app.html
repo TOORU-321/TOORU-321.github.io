@@ -8,149 +8,130 @@
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --plum: #8b5a6b;
-  --plum-light: #a87389;
-  --plum-pale: #f5eef1;
-  --plum-bg: #faf6f8;
-  --gold: #c4a265;
-  --gold-light: #e8d5a8;
-  --cream: #fdfbf7;
-  --warm-gray: #6b5e5e;
-  --text: #3d2e2e;
-  --text-light: #7a6a6a;
-  --border: #e8ddd5;
-  --success: #6ba37a;
-  --success-light: #e8f5ec;
-  --white: #ffffff;
-  --shadow: 0 2px 12px rgba(100, 60, 70, 0.08);
-  --shadow-lg: 0 4px 24px rgba(100, 60, 70, 0.12);
-  --radius: 12px;
-  --radius-sm: 8px;
-  --font-mincho: 'Shippori Mincho', 'Noto Serif JP', serif;
+  --plum: #8b5a6b; --plum-light: #a87389; --plum-pale: #f5eef1; --plum-bg: #faf6f8;
+  --gold: #c4a265; --gold-light: #e8d5a8; --cream: #fdfbf7; --warm-gray: #6b5e5e;
+  --text: #3d2e2e; --text-light: #7a6a6a; --border: #e8ddd5;
+  --success: #6ba37a; --success-light: #e8f5ec; --white: #ffffff;
+  --shadow: 0 2px 12px rgba(100,60,70,0.08); --shadow-lg: 0 4px 24px rgba(100,60,70,0.12);
+  --radius: 12px; --radius-sm: 8px; --font-mincho: 'Shippori Mincho','Noto Serif JP',serif;
   --bottom-nav-h: 60px;
 }
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--font-mincho); background: var(--cream); color: var(--text); min-height: 100dvh; -webkit-font-smoothing: antialiased; }
-#login-overlay { position: fixed; inset: 0; z-index: 800; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%); padding: 20px 16px; transition: opacity 0.35s ease, visibility 0.35s ease; }
-#login-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.main-app { display: none; }
-.main-app.show { display: block; }
-.view { display: none; min-height: 100dvh; padding-bottom: calc(var(--bottom-nav-h) + 24px); }
-.view.active { display: block; }
-.app-header { background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%); color: var(--white); text-align: center; padding: 20px 16px 18px; position: relative; }
-.app-header h1 { font-size: 15px; font-weight: 500; letter-spacing: 0.12em; line-height: 1.6; }
-.app-header .subtitle { font-size: 11px; opacity: 0.75; margin-top: 4px; letter-spacing: 0.08em; }
-.header-back { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--white); font-size: 22px; cursor: pointer; padding: 8px; opacity: 0.85; transition: opacity 0.2s; }
-.header-back:hover { opacity: 1; }
-.container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
-.btn { display: block; width: 100%; padding: 14px 24px; border: none; border-radius: var(--radius); font-family: var(--font-mincho); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.25s; letter-spacing: 0.06em; }
-.btn-primary { background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%); color: var(--white); box-shadow: 0 3px 12px rgba(139, 90, 107, 0.3); }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4); }
-.btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--bottom-nav-h); background: var(--white); border-top: 1px solid var(--border); z-index: 100; display: flex; justify-content: center; align-items: stretch; box-shadow: 0 -2px 12px rgba(100, 60, 70, 0.06); }
-.nav-item { flex: 1; max-width: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; background: none; border: none; cursor: pointer; color: var(--text-light); transition: color 0.2s; font-family: var(--font-mincho); position: relative; }
-.nav-item:hover { color: var(--text); }
-.nav-item.active { color: var(--plum); }
-.nav-item.active::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 32px; height: 2.5px; background: var(--plum); border-radius: 0 0 2px 2px; }
-.nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
-.nav-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.03em; }
-.login-card { background: var(--white); border-radius: 20px; padding: 40px 28px 36px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); text-align: center; }
-.login-logo { font-size: 13px; color: var(--plum); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 500; }
-.login-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
-.login-sub { font-size: 12px; color: var(--text-light); margin-bottom: 32px; line-height: 1.7; }
-.login-deco { width: 40px; height: 1px; background: var(--gold-light); margin: 16px auto 20px; }
-.login-privacy-note { font-size: 11px; color: var(--text-light); background: var(--plum-pale); border-radius: 8px; padding: 8px 12px; margin: -4px 0 16px; line-height: 1.7; text-align: left; }
-.input-group { text-align: left; margin-bottom: 20px; }
-.input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 6px; letter-spacing: 0.05em; }
-.input-group input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-mincho); font-size: 15px; color: var(--text); background: var(--cream); transition: border-color 0.25s; outline: none; }
-.input-group input:focus { border-color: var(--plum-light); background: var(--white); }
-.input-group input::placeholder { color: #c0b0b0; }
-.login-error { display: none; background: #fdf0f0; color: #b44; font-size: 12px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; line-height: 1.6; }
-.login-error.show { display: block; }
-.login-note { font-size: 10.5px; color: var(--text-light); margin-top: 16px; line-height: 1.7; opacity: 0.7; }
-.welcome-section { background: var(--white); padding: 20px; margin: 20px 16px; border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
-.welcome-name { font-size: 14px; color: var(--plum); font-weight: 600; margin-bottom: 4px; }
-.welcome-msg { font-size: 12px; color: var(--text-light); line-height: 1.7; }
-.progress-bar-wrap { background: var(--white); margin: 0 16px 20px; padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
-.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
-.progress-count { color: var(--plum); font-weight: 600; }
-.progress-track { height: 6px; background: var(--plum-pale); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--plum) 0%, var(--plum-light) 100%); border-radius: 3px; transition: width 0.5s ease; width: 0%; }
-.day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; margin-bottom: 24px; }
-.day-card { background: var(--white); border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.25s; position: relative; border: 1.5px solid transparent; }
-.day-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--plum-pale); }
-.day-card:active { transform: translateY(0); }
-.day-card.submitted { border-color: var(--success-light); background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%); }
-.day-card.locked { opacity: 0.5; cursor: default; pointer-events: none; }
-.day-number { font-size: 11px; color: var(--text-light); letter-spacing: 0.08em; margin-bottom: 4px; }
-.day-theme { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; min-height: 40px; }
-.day-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; margin-top: 10px; padding: 3px 8px; border-radius: 20px; }
-.day-status.done { background: var(--success-light); color: var(--success); }
-.day-status.todo { background: var(--plum-pale); color: var(--plum); }
-.day-status.locked-label { background: #f0eded; color: #aaa; }
-.day-check { position: absolute; top: 10px; right: 12px; font-size: 16px; }
-.logout-link { display: block; text-align: center; font-size: 11px; color: var(--text-light); margin: 24px 0 0; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; text-decoration: none; }
-.logout-link:hover { opacity: 1; }
-.work-header-info { background: var(--white); margin: 20px 16px; padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
-.work-day-label { font-size: 11px; color: var(--plum); letter-spacing: 0.1em; margin-bottom: 4px; font-weight: 500; }
-.work-theme-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
-.work-description { font-size: 13px; color: var(--text-light); line-height: 1.8; }
-.work-form-area { margin: 0 16px; padding: 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
-.work-form-area label { display: block; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px; }
-.work-textarea { width: 100%; min-height: 200px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-mincho); font-size: 14px; color: var(--text); background: var(--cream); resize: vertical; outline: none; line-height: 1.8; transition: border-color 0.25s; }
-.work-textarea:focus { border-color: var(--plum-light); background: var(--white); }
-.work-textarea::placeholder { color: #c0b0b0; }
-.char-count { text-align: right; font-size: 11px; color: var(--text-light); margin-top: 6px; opacity: 0.6; }
-.submit-area { margin: 20px 16px 0; }
-.submitted-banner { display: none; background: var(--success-light); border: 1.5px solid var(--success); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; text-align: center; }
-.submitted-banner.show { display: block; }
-.submitted-banner .check-icon { font-size: 24px; margin-bottom: 4px; }
-.submitted-banner .banner-text { font-size: 13px; color: var(--success); font-weight: 600; }
-.submitted-banner .banner-date { font-size: 11px; color: var(--text-light); margin-top: 4px; }
-.prev-submission { display: none; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; }
-.prev-submission.show { display: block; }
-.prev-submission-label { font-size: 11px; color: var(--text-light); margin-bottom: 8px; letter-spacing: 0.05em; }
-.prev-submission-text { font-size: 13px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
-.board-day-tabs { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--white); border-bottom: 1px solid var(--border); scrollbar-width: none; }
-.board-day-tabs::-webkit-scrollbar { display: none; }
-.board-day-tab { flex-shrink: 0; padding: 12px 16px; background: none; border: none; border-bottom: 2.5px solid transparent; font-family: var(--font-mincho); font-size: 12.5px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.board-day-tab.active { color: var(--plum); border-bottom-color: var(--plum); }
-.board-day-tab:hover { color: var(--text); }
-.board-day-tab .tab-count { display: inline-block; background: var(--plum-pale); color: var(--plum); font-size: 10px; padding: 1px 6px; border-radius: 10px; margin-left: 4px; font-weight: 600; }
-.board-day-tab.active .tab-count { background: var(--plum); color: var(--white); }
-.board-stats { display: flex; gap: 10px; padding: 16px 16px 0; max-width: 480px; margin: 0 auto; }
-.board-stat { flex: 1; background: var(--white); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--shadow); }
-.board-stat-num { font-size: 22px; font-weight: 700; color: var(--plum); line-height: 1; }
-.board-stat-label { font-size: 10px; color: var(--text-light); margin-top: 3px; }
-.board-submissions-area { padding: 16px 16px 0; max-width: 480px; margin: 0 auto; }
-.board-day-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.board-day-theme { font-size: 12px; color: var(--text-light); margin-bottom: 16px; line-height: 1.6; }
-.submission-card { background: var(--white); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
-.submission-card.mine { border-left: 3px solid var(--plum); }
-.submission-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.submission-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--plum-pale) 0%, var(--gold-light) 100%); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--plum); flex-shrink: 0; }
-.submission-meta { flex: 1; min-width: 0; }
-.submission-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
-.submission-name .me-tag { font-size: 10px; color: var(--plum); font-weight: 400; }
-.submission-date { font-size: 10.5px; color: var(--text-light); margin-top: 1px; }
-.submission-body { font-size: 13.5px; color: var(--text); line-height: 1.9; white-space: pre-wrap; word-break: break-word; padding: 14px 16px; background: var(--cream); border-radius: var(--radius-sm); border-left: 3px solid var(--plum-pale); }
-.submission-body.collapsed { max-height: 160px; overflow: hidden; position: relative; }
-.submission-body.collapsed::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50px; background: linear-gradient(transparent, var(--cream)); }
-.toggle-expand { display: none; background: none; border: none; color: var(--plum); font-family: var(--font-mincho); font-size: 12px; font-weight: 600; cursor: pointer; padding: 8px 0 0; transition: opacity 0.2s; }
-.toggle-expand:hover { opacity: 0.7; }
-.toggle-expand.show { display: block; }
-.board-empty { text-align: center; padding: 50px 20px; color: var(--text-light); }
-.board-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
-.board-empty-text { font-size: 13px; line-height: 1.8; }
-.toast { position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--white); padding: 12px 24px; border-radius: 30px; font-size: 13px; font-family: var(--font-mincho); box-shadow: var(--shadow-lg); transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1000; white-space: nowrap; }
-.toast.show { bottom: calc(var(--bottom-nav-h) + 16px); }
-.spinner-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 999; align-items: center; justify-content: center; }
-.spinner-overlay.show { display: flex; }
-.spinner { width: 36px; height: 36px; border: 3px solid var(--plum-pale); border-top-color: var(--plum); border-radius: 50%; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 360px) { .day-grid { grid-template-columns: 1fr; } .login-card { padding: 32px 20px 28px; } .board-stats { flex-direction: column; } }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;}
+#login-overlay{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--plum-pale) 0%,var(--cream) 40%,var(--plum-pale) 100%);padding:20px 16px;transition:opacity .35s ease,visibility .35s ease;}
+#login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.main-app{display:none;} .main-app.show{display:block;}
+.view{display:none;min-height:100dvh;padding-bottom:calc(var(--bottom-nav-h) + 24px);} .view.active{display:block;}
+.app-header{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);text-align:center;padding:20px 16px 18px;position:relative;}
+.app-header h1{font-size:15px;font-weight:500;letter-spacing:.12em;line-height:1.6;}
+.app-header .subtitle{font-size:11px;opacity:.75;margin-top:4px;letter-spacing:.08em;}
+.header-back{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white);font-size:22px;cursor:pointer;padding:8px;opacity:.85;transition:opacity .2s;}
+.header-back:hover{opacity:1;}
+.btn{display:block;width:100%;padding:14px 24px;border:none;border-radius:var(--radius);font-family:var(--font-mincho);font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;letter-spacing:.06em;}
+.btn-primary{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);box-shadow:0 3px 12px rgba(139,90,107,.3);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(139,90,107,.4);}
+.btn-primary:active{transform:translateY(0);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--white);border-top:1px solid var(--border);z-index:100;display:flex;justify-content:center;align-items:stretch;box-shadow:0 -2px 12px rgba(100,60,70,.06);}
+.nav-item{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text-light);transition:color .2s;font-family:var(--font-mincho);position:relative;}
+.nav-item:hover{color:var(--text);} .nav-item.active{color:var(--plum);}
+.nav-item.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:2.5px;background:var(--plum);border-radius:0 0 2px 2px;}
+.nav-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.03em;}
+.login-card{background:var(--white);border-radius:20px;padding:40px 28px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);text-align:center;}
+.login-logo{font-size:13px;color:var(--plum);letter-spacing:.15em;margin-bottom:6px;font-weight:500;}
+.login-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.5;}
+.login-sub{font-size:12px;color:var(--text-light);margin-bottom:32px;line-height:1.7;}
+.login-deco{width:40px;height:1px;background:var(--gold-light);margin:16px auto 20px;}
+.login-privacy-note{font-size:11px;color:var(--text-light);background:var(--plum-pale);border-radius:8px;padding:8px 12px;margin:-4px 0 16px;line-height:1.7;text-align:left;}
+.input-group{text-align:left;margin-bottom:20px;}
+.input-group label{display:block;font-size:12px;color:var(--text-light);margin-bottom:6px;letter-spacing:.05em;}
+.input-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-mincho);font-size:15px;color:var(--text);background:var(--cream);transition:border-color .25s;outline:none;}
+.input-group input:focus{border-color:var(--plum-light);background:var(--white);}
+.input-group input::placeholder{color:#c0b0b0;}
+.login-error{display:none;background:#fdf0f0;color:#b44;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;line-height:1.6;}
+.login-error.show{display:block;}
+.login-note{font-size:10.5px;color:var(--text-light);margin-top:16px;line-height:1.7;opacity:.7;}
+.welcome-section{background:var(--white);padding:20px;margin:20px 16px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;}
+.welcome-name{font-size:15px;color:var(--plum);font-weight:700;margin-bottom:4px;}
+.welcome-msg{font-size:12px;color:var(--text-light);line-height:1.7;}
+.progress-bar-wrap{background:var(--white);margin:0 16px 20px;padding:16px 20px;border-radius:var(--radius);box-shadow:var(--shadow);}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-light);margin-bottom:8px;}
+.progress-count{color:var(--plum);font-weight:600;}
+.progress-track{height:6px;background:var(--plum-pale);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--plum) 0%,var(--plum-light) 100%);border-radius:3px;transition:width .5s ease;width:0%;}
+.day-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-bottom:24px;}
+.day-card{background:var(--white);border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow);cursor:pointer;transition:all .25s;position:relative;border:1.5px solid transparent;}
+.day-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--plum-pale);}
+.day-card:active{transform:translateY(0);}
+.day-card.submitted{border-color:var(--success-light);background:linear-gradient(135deg,var(--white) 0%,var(--success-light) 100%);}
+.day-card.locked{opacity:.5;cursor:default;pointer-events:none;}
+.day-number{font-size:11px;color:var(--text-light);letter-spacing:.08em;margin-bottom:4px;}
+.day-theme{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;min-height:40px;}
+.day-status{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;margin-top:10px;padding:3px 8px;border-radius:20px;}
+.day-status.done{background:var(--success-light);color:var(--success);}
+.day-status.todo{background:var(--plum-pale);color:var(--plum);}
+.day-status.locked-label{background:#f0eded;color:#aaa;}
+.day-check{position:absolute;top:10px;right:12px;font-size:16px;}
+.logout-link{display:block;text-align:center;font-size:11px;color:var(--text-light);margin:24px 0 0;cursor:pointer;opacity:.6;transition:opacity .2s;text-decoration:none;}
+.logout-link:hover{opacity:1;}
+.work-header-info{background:var(--white);margin:20px 16px;padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);}
+.work-day-label{font-size:11px;color:var(--plum);letter-spacing:.1em;margin-bottom:4px;font-weight:500;}
+.work-theme-title{font-size:17px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:8px;}
+.work-description{font-size:13px;color:var(--text-light);line-height:1.8;}
+.work-form-area{margin:0 16px;padding:20px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);}
+.work-form-area label{display:block;font-size:13px;color:var(--text);font-weight:600;margin-bottom:8px;}
+.work-textarea{width:100%;min-height:200px;padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-mincho);font-size:14px;color:var(--text);background:var(--cream);resize:vertical;outline:none;line-height:1.8;transition:border-color .25s;}
+.work-textarea:focus{border-color:var(--plum-light);background:var(--white);}
+.work-textarea::placeholder{color:#c0b0b0;}
+.char-count{text-align:right;font-size:11px;color:var(--text-light);margin-top:6px;opacity:.6;}
+.submit-area{margin:20px 16px 0;}
+.submitted-banner{display:none;background:var(--success-light);border:1.5px solid var(--success);border-radius:var(--radius);padding:16px 20px;margin:0 16px 16px;text-align:center;}
+.submitted-banner.show{display:block;}
+.submitted-banner .check-icon{font-size:24px;margin-bottom:4px;}
+.submitted-banner .banner-text{font-size:13px;color:var(--success);font-weight:600;}
+.submitted-banner .banner-date{font-size:11px;color:var(--text-light);margin-top:4px;}
+.prev-submission{display:none;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin:0 16px 16px;}
+.prev-submission.show{display:block;}
+.prev-submission-label{font-size:11px;color:var(--text-light);margin-bottom:8px;letter-spacing:.05em;}
+.prev-submission-text{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;}
+.board-day-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--white);border-bottom:1px solid var(--border);scrollbar-width:none;}
+.board-day-tabs::-webkit-scrollbar{display:none;}
+.board-day-tab{flex-shrink:0;padding:12px 16px;background:none;border:none;border-bottom:2.5px solid transparent;font-family:var(--font-mincho);font-size:12.5px;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.board-day-tab.active{color:var(--plum);border-bottom-color:var(--plum);}
+.board-day-tab .tab-count{display:inline-block;background:var(--plum-pale);color:var(--plum);font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:600;}
+.board-day-tab.active .tab-count{background:var(--plum);color:var(--white);}
+.board-stats{display:flex;gap:10px;padding:16px 16px 0;max-width:480px;margin:0 auto;}
+.board-stat{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:12px;text-align:center;box-shadow:var(--shadow);}
+.board-stat-num{font-size:22px;font-weight:700;color:var(--plum);line-height:1;}
+.board-stat-label{font-size:10px;color:var(--text-light);margin-top:3px;}
+.board-submissions-area{padding:16px 16px 0;max-width:480px;margin:0 auto;}
+.board-day-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.board-day-theme{font-size:12px;color:var(--text-light);margin-bottom:16px;line-height:1.6;}
+.submission-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow);}
+.submission-card.mine{border-left:3px solid var(--plum);}
+.submission-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.submission-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--plum-pale) 0%,var(--gold-light) 100%);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--plum);flex-shrink:0;}
+.submission-meta{flex:1;min-width:0;}
+.submission-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
+.submission-name .me-tag{font-size:10px;color:var(--plum);font-weight:400;}
+.submission-date{font-size:10.5px;color:var(--text-light);margin-top:1px;}
+.submission-body{font-size:13.5px;color:var(--text);line-height:1.9;white-space:pre-wrap;word-break:break-word;padding:14px 16px;background:var(--cream);border-radius:var(--radius-sm);border-left:3px solid var(--plum-pale);}
+.submission-body.collapsed{max-height:160px;overflow:hidden;position:relative;}
+.submission-body.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,var(--cream));}
+.toggle-expand{display:none;background:none;border:none;color:var(--plum);font-family:var(--font-mincho);font-size:12px;font-weight:600;cursor:pointer;padding:8px 0 0;transition:opacity .2s;}
+.toggle-expand:hover{opacity:.7;} .toggle-expand.show{display:block;}
+.board-empty{text-align:center;padding:50px 20px;color:var(--text-light);}
+.board-empty-icon{font-size:36px;margin-bottom:10px;opacity:.35;}
+.board-empty-text{font-size:13px;line-height:1.8;}
+.toast{position:fixed;bottom:-80px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--white);padding:12px 24px;border-radius:30px;font-size:13px;font-family:var(--font-mincho);box-shadow:var(--shadow-lg);transition:bottom .4s cubic-bezier(.34,1.56,.64,1);z-index:1000;white-space:nowrap;}
+.toast.show{bottom:calc(var(--bottom-nav-h) + 16px);}
+.spinner-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:999;align-items:center;justify-content:center;}
+.spinner-overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid var(--plum-pale);border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:360px){.day-grid{grid-template-columns:1fr;}.login-card{padding:32px 20px 28px;}.board-stats{flex-direction:column;}}
 </style>
 </head>
 <body>
@@ -169,18 +150,18 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
       <label for="display-name-input">オープンチャットでのお名前</label>
       <input type="text" id="display-name-input" placeholder="例）みこ、田中さん" autocomplete="nickname">
     </div>
-    <p class="login-privacy-note">🔒 本名はお申し込み情報で把握しています。ここで入力した名前のみ掲示板に表示されます。</p>
+    <p class="login-privacy-note">&#x1F512; 本名はお申し込み情報で把握しています。ここで入力した名前のみ掲示板に表示されます。</p>
     <div id="login-error" class="login-error">登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。</div>
     <button class="btn btn-primary" onclick="handleLogin()">ログイン</button>
-    <p class="login-note">※ 次回からは自動ログインされます</p>
+    <p class="login-note">&#xFF05; 次回からは自動ログインされます</p>
   </div>
 </div>
 
 <div id="main-app" class="main-app">
+
   <div id="view-dashboard" class="view active">
     <div class="app-header">
       <h1>2days実践講座<br>ワーク提出</h1>
-      <div class="subtitle">〜実践型プログラム〜</div>
     </div>
     <div class="welcome-section">
       <div class="welcome-name" id="welcome-name">ようこそ</div>
@@ -191,7 +172,7 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
     <div class="day-grid" id="day-grid"></div>
-    <div style="padding: 0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
+    <div style="padding:0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
   </div>
 
   <div id="view-work" class="view">
@@ -200,7 +181,7 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
       <h1 id="work-screen-title">Day 1 ワーク</h1>
     </div>
     <div id="submitted-banner" class="submitted-banner">
-      <div class="check-icon">✓</div>
+      <div class="check-icon">&#x2713;</div>
       <div class="banner-text">提出済みです</div>
       <div class="banner-date" id="submitted-date"></div>
     </div>
@@ -245,29 +226,29 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
     <div style="padding:0 16px 24px">
       <div id="tokuten-video-card" style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden">
         <div style="padding:18px 18px 12px;border-bottom:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--plum);letter-spacing:0.15em;font-weight:600;margin-bottom:4px">SPECIAL VIDEO</div>
+          <div style="font-size:10px;color:var(--plum);letter-spacing:.15em;font-weight:600;margin-bottom:4px">SPECIAL VIDEO</div>
           <div style="font-size:16px;font-weight:700;line-height:1.6">東洋哲学の概論<br>運と徳の法則</div>
         </div>
-        <div id="tokuten-video-area" style="position:relative;padding:56.25% 0 0 0;background:#1a1a1a">
+        <div style="position:relative;padding:56.25% 0 0 0;background:#1a1a1a">
           <iframe src="https://player.vimeo.com/video/1119403217?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
             style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
             title="東洋哲学の概論 運と徳の法則"></iframe>
         </div>
-        <div style="padding:14px 18px;background:var(--cream);display:flex;align-items:center;gap:8px">
+        <div style="padding:14px 18px;background:var(--cream)">
           <span style="font-size:12px;color:var(--text-light)">視聴期限：<strong style="color:var(--plum)">2026年6月28日（日）</strong>まで</span>
         </div>
-        <div id="tokuten-countdown" style="background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);padding:16px 18px;text-align:center">
-          <div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:0.15em;margin-bottom:8px">視聴可能 残り時間</div>
+        <div style="background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);padding:16px 18px;text-align:center">
+          <div style="font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.15em;margin-bottom:8px">視聴可能 残り時間</div>
           <div style="display:flex;justify-content:center;gap:6px;align-items:baseline">
-            <div style="text-align:center;min-width:44px"><span id="tk-days" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">日</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-hours" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">時間</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-min" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">分</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-sec" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">秒</div></div>
+            <div style="text-align:center;min-width:44px"><span id="tk-days" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">日</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-hours" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">時間</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-min" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">分</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-sec" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">秒</div></div>
           </div>
         </div>
       </div>
@@ -276,7 +257,7 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
 
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
       <span class="nav-label">マイワーク</span>
     </button>
     <button class="nav-item" id="nav-board" onclick="switchNav('board')">
@@ -294,56 +275,51 @@ body { font-family: var(--font-mincho); background: var(--cream); color: var(--t
 <div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
 
 <script>
-const CONFIG = {
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec',
-  TOTAL_DAYS: 12,
-  DEMO_MODE: false,
-  COLLAPSE_THRESHOLD: 200,
-};
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec';
+var TOTAL_DAYS = 12;
+var COLLAPSE_THRESHOLD = 200;
 
-const state = {
+var state = {
   email: null, userName: null, currentDay: null,
   submissions: {}, dayConfigs: [],
   boardDay: 1, allMembers: [], allSubmissions: {},
-  activeNav: 'mywork',
+  activeNav: 'mywork'
 };
 
-const API = {
-  async verifyEmail(email) {
-    const res = await fetch(CONFIG.GAS_URL + '?action=verify&email=' + encodeURIComponent(email));
-    return await res.json();
-  },
-  async getDayConfigs() {
-    const res = await fetch(CONFIG.GAS_URL + '?action=configs');
-    return await res.json();
-  },
-  async getSubmissions(email) {
-    const res = await fetch(CONFIG.GAS_URL + '?action=submissions&email=' + encodeURIComponent(email));
-    return await res.json();
-  },
-  async submitWork(email, day, text) {
-    const res = await fetch(CONFIG.GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'submit', email, day, text })
-    });
-    return await res.json();
-  },
-  async getAllSubmissions() {
-    const res = await fetch(CONFIG.GAS_URL + '?action=allsubmissions');
-    return await res.json();
-  },
-};
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-function enterApp() { document.getElementById('main-app').classList.add('show'); document.getElementById('login-overlay').classList.add('hidden'); }
-function exitApp() { document.getElementById('main-app').classList.remove('show'); document.getElementById('login-overlay').classList.remove('hidden'); }
-function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0, 0); }
-function showToast(message, duration) { duration = duration || 2500; var el = document.getElementById('toast'); el.textContent = message; el.classList.add('show'); setTimeout(function() { el.classList.remove('show'); }, duration); }
+function enterApp() {
+  document.getElementById('main-app').classList.add('show');
+  document.getElementById('login-overlay').classList.add('hidden');
+}
+function exitApp() {
+  document.getElementById('main-app').classList.remove('show');
+  document.getElementById('login-overlay').classList.remove('hidden');
+}
+function showView(id) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showToast(msg, dur) {
+  dur = dur || 2500;
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, dur);
+}
 function showSpinner() { document.getElementById('spinner').classList.add('show'); }
 function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 function getInitial(name) { return name ? name.charAt(0) : '?'; }
+
+function updateWelcome() {
+  var n = state.userName || 'あなた';
+  document.getElementById('welcome-name').textContent = n + 'さん、こんにちは！';
+  document.getElementById('welcome-msg').textContent = n + 'さん専用の12日間ワーク提出アプリです';
+}
 
 function switchNav(tab) {
   state.activeNav = tab;
@@ -356,15 +332,15 @@ function switchNav(tab) {
 
 async function handleLogin() {
   var emailInput = document.getElementById('email-input');
-  var displayNameInput = document.getElementById('display-name-input');
+  var nameInput = document.getElementById('display-name-input');
   var email = emailInput.value.trim().toLowerCase();
-  var displayName = displayNameInput.value.trim();
+  var displayName = nameInput.value.trim();
   var errorEl = document.getElementById('login-error');
 
   if (!displayName) {
     errorEl.textContent = 'オープンチャットでのお名前を入力してください。';
     errorEl.classList.add('show');
-    displayNameInput.focus();
+    nameInput.focus();
     return;
   }
 
@@ -388,7 +364,8 @@ async function handleLogin() {
   showSpinner();
 
   try {
-    var result = await API.verifyEmail(email);
+    var res = await fetch(GAS_URL + '?action=verify&email=' + encodeURIComponent(email));
+    var result = await res.json();
     if (result.ok) {
       state.email = email;
       state.userName = displayName;
@@ -424,12 +401,12 @@ document.getElementById('display-name-input').addEventListener('keydown', functi
 
 function loadDashboardDemo() {
   var demos = [];
-  for (var i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+  for (var i = 1; i <= TOTAL_DAYS; i++) {
     demos.push({ day: i, theme: 'Day ' + i + ' のワーク', description: 'ワーク内容は後日設定されます。', open: i === 1 });
   }
   state.dayConfigs = demos;
   state.submissions = {};
-  document.getElementById('welcome-name').textContent = state.userName;
+  updateWelcome();
   renderDayCards();
   updateProgress();
   showView('view-dashboard');
@@ -438,12 +415,11 @@ function loadDashboardDemo() {
 async function loadDashboard() {
   showSpinner();
   try {
-    var results = await Promise.all([API.getDayConfigs(), API.getSubmissions(state.email)]);
-    state.dayConfigs = results[0];
-    state.submissions = results[1];
-    var n = state.userName || 'あなた';
-    document.getElementById('welcome-name').textContent = n + 'さん、こんにちは！';
-    document.getElementById('welcome-msg').textContent = n + 'さん専用の12日間ワーク提出アプリです';
+    var r1 = await fetch(GAS_URL + '?action=configs');
+    var r2 = await fetch(GAS_URL + '?action=submissions&email=' + encodeURIComponent(state.email));
+    state.dayConfigs = await r1.json();
+    state.submissions = await r2.json();
+    updateWelcome();
     renderDayCards();
     updateProgress();
     showView('view-dashboard');
@@ -458,17 +434,17 @@ async function loadDashboard() {
 function renderDayCards() {
   var grid = document.getElementById('day-grid');
   grid.innerHTML = '';
-  for (var i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
-    var config = state.dayConfigs.find(function(c) { return c.day === i; }) || {};
-    var submission = state.submissions[i];
-    var isSubmitted = !!submission;
-    var isOpen = config.open !== false;
+  for (var i = 1; i <= TOTAL_DAYS; i++) {
+    var cfg = state.dayConfigs.find(function(c) { return c.day === i; }) || {};
+    var sub = state.submissions[i];
+    var isSubmitted = !!sub;
+    var isOpen = cfg.open !== false;
     var card = document.createElement('div');
     card.className = 'day-card' + (isSubmitted ? ' submitted' : '') + (!isOpen ? ' locked' : '');
     if (isOpen) { (function(day) { card.onclick = function() { openWork(day); }; })(i); }
     card.innerHTML = '<div class="day-number">DAY ' + i + '</div>' +
-      '<div class="day-theme">' + (config.theme || 'Day ' + i) + '</div>' +
-      (isSubmitted ? '<span class="day-check">✓</span><span class="day-status done">提出済み</span>' :
+      '<div class="day-theme">' + escHtml(cfg.theme || ('Day ' + i)) + '</div>' +
+      (isSubmitted ? '<span class="day-check">&#x2713;</span><span class="day-status done">提出済み</span>' :
         isOpen ? '<span class="day-status todo">未提出</span>' : '<span class="day-status locked-label">準備中</span>');
     grid.appendChild(card);
   }
@@ -477,39 +453,40 @@ function renderDayCards() {
 function updateProgress() {
   var openDays = state.dayConfigs.filter(function(c) { return c.open !== false; });
   var done = Object.keys(state.submissions).length;
-  var total = openDays.length || CONFIG.TOTAL_DAYS;
+  var total = openDays.length || TOTAL_DAYS;
   document.getElementById('progress-text').textContent = done + ' / ' + total;
   document.getElementById('progress-fill').style.width = ((done / total) * 100) + '%';
 }
 
 function openWork(day) {
   state.currentDay = day;
-  var config = state.dayConfigs.find(function(c) { return c.day === day; }) || {};
-  var submission = state.submissions[day];
+  var cfg = state.dayConfigs.find(function(c) { return c.day === day; }) || {};
+  var sub = state.submissions[day];
   document.getElementById('work-screen-title').textContent = 'Day ' + day + ' ワーク';
   document.getElementById('work-day-label').textContent = 'DAY ' + day;
-  var lbl = document.getElementById('work-form-label');
-  if (lbl) lbl.textContent = (state.userName || 'あなた') + 'さんの回答';
-  document.getElementById('work-theme-title').textContent = config.theme || ('Day ' + day);
-  document.getElementById('work-description').textContent = config.description || '';
+  document.getElementById('work-theme-title').textContent = cfg.theme || ('Day ' + day);
+  document.getElementById('work-description').textContent = cfg.description || '';
+  document.getElementById('work-form-label').textContent = (state.userName || 'あなた') + 'さんの回答';
   var banner = document.getElementById('submitted-banner');
   var prevArea = document.getElementById('prev-submission');
-  if (submission) {
+  if (sub) {
     banner.classList.add('show');
-    document.getElementById('submitted-date').textContent = '提出日: ' + submission.date;
+    document.getElementById('submitted-date').textContent = '提出日: ' + sub.date;
     prevArea.classList.add('show');
-    document.getElementById('prev-submission-text').textContent = submission.text;
+    document.getElementById('prev-submission-text').textContent = sub.text;
   } else {
     banner.classList.remove('show');
     prevArea.classList.remove('show');
   }
   document.getElementById('work-input').value = '';
   document.getElementById('char-count').textContent = '0';
-  document.getElementById('submit-btn').textContent = submission ? '再提出する' : '提出する';
+  document.getElementById('submit-btn').textContent = sub ? '再提出する' : '提出する';
   showView('view-work');
 }
 
-function updateCharCount() { document.getElementById('char-count').textContent = document.getElementById('work-input').value.length; }
+function updateCharCount() {
+  document.getElementById('char-count').textContent = document.getElementById('work-input').value.length;
+}
 
 async function handleSubmit() {
   var text = document.getElementById('work-input').value.trim();
@@ -517,15 +494,26 @@ async function handleSubmit() {
   var btn = document.getElementById('submit-btn');
   btn.disabled = true; showSpinner();
   try {
-    var result = await API.submitWork(state.email, state.currentDay, text);
+    var res = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'submit', email: state.email, day: state.currentDay, text: text })
+    });
+    var result = await res.json();
     if (result.ok) {
       state.submissions[state.currentDay] = { text: text, date: new Date().toLocaleDateString('ja-JP') };
       showToast('提出しました！お疲れさまです ✓');
       await sleep(800);
       await loadDashboard();
-    } else { showToast('提出に失敗しました。もう一度お試しください'); }
-  } catch(e) { showToast('通信エラーが発生しました'); console.error(e); }
-  finally { btn.disabled = false; hideSpinner(); }
+    } else {
+      showToast('提出に失敗しました。もう一度お試しください');
+    }
+  } catch(e) {
+    showToast('通信エラーが発生しました');
+    console.error(e);
+  } finally {
+    btn.disabled = false; hideSpinner();
+  }
 }
 
 function goToDashboard() { loadDashboard(); }
@@ -533,7 +521,8 @@ function goToDashboard() { loadDashboard(); }
 async function loadBoard() {
   showSpinner();
   try {
-    var result = await API.getAllSubmissions();
+    var res = await fetch(GAS_URL + '?action=allsubmissions');
+    var result = await res.json();
     if (result.ok) {
       state.allMembers = result.members || [];
       state.allSubmissions = result.submissions || {};
@@ -552,10 +541,13 @@ async function loadBoard() {
 function renderBoardTabs() {
   var tabs = document.getElementById('board-day-tabs');
   var openDays = state.dayConfigs.filter(function(c) { return c.open; });
-  if (openDays.length === 0) { tabs.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:#999;">まだ開放されたDayがありません</div>'; return; }
+  if (openDays.length === 0) {
+    tabs.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:#999;">まだ開放されたDayがありません</div>';
+    return;
+  }
   tabs.innerHTML = openDays.map(function(c) {
     var count = 0;
-    Object.values(state.allSubmissions).forEach(function(subs) { if (subs[c.day]) count++; });
+    Object.values(state.allSubmissions).forEach(function(s) { if (s[c.day]) count++; });
     return '<button class="board-day-tab' + (c.day === state.boardDay ? ' active' : '') + '" onclick="selectBoardDay(' + c.day + ')">Day ' + c.day + '<span class="tab-count">' + count + '</span></button>';
   }).join('');
 }
@@ -564,7 +556,7 @@ function selectBoardDay(day) { state.boardDay = day; renderBoardTabs(); renderBo
 
 function renderBoardSubmissions() {
   var area = document.getElementById('board-submissions-area');
-  var config = state.dayConfigs.find(function(c) { return c.day === state.boardDay; }) || {};
+  var cfg = state.dayConfigs.find(function(c) { return c.day === state.boardDay; }) || {};
   var allEmails = Object.keys(state.allSubmissions);
   var daySubCount = 0, totalSubCount = 0, daySubmissions = [];
   allEmails.forEach(function(email) {
@@ -573,20 +565,26 @@ function renderBoardSubmissions() {
     if (subs[state.boardDay]) {
       daySubCount++;
       var member = state.allMembers.find(function(m) { return m.email === email; });
-      daySubmissions.push({ name: member ? (member.name || email.split('@')[0]) : email.split('@')[0], email: email, text: subs[state.boardDay].text, date: subs[state.boardDay].date });
+      daySubmissions.push({
+        name: member ? (member.name || email.split('@')[0]) : email.split('@')[0],
+        email: email, text: subs[state.boardDay].text, date: subs[state.boardDay].date
+      });
     }
   });
   document.getElementById('b-stat-members').textContent = allEmails.length;
   document.getElementById('b-stat-day').textContent = daySubCount;
   document.getElementById('b-stat-total').textContent = totalSubCount;
-  if (!config.open) { area.innerHTML = '<div class="board-empty"><div class="board-empty-icon">🔒</div><div class="board-empty-text">このDayはまだ開放されていません</div></div>'; return; }
-  var html = '<div class="board-day-title">DAY ' + state.boardDay + '</div><div class="board-day-theme">' + escHtml(config.theme || '') + '</div>';
+  if (!cfg.open) {
+    area.innerHTML = '<div class="board-empty"><div class="board-empty-icon">&#x1F512;</div><div class="board-empty-text">このDayはまだ開放されていません</div></div>';
+    return;
+  }
+  var html = '<div class="board-day-title">DAY ' + state.boardDay + '</div><div class="board-day-theme">' + escHtml(cfg.theme || '') + '</div>';
   if (daySubmissions.length === 0) {
-    html += '<div class="board-empty"><div class="board-empty-icon">📝</div><div class="board-empty-text">まだ提出がありません<br>最初の一歩を踏み出しましょう！</div></div>';
+    html += '<div class="board-empty"><div class="board-empty-icon">&#x1F4DD;</div><div class="board-empty-text">まだ提出がありません<br>最初の一歩を踏み出しましょう！</div></div>';
   } else {
     daySubmissions.sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); });
     daySubmissions.forEach(function(sub, idx) {
-      var isLong = sub.text.length > CONFIG.COLLAPSE_THRESHOLD;
+      var isLong = sub.text.length > COLLAPSE_THRESHOLD;
       var isMine = sub.email === state.email;
       html += '<div class="submission-card' + (isMine ? ' mine' : '') + '"><div class="submission-card-header"><div class="submission-avatar">' + escHtml(getInitial(sub.name)) + '</div><div class="submission-meta"><div class="submission-name">' + escHtml(sub.name) + (isMine ? ' <span class="me-tag">（自分）</span>' : '') + '</div><div class="submission-date">' + escHtml(sub.date || '') + '</div></div></div><div class="submission-body' + (isLong ? ' collapsed' : '') + '" id="board-body-' + state.boardDay + '-' + idx + '">' + escHtml(sub.text) + '</div>' + (isLong ? '<button class="toggle-expand show" onclick="toggleBoardExpand(' + state.boardDay + ',' + idx + ',this)">もっと読む</button>' : '') + '</div>';
     });
@@ -603,31 +601,46 @@ function toggleBoardExpand(day, idx, btn) {
 (async function init() {
   var savedEmail = localStorage.getItem('work_app_email');
   var savedName = localStorage.getItem('work_app_name');
-  if (savedEmail) {
+  if (savedEmail && savedName) {
     state.email = savedEmail;
-    state.userName = savedName || savedEmail;
+    state.userName = savedName;
     try { await loadDashboard(); enterApp(); } catch(e) { console.error(e); }
   }
 })();
 
 var TOKUTEN_DEADLINE = new Date('2026-06-28T23:59:59+09:00');
 var tokutenTimer = null;
+
 function initTokutenCountdown() {
   if (tokutenTimer) clearInterval(tokutenTimer);
-  checkTokutenExpiry(); updateTokutenCountdown();
+  checkTokutenExpiry();
+  updateTokutenCountdown();
   tokutenTimer = setInterval(updateTokutenCountdown, 1000);
 }
+
 function checkTokutenExpiry() {
   if (new Date() > TOKUTEN_DEADLINE) {
     var card = document.getElementById('tokuten-video-card');
-    if (card) card.innerHTML = '<div style="padding:60px 24px;text-align:center"><p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">視聴期限が終了しました</p><p style="font-size:13px;color:var(--text-light);line-height:1.8">この動画の視聴期限は<br><strong style="color:var(--plum)">2026年6月28日</strong>をもって<br>終了いたしました。</p></div>';
+    if (card) {
+      card.innerHTML = '<div style="padding:60px 24px;text-align:center"><p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">視聴期限が終了しました</p><p style="font-size:13px;color:var(--text-light);line-height:1.8">この動画の視聴期限は<br><strong style="color:var(--plum)">2026年6月28日</strong>をもって<br>終了いたしました。</p></div>';
+    }
     if (tokutenTimer) { clearInterval(tokutenTimer); tokutenTimer = null; }
   }
 }
+
 function updateTokutenCountdown() {
   var diff = TOKUTEN_DEADLINE - new Date();
   if (diff <= 0) { checkTokutenExpiry(); return; }
   var d = Math.floor(diff / 86400000);
   var h = Math.floor((diff % 86400000) / 3600000);
   var m = Math.floor((diff % 3600000) / 60000);
-  var s
+  var s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('tk-days').textContent = d;
+  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
+  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
+  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
+}
+</script>
+</body>
+</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
