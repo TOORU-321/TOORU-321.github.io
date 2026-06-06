@@ -18,13 +18,13 @@ import os, re, glob, html
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
-OUT  = os.path.join(ROOT, "preview")
+OUT  = os.path.join(ROOT, "columns")          # 公開フォルダ（他アプリと混ざらないよう独立）
 ASSETS = os.path.join(OUT, "assets")
 
 NAV = [
     ("ホーム", "https://l-mine.com/home", False),
     ("行動経済学への想い", "https://columns.l-mine.com/behavioral-economics-lp.html", False),
-    ("コラム", "columns.html", True),
+    ("コラム", "index.html", True),
     ("オンラインコース一覧", "https://l-mine.com/onlinecourse", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
     ("お問い合わせ", "https://l-mine.com/contact-us", False),
@@ -134,6 +134,11 @@ def thumb_html(c, cls):
         return f'<div class="{cls}"><img src="assets/column{n}-hero.jpg" alt=""></div>'
     return f'<div class="{cls}"><span class="fb">Illustration</span></div>'
 
+def label(c):
+    if c.get("series") == "Act":
+        return f'Act#{c.get("series_no", "")}'
+    return f'コラム＃{c["number"]}'
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -147,7 +152,7 @@ def render_article(c, cols):
     # 最近の記事（自分以外、日付降順4件）
     recents = [x for x in sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True) if x["number"] != n][:4]
     rec_html = "\n        ".join(
-        f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">No.{r["number"]} — {r["date_disp_short"]}</span></a>'
+        f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">{label(r)} — {r["date_disp_short"]}</span></a>'
         for r in recents)
     # ヒーロー（画像が無ければ枠ごと省略）
     if hero_exists(n):
@@ -182,7 +187,7 @@ def render_article(c, cols):
 
 <div class="layout">
   <main class="article">
-    <div class="kicker"><span class="no">No.{n}</span><span class="div"></span><span class="cat">{html.escape(c["category"])}</span></div>
+    <div class="kicker"><span class="no">{label(c)}</span><span class="div"></span><span class="cat">{html.escape(c["category"])}</span></div>
     <h1 class="title">{title_html}</h1>
     <div class="dateline"><b>文・とーる</b><span class="sep"></span><span>行動経済アナリスト</span><span class="sep"></span><span>{html.escape(c["date_disp"])}</span></div>
     <div class="rule"></div>
@@ -195,7 +200,7 @@ def render_article(c, cols):
 
     <div class="filed"><span class="lab">Filed under</span>{tags}</div>
 
-    <nav class="pager">{prev_html}<a class="home" href="columns.html">Index</a>{next_html}</nav>
+    <nav class="pager">{prev_html}<a class="home" href="index.html">Index</a>{next_html}</nav>
   </main>
 
   <aside class="side">
@@ -215,7 +220,7 @@ def render_article(c, cols):
 
 # ---------- 一覧ページ ----------
 def page_file(p):
-    return "columns.html" if p == 1 else f"columns-{p}.html"
+    return "index.html" if p == 1 else f"columns-{p}.html"
 
 def pagination_html(page, pages):
     if pages <= 1:
@@ -239,7 +244,7 @@ def render_index(page_cols, page, pages):
         posts.append(f'''    <a class="{cls}" href="column{n}.html">
       {thumb}
       <div class="pbody">
-        <div class="meta">No.{n} — {html.escape(c["date_disp_short"])}</div>
+        <div class="meta">{label(c)} — {html.escape(c["date_disp_short"])}</div>
         <h2>{html.escape(c["title"])}</h2>
         {ex_html}
         <div class="cat"><span>{html.escape(c["category"])}</span>{("／" + html.escape("／".join([t for t in c["tags"] if t != c["category"]][:2]))) if len(c["tags"])>1 else ""}</div>
@@ -298,6 +303,7 @@ def render_index(page_cols, page, pages):
 </html>'''
 
 def main():
+    os.makedirs(OUT, exist_ok=True)
     cols = []
     for p in glob.glob(os.path.join(SRC, "*.md")):
         c = parse(p)

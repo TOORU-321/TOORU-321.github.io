@@ -9,15 +9,17 @@
 その際、続きをスムーズに再開できる短い引き継ぎメモも必ず添える。
 ※正確なトークン数は見えないため、判断は目安（ヒューリスティック）でよい。
 
-## プロジェクト概要：コラム（columns.l-mine.com）
+## プロジェクト概要：コラム（columns.l-mine.com/columns/）
 - このリポジトリは GitHub Pages で **`columns.l-mine.com`**（`CNAME`）として公開される静的サイト。
-- コラム移行を **`preview/` 配下**で構築中（本番＝ルート/`columns/` への配置は未実施）。
+- **重要：各独立サイト/アプリは専用フォルダに隔離**し、リポジトリ直下（root）で他アプリと混ぜない。
+  コラムは **`columns/` フォルダ**にまとまっている（root には置かない）。
+- 公開URL：一覧＝**`https://columns.l-mine.com/columns/`**（＝`columns/index.html`）、各記事＝`columns/columnNN.html`。
 - コラムは「**Markdown原稿 → 自動HTML生成**」方式：
   - 原稿：`src/columns/NN.md`（フロントマター ＋ 本文）
-  - 生成器：`tools/build_columns.py` → `python3 tools/build_columns.py` で
-    `preview/columnNN.html`（各記事）と `preview/columns*.html`（一覧・ページ送り）を生成
-  - 共有CSS：`preview/assets/column.css`／画像：`preview/assets/columnNN-hero.jpg` 等
-  - 一覧は **日付の新しい順・12本/ページ**。**画像が無いコラムは枠なし・本文のみ**で表示。
+  - 生成器：`tools/build_columns.py` → `python tools/build_columns.py` で
+    `columns/columnNN.html`（各記事）と `columns/index.html`＋`columns/columns-N.html`（一覧・ページ送り）を生成
+  - 共有CSS：`columns/assets/column.css`／画像：`columns/assets/columnNN-hero.jpg` 等
+  - 一覧1ページ目は **`index.html`**、2ページ目以降が `columns-2.html`〜。**日付の新しい順・12本/ページ**。**画像が無いコラムは枠なし・本文のみ**で表示。
 - 本文の書式ルール（src原稿）：
   - 空行＝まとまり（段落）区切り／段落内の改行は `<br>` 化
   - `## 見出し`／`***`＝区切り（✦）／`**強調**`／`- `箇条書き
