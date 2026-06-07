@@ -106,6 +106,11 @@ main{padding:0 14px 80px}
 .koji-card.completed .kc-ico{background:linear-gradient(135deg,#E8F4D9 0%,#C8E0A0 100%);border-color:#A8C97A}
 .koji-card.resting{opacity:.55;background:#F5F0E5}
 .koji-card.resting::after{content:'お休み中';position:absolute;top:6px;right:8px;font-size:9px;color:#8C7A6A;background:#fff;padding:1px 6px;border-radius:6px;border:1px solid #D9D0BC}
+.koji-card .kc-chip-row{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+.ci-chip{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;letter-spacing:.03em;line-height:1.55}
+.ci-chip.done{background:#E8F4D9;color:#3B6D11;border:1px solid #A8C97A}
+.ci-chip.pending{background:#FFF4DC;color:#B3631A;border:1px solid #F5CF8E;animation:chipPulse 2.4s ease-in-out infinite}
+@keyframes chipPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,.3)}50%{box-shadow:0 0 0 4px rgba(245,166,35,0)}}
 
 /* Add-koji button */
 .add-koji-btn{width:100%;padding:11px;border-radius:12px;background:transparent;border:2px dashed #F5CF8E;color:#B3631A;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
@@ -1625,6 +1630,7 @@ function renderKojiCards(){
     $('addKojiBtn').style.display='none';
     return;
   }
+  const tdy=today();
   el.innerHTML=state.selectedKoji.map(kk=>{
     const k=getKoji(kk);
     const kd=state.kojiData[kk]||{};
@@ -1642,11 +1648,20 @@ function renderKojiCards(){
     }
     else if(day>=k.days)statusText='<b>完成判定OK！</b>タップして判定';
     else statusText='Day '+day+' / '+k.days+' ・ '+stage.name;
+    // 今日の提出状態チップ（育成中のみ）
+    const hasCheckinToday=!!(kd.checkins&&kd.checkins[tdy]);
+    let chip='';
+    if(!completed&&!resting&&day>=1){
+      chip=hasCheckinToday
+        ? '<div class="kc-chip-row"><span class="ci-chip done">✅ 今日提出済</span></div>'
+        : '<div class="kc-chip-row"><span class="ci-chip pending">⚠ 今日まだ未提出</span></div>';
+    }
     return '<div class="koji-card '+(completed?'completed':'')+(resting?' resting':'')+'" data-koji="'+kk+'">'+
       '<div class="kc-ico">'+k.emoji+'</div>'+
       '<div class="kc-info">'+
         '<div class="kc-name">'+k.n+(completed?' <span class="stage" style="background:#3B6D11">完成</span>':'<span class="stage">Stage '+stage.n+'</span>')+'</div>'+
         '<div class="kc-meta">'+statusText+'</div>'+
+        chip+
         (!completed&&!resting?'<div class="kc-bar"><div class="fill" style="width:'+pct+'%"></div></div>':'')+
       '</div>'+
       '<div class="kc-arrow">›</div>'+
