@@ -21,7 +21,19 @@ a{color:inherit;text-decoration:none}
 .nav a{padding-bottom:2px;border-bottom:1px solid transparent;transition:.15s;white-space:nowrap}
 .nav a:hover{color:var(--gold);border-color:var(--gold)}
 .nav a.active{color:var(--gold);border-color:var(--gold)}
-@media(max-width:900px){.mast-inner{flex-direction:column;gap:14px;padding:16px 18px}.brand img.logo{height:44px}.nav{width:100%;flex-wrap:wrap;justify-content:center;gap:12px 18px;font-size:13px}}
+.navtog{display:none}
+.hamb{display:none}
+@media(max-width:900px){
+  .mast-inner{flex-wrap:wrap;gap:0;padding:14px 18px}
+  .brand img.logo{height:42px}
+  .hamb{display:flex;flex-direction:column;justify-content:center;gap:5px;width:30px;height:30px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .hamb span{display:block;width:24px;height:2px;background:var(--ink);transition:transform .25s,opacity .2s}
+  .nav{display:none;width:100%;flex-direction:column;align-items:center;gap:16px;margin:0;padding:18px 0 4px;font-size:15px}
+  .navtog:checked ~ .nav{display:flex}
+  .navtog:checked ~ .hamb span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .navtog:checked ~ .hamb span:nth-child(2){opacity:0}
+  .navtog:checked ~ .hamb span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+}
 
 /* ===== 記事 ===== */
 .layout{max-width:1120px;margin:0 auto;padding:52px 28px 0;display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:56px}

@@ -212,6 +212,8 @@ def render_article(c, cols):
 <header class="masthead">
   <div class="mast-inner">
     <a class="brand" href="https://l-mine.com/home"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
+    <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
     <nav class="nav">
 {nav_html()}
     </nav>
@@ -304,6 +306,8 @@ def render_index(page_cols, page, pages):
 <header class="masthead">
   <div class="mast-inner">
     <a class="brand" href="https://l-mine.com/home"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
+    <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
     <nav class="nav">
 {nav_html()}
     </nav>
