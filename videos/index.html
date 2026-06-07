@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動画講座｜L-MINE ON-LINE</title>
+<link rel="icon" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/column.css">
+<style>
+/* ===== 動画講座ページ専用（コラムの配色変数を踏襲／ダーク×ゴールドで上質感） ===== */
+
+/* ── ヒーロー（page-head を上書き：videosamune.jpg を背景に・画像比率3:1） ── */
+.page-head{position:relative;overflow:hidden;height:33.34vw;min-height:210px;max-height:330px;display:grid;place-items:center;padding:24px;text-align:center;border-bottom:none;background:#14141a}
+@media(max-width:600px){.page-head{height:auto;min-height:230px;max-height:260px}}
+.page-head .ph-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.page-head::before{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(820px 360px at 50% 50%, rgba(16,16,21,.30), rgba(13,13,18,.74))}
+.page-head::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(13,13,18,.55),rgba(13,13,18,.28) 42%,rgba(13,13,18,.7))}
+.page-head .ph-inner{position:relative;z-index:2}
+.page-head .ph-inner .ornament{width:28px;height:1px;background:var(--gold-2);margin:0 auto 13px;opacity:.8}
+.page-head .ey{font-family:var(--serif-en);font-size:13px;letter-spacing:.42em;text-transform:uppercase;color:#e8cf98;text-shadow:0 1px 14px rgba(0,0,0,.55)}
+.page-head h1{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,4vw,38px);margin-top:11px;letter-spacing:.14em;color:#fff;text-shadow:0 2px 26px rgba(0,0,0,.6)}
+.page-head p{color:#ddd6c9;font-size:13px;margin-top:12px;letter-spacing:.04em;line-height:1.85;text-shadow:0 1px 14px rgba(0,0,0,.5)}
+.page-head .hr{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold-2),transparent);margin:18px auto 0}
+
+.vlayout{max-width:1140px;margin:0 auto;padding:60px 28px 0;display:grid;grid-template-columns:336px minmax(0,1fr);gap:54px;align-items:start}
+@media(max-width:900px){.vlayout{grid-template-columns:1fr;gap:34px;padding-top:38px}}
+
+/* ── 左：コース一覧（アコーディオン） ── */
+.vlist{align-self:start}
+@media(max-width:900px){.vlist{order:2}}
+.vlist .listhead{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--serif-en);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);padding-bottom:11px;border-bottom:1px solid var(--gold);margin-bottom:2px}
+.vlist .listhead .lh-count{font-family:var(--gothic);font-size:11px;letter-spacing:.02em;color:var(--ink-soft);text-transform:none}
+
+/* コース行（第1階層） */
+.course{border-bottom:1px solid var(--line);position:relative}
+.course-head{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--mincho);font-weight:700;color:var(--ink);font-size:14.5px;line-height:1.55;padding:16px 8px 16px 16px;display:flex;gap:12px;align-items:center;transition:color .18s}
+.course-head::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:0;background:var(--gold);transition:height .2s}
+.course.open>.course-head::before,.course.single.active>.course-head::before{height:62%}
+.course-head:hover{color:var(--gold)}
+.course-head .c-tw{flex:1}
+/* 単発コースは再生ヒント（▷）をホバー表示 */
+.course.single .course-head .c-tw::after{content:"▷";font-size:10px;color:var(--line-2);margin-left:9px;vertical-align:1px;transition:color .18s}
+.course.single:hover .course-head .c-tw::after,.course.single.active .course-head .c-tw::after{color:var(--gold)}
+.course.single.active .course-head{color:var(--gold)}
+/* 開閉トグル（丸囲みの＋／−） */
+.course-head .c-toggle{font-family:var(--gothic);font-size:13px;line-height:1;color:var(--gold);width:21px;height:21px;border:1px solid var(--line-2);border-radius:50%;display:inline-grid;place-items:center;transition:.2s;flex:none}
+.course.open .course-head .c-toggle{background:var(--gold);color:#fff;border-color:var(--gold)}
+.course-head .c-lock{color:var(--gold);font-size:13px}
+.course-head .c-tag{font-size:10px;font-weight:400;letter-spacing:.04em;color:var(--ink-soft);border:1px solid var(--line-2);border-radius:999px;padding:2px 9px;white-space:nowrap;font-family:var(--gothic)}
+
+/* 章リスト（第2階層・展開部）— 左に細い背骨ライン */
+.chapters{display:none;margin:0 0 8px;padding:4px 0 4px 16px;border-left:1px solid var(--line-2);margin-left:7px}
+.course.open .chapters{display:block}
+.chapter{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);color:var(--ink-2);font-size:13px;line-height:1.65;padding:9px 6px 9px 12px;display:flex;gap:11px;align-items:flex-start;position:relative;transition:color .18s}
+.chapter::before{content:"";position:absolute;left:-17px;top:50%;transform:translateY(-50%) scale(0);width:7px;height:7px;border-radius:50%;background:var(--gold);transition:transform .2s}
+.chapter:hover{color:var(--gold)}
+.chapter.active{color:var(--gold);font-weight:700}
+.chapter.active::before{transform:translateY(-50%) scale(1)}
+.chapter .ch-no{font-family:var(--serif-en);font-size:12px;color:var(--ink-soft);min-width:18px;padding-top:1px}
+.chapter.active .ch-no{color:var(--gold)}
+.chapter .ch-t{flex:1}
+
+/* ── 右：プレイヤー ── */
+.vplayer{align-self:start}
+@media(max-width:900px){.vplayer{order:1}}
+.vframe{position:relative;aspect-ratio:16/9;background:#0f0f14;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;box-shadow:0 28px 56px -30px rgba(16,16,24,.55),0 6px 16px -10px rgba(16,16,24,.3)}
+.vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vmeta{margin-top:26px}
+.vmeta .np{font-family:var(--serif-en);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
+.vmeta .np::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(168,132,63,.16)}
+.vmeta .kick{font-family:var(--gothic);font-size:12.5px;letter-spacing:.05em;color:var(--ink-soft);margin-top:13px}
+.vmeta h1{font-family:var(--mincho);font-weight:800;font-size:clamp(21px,3vw,28px);line-height:1.5;color:var(--ink);margin-top:9px}
+.vmeta .vfiled{margin-top:18px;padding-top:15px;border-top:1px solid var(--line-2);display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);min-height:1px}
+.vmeta .vfiled a.col-link{color:var(--ink-2);border-bottom:1px solid var(--line-2);padding-bottom:2px;font-size:12px}
+.vmeta .vfiled a.col-link:hover{color:var(--gold);border-color:var(--gold)}
+
+/* ヘッダーナビ：項目数が多いので間隔・サイズを調整（公式サイト準拠の9項目） */
+.masthead .nav{gap:18px;font-size:13px;flex-wrap:wrap;justify-content:flex-end}
+.masthead .nav a.login{color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:5px 16px}
+.masthead .nav a.login:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* 🔒 登録が必要です画面（フェーズ②で本物の判定に差し替え） */
+.lockscreen{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:30px;background:linear-gradient(rgba(17,17,20,.86),rgba(17,17,20,.9));color:#fff}
+.vframe.locked .lockscreen{display:flex}
+.lockscreen .lk-ico{font-size:30px}
+.lockscreen .lk-t{font-family:var(--mincho);font-weight:700;font-size:18px;line-height:1.6}
+.lockscreen .lk-d{font-size:12.5px;color:#e7e2d8;line-height:1.9;max-width:380px}
+.lockscreen .lk-btn{margin-top:6px;display:inline-block;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));padding:11px 26px;border-radius:999px;letter-spacing:.04em}
+.lockscreen .lk-btn:hover{filter:brightness(1.06)}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+<header class="masthead">
+  <div class="mast-inner">
+    <a class="brand" href="https://l-mine.com/home"><img class="logo" src="../assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <nav class="nav">
+      <a href="https://l-mine.com/home">ホーム</a>
+      <a href="https://columns.l-mine.com/behavioral-economics-lp.html">行動経済学への想い</a>
+      <a href="https://columns.l-mine.com/columns/">コラム</a>
+      <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
+      <a href="https://l-mine.com/onlinecourse-oshirase">動画・オンラインコース視聴</a>
+      <a href="https://columns.l-mine.com/book-intro-dark.html">KINDLE小説</a>
+      <a href="https://l-mine.com/contact-us">お問い合わせ</a>
+      <a href="https://l-mine.com/l-mine-2.0">エルラボ2.0</a>
+      <a class="login" href="https://l-mine.com/signin">ログイン</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <img class="ph-bg" src="assets/videosamune.jpg" alt="">
+  <div class="ph-inner">
+    <div class="ornament"></div>
+    <div class="ey">Video Library</div>
+    <h1>動画講座</h1>
+    <p>マーケティングの根本構造から自己育成まで。</p>
+    <div class="hr"></div>
+  </div>
+</div>
+
+<div class="vlayout">
+  <!-- 左：コース一覧 -->
+  <aside class="vlist">
+    <div class="listhead"><span>Courses</span><span class="lh-count" id="lhCount"></span></div>
+    <div id="vcourses"></div>
+  </aside>
+
+  <!-- 右：プレイヤー -->
+  <main class="vplayer">
+    <div class="vframe" id="vframe">
+      <iframe id="viframe" src="" title="動画プレイヤー" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      <div class="lockscreen">
+        <div class="lk-ico">🔒</div>
+        <div class="lk-t">この講座の視聴には登録が必要です</div>
+        <div class="lk-d">こちらは会員限定の講座です。オンラインスクールにご登録いただくと視聴できます。</div>
+        <a class="lk-btn" id="lkbtn" href="https://l-mine.com/onlinecourse" target="_blank" rel="noopener">今すぐ登録する →</a>
+      </div>
+    </div>
+    <div class="vmeta">
+      <div class="np">Now Playing</div>
+      <div class="kick" id="vkick">Course</div>
+      <h1 id="vtitle">講座を選択してください</h1>
+      <div class="vfiled" id="vfiled"></div>
+    </div>
+  </main>
+</div>
+
+<footer><div class="foot-inner"><div class="foot-links"><a href="https://l-mine.com/term">利用規約</a><a href="https://l-mine.com/about">特定商取引法に基づく表示</a><a href="https://l-mine.com/privacy">プライバシーポリシー</a><a href="https://l-mine.com/mensekizikou">免責事項</a></div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
+
+<script>
+/* =========================================================
+   コースデータ（Notion「🎥 動画視聴ページ」を「コース→章」で再構成）
+   構造：
+     COURSES = [{ name, locked?, registerUrl?, videos:[{t, platform, id, column?}] }]
+   表示ルール：
+     ・左カラム＝コース名のリスト
+     ・videos が複数 → コース名タップで開閉（章リスト展開）、章タップで再生
+     ・videos が1本のみ → コース名タップで直接その動画を再生（展開しない）
+     ・locked:true → コース全体に🔒。再生位置に「登録が必要です」画面（フェーズ②でFirebase判定に差し替え）
+     ・各動画に column（URL）を入れると「補足はこちら」リンクを表示
+   ========================================================= */
+const COURSES = [
+  {
+    name: "マーケティングの根本構造を理解する",
+    videos: [
+      { t:"イノベーター理論講義：前編", platform:"vimeo", id:"1129387869" },
+      { t:"イノベーター理論講義：後編", platform:"vimeo", id:"1129388099" },
+    ]
+  },
+  {
+    name: "ビジネス自己啓発育成講座",
+    videos: [
+      { t:"2-1：勉強に取り組むモチベーションを高める方法", platform:"youtube", id:"DzIQBibkO4M" },
+      { t:"2-2：マインドセットの重要性と育成方法", platform:"youtube", id:"i7p6f2LQqrk" },
+      { t:"2-3：自己成長の意識と目標設定", platform:"youtube", id:"qfBv1T9KMiI" },
+      { t:"2-4：自己価値感と自己受容", platform:"youtube", id:"mZT9Ogvzrmo" },
+      { t:"2-5：目標の意味付けと自己動機付け", platform:"youtube", id:"k-2cXpLT2E8" },
+      { t:"2-6：モチベーションの維持と向上", platform:"youtube", id:"aHq4RZa_X68" },
+      { t:"2-7：タイムマネジメントと自己管理のテクニック", platform:"youtube", id:"7WmOrqDkiQo" },
+      { t:"2-8：ビジョンを持つことの意義と具体的な方法", platform:"youtube", id:"JVxRsXfweNU" },
+      { t:"2-9：マーケティング戦略と競争優位の確立", platform:"youtube", id:"N8_gH5foTe4" },
+    ]
+  },
+  { name:"３つの信頼要素",                     videos:[ { t:"３つの信頼要素", platform:"vimeo", id:"995703100" } ] },
+  { name:"購買意欲を高める３つの感情",         videos:[ { t:"購買意欲を高める３つの感情", platform:"vimeo", id:"1087708059" } ] },
+  { name:"仕組み化ウェビナー（11.09外部セミナー）", videos:[ { t:"11.09外部セミナー：仕組み化ウェビナー", platform:"vimeo", id:"1087707907" } ] },
+  { name:"“やりたいこと”と“できること”：前編", videos:[ { t:"“やりたいこと”と“できること”：前編", platform:"vimeo", id:"982024516" } ] },
+  { name:"“やりたいこと”と“できること”：後編", videos:[ { t:"“やりたいこと”と“できること”：後編", platform:"vimeo", id:"982017190" } ] },
+];
+
+const REGISTER_URL = "https://l-mine.com/onlinecourse";
+const platLabel = { vimeo:"Vimeo", youtube:"YouTube" };
+function embedUrl(v){
+  if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id;
+  if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
+  return "";
+}
+
+const vframe  = document.getElementById("vframe");
+const viframe = document.getElementById("viframe");
+const vkick   = document.getElementById("vkick");
+const vtitle  = document.getElementById("vtitle");
+const vfiled  = document.getElementById("vfiled");
+const lkbtn   = document.getElementById("lkbtn");
+const wrap    = document.getElementById("vcourses");
+
+// ---- リスト描画 ----
+COURSES.forEach((course, ci) => {
+  const multi = course.videos.length > 1;
+  const el = document.createElement("section");
+  el.className = "course" + (multi ? " multi" : " single");
+  el.dataset.ci = ci;
+
+  // コース見出し（第1階層）
+  const head = document.createElement("button");
+  head.className = "course-head";
+  const toggle = multi ? `<span class="c-toggle" data-toggle>＋</span>` : "";
+  const badge  = course.locked
+      ? `<span class="c-lock">🔒</span>`
+      : (multi ? `<span class="c-tag">${course.videos.length}本</span>` : "");
+  head.innerHTML = `${toggle}<span class="c-tw">${course.name}</span>${badge}`;
+  head.addEventListener("click", () => onCourseClick(ci));
+  el.appendChild(head);
+
+  // 章リスト（第2階層）— 複数本のみ
+  if(multi){
+    const chWrap = document.createElement("div");
+    chWrap.className = "chapters";
+    course.videos.forEach((v, vi) => {
+      const ch = document.createElement("button");
+      ch.className = "chapter";
+      ch.dataset.ci = ci; ch.dataset.vi = vi;
+      ch.innerHTML =
+        `<span class="ch-no">${String(vi+1).padStart(2,"0")}</span>` +
+        `<span class="ch-t">${v.t}</span>`;
+      ch.addEventListener("click", () => select(ci, vi));
+      chWrap.appendChild(ch);
+    });
+    el.appendChild(chWrap);
+  }
+
+  wrap.appendChild(el);
+});
+
+const courseEls = [...wrap.querySelectorAll(".course")];
+
+// コース数・総本数の表示
+document.getElementById("lhCount").textContent =
+  `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+c.videos.length,0)}本`;
+
+// コース見出しクリック：単発＝即再生 / 複数＝開閉
+function onCourseClick(ci){
+  const course = COURSES[ci];
+  const el = courseEls[ci];
+  if(course.videos.length === 1){
+    select(ci, 0);
+    return;
+  }
+  // 複数本：アコーディオン開閉（他は閉じる）
+  const willOpen = !el.classList.contains("open");
+  courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
+  if(willOpen){
+    el.classList.add("open");
+    const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
+  }
+}
+
+// 動画を選択して再生
+function select(ci, vi){
+  const course = COURSES[ci];
+  const v = course.videos[vi];
+  if(!v) return;
+  const locked = course.locked || v.locked;
+
+  // アクティブ表示の更新
+  courseEls.forEach(c => c.classList.remove("active"));
+  wrap.querySelectorAll(".chapter").forEach(c => c.classList.remove("active"));
+  const el = courseEls[ci];
+  if(course.videos.length === 1){
+    el.classList.add("active");
+  } else {
+    // 親コースを開いて該当章をハイライト
+    courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
+    el.classList.add("open");
+    const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
+    const ch = el.querySelector(`.chapter[data-vi="${vi}"]`);
+    if(ch) ch.classList.add("active");
+  }
+
+  // ヘッダー（コース名／複数本のときは章番号も）
+  vkick.textContent  = course.videos.length > 1
+      ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}`
+      : course.name;
+  vtitle.textContent = v.t;
+
+  // プレイヤー or ロック画面
+  if(locked){
+    vframe.classList.add("locked");
+    viframe.src = "";
+    lkbtn.href  = course.registerUrl || REGISTER_URL;
+  } else {
+    vframe.classList.remove("locked");
+    viframe.src = embedUrl(v);
+  }
+
+  // メタ（任意のコラムリンクのみ。媒体名は非表示）
+  let meta = "";
+  if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
+  vfiled.innerHTML = meta;
+}
+
+// 初期表示：最初のコースの1本目（複数本なら展開）
+select(0, 0);
+</script>
+</body>
+</html>
