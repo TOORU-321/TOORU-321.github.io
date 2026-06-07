@@ -337,6 +337,43 @@ function viewFeed(){
   '<div class="card" style="text-align:center;background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div style="font-size:30px;font-weight:800;color:var(--pp-d)">'+state.todayCount+'人</div><div class="muted" style="font-weight:700">が今日チェックインしました</div></div>'+
   '<div class="card"><h2>みんなの動き</h2><p class="muted" style="margin-bottom:6px">※ 名前や内容は表示されません。仲間が動いている実感だけ共有します。</p>'+items+'</div>';
 }
+var GLOSSARY=[
+ {cat:'まず押さえる：目標を立てる3点セット', terms:[
+  {k:'kgi',t:'KGI',r:'最終ゴール',b:'最後にたどり着きたい数字の目標。<br>例（コンテンツ販売）：「半年で月商50万円」「教材を月20本売る」。'},
+  {k:'ksf',t:'KSF',r:'成功の“要”（このアプリの中心）',b:'ゴール達成に<b>直結</b>する一番の要。あれもこれもでなく「これさえ効けば」を1〜2個に絞る。<br>例：「無料プレゼントの登録者を増やす」。ここがズレると、頑張っても成果が出にくい。'},
+  {k:'kpi',t:'KPI',r:'進み具合のものさし',b:'KSFが前に進んでいるか測る数字。毎日〜毎週チェックする。<br>例：「無料登録 1日5件」「投稿のクリック率3%」。<br><b>関係：</b>KGI=ゴール／KSF=要／KPI=ものさし。'}
+ ]},
+ {cat:'SNS・コンテンツビジネスの基本', terms:[
+  {k:'list',t:'リスト',r:'見込み客の連絡先',b:'メルマガやLINEなどでつながった見込み客の一覧。何度も届けられる“資産”。フォロワーと違い、自分から直接届けられるのが強み。'},
+  {k:'lead',t:'リードマグネット',r:'無料プレゼント',b:'登録と引き換えに渡す無料特典（PDF・動画など）。リスト（見込み客）を集める入口になる。'},
+  {k:'front',t:'フロントエンド / バックエンド',r:'入口商品 / 本命商品',b:'フロント＝買いやすい安価or無料の入口商品。バック＝本命の高単価商品。まず信頼を作ってから本命へつなぐ。'},
+  {k:'ltv',t:'LTV',r:'顧客生涯価値',b:'1人のお客さんが生涯で払ってくれる総額。LTVが高いほど、集客にかけられるお金も増やせる。'},
+  {k:'cvr',t:'CVR',r:'成約率',b:'見た人のうち実際に申込・購入した人の割合。例：100人見て3人購入＝CVR 3%。'},
+  {k:'cta',t:'CTA',r:'行動を促す一言',b:'「今すぐ登録」「詳しくはこちら」など、次の行動を促す言葉やボタン。ここが弱いと反応が落ちる。'},
+  {k:'persona',t:'ペルソナ',r:'たった1人の理想客',b:'発信の“宛先”となる理想の顧客像。みんなに向けると刺さらない。1人に絞ると深く刺さる。'},
+  {k:'eng',t:'エンゲージメント',r:'反応の度合い',b:'いいね・コメント・保存・滞在時間など、見た人の反応の強さ。高いほど多くの人に届きやすくなる。'}
+ ]},
+ {cat:'このアプリで使う考え方', terms:[
+  {k:'eisen',t:'アイゼンハワー行列',r:'重要度×緊急度',b:'タスクを「重要か × 緊急か」の4マスに仕分ける方法。何を先にやるかが整理できる。'},
+  {k:'q2',t:'第2象限',r:'重要だけど急ぎでない＝本丸',b:'重要だが緊急でない領域。KSFに直結することが多い。多くの人は緊急なこと（第1・第3象限）に追われがちで、ここに時間を割けるかで成果が分かれる。'},
+  {k:'streak',t:'習慣化 / 連続記録',r:'続ける力',b:'続けること自体が力になる。連続記録（streak）を途切れさせたくない心理を使って、毎日の行動を後押しする。'}
+ ]}
+];
+function toggleTerm(k){ state._openTerm = (state._openTerm===k?null:k); render(); }
+function renderGlossary(){
+  return GLOSSARY.map(function(g){
+    var items=g.terms.map(function(t){
+      var open=state._openTerm===t.k;
+      return '<div style="border-bottom:1px solid var(--line)">'+
+        '<div onclick="toggleTerm(\''+t.k+'\')" style="display:flex;align-items:center;gap:8px;padding:11px 2px;cursor:pointer">'+
+          '<b style="font-size:14px">'+esc(t.t)+'</b>'+(t.r?'<span class="muted" style="font-size:12px">'+esc(t.r)+'</span>':'')+
+          '<span style="margin-left:auto;color:var(--pp-mid);font-weight:800;font-size:18px">'+(open?'−':'＋')+'</span></div>'+
+        (open?'<div class="muted" style="font-size:13px;padding:0 2px 12px;line-height:1.75">'+t.b+'</div>':'')+
+      '</div>';
+    }).join('');
+    return '<div style="font-size:12px;font-weight:800;color:var(--pp-d);margin:12px 2px 2px">'+esc(g.cat)+'</div>'+items;
+  }).join('');
+}
 function viewMenu(){
   var anns=state.announcements.map(function(a){ return '<div class="feed-item"><span class="dot"></span><span><b>'+esc(a.title)+'</b><br><span class="muted">'+esc(a.body)+'</span></span></div>'; }).join('')||'<div class="muted">お知らせはまだありません。</div>';
   return ''+
@@ -344,6 +381,7 @@ function viewMenu(){
     '<a class="sc" href="'+COLUMN_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--pp-l)">📝</span><span><b>僕のコラム</b><br><span class="muted" style="font-size:12px">考え方を深める読みもの</span></span><span class="arr">→</span></a>'+
     '<a class="sc" href="'+VIDEO_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--green-l)">▶</span><span><b>無料動画</b><br><span class="muted" style="font-size:12px">メンバー向けオンライン講座</span></span><span class="arr">→</span></a>'+
     '<a class="sc" href="'+ZOOM_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:#E6F1FB">📅</span><span><b>ZOOMの予定を組む</b><br><span class="muted" style="font-size:12px">面談の予約はこちら</span></span><span class="arr">→</span></a></div>'+
+  '<div class="card"><h2>📖 用語解説</h2><p class="muted" style="margin-bottom:2px">ビジネス初心者向け。用語をタップすると説明が開きます。</p>'+renderGlossary()+'</div>'+
   '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>';
 }
 
@@ -392,54 +430,4 @@ async function postAnnounce(){
 /* ===== ルーティング & レンダリング ===== */
 function setRole(r){
   state.role=r;
-  document.getElementById('role-student').classList.toggle('on',r==='student');
-  document.getElementById('role-coach').classList.toggle('on',r==='coach');
-  document.getElementById('student').classList.toggle('hide',r!=='student');
-  document.getElementById('nav').classList.toggle('hide',r!=='student');
-  document.getElementById('coach').classList.toggle('hide',r!=='coach');
-  if(r==='coach'){ document.getElementById('c-body').innerHTML='<div class="card"><div class="spin"></div></div>'; loadCoach().then(render); }
-  else render();
-}
-function setTab(t){ state.tab=t; document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t);}); render(); }
-function render(){
-  if(state.role==='student'){
-    var v={today:viewToday,plan:viewPlan,feed:viewFeed,menu:viewMenu}[state.tab];
-    document.getElementById('s-body').innerHTML=v();
-  }else{
-    document.getElementById('c-body').innerHTML=coachView();
-  }
-}
-
-/* ===== ポップアップ ===== */
-function showOv(it){ document.getElementById('ov-tag').textContent=it.tag; document.getElementById('ov-title').textContent=it.title; document.getElementById('ov-body').textContent=it.body; document.getElementById('ov-btn').textContent=it.btn||'確認しました'; document.getElementById('ov').classList.add('on'); }
-function closeOv(){ document.getElementById('ov').classList.remove('on'); if(state.popupQueue.length) showOv(state.popupQueue.shift()); }
-function buildPopups(){
-  state.popupQueue=[];
-  if(state.announcements[0]){ var a=state.announcements[0]; state.popupQueue.push({tag:'📣 とーるさんからのお知らせ',title:a.title,body:a.body}); }
-  if(state.checkinDays>=5){ state.popupQueue.push({tag:'🌙 ひとやすみのご提案',title:state.checkinDays+'日報告、おつかれさまです！',body:'がんばり屋さんですね。でも大丈夫ですか？無理は禁物です。今日はしっかり休むのも立派な選択ですよ。',btn:'休むのも大事だね'}); }
-  if(ZOOM_REMIND_DAYS.indexOf(new Date().getDate())>=0){ state.popupQueue.push({tag:'📅 リマインド',title:'ZOOM予約してますか？',body:'今月の面談がまだの方は、メニューの「ZOOMの予定を組む」から予約しておきましょう。',btn:'メニューで予約する'}); }
-  if(state.popupQueue.length) showOv(state.popupQueue.shift());
-}
-
-/* ===== オンボーディング ===== */
-function curPanel(){ var s=document.getElementById('scroller'); return Math.round(s.scrollLeft/s.clientWidth); }
-function onbScroll(){ var i=curPanel(); document.querySelectorAll('.dots i').forEach(function(d,k){d.classList.toggle('on',k===i);}); document.getElementById('onb-btn').textContent=(i>=3?'はじめる':'次へ'); onbValidate(); }
-function onbValidate(){ var btn=document.getElementById('onb-btn'); if(curPanel()>=3){ var nm=(document.getElementById('onb-name').value||'').trim(); btn.disabled=!nm; btn.style.opacity=nm?1:.5; } else { btn.disabled=false; btn.style.opacity=1; } }
-async function onbNext(){
-  var s=document.getElementById('scroller'),i=curPanel();
-  if(i<3){ s.scrollTo({left:(i+1)*s.clientWidth,behavior:'smooth'}); return; }
-  var nm=(document.getElementById('onb-name').value||'').trim(); if(!nm){ alert('お名前を入力してください'); return; }
-  document.getElementById('onb-btn').disabled=true;
-  try{ await db.doc('users/'+state.uid).set({uid:state.uid,name:nm,role:'student',updatedAt:Date.now()},{merge:true}); state.name=nm; }
-  catch(e){ alert('保存に失敗しました: '+e.code); document.getElementById('onb-btn').disabled=false; return; }
-  document.getElementById('onb').classList.remove('on');
-  await loadStudent(); render(); buildPopups();
-}
-
-/* ===== ユーティリティ ===== */
-function timeAgo(ts){ if(!ts) return ''; var s=Math.floor((Date.now()-ts)/1000); if(s<60) return 'たった今'; if(s<3600) return Math.floor(s/60)+'分前'; if(s<86400) return Math.floor(s/3600)+'時間前'; return Math.floor(s/86400)+'日前'; }
-function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
-function copyUid(){ if(state.uid){ navigator.clipboard && navigator.clipboard.writeText(state.uid); toast('UIDをコピーしました'); } }
-</script>
-</body>
-</html>
+  document.getElementById('role-student').classList.toggle('
