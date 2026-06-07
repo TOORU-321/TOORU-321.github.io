@@ -112,6 +112,19 @@ main{padding:0 14px 80px}
 .ci-chip.pending{background:#FFF4DC;color:#B3631A;border:1px solid #F5CF8E;animation:chipPulse 2.4s ease-in-out infinite}
 @keyframes chipPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,.3)}50%{box-shadow:0 0 0 4px rgba(245,166,35,0)}}
 
+/* 講座アーカイブ */
+.archive-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.archive-item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:#FFFDF8;border:1px solid #F5E0B5;border-radius:12px;cursor:pointer;transition:transform .12s,box-shadow .15s}
+.archive-item:active{transform:scale(.98);box-shadow:0 2px 6px rgba(245,166,35,.15)}
+.archive-item .av-ico{font-size:24px;flex-shrink:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FFFAE5 0%,#FFE7B0 100%);border-radius:10px;border:1px solid #F5CF8E}
+.archive-item .av-info{flex:1;min-width:0}
+.archive-item .av-title{font-family:'Klee One',serif;font-size:14px;color:#B3631A;font-weight:700;line-height:1.4}
+.archive-item .av-meta{font-size:10.5px;color:#8C7A6A;margin-top:2px;line-height:1.45}
+.archive-item .av-arrow{color:#C2B39B;font-size:18px;flex-shrink:0}
+.video-frame{position:relative;width:100%;padding-bottom:56.25%;background:#000;border-radius:10px;overflow:hidden;margin-top:4px}
+.video-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.video-back{flex:0 0 auto;padding:5px 10px !important;font-size:12px !important;width:auto !important;margin:0 !important}
+
 /* Add-koji button */
 .add-koji-btn{width:100%;padding:11px;border-radius:12px;background:transparent;border:2px dashed #F5CF8E;color:#B3631A;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
 .add-koji-btn:active{background:#FFF4DC}
@@ -670,6 +683,28 @@ body.admin header{top:66px}
   </div>
 </div>
 
+<!-- 講座アーカイブ：動画一覧モーダル -->
+<div class="modal-bg" id="archiveModal">
+  <div class="modal" style="max-width:380px;max-height:90vh;overflow-y:auto">
+    <h2>🎥 講座アーカイブ</h2>
+    <p class="sub">レッスン動画を見返せます🌾</p>
+    <div id="archiveList"></div>
+    <button class="btn pri" id="archiveClose" style="margin-top:12px">閉じる</button>
+  </div>
+</div>
+
+<!-- 動画再生モーダル（アーカイブの上に重ねて開く） -->
+<div class="modal-bg" id="videoModal" style="z-index:55">
+  <div class="modal" style="max-width:480px;max-height:95vh;overflow-y:auto;padding:14px 14px 14px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <button class="btn sec video-back" id="videoBack">‹ 戻る</button>
+      <h2 id="videoTitle" style="margin:0;flex:1;font-size:14px;text-align:left">—</h2>
+    </div>
+    <p class="sub" id="videoNote" style="text-align:left;margin-bottom:6px;font-size:11.5px"></p>
+    <div class="video-frame"><iframe id="videoIframe" src="about:blank" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+  </div>
+</div>
+
 <!-- バッジ画面モーダル -->
 <div class="modal-bg" id="badgesModal">
   <div class="modal" style="max-width:420px;max-height:90vh;overflow-y:auto">
@@ -716,6 +751,7 @@ body.admin header{top:66px}
     <button class="drawer-item" data-act="faq"><span class="ico">❓</span>よくある質問<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="quiz"><span class="ico">🎲</span>麹クイズ<span class="arrow">›</span></button>
     <button class="drawer-item" data-act="addKoji"><span class="ico">➕</span>麹を追加する<span class="arrow">›</span></button>
+    <button class="drawer-item" data-act="archive"><span class="ico">🎥</span>講座アーカイブ<span class="arrow">›</span></button>
     <div class="drawer-divider"></div>
     <a class="drawer-item" href="https://line.me/ti/g2/J8VE9qcVUKuipZaVjRPVURvronnOT89EGENO8A?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer">
       <span class="ico">💬</span>麹使い道場で質問<span class="arrow">↗</span>
@@ -1358,6 +1394,44 @@ function openBadges(){
   document.body.style.overflow='hidden';
 }
 function closeBadges(){$('badgesModal').classList.remove('on');document.body.style.overflow=''}
+
+// ======== 講座アーカイブ ========
+const ARCHIVE_VIDEOS=[
+  {id:'prep',  title:'🍶 ①準備体操編',   subtitle:'麹の選び方・材料の説明',     date:'5/30 レッスン①', youtubeId:'R_vwkRyQp3c', start:140, note:'2分20秒のところから本編が始まります'},
+  {id:'shikomi',title:'🌾 ②仕込み編',    subtitle:'実際に麹調味料を仕込む',     date:'6/5 レッスン②',  youtubeId:'xVdiovJaVh0', start:176, note:'3分経過のところから視聴してください'}
+];
+function openArchive(){
+  $('archiveList').innerHTML='<div class="archive-list">'+ARCHIVE_VIDEOS.map(function(v){
+    return '<div class="archive-item" data-archive="'+v.id+'">'+
+      '<div class="av-ico">🎥</div>'+
+      '<div class="av-info">'+
+        '<div class="av-title">'+v.title+'</div>'+
+        '<div class="av-meta">'+v.date+' ／ '+v.subtitle+'</div>'+
+      '</div>'+
+      '<div class="av-arrow">›</div>'+
+    '</div>';
+  }).join('')+'</div>';
+  $('archiveModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeArchive(){
+  $('archiveModal').classList.remove('on');
+  if(!$('videoModal').classList.contains('on'))document.body.style.overflow='';
+}
+function openVideo(id){
+  const v=ARCHIVE_VIDEOS.find(function(x){return x.id===id});
+  if(!v)return;
+  $('videoTitle').textContent=v.title+'（'+v.date+'）';
+  $('videoNote').textContent=v.note||'';
+  $('videoIframe').src='https://www.youtube.com/embed/'+v.youtubeId+'?start='+(v.start||0)+'&rel=0';
+  $('videoModal').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeVideo(){
+  $('videoIframe').src='about:blank'; // 再生停止
+  $('videoModal').classList.remove('on');
+  if(!$('archiveModal').classList.contains('on'))document.body.style.overflow='';
+}
 
 // ======== 先行予約 ========
 function openPreorder(){
@@ -2084,6 +2158,7 @@ document.addEventListener('click',e=>{
     else if(act==='faq')openFaq();
     else if(act==='quiz')openQuiz();
     else if(act==='addKoji')openAddKoji();
+    else if(act==='archive')openArchive();
     else if(act==='reset')resetAll();
     return;
   }
@@ -2110,6 +2185,11 @@ document.addEventListener('click',e=>{
   if(e.target.closest('#preorderSubmit')){submitPreorder();return}
   if(e.target.closest('#preorderHintBtn')){if(!(Array.isArray(state.preorders)&&state.preorders.length))openPreorder();return}
   if(e.target.closest('#preorderOpenBtn')){closeFarewell();setTimeout(openPreorder,180);return}
+  // 講座アーカイブ
+  if(e.target.closest('#archiveClose')||e.target.id==='archiveModal'){closeArchive();return}
+  const archItem=e.target.closest('[data-archive]');
+  if(archItem){openVideo(archItem.dataset.archive);return}
+  if(e.target.closest('#videoBack')||e.target.id==='videoModal'){closeVideo();return}
   // Manual
   if(e.target.closest('#manualClose')||(e.target.id==='manualModal')){closeManual();return}
   // Onboarding
