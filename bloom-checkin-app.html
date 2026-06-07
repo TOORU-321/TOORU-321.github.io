@@ -136,7 +136,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-/* ===== Firebase 初期化 ===== */
+/* ===== Firebase ===== */
 var firebaseConfig = {
   apiKey: "AIzaSyCOU1uTn74lN_BaykrC_a7nGWKYO2e66EI",
   authDomain: "bloom-checkin-dd8ac.firebaseapp.com",
@@ -149,122 +149,59 @@ firebase.initializeApp(firebaseConfig);
 var auth = firebase.auth();
 var db = firebase.firestore();
 
-/* ===== 定数 ===== */
 var COLUMN_URL='https://l-mine.com/column/page/1';
 var VIDEO_URL='https://l-mine.com/community/member_on-line_course';
 var ZOOM_URL='https://dn15jkbd.autosns.app/addfriend/s/aK6Cn5eBu8/@144htozo';
 var ZOOM_REMIND_DAYS=[10,20,30];
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
-/* ===== 状態 ===== */
 var state={ uid:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
-  _newq:'Q2', _refl:'', popupQueue:[], coachStudents:[] };
+  _newq:'Q2', _refl:'', _openTerm:null, popupQueue:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function monthKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
 function err(e){ console.error(e); }
 
-/* ===== 認証 → ブート ===== */
 auth.signInAnonymously().catch(function(e){
   document.getElementById('loading').innerHTML='<div class="card" style="max-width:340px">サインインに失敗しました。<br><span class="muted">'+esc(e.message)+'</span></div>';
 });
-auth.onAuthStateChanged(function(user){
-  if(!user) return;
-  state.uid=user.uid;
-  boot();
-});
+auth.onAuthStateChanged(function(user){ if(!user) return; state.uid=user.uid; boot(); });
 
 async function boot(){
-  try{
-    var roleDoc=await db.doc('roles/coach').get();
-    state.isCoach = roleDoc.exists && (roleDoc.data().uids||[]).indexOf(state.uid)>=0;
-  }catch(e){ state.isCoach=false; }
+  try{ var roleDoc=await db.doc('roles/coach').get(); state.isCoach = roleDoc.exists && (roleDoc.data().uids||[]).indexOf(state.uid)>=0; }catch(e){ state.isCoach=false; }
   document.getElementById('roleseg').style.visibility = state.isCoach ? 'visible' : 'hidden';
   var showUid = state.isCoach || /[?&]setup(\b|=)/.test(location.search);
   document.getElementById('uidlabel').textContent = showUid ? ('UID: '+state.uid) : '';
-
   var prof=null;
   try{ var p=await db.doc('users/'+state.uid).get(); if(p.exists) prof=p.data(); }catch(e){ err(e); }
   document.getElementById('loading').classList.add('hide');
-
-  if(prof && prof.name){
-    state.name=prof.name;
-    await loadStudent();
-    render();
-    buildPopups();
-  }else{
-    document.getElementById('onb').classList.add('on'); onbScroll();
-  }
+  if(prof && prof.name){ state.name=prof.name; await loadStudent(); render(); buildPopups(); }
+  else { document.getElementById('onb').classList.add('on'); onbScroll(); }
 }
 
-/* ===== データ読み込み（受講生） ===== */
 async function loadStudent(){
-  try{
-    var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get();
-    state.ksf = kdoc.exists ? (kdoc.data().text||'') : '';
-  }catch(e){ err(e); }
-  try{
-    var tq=await db.collection('tasks').where('uid','==',state.uid).get();
-    state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q}); });
-  }catch(e){ err(e); }
-  try{
-    var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get();
-    if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; }
-  }catch(e){ err(e); }
-  await loadAnnouncements();
-  await loadActivity();
-  try{
-    var cc=await db.collection('checkins').where('uid','==',state.uid).get();
-    state.checkinDays=cc.size;
-  }catch(e){ state.checkinDays=0; }
+  try{ var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get(); state.ksf = kdoc.exists ? (kdoc.data().text||'') : ''; }catch(e){ err(e); }
+  try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q}); }); }catch(e){ err(e); }
+  try{ var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; } }catch(e){ err(e); }
+  await loadAnnouncements(); await loadActivity();
+  try{ var cc=await db.collection('checkins').where('uid','==',state.uid).get(); state.checkinDays=cc.size; }catch(e){ state.checkinDays=0; }
 }
 async function loadAnnouncements(){
-  try{
-    var q=await db.collection('announcements').orderBy('publishedAt','desc').limit(20).get();
-    state.announcements=[]; q.forEach(function(d){ var x=d.data(); state.announcements.push({id:d.id,title:x.title,body:x.body,at:x.publishedAt}); });
-  }catch(e){ state.announcements=[]; }
+  try{ var q=await db.collection('announcements').orderBy('publishedAt','desc').limit(20).get(); state.announcements=[]; q.forEach(function(d){ var x=d.data(); state.announcements.push({id:d.id,title:x.title,body:x.body,at:x.publishedAt}); }); }catch(e){ state.announcements=[]; }
 }
 async function loadActivity(){
-  try{
-    var q=await db.collection('activity').orderBy('at','desc').limit(30).get();
-    state.activity=[]; var t0=new Date(); t0.setHours(0,0,0,0); var cnt=0;
-    q.forEach(function(d){ var x=d.data(); state.activity.push(x); if(x.at && x.at>=t0.getTime() && x.type==='checkin') cnt++; });
-    state.todayCount=cnt;
-  }catch(e){ state.activity=[]; }
+  try{ var q=await db.collection('activity').orderBy('at','desc').limit(30).get(); state.activity=[]; var t0=new Date(); t0.setHours(0,0,0,0); var cnt=0; q.forEach(function(d){ var x=d.data(); state.activity.push(x); if(x.at && x.at>=t0.getTime() && x.type==='checkin') cnt++; }); state.todayCount=cnt; }catch(e){ state.activity=[]; }
 }
 
-/* ===== 受講生：操作 ===== */
-function q2ratio(){
-  var done=state.tasks.filter(function(t){return state.todayDone[t.id];});
-  if(!done.length) return 0;
-  return Math.round(done.filter(function(t){return t.q==='Q2';}).length/done.length*100);
-}
-async function saveKsf(){
-  var e=document.getElementById('ksf'); if(!e) return; state.ksf=e.value;
-  try{ await db.doc('ksf/'+state.uid+'_'+monthKey()).set({uid:state.uid,month:monthKey(),text:state.ksf,updatedAt:Date.now()},{merge:true}); toast('KSFを保存しました'); }
-  catch(err2){ toast('保存に失敗: '+err2.code); }
-}
+function q2ratio(){ var done=state.tasks.filter(function(t){return state.todayDone[t.id];}); if(!done.length) return 0; return Math.round(done.filter(function(t){return t.q==='Q2';}).length/done.length*100); }
+async function saveKsf(){ var e=document.getElementById('ksf'); if(!e) return; state.ksf=e.value; try{ await db.doc('ksf/'+state.uid+'_'+monthKey()).set({uid:state.uid,month:monthKey(),text:state.ksf,updatedAt:Date.now()},{merge:true}); toast('KSFを保存しました'); }catch(err2){ toast('保存に失敗: '+err2.code); } }
 function setNewQ(q){ state._newq=q; render(); }
-async function addTask(){
-  var ti=document.getElementById('newtask'); if(!ti||!ti.value.trim()) return;
-  var q=state._newq||'Q2'; var text=ti.value.trim();
-  try{
-    var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()});
-    state.tasks.push({id:ref.id,text:text,q:q}); render();
-  }catch(e){ toast('追加に失敗: '+e.code); }
-}
-async function cycleTask(id){
-  var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return;
-  t.q=order[(order.indexOf(t.q)+1)%4]; render();
-  try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); }
-}
-async function delTask(id){
-  state.tasks=state.tasks.filter(function(t){return t.id!==id;}); render();
-  try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); }
-}
+async function addTask(){ var ti=document.getElementById('newtask'); if(!ti||!ti.value.trim()) return; var q=state._newq||'Q2'; var text=ti.value.trim(); try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
+async function cycleTask(id){ var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return; t.q=order[(order.indexOf(t.q)+1)%4]; render(); try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); } }
+async function delTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); render(); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
 function toggleDone(id){ saveRefl(); state.todayDone[id]=!state.todayDone[id]; render(); }
 function saveRefl(){ var e=document.getElementById('refl'); if(e) state.reflection=e.value; }
 async function submitDay(){
@@ -274,22 +211,16 @@ async function submitDay(){
   try{
     await db.doc('checkins/'+state.uid+'_'+todayKey()).set({uid:state.uid,date:todayKey(),items:items,doneCount:doneCount,total:items.length,q2:q2ratio(),reflection:state.reflection,updatedAt:Date.now()},{merge:true});
     await db.collection('activity').add({type:'checkin',at:Date.now()});
-    await loadActivity();
-    toast('今日の報告を送信しました！');
-    render();
+    await loadActivity(); toast('今日の報告を送信しました！'); render();
   }catch(e){ toast('送信に失敗: '+e.code); }
 }
 function restDay(){ alert('🌙 今日はお休みを記録しました。\nしっかり休むことも大切な選択です。よく休むと明日のクオリティも上がります。ゆっくりしてくださいね。'); }
 function todayTasks(){ return state.tasks.filter(function(t){return t.q==='Q1'||t.q==='Q2';}); }
 
-/* ===== 受講生：画面 ===== */
 function ring(p){ return '<div class="ring" style="background:conic-gradient(var(--pp) '+(p*3.6)+'deg,var(--pp-l) 0)"><div class="in">'+p+'%</div></div>'; }
 function viewToday(){
   var todays=todayTasks();
-  var rows=todays.map(function(t){
-    var on=state.todayDone[t.id];
-    return '<div class="task '+(on?'done':'')+'"><span class="q '+t.q+'">'+t.q+'</span><span class="t">'+esc(t.text)+'</span><span class="chk '+(on?'on':'')+'" onclick="toggleDone(\''+t.id+'\')">'+(on?'✓':'')+'</span></div>';
-  }).join('');
+  var rows=todays.map(function(t){ var on=state.todayDone[t.id]; return '<div class="task '+(on?'done':'')+'"><span class="q '+t.q+'">'+t.q+'</span><span class="t">'+esc(t.text)+'</span><span class="chk '+(on?'on':'')+'" onclick="toggleDone(\''+t.id+'\')">'+(on?'✓':'')+'</span></div>'; }).join('');
   var ann=state.announcements[0];
   var hello=state.name?('こんにちは、'+esc(state.name)+'さん'):'こんにちは';
   return ''+
@@ -329,10 +260,7 @@ function viewPlan(){
     '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>';
 }
 function viewFeed(){
-  var items=state.activity.map(function(f){
-    var label=f.type==='checkin'?'別の方がタスクを提出しました':'コミュニティで動きがありました';
-    return '<div class="feed-item"><span class="dot"></span><span>'+label+'</span><time>'+timeAgo(f.at)+'</time></div>';
-  }).join('')||'<div class="muted">まだ動きがありません。最初の一歩を踏み出しましょう。</div>';
+  var items=state.activity.map(function(f){ var label=f.type==='checkin'?'別の方がタスクを提出しました':'コミュニティで動きがありました'; return '<div class="feed-item"><span class="dot"></span><span>'+label+'</span><time>'+timeAgo(f.at)+'</time></div>'; }).join('')||'<div class="muted">まだ動きがありません。最初の一歩を踏み出しましょう。</div>';
   return ''+
   '<div class="card" style="text-align:center;background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div style="font-size:30px;font-weight:800;color:var(--pp-d)">'+state.todayCount+'人</div><div class="muted" style="font-weight:700">が今日チェックインしました</div></div>'+
   '<div class="card"><h2>みんなの動き</h2><p class="muted" style="margin-bottom:6px">※ 名前や内容は表示されません。仲間が動いている実感だけ共有します。</p>'+items+'</div>';
@@ -385,7 +313,6 @@ function viewMenu(){
   '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>';
 }
 
-/* ===== コーチ ===== */
 async function loadCoach(){
   state.coachStudents=[]; state.coachErr=null;
   try{
@@ -427,7 +354,49 @@ async function postAnnounce(){
   catch(e){ toast('投稿に失敗: '+e.code); }
 }
 
-/* ===== ルーティング & レンダリング ===== */
 function setRole(r){
   state.role=r;
-  document.getElementById('role-student').classList.toggle('
+  document.getElementById('role-student').classList.toggle('on',r==='student');
+  document.getElementById('role-coach').classList.toggle('on',r==='coach');
+  document.getElementById('student').classList.toggle('hide',r!=='student');
+  document.getElementById('nav').classList.toggle('hide',r!=='student');
+  document.getElementById('coach').classList.toggle('hide',r!=='coach');
+  if(r==='coach'){ document.getElementById('c-body').innerHTML='<div class="card"><div class="spin"></div></div>'; loadCoach().then(render); }
+  else render();
+}
+function setTab(t){ state.tab=t; document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t);}); render(); }
+function render(){
+  if(state.role==='student'){ var v={today:viewToday,plan:viewPlan,feed:viewFeed,menu:viewMenu}[state.tab]; document.getElementById('s-body').innerHTML=v(); }
+  else{ document.getElementById('c-body').innerHTML=coachView(); }
+}
+
+function showOv(it){ document.getElementById('ov-tag').textContent=it.tag; document.getElementById('ov-title').textContent=it.title; document.getElementById('ov-body').textContent=it.body; document.getElementById('ov-btn').textContent=it.btn||'確認しました'; document.getElementById('ov').classList.add('on'); }
+function closeOv(){ document.getElementById('ov').classList.remove('on'); if(state.popupQueue.length) showOv(state.popupQueue.shift()); }
+function buildPopups(){
+  state.popupQueue=[];
+  if(state.announcements[0]){ var a=state.announcements[0]; state.popupQueue.push({tag:'📣 とーるさんからのお知らせ',title:a.title,body:a.body}); }
+  if(state.checkinDays>=5){ state.popupQueue.push({tag:'🌙 ひとやすみのご提案',title:state.checkinDays+'日報告、おつかれさまです！',body:'がんばり屋さんですね。でも大丈夫ですか？無理は禁物です。今日はしっかり休むのも立派な選択ですよ。',btn:'休むのも大事だね'}); }
+  if(ZOOM_REMIND_DAYS.indexOf(new Date().getDate())>=0){ state.popupQueue.push({tag:'📅 リマインド',title:'ZOOM予約してますか？',body:'今月の面談がまだの方は、メニューの「ZOOMの予定を組む」から予約しておきましょう。',btn:'メニューで予約する'}); }
+  if(state.popupQueue.length) showOv(state.popupQueue.shift());
+}
+
+function curPanel(){ var s=document.getElementById('scroller'); return Math.round(s.scrollLeft/s.clientWidth); }
+function onbScroll(){ var i=curPanel(); document.querySelectorAll('.dots i').forEach(function(d,k){d.classList.toggle('on',k===i);}); document.getElementById('onb-btn').textContent=(i>=3?'はじめる':'次へ'); onbValidate(); }
+function onbValidate(){ var btn=document.getElementById('onb-btn'); if(curPanel()>=3){ var nm=(document.getElementById('onb-name').value||'').trim(); btn.disabled=!nm; btn.style.opacity=nm?1:.5; } else { btn.disabled=false; btn.style.opacity=1; } }
+async function onbNext(){
+  var s=document.getElementById('scroller'),i=curPanel();
+  if(i<3){ s.scrollTo({left:(i+1)*s.clientWidth,behavior:'smooth'}); return; }
+  var nm=(document.getElementById('onb-name').value||'').trim(); if(!nm){ alert('お名前を入力してください'); return; }
+  document.getElementById('onb-btn').disabled=true;
+  try{ await db.doc('users/'+state.uid).set({uid:state.uid,name:nm,role:'student',updatedAt:Date.now()},{merge:true}); state.name=nm; }
+  catch(e){ alert('保存に失敗しました: '+e.code); document.getElementById('onb-btn').disabled=false; return; }
+  document.getElementById('onb').classList.remove('on');
+  await loadStudent(); render(); buildPopups();
+}
+
+function timeAgo(ts){ if(!ts) return ''; var s=Math.floor((Date.now()-ts)/1000); if(s<60) return 'たった今'; if(s<3600) return Math.floor(s/60)+'分前'; if(s<86400) return Math.floor(s/3600)+'時間前'; return Math.floor(s/86400)+'日前'; }
+function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+function copyUid(){ if(state.uid){ navigator.clipboard && navigator.clipboard.writeText(state.uid); toast('UIDをコピーしました'); } }
+</script>
+</body>
+</html>
