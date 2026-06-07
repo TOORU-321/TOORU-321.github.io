@@ -26,8 +26,11 @@ NAV = [
     ("行動経済学への想い", "https://columns.l-mine.com/behavioral-economics-lp.html", False),
     ("コラム", "index.html", True),
     ("オンラインコース一覧", "https://l-mine.com/onlinecourse", False),
+    ("動画・オンラインコース視聴", "https://l-mine.com/onlinecourse-oshirase", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
     ("お問い合わせ", "https://l-mine.com/contact-us", False),
+    ("エルラボ2.0", "https://l-mine.com/l-mine-2.0", False),
+    ("ログイン", "https://l-mine.com/signin", False),
 ]
 FOOT_LINKS = [
     ("利用規約", "https://l-mine.com/term"),
@@ -172,15 +175,15 @@ def label(c):
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
-    order = sorted(cols, key=lambda z: (z["date"], z["number"]))  # 日付昇順（古い→新しい）
+    order = sorted(cols, key=lambda z: z["number"])  # 番号昇順（小→大）
     ids = [x["number"] for x in order]
     i = ids.index(n)
-    older = ids[i-1] if i > 0 else None            # 前の記事（日付が古い）
-    newer = ids[i+1] if i < len(ids)-1 else None   # 次の記事（日付が新しい）
+    older = ids[i-1] if i > 0 else None            # 前の記事（番号が小さい）
+    newer = ids[i+1] if i < len(ids)-1 else None   # 次の記事（番号が大きい）
     prev_html = f'<a class="prev" href="column{older}.html">&larr; 前の記事</a>' if older else '<span></span>'
     next_html = f'<a class="next" href="column{newer}.html">次の記事 &rarr;</a>' if newer else '<span></span>'
-    # 最近の記事（自分以外、日付降順4件）
-    recents = [x for x in sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True) if x["number"] != n][:4]
+    # 最近の記事（自分以外、番号の新しい順4件）
+    recents = [x for x in sorted(cols, key=lambda z: z["number"], reverse=True) if x["number"] != n][:4]
     rec_html = "\n        ".join(
         f'<a href="column{r["number"]}.html">{html.escape(r["title"])}<span class="d">{label(r)} — {r["date_disp_short"]}</span></a>'
         for r in recents)
@@ -347,7 +350,7 @@ def main():
     VALID_NUMS.update(c["number"] for c in cols)  # コラム間リンク用
     for c in cols:
         open(os.path.join(OUT, f'column{c["number"]}.html'), "w", encoding="utf-8").write(render_article(c, cols))
-    desc = sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True)
+    desc = sorted(cols, key=lambda z: z["number"], reverse=True)  # 番号の新しい順
     PER = 12
     chunks = [desc[i:i+PER] for i in range(0, len(desc), PER)] or [[]]
     pages = len(chunks)
