@@ -730,48 +730,55 @@ function renderHome(){
      ${afterCardHTML()}`;
     return;
   }
+  const isPre = (PHASE==='pre');
   const dec=state.me.declared,chk=state.me.checked;
   const done=dec.filter(t=>chk.includes(t)).length,total=dec.length;
   const pct=total?Math.round(done/total*100):0;
-  const actRows=total?dec.map(t=>{
-    const d=chk.includes(t);
-    return `<div class="act ${d?'done':''}" onclick="toggleCheck('${esc(t)}')">
+  const actRows = total ? (isPre
+    ? '<div class="declared-list" style="margin:10px 0 6px;">'+dec.map(t=>`<span class="dchip"><span class="tier-dot ${tierOf(t)}" style="display:inline-block;margin-right:5px;vertical-align:middle;"></span>${t}</span>`).join('')+'</div>'
+    : dec.map(t=>{
+      const d=chk.includes(t);
+      return `<div class="act ${d?'done':''}" onclick="toggleCheck('${esc(t)}')">
       <div class="tick">${d?'✓':''}</div><span class="tier-dot ${tierOf(t)}"></span>
       <span class="txt">${t}</span></div>`;}).join('')
-   :`<p class="empty">まだ何も選んでいません。下のボタンから、今日やることをえらびましょう。</p>`;
+    ) : (isPre
+      ? `<p class="empty">まだ宣言していません。下のボタンから、初日（${dayByIndex(1).disp}）にやる行動を選んでおきましょう。</p>`
+      : `<p class="empty">まだ何も選んでいません。下のボタンから、今日やることをえらびましょう。</p>`
+    );
   const moods=[['◎','できた'],['○','ちょっとできた'],['🌱','今日は伸びしろDAY']];
   const moodRow=moods.map(([em,lb])=>
     `<button class="mood ${state.me.mood===em?'sel':''}" onclick="setMood('${em}')">
        <span class="em">${em}</span><span class="ml">${lb}</span></button>`).join('');
-
-  $('view-home').innerHTML=`
-   <div class="topbar"><div class="greet">こんばんは、<b>${myName}</b>さん 🌙</div>
-     <button class="linkbtn" onclick="openSettings()">⚙ 設定</button></div>
-   <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-     <span class="daytag">${PHASE==='pre'?'スタート前 ・ '+dayByIndex(1).disp+'スタート':'DAY '+CUR+' / 14 ・ '+TODAY.disp}</span></div>
-   ${PHASE==='pre'?'<div class="cheer" style="margin-bottom:14px;">企画スタートは '+dayByIndex(1).disp+'。いまは練習で自由にさわってみてください🌱</div>':''}
-   <div class="streak-band">
-     <div class="sb"><div class="sv">🔥${stats.streak}</div><div class="sl">連続記録</div></div>
-     <div class="sb"><div class="sv">${levelOf(stats.total).cur.em}${stats.level}</div><div class="sl">できる私Lv</div></div>
-     <div class="sb"><div class="sv">${stats.best}</div><div class="sl">自己ベスト/日</div></div>
-   </div>
-   <div class="card">
-     <h2>📌 今日やること</h2>
-     <div class="cap">${total?'やってみて、できたら行動をタップ。':'やる行動をえらんで、できたらタップでチェック。'}</div>
-     ${actRows}
-     ${total?`<div class="progress-line"><span>${done}/${total}</span>
-        <div class="bar"><i style="width:${pct}%"></i></div></div>`:''}
-     ${done===total&&total>0?'<div class="cheer">ぜんぶできました。今日のあなた、えらい🌿</div>':''}
-     <button class="btn ${total?'btn-sub':'btn-main'}" style="margin-top:12px;" onclick="openDeclare(false)">${total?'やることを えらび直す／追加する':'今日やることをえらぶ'}</button>
-   </div>
-   <div class="card">
+  const furikaeriHtml = isPre ? '' : `<div class="card">
      <h2>🌙 今日のふりかえり</h2>
      <div class="cap">できなくても大丈夫。今日の自分に正直に。</div>
      <div class="mood-row">${moodRow}</div>
      <textarea id="noteInput" rows="2" placeholder="ひとこと（任意）　例：白湯がしみた／伸びしろDAYだった"
        onchange="saveNote(this.value)">${state.me.note||''}</textarea>
      <button class="btn btn-sub" style="margin-top:8px;" onclick="copyNote()">📋 ひとことをコピー（オプチャ貼り付け用）</button>
+   </div>`;
+
+  $('view-home').innerHTML=`
+   <div class="topbar"><div class="greet">こんばんは、<b>${myName}</b>さん 🌙</div>
+     <button class="linkbtn" onclick="openSettings()">⚙ 設定</button></div>
+   <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+     <span class="daytag">${isPre?'スタート前 ・ '+dayByIndex(1).disp+'スタート':'DAY '+CUR+' / 14 ・ '+TODAY.disp}</span></div>
+   ${isPre?'<div class="cheer" style="margin-bottom:14px;">🌱 今日はキックオフ！<br>初日（'+dayByIndex(1).disp+'）にやる行動を宣言しておきましょう。<br><strong>チェックは明日からです。</strong></div>':''}
+   <div class="streak-band">
+     <div class="sb"><div class="sv">🔥${stats.streak}</div><div class="sl">連続記録</div></div>
+     <div class="sb"><div class="sv">${levelOf(stats.total).cur.em}${stats.level}</div><div class="sl">できる私Lv</div></div>
+     <div class="sb"><div class="sv">${stats.best}</div><div class="sl">自己ベスト/日</div></div>
    </div>
+   <div class="card">
+     <h2>${isPre?'📌 初日（'+dayByIndex(1).disp+'）の宣言':'📌 今日やること'}</h2>
+     <div class="cap">${isPre?(total?'宣言ずみ！明日から、できたらタップでチェックできるようになります🌿':'初日にやる行動を選んで宣言しておきましょう。チェックは明日（'+dayByIndex(1).disp+'）から。'):(total?'やってみて、できたら行動をタップ。':'やる行動をえらんで、できたらタップでチェック。')}</div>
+     ${actRows}
+     ${(!isPre&&total)?`<div class="progress-line"><span>${done}/${total}</span>
+        <div class="bar"><i style="width:${pct}%"></i></div></div>`:''}
+     ${(!isPre&&done===total&&total>0)?'<div class="cheer">ぜんぶできました。今日のあなた、えらい🌿</div>':''}
+     <button class="btn ${total?'btn-sub':'btn-main'}" style="margin-top:12px;" onclick="openDeclare(false)">${isPre?(total?'宣言を えらび直す／追加する':'初日にやる行動をえらぶ'):(total?'やることを えらび直す／追加する':'今日やることをえらぶ')}</button>
+   </div>
+   ${furikaeriHtml}
    ${afterCardHTML()}
    <button class="btn btn-share" onclick="goView('share')">📸 今日をシェアする</button>`;
 }
