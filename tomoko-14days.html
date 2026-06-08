@@ -244,6 +244,12 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .celebrate-box .csub{font-size:13px;color:var(--ink-soft);line-height:1.7;}
 .celebrate-box button{margin-top:18px;background:var(--sage);color:#fff;border:none;border-radius:12px;padding:11px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
 .confetti{position:absolute;width:9px;height:14px;top:-24px;z-index:1;border-radius:1px;animation:fall linear forwards;}
+#settingsModal{display:none;position:fixed;inset:0;z-index:300;background:rgba(61,58,52,.45);justify-content:center;align-items:flex-end;}
+#settingsModal.open{display:flex;}
+.set-btn{display:block;width:100%;text-align:left;padding:14px 16px;margin-bottom:8px;border:1.5px solid var(--line);background:#fff;border-radius:13px;font-family:inherit;font-size:14px;color:var(--ink);cursor:pointer;}
+.set-btn:hover{background:var(--bg);}
+.set-btn.warn{color:var(--terra-d);border-color:#E7C9BC;}
+.set-note{font-size:11.5px;color:var(--ink-soft);line-height:1.7;margin-top:8px;padding:0 4px;}
 @keyframes fall{to{transform:translateY(110vh) rotate(640deg);}}
 
 #toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;font-size:13px;padding:11px 20px;border-radius:24px;opacity:0;transition:.3s;z-index:400;pointer-events:none;white-space:nowrap;}
@@ -399,6 +405,23 @@ textarea:focus{outline:none;border-color:var(--sage);}
     <button class="finale-btn2" onclick="closeFinale()">とじる</button>
   </div>
 </div>
+<div id="settingsModal">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 class="serif">⚙ 設定</h3>
+      <p>マニュアル再表示・名前変更・記録のリセットができます。</p>
+    </div>
+    <div class="sheet-body">
+      <button class="set-btn" onclick="userManual()">📖 使い方マニュアルをもう一度見る</button>
+      <button class="set-btn" onclick="userChangeName()">✏️ 名前を変える（記録は残ります）</button>
+      <button class="set-btn warn" onclick="userReset()">🗑 すべてリセット（みんなとの共有ログからも削除）</button>
+      <p class="set-note">※「すべてリセット」は、あなたの宣言・チェック・ひとこと・アフター会希望を、スプレッドシートからも完全に削除します。テスト用に試した記録を消したいときに使ってください。</p>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn btn-sub" onclick="closeSettings()">閉じる</button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -516,6 +539,7 @@ function demoSummary(label){
 }
 function demoSave(p){
   if(p.type==='after'){var ar=mockAfter.find(r=>r.name===p.name);const cc=p.choices||[];if(!ar){ar={name:p.name};mockAfter.push(ar);}ar.c1=cc[0]||'';ar.c2=cc[1]||'';ar.c3=cc[2]||'';ar.updated='now';return;}
+  if(p.type==='deleteUser'){Object.keys(mockDB).forEach(d=>{mockDB[d]=mockDB[d].filter(r=>r.name!==p.name);});delete mockTotals[p.name];mockAfter=mockAfter.filter(r=>r.name!==p.name);return;}
   if(!mockDB[p.day])mockDB[p.day]=[];
   let row=mockDB[p.day].find(r=>r.name===p.name);
   const dc=(p.declared||[]).join(' / '),ck=(p.checked||[]).join(' / '),cnt=(p.checked||[]).length;
@@ -695,7 +719,7 @@ function renderHome(){
   if(PHASE==='post'){
     $('view-home').innerHTML=`
      <div class="topbar"><div class="greet">こんばんは、<b>${myName}</b>さん 🌙</div>
-       <button class="linkbtn" onclick="changeName()">名前を変える</button></div>
+       <button class="linkbtn" onclick="openSettings()">⚙ 設定</button></div>
      <div class="card" style="text-align:center;">
        <div style="font-size:34px;">🌳</div>
        <h2 class="serif" style="justify-content:center;">14日間、おつかれさまでした</h2>
@@ -721,7 +745,7 @@ function renderHome(){
 
   $('view-home').innerHTML=`
    <div class="topbar"><div class="greet">こんばんは、<b>${myName}</b>さん 🌙</div>
-     <button class="linkbtn" onclick="changeName()">名前を変える</button></div>
+     <button class="linkbtn" onclick="openSettings()">⚙ 設定</button></div>
    <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
      <span class="daytag">${PHASE==='pre'?'スタート前 ・ '+dayByIndex(1).disp+'スタート':'DAY '+CUR+' / 14 ・ '+TODAY.disp}</span></div>
    ${PHASE==='pre'?'<div class="cheer" style="margin-bottom:14px;">企画スタートは '+dayByIndex(1).disp+'。いまは練習で自由にさわってみてください🌱</div>':''}
@@ -1129,6 +1153,30 @@ function finaleShare(){
   closeFinale(); shareCard='trace'; renderShare(); goView('share');
 }
 function devFinale(){ closeDev(); showFinalCelebration(); }
+
+/* ===== 一般ユーザー設定パネル ===== */
+function openSettings(){$('settingsModal').classList.add('open');}
+function closeSettings(){$('settingsModal').classList.remove('open');}
+document.getElementById('settingsModal').addEventListener('click',function(e){if(e.target.id==='settingsModal')closeSettings();});
+
+function userManual(){
+  closeSettings();
+  $('app').classList.remove('show');
+  $('screen-name').classList.remove('show');
+  obShow(0);
+  $('screen-onboard').classList.add('show');
+}
+function userChangeName(){
+  closeSettings();
+  changeName();
+}
+async function userReset(){
+  closeSettings();
+  if(!confirm('あなたの記録を、みんなとの共有ログ（スプシ）からも完全に削除します。\nこの操作は取り消せません。本当にリセットしますか？')) return;
+  try{ await api.save({type:'deleteUser', name: myName}); }catch(e){}
+  ['app_username','app_onboarded','app_kickoff_done','app_final_seen'].forEach(k=>localStorage.removeItem(k));
+  location.href = location.pathname + (DEV ? '?admin=1' : '');
+}
 
 boot();
 </script>
