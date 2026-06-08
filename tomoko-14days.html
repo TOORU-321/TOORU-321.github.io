@@ -118,6 +118,13 @@ textarea:focus{outline:none;border-color:var(--sage);}
 .btn-sub{background:var(--bg);color:var(--sage-d);border:1.5px solid var(--sage);}
 .btn-share{background:var(--tan);color:#fff;margin-top:4px;}
 .btn-line{background:#06C755;color:#fff;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;}
+.ss-help{background:#fdfaf4;border:1px solid #f3e7d4;border-radius:13px;padding:14px 16px;margin-top:14px;}
+.ss-help .sh-title{font-weight:bold;color:var(--tan-d);font-size:13px;margin:0 0 10px;}
+.ss-help p{font-size:12.5px;line-height:1.75;margin:0 0 9px;color:var(--ink);}
+.ss-help p:last-child{margin-bottom:0;}
+.ss-help b{color:var(--ink);}
+.ss-help .sh-small{font-size:10.5px;color:var(--ink-soft);}
+.ss-help .sh-note{font-size:11.5px;color:var(--ink-soft);background:#fff;border-radius:9px;padding:8px 10px;margin-top:10px;}
 
 .feed-item{background:var(--card);border-radius:14px;padding:13px 15px;margin-bottom:9px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:11px;}
 .ava{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
@@ -892,6 +899,12 @@ function renderShare(){
    <div class="share-switch">${sw}</div>
    ${shareCardHTML()}
    <p class="share-hint">📱 スマホの画面ショットで上のカードを撮って、専用オープンチャットや Instagram ストーリーズに投稿してみてください。<br>シェアするほど、続ける力になります。</p>
+   <div class="ss-help">
+     <p class="sh-title">📷 スクショ（画面ショット）の撮り方</p>
+     <p><b>iPhone：</b>サイドボタン ＋ 音量を上げるボタン を同時に押す<br><span class="sh-small">（ホームボタンのある古い機種は、ホームボタン ＋ サイドボタン）</span></p>
+     <p><b>Android：</b>電源ボタン ＋ 音量を下げるボタン を同時に押す<br><span class="sh-small">※機種によって違うことがあります。「電源ボタン長押し → スクリーンショット」でも撮れます</span></p>
+     <p class="sh-note">📥 撮ったスクショは「写真」アプリに保存されます。そこから選んで投稿してください。</p>
+   </div>
    <a class="btn btn-line" href="https://line.me/ti/g2/9entcWDe5qDi-w5HbPSm-meRoYpy0_1aI4vroQ?utm_source=invitation&amp;utm_medium=link_copy&amp;utm_campaign=default" target="_blank" rel="noopener">💬 専用オープンチャットを開く</a>
    <p class="credit">監修：<a href="https://www.instagram.com/tomoko_happy_diet?igsh=cDdjNGpwamI5cjk4" target="_blank" rel="noopener">ともこ</a> ／ 制作：とーる</p>`;
 }
