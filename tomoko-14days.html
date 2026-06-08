@@ -690,7 +690,7 @@ async function saveToday(){
   const r=await api.save({day:TODAY.label,name:myName,
     declared:state.me.declared,checked:state.me.checked,mood:state.me.mood,note:state.me.note});
   if(!r.ok)toast('保存に失敗しました');
-  await refresh();
+  refresh();  // バックグラウンド同期（awaitしない）
 }
 
 /* ====================== お祝い演出 ====================== */
@@ -1021,11 +1021,17 @@ function updateCnt(){
 async function confirmDeclare(){
   if(declarePick.length===0){toast('1つ以上えらんでください');return;}
   closeDeclare();
-  const r=await api.save({day:TODAY.label,name:myName,declared:declarePick});
-  if(!r.ok){toast('保存に失敗しました');return;}
-  localStorage.setItem('app_kickoff_done','1');
-  await refresh();
-  toast('今日やることを保存しました 🌱');
+  // 即時に画面反映（オプティミスティック）
+  state.me.declared=[...declarePick];
+  renderHome();
+  toast('保存しています…');
+  // バックグラウンドで保存＋同期
+  api.save({day:TODAY.label,name:myName,declared:declarePick}).then(function(r){
+    if(!r||!r.ok){toast('保存に失敗しました');return;}
+    localStorage.setItem('app_kickoff_done','1');
+    toast('宣言を保存しました 🌱');
+    refresh();
+  }).catch(function(){toast('通信に失敗しました');});
 }
 $('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeDeclare();});
 
