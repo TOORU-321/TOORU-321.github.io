@@ -89,7 +89,7 @@ body{
 .act .txt{font-size:14px;flex:1;}
 .act.done .txt{color:var(--ink-soft);text-decoration:line-through;}
 .tier-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.t-e{background:var(--sage);} .t-m{background:var(--tan);} .t-a{background:var(--terra);}
+.t-e{background:var(--sage);} .t-m{background:var(--tan);} .t-a{background:var(--terra);} .t-o{background:#B8A8C4;}
 
 .progress-line{font-size:12px;color:var(--ink-soft);margin-top:12px;display:flex;align-items:center;gap:9px;}
 .bar{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden;}
@@ -449,6 +449,7 @@ const CHIBI_CHEER  = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANwAAAETCAYA
 
 /* ====================== カタログ ====================== */
 const CATALOG = {
+  o:{label:'お休み',theme:'むりせず、今日はじぶんを休ませる',cls:'t-o',items:['今日はお休み（むりしない）']},
   e:{label:'初級',theme:'まずは"止まってる体"をゆるめる',cls:'t-e',items:[
     '朝日を浴びる','朝イチで白湯を飲む','深呼吸3回する','肩を回す','伸びをする','5分だけ歩く','湯船につかる']},
   m:{label:'中級',theme:'自分を整える力を育てる',cls:'t-m',items:[
@@ -459,7 +460,7 @@ const CATALOG = {
     '誰かにありがとうの気持ちを伝える','我慢していた小さな望みを1つ叶える','10分、自分のために時間を使う']}
 };
 const TIER = {};
-['e','m','a'].forEach(k=>CATALOG[k].items.forEach(t=>TIER[t]=CATALOG[k].cls));
+['o','e','m','a'].forEach(k=>CATALOG[k].items.forEach(t=>TIER[t]=CATALOG[k].cls));
 function tierOf(t){return TIER[t]||'t-m';}
 
 const LEVELS = [
@@ -997,7 +998,7 @@ function openDeclare(isKickoff){
 function closeDeclare(){$('modal').classList.remove('open');}
 function buildSheet(){
   let h='';
-  ['e','m','a'].forEach(k=>{
+  ['o','e','m','a'].forEach(k=>{
     const c=CATALOG[k];
     h+=`<div class="tier-head"><span class="tier-dot ${c.cls}"></span>${c.label}
       <span class="tt">${c.theme}</span></div><div class="chips">`;
