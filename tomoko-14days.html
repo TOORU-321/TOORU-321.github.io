@@ -17,11 +17,12 @@
   --line:#EAE3D7; --shadow:0 6px 20px rgba(95,82,60,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;}
+html{min-height:100%;background:linear-gradient(160deg,#F1EADD 0%,#FAF7F2 45%,#EFE7DA 100%) fixed;}
 body{
+  min-height:100vh;
   font-family:'Noto Sans JP',sans-serif;color:var(--ink);
-  background:linear-gradient(160deg,#F1EADD 0%,#FAF7F2 45%,#EFE7DA 100%);
-  background-attachment:fixed;display:flex;justify-content:center;
+  background:transparent;display:flex;justify-content:center;
+  margin:0;
 }
 .serif{font-family:'Noto Serif JP',serif;}
 #frame{
