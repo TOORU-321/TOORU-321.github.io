@@ -638,7 +638,7 @@ function startApp(firstTime){
 /* ====================== データ取得＋集計 ====================== */
 async function refresh(){
   try{
-    const s=await api.summary(TODAY.label);
+    const [s,st]=HAS_TMRW?await Promise.all([api.summary(TODAY.label),api.summary(TMRW.label)]):[await api.summary(TODAY.label),{today:[]}];
     state.todayRows=s.today||[];
     state.totals=s.totals||{};
     state.grandTotal=s.grandTotal||0;
@@ -648,6 +648,8 @@ async function refresh(){
     state.me.checked =mine?splitList(mine.checked):[];
     state.me.mood    =mine?(mine.mood||''):'';
     state.me.note    =mine?(mine.note||''):'';
+    const myTom=(st.today||[]).find(r=>r.name===myName);
+    state.tomorrowMine=myTom?splitList(myTom.declared):[];
     if(CUR>=11){ try{ const af=await api.after(); state.afterMine=afMine(af.after||[]); }catch(e){} }
     computeStats();
     if(feedIdx===Math.min(14,Math.max(1,CUR))) feedRows=state.todayRows;
@@ -780,13 +782,25 @@ function renderHome(){
    </div>
    <div class="card">
      <h2>${isPre?'📌 初日（'+dayByIndex(1).disp+'）の宣言':'📌 今日やること'}</h2>
-     <div class="cap">${isPre?(total?'宣言ずみ！明日から、できたらタップでチェックできるようになります🌿':'初日にやる行動を選んで宣言しておきましょう。チェックは明日（'+dayByIndex(1).disp+'）から。'):(total?'やってみて、できたら行動をタップ。':'やる行動をえらんで、できたらタップでチェック。')}</div>
+     <div class="cap">${isPre?(total?'宣言ずみ！明日からチェックできるようになります🌿':'初日にやる行動を選んで宣言しておきましょう。'):(total?'昨夜えらんだ'+total+'つ。やってみて、できたら行動をタップ。':'まだ宣言がありません。下のボタンから、今日ぶんを選びましょう。')}</div>
      ${actRows}
      ${(!isPre&&total)?`<div class="progress-line"><span>${done}/${total}</span>
         <div class="bar"><i style="width:${pct}%"></i></div></div>`:''}
      ${(!isPre&&done===total&&total>0)?'<div class="cheer">ぜんぶできました。今日のあなた、えらい🌿</div>':''}
-     <button class="btn ${total?'btn-sub':'btn-main'}" style="margin-top:12px;" onclick="openDeclare(false)">${isPre?(total?'宣言を えらび直す／追加する':'初日にやる行動をえらぶ'):(total?'やることを えらび直す／追加する':'今日やることをえらぶ')}</button>
+     ${isPre?`<button class="btn ${total?'btn-sub':'btn-main'}" style="margin-top:12px;" onclick="openDeclare(false,'today')">${total?'宣言を えらび直す／追加する':'初日にやる行動をえらぶ'}</button>`:(total?'':`<button class="btn btn-main" style="margin-top:12px;" onclick="openDeclare(false,'today')">今日やることをえらぶ</button>`)}
    </div>
+   ${(!isPre && HAS_TMRW)?`<div class="card">
+     <h2>✨ あしたの宣言（${TMRW.disp}）</h2>
+     ${state.tomorrowMine.length?`
+       <div class="cap">明日やると宣言した行動。明日になったらチェックできるようになります。</div>
+       <div class="declared-list">${state.tomorrowMine.map(t=>`<span class="dchip"><span class="tier-dot ${tierOf(t)}" style="display:inline-block;margin-right:5px;vertical-align:middle;"></span>${t}</span>`).join('')}</div>
+       <button class="btn btn-sub" style="margin-top:12px;" onclick="openDeclare(false,'tomorrow')">明日の宣言を えらび直す／追加する</button>
+     `:`
+       <div class="cap">今夜のうちに、明日（${TMRW.disp}）にやる行動を選んでおきましょう。</div>
+       <p class="empty">まだ明日の宣言はありません。</p>
+       <button class="btn btn-main" style="margin-top:12px;" onclick="openDeclare(false,'tomorrow')">明日やる行動をえらぶ</button>
+     `}
+   </div>`:''}
    ${furikaeriHtml}
    ${afterCardHTML()}
    <button class="btn btn-share" onclick="goView('share')">📸 今日をシェアする</button>`;
@@ -988,9 +1002,12 @@ document.addEventListener('click',e=>{
 });
 
 /* 宣言モーダル */
-function openDeclare(isKickoff){
-  declarePick=[...state.me.declared];
-  $('sheetTitle').textContent=`${TODAY.disp} にやること`;
+let declareTargetDay=null;
+function openDeclare(isKickoff, target){
+  if(target===undefined) target = (PHASE==='live' && HAS_TMRW) ? 'tomorrow' : 'today';
+  declareTargetDay = (target==='tomorrow' && HAS_TMRW) ? TMRW : TODAY;
+  declarePick = (declareTargetDay===TMRW) ? [...state.tomorrowMine] : [...state.me.declared];
+  $('sheetTitle').textContent=`${declareTargetDay.disp} にやること`;
   $('kickoffTip').style.display=isKickoff?'block':'none';
   buildSheet();
   $('modal').classList.add('open');
@@ -1036,15 +1053,17 @@ function updateCnt(){
 async function confirmDeclare(){
   if(declarePick.length===0){toast('1つ以上えらんでください');return;}
   closeDeclare();
+  const d = declareTargetDay || TODAY;
   // 即時に画面反映（オプティミスティック）
-  state.me.declared=[...declarePick];
+  if(d===TMRW){ state.tomorrowMine=[...declarePick]; }
+  else { state.me.declared=[...declarePick]; }
   renderHome();
   toast('保存しています…');
   // バックグラウンドで保存＋同期
-  api.save({day:TODAY.label,name:myName,declared:declarePick}).then(function(r){
+  api.save({day:d.label,name:myName,declared:declarePick}).then(function(r){
     if(!r||!r.ok){toast('保存に失敗しました');return;}
     localStorage.setItem('app_kickoff_done','1');
-    toast('宣言を保存しました 🌱');
+    toast(d.disp+' の宣言を保存しました 🌱');
     refresh();
   }).catch(function(){toast('通信に失敗しました');});
 }
