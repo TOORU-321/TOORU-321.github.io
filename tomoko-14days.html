@@ -928,8 +928,8 @@ function renderShare(){
 function shareCardHTML(){
   const {cur}=levelOf(stats.total);
   if(shareCard==='decl'){
-    const list=state.me.declared;
-    const dayLabel=TODAY.disp;
+    const list=(state.tomorrowMine&&state.tomorrowMine.length)?state.tomorrowMine:state.me.declared;
+    const dayLabel=(state.tomorrowMine&&state.tomorrowMine.length)?TMRW.disp:TODAY.disp;
     const deeds=list.length?list.map(t=>`<div class="s-row">${t}</div>`).join('')
       :'<div class="s-row" style="opacity:.8;">まだ宣言がありません</div>';
     return `<div class="scard decl">
