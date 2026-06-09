@@ -789,6 +789,7 @@ function renderHome(){
      ${(!isPre&&done===total&&total>0)?'<div class="cheer">ぜんぶできました。今日のあなた、えらい🌿</div>':''}
      ${isPre?`<button class="btn ${total?'btn-sub':'btn-main'}" style="margin-top:12px;" onclick="openDeclare(false,'today')">${total?'宣言を えらび直す／追加する':'初日にやる行動をえらぶ'}</button>`:(total?'':`<button class="btn btn-main" style="margin-top:12px;" onclick="openDeclare(false,'today')">今日やることをえらぶ</button>`)}
    </div>
+   ${furikaeriHtml}
    ${(!isPre && HAS_TMRW)?`<div class="card">
      <h2>✨ あしたの宣言（${TMRW.disp}）</h2>
      ${state.tomorrowMine.length?`
@@ -801,7 +802,6 @@ function renderHome(){
        <button class="btn btn-main" style="margin-top:12px;" onclick="openDeclare(false,'tomorrow')">明日やる行動をえらぶ</button>
      `}
    </div>`:''}
-   ${furikaeriHtml}
    ${afterCardHTML()}
    <button class="btn btn-share" onclick="goView('share')">📸 今日をシェアする</button>`;
 }
