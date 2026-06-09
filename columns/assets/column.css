@@ -75,8 +75,8 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .optin .optin-btn:hover{filter:brightness(1.06)}
 .body ul{margin:0 0 2.35em;padding-left:1.25em}
 .body li{margin:.25em 0;line-height:1.8}
-.body .flowbox{margin:0 0 2.35em}
-.body .flowbox p{margin:.1em 0;line-height:1.5}
+.body .flowbox{margin:0 0 2.35em;text-align:center}
+.body .flowbox p{margin:.3em 0;line-height:1.5}
 .body .flow{text-align:center;color:var(--gold);margin:.1em 0;font-size:14px;line-height:1.2}
 .body .sec{text-align:center;color:var(--gold-2);letter-spacing:.5em;margin:2.6em 0 2.4em;font-size:12px}
 .body .step-h{margin:2.35em 0 .7em;display:flex;gap:11px;align-items:baseline}
