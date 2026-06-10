@@ -1200,4 +1200,54 @@ function closeWelcome() {
     state.email = savedEmail;
     state.userName = savedName || savedEmail;
     await loadDashboard();
-    ente
+    enterApp();
+  }
+})();
+
+/* =============================================
+   特典動画 カウントダウン & 期限切れ
+   ============================================= */
+const TOKUTEN_DEADLINE = new Date('2026-06-28T23:59:59+09:00');
+let tokutenTimer = null;
+
+function initTokutenCountdown() {
+  if (tokutenTimer) clearInterval(tokutenTimer);
+  checkTokutenExpiry();
+  updateTokutenCountdown();
+  tokutenTimer = setInterval(updateTokutenCountdown, 1000);
+}
+
+function checkTokutenExpiry() {
+  if (new Date() > TOKUTEN_DEADLINE) {
+    const card = document.getElementById('tokuten-video-card');
+    card.innerHTML = `
+      <div style="padding:60px 24px;text-align:center;background:var(--cream);">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin-bottom:16px;opacity:0.5">
+          <circle cx="24" cy="24" r="22" stroke="#8b5a6b" stroke-width="1.5"/>
+          <path d="M24 12v13l8 4" stroke="#8b5a6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="14" y1="14" x2="34" y2="34" stroke="#a87389" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px">視聴期限が終了しました</p>
+        <p style="font-size:13px;color:var(--text-light);line-height:1.8">この動画の視聴期限は<br><strong style="color:var(--plum)">2026年6月28日</strong>をもって<br>終了いたしました。</p>
+      </div>`;
+    if (tokutenTimer) { clearInterval(tokutenTimer); tokutenTimer = null; }
+  }
+}
+
+function updateTokutenCountdown() {
+  const diff = TOKUTEN_DEADLINE - new Date();
+  if (diff <= 0) { checkTokutenExpiry(); return; }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('tk-days').textContent = d;
+  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
+  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
+  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
+}
+</script>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+</body>
+</html>
