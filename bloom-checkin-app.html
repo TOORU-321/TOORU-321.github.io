@@ -21,7 +21,7 @@
   .seg button{border:0;background:transparent;color:#cfc9e6;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
   .seg button.on{background:#fff;color:#1E1B2E}
   .wrap{max-width:440px;margin:0 auto;padding:16px 16px 96px}
-  .wrap.coach{max-width:900px}
+  .wrap.coach{max-width:980px}
   .appbar{display:flex;align-items:center;gap:10px;margin:6px 2px 16px}
   .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7F77DD,#534AB7);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
   .appbar h1{font-size:18px;font-weight:800}.appbar small{display:block;color:var(--sub);font-size:11px;font-weight:600}
@@ -31,7 +31,7 @@
   .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px}
   .pill.pp{background:var(--pp-l);color:var(--pp-d)}.pill.gr{background:var(--green-l);color:var(--green)}.pill.rd{background:var(--red-l);color:var(--red)}
   .btn{border:0;border-radius:12px;background:var(--pp);color:#fff;font-weight:700;font-size:14px;padding:12px 16px;cursor:pointer;font-family:inherit;width:100%}
-  .btn:active{transform:translateY(1px)}.btn.ghost{background:var(--pp-l);color:var(--pp-d)}.btn.sm{width:auto;padding:8px 14px;font-size:13px}
+  .btn:active{transform:translateY(1px)}.btn.ghost{background:var(--pp-l);color:var(--pp-d)}.btn.sm{width:auto;padding:8px 12px;font-size:12px}
   input,textarea,select{font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;background:#fff;color:var(--ink)}
   textarea{resize:vertical;min-height:64px}
   label.fld{display:block;font-size:12px;font-weight:700;color:var(--sub);margin:0 0 6px 2px}
@@ -136,7 +136,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-/* ===== Firebase ===== */
 var firebaseConfig = {
   apiKey: "AIzaSyCOU1uTn74lN_BaykrC_a7nGWKYO2e66EI",
   authDomain: "bloom-checkin-dd8ac.firebaseapp.com",
@@ -153,16 +152,19 @@ var COLUMN_URL='https://l-mine.com/column/page/1';
 var VIDEO_URL='https://l-mine.com/community/member_on-line_course';
 var ZOOM_URL='https://dn15jkbd.autosns.app/addfriend/s/aK6Cn5eBu8/@144htozo';
 var ZOOM_REMIND_DAYS=[10,20,30];
+var GAS_REPORT_URL='';            // ←GASデプロイ後の /exec を貼る（報告→スプシ追記＋コーチへメール）
+var NOTIFY_KEY='bloom-notify-7Xk2';
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
 var state={ uid:null, isCoach:false, role:'student', tab:'today',
-  name:'', ksf:'', tasks:[], todayDone:{}, reflection:'',
+  name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
   _newq:'Q2', _refl:'', _openTerm:null, popupQueue:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function monthKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
 function err(e){ console.error(e); }
 
 auth.signInAnonymously().catch(function(e){
@@ -186,6 +188,7 @@ async function loadStudent(){
   try{ var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get(); state.ksf = kdoc.exists ? (kdoc.data().text||'') : ''; }catch(e){ err(e); }
   try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q}); }); }catch(e){ err(e); }
   try{ var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; } }catch(e){ err(e); }
+  try{ var ad=await db.doc('advice/'+state.uid).get(); state.advice = ad.exists?(ad.data().text||''):''; }catch(e){ state.advice=''; }
   await loadAnnouncements(); await loadActivity();
   try{ var cc=await db.collection('checkins').where('uid','==',state.uid).get(); state.checkinDays=cc.size; }catch(e){ state.checkinDays=0; }
 }
@@ -211,6 +214,7 @@ async function submitDay(){
   try{
     await db.doc('checkins/'+state.uid+'_'+todayKey()).set({uid:state.uid,date:todayKey(),items:items,doneCount:doneCount,total:items.length,q2:q2ratio(),reflection:state.reflection,updatedAt:Date.now()},{merge:true});
     await db.collection('activity').add({type:'checkin',at:Date.now()});
+    if(GAS_REPORT_URL){ try{ fetch(GAS_REPORT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'report',key:NOTIFY_KEY,name:state.name,date:todayKey(),done:doneCount+'/'+items.length,q2:q2ratio(),tasks:items.filter(function(i){return i.done;}).map(function(i){return i.text;}),reflection:state.reflection})}); }catch(e){} }
     await loadActivity(); toast('今日の報告を送信しました！'); render();
   }catch(e){ toast('送信に失敗: '+e.code); }
 }
@@ -225,6 +229,7 @@ function viewToday(){
   var hello=state.name?('こんにちは、'+esc(state.name)+'さん'):'こんにちは';
   return ''+
   '<div style="font-weight:800;font-size:16px;margin:0 2px 12px">'+hello+' 👋</div>'+
+  (state.advice?'<div class="card" style="border-left:4px solid var(--green)"><div class="muted" style="font-weight:700;color:var(--green)">💬 コーチからのアドバイス</div><div style="margin-top:4px;font-size:14px">'+esc(state.advice)+'</div></div>':'')+
   '<div class="card" style="background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div class="row" style="align-items:center">'+
     '<div class="stat"><div class="n">'+state.checkinDays+'</div><div class="l">報告した日数</div></div>'+
     '<div style="text-align:center">'+ring(q2ratio())+'<div class="l" style="font-size:11px;font-weight:700;color:var(--pp-d)">第2象限の割合</div></div>'+
@@ -319,9 +324,10 @@ async function loadCoach(){
     var us=await db.collection('users').where('role','==','student').get();
     var list=[]; us.forEach(function(d){ list.push(d.data()); });
     for(var i=0;i<list.length;i++){
-      var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,reported:false,done:'—',q2:0,reflection:''};
+      var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,reported:false,done:'—',q2:0,reflection:'',advice:''};
       try{ var c=await db.doc('checkins/'+s.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); rec.reported=true; rec.done=cd.doneCount+'/'+cd.total; rec.q2=cd.q2||0; rec.reflection=cd.reflection||''; } }catch(e){}
       try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){ rec.ksf=''; }
+      try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){ rec.advice=''; }
       state.coachStudents.push(rec);
     }
   }catch(e){ state.coachErr=e.code||e.message; }
@@ -338,14 +344,20 @@ function coachView(){
   var rows=sorted.map(function(s){
     return '<tr class="'+(!s.reported?'stall':'')+'"><td><b>'+esc(s.name)+'</b></td><td><span class="muted">'+esc(s.ksf||'—')+'</span></td>'+
       '<td>'+(s.reported?'<span class="pill gr">提出</span>':'<span class="pill rd">未報告</span>')+'</td><td>'+esc(s.done)+'</td>'+
-      '<td>'+s.q2+'%</td><td><span class="muted">'+esc(s.reflection||'—')+'</span></td></tr>';
-  }).join('')||'<tr><td colspan="6" class="muted">まだ受講生がいません。</td></tr>';
+      '<td>'+s.q2+'%</td><td><span class="muted">'+esc(s.reflection||'—')+'</span></td>'+
+      '<td><div style="display:flex;gap:4px;min-width:230px"><input id="adv_'+s.uid+'" value="'+escAttr(s.advice||'')+'" placeholder="一言アドバイス" style="font-size:12px;padding:8px"><button class="btn sm" onclick="saveAdvice(\''+s.uid+'\')" style="white-space:nowrap">送信</button></div></td></tr>';
+  }).join('')||'<tr><td colspan="7" class="muted">まだ受講生がいません。</td></tr>';
   return ''+
-  '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">未報告 '+stalled+'名</span><span class="muted">未報告の人を上に表示しています。</span></div>'+
-  '<div class="card"><h2>今日の一覧（'+ss.length+'名）</h2><div style="overflow-x:auto"><table><thead><tr><th>名前</th><th>今月のKSF</th><th>今日</th><th>達成</th><th>第2象限</th><th>ふりかえり</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
+  '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">未報告 '+stalled+'名</span><span class="muted">未報告の人を上に表示。右端の「アドバイス」は送信すると生徒の今日タブに表示されます。</span></div>'+
+  '<div class="card"><h2>今日の一覧（'+ss.length+'名）</h2><div style="overflow-x:auto"><table><thead><tr><th>名前</th><th>今月のKSF</th><th>今日</th><th>達成</th><th>第2象限</th><th>ふりかえり</th><th>アドバイス（生徒に表示）</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
   '<div class="card"><h2>お知らせを投稿</h2><label class="fld">タイトル</label><input id="an-title" placeholder="例：今週のテーマ"><div style="height:8px"></div>'+
     '<label class="fld">本文</label><textarea id="an-body" placeholder="受講生へのメッセージ"></textarea><div style="height:12px"></div>'+
     '<button class="btn" onclick="postAnnounce()">投稿する</button></div>';
+}
+async function saveAdvice(uid){
+  var el=document.getElementById('adv_'+uid); if(!el) return;
+  try{ await db.doc('advice/'+uid).set({uid:uid,text:el.value,by:state.uid,at:Date.now()},{merge:true}); toast('アドバイスを送信しました'); var s=state.coachStudents.find(function(x){return x.uid===uid;}); if(s)s.advice=el.value; }
+  catch(e){ toast('保存に失敗: '+(e.code||e.message)); }
 }
 async function postAnnounce(){
   var t=document.getElementById('an-title'),b=document.getElementById('an-body');
