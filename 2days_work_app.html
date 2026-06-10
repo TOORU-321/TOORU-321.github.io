@@ -7,197 +7,498 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ========================================
+   CSS Variables & Reset
+   ======================================== */
 :root {
-  --plum: #8b5a6b; --plum-light: #a87389; --plum-pale: #f5eef1; --plum-bg: #faf6f8;
-  --gold: #c4a265; --gold-light: #e8d5a8; --cream: #fdfbf7; --warm-gray: #6b5e5e;
-  --text: #3d2e2e; --text-light: #7a6a6a; --border: #e8ddd5;
-  --success: #6ba37a; --success-light: #e8f5ec; --white: #ffffff;
-  --shadow: 0 2px 12px rgba(100,60,70,0.08); --shadow-lg: 0 4px 24px rgba(100,60,70,0.12);
-  --radius: 12px; --radius-sm: 8px; --font-mincho: 'Shippori Mincho','Noto Serif JP',serif;
+  --plum: #8b5a6b;
+  --plum-light: #a87389;
+  --plum-pale: #f5eef1;
+  --plum-bg: #faf6f8;
+  --gold: #c4a265;
+  --gold-light: #e8d5a8;
+  --cream: #fdfbf7;
+  --warm-gray: #6b5e5e;
+  --text: #3d2e2e;
+  --text-light: #7a6a6a;
+  --border: #e8ddd5;
+  --success: #6ba37a;
+  --success-light: #e8f5ec;
+  --white: #ffffff;
+  --shadow: 0 2px 12px rgba(100, 60, 70, 0.08);
+  --shadow-lg: 0 4px 24px rgba(100, 60, 70, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --font-mincho: 'Shippori Mincho', 'Noto Serif JP', serif;
   --bottom-nav-h: 60px;
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;}
-#login-overlay{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--plum-pale) 0%,var(--cream) 40%,var(--plum-pale) 100%);padding:20px 16px;transition:opacity .35s ease,visibility .35s ease;}
-#login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-.main-app{display:none;} .main-app.show{display:block;}
-.view{display:none;min-height:100dvh;padding-bottom:calc(var(--bottom-nav-h) + 24px);} .view.active{display:block;}
-.app-header{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);text-align:center;padding:20px 16px 18px;position:relative;}
-.app-header h1{font-size:15px;font-weight:500;letter-spacing:.12em;line-height:1.6;}
-.app-header .subtitle{font-size:11px;opacity:.75;margin-top:4px;letter-spacing:.08em;}
-.header-back{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white);font-size:22px;cursor:pointer;padding:8px;opacity:.85;transition:opacity .2s;}
-.header-back:hover{opacity:1;}
-.btn{display:block;width:100%;padding:14px 24px;border:none;border-radius:var(--radius);font-family:var(--font-mincho);font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;letter-spacing:.06em;}
-.btn-primary{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);box-shadow:0 3px 12px rgba(139,90,107,.3);}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(139,90,107,.4);}
-.btn-primary:active{transform:translateY(0);}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:var(--white);border-top:1px solid var(--border);z-index:100;display:flex;justify-content:center;align-items:stretch;box-shadow:0 -2px 12px rgba(100,60,70,.06);}
-.nav-item{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text-light);transition:color .2s;font-family:var(--font-mincho);position:relative;}
-.nav-item:hover{color:var(--text);} .nav-item.active{color:var(--plum);}
-.nav-item.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:2.5px;background:var(--plum);border-radius:0 0 2px 2px;}
-.nav-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
-.nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.nav-label{font-size:10px;font-weight:600;letter-spacing:.03em;}
-.login-card{background:var(--white);border-radius:20px;padding:40px 28px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);text-align:center;}
-.login-logo{font-size:13px;color:var(--plum);letter-spacing:.15em;margin-bottom:6px;font-weight:500;}
-.login-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.5;}
-.login-sub{font-size:12px;color:var(--text-light);margin-bottom:32px;line-height:1.7;}
-.login-deco{width:40px;height:1px;background:var(--gold-light);margin:16px auto 20px;}
-.login-privacy-note{font-size:11px;color:var(--text-light);background:var(--plum-pale);border-radius:8px;padding:8px 12px;margin:-4px 0 16px;line-height:1.7;text-align:left;}
-.input-group{text-align:left;margin-bottom:20px;}
-.input-group label{display:block;font-size:12px;color:var(--text-light);margin-bottom:6px;letter-spacing:.05em;}
-.input-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-mincho);font-size:15px;color:var(--text);background:var(--cream);transition:border-color .25s;outline:none;}
-.input-group input:focus{border-color:var(--plum-light);background:var(--white);}
-.input-group input::placeholder{color:#c0b0b0;}
-.login-error{display:none;background:#fdf0f0;color:#b44;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;line-height:1.6;}
-.login-error.show{display:block;}
-.login-note{font-size:10.5px;color:var(--text-light);margin-top:16px;line-height:1.7;opacity:.7;}
-.welcome-section{background:var(--white);padding:20px;margin:20px 16px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;}
-.welcome-name{font-size:15px;color:var(--plum);font-weight:700;margin-bottom:4px;}
-.welcome-msg{font-size:12px;color:var(--text-light);line-height:1.7;}
-.progress-bar-wrap{background:var(--white);margin:0 16px 20px;padding:16px 20px;border-radius:var(--radius);box-shadow:var(--shadow);}
-.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-light);margin-bottom:8px;}
-.progress-count{color:var(--plum);font-weight:600;}
-.progress-track{height:6px;background:var(--plum-pale);border-radius:3px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--plum) 0%,var(--plum-light) 100%);border-radius:3px;transition:width .5s ease;width:0%;}
-.day-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;margin-bottom:24px;}
-.day-card{background:var(--white);border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow);cursor:pointer;transition:all .25s;position:relative;border:1.5px solid transparent;}
-.day-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--plum-pale);}
-.day-card:active{transform:translateY(0);}
-.day-card.submitted{border-color:var(--success-light);background:linear-gradient(135deg,var(--white) 0%,var(--success-light) 100%);}
-.day-card.locked{opacity:.5;cursor:default;pointer-events:none;}
-.day-number{font-size:11px;color:var(--text-light);letter-spacing:.08em;margin-bottom:4px;}
-.day-theme{font-size:13px;font-weight:600;color:var(--text);line-height:1.5;min-height:40px;}
-.day-status{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;margin-top:10px;padding:3px 8px;border-radius:20px;}
-.day-status.done{background:var(--success-light);color:var(--success);}
-.day-status.todo{background:var(--plum-pale);color:var(--plum);}
-.day-status.locked-label{background:#f0eded;color:#aaa;}
-.day-check{position:absolute;top:10px;right:12px;font-size:16px;}
-.logout-link{display:block;text-align:center;font-size:11px;color:var(--text-light);margin:24px 0 0;cursor:pointer;opacity:.6;transition:opacity .2s;text-decoration:none;}
-.logout-link:hover{opacity:1;}
-.work-header-info{background:var(--white);margin:20px 16px;padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);}
-.work-day-label{font-size:11px;color:var(--plum);letter-spacing:.1em;margin-bottom:4px;font-weight:500;}
-.work-theme-title{font-size:17px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:8px;}
-.work-description{font-size:13px;color:var(--text-light);line-height:1.8;}
-.work-form-area{margin:0 16px;padding:20px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);}
-.work-form-area label{display:block;font-size:13px;color:var(--text);font-weight:600;margin-bottom:8px;}
-.work-textarea{width:100%;min-height:200px;padding:14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-mincho);font-size:14px;color:var(--text);background:var(--cream);resize:vertical;outline:none;line-height:1.8;transition:border-color .25s;}
-.work-textarea:focus{border-color:var(--plum-light);background:var(--white);}
-.work-textarea::placeholder{color:#c0b0b0;}
-.char-count{text-align:right;font-size:11px;color:var(--text-light);margin-top:6px;opacity:.6;}
-.submit-area{margin:20px 16px 0;}
-.submitted-banner{display:none;background:var(--success-light);border:1.5px solid var(--success);border-radius:var(--radius);padding:16px 20px;margin:0 16px 16px;text-align:center;}
-.submitted-banner.show{display:block;}
-.submitted-banner .check-icon{font-size:24px;margin-bottom:4px;}
-.submitted-banner .banner-text{font-size:13px;color:var(--success);font-weight:600;}
-.submitted-banner .banner-date{font-size:11px;color:var(--text-light);margin-top:4px;}
-.prev-submission{display:none;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin:0 16px 16px;}
-.prev-submission.show{display:block;}
-.prev-submission-label{font-size:11px;color:var(--text-light);margin-bottom:8px;letter-spacing:.05em;}
-.prev-submission-text{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;}
-.board-day-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--white);border-bottom:1px solid var(--border);scrollbar-width:none;}
-.board-day-tabs::-webkit-scrollbar{display:none;}
-.board-day-tab{flex-shrink:0;padding:12px 16px;background:none;border:none;border-bottom:2.5px solid transparent;font-family:var(--font-mincho);font-size:12.5px;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .2s;white-space:nowrap;}
-.board-day-tab.active{color:var(--plum);border-bottom-color:var(--plum);}
-.board-day-tab .tab-count{display:inline-block;background:var(--plum-pale);color:var(--plum);font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:600;}
-.board-day-tab.active .tab-count{background:var(--plum);color:var(--white);}
-.board-stats{display:flex;gap:10px;padding:16px 16px 0;max-width:480px;margin:0 auto;}
-.board-stat{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:12px;text-align:center;box-shadow:var(--shadow);}
-.board-stat-num{font-size:22px;font-weight:700;color:var(--plum);line-height:1;}
-.board-stat-label{font-size:10px;color:var(--text-light);margin-top:3px;}
-.board-submissions-area{padding:16px 16px 0;max-width:480px;margin:0 auto;}
-.board-day-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.board-day-theme{font-size:12px;color:var(--text-light);margin-bottom:16px;line-height:1.6;}
-.submission-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow);}
-.submission-card.mine{border-left:3px solid var(--plum);}
-.submission-card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.submission-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--plum-pale) 0%,var(--gold-light) 100%);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--plum);flex-shrink:0;}
-.submission-meta{flex:1;min-width:0;}
-.submission-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
-.submission-name .me-tag{font-size:10px;color:var(--plum);font-weight:400;}
-.submission-date{font-size:10.5px;color:var(--text-light);margin-top:1px;}
-.submission-body{font-size:13.5px;color:var(--text);line-height:1.9;white-space:pre-wrap;word-break:break-word;padding:14px 16px;background:var(--cream);border-radius:var(--radius-sm);border-left:3px solid var(--plum-pale);}
-.submission-body.collapsed{max-height:160px;overflow:hidden;position:relative;}
-.submission-body.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,var(--cream));}
-.toggle-expand{display:none;background:none;border:none;color:var(--plum);font-family:var(--font-mincho);font-size:12px;font-weight:600;cursor:pointer;padding:8px 0 0;transition:opacity .2s;}
-.toggle-expand:hover{opacity:.7;} .toggle-expand.show{display:block;}
-.board-empty{text-align:center;padding:50px 20px;color:var(--text-light);}
-.board-empty-icon{font-size:36px;margin-bottom:10px;opacity:.35;}
-.board-empty-text{font-size:13px;line-height:1.8;}
-.toast{position:fixed;bottom:-80px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--white);padding:12px 24px;border-radius:30px;font-size:13px;font-family:var(--font-mincho);box-shadow:var(--shadow-lg);transition:bottom .4s cubic-bezier(.34,1.56,.64,1);z-index:1000;white-space:nowrap;}
-.toast.show{bottom:calc(var(--bottom-nav-h) + 16px);}
-.spinner-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:999;align-items:center;justify-content:center;}
-.spinner-overlay.show{display:flex;}
-.spinner{width:36px;height:36px;border:3px solid var(--plum-pale);border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.busy-bar{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#fff3cd;border:1.5px solid #e8c84a;border-radius:var(--radius);padding:14px 20px;box-shadow:var(--shadow-lg);z-index:1000;min-width:280px;max-width:90vw;align-items:center;gap:12px;}
-.busy-bar.show{display:flex;}
-.busy-icon{font-size:22px;flex-shrink:0;}
-.busy-body{flex:1;}
-.busy-msg{font-size:13px;font-weight:600;color:#856404;margin-bottom:2px;}
-.busy-count{font-size:11px;color:#856404;opacity:.8;}
-/* ── ウェルカムモーダル ── */
-.wm-overlay{position:fixed;inset:0;z-index:900;background:linear-gradient(160deg,var(--plum-pale) 0%,var(--cream) 50%,var(--plum-pale) 100%);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 16px 40px;}
-.wm-overlay.hidden{display:none;}
-.wm-card{background:var(--white);border-radius:20px;padding:36px 24px 32px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);margin:auto;}
-.wm-logo{font-size:12px;color:var(--plum);letter-spacing:.16em;font-weight:500;text-align:center;}
-.wm-deco{width:40px;height:1px;background:var(--gold-light);margin:12px auto 20px;}
-.wm-title{font-size:18px;font-weight:700;color:var(--text);text-align:center;line-height:1.6;margin-bottom:24px;}
-.wm-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:28px;}
-.wm-step{display:flex;gap:14px;align-items:flex-start;background:var(--plum-pale);border-radius:var(--radius);padding:14px 16px;}
-.wm-step-icon{font-size:22px;flex-shrink:0;line-height:1.3;}
-.wm-step-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
-.wm-step-desc{font-size:12px;color:var(--text-light);line-height:1.8;}
-.wm-step-desc strong{color:var(--plum);}
-/* ── LINE警告バナー ── */
-.line-warn{display:none;background:#fff3cd;border:1.5px solid #e8c84a;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:12px;color:#856404;line-height:1.75;text-align:left;}
-.line-warn strong{display:block;font-size:13px;margin-bottom:3px;}
-@media(max-width:360px){.day-grid{grid-template-columns:1fr;}.login-card{padding:32px 20px 28px;}.board-stats{flex-direction:column;}}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-mincho);
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   共通コンポーネント
+   ======================================== */
+/* ── ウェルカムモーダル（初回のみ表示） ── */
+#welcome-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(61, 46, 46, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+#welcome-modal.hidden { display: none; }
+.welcome-modal-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 32px 24px 28px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.welcome-modal-logo { font-size: 13px; color: var(--plum); letter-spacing: 0.15em; margin-bottom: 8px; font-weight: 500; }
+.welcome-modal-deco { width: 40px; height: 1px; background: var(--gold-light); margin: 0 auto 20px; }
+.welcome-modal-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 20px; line-height: 1.5; }
+.welcome-modal-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; text-align: left; }
+.welcome-modal-item { background: var(--plum-pale); border-radius: var(--radius-sm); padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; }
+.welcome-modal-item-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.welcome-modal-item-body { font-size: 12px; color: var(--text); line-height: 1.7; }
+.welcome-modal-item-body strong { color: var(--plum); }
+
+/* ── ログインオーバーレイ（最前面） ── */
+#login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--plum-pale) 0%, var(--cream) 40%, var(--plum-pale) 100%);
+  padding: 20px 16px;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+#login-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── メインアプリ（ログイン後に見える） ── */
+.main-app { display: none; }
+.main-app.show { display: block; }
+
+/* ── ビュー切り替え（タブ内） ── */
+.view {
+  display: none;
+  min-height: 100dvh;
+  padding-bottom: calc(var(--bottom-nav-h) + 24px);
+}
+.view.active { display: block; }
+
+.app-header {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  text-align: center;
+  padding: 20px 16px 18px;
+  position: relative;
+}
+.app-header h1 {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.6;
+}
+.app-header .subtitle {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+.header-back {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 8px;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.header-back:hover { opacity: 1; }
+
+.container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-mincho);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.06em;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--plum-light) 100%);
+  color: var(--white);
+  box-shadow: 0 3px 12px rgba(139, 90, 107, 0.3);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(139, 90, 107, 0.4); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ========================================
+   ボトムナビ
+   ======================================== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  box-shadow: 0 -2px 12px rgba(100, 60, 70, 0.06);
+}
+
+.nav-item {
+  flex: 1;
+  max-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: color 0.2s;
+  font-family: var(--font-mincho);
+  position: relative;
+}
+.nav-item:hover { color: var(--text); }
+.nav-item.active { color: var(--plum); }
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2.5px;
+  background: var(--plum);
+  border-radius: 0 0 2px 2px;
+}
+
+.nav-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ========================================
+   ログイン画面
+   ======================================== */
+/* ログインカードのスタイルは #login-overlay で制御 */
+
+.login-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 28px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.login-logo { font-size: 13px; color: var(--plum); letter-spacing: 0.15em; margin-bottom: 6px; font-weight: 500; }
+.login-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
+.login-sub { font-size: 12px; color: var(--text-light); margin-bottom: 32px; line-height: 1.7; }
+.login-deco { width: 40px; height: 1px; background: var(--gold-light); margin: 16px auto 20px; }
+.login-privacy-note { font-size: 11px; color: var(--text-light); background: var(--plum-pale); border-radius: 8px; padding: 8px 12px; margin: -4px 0 16px; line-height: 1.7; text-align: left; }
+
+.input-group { text-align: left; margin-bottom: 20px; }
+.input-group label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 6px; letter-spacing: 0.05em; }
+.input-group input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font-mincho); font-size: 15px; color: var(--text); background: var(--cream);
+  transition: border-color 0.25s; outline: none;
+}
+.input-group input:focus { border-color: var(--plum-light); background: var(--white); }
+.input-group input::placeholder { color: #c0b0b0; }
+
+.login-error { display: none; background: #fdf0f0; color: #b44; font-size: 12px; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 16px; line-height: 1.6; }
+.login-error.show { display: block; }
+.login-note { font-size: 10.5px; color: var(--text-light); margin-top: 16px; line-height: 1.7; opacity: 0.7; }
+
+/* ========================================
+   ダッシュボード
+   ======================================== */
+.welcome-section { background: var(--white); padding: 20px; margin: 20px 16px; border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
+.welcome-name { font-size: 14px; color: var(--plum); font-weight: 600; margin-bottom: 4px; }
+.welcome-msg { font-size: 12px; color: var(--text-light); line-height: 1.7; }
+
+.progress-bar-wrap { background: var(--white); margin: 0 16px 20px; padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+.progress-count { color: var(--plum); font-weight: 600; }
+.progress-track { height: 6px; background: var(--plum-pale); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--plum) 0%, var(--plum-light) 100%); border-radius: 3px; transition: width 0.5s ease; width: 0%; }
+
+.day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; margin-bottom: 24px; }
+
+.day-card {
+  background: var(--white); border-radius: var(--radius); padding: 18px 16px; box-shadow: var(--shadow);
+  cursor: pointer; transition: all 0.25s; position: relative; border: 1.5px solid transparent;
+}
+.day-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--plum-pale); }
+.day-card:active { transform: translateY(0); }
+.day-card.submitted { border-color: var(--success-light); background: linear-gradient(135deg, var(--white) 0%, var(--success-light) 100%); }
+.day-card.locked { opacity: 0.5; cursor: default; pointer-events: none; }
+
+.day-number { font-size: 11px; color: var(--text-light); letter-spacing: 0.08em; margin-bottom: 4px; }
+.day-theme { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.5; min-height: 40px; }
+.day-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; margin-top: 10px; padding: 3px 8px; border-radius: 20px; }
+.day-status.done { background: var(--success-light); color: var(--success); }
+.day-status.todo { background: var(--plum-pale); color: var(--plum); }
+.day-status.locked-label { background: #f0eded; color: #aaa; }
+.day-check { position: absolute; top: 10px; right: 12px; font-size: 16px; }
+
+.logout-link { display: block; text-align: center; font-size: 11px; color: var(--text-light); margin: 24px 0 0; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; text-decoration: none; }
+.logout-link:hover { opacity: 1; }
+
+/* ========================================
+   ワーク提出画面
+   ======================================== */
+.work-header-info { background: var(--white); margin: 20px 16px; padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.work-day-label { font-size: 11px; color: var(--plum); letter-spacing: 0.1em; margin-bottom: 4px; font-weight: 500; }
+.work-theme-title { font-size: 17px; font-weight: 700; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
+.work-description { font-size: 13px; color: var(--text-light); line-height: 1.8; }
+
+.work-form-area { margin: 0 16px; padding: 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+.work-form-area label { display: block; font-size: 13px; color: var(--text); font-weight: 600; margin-bottom: 8px; }
+.work-textarea {
+  width: 100%; min-height: 200px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: var(--font-mincho); font-size: 14px; color: var(--text); background: var(--cream);
+  resize: vertical; outline: none; line-height: 1.8; transition: border-color 0.25s;
+}
+.work-textarea:focus { border-color: var(--plum-light); background: var(--white); }
+.work-textarea::placeholder { color: #c0b0b0; }
+.char-count { text-align: right; font-size: 11px; color: var(--text-light); margin-top: 6px; opacity: 0.6; }
+.submit-area { margin: 20px 16px 0; }
+
+.submitted-banner { display: none; background: var(--success-light); border: 1.5px solid var(--success); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; text-align: center; }
+.submitted-banner.show { display: block; }
+.submitted-banner .check-icon { font-size: 24px; margin-bottom: 4px; }
+.submitted-banner .banner-text { font-size: 13px; color: var(--success); font-weight: 600; }
+.submitted-banner .banner-date { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+.prev-submission { display: none; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin: 0 16px 16px; }
+.prev-submission.show { display: block; }
+.prev-submission-label { font-size: 11px; color: var(--text-light); margin-bottom: 8px; letter-spacing: 0.05em; }
+.prev-submission-text { font-size: 13px; color: var(--text); line-height: 1.8; white-space: pre-wrap; }
+
+/* ========================================
+   みんなのワーク（ボード画面）
+   ======================================== */
+.board-day-tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.board-day-tabs::-webkit-scrollbar { display: none; }
+.board-day-tab {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  font-family: var(--font-mincho);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.board-day-tab.active { color: var(--plum); border-bottom-color: var(--plum); }
+.board-day-tab:hover { color: var(--text); }
+.board-day-tab .tab-count {
+  display: inline-block;
+  background: var(--plum-pale);
+  color: var(--plum);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  font-weight: 600;
+}
+.board-day-tab.active .tab-count { background: var(--plum); color: var(--white); }
+
+.board-stats {
+  display: flex;
+  gap: 10px;
+  padding: 16px 16px 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.board-stat {
+  flex: 1;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.board-stat-num { font-size: 22px; font-weight: 700; color: var(--plum); line-height: 1; }
+.board-stat-label { font-size: 10px; color: var(--text-light); margin-top: 3px; }
+
+.board-submissions-area { padding: 16px 16px 0; max-width: 480px; margin: 0 auto; }
+.board-day-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.board-day-theme { font-size: 12px; color: var(--text-light); margin-bottom: 16px; line-height: 1.6; }
+
+.submission-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.submission-card.mine { border-left: 3px solid var(--plum); }
+.submission-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.submission-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--plum-pale) 0%, var(--gold-light) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--plum); flex-shrink: 0;
+}
+.submission-meta { flex: 1; min-width: 0; }
+.submission-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.submission-name .me-tag { font-size: 10px; color: var(--plum); font-weight: 400; }
+.submission-date { font-size: 10.5px; color: var(--text-light); margin-top: 1px; }
+
+.submission-body {
+  font-size: 13.5px; color: var(--text); line-height: 1.9; white-space: pre-wrap; word-break: break-word;
+  padding: 14px 16px; background: var(--cream); border-radius: var(--radius-sm); border-left: 3px solid var(--plum-pale);
+}
+.submission-body.collapsed { max-height: 160px; overflow: hidden; position: relative; }
+.submission-body.collapsed::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+  background: linear-gradient(transparent, var(--cream));
+}
+.toggle-expand {
+  display: none; background: none; border: none; color: var(--plum); font-family: var(--font-mincho);
+  font-size: 12px; font-weight: 600; cursor: pointer; padding: 8px 0 0; transition: opacity 0.2s;
+}
+.toggle-expand:hover { opacity: 0.7; }
+.toggle-expand.show { display: block; }
+
+.board-empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-light);
+}
+.board-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
+.board-empty-text { font-size: 13px; line-height: 1.8; }
+
+/* ========================================
+   トースト・ローディング
+   ======================================== */
+.toast {
+  position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--white); padding: 12px 24px; border-radius: 30px;
+  font-size: 13px; font-family: var(--font-mincho); box-shadow: var(--shadow-lg);
+  transition: bottom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1000; white-space: nowrap;
+}
+.toast.show { bottom: calc(var(--bottom-nav-h) + 16px); }
+
+.spinner-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.7); z-index: 999;
+  align-items: center; justify-content: center;
+}
+.spinner-overlay.show { display: flex; }
+.spinner { width: 36px; height: 36px; border: 3px solid var(--plum-pale); border-top-color: var(--plum); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ========================================
+   レスポンシブ
+   ======================================== */
+@media (max-width: 360px) {
+  .day-grid { grid-template-columns: 1fr; }
+  .login-card { padding: 32px 20px 28px; }
+  .board-stats { flex-direction: column; }
+}
 </style>
 </head>
 <body>
 
-<!-- ════ ウェルカムモーダル（初回のみ） ════ -->
-<div id="welcome-modal" class="wm-overlay">
-  <div class="wm-card">
-    <div class="wm-logo">凛穏塾</div>
-    <div class="wm-deco"></div>
-    <h2 class="wm-title">はじめにご確認ください&#x1F64F;</h2>
-    <div class="wm-steps">
-      <div class="wm-step">
-        <div class="wm-step-icon">&#x1F4F1;</div>
-        <div>
-          <div class="wm-step-title">LINEから開いた方へ（重要）</div>
-          <div class="wm-step-desc">画面右上の<strong>「…」→「ブラウザで開く」</strong>を選んでください。そのままだと毎回ログインが必要になります。</div>
-        </div>
+<!-- ==========================================
+     ウェルカムモーダル（初回のみ表示）
+     ========================================== -->
+<div id="welcome-modal">
+  <div class="welcome-modal-card">
+    <div class="welcome-modal-logo">凛穏塾</div>
+    <div class="welcome-modal-deco"></div>
+    <div class="welcome-modal-title">はじめにご確認ください🙏</div>
+    <div class="welcome-modal-items">
+      <div class="welcome-modal-item">
+        <span class="welcome-modal-item-icon">📱</span>
+        <div class="welcome-modal-item-body"><strong>LINEから開いた方へ（重要）</strong><br>画面右上の「…」→「ブラウザで開く」を選んでください。そのままだと毎回ログインが必要になります。</div>
       </div>
-      <div class="wm-step">
-        <div class="wm-step-icon">&#x1F511;</div>
-        <div>
-          <div class="wm-step-title">初回だけ入力が必要です</div>
-          <div class="wm-step-desc">お申し込み時の<strong>メールアドレス</strong>とオプチャ名を入力してください。</div>
-        </div>
+      <div class="welcome-modal-item">
+        <span class="welcome-modal-item-icon">🔑</span>
+        <div class="welcome-modal-item-body"><strong>初回だけ入力が必要です</strong><br>お申し込み時の<strong>メールアドレス</strong>とオプチャ名を入力してください。</div>
       </div>
-      <div class="wm-step">
-        <div class="wm-step-icon">&#x2705;</div>
-        <div>
-          <div class="wm-step-title">次回からは自動ログイン</div>
-          <div class="wm-step-desc"><strong>同じブラウザ</strong>で開けば、次回から自動でログインされます。</div>
-        </div>
+      <div class="welcome-modal-item">
+        <span class="welcome-modal-item-icon">✅</span>
+        <div class="welcome-modal-item-body"><strong>次回からは自動ログイン</strong><br><strong>同じブラウザ</strong>で開けば、次回から自動でログインされます。</div>
       </div>
-      <div class="wm-step">
-        <div class="wm-step-icon">&#x2B50;</div>
-        <div>
-          <div class="wm-step-title">ホーム画面への保存がおすすめ</div>
-          <div class="wm-step-desc">ブラウザの「共有」→<strong>「ホーム画面に追加」</strong>で毎回すぐ開けます。</div>
-        </div>
+      <div class="welcome-modal-item">
+        <span class="welcome-modal-item-icon">⭐</span>
+        <div class="welcome-modal-item-body"><strong>ホーム画面への保存がおすすめ</strong><br>ブラウザの「共有」→「ホーム画面に追加」で毎回すぐ開けます。</div>
       </div>
     </div>
-    <button class="btn btn-primary" onclick="closeWelcome()">わかりました！ログインへ &#x2192;</button>
+    <button class="btn btn-primary" onclick="closeWelcome()">わかりました！ログインへ →</button>
   </div>
 </div>
 
+<!-- ==========================================
+     レイヤー1: ログイン画面（最前面、ログイン後に消える）
+     ========================================== -->
 <div id="login-overlay">
   <div class="login-card">
     <div class="login-logo">凛穏塾</div>
@@ -212,39 +513,49 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
       <label for="display-name-input">オープンチャットでのお名前</label>
       <input type="text" id="display-name-input" placeholder="例）みこ、田中さん" autocomplete="nickname">
     </div>
-    <p class="login-privacy-note">&#x1F512; 本名はお申し込み情報で把握しています。ここで入力した名前のみ掲示板に表示されます。</p>
-    <div id="line-warn" class="line-warn"></div>
+    <p class="login-privacy-note">🔒 本名はお申し込み情報で把握しています。ここで入力した名前のみ掲示板に表示されます。</p>
     <div id="login-error" class="login-error">登録されていないメールアドレスです。<br>お申し込み時のアドレスをご確認ください。</div>
     <button class="btn btn-primary" onclick="handleLogin()">ログイン</button>
-    <p class="login-note">&#xFF05; 次回からは自動ログインされます</p>
+    <p class="login-note">※ 次回からは自動ログインされます</p>
   </div>
 </div>
 
+<!-- ==========================================
+     レイヤー2: メインアプリ（ログイン後に表示）
+     ========================================== -->
 <div id="main-app" class="main-app">
 
+  <!-- ビュー: マイワーク（ダッシュボード） -->
   <div id="view-dashboard" class="view active">
     <div class="app-header">
       <h1>2days実践講座<br>ワーク提出</h1>
+      <div class="subtitle">〜実践型プログラム〜</div>
     </div>
     <div class="welcome-section">
       <div class="welcome-name" id="welcome-name">ようこそ</div>
-      <div class="welcome-msg" id="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
+      <div class="welcome-msg">12日間のワーク、一緒に頑張りましょう</div>
     </div>
     <div class="progress-bar-wrap">
-      <div class="progress-label"><span>提出状況</span><span class="progress-count" id="progress-text">0 / 12</span></div>
-      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-label">
+        <span>提出状況</span>
+        <span class="progress-count" id="progress-text">0 / 12</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
     </div>
     <div class="day-grid" id="day-grid"></div>
-    <div style="padding:0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
+    <div style="padding: 0 16px;"><a class="logout-link" onclick="handleLogout()">ログアウト</a></div>
   </div>
 
+  <!-- ビュー: ワーク提出 -->
   <div id="view-work" class="view">
     <div class="app-header">
-      <button class="header-back" onclick="goToDashboard()">&#x2039;</button>
+      <button class="header-back" onclick="goToDashboard()">‹</button>
       <h1 id="work-screen-title">Day 1 ワーク</h1>
     </div>
     <div id="submitted-banner" class="submitted-banner">
-      <div class="check-icon">&#x2713;</div>
+      <div class="check-icon">✓</div>
       <div class="banner-text">提出済みです</div>
       <div class="banner-date" id="submitted-date"></div>
     </div>
@@ -258,7 +569,7 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
       <div class="prev-submission-text" id="prev-submission-text"></div>
     </div>
     <div class="work-form-area">
-      <label for="work-input" id="work-form-label">あなたの回答</label>
+      <label for="work-input">あなたの回答</label>
       <textarea id="work-input" class="work-textarea" placeholder="ここにワークの回答を書いてください…" oninput="updateCharCount()"></textarea>
       <div class="char-count"><span id="char-count">0</span>文字</div>
     </div>
@@ -267,6 +578,7 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
     </div>
   </div>
 
+  <!-- ビュー: みんなのワーク -->
   <div id="view-board" class="view">
     <div class="app-header">
       <h1>みんなのワーク</h1>
@@ -274,13 +586,23 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
     </div>
     <div class="board-day-tabs" id="board-day-tabs"></div>
     <div class="board-stats">
-      <div class="board-stat"><div class="board-stat-num" id="b-stat-members">0</div><div class="board-stat-label">参加者</div></div>
-      <div class="board-stat"><div class="board-stat-num" id="b-stat-day">0</div><div class="board-stat-label">このDayの提出</div></div>
-      <div class="board-stat"><div class="board-stat-num" id="b-stat-total">0</div><div class="board-stat-label">全体の提出数</div></div>
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-members">0</div>
+        <div class="board-stat-label">参加者</div>
+      </div>
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-day">0</div>
+        <div class="board-stat-label">このDayの提出</div>
+      </div>
+      <div class="board-stat">
+        <div class="board-stat-num" id="b-stat-total">0</div>
+        <div class="board-stat-label">全体の提出数</div>
+      </div>
     </div>
     <div class="board-submissions-area" id="board-submissions-area"></div>
   </div>
 
+  <!-- 特典動画ページ -->
   <div id="view-tokuten" class="view">
     <div class="app-header">
       <h1>参加特典動画</h1>
@@ -289,183 +611,260 @@ body{font-family:var(--font-mincho);background:var(--cream);color:var(--text);mi
     <div style="padding:0 16px 24px">
       <div id="tokuten-video-card" style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden">
         <div style="padding:18px 18px 12px;border-bottom:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--plum);letter-spacing:.15em;font-weight:600;margin-bottom:4px">SPECIAL VIDEO</div>
+          <div style="font-size:10px;color:var(--plum);letter-spacing:0.15em;font-weight:600;margin-bottom:4px">SPECIAL VIDEO</div>
           <div style="font-size:16px;font-weight:700;line-height:1.6">東洋哲学の概論<br>運と徳の法則</div>
         </div>
-        <div style="position:relative;padding:56.25% 0 0 0;background:#1a1a1a">
+        <div id="tokuten-video-area" style="position:relative;padding:56.25% 0 0 0;background:#1a1a1a">
           <iframe src="https://player.vimeo.com/video/1119403217?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
             style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
             allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
             referrerpolicy="strict-origin-when-cross-origin"
             title="東洋哲学の概論 運と徳の法則"></iframe>
         </div>
-        <div style="padding:14px 18px;background:var(--cream)">
+        <div style="padding:14px 18px;background:var(--cream);display:flex;align-items:center;gap:8px">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#8b5a6b" stroke-width="1.2"/><path d="M8 4v4.5l3 1.5" stroke="#8b5a6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span style="font-size:12px;color:var(--text-light)">視聴期限：<strong style="color:var(--plum)">2026年6月28日（日）</strong>まで</span>
         </div>
-        <div style="background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);padding:16px 18px;text-align:center">
-          <div style="font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.15em;margin-bottom:8px">視聴可能 残り時間</div>
+        <div id="tokuten-countdown" style="background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);padding:16px 18px;text-align:center">
+          <div style="font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:0.15em;margin-bottom:8px">視聴可能 残り時間</div>
           <div style="display:flex;justify-content:center;gap:6px;align-items:baseline">
-            <div style="text-align:center;min-width:44px"><span id="tk-days" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">日</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-hours" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">時間</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-min" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">分</div></div>
-            <span style="font-size:20px;color:rgba(255,255,255,.35)">:</span>
-            <div style="text-align:center;min-width:44px"><span id="tk-sec" style="font-size:26px;font-weight:700;color:#fff">--</span><div style="font-size:9px;color:rgba(255,255,255,.55);margin-top:3px">秒</div></div>
+            <div style="text-align:center;min-width:44px"><span id="tk-days" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">日</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-hours" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">時間</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-min" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">分</div></div>
+            <span style="font-size:20px;color:rgba(255,255,255,0.35)">:</span>
+            <div style="text-align:center;min-width:44px"><span id="tk-sec" style="font-size:26px;font-weight:700;color:#fff;line-height:1">--</span><div style="font-size:9px;color:rgba(255,255,255,0.55);margin-top:3px">秒</div></div>
           </div>
         </div>
+      </div>
+      <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--plum);margin-bottom:8px">ご視聴にあたって</div>
+        <ul style="list-style:none;padding:0;margin:0">
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>本動画は2days実践講座の参加特典です</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>視聴期限を過ぎると再生できなくなります</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>動画の録画・転載・共有はご遠慮ください</li>
+          <li style="font-size:12px;color:var(--text-light);line-height:1.8;padding-left:14px;position:relative"><span style="position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);display:block"></span>Wi-Fi環境での視聴をおすすめします</li>
+        </ul>
       </div>
     </div>
   </div>
 
+  <!-- ボトムナビゲーション -->
   <nav class="bottom-nav">
     <button class="nav-item active" id="nav-mywork" onclick="switchNav('mywork')">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
       <span class="nav-label">マイワーク</span>
     </button>
     <button class="nav-item" id="nav-board" onclick="switchNav('board')">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
       <span class="nav-label">みんなのワーク</span>
     </button>
     <button class="nav-item" id="nav-tokuten" onclick="switchNav('tokuten')">
-      <div class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
       <span class="nav-label">特典動画</span>
     </button>
   </nav>
 </div>
 
-<div id="busy-bar" class="busy-bar">
-  <div class="busy-icon">&#x23F3;</div>
-  <div class="busy-body">
-    <div class="busy-msg">ただいま混雑しています。</div>
-    <div class="busy-count"></div>
-  </div>
-</div>
+<!-- トースト -->
 <div id="toast" class="toast"></div>
+
+<!-- ローディング -->
 <div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
 
 <script>
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec';
-
-// ── ウェルカムモーダル ──
-(function() {
-  // 初回訪問かチェック
-  if (localStorage.getItem('work_app_welcomed')) {
-    document.getElementById('welcome-modal').classList.add('hidden');
-  }
-  // LINE内ブラウザ検知
-  if (/Line\//i.test(navigator.userAgent || '')) {
-    var w = document.getElementById('line-warn');
-    if (w) {
-      w.innerHTML = '<strong>&#x26A0;&#xFE0F; LINEアプリ内で開いています</strong>右上の「&#x22EF;」→「ブラウザで開く」を選んでから使用してください。そのままだと毎回ログインが必要になります。';
-      w.style.display = 'block';
-    }
-  }
-})();
-function closeWelcome() {
-  localStorage.setItem('work_app_welcomed', '1');
-  document.getElementById('welcome-modal').classList.add('hidden');
-}
-var TOTAL_DAYS = 12;
-var COLLAPSE_THRESHOLD = 200;
-
-var state = {
-  email: null, userName: null, currentDay: null,
-  submissions: {}, dayConfigs: [],
-  boardDay: 1, allMembers: [], allSubmissions: {},
-  activeNav: 'mywork'
+/* =============================================
+   設定 & 状態管理
+   ============================================= */
+const CONFIG = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec',
+  TOTAL_DAYS: 12,
+  DEMO_MODE: false,
+  COLLAPSE_THRESHOLD: 200,
 };
 
-function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+const state = {
+  email: null,
+  userName: null,
+  currentDay: null,
+  submissions: {},
+  dayConfigs: [],
+  // ボード用
+  boardDay: 1,
+  allMembers: [],
+  allSubmissions: {},
+  activeNav: 'mywork', // 'mywork' | 'board'
+};
 
-// 混雑エラー：メッセージ表示＋N秒後に自動再試行
-var retryTimer = null;
-function showBusy(msg, retryFn, sec) {
-  sec = sec || 8;
-  if (retryTimer) clearInterval(retryTimer);
-  var el = document.getElementById('busy-bar');
-  if (!el) return;
-  el.classList.add('show');
-  var left = sec;
-  el.querySelector('.busy-msg').textContent = msg;
-  el.querySelector('.busy-count').textContent = left + '秒後に自動で再試行します';
-  retryTimer = setInterval(function() {
-    left--;
-    el.querySelector('.busy-count').textContent = left + '秒後に自動で再試行します';
-    if (left <= 0) {
-      clearInterval(retryTimer);
-      el.classList.remove('show');
-      if (retryFn) retryFn();
+/* =============================================
+   API スタブ（GAS連携用）
+   ============================================= */
+const API = {
+  async verifyEmail(email) {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(`${CONFIG.GAS_URL}?action=verify&email=${encodeURIComponent(email)}`, { redirect: 'follow' });
+      return await res.json();
     }
-  }, 1000);
-}
-function hideBusy() {
-  if (retryTimer) { clearInterval(retryTimer); retryTimer = null; }
-  var el = document.getElementById('busy-bar');
-  if (el) el.classList.remove('show');
-}
+    await sleep(600);
+    const adminMembers = JSON.parse(localStorage.getItem('work_admin_members') || '[]');
+    const registered = JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
+    const member = adminMembers.find(m => m.email === email);
+    if (member) return { ok: true, name: member.name || email.split('@')[0] + 'さん' };
+    if (registered.includes(email)) return { ok: true, name: email.split('@')[0] + 'さん' };
+    return { ok: false };
+  },
 
+  async getDayConfigs() {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(`${CONFIG.GAS_URL}?action=configs`, { redirect: 'follow' });
+      return await res.json();
+    }
+    const adminConfigs = JSON.parse(localStorage.getItem('work_admin_dayConfigs') || 'null');
+    if (adminConfigs) return adminConfigs;
+    const demos = [];
+    for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+      demos.push({ day: i, theme: `Day ${i} のワーク`, description: 'ワーク内容は後日設定されます。お楽しみに！', open: false });
+    }
+    return demos;
+  },
+
+  async getSubmissions(email) {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(`${CONFIG.GAS_URL}?action=submissions&email=${encodeURIComponent(email)}`, { redirect: 'follow' });
+      return await res.json();
+    }
+    const saved = localStorage.getItem(`work_submissions_${email}`);
+    return saved ? JSON.parse(saved) : {};
+  },
+
+  async submitWork(email, day, text) {
+    if (CONFIG.GAS_URL) {
+      const res = await fetch(CONFIG.GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'submit', email, day, text })
+      });
+      return await res.json();
+    }
+    await sleep(500);
+    const saved = localStorage.getItem(`work_submissions_${email}`);
+    const data = saved ? JSON.parse(saved) : {};
+    data[day] = { text, date: new Date().toLocaleDateString('ja-JP') };
+    localStorage.setItem(`work_submissions_${email}`, JSON.stringify(data));
+    return { ok: true };
+  },
+
+  // ボード用：全参加者の提出を取得
+  getAllMembers() {
+    return JSON.parse(localStorage.getItem('work_admin_members') || '[]');
+  },
+  getAllRegisteredEmails() {
+    return JSON.parse(localStorage.getItem('work_admin_registered_emails') || '[]');
+  },
+  getAllSubmissions() {
+    const members = this.getAllMembers();
+    const registered = this.getAllRegisteredEmails();
+    const allEmails = [...new Set([...members.map(m => m.email), ...registered])];
+    const result = {};
+    allEmails.forEach(email => {
+      const saved = localStorage.getItem(`work_submissions_${email}`);
+      result[email] = saved ? JSON.parse(saved) : {};
+    });
+    return result;
+  },
+};
+
+/* =============================================
+   ユーティリティ
+   ============================================= */
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ログイン画面を消してメインアプリを表示
 function enterApp() {
   document.getElementById('main-app').classList.add('show');
   document.getElementById('login-overlay').classList.add('hidden');
 }
+
+// ログイン画面に戻す
 function exitApp() {
   document.getElementById('main-app').classList.remove('show');
   document.getElementById('login-overlay').classList.remove('hidden');
 }
+
+// メインアプリ内のビュー切り替え（ログイン画面は触らない）
 function showView(id) {
-  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
-function showToast(msg, dur) {
-  dur = dur || 2500;
-  var el = document.getElementById('toast');
-  el.textContent = msg;
+
+function showToast(message, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = message;
   el.classList.add('show');
-  setTimeout(function() { el.classList.remove('show'); }, dur);
+  setTimeout(() => el.classList.remove('show'), duration);
 }
+
 function showSpinner() { document.getElementById('spinner').classList.add('show'); }
 function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
+
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function getInitial(name) { return name ? name.charAt(0) : '?'; }
 
-function updateWelcome() {
-  var n = state.userName || 'あなた';
-  document.getElementById('welcome-name').textContent = n + 'さん、こんにちは！';
-  document.getElementById('welcome-msg').textContent = n + 'さん専用の12日間ワーク提出アプリです';
+function getInitial(name) {
+  return name ? name.charAt(0).toUpperCase() : '?';
 }
 
+/* =============================================
+   ボトムナビ
+   ============================================= */
 function switchNav(tab) {
   state.activeNav = tab;
-  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-  document.getElementById('nav-' + tab).classList.add('active');
-  if (tab === 'mywork') { loadDashboard(); }
-  else if (tab === 'board') { loadBoard(); }
-  else if (tab === 'tokuten') { showView('view-tokuten'); initTokutenCountdown(); }
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`nav-${tab}`).classList.add('active');
+
+  if (tab === 'mywork') {
+    loadDashboard();
+  } else if (tab === 'board') {
+    loadBoard();
+  } else if (tab === 'tokuten') {
+    showView('view-tokuten');
+    initTokutenCountdown();
+  }
 }
 
+/* =============================================
+   ログイン
+   ============================================= */
 async function handleLogin() {
-  var emailInput = document.getElementById('email-input');
-  var nameInput = document.getElementById('display-name-input');
-  var email = emailInput.value.trim().toLowerCase();
-  var displayName = nameInput.value.trim();
-  var errorEl = document.getElementById('login-error');
+  const emailInput       = document.getElementById('email-input');
+  const displayNameInput = document.getElementById('display-name-input');
+  const email       = emailInput.value.trim().toLowerCase();
+  const displayName = displayNameInput.value.trim();
+  const errorEl = document.getElementById('login-error');
 
   if (!displayName) {
     errorEl.textContent = 'オープンチャットでのお名前を入力してください。';
     errorEl.classList.add('show');
-    nameInput.focus();
+    displayNameInput.focus();
     return;
   }
 
-  // デモログイン（テスト用）
+  // ★ 仮ログイン（確認用）
   if (email === 'aaa') {
     state.email = 'preview@demo.local';
-    state.userName = displayName || 'テスト';
-    loadDashboardDemo();
+    state.userName = displayName || 'プレビューユーザー';
+    localStorage.setItem('work_app_email', state.email);
+    localStorage.setItem('work_app_name', state.userName);
+    await loadDashboardDemo();
     enterApp();
     return;
   }
@@ -480,8 +879,7 @@ async function handleLogin() {
   showSpinner();
 
   try {
-    var res = await fetch(GAS_URL + '?action=verify&email=' + encodeURIComponent(email));
-    var result = await res.json();
+    const result = await API.verifyEmail(email);
     if (result.ok) {
       state.email = email;
       state.userName = displayName;
@@ -490,12 +888,12 @@ async function handleLogin() {
       await loadDashboard();
       enterApp();
     } else {
-      errorEl.textContent = '登録されていないメールアドレスです。お申し込み時のアドレスをご確認ください。';
+      errorEl.textContent = '登録されていないメールアドレスです。\nお申し込み時のアドレスをご確認ください。';
       errorEl.classList.add('show');
       emailInput.focus();
     }
-  } catch(e) {
-    errorEl.textContent = 'ただいま混雑しています。少し時間をおいて再度お試しください。';
+  } catch (e) {
+    errorEl.textContent = '通信エラーが発生しました。もう一度お試しください。';
     errorEl.classList.add('show');
     console.error(e);
   } finally {
@@ -506,23 +904,29 @@ async function handleLogin() {
 function handleLogout() {
   localStorage.removeItem('work_app_email');
   localStorage.removeItem('work_app_name');
-  state.email = null; state.userName = null; state.submissions = {};
+  state.email = null;
+  state.userName = null;
+  state.submissions = {};
   document.getElementById('email-input').value = '';
-  document.getElementById('display-name-input').value = '';
   exitApp();
 }
 
-document.getElementById('email-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
-document.getElementById('display-name-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+document.getElementById('email-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') handleLogin();
+});
 
-function loadDashboardDemo() {
-  var demos = [];
-  for (var i = 1; i <= TOTAL_DAYS; i++) {
-    demos.push({ day: i, theme: 'Day ' + i + ' のワーク', description: 'ワーク内容は後日設定されます。', open: i === 1 });
+/* =============================================
+   ダッシュボード（マイワーク）
+   ============================================= */
+// デモ用：GASを呼ばずにダミーデータで表示
+async function loadDashboardDemo() {
+  const demos = [];
+  for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+    demos.push({ day: i, theme: `Day ${i} のワーク`, description: 'ワーク内容は後日設定されます。', open: i === 1 });
   }
   state.dayConfigs = demos;
   state.submissions = {};
-  updateWelcome();
+  document.getElementById('welcome-name').textContent = state.userName;
   renderDayCards();
   updateProgress();
   showView('view-dashboard');
@@ -531,16 +935,19 @@ function loadDashboardDemo() {
 async function loadDashboard() {
   showSpinner();
   try {
-    var r1 = await fetch(GAS_URL + '?action=configs');
-    var r2 = await fetch(GAS_URL + '?action=submissions&email=' + encodeURIComponent(state.email));
-    state.dayConfigs = await r1.json();
-    state.submissions = await r2.json();
-    updateWelcome();
+    const [configs, submissions] = await Promise.all([
+      API.getDayConfigs(),
+      API.getSubmissions(state.email)
+    ]);
+    state.dayConfigs = configs;
+    state.submissions = submissions;
+
+    document.getElementById('welcome-name').textContent = state.userName;
     renderDayCards();
     updateProgress();
     showView('view-dashboard');
-  } catch(e) {
-    showBusy('ただいま混雑しています。', loadDashboard, 8);
+  } catch (e) {
+    showToast('読み込みに失敗しました');
     console.error(e);
   } finally {
     hideSpinner();
@@ -548,55 +955,68 @@ async function loadDashboard() {
 }
 
 function renderDayCards() {
-  var grid = document.getElementById('day-grid');
+  const grid = document.getElementById('day-grid');
   grid.innerHTML = '';
-  for (var i = 1; i <= TOTAL_DAYS; i++) {
-    var cfg = state.dayConfigs.find(function(c) { return c.day === i; }) || {};
-    var sub = state.submissions[i];
-    var isSubmitted = !!sub;
-    var isOpen = cfg.open !== false;
-    var card = document.createElement('div');
-    card.className = 'day-card' + (isSubmitted ? ' submitted' : '') + (!isOpen ? ' locked' : '');
-    if (isOpen) { (function(day) { card.onclick = function() { openWork(day); }; })(i); }
-    card.innerHTML = '<div class="day-number">DAY ' + i + '</div>' +
-      '<div class="day-theme">' + escHtml(cfg.theme || ('Day ' + i)) + '</div>' +
-      (isSubmitted ? '<span class="day-check">&#x2713;</span><span class="day-status done">提出済み</span>' :
-        isOpen ? '<span class="day-status todo">未提出</span>' : '<span class="day-status locked-label">準備中</span>');
+
+  for (let i = 1; i <= CONFIG.TOTAL_DAYS; i++) {
+    const config = state.dayConfigs.find(c => c.day === i) || {};
+    const submission = state.submissions[i];
+    const isSubmitted = !!submission;
+    const isOpen = config.open !== false;
+
+    const card = document.createElement('div');
+    card.className = `day-card${isSubmitted ? ' submitted' : ''}${!isOpen ? ' locked' : ''}`;
+    if (isOpen) card.onclick = () => openWork(i);
+
+    card.innerHTML = `
+      <div class="day-number">DAY ${i}</div>
+      <div class="day-theme">${config.theme || `Day ${i}`}</div>
+      ${isSubmitted
+        ? `<span class="day-check">✓</span><span class="day-status done">提出済み</span>`
+        : isOpen
+          ? `<span class="day-status todo">未提出</span>`
+          : `<span class="day-status locked-label">準備中</span>`
+      }`;
     grid.appendChild(card);
   }
 }
 
 function updateProgress() {
-  var openDays = state.dayConfigs.filter(function(c) { return c.open !== false; });
-  var done = Object.keys(state.submissions).length;
-  var total = openDays.length || TOTAL_DAYS;
-  document.getElementById('progress-text').textContent = done + ' / ' + total;
-  document.getElementById('progress-fill').style.width = ((done / total) * 100) + '%';
+  const openDays = state.dayConfigs.filter(c => c.open !== false);
+  const done = Object.keys(state.submissions).length;
+  const total = openDays.length || CONFIG.TOTAL_DAYS;
+  document.getElementById('progress-text').textContent = `${done} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${(done / total) * 100}%`;
 }
 
+/* =============================================
+   ワーク提出
+   ============================================= */
 function openWork(day) {
   state.currentDay = day;
-  var cfg = state.dayConfigs.find(function(c) { return c.day === day; }) || {};
-  var sub = state.submissions[day];
-  document.getElementById('work-screen-title').textContent = 'Day ' + day + ' ワーク';
-  document.getElementById('work-day-label').textContent = 'DAY ' + day;
-  document.getElementById('work-theme-title').textContent = cfg.theme || ('Day ' + day);
-  document.getElementById('work-description').textContent = cfg.description || '';
-  document.getElementById('work-form-label').textContent = (state.userName || 'あなた') + 'さんの回答';
-  var banner = document.getElementById('submitted-banner');
-  var prevArea = document.getElementById('prev-submission');
-  if (sub) {
+  const config = state.dayConfigs.find(c => c.day === day) || {};
+  const submission = state.submissions[day];
+
+  document.getElementById('work-screen-title').textContent = `Day ${day} ワーク`;
+  document.getElementById('work-day-label').textContent = `DAY ${day}`;
+  document.getElementById('work-theme-title').textContent = config.theme || `Day ${day}`;
+  document.getElementById('work-description').textContent = config.description || '';
+
+  const banner = document.getElementById('submitted-banner');
+  const prevArea = document.getElementById('prev-submission');
+  if (submission) {
     banner.classList.add('show');
-    document.getElementById('submitted-date').textContent = '提出日: ' + sub.date;
+    document.getElementById('submitted-date').textContent = `提出日: ${submission.date}`;
     prevArea.classList.add('show');
-    document.getElementById('prev-submission-text').textContent = sub.text;
+    document.getElementById('prev-submission-text').textContent = submission.text;
   } else {
     banner.classList.remove('show');
     prevArea.classList.remove('show');
   }
+
   document.getElementById('work-input').value = '';
   document.getElementById('char-count').textContent = '0';
-  document.getElementById('submit-btn').textContent = sub ? '再提出する' : '提出する';
+  document.getElementById('submit-btn').textContent = submission ? '再提出する' : '提出する';
   showView('view-work');
 }
 
@@ -605,64 +1025,179 @@ function updateCharCount() {
 }
 
 async function handleSubmit() {
-  var text = document.getElementById('work-input').value.trim();
+  const text = document.getElementById('work-input').value.trim();
   if (!text) { showToast('回答を入力してください'); return; }
-  var btn = document.getElementById('submit-btn');
-  btn.disabled = true; showSpinner();
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  showSpinner();
+
   try {
-    var payload = encodeURIComponent(JSON.stringify({ action: 'submit', email: state.email, day: state.currentDay, text: text }));
-    var res = await fetch(GAS_URL + '?action=submit&payload=' + payload);
-    var result = await res.json();
+    const result = await API.submitWork(state.email, state.currentDay, text);
     if (result.ok) {
-      state.submissions[state.currentDay] = { text: text, date: new Date().toLocaleDateString('ja-JP') };
+      state.submissions[state.currentDay] = { text, date: new Date().toLocaleDateString('ja-JP') };
       showToast('提出しました！お疲れさまです ✓');
       await sleep(800);
       await loadDashboard();
     } else {
       showToast('提出に失敗しました。もう一度お試しください');
     }
-  } catch(e) {
-    showToast('ただいま混雑しています。少し時間をおいて再度提出してください。', 4000);
+  } catch (e) {
+    showToast('通信エラーが発生しました');
     console.error(e);
   } finally {
-    btn.disabled = false; hideSpinner();
+    btn.disabled = false;
+    hideSpinner();
   }
 }
 
 function goToDashboard() { loadDashboard(); }
 
-async function loadBoard() {
-  showSpinner();
-  try {
-    var res = await fetch(GAS_URL + '?action=allsubmissions');
-    var result = await res.json();
-    if (result.ok) {
-      state.allMembers = result.members || [];
-      state.allSubmissions = result.submissions || {};
-    }
-  } catch(e) { console.error(e); }
-  finally { hideSpinner(); }
-  var openDays = state.dayConfigs.filter(function(c) { return c.open; });
-  if (openDays.length > 0 && !openDays.find(function(c) { return c.day === state.boardDay; })) {
+/* =============================================
+   みんなのワーク（ボード）
+   ============================================= */
+function loadBoard() {
+  state.allMembers = API.getAllMembers();
+  state.allSubmissions = API.getAllSubmissions();
+
+  // 開放済みの最新Dayを選択
+  const openDays = state.dayConfigs.filter(c => c.open);
+  if (openDays.length > 0 && !openDays.find(c => c.day === state.boardDay)) {
     state.boardDay = openDays[openDays.length - 1].day;
   }
+
   renderBoardTabs();
   renderBoardSubmissions();
   showView('view-board');
 }
 
 function renderBoardTabs() {
-  var tabs = document.getElementById('board-day-tabs');
-  var openDays = state.dayConfigs.filter(function(c) { return c.open; });
+  const tabs = document.getElementById('board-day-tabs');
+  const openDays = state.dayConfigs.filter(c => c.open);
+
   if (openDays.length === 0) {
-    tabs.innerHTML = '<div style="padding:12px 16px;font-size:12px;color:#999;">まだ開放されたDayがありません</div>';
+    tabs.innerHTML = '<div style="padding:12px 16px; font-size:12px; color:#999;">まだ開放されたDayがありません</div>';
     return;
   }
-  tabs.innerHTML = openDays.map(function(c) {
-    var count = 0;
-    Object.values(state.allSubmissions).forEach(function(s) { if (s[c.day]) count++; });
-    return '<button class="board-day-tab' + (c.day === state.boardDay ? ' active' : '') + '" onclick="selectBoardDay(' + c.day + ')">Day ' + c.day + '<span class="tab-count">' + count + '</span></button>';
+
+  tabs.innerHTML = openDays.map(c => {
+    let count = 0;
+    Object.values(state.allSubmissions).forEach(subs => { if (subs[c.day]) count++; });
+    return `<button class="board-day-tab${c.day === state.boardDay ? ' active' : ''}" onclick="selectBoardDay(${c.day})">
+      Day ${c.day}<span class="tab-count">${count}</span>
+    </button>`;
   }).join('');
+
+  setTimeout(() => {
+    const active = tabs.querySelector('.board-day-tab.active');
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, 100);
 }
 
-function selectBoardDay(day) { state.boardDay = day; 
+function selectBoardDay(day) {
+  state.boardDay = day;
+  renderBoardTabs();
+  renderBoardSubmissions();
+}
+
+function renderBoardSubmissions() {
+  const area = document.getElementById('board-submissions-area');
+  const config = state.dayConfigs.find(c => c.day === state.boardDay) || {};
+
+  const allEmails = Object.keys(state.allSubmissions);
+  let daySubCount = 0;
+  let totalSubCount = 0;
+  const daySubmissions = [];
+
+  allEmails.forEach(email => {
+    const subs = state.allSubmissions[email] || {};
+    Object.keys(subs).forEach(() => totalSubCount++);
+    if (subs[state.boardDay]) {
+      daySubCount++;
+      const member = state.allMembers.find(m => m.email === email);
+      daySubmissions.push({
+        name: member ? (member.name || email.split('@')[0]) : email.split('@')[0],
+        email,
+        text: subs[state.boardDay].text,
+        date: subs[state.boardDay].date,
+      });
+    }
+  });
+
+  document.getElementById('b-stat-members').textContent = allEmails.length;
+  document.getElementById('b-stat-day').textContent = daySubCount;
+  document.getElementById('b-stat-total').textContent = totalSubCount;
+
+  if (!config.open) {
+    area.innerHTML = '<div class="board-empty"><div class="board-empty-icon">🔒</div><div class="board-empty-text">このDayはまだ開放されていません</div></div>';
+    return;
+  }
+
+  let html = `<div class="board-day-title">DAY ${state.boardDay}</div>`;
+  html += `<div class="board-day-theme">${escHtml(config.theme || '')}</div>`;
+
+  if (daySubmissions.length === 0) {
+    html += '<div class="board-empty"><div class="board-empty-icon">📝</div><div class="board-empty-text">まだ提出がありません<br>最初の一歩を踏み出しましょう！</div></div>';
+  } else {
+    daySubmissions.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+    daySubmissions.forEach((sub, idx) => {
+      const isLong = sub.text.length > CONFIG.COLLAPSE_THRESHOLD;
+      const isMine = sub.email === state.email;
+
+      html += `
+        <div class="submission-card${isMine ? ' mine' : ''}">
+          <div class="submission-card-header">
+            <div class="submission-avatar">${escHtml(getInitial(sub.name))}</div>
+            <div class="submission-meta">
+              <div class="submission-name">${escHtml(sub.name)}${isMine ? ' <span class="me-tag">（自分）</span>' : ''}</div>
+              <div class="submission-date">${escHtml(sub.date || '')}</div>
+            </div>
+          </div>
+          <div class="submission-body${isLong ? ' collapsed' : ''}" id="board-body-${state.boardDay}-${idx}">
+            ${escHtml(sub.text)}
+          </div>
+          ${isLong ? `<button class="toggle-expand show" onclick="toggleBoardExpand(${state.boardDay}, ${idx}, this)">もっと読む</button>` : ''}
+        </div>`;
+    });
+  }
+
+  area.innerHTML = html;
+}
+
+function toggleBoardExpand(day, idx, btn) {
+  const body = document.getElementById(`board-body-${day}-${idx}`);
+  if (body.classList.contains('collapsed')) {
+    body.classList.remove('collapsed');
+    btn.textContent = '閉じる';
+  } else {
+    body.classList.add('collapsed');
+    btn.textContent = 'もっと読む';
+  }
+}
+
+/* =============================================
+   ウェルカムモーダル
+   ============================================= */
+function closeWelcome() {
+  localStorage.setItem('work_app_welcomed', '1');
+  document.getElementById('welcome-modal').classList.add('hidden');
+}
+// ページ読み込み時：既訪問者はモーダルをスキップ
+(function() {
+  if (localStorage.getItem('work_app_welcomed')) {
+    document.getElementById('welcome-modal').classList.add('hidden');
+  }
+})();
+
+/* =============================================
+   自動ログイン（初期化）
+   ============================================= */
+(async function init() {
+  const savedEmail = localStorage.getItem('work_app_email');
+  const savedName = localStorage.getItem('work_app_name');
+  if (savedEmail) {
+    state.email = savedEmail;
+    state.userName = savedName || savedEmail;
+    await loadDashboard();
+    ente
