@@ -70,8 +70,12 @@
   .nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;max-width:440px;margin:0 auto;z-index:30}
   .nav button{flex:1;border:0;background:transparent;padding:10px 0 12px;font-size:10px;font-weight:700;color:var(--sub);cursor:pointer;font-family:inherit}
   .nav button .i{display:block;font-size:19px;margin-bottom:2px}.nav button.on{color:var(--pp)}
+  .ctabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .ctabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;color:var(--sub)}
+  .ctabs button.on{background:var(--pp);color:#fff;border-color:var(--pp)}
   table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
   th{font-size:11px;color:var(--sub);font-weight:700}tr.stall{background:var(--red-l)}
+  .wkcell{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:7px;font-weight:800;font-size:12px}
   .ov{position:fixed;inset:0;background:rgba(20,15,40,.45);display:none;place-items:center;z-index:60;padding:20px}.ov.on{display:grid}
   .modal{background:#fff;border-radius:20px;max-width:380px;width:100%;padding:24px;box-shadow:var(--shadow)}
   .modal .tag{font-size:11px;font-weight:800;color:var(--pp)}.modal h3{font-size:17px;font-weight:800;margin:6px 0 8px}
@@ -152,14 +156,15 @@ var COLUMN_URL='https://l-mine.com/column/page/1';
 var VIDEO_URL='https://l-mine.com/community/member_on-line_course';
 var ZOOM_URL='https://dn15jkbd.autosns.app/addfriend/s/aK6Cn5eBu8/@144htozo';
 var ZOOM_REMIND_DAYS=[10,20,30];
-var GAS_REPORT_URL='https://script.google.com/macros/s/AKfycbwf-piJrr7O1-srzHw4YDJRl_jFZBbZzAYsaEYZOIiT_I-H-vTZvtTxnW-Wltx8xVs04g/exec';            // ←GASデプロイ後の /exec を貼る（報告→スプシ追記＋コーチへメール）
+var GAS_REPORT_URL='https://script.google.com/macros/s/AKfycbwf-piJrr7O1-srzHw4YDJRl_jFZBbZzAYsaEYZOIiT_I-H-vTZvtTxnW-Wltx8xVs04g/exec';
 var NOTIFY_KEY='bloom-notify-7Xk2';
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
 var state={ uid:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
-  _newq:'Q2', _refl:'', _openTerm:null, popupQueue:[], coachStudents:[] };
+  _newq:'Q2', _refl:'', _openTerm:null, popupQueue:[],
+  coachTab:'list', _karte:null, weekDates:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function monthKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -318,41 +323,100 @@ function viewMenu(){
   '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>';
 }
 
+/* ===== コーチ ===== */
+function dayStatus(c){
+  if(!c) return {st:'none',done:'—',q2:0,tasks:[],reflection:''};
+  var done=(c.doneCount||0), total=(c.total||0);
+  return {st:(done>0?'done':'part'), done:done+'/'+total, q2:(c.q2||0), tasks:(c.items||[]).filter(function(i){return i.done;}).map(function(i){return i.text;}), reflection:(c.reflection||'')};
+}
 async function loadCoach(){
   state.coachStudents=[]; state.coachErr=null;
+  state.weekDates=[]; for(var d=6; d>=0; d--){ var dt=new Date(); dt.setDate(dt.getDate()-d); var key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); state.weekDates.push({key:key,label:(dt.getMonth()+1)+'/'+dt.getDate()}); }
   try{
     var us=await db.collection('users').where('role','==','student').get();
     var list=[]; us.forEach(function(d){ list.push(d.data()); });
     for(var i=0;i<list.length;i++){
-      var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,reported:false,done:'—',q2:0,reflection:'',advice:''};
-      try{ var c=await db.doc('checkins/'+s.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); rec.reported=true; rec.done=cd.doneCount+'/'+cd.total; rec.q2=cd.q2||0; rec.reflection=cd.reflection||''; } }catch(e){}
-      try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){ rec.ksf=''; }
-      try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){ rec.advice=''; }
+      var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,ksf:'',advice:'',wk:[]};
+      for(var w=0;w<state.weekDates.length;w++){ var ck=null; try{ var cd=await db.doc('checkins/'+s.uid+'_'+state.weekDates[w].key).get(); if(cd.exists) ck=cd.data(); }catch(e){} rec.wk.push(dayStatus(ck)); }
+      try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){}
+      try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){}
+      var last=rec.wk[rec.wk.length-1]; rec.reported=last.st!=='none'; rec.done=last.done; rec.q2=last.q2; rec.reflection=last.reflection;
+      var sil=0; for(var w2=rec.wk.length-1;w2>=0;w2--){ if(rec.wk[w2].st==='none')sil++; else break; } rec.silent=sil;
+      var stk=0; for(var w3=rec.wk.length-1;w3>=0;w3--){ if(rec.wk[w3].st==='done')stk++; else break; } rec.streak=stk;
+      var got=rec.wk.filter(function(x){return x.st!=='none';}); rec.q2avg=got.length?Math.round(got.reduce(function(a,b){return a+b.q2;},0)/got.length):0;
+      rec.status = sil>=3?'離脱リスク':((sil>=1)||(got.length&&rec.q2avg<45))?'要フォロー':'順調';
       state.coachStudents.push(rec);
     }
   }catch(e){ state.coachErr=e.code||e.message; }
   await loadAnnouncements();
 }
+function setCoachTab(t){ state.coachTab=t; render(); }
+function openKarte(uid){ state._karte=uid; state.coachTab='karte'; render(); }
+function statusPill(st){ return '<span class="pill '+(st==='順調'?'gr':'rd')+'">'+st+'</span>'; }
 function coachView(){
   if(state.coachErr){
-    return '<div class="banner">コーチ権限がまだありません。下記のUIDを Firestore の roles/coach ドキュメントの uids 配列に追加してください。</div>'+
-      '<div class="card"><h2>あなたのUID</h2><p style="font-family:monospace;font-size:13px;word-break:break-all">'+esc(state.uid)+'</p><p class="muted" style="margin-top:8px">追加後この画面を再読み込みすると、全員のデータが表示されます。</p></div>';
+    return '<div class="banner">コーチ権限がまだありません。下記のUIDを Firestore の roles/coach の uids に追加してください。</div>'+
+      '<div class="card"><h2>あなたのUID</h2><p style="font-family:monospace;font-size:13px;word-break:break-all">'+esc(state.uid)+'</p></div>';
   }
+  var tabs='<div class="ctabs">'+['list','week','karte'].map(function(t){var lbl={list:'今日の一覧',week:'直近1週間',karte:'受講生カルテ'}[t]; return '<button class="'+(state.coachTab===t?'on':'')+'" onclick="setCoachTab(\''+t+'\')">'+lbl+'</button>';}).join('')+'</div>';
+  var body=state.coachTab==='week'?coachWeek():state.coachTab==='karte'?coachKarte():coachList();
+  return tabs+body;
+}
+function coachList(){
   var ss=state.coachStudents;
-  var stalled=ss.filter(function(s){return !s.reported;}).length;
-  var sorted=ss.slice().sort(function(a,b){return (a.reported?1:0)-(b.reported?1:0);});
+  var stalled=ss.filter(function(s){return s.status!=='順調';}).length;
+  var sorted=ss.slice().sort(function(a,b){return (b.silent||0)-(a.silent||0);});
   var rows=sorted.map(function(s){
-    return '<tr class="'+(!s.reported?'stall':'')+'"><td><b>'+esc(s.name)+'</b></td><td><span class="muted">'+esc(s.ksf||'—')+'</span></td>'+
+    return '<tr class="'+(s.status!=='順調'?'stall':'')+'"><td><b>'+esc(s.name)+'</b> '+statusPill(s.status)+'</td><td><span class="muted">'+esc(s.ksf||'—')+'</span></td>'+
       '<td>'+(s.reported?'<span class="pill gr">提出</span>':'<span class="pill rd">未報告</span>')+'</td><td>'+esc(s.done)+'</td>'+
       '<td>'+s.q2+'%</td><td><span class="muted">'+esc(s.reflection||'—')+'</span></td>'+
       '<td><div style="display:flex;gap:4px;min-width:230px"><input id="adv_'+s.uid+'" value="'+escAttr(s.advice||'')+'" placeholder="一言アドバイス" style="font-size:12px;padding:8px"><button class="btn sm" onclick="saveAdvice(\''+s.uid+'\')" style="white-space:nowrap">送信</button></div></td></tr>';
   }).join('')||'<tr><td colspan="7" class="muted">まだ受講生がいません。</td></tr>';
   return ''+
-  '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">未報告 '+stalled+'名</span><span class="muted">未報告の人を上に表示。右端の「アドバイス」は送信すると生徒の今日タブに表示されます。</span></div>'+
+  '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">要フォロー '+stalled+'名</span><span class="muted">未報告・滞り・第2象限が低い人を上に。右端で生徒にアドバイス送信。</span></div>'+
   '<div class="card"><h2>今日の一覧（'+ss.length+'名）</h2><div style="overflow-x:auto"><table><thead><tr><th>名前</th><th>今月のKSF</th><th>今日</th><th>達成</th><th>第2象限</th><th>ふりかえり</th><th>アドバイス（生徒に表示）</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
   '<div class="card"><h2>お知らせを投稿</h2><label class="fld">タイトル</label><input id="an-title" placeholder="例：今週のテーマ"><div style="height:8px"></div>'+
     '<label class="fld">本文</label><textarea id="an-body" placeholder="受講生へのメッセージ"></textarea><div style="height:12px"></div>'+
     '<button class="btn" onclick="postAnnounce()">投稿する</button></div>';
+}
+function coachWeek(){
+  var ss=state.coachStudents; var ICON={done:'✓',part:'½',none:'・'};
+  var head='<th>受講生</th>'+state.weekDates.map(function(d){return '<th style="text-align:center">'+d.label+'</th>';}).join('');
+  var rows=ss.map(function(s){
+    var cells=s.wk.map(function(w){ var bg=w.st==='done'?'var(--green-l)':w.st==='part'?'var(--amber-l)':'#F1EFE8'; var fg=w.st==='done'?'var(--green)':w.st==='part'?'var(--amber)':'#B4B2A9'; return '<td style="text-align:center"><span class="wkcell" style="background:'+bg+';color:'+fg+'">'+ICON[w.st]+'</span></td>'; }).join('');
+    return '<tr><td><span style="font-weight:700;color:var(--pp-d);cursor:pointer" onclick="openKarte(\''+s.uid+'\')">'+esc(s.name)+' ▸</span> '+statusPill(s.status)+'</td>'+cells+'</tr>';
+  }).join('')||'<tr><td colspan="8" class="muted">データなし</td></tr>';
+  var avgRate=ss.length?Math.round(ss.reduce(function(a,s){return a+s.wk.filter(function(w){return w.st!=='none';}).length;},0)/(ss.length*7)*100):0;
+  return ''+
+  '<div class="card" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div><div class="muted" style="font-size:12px;font-weight:700">今週の報告率</div><div style="font-size:24px;font-weight:800;color:var(--pp-d)">'+avgRate+'%</div></div><div class="muted" style="flex:1;min-width:160px">名前をタップでカルテ（詳細）へ。</div></div>'+
+  '<div class="card"><h2>直近1週間（全員）</h2><div style="overflow-x:auto"><table><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div style="margin-top:10px;font-size:12px;color:var(--sub)">✓ 提出（達成あり）／ ½ 提出（達成なし）／ ・ 未報告</div></div>';
+}
+function coachKarte(){
+  var ss=state.coachStudents;
+  if(!ss.length) return '<div class="card muted">受講生がいません。</div>';
+  var chips=ss.map(function(s){ var col=s.status==='順調'?'var(--green)':s.status==='要フォロー'?'var(--amber)':'var(--red)'; return '<button onclick="openKarte(\''+s.uid+'\')" style="border:1.5px solid '+(state._karte===s.uid?'var(--pp)':'var(--line)')+';background:'+(state._karte===s.uid?'var(--pp-l)':'#fff')+';border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin:0 6px 6px 0;color:var(--ink)"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+col+';margin-right:5px"></span>'+esc(s.name)+'</button>'; }).join('');
+  var s=ss.find(function(x){return x.uid===state._karte;})||ss[0];
+  var days=s.wk.map(function(w,i){
+    var lst=w.tasks.length?('<ul style="margin:4px 0 0;padding-left:18px;font-size:12px;color:var(--sub)">'+w.tasks.map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>'):(w.st==='none'?'<span class="muted" style="font-size:12px">未報告</span>':'<span class="muted" style="font-size:12px">提出（達成なし）</span>');
+    return '<div style="border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:7px"><div style="font-weight:700;font-size:13px">'+state.weekDates[i].label+' <span class="muted" style="font-weight:600">'+w.done+'</span>'+(w.reflection?' <span class="muted">／ '+esc(w.reflection)+'</span>':'')+'</div>'+lst+'</div>';
+  }).join('');
+  var alertB = s.status!=='順調' ? '<div class="banner" style="background:var(--red-l);color:var(--red)">⚠ '+s.status+'：'+(s.silent?('沈黙'+s.silent+'日 '):'')+(s.q2avg<45&&s.silent===0?'第2象限が低め':'')+'</div>' : '';
+  var agenda=[]; agenda.push('今月のKSF「'+(s.ksf||'未設定')+'」の進捗を確認');
+  if(s.silent>=3) agenda.push('報告が'+s.silent+'日途切れている。まず近況と負荷を聞く');
+  else if(s.silent>=1) agenda.push('報告が'+s.silent+'日空いている。きっかけを聞く');
+  if(s.q2avg<45 && s.silent===0) agenda.push('第2象限が手薄。今週その時間をどう確保するか一緒に決める');
+  if(s.streak>=3) agenda.push(s.streak+'日連続をしっかり称賛する');
+  return ''+
+  '<div style="margin-bottom:12px">'+chips+'</div>'+alertB+
+  '<div class="card"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">'+esc(s.name)+'</h2>'+statusPill(s.status)+(s.streak>=3?'<span class="pill pp">🔥'+s.streak+'日連続</span>':'')+'</div>'+
+    '<p class="muted" style="margin-top:8px">今月のKSF：'+esc(s.ksf||'—')+'</p>'+
+    '<div class="row" style="margin-top:8px"><div class="stat"><div class="n">'+s.q2avg+'%</div><div class="l">第2象限(週平均)</div></div><div class="stat"><div class="n">'+s.wk.filter(function(w){return w.st!=='none';}).length+'/7</div><div class="l">7日中の報告</div></div></div>'+
+    '<div style="margin-top:14px;font-weight:700;font-size:13px">次回アジェンダ（自動生成）</div>'+
+    '<div class="hint"><ul style="margin:0;padding-left:18px">'+agenda.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul></div>'+
+    '<div style="margin-top:12px"><label class="fld">アドバイス（生徒に表示）</label><div style="display:flex;gap:6px"><input id="adv_'+s.uid+'" value="'+escAttr(s.advice||'')+'" placeholder="一言アドバイス"><button class="btn sm" onclick="saveAdvice(\''+s.uid+'\')">送信</button></div></div>'+
+  '</div>'+
+  '<div class="card"><h2>直近1週間の記録</h2>'+days+'</div>';
 }
 async function saveAdvice(uid){
   var el=document.getElementById('adv_'+uid); if(!el) return;
