@@ -114,6 +114,13 @@ def convert_body(body, sign):
         if raw == "[準備中]":
             out.append(f'<p class="optin-inline"><a href="{LP_URL}" target="_blank" rel="noopener">▶ メルマガ・無料講座の詳細・ご登録はこちら（3-2-1ラボ）</a></p>')
             continue
+        # 本文画像  ![alt](src)
+        mi = re.match(r'^!\[(.*?)\]\((.+?)\)$', lines[0]) if len(lines) == 1 else None
+        if mi:
+            alt = html.escape(mi.group(1))
+            out.append(f'<figure class="cimg"><img src="{mi.group(2).strip()}" alt="{alt}" loading="lazy">'
+                       + (f'<figcaption>{alt}</figcaption>' if alt else '') + '</figure>')
+            continue
         # 見出し
         if len(lines) == 1 and lines[0].startswith("## "):
             out.append(f'<h2>{inline(lines[0][3:].strip())}</h2>')
