@@ -384,11 +384,10 @@ async function handleLogin() {
     return;
   }
 
+  // デモログイン（テスト用）
   if (email === 'aaa') {
     state.email = 'preview@demo.local';
-    state.userName = displayName;
-    localStorage.setItem('work_app_email', state.email);
-    localStorage.setItem('work_app_name', state.userName);
+    state.userName = displayName || 'テスト';
     loadDashboardDemo();
     enterApp();
     return;
@@ -666,18 +665,3 @@ function checkTokutenExpiry() {
 }
 
 function updateTokutenCountdown() {
-  var diff = TOKUTEN_DEADLINE - new Date();
-  if (diff <= 0) { checkTokutenExpiry(); return; }
-  var d = Math.floor(diff / 86400000);
-  var h = Math.floor((diff % 86400000) / 3600000);
-  var m = Math.floor((diff % 3600000) / 60000);
-  var s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('tk-days').textContent = d;
-  document.getElementById('tk-hours').textContent = String(h).padStart(2, '0');
-  document.getElementById('tk-min').textContent = String(m).padStart(2, '0');
-  document.getElementById('tk-sec').textContent = String(s).padStart(2, '0');
-}
-</script>
-</body>
-</html>
-                                                                                                                                                                                                                                                     
