@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>2days実践講座 メンバーサイト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plum:#8b5a6b;--plum-light:#a87389;--plum-pale:#f5eef1;
+  --gold:#c4a265;--gold-light:#e8d5a8;--cream:#fdfbf7;
+  --text:#3d2e2e;--text-light:#7a6a6a;--border:#e8ddd5;
+  --success:#6ba37a;--success-light:#e8f5ec;--white:#ffffff;
+  --shadow:0 2px 12px rgba(100,60,70,.08);--shadow-lg:0 4px 24px rgba(100,60,70,.12);
+  --radius:12px;--radius-sm:8px;--font-m:'Shippori Mincho','Noto Serif JP',serif;
+  --nav-h:60px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-m);background:var(--cream);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;}
+
+/* ── ログイン ── */
+#login-overlay{position:fixed;inset:0;z-index:800;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--plum-pale) 0%,var(--cream) 40%,var(--plum-pale) 100%);padding:20px 16px;transition:opacity .35s,visibility .35s;}
+#login-overlay.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.login-card{background:var(--white);border-radius:20px;padding:40px 28px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);text-align:center;}
+.login-logo{font-size:13px;color:var(--plum);letter-spacing:.15em;margin-bottom:6px;font-weight:500;}
+.login-deco{width:40px;height:1px;background:var(--gold-light);margin:14px auto 20px;}
+.login-title{font-size:20px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:4px;}
+.login-sub{font-size:12px;color:var(--text-light);margin-bottom:28px;line-height:1.7;}
+.input-group{text-align:left;margin-bottom:18px;}
+.input-group label{display:block;font-size:12px;color:var(--text-light);margin-bottom:6px;letter-spacing:.05em;}
+.input-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-m);font-size:15px;color:var(--text);background:var(--cream);outline:none;transition:border-color .25s;}
+.input-group input:focus{border-color:var(--plum-light);background:var(--white);}
+.input-group input::placeholder{color:#c0b0b0;}
+.login-error{display:none;background:#fdf0f0;color:#b44;font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:14px;line-height:1.6;}
+.login-error.show{display:block;}
+.login-note{font-size:10.5px;color:var(--text-light);margin-top:14px;line-height:1.7;opacity:.7;}
+
+/* ── 共通ボタン ── */
+.btn{display:block;width:100%;padding:14px 24px;border:none;border-radius:var(--radius);font-family:var(--font-m);font-size:15px;font-weight:600;cursor:pointer;transition:all .25s;letter-spacing:.06em;}
+.btn-plum{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);box-shadow:0 3px 12px rgba(139,90,107,.3);}
+.btn-plum:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(139,90,107,.4);}
+.btn-plum:active{transform:translateY(0);}
+.btn-plum:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* ── レイアウト ── */
+.main-app{display:none;} .main-app.show{display:block;}
+.view{display:none;min-height:100dvh;padding-bottom:calc(var(--nav-h) + 24px);} .view.active{display:block;}
+.app-header{background:linear-gradient(135deg,var(--plum) 0%,var(--plum-light) 100%);color:var(--white);text-align:center;padding:20px 16px 18px;position:relative;}
+.app-header h1{font-size:15px;font-weight:500;letter-spacing:.12em;line-height:1.6;}
+.app-header .sub{font-size:11px;opacity:.75;margin-top:4px;letter-spacing:.08em;}
+.hdr-back{position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--white);font-size:24px;cursor:pointer;padding:8px;line-height:1;}
+
+/* ── ボトムナビ ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:var(--white);border-top:1px solid var(--border);z-index:100;display:flex;justify-content:center;align-items:stretch;box-shadow:0 -2px 12px rgba(100,60,70,.06);}
+.nav-item{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text-light);transition:color .2s;font-family:var(--font-m);position:relative;}
+.nav-item.active{color:var(--plum);}
+.nav-item.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:2.5px;background:var(--plum);border-radius:0 0 2px 2px;}
+.nav-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.nav-label{font-size:10px;font-weight:600;letter-spacing:.03em;}
+
+/* ── セクション ── */
+.sec{padding:0 16px;margin-bottom:20px;}
+.sec-title{font-size:11.5px;color:var(--text-light);letter-spacing:.14em;margin-bottom:12px;font-weight:600;}
+
+/* ── ウェルカム ── */
+.welcome{background:var(--white);padding:18px 20px;margin:20px 16px;border-radius:var(--radius);box-shadow:var(--shadow);text-align:center;}
+.welcome-name{font-size:16px;color:var(--plum);font-weight:700;margin-bottom:3px;}
+.welcome-msg{font-size:12px;color:var(--text-light);line-height:1.7;}
+
+/* ── ZOOMカード ── */
+.zoom-card{background:linear-gradient(135deg,var(--plum) 0%,#a87389 100%);border-radius:var(--radius);padding:20px;margin:0 16px 16px;box-shadow:var(--shadow-lg);color:var(--white);}
+.zoom-label{font-size:10px;letter-spacing:.18em;opacity:.75;margin-bottom:6px;font-weight:500;}
+.zoom-date-text{font-size:14px;font-weight:600;margin-bottom:16px;line-height:1.6;}
+.zoom-join-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.45);border-radius:var(--radius-sm);padding:13px 20px;color:var(--white);font-family:var(--font-m);font-size:14px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.06em;transition:background .2s;text-decoration:none;}
+.zoom-join-btn:hover{background:rgba(255,255,255,.32);}
+.zoom-join-btn svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.zoom-none{font-size:12.5px;opacity:.7;text-align:center;padding:6px 0;}
+
+/* ── オプチャボタン ── */
+.openchat-wrap{padding:0 16px;margin-bottom:16px;}
+.openchat-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 20px;width:100%;color:var(--text);font-family:var(--font-m);font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.04em;transition:all .2s;text-decoration:none;box-shadow:var(--shadow);}
+.openchat-btn:hover{border-color:var(--plum-light);color:var(--plum);}
+.openchat-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ── お知らせ ── */
+.notice-card{background:var(--white);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow);border-left:3px solid var(--plum);}
+.notice-date{font-size:10.5px;color:var(--text-light);margin-bottom:5px;}
+.notice-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.5;}
+.notice-body{font-size:12.5px;color:var(--text-light);line-height:1.85;white-space:pre-wrap;}
+.notice-empty{text-align:center;padding:32px 20px;color:var(--text-light);font-size:13px;}
+
+/* ── 動画リスト ── */
+.video-list-wrap{padding:20px 16px 0;}
+.video-card{background:var(--white);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:all .22s;display:flex;align-items:stretch;}
+.video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.video-card:active{transform:translateY(0);}
+.video-thumb{width:112px;min-height:80px;background:linear-gradient(135deg,var(--plum-pale) 0%,var(--gold-light) 100%);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.video-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.video-play-icon{width:38px;height:38px;background:rgba(139,90,107,.82);border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:1;flex-shrink:0;}
+.video-play-icon svg{width:16px;height:16px;fill:var(--white);margin-left:2px;}
+.video-meta{padding:14px 16px;flex:1;min-width:0;}
+.video-cat{font-size:10px;color:var(--plum);letter-spacing:.1em;font-weight:600;margin-bottom:4px;}
+.video-title{font-size:14px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:4px;}
+.video-desc{font-size:11.5px;color:var(--text-light);line-height:1.65;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.videos-empty{text-align:center;padding:60px 20px;color:var(--text-light);}
+.videos-empty-icon{font-size:38px;margin-bottom:12px;opacity:.32;}
+.videos-empty-text{font-size:13px;line-height:1.8;}
+
+/* ── 動画プレイヤー ── */
+.player-vimeo{width:100%;background:#000;position:relative;padding-top:56.25%;}
+.player-vimeo iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+.player-info{padding:20px 16px;}
+.player-cat{font-size:11px;color:var(--plum);letter-spacing:.1em;font-weight:600;margin-bottom:6px;}
+.player-title{font-size:18px;font-weight:700;color:var(--text);line-height:1.5;margin-bottom:10px;}
+.player-desc{font-size:13px;color:var(--text-light);line-height:1.9;white-space:pre-wrap;}
+
+/* ── スピナー / トースト ── */
+.spinner-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.7);z-index:999;align-items:center;justify-content:center;}
+.spinner-overlay.show{display:flex;}
+.spinner{width:36px;height:36px;border:3px solid var(--plum-pale);border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.toast{position:fixed;bottom:-80px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--white);padding:12px 24px;border-radius:30px;font-size:13px;font-family:var(--font-m);box-shadow:var(--shadow-lg);transition:bottom .4s cubic-bezier(.34,1.56,.64,1);z-index:1000;white-space:nowrap;}
+.toast.show{bottom:calc(var(--nav-h) + 16px);}
+
+/* ── ログアウト ── */
+.logout-link{display:block;text-align:center;font-size:11px;color:var(--text-light);margin:24px 0 0;cursor:pointer;opacity:.6;transition:opacity .2s;}
+.logout-link:hover{opacity:1;}
+
+@media(max-width:360px){.video-thumb{width:90px;}.login-card{padding:32px 20px 28px;}}
+</style>
+</head>
+<body>
+
+<!-- ════ ログイン ════ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">凛穏塾</div>
+    <div class="login-deco"></div>
+    <h1 class="login-title">2days実践講座<br>メンバーサイト</h1>
+    <p class="login-sub">お申し込み時のメールアドレスと<br>オプチャ名でログインしてください</p>
+    <div class="input-group">
+      <label for="email-input">メールアドレス</label>
+      <input type="email" id="email-input" placeholder="example@email.com" autocomplete="email">
+    </div>
+    <div class="input-group">
+      <label for="name-input">オープンチャットでのお名前</label>
+      <input type="text" id="name-input" placeholder="例）みこ、田中さん" autocomplete="nickname">
+    </div>
+    <div id="login-error" class="login-error"></div>
+    <button class="btn btn-plum" onclick="handleLogin()">ログイン</button>
+    <p class="login-note">※ 次回から同じブラウザでは自動ログインされます</p>
+  </div>
+</div>
+
+<!-- ════ メインアプリ ════ -->
+<div id="main-app" class="main-app">
+
+  <!-- ホーム -->
+  <div id="view-home" class="view active">
+    <div class="app-header">
+      <h1>2days実践講座<br>メンバーサイト</h1>
+      <div class="sub">Member's Site</div>
+    </div>
+
+    <div class="welcome">
+      <div class="welcome-name" id="welcome-name">ようこそ</div>
+      <div class="welcome-msg" id="welcome-msg">2days実践講座へようこそ</div>
+    </div>
+
+    <!-- ZOOMリンク -->
+    <div class="sec">
+      <div class="sec-title">&#x1F4F9; ZOOM リンク</div>
+    </div>
+    <div class="zoom-card">
+      <div class="zoom-label">NEXT ZOOM SESSION</div>
+      <div class="zoom-date-text" id="zoom-date">読み込み中...</div>
+      <a id="zoom-join-btn" class="zoom-join-btn" href="#" target="_blank" rel="noopener" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M15 10l4.553-2.069A1 1 0 0121 8.879V15.12a1 1 0 01-1.447.89L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        ZOOMに参加する
+      </a>
+      <div id="zoom-none-msg" class="zoom-none" style="display:none;">現在ZOOMリンクは設定されていません</div>
+    </div>
+
+    <!-- オープンチャット -->
+    <div class="openchat-wrap" id="openchat-wrap" style="display:none;">
+      <a id="openchat-btn" class="openchat-btn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        専用オープンチャットへ
+      </a>
+    </div>
+
+    <!-- お知らせ -->
+    <div class="sec">
+      <div class="sec-title">&#x1F4E2; お知らせ</div>
+      <div id="notices-list"><div class="notice-empty">読み込み中...</div></div>
+    </div>
+
+    <a class="logout-link" onclick="handleLogout()">ログアウト</a>
+  </div>
+
+  <!-- 動画リスト -->
+  <div id="view-videos" class="view">
+    <div class="app-header">
+      <h1>動画コンテンツ</h1>
+      <div class="sub">Video Contents</div>
+    </div>
+    <div class="video-list-wrap" id="videos-list"></div>
+  </div>
+
+  <!-- 動画プレイヤー -->
+  <div id="view-player" class="view">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goBackToVideos()">&#x2039;</button>
+      <h1 id="player-header-title">動画</h1>
+    </div>
+    <div class="player-vimeo">
+      <iframe id="player-iframe" src=""
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div class="player-info">
+      <div class="player-cat" id="player-category"></div>
+      <div class="player-title" id="player-title"></div>
+      <div class="player-desc" id="player-desc"></div>
+    </div>
+  </div>
+
+  <!-- ボトムナビ -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="switchNav('home')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">ホーム</span>
+    </button>
+    <button class="nav-item" id="nav-videos" onclick="switchNav('videos')">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </div>
+      <span class="nav-label">動画</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="spinner" class="spinner-overlay"><div class="spinner"></div></div>
+
+<script>
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbyJVSGJSaGbOxcvf6o4FSO4fVteVl9ff3jRodr1pdqfJfGKAOGv0iToklqlcB_ajU1I/exec';
+
+var st = { email: null, userName: null, settings: {}, notices: [], videos: [] };
+
+// ── ユーティリティ ──
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function showSpinner() { document.getElementById('spinner').classList.add('show'); }
+function hideSpinner() { document.getElementById('spinner').classList.remove('show'); }
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showView(id) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function enterApp() {
+  document.getElementById('main-app').classList.add('show');
+  document.getElementById('login-overlay').classList.add('hidden');
+}
+function exitApp() {
+  document.getElementById('main-app').classList.remove('show');
+  document.getElementById('login-overlay').classList.remove('hidden');
+}
+
+// ── ナビ切替 ──
+function switchNav(tab) {
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('nav-' + tab).classList.add('active');
+  if (tab === 'home') showView('view-home');
+  else if (tab === 'videos') showView('view-videos');
+}
+
+// ── ログイン ──
+async function handleLogin() {
+  var emailEl = document.getElementById('email-input');
+  var nameEl  = document.getElementById('name-input');
+  var email   = emailEl.value.trim().toLowerCase();
+  var name    = nameEl.value.trim();
+  var errEl   = document.getElementById('login-error');
+
+  if (!name) {
+    errEl.textContent = 'オープンチャットでのお名前を入力してください。';
+    errEl.classList.add('show'); nameEl.focus(); return;
+  }
+
+  // デモログイン
+  if (email === 'aaa') {
+    st.email = 'preview@demo.local';
+    st.userName = name || 'テスト';
+    loadDemoData(); enterApp(); return;
+  }
+
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'メールアドレスを正しく入力してください。';
+    errEl.classList.add('show'); emailEl.focus(); return;
+  }
+
+  errEl.classList.remove('show');
+  showSpinner();
+  try {
+    var res    = await fetch(GAS_URL + '?action=verify&email=' + encodeURIComponent(email));
+    var result = await res.json();
+    if (result.ok) {
+      st.email = email; st.userName = name;
+      localStorage.setItem('cnt_email', email);
+      localStorage.setItem('cnt_name', name);
+      await loadAll();
+      enterApp();
+    } else {
+      errEl.textContent = '登録されていないメールアドレスです。お申し込み時のアドレスをご確認ください。';
+      errEl.classList.add('show');
+    }
+  } catch(e) {
+    errEl.textContent = 'ただいま混雑しています。少し時間をおいて再度お試しください。';
+    errEl.classList.add('show');
+    console.error(e);
+  } finally { hideSpinner(); }
+}
+
+function handleLogout() {
+  localStorage.removeItem('cnt_email'); localStorage.removeItem('cnt_name');
+  st.email = null; st.userName = null;
+  document.getElementById('email-input').value = '';
+  document.getElementById('name-input').value = '';
+  exitApp();
+}
+
+document.getElementById('email-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+document.getElementById('name-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') handleLogin(); });
+
+// ── データ読込 ──
+async function loadAll() {
+  showSpinner();
+  try {
+    var responses = await Promise.all([
+      fetch(GAS_URL + '?action=contentsSettings').then(function(r) { return r.json(); }),
+      fetch(GAS_URL + '?action=contentNotices').then(function(r) { return r.json(); }),
+      fetch(GAS_URL + '?action=contentVideos').then(function(r) { return r.json(); })
+    ]);
+    st.settings = responses[0].ok ? responses[0] : {};
+    st.notices  = responses[1].ok ? (responses[1].notices || []) : [];
+    st.videos   = responses[2].ok ? (responses[2].videos  || []) : [];
+  } catch(e) {
+    console.error(e);
+    showToast('データの読み込みに失敗しました。再読み込みをお試しください。');
+  } finally { hideSpinner(); }
+  renderAll();
+}
+
+function loadDemoData() {
+  st.settings = { zoomUrl: '#', zoomDate: '第1講：6月12日（木）21:30〜', openchatUrl: '#' };
+  st.notices  = [{ date: '2026/06/10', title: 'デモ表示', content: 'これはデモ用のお知らせです。' }];
+  st.videos   = [
+    { title: 'サンプル動画', description: '動画の説明が入ります。', vimeoUrl: '', category: 'アーカイブ', order: 1 }
+  ];
+  renderAll();
+}
+
+function renderAll() {
+  updateWelcome();
+  renderHome();
+  renderVideoList();
+}
+
+// ── ウェルカム ──
+function updateWelcome() {
+  var n = st.userName || 'あなた';
+  document.getElementById('welcome-name').textContent = n + 'さん、こんにちは！';
+  document.getElementById('welcome-msg').textContent  = '2days実践講座メンバーサイトへようこそ';
+}
+
+// ── ホーム描画 ──
+function renderHome() {
+  var s = st.settings || {};
+
+  // ZOOM
+  document.getElementById('zoom-date').textContent = s.zoomDate || '日程は後日お知らせします';
+  if (s.zoomUrl) {
+    var zBtn = document.getElementById('zoom-join-btn');
+    zBtn.href = s.zoomUrl;
+    zBtn.style.display = 'flex';
+    document.getElementById('zoom-none-msg').style.display = 'none';
+  } else {
+    document.getElementById('zoom-join-btn').style.display = 'none';
+    document.getElementById('zoom-none-msg').style.display = 'block';
+  }
+
+  // OpenChat
+  var ocWrap = document.getElementById('openchat-wrap');
+  if (s.openchatUrl) {
+    document.getElementById('openchat-btn').href = s.openchatUrl;
+    ocWrap.style.display = 'block';
+  } else {
+    ocWrap.style.display = 'none';
+  }
+
+  // お知らせ
+  var list = document.getElementById('notices-list');
+  if (!st.notices || st.notices.length === 0) {
+    list.innerHTML = '<div class="notice-empty">現在お知らせはありません</div>';
+    return;
+  }
+  list.innerHTML = st.notices.map(function(n) {
+    return '<div class="notice-card">' +
+      '<div class="notice-date">' + escHtml(n.date) + '</div>' +
+      '<div class="notice-title">' + escHtml(n.title) + '</div>' +
+      '<div class="notice-body">'  + escHtml(n.content) + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+// ── 動画リスト描画 ──
+function getVimeoId(url) {
+  if (!url) return null;
+  var m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  return m ? m[1] : null;
+}
+
+function renderVideoList() {
+  var area = document.getElementById('videos-list');
+  if (!st.videos || st.videos.length === 0) {
+    area.innerHTML = '<div class="videos-empty"><div class="videos-empty-icon">&#x1F3A5;</div><div class="videos-empty-text">動画コンテンツは準備中です</div></div>';
+    return;
+  }
+  area.innerHTML = st.videos.map(function(v, idx) {
+    var vid   = getVimeoId(v.vimeoUrl);
+    var thumb = vid ? 'https://vumbnail.com/' + vid + '.jpg' : '';
+    return '<div class="video-card" onclick="openVideo(' + idx + ')">' +
+      '<div class="video-thumb">' +
+      (thumb ? '<img src="' + escHtml(thumb) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') +
+      '<div class="video-play-icon"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+      '</div>' +
+      '<div class="video-meta">' +
+      (v.category ? '<div class="video-cat">' + escHtml(v.category) + '</div>' : '') +
+      '<div class="video-title">' + escHtml(v.title) + '</div>' +
+      (v.description ? '<div class="video-desc">' + escHtml(v.description) + '</div>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+// ── 動画再生 ──
+function openVideo(idx) {
+  var v = st.videos[idx];
+  if (!v) return;
+  var vid      = getVimeoId(v.vimeoUrl);
+  var embedUrl = vid ? 'https://player.vimeo.com/video/' + vid + '?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479' : '';
+
+  document.getElementById('player-header-title').textContent = v.title;
+  document.getElementById('player-category').textContent     = v.category || '';
+  document.getElementById('player-title').textContent        = v.title;
+  document.getElementById('player-desc').textContent         = v.description || '';
+  document.getElementById('player-iframe').src               = embedUrl;
+
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.getElementById('nav-videos').classList.add('active');
+  showView('view-player');
+}
+
+function goBackToVideos() {
+  document.getElementById('player-iframe').src = '';
+  showView('view-videos');
+}
+
+// ── 自動ログイン ──
+(async function init() {
+  var savedEmail = localStorage.getItem('cnt_email');
+  var savedName  = localStorage.getItem('cnt_name');
+  if (savedEmail && savedName) {
+    st.email = savedEmail; st.userName = savedName;
+    try { await loadAll(); enterApp(); } catch(e) { console.error(e); }
+  }
+})();
+</script>
+</body>
+</html>
