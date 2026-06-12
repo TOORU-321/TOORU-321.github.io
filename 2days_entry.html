@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>2days実践講座 入室確認</title>
+  <style>
+    :root {
+      --plum:        #8b4c6b;
+      --plum-mid:    #a8638a;
+      --plum-light:  #d4a0b8;
+      --plum-pale:   #f7eef3;
+      --cream:       #fdf6ef;
+      --white:       #ffffff;
+      --text:        #3d2e2e;
+      --text-mid:    #7a6060;
+      --text-light:  #a89090;
+      --success:     #4a9d75;
+      --success-bg:  #e8f7ef;
+      --error:       #c05060;
+      --error-bg:    #fbeaec;
+      --warn-bg:     #fff8ea;
+      --warn-border: #f0d080;
+      --warn-text:   #7a5400;
+      --border:      #e8d5dc;
+      --shadow:      0 4px 20px rgba(139,76,107,0.12);
+      --shadow-lg:   0 8px 40px rgba(139,76,107,0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ─── ヘッダー ─────────────────────── */
+    .header {
+      width: 100%;
+      background: linear-gradient(135deg, #7a3d5e 0%, var(--plum-mid) 100%);
+      padding: 18px 24px 16px;
+      text-align: center;
+      color: #fff;
+    }
+    .header-logo { font-size: 11px; letter-spacing: 3px; opacity: 0.75; margin-bottom: 4px; }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .header-sub   { font-size: 12px; opacity: 0.7; margin-top: 3px; }
+
+    /* ─── メインコンテナ ──────────────── */
+    .main {
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 14px 40px;
+      flex: 1;
+    }
+
+    /* ─── スクリーン管理 ──────────────── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ─── カード ──────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 26px 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .card-sm {
+      background: var(--plum-pale);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── バッジ ──────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .badge-success { background: var(--success-bg); color: var(--success); }
+    .badge-error   { background: var(--error-bg);   color: var(--error); }
+
+    /* ─── タイトル・説明 ──────────────── */
+    .screen-icon  { font-size: 42px; text-align: center; margin-bottom: 10px; }
+    .screen-title {
+      font-size: 17px; font-weight: 700;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .screen-desc  {
+      font-size: 13px; color: var(--text-mid);
+      line-height: 1.75; margin-bottom: 20px;
+    }
+
+    /* ─── フォーム ────────────────────── */
+    .form-label {
+      display: block;
+      font-size: 12px; font-weight: 700;
+      color: var(--text-mid);
+      margin-bottom: 6px; letter-spacing: 0.5px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 13px 15px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      color: var(--text);
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-input:focus {
+      border-color: var(--plum-light);
+      background: var(--white);
+    }
+    .form-hint {
+      font-size: 12px; color: var(--text-light);
+      line-height: 1.6; margin-top: 7px;
+    }
+
+    /* ─── ボタン ──────────────────────── */
+    .btn {
+      display: block; width: 100%;
+      padding: 15px; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #7a3d5e 0%, var(--plum-mid) 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(139,76,107,0.38);
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--plum);
+      border: 2px solid var(--border);
+    }
+    .btn + .btn { margin-top: 10px; }
+    .mt12 { margin-top: 12px; }
+    .mt18 { margin-top: 18px; }
+
+    /* ─── ローディング ────────────────── */
+    .loading-wrap { padding: 50px 0; text-align: center; }
+    .dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+    .dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--plum-light);
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+    .dots span:nth-child(2) { animation-delay: .2s; }
+    .dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40%           { transform: scale(1.2); opacity: 1; }
+    }
+    .loading-msg { font-size: 14px; color: var(--text-mid); }
+
+    /* ─── ZOOM情報ボックス ────────────── */
+    .zoom-box {
+      background: linear-gradient(135deg, #fdf0f6, #fdf6ef);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin: 14px 0;
+    }
+    .zoom-box-title {
+      font-size: 11px; font-weight: 700;
+      color: var(--plum); letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .zoom-row {
+      display: flex; align-items: center;
+      margin-bottom: 10px;
+    }
+    .zoom-row:last-child { margin-bottom: 0; }
+    .zoom-label {
+      font-size: 11px; color: var(--text-light);
+      width: 78px; flex-shrink: 0;
+    }
+    .zoom-value {
+      font-size: 17px; font-weight: 700;
+      color: var(--text); letter-spacing: 1px;
+      flex: 1;
+    }
+    .zoom-value.name { color: var(--plum); font-size: 15px; }
+    .copy-mini {
+      padding: 4px 11px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      border-radius: 8px;
+      font-size: 11px; color: var(--plum);
+      cursor: pointer; flex-shrink: 0;
+    }
+    .copy-mini:active { background: var(--plum-pale); }
+
+    /* ─── 警告ボックス ────────────────── */
+    .warn-box {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      border-radius: 12px;
+      padding: 13px 15px;
+      font-size: 12px; color: var(--warn-text);
+      line-height: 1.75;
+    }
+    .warn-box strong { color: #c87820; }
+
+    /* ─── 分割線 ──────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+    /* ─── 戻り訪問バナー ──────────────── */
+    .returning-banner {
+      background: #eef3fd;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px; color: #4a6ea8;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    /* ─── トースト ────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px;
+      left: 50%; transform: translateX(-50%);
+      background: #333; color: #fff;
+      padding: 11px 22px; border-radius: 8px;
+      font-size: 13px; z-index: 9999;
+      white-space: nowrap;
+      animation: toast-in 0.2s ease;
+    }
+    @keyframes toast-in { from { opacity:0; transform: translateX(-50%) translateY(8px); } }
+
+    /* ─── 入力済みメール表示 ─────────── */
+    .email-badge {
+      display: inline-block;
+      background: #f4f4f4; border: 1px solid #ddd;
+      border-radius: 8px; padding: 8px 13px;
+      font-size: 14px; color: var(--text);
+      margin: 10px 0; max-width: 100%; word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<div class="header">
+  <div class="header-logo">凛 穏 塾</div>
+  <div class="header-title">2days 実践講座</div>
+  <div class="header-sub">ZOOM 入室確認</div>
+</div>
+
+<div class="main">
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen 1: メールアドレス入力        -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-email">
+    <div class="card">
+      <div class="screen-icon">🔐</div>
+      <div class="screen-title" style="text-align:center;">参加確認</div>
+      <div class="screen-desc" style="text-align:center;">
+        ご登録のメールアドレスを入力してください。<br>
+        確認後、ZOOMのお部屋番号をお伝えします。
+      </div>
+      <label class="form-label">メールアドレス</label>
+      <input
+        class="form-input"
+        type="email"
+        id="email-input"
+        placeholder="example@gmail.com"
+        inputmode="email"
+        autocomplete="email"
+        autocapitalize="none"
+      >
+      <div class="form-hint">お申し込み時にご利用のメールアドレスを入力してください</div>
+      <div class="mt18">
+        <button class="btn btn-primary" onclick="submitEmail()">確認する →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen: ローディング               -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-loading">
+    <div class="card">
+      <div class="loading-wrap">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="loading-msg" id="loading-msg">確認しています...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen 2: ZOOMネーム登録           -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-zoom-name">
+    <div class="card">
+      <div class="badge badge-success">✓ ご参加を確認しました</div>
+      <div class="screen-title">ZOOMのお名前を登録</div>
+      <div class="screen-desc">
+        ZOOMに入室する際のお名前を入力してください。<br>ニックネームでも大丈夫です。
+      </div>
+      <label class="form-label">ZOOMに表示するお名前</label>
+      <input
+        class="form-input"
+        type="text"
+        id="zoom-name-input"
+        placeholder="例：田中さちえ　/ さちえん"
+        autocomplete="name"
+      >
+      <div class="form-hint">
+        ⚠️ ZOOMには必ず<strong style="color:var(--plum)">このお名前と同じ表示名</strong>でご入室ください。<br>
+        異なる名前でのご入室は確認が取れない場合があります。
+      </div>
+      <div class="mt18">
+        <button class="btn btn-primary" onclick="submitZoomName()">登録してZOOM情報を見る →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen 3: ZOOM情報表示（完了）      -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-done">
+
+    <div class="returning-banner" id="returning-banner" style="display:none;">
+      📌 前回の登録情報を表示しています
+    </div>
+
+    <div class="card">
+      <div class="badge badge-success">✓ 登録完了！</div>
+
+      <div class="zoom-box">
+        <div class="zoom-box-title">🎥 ZOOMルーム情報</div>
+        <div class="zoom-row">
+          <span class="zoom-label">ルームID</span>
+          <span class="zoom-value" id="disp-zoom-id">---</span>
+          <button class="copy-mini" onclick="copyZoomId()">コピー</button>
+        </div>
+        <div class="zoom-row">
+          <span class="zoom-label">パスワード</span>
+          <span class="zoom-value" id="disp-zoom-pw">---</span>
+          <button class="copy-mini" onclick="copyZoomPw()">コピー</button>
+        </div>
+        <div class="zoom-row">
+          <span class="zoom-label">登録名</span>
+          <span class="zoom-value name" id="disp-zoom-name">---</span>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        ⚠️ ZOOMには必ず「<strong id="warn-name"></strong>」の表示名でご入室ください。<br>
+        異なる名前でのご入室は、運営よりご確認のご連絡をする場合がございます。
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="btn btn-primary" onclick="copyAll()">📋 ZOOM情報をまとめてコピー</button>
+      <button class="btn btn-secondary mt12" onclick="changeName()">✏️ 登録名を変更する</button>
+    </div>
+
+    <div class="card-sm">
+      <div style="font-size:12px; color:var(--text-mid); line-height:1.8;">
+        💡 このページをホーム画面に追加しておくと、<br>
+        　　次回からすぐに確認できます
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen 4: エラー（メール未登録）   -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-error-email">
+    <div class="card">
+      <div class="badge badge-error">⚠ 確認できませんでした</div>
+      <div class="screen-title">メールアドレスが見つかりません</div>
+      <div class="screen-desc">
+        入力されたメールアドレスで参加登録を確認できませんでした。<br>
+        お申し込み時にご利用のメールアドレスをご確認のうえ、再度お試しください。
+      </div>
+      <div class="email-badge" id="error-email-disp"></div>
+      <div class="screen-desc" style="font-size:12px; margin-bottom:0;">
+        お心当たりがない場合は、事務局のLINEへご連絡ください。
+      </div>
+      <div class="mt18">
+        <button class="btn btn-secondary" onclick="showScreen('email')">← 戻って入力し直す</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────────────────────────────────── -->
+  <!-- Screen 5: ネットワークエラー       -->
+  <!-- ────────────────────────────────── -->
+  <div class="screen" id="screen-error-network">
+    <div class="card">
+      <div class="screen-icon">📡</div>
+      <div class="screen-title" style="text-align:center;">通信エラーが発生しました</div>
+      <div class="screen-desc" style="text-align:center;">
+        通信に失敗しました。<br>
+        しばらくしてから再度お試しください。
+      </div>
+      <button class="btn btn-secondary" id="retry-btn" onclick="retry()">再試行する</button>
+    </div>
+  </div>
+
+</div><!-- /.main -->
+
+<script>
+// ============================================================
+// ★ 設定: GASデプロイ後にURLを更新してください ★
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxSetCZh0vFfZPL536KYDIO7OBvRULP1K3nMRMJSmR7fW4o2PHnk8q-ARNnC8Uaw98X0A/exec';
+const TOKEN   = 'rion2days2026secret'; // GASのCONFIG.TOKENと合わせること
+
+// ============================================================
+// State
+// ============================================================
+let currentEmail    = '';
+let currentZoomName = '';
+let currentZoomId   = '';
+let currentZoomPw   = '';
+let lastAction      = null; // リトライ用
+
+const LS_KEY = 'entry_2days_v1';
+
+// ============================================================
+// LocalStorage
+// ============================================================
+function loadSaved() {
+  try {
+    const d = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (d && d.done && d.email && d.zoomName && d.zoomId) return d;
+  } catch(e) {}
+  return null;
+}
+function saveDone() {
+  localStorage.setItem(LS_KEY, JSON.stringify({
+    done: true,
+    email:    currentEmail,
+    zoomName: currentZoomName,
+    zoomId:   currentZoomId,
+    zoomPw:   currentZoomPw,
+  }));
+}
+function clearSaved() {
+  localStorage.removeItem(LS_KEY);
+}
+
+// ============================================================
+// Screen management
+// ============================================================
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// JSONP 呼び出し（CORS 回避）
+// ============================================================
+function gasCall(params) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_gc' + Date.now() + Math.random().toString(36).slice(2);
+    const timer  = setTimeout(() => {
+      cleanup();
+      reject(new Error('timeout'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      const s = document.getElementById('_jsonp_' + cbName);
+      if (s) s.remove();
+    }
+
+    window[cbName] = function(data) {
+      cleanup();
+      resolve(data);
+    };
+
+    const p = new URLSearchParams({ ...params, token: TOKEN, callback: cbName });
+    const script = document.createElement('script');
+    script.id = '_jsonp_' + cbName;
+    script.onerror = function() { cleanup(); reject(new Error('network')); };
+    script.src = GAS_URL + '?' + p.toString();
+    document.body.appendChild(script);
+  });
+}
+
+// ============================================================
+// Step 1: メールアドレス送信
+// ============================================================
+async function submitEmail() {
+  const email = (document.getElementById('email-input').value || '').trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showToast('メールアドレスを正しく入力してください');
+    return;
+  }
+
+  currentEmail = email;
+  lastAction = 'checkEmail';
+  showScreen('loading');
+  document.getElementById('loading-msg').textContent = '参加者リストを確認しています...';
+
+  try {
+    const res = await gasCall({ action: 'checkEmail', email });
+
+    if (res.error) {
+      showScreen('error-network');
+      return;
+    }
+
+    if (res.found) {
+      if (res.zoomName) {
+        // 既にZOOMネーム登録済み → ローカルに保存情報があれば使う
+        const saved = loadSaved();
+        if (saved && saved.email === email) {
+          currentZoomName = saved.zoomName;
+          currentZoomId   = saved.zoomId;
+          currentZoomPw   = saved.zoomPw;
+          showDone(true);
+        } else {
+          // サーバー側に登録名はあるがローカルには情報がない
+          // → ZOOMネーム入力画面へ（既存名を初期値に）
+          document.getElementById('zoom-name-input').value = res.zoomName;
+          showScreen('zoom-name');
+        }
+      } else {
+        // 未登録 → ZOOMネーム入力へ
+        document.getElementById('zoom-name-input').value = '';
+        showScreen('zoom-name');
+      }
+    } else {
+      // 見つからない
+      document.getElementById('error-email-disp').textContent = email;
+      showScreen('error-email');
+    }
+
+  } catch(e) {
+    showScreen('error-network');
+  }
+}
+
+// ============================================================
+// Step 2: ZOOMネーム登録
+// ============================================================
+async function submitZoomName() {
+  const name = (document.getElementById('zoom-name-input').value || '').trim();
+  if (!name) {
+    showToast('ZOOMに表示するお名前を入力してください');
+    return;
+  }
+
+  currentZoomName = name;
+  lastAction = 'saveZoomName';
+  showScreen('loading');
+  document.getElementById('loading-msg').textContent = '登録しています...';
+
+  try {
+    const res = await gasCall({ action: 'saveZoomName', email: currentEmail, name });
+
+    if (res.success) {
+      currentZoomId = res.zoom_id;
+      currentZoomPw = res.zoom_pw;
+      saveDone();
+      showDone(false);
+    } else {
+      showToast('登録に失敗しました。もう一度お試しください。');
+      showScreen('zoom-name');
+    }
+
+  } catch(e) {
+    showScreen('error-network');
+  }
+}
+
+// ============================================================
+// ZOOM情報画面を表示
+// ============================================================
+function showDone(isReturning) {
+  document.getElementById('disp-zoom-id').textContent   = currentZoomId;
+  document.getElementById('disp-zoom-pw').textContent   = currentZoomPw;
+  document.getElementById('disp-zoom-name').textContent = currentZoomName;
+  document.getElementById('warn-name').textContent      = currentZoomName;
+  document.getElementById('returning-banner').style.display = isReturning ? 'block' : 'none';
+  showScreen('done');
+}
+
+// ============================================================
+// 登録名を変更する（ done → zoom-name 画面へ戻る）
+// ============================================================
+function changeName() {
+  document.getElementById('zoom-name-input').value = currentZoomName;
+  clearSaved();
+  showScreen('zoom-name');
+}
+
+// ============================================================
+// リトライ
+// ============================================================
+function retry() {
+  if (lastAction === 'checkEmail') {
+    submitEmail();
+  } else if (lastAction === 'saveZoomName') {
+    submitZoomName();
+  } else {
+    showScreen('email');
+  }
+}
+
+// ============================================================
+// コピー系
+// ============================================================
+function copyZoomId()  { doCopy(currentZoomId, 'ルームIDをコピーしました'); }
+function copyZoomPw()  { doCopy(currentZoomPw, 'パスワードをコピーしました'); }
+function copyAll() {
+  const text = `【ZOOM入室情報】\nルームID: ${currentZoomId}\nパスワード: ${currentZoomPw}\n入室名: ${currentZoomName}`;
+  doCopy(text, 'ZOOM情報をコピーしました');
+}
+function doCopy(text, msg) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast(msg); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+// ============================================================
+// トースト通知
+// ============================================================
+function showToast(msg) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = '✓ ' + msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+// ============================================================
+// 初期化
+// ============================================================
+(function init() {
+  const saved = loadSaved();
+  if (saved) {
+    currentEmail    = saved.email;
+    currentZoomName = saved.zoomName;
+    currentZoomId   = saved.zoomId;
+    currentZoomPw   = saved.zoomPw;
+    showDone(true);
+  } else {
+    showScreen('email');
+  }
+})();
+</script>
+
+</body>
+</html>
