@@ -48,6 +48,18 @@ OPTIN_FOOTER = f'''    <aside class="optin">
       <a class="optin-btn" href="{LP_URL}" target="_blank" rel="noopener">メルマガ・講座を見てみる →</a>
     </aside>'''
 
+# スクロール追従ポップアップ（インスタ誘引＋メルマガ送客）。PC=右下カード／スマホ=下部バー
+POPUP_HTML = f'''<div id="lm-popup" class="lm-popup" aria-hidden="true">
+    <button class="lm-pop-close" type="button" aria-label="閉じる">&times;</button>
+    <div class="lm-pop-eyebrow">もっと、とーるの話</div>
+    <div class="lm-pop-ttl">よかったら、こちらも</div>
+    <p class="lm-pop-txt">コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。</p>
+    <div class="lm-pop-btns">
+      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>
+      <a class="lm-pop-mag" href="{LP_URL}" target="_blank" rel="noopener">メルマガ『3-2-1ラボ』</a>
+    </div>
+  </div>'''
+
 def nav_html():
     out = []
     for label, href, active in NAV:
@@ -259,6 +271,9 @@ def render_article(c, cols):
 </div>
 
 <footer><div class="foot-inner"><div class="foot-links">{foot_html()}</div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
+
+{POPUP_HTML}
+<script src="assets/popup.js"></script>
 </body>
 </html>'''
 

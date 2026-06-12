@@ -165,3 +165,24 @@ footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)
 .foot-links{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
 .foot-links a:hover{color:var(--gold)}
 .foot-cc{font-family:var(--serif-en);font-size:12px;letter-spacing:.05em;color:var(--ink-soft)}
+
+/* ===== 追従ポップアップ（インスタ誘引＋メルマガ送客） PC=右下カード／スマホ=下部バー ===== */
+.lm-popup{position:fixed;right:22px;bottom:22px;width:330px;max-width:calc(100vw - 32px);background:#fff;border:1px solid var(--line-2);border-radius:14px;box-shadow:0 14px 40px rgba(20,18,14,.22);padding:20px 20px 18px;z-index:1000;opacity:0;transform:translateY(18px);pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.lm-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.lm-pop-close{position:absolute;top:7px;right:9px;border:none;background:none;font-size:23px;line-height:1;color:var(--ink-soft);cursor:pointer;width:32px;height:32px;border-radius:50%}
+.lm-pop-close:hover{color:var(--ink);background:#f3efe6}
+.lm-pop-eyebrow{font-family:var(--serif-en);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.lm-pop-ttl{font-family:var(--mincho);font-weight:700;font-size:17px;color:var(--ink);margin-bottom:8px;line-height:1.5}
+.lm-pop-txt{font-size:12.5px;color:var(--ink-2);line-height:1.8;margin-bottom:15px}
+.lm-pop-btns{display:flex;flex-direction:column;gap:9px}
+.lm-pop-insta{display:block;text-align:center;font-weight:700;font-size:13.5px;color:#fff;padding:11px 14px;border-radius:999px;background:linear-gradient(135deg,#feda75,#fa7e1e 25%,#d62976 55%,#962fbf 80%,#4f5bd5);letter-spacing:.02em}
+.lm-pop-mag{display:block;text-align:center;font-weight:700;font-size:13px;color:var(--gold);padding:10px 14px;border-radius:999px;border:1.5px solid var(--gold-2);background:#fffdf7}
+.lm-pop-insta:hover{filter:brightness(1.06)}
+.lm-pop-mag:hover{background:#fbf4e6}
+@media(max-width:600px){
+  .lm-popup{right:0;left:0;bottom:0;width:auto;max-width:none;border-radius:14px 14px 0 0;border-left:none;border-right:none;border-bottom:none;padding:15px 15px 17px;transform:translateY(100%)}
+  .lm-popup.show{transform:translateY(0)}
+  .lm-pop-txt{margin-bottom:12px}
+  .lm-pop-btns{flex-direction:row}
+  .lm-pop-insta,.lm-pop-mag{flex:1;padding:12px 8px;font-size:12.5px}
+}
