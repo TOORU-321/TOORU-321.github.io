@@ -171,8 +171,11 @@ footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)
 .lm-popup.show{opacity:1;transform:translateY(0);pointer-events:auto}
 .lm-pop-close{position:absolute;top:7px;right:9px;border:none;background:none;font-size:23px;line-height:1;color:var(--ink-soft);cursor:pointer;width:32px;height:32px;border-radius:50%}
 .lm-pop-close:hover{color:var(--ink);background:#f3efe6}
-.lm-pop-eyebrow{font-family:var(--serif-en);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
-.lm-pop-ttl{font-family:var(--mincho);font-weight:700;font-size:17px;color:var(--ink);margin-bottom:8px;line-height:1.5}
+.lm-pop-head{display:flex;align-items:center;gap:12px;margin-bottom:11px;padding-right:22px}
+.lm-pop-ico{width:52px;height:52px;border-radius:50%;object-fit:cover;object-position:50% 14%;flex:0 0 auto;border:1px solid var(--line-2);background:#eef1f3}
+.lm-pop-head-tx{min-width:0}
+.lm-pop-eyebrow{font-family:var(--serif-en);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.lm-pop-ttl{font-family:var(--mincho);font-weight:700;font-size:17px;color:var(--ink);line-height:1.4}
 .lm-pop-txt{font-size:12.5px;color:var(--ink-2);line-height:1.8;margin-bottom:15px}
 .lm-pop-btns{display:flex;flex-direction:column;gap:9px}
 .lm-pop-insta{display:block;text-align:center;font-weight:700;font-size:13.5px;color:#fff;padding:11px 14px;border-radius:999px;background:linear-gradient(135deg,#feda75,#fa7e1e 25%,#d62976 55%,#962fbf 80%,#4f5bd5);letter-spacing:.02em}

@@ -51,8 +51,13 @@ OPTIN_FOOTER = f'''    <aside class="optin">
 # スクロール追従ポップアップ（インスタ誘引＋メルマガ送客）。PC=右下カード／スマホ=下部バー
 POPUP_HTML = f'''<div id="lm-popup" class="lm-popup" aria-hidden="true">
     <button class="lm-pop-close" type="button" aria-label="閉じる">&times;</button>
-    <div class="lm-pop-eyebrow">もっと、とーるの話</div>
-    <div class="lm-pop-ttl">よかったら、こちらも</div>
+    <div class="lm-pop-head">
+      <img class="lm-pop-ico" src="assets/pop-icon.png" alt="とーる" loading="lazy">
+      <div class="lm-pop-head-tx">
+        <div class="lm-pop-eyebrow">もっと、とーるの話</div>
+        <div class="lm-pop-ttl">よかったら、こちらも</div>
+      </div>
+    </div>
     <p class="lm-pop-txt">コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。</p>
     <div class="lm-pop-btns">
       <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>
