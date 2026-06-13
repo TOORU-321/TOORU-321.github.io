@@ -3,165 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2days実践講座｜第1回 ZOOMアーカイブ</title>
+  <title>運を自分で創る 凛穏塾２day講座 2026.6.12 第１講義</title>
   <style>
     :root {
-      --plum:       #8b4c6b;
-      --plum-mid:   #a8638a;
-      --cream:      #fdf6ef;
-      --white:      #ffffff;
-      --text:       #3d2e2e;
-      --text-mid:   #7a6060;
-      --border:     #e8d5dc;
-      --shadow:     0 4px 20px rgba(139,76,107,0.12);
+      --plum:     #8b4c6b;
+      --plum-mid: #a8638a;
+      --cream:    #fdf6ef;
+      --white:    #ffffff;
+      --text:     #3d2e2e;
+      --text-mid: #7a6060;
+      --border:   #e8d5dc;
+      --shadow:   0 4px 20px rgba(139,76,107,0.12);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', sans-serif;
       background: var(--cream);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-top: 62px; /* fixed headerの高さ分 */
     }
 
-    /* ─── ヘッダー ─── */
-    .header {
-      width: 100%;
-      background: linear-gradient(135deg, #7a3d5e 0%, var(--plum-mid) 100%);
-      padding: 16px 20px;
-      text-align: center;
+    /* ─── 固定カウントダウンヘッダー ─── */
+    .fixed-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      height: 62px;
+      background: linear-gradient(135deg, #5c2d45 0%, #8b4c6b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.3);
+    }
+    .fh-left {
+      line-height: 1.4;
+    }
+    .fh-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.5px;
+    }
+    .fh-deadline {
+      font-size: 13px;
+      font-weight: 700;
       color: #fff;
     }
-    .header-logo  { font-size: 11px; letter-spacing: 3px; opacity: 0.7; margin-bottom: 4px; }
-    .header-title { font-size: 17px; font-weight: 700; }
-    .header-sub   { font-size: 11px; opacity: 0.65; margin-top: 3px; }
+    .fh-timer {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .fh-unit {
+      text-align: center;
+      min-width: 36px;
+    }
+    .fh-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      letter-spacing: 0.5px;
+    }
+    .fh-unit-label {
+      font-size: 9px;
+      color: rgba(255,255,255,0.55);
+      display: block;
+      text-align: center;
+    }
+    .fh-sep {
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.4);
+      padding-bottom: 10px;
+      margin: 0 1px;
+    }
+    /* 期限切れ時のヘッダー */
+    .fixed-header.expired {
+      background: linear-gradient(135deg, #5a1a28 0%, #a03045 100%);
+    }
+    .fh-expired-msg {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
 
-    /* ─── コンテンツ ─── */
+    /* ─── メインコンテンツ ─── */
     .main {
-      width: 100%;
       max-width: 720px;
-      padding: 20px 14px 48px;
+      margin: 0 auto;
+      padding: 18px 14px 48px;
     }
 
     /* ─── タイトルカード ─── */
     .title-card {
       background: var(--white);
       border-radius: 16px;
-      padding: 18px 20px;
+      padding: 16px 20px;
       box-shadow: var(--shadow);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+    }
+    .title-meta {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
+      margin-bottom: 8px;
     }
     .title-badge {
-      background: linear-gradient(135deg, #7a3d5e, var(--plum-mid));
+      background: linear-gradient(135deg, #5c2d45, var(--plum-mid));
       color: #fff;
       font-size: 11px;
       font-weight: 700;
-      padding: 5px 12px;
+      padding: 4px 12px;
       border-radius: 20px;
       white-space: nowrap;
-      letter-spacing: 0.5px;
+    }
+    .title-date {
+      font-size: 12px;
+      color: var(--text-mid);
     }
     .title-text {
       font-size: 15px;
       font-weight: 700;
       color: var(--text);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     /* ─── 動画カード ─── */
     .video-card {
-      background: #000;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: var(--shadow);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      background: #000;
     }
-    .video-wrap {
-      padding: 56.25% 0 0 0; /* 16:9 */
+
+    /* 通常表示 */
+    .video-active .video-wrap {
+      padding: 56.25% 0 0 0;
       position: relative;
     }
-    .video-wrap iframe {
+    .video-active .video-wrap iframe {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       border: none;
     }
 
+    /* 期限切れ表示 */
+    .video-expired {
+      display: none;
+      background: #120608;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .expired-icon { opacity: 0.45; margin-bottom: 18px; }
+    .expired-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .expired-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.9;
+    }
+    .expired-date {
+      color: #c4849d;
+      font-weight: 700;
+    }
+
     /* ─── メモカード ─── */
     .note-card {
       background: var(--white);
       border-radius: 14px;
-      padding: 16px 18px;
-      box-shadow: var(--shadow);
-    }
-    .note-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--plum);
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-    .note-list {
-      list-style: none;
-    }
-    .note-list li {
-      font-size: 13px;
-      color: var(--text-mid);
-      line-height: 1.75;
-      padding-left: 16px;
-      position: relative;
-    }
-    .note-list li::before {
-      content: '•';
-      position: absolute;
-      left: 4px;
-      color: var(--plum);
-    }
-  </style>
-</head>
-<body>
-
-<div class="header">
-  <div class="header-logo">凛 穏 塾</div>
-  <div class="header-title">運を自分で創る 2days 実践講座</div>
-  <div class="header-sub">ZOOMアーカイブ動画</div>
-</div>
-
-<div class="main">
-
-  <div class="title-card">
-    <span class="title-badge">第1回</span>
-    <span class="title-text">初回 ZOOM講座アーカイブ</span>
-  </div>
-
-  <div class="video-card">
-    <div class="video-wrap">
-      <iframe
-        src="https://player.vimeo.com/video/1200889077?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479"
-        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        title="運を自分で創る＿2DAYS講座"
-      ></iframe>
-    </div>
-  </div>
-
-  <div class="note-card">
-    <div class="note-title">📝 視聴メモ</div>
-    <ul class="note-list">
-      <li>Wi-Fi環境での視聴を推奨します</li>
-      <li>全画面表示は動画右下のアイコンから</li>
-      <li>視聴中はメモをとりながらご覧ください</li>
-    </ul>
-  </div>
-
-</div>
-
-<script src="https://player.vimeo.com/api/player.js"></script>
-</body>
-</html>
+      padding: 14px 18px;
+      box-shadow: var(--shad
