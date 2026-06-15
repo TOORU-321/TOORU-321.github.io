@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凛穏サロン 退会申請</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;background:#f0f7fa;color:#333;line-height:1.7}
+
+.cancel-wrap{max-width:520px;margin:30px auto;padding:0 16px}
+
+/* ヘッダー */
+.cancel-header{text-align:center;padding:32px 0 24px;border-bottom:2px solid #e0eef4}
+.cancel-header h1{font-size:20px;color:#3a7ca5;letter-spacing:.08em;margin-bottom:6px}
+.cancel-header p{font-size:13px;color:#6a9bb8}
+
+/* 注意ボックス */
+.notice-box{background:#fff5f5;border:1px solid #e8c4c4;border-radius:8px;padding:16px 18px;margin:24px 0;font-size:13px;color:#8b4c4c;line-height:1.8}
+.notice-box strong{display:block;margin-bottom:4px;font-size:14px;color:#a04040}
+
+/* フォーム */
+.cancel-form{background:#fff;border-radius:12px;padding:28px 24px;margin:20px 0;box-shadow:0 2px 12px rgba(58,124,165,.08)}
+
+.form-group{margin-bottom:22px}
+.form-group label{display:block;font-size:14px;font-weight:600;color:#3a7ca5;margin-bottom:6px}
+.form-group label .req{color:#d45;font-size:11px;margin-left:4px;font-weight:normal}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea{
+  width:100%;border:1.5px solid #c8dce8;border-radius:8px;padding:12px 14px;
+  font-size:15px;color:#333;background:#fafcfd;transition:border-color .2s;
+  font-family:inherit;outline:none
+}
+.form-group input:focus,
+.form-group textarea:focus{border-color:#3a7ca5;background:#fff}
+.form-group textarea{resize:vertical;min-height:80px}
+
+/* バリデーションエラー */
+.form-group input.error,
+.form-group textarea.error{border-color:#d45;background:#fff8f8}
+.error-msg{color:#d45;font-size:12px;margin-top:4px;display:none}
+.form-group.has-error .error-msg{display:block}
+
+/* チェックボックス */
+.check-group{margin-bottom:18px;padding:14px 16px;background:#f7fbfd;border-radius:8px;border:1.5px solid #e0eef4}
+.check-group.error{border-color:#d45;background:#fff8f8}
+.check-group label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13.5px;color:#444;line-height:1.6}
+.check-group input[type="checkbox"]{
+  flex-shrink:0;width:20px;height:20px;margin-top:3px;accent-color:#3a7ca5;cursor:pointer
+}
+.check-error{color:#d45;font-size:12px;margin-top:6px;display:none}
+.check-group.has-error .check-error{display:block}
+
+/* 送信ボタン */
+.submit-area{text-align:center;margin-top:28px}
+.submit-btn{
+  display:inline-block;background:#3a7ca5;color:#fff;border:none;border-radius:30px;
+  padding:14px 48px;font-size:16px;font-weight:600;letter-spacing:.06em;cursor:pointer;
+  transition:background .2s,transform .1s;font-family:inherit
+}
+.submit-btn:hover{background:#2e6a90}
+.submit-btn:active{transform:scale(.98)}
+
+/* フッター */
+.cancel-footer{text-align:center;padding:20px 0 40px;font-size:12px;color:#9ab}
+</style>
+</head>
+<body>
+
+<div class="cancel-wrap">
+
+  <div class="cancel-header">
+    <h1>凛穏サロン 退会申請フォーム</h1>
+    <p>以下の項目をすべてご入力のうえ送信してください</p>
+  </div>
+
+  <div class="notice-box">
+    <strong>ご確認ください</strong>
+    退会手続きには4〜5日程度かかります。<br>
+    退会後は動画コンテンツ・オープンチャット等すべてのサービスが翌月よりご利用いただけなくなります。
+  </div>
+
+  <!-- ===== ProLine埋め込みフォーム ===== -->
+  <form action="https://mka0tn6z.autosns.app/fm/V7zd9YjTaH"
+        class="frmSubmit cancel-form"
+        data-form-id="V7zd9YjTaH"
+        method="post"
+        enctype="multipart/form-data"
+        id="cancelForm"
+        novalidate>
+
+    <input type="hidden" name="uid" id="user_id" value="[[uid]]">
+
+    <!-- 氏名 -->
+    <div class="form-group" id="g-name">
+      <label for="txtFufpEg8be5">氏名<span class="req">（必須）</span></label>
+      <input id="txtFufpEg8be5"
+             name="txt[FufpEg8be5]"
+             class="form-data validate[required] full-width"
+             type="text"
+             value=""
+             placeholder="姓名をご入力ください"
+             data-prompt-target="input-box-FufpEg8be5"
+             data-reserved-field-name="LAST_NAME"
+             required />
+      <div class="error-msg">氏名を入力してください</div>
+    </div>
+
+    <!-- メールアドレス -->
+    <div class="form-group" id="g-email">
+      <label for="txtnVtk0Fezi2">メールアドレス<span class="req">（必須）</span></label>
+      <input id="txtnVtk0Fezi2"
+             name="txt[nVtk0Fezi2]"
+             class="full-width validate[required,custom[email]] tohalf_class"
+             type="email"
+             value=""
+             placeholder="example@email.com"
+             required />
+      <div class="error-msg">正しいメールアドレスを入力してください</div>
+    </div>
+
+    <!-- 退会理由 -->
+    <div class="form-group" id="g-reason">
+      <label for="txthNylVYmh4A">退会理由<span class="req">（必須）</span></label>
+      <textarea name="txt[hNylVYmh4A]"
+                id="txthNylVYmh4A"
+                rows="3"
+                placeholder="差し支えなければ退会理由をお聞かせください"
+                class="validate[required] full-width"
+                data-prompt-target="input-box-hNylVYmh4A"
+                required></textarea>
+      <div class="error-msg">退会理由を入力してください</div>
+    </div>
+
+    <!-- 同意1: サービス停止 -->
+    <div class="check-group" id="g-agree1">
+      <input type="hidden" name="txt[bBjPhW3kZH][checkbox_empty]" value="checkbox_empty">
+      <label>
+        <input id="txtbBjPhW3kZH-0"
+               name="txt[bBjPhW3kZH][]"
+               class="form-data validate[required]"
+               type="checkbox"
+               value="はい、同意します。"
+               data-prompt-target="input-box-bBjPhW3kZH"
+               required />
+        <span>翌月以降の配信および特典の利用が停止されることに同意します。</span>
+      </label>
+      <div class="check-error">同意が必要です</div>
+    </div>
+
+    <!-- 同意2: 返金不可 -->
+    <div class="check-group" id="g-agree2">
+      <input type="hidden" name="txt[gbmMglNhxf][checkbox_empty]" value="checkbox_empty">
+      <label>
+        <input id="txtgbmMglNhxf-0"
+               name="txt[gbmMglNhxf][]"
+               class="form-data validate[required]"
+               type="checkbox"
+               value="はい、同意します。"
+               data-prompt-target="input-box-gbmMglNhxf"
+               required />
+        <span>途中返金・日割りには対応していないことを了承します。</span>
+      </label>
+      <div class="check-error">同意が必要です</div>
+    </div>
+
+    <div class="submit-area">
+      <button type="submit" class="submit-btn form-submit">退会申請を送信する</button>
+    </div>
+
+  </form>
+
+  <div class="cancel-footer">凛穏塾 卒業生サロン</div>
+
+</div>
+
+<script>
+/* --- UID自動セット（ProLine標準） --- */
+function getParameterByName(n,u){
+  if(!u)u=window.location.href;
+  n=n.replace(/[\[\]]/g,"\\$&");
+  var r=new RegExp("[?&]"+n+"(=([^&#]*)|&|#|$)").exec(u);
+  if(!r)return null;if(!r[2])return'';
+  return decodeURIComponent(r[2].replace(/\+/g," "));
+}
+window.addEventListener('DOMContentLoaded',function(){
+  var uid=document.getElementById('user_id');
+  var p=getParameterByName('uid');
+  if(p!=null&&p!=='')uid.value=p;
+});
+
+/* --- クライアントバリデーション --- */
+(function(){
+  var form=document.getElementById('cancelForm');
+  if(!form)return;
+
+  function clearErrors(){
+    form.querySelectorAll('.has-error').forEach(function(el){el.classList.remove('has-error')});
+    form.querySelectorAll('input.error,textarea.error').forEach(function(el){el.classList.remove('error')});
+  }
+
+  function showError(groupId, inputEl){
+    var g=document.getElementById(groupId);
+    if(g)g.classList.add('has-error');
+    if(inputEl)inputEl.classList.add('error');
+  }
+
+  form.addEventListener('submit',function(e){
+    clearErrors();
+    var ok=true;
+
+    /* 氏名 */
+    var name=document.getElementById('txtFufpEg8be5');
+    if(!name.value.trim()){showError('g-name',name);ok=false}
+
+    /* メール */
+    var email=document.getElementById('txtnVtk0Fezi2');
+    var emailPat=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!email.value.trim()||!emailPat.test(email.value.trim())){showError('g-email',email);ok=false}
+
+    /* 退会理由 */
+    var reason=document.getElementById('txthNylVYmh4A');
+    if(!reason.value.trim()){showError('g-reason',reason);ok=false}
+
+    /* 同意チェック1 */
+    var cb1=document.getElementById('txtbBjPhW3kZH-0');
+    if(!cb1.checked){showError('g-agree1',null);ok=false}
+
+    /* 同意チェック2 */
+    var cb2=document.getElementById('txtgbmMglNhxf-0');
+    if(!cb2.checked){showError('g-agree2',null);ok=false}
+
+    if(!ok){
+      e.preventDefault();
+      /* 最初のエラーまでスクロール */
+      var first=form.querySelector('.has-error');
+      if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  });
+
+  /* リアルタイムでエラー解除 */
+  form.querySelectorAll('input,textarea').forEach(function(el){
+    el.addEventListener('input',function(){
+      var g=el.closest('.form-group')||el.closest('.check-group');
+      if(g){g.classList.remove('has-error');el.classList.remove('error')}
+    });
+    el.addEventListener('change',function(){
+      var g=el.closest('.form-group')||el.closest('.check-group');
+      if(g){g.classList.remove('has-error');el.classList.remove('error')}
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
