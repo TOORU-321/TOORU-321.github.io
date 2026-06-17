@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-30",
+  "updated": "2026-06-17",
   "byUid": {
     "ulikda": {
       "items": [
@@ -646,11 +646,12 @@
     },
     "zcbyix": {
       "items": [
-        "記念式典 大人1人"
+        "記念式典 大人1人",
+        "第1部+第2部 中高生1人"
       ],
-      "total": 15000,
+      "total": 30000,
       "email": "jinjinyoujiazi@gmail.com",
-      "details": "記念式典 大人1人"
+      "details": "記念式典 大人1人 / 第1部+第2部 中高生1人"
     },
     "tzrxkl": {
       "items": [
@@ -715,6 +716,46 @@
       "total": 15000,
       "email": "ka.mayuchi.ko.0304@icloud.com",
       "details": "一般 記念式典 大人1人"
+    },
+    "gmonpj": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "henteko.a@me.com",
+      "details": "記念式典 大人1人"
+    },
+    "dypxsw": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "yuka-popo-0630@i.softbank.jp",
+      "details": "記念式典 大人1人"
+    },
+    "wovscx": {
+      "items": [
+        "第1部+第2部 大人1人"
+      ],
+      "total": 27000,
+      "email": "erina10113@gmail.com",
+      "details": "第1部+第2部 大人1人"
+    },
+    "rnaoyc": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "m_t.0906.mx2@i.softbank.jp",
+      "details": "記念式典 大人1人"
+    },
+    "hinjax": {
+      "items": [
+        "記念式典 大人1人"
+      ],
+      "total": 15000,
+      "email": "fikanokurashi.haruri.1004@gmail.com",
+      "details": "記念式典 大人1人"
     }
   },
   "byEmail": {
@@ -802,6 +843,11 @@
     "spiel.rugandleather.works@gmail.com": "vgnszb",
     "s.hi.maw1016@gmail.com": "yvehxj",
     "middle_mika@yahoo.co.jp": "dctqof",
-    "ka.mayuchi.ko.0304@icloud.com": "hxajps"
+    "ka.mayuchi.ko.0304@icloud.com": "hxajps",
+    "henteko.a@me.com": "gmonpj",
+    "yuka-popo-0630@i.softbank.jp": "dypxsw",
+    "erina10113@gmail.com": "wovscx",
+    "m_t.0906.mx2@i.softbank.jp": "rnaoyc",
+    "fikanokurashi.haruri.1004@gmail.com": "hinjax"
   }
 }
