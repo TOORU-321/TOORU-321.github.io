@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<!-- スマホ・PC両対応に必須（これが無いとスマホで崩れます） -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 検索避け：Google等の検索結果に出さない（限定公開用） -->
+<meta name="robots" content="noindex, nofollow">
+<title>参加審査面談のご予約｜エルラボ2.0</title>
+<style>
+  /* ページ全体（720px幅カードの外側）を黒で塗りつぶす */
+  html, body { margin: 0; padding: 0; background: #0d0a08; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ② 参加審査申請ページ（エルラボ2.0 参加審査面談のご予約）
+     GitHub公開用 スタンドアロンHTML ／ 黒×金 上質デザイン
+     ※本文テキストは法的配慮済みのため改変していません。
+     ※「ご予約から審査結果までの流れ」のみ視覚的タイムラインで表現。
+     ※スマホ・PC両対応（レスポンシブ）
+     ============================================================ -->
+
+<div class="shinsa-lp">
+
+<style>
+  .shinsa-lp {
+    --bg: #0d0a08;
+    --bg-alt: #1a1612;
+    --bg-card: #221c16;
+    --ink: #f0e8da;
+    --ink-soft: #b8a98f;
+    --accent: #d4a55c;
+    --accent-light: #e8c07e;
+    --line: #3a322a;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Hiragino Mincho ProN", "游明朝", "Yu Mincho", "Noto Serif JP", serif;
+    line-height: 1.9;
+    letter-spacing: 0.04em;
+    -webkit-font-smoothing: antialiased;
+    margin: 0 auto;
+    max-width: 720px;
+  }
+  .shinsa-lp * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ====== Hero ====== */
+  .shinsa-lp .hero {
+    padding: 64px 24px 48px;
+    text-align: center;
+    background: linear-gradient(180deg, #1a0f08 0%, var(--bg) 100%);
+  }
+  .shinsa-lp .hero .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 6px 16px;
+    margin-bottom: 28px;
+  }
+  .shinsa-lp .hero h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 20px;
+    letter-spacing: 0.06em;
+  }
+  .shinsa-lp .hero h1 .em { color: var(--accent-light); }
+  .shinsa-lp .hero .sub {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 2.0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  @media (min-width: 600px) {
+    .shinsa-lp .hero h1 { font-size: 32px; }
+  }
+
+  /* ====== Section heading ====== */
+  .shinsa-lp .sec-head {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 auto 28px;
+    position: relative;
+    padding-bottom: 16px;
+    color: var(--ink);
+    text-align: center;
+  }
+  .shinsa-lp .sec-head::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ====== Generic section / text ====== */
+  .shinsa-lp .section {
+    padding: 48px 24px;
+  }
+  .shinsa-lp .section.alt { background: var(--bg-alt); }
+  .shinsa-lp .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+  .shinsa-lp .text {
+    font-size: 16px;
+    line-height: 2.1;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .shinsa-lp .text:last-child { margin-bottom: 0; }
+  .shinsa-lp .text.soft { color: var(--ink-soft); font-size: 15px; }
+  .shinsa-lp .text.center { text-align: center; }
+
+  /* ====== Bullet list ====== */
+  .shinsa-lp .b-list {
+    list-style: none;
+    margin: 4px 0 18px;
+    padding: 0;
+  }
+  .shinsa-lp .b-list li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink);
+  }
+  .shinsa-lp .b-list li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* ====== 対象 / 非対象カード ====== */
+  .shinsa-lp .target-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 24px 24px 12px;
+    margin-bottom: 18px;
+  }
+  .shinsa-lp .target-card.ok { border-left: 3px solid var(--accent); }
+  .shinsa-lp .target-card.ng { border-left: 3px solid #6b5b48; }
+  .shinsa-lp .target-card .card-label {
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .shinsa-lp .target-card.ok .card-label { color: var(--accent-light); }
+  .shinsa-lp .target-card.ng .card-label { color: var(--ink-soft); }
+  .shinsa-lp .target-card .mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    font-size: 13px;
+  }
+  .shinsa-lp .target-card.ok .mark { border: 1px solid var(--accent); color: var(--accent); }
+  .shinsa-lp .target-card.ng .mark { border: 1px solid #6b5b48; color: #8a7a64; }
+  .shinsa-lp .check-list { list-style: none; margin: 0; padding: 0; }
+  .shinsa-lp .check-list li {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.85;
+  }
+  .shinsa-lp .check-list.ok li { color: var(--ink); }
+  .shinsa-lp .check-list.ng li { color: var(--ink-soft); }
+  .shinsa-lp .check-list.ok li::before {
+    content: '✓';
+    position: absolute; left: 2px; top: 0;
+    color: var(--accent); font-size: 14px;
+  }
+  .shinsa-lp .check-list.ng li::before {
+    content: '−';
+    position: absolute; left: 4px; top: -1px;
+    color: #8a7a64; font-size: 16px;
+  }
+
+  /* ====== Highlight box ====== */
+  .shinsa-lp .note-box {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 22px 24px;
+    margin: 18px 0;
+  }
+  .shinsa-lp .note-box .text { font-size: 15px; margin-bottom: 12px; }
+
+  /* ====== Buttons ====== */
+  .shinsa-lp .btn-area { text-align: center; margin: 28px 0 0; }
+  .shinsa-lp .btn {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    padding: 16px 40px;
+    border-radius: 4px;
+    transition: opacity .2s ease;
+  }
+  .shinsa-lp .btn:hover { opacity: .88; }
+  .shinsa-lp .btn-outline {
+    color: var(--accent-light);
+    border: 1px solid var(--accent);
+    background: transparent;
+  }
+  .shinsa-lp .btn-primary {
+    color: #1a0f08;
+    background: linear-gradient(180deg, var(--accent-light) 0%, var(--accent) 100%);
+    border: none;
+    box-shadow: 0 6px 20px rgba(212, 165, 92, 0.25);
+    font-weight: 600;
+  }
+
+  /* ====== Divider ====== */
+  .shinsa-lp .divider { padding: 16px; text-align: center; }
+  .shinsa-lp .divider-symbol {
+    display: inline-block;
+    color: var(--accent);
+    font-size: 18px;
+    letter-spacing: 1em;
+  }
+
+  /* ====== Profile（面談担当者プロフィール：横型）====== */
+  .shinsa-lp .profile-section {
+    background: var(--bg);
+    padding: 48px 24px;
+  }
+  .shinsa-lp .profile-card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 30px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+    box-shadow: var(--shadow);
+  }
+  .shinsa-lp .profile-card .p-photo {
+    flex: 0 0 auto;
+    width: 150px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 18px rgba(0,0,0,.4);
+  }
+  .shinsa-lp .profile-card .p-body { text-align: left; flex: 1; min-width: 0; }
+  .shinsa-lp .profile-card .p-role {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .shinsa-lp .profile-card .p-name {
+    font-size: 21px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    letter-spacing: 0.06em;
+  }
+  /* プロフィール内の小見出し（｜実績 のような縦バー付き）*/
+  .shinsa-lp .profile-card .p-sec { margin-bottom: 16px; }
+  .shinsa-lp .profile-card .p-sec:last-child { margin-bottom: 0; }
+  .shinsa-lp .profile-card .p-sec-head {
+    font-size: 15px;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent);
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+  }
+  .shinsa-lp .profile-card .p-list { list-style: none; margin: 0; padding: 0; }
+  .shinsa-lp .profile-card .p-list li {
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 7px;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
+  .shinsa-lp .profile-card .p-list li:last-child { margin-bottom: 0; }
+  .shinsa-lp .profile-card .p-list li::before {
+    content: '';
+    position: absolute;
+    left: 3px; top: 11px;
+    width: 5px; height: 5px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  @media (max-width: 520px) {
+    .shinsa-lp .profile-card {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 28px 22px;
+    }
+    .shinsa-lp .profile-card .p-photo { width: 140px; height: 170px; }
+    .shinsa-lp .profile-card .p-name { text-align: center; }
+    .shinsa-lp .profile-card .p-role { text-align: center; }
+  }
+
+  /* =========================================================
+     ★ FLOW TIMELINE（ご予約から審査結果までの流れ：視覚化）
+     ========================================================= */
+  .shinsa-lp .flow-section {
+    background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+    padding: 56px 24px;
+  }
+  .shinsa-lp .timeline {
+    max-width: 560px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 8px;
+  }
+  /* 縦の進行ライン */
+  .shinsa-lp .timeline::before {
+    content: '';
+    position: absolute;
+    left: 27px;
+    top: 18px;
+    bottom: 18px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--line) 100%);
+  }
+  .shinsa-lp .tl-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .shinsa-lp .tl-item:last-child { margin-bottom: 0; }
+  .shinsa-lp .tl-marker {
+    position: relative;
+    z-index: 1;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,.4);
+  }
+  .shinsa-lp .tl-marker .tl-step {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .shinsa-lp .tl-marker .tl-no {
+    font-size: 20px;
+    color: var(--accent-light);
+    line-height: 1;
+  }
+  .shinsa-lp .tl-body {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .shinsa-lp .tl-body .tl-icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+    display: block;
+    filter: saturate(0.6);
+  }
+  .shinsa-lp .tl-body .tl-ttl {
+    font-size: 17px;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .shinsa-lp .tl-body .tl-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    margin-bottom: 10px;
+  }
+  .shinsa-lp .tl-body .tl-desc:last-child { margin-bottom: 0; }
+  .shinsa-lp .tl-body .tl-mini {
+    background: var(--bg-alt);
+    border-left: 2px solid var(--accent);
+    border-radius: 3px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-top: 10px;
+  }
+  .shinsa-lp .tl-body .tl-sublist { list-style: none; margin: 6px 0 0; padding: 0; }
+  .shinsa-lp .tl-body .tl-sublist li {
+    position: relative;
+    padding-left: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+  .shinsa-lp .tl-body .tl-sublist li::before {
+    content: '・';
+    position: absolute; left: 0; color: var(--accent);
+  }
+  @media (max-width: 420px) {
+    .shinsa-lp .tl-item { grid-template-columns: 48px 1fr; gap: 12px; }
+    .shinsa-lp .tl-marker { width: 48px; height: 48px; }
+    .shinsa-lp .timeline::before { left: 23px; }
+  }
+
+  /* ====== Calendar / Schedule ====== */
+  .shinsa-lp .calendar-section {
+    background: linear-gradient(180deg, var(--bg) 0%, #1a0f08 100%);
+    padding: 60px 20px;
+    text-align: center;
+  }
+  .shinsa-lp .calendar-section .description {
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+  }
+  .shinsa-lp .calendar-frame {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 560px;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+    /* 埋め込みカレンダーがLPの明るい文字色を継承して
+       白カード上で読みにくくなるのを防ぐ（色・フォント・字間をリセット） */
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    letter-spacing: normal;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .shinsa-lp .calendar-frame .proline-embed-calendar { color: #333; }
+
+  /* ====== FAQ ====== */
+  .shinsa-lp .faq-list { max-width: 560px; margin: 0 auto; }
+  .shinsa-lp .faq-item {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .shinsa-lp .faq-q {
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.7;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .shinsa-lp .faq-q .q-mark { color: var(--accent); font-size: 18px; }
+  .shinsa-lp .faq-a {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.9;
+    padding-left: 34px;
+  }
+
+  /* ====== Footer ====== */
+  .shinsa-lp .lp-footer {
+    background: #000;
+    color: var(--ink-soft);
+    padding: 40px 24px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.8;
+    border-top: 1px solid var(--line);
+  }
+  .shinsa-lp .lp-footer .org {
+    color: var(--accent);
+    font-size: 18px;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+  .shinsa-lp .lp-footer .legal-links {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 14px;
+    font-size: 12px;
+  }
+  .shinsa-lp .lp-footer .legal-links a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .shinsa-lp .lp-footer .legal-links a:hover {
+    color: var(--accent-light);
+    border-bottom-color: var(--accent);
+  }
+  .shinsa-lp .lp-footer .legal-links .sep { color: #4a4036; }
+  .shinsa-lp .lp-footer .copyright {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #555;
+  }
+</style>
+
+<!-- ====== HERO ====== -->
+<section class="hero">
+  <span class="eyebrow">エルラボ2.0</span>
+  <h1>
+    参加審査面談の<br>
+    ご予約<span class="em">。</span>
+  </h1>
+  <p class="sub">
+    エルラボ2.0に興味を持っていただき、ありがとうございます。
+  </p>
+</section>
+
+<!-- ====== INTRO ====== -->
+<section class="section">
+  <div class="wrap">
+    <p class="text">このページでは、エルラボ2.0への参加を希望される方を対象に、参加審査面談の日時を予約していただけます。</p>
+    <p class="text">商品内容・料金・サポート範囲をまだ確認していない方は、先に商品詳細ページをご確認ください。</p>
+    <div class="btn-area">
+      <a class="btn btn-outline" href="https://l-mine.com/l-mine-2.0.2026" target="_blank" rel="noopener">サービス・プラン詳細を確認する</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-symbol">◇</span></div>
+
+<!-- ====== はじめにご確認ください ====== -->
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="sec-head">はじめにご確認ください</h2>
+    <p class="text">この面談は、商品を一から説明するための無料相談や、参加をおすすめするための営業面談ではありません。</p>
+    <p class="text">現在の活動状況やお悩み、これから取り組みたいことをお聞きしながら、</p>
+    <ul class="b-list">
+      <li>エルラボ2.0でお力になれそうか</li>
+      <li>求めているサポートと提供内容が合っているか</li>
+      <li>今のタイミングで参加することが合っているか</li>
+      <li>現在の受付枠で対応可能か</li>
+    </ul>
+    <p class="text">を、お互いに確認するための時間です。</p>
+    <p class="text">審査面談中に契約や決済を行ったり、その場で参加を決めていただいたりすることはありません。</p>
+  </div>
+</section>
+
+<!-- ====== なぜ参加審査を行っているのか ====== -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="sec-head">なぜ参加審査を行っているのか</h2>
+    <p class="text">エルラボ2.0は、教材だけを渡して終わるサービスではありません。</p>
+    <p class="text">一人ひとりの状況を見ながら、商品設計や販売導線、発信、LINEの仕組みなどを一緒に考えていくサポートです。</p>
+    <p class="text">そのため、誰でもそのまま申し込める形にはしていません。</p>
+    <p class="text">いきなり決済していただくのではなく、</p>
+    <div class="note-box">
+      <p class="text">「今のお悩みに対して、本当にサポートできそうか」</p>
+      <p class="text">「求めているものと、エルラボの提供内容が合っているか」</p>
+    </div>
+    <p class="text">を、事前に確認したいと考えています。</p>
+    <p class="text">せっかく参加していただいても、</p>
+    <div class="note-box">
+      <p class="text">「思っていたサポートと違った」</p>
+      <p class="text">「今は別のことを優先した方がよかった」</p>
+      <p class="text">「僕のサポート範囲では対応できなかった」</p>
+    </div>
+    <p class="text">となってしまっては、お互いにとって良くありません。</p>
+    <p class="text">審査といっても、テストをしたり、上から合否をつけたりするものではありません。</p>
+    <p class="text">エルラボでお力になれそうかを、お互いに確認するための時間だと思ってください。</p>
+  </div>
+</section>
+
+<!-- ====== 面談担当者プロフィール（横型）====== -->
+<section class="profile-section">
+  <div class="profile-card">
+    <img class="p-photo" src="assets/toru.jpg" alt="行動経済アナリスト とーる プロフィール写真">
+    <div class="p-body">
+      <div class="p-role">講師紹介</div>
+      <div class="p-name">行動経済アナリスト「とーる」</div>
+
+      <div class="p-sec">
+        <div class="p-sec-head">実績</div>
+        <ul class="p-list">
+          <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
+          <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
+          <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
+          <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
+        </ul>
+      </div>
+
+      <div class="p-sec">
+        <div class="p-sec-head">活動内容</div>
+        <ul class="p-list">
+          <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
+          <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
+          <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
+          <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
+          <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
+        </ul>
+      </div>
+
+      <div class="p-sec">
+        <div class="p-sec-head">想い</div>
+        <ul class="p-list">
+          <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== このような方を対象としています ====== -->
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="sec-head">このような方を対象としています</h2>
+
+    <div class="target-card ok">
+      <div class="card-label"><span class="mark">✓</span>対象となる方</div>
+      <ul class="check-list ok">
+        <li>エルラボ2.0の商品詳細ページを確認している方</li>
+        <li>サービス内容や料金を理解したうえで、参加を具体的に検討している方</li>
+        <li>現在の活動や課題についてお話しいただける方</li>
+        <li>アドバイスを受けるだけでなく、ご自身でも実践する意思がある方</li>
+        <li>商品、導線、発信などを長期的に整えていきたい方</li>
+      </ul>
+    </div>
+
+    <p class="text">一方で、</p>
+
+    <div class="target-card ng">
+      <div class="card-label"><span class="mark">−</span>目的が合わない可能性がある方</div>
+      <ul class="check-list ng">
+        <li>まだ商品詳細ページを読んでいない</li>
+        <li>とりあえず無料で相談だけしてみたい</li>
+        <li>参加するつもりはなく、情報収集だけをしたい</li>
+        <li>作業や行動のすべてを任せたい</li>
+        <li>必ず売上が上がる保証を求めている</li>
+      </ul>
+    </div>
+
+    <p class="text">という場合は、現在の審査面談とは目的が合わない可能性があります。</p>
+    <p class="text">まずは商品詳細ページをご確認いただき、参加を具体的に考えたいと思った段階でご予約ください。</p>
+  </div>
+</section>
+
+<!-- ====== 審査面談でお聞きすること ====== -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="sec-head">審査面談でお聞きすること</h2>
+    <p class="text">面談では、主に次の内容を確認します。</p>
+    <ul class="b-list">
+      <li>現在行っている活動やビジネス</li>
+      <li>現在の商品・サービス</li>
+      <li>今困っていること</li>
+      <li>今後取り組みたいこと</li>
+      <li>エルラボに期待しているサポート</li>
+      <li>ご希望のプラン</li>
+      <li>サポート開始を希望する時期</li>
+    </ul>
+    <p class="text">きれいに整理してお話しいただく必要はありません。</p>
+    <p class="text">現時点で分かる範囲で、そのままお聞かせください。</p>
+    <p class="text">商品ページを読んで分からなかった点がある場合は、面談の中でご質問いただけます。</p>
+  </div>
+</section>
+
+<!-- ====== ★ ご予約から審査結果までの流れ（視覚化タイムライン）====== -->
+<section class="flow-section">
+  <h2 class="sec-head">ご予約から審査結果までの流れ</h2>
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">1</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">📄</span>
+        <div class="tl-ttl">商品詳細ページを確認する</div>
+        <p class="tl-desc">サービス内容、料金、サポート範囲、各プランの違いをご確認ください。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">2</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">🗓️</span>
+        <div class="tl-ttl">面談日時を選択する</div>
+        <p class="tl-desc">このページの予約カレンダーから、ご都合のよい日時をお選びください。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">3</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">✉️</span>
+        <div class="tl-ttl">日程を送信して仮予約する</div>
+        <p class="tl-desc">予約フォームを送信した時点では、まだ仮予約です。</p>
+        <p class="tl-desc">この段階では、面談日時は正式には確定していません。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">4</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">💬</span>
+        <div class="tl-ttl">公式LINEを友だち追加する</div>
+        <p class="tl-desc">仮予約完了後に表示される案内から、エルラボ2.0の公式LINEを友だち追加してください。</p>
+        <p class="tl-desc">LINE内の案内に沿って手続きを完了すると、審査面談の本予約となります。</p>
+        <div class="tl-mini">※ここでいう「本予約」とは、審査面談の日程が正式に確定することです。エルラボ2.0への入会・契約・決済が成立するものではありません。</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">5</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">🎥</span>
+        <div class="tl-ttl">Zoomで審査面談を行う</div>
+        <p class="tl-desc">ご予約いただいた日時に、Zoomでお話を伺います。</p>
+        <p class="tl-desc">面談時間：［約○分］</p>
+        <p class="tl-desc">面談用のZoom URLは、公式LINEからご案内します。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">6</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">📩</span>
+        <div class="tl-ttl">後日、審査結果をご連絡する</div>
+        <p class="tl-desc">面談内容を確認したうえで、参加可否を公式LINEからご連絡します。</p>
+        <p class="tl-desc">面談中に、その場で参加を決めていただくことはありません。</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-marker"><span class="tl-step">STEP</span><span class="tl-no">7</span></div>
+      <div class="tl-body">
+        <span class="tl-icon">✅</span>
+        <div class="tl-ttl">参加可能な方に申込みページをご案内する</div>
+        <p class="tl-desc">参加可能となった方には、後日、正式な申込みページをご案内します。</p>
+        <p class="tl-desc">審査に通過したからといって、申込みや支払いが義務になることはありません。</p>
+        <p class="tl-desc">正式な申込みページで、</p>
+        <ul class="tl-sublist">
+          <li>サービス内容</li>
+          <li>料金</li>
+          <li>契約期間</li>
+          <li>自動更新</li>
+          <li>解約・返金条件</li>
+          <li>利用規約</li>
+        </ul>
+        <p class="tl-desc" style="margin-top:10px;">を改めて確認し、それでも参加したいと思った場合のみ、ご自身の判断でお手続きください。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====== 参加審査面談の日程を選ぶ（スケジュール埋め込み）====== -->
+<section class="calendar-section">
+  <h2 class="sec-head" style="color:#f0e8da;">参加審査面談の日程を選ぶ</h2>
+  <p class="description">
+    以下の予約カレンダーから、ご希望の日時をお選びください。
+  </p>
+
+  <!-- ▼▼▼ プロライン 予約カレンダー埋め込み ▼▼▼ -->
+  <div class="calendar-frame">
+    <script src="https://vjbsvali.autosns.app/proline-embed-calendar/js"></script>
+    <div class="proline-embed-calendar" data-id="IeWjY6tH4U"></div>
+  </div>
+  <!-- ▲▲▲ プロライン 予約カレンダー埋め込み ▲▲▲ -->
+</section>
+
+<!-- ====== 仮予約後に必ずLINEをご確認ください ====== -->
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="sec-head">仮予約後に必ずLINEをご確認ください</h2>
+    <p class="text">予約フォームを送信しただけでは、審査面談の予約は確定しません。</p>
+    <p class="text">送信後のページに表示される案内から公式LINEを友だち追加し、LINE内の手続きを完了してください。</p>
+    <p class="text">公式LINEでは、</p>
+    <ul class="b-list">
+      <li>本予約完了のご案内</li>
+      <li>Zoom URL</li>
+      <li>面談日時の確認</li>
+      <li>日程変更・キャンセルの受付</li>
+      <li>審査結果</li>
+      <li>審査通過後の正式な申込みページ</li>
+    </ul>
+    <p class="text">をご連絡します。</p>
+    <p class="text soft">LINEの友だち追加および本予約の手続が確認できない場合、仮予約は無効となる場合があります。</p>
+  </div>
+</section>
+
+<!-- ====== 日程変更・キャンセルについて ====== -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="sec-head">日程変更・キャンセルについて</h2>
+    <p class="text">予約日時の変更やキャンセルを希望される場合は、分かった時点で公式LINEからご連絡ください。</p>
+    <p class="text">無断キャンセルはお控えください。</p>
+    <p class="text">やむを得ない事情がある場合は、別の日程をご案内します。</p>
+  </div>
+</section>
+
+<!-- ====== よくあるご質問 ====== -->
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="sec-head">よくあるご質問</h2>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>審査面談に料金はかかりますか？</span></div>
+        <div class="faq-a">参加審査面談に料金はかかりません。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>面談を受けたら、入会しなければいけませんか？</span></div>
+        <div class="faq-a">いいえ。<br>審査面談を受けても、入会や支払いの義務は発生しません。<br>参加可能となった場合も、後日お送りする正式な申込みページを確認し、参加を希望される場合のみお手続きください。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>面談中に申込みや決済を行いますか？</span></div>
+        <div class="faq-a">行いません。<br>面談では現在の状況や希望されているサポートを確認し、参加可否は後日ご連絡します。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>商品について質問できますか？</span></div>
+        <div class="faq-a">商品詳細ページを確認したうえで分からなかった点は、ご質問いただけます。<br>ただし、商品内容や料金の基本情報は、事前に商品詳細ページをご確認ください。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>必ず参加できますか？</span></div>
+        <div class="faq-a">参加を保証するものではありません。<br>現在の状況、ご希望のサポート、提供可能な範囲、受付状況などを踏まえて判断します。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>審査に通過したら契約成立ですか？</span></div>
+        <div class="faq-a">いいえ。<br>審査通過後に正式な申込みページをご案内します。<br>そのページで内容を改めて確認し、ご自身で申込み・決済を完了した時点で契約が成立します。</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q"><span class="q-mark">Q</span><span>LINEを追加しないとどうなりますか？</span></div>
+        <div class="faq-a">予約フォーム送信後は仮予約となります。<br>公式LINEの友だち追加とLINE内の本予約手続が確認できない場合、面談日時は正式に確定しません。</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====== 最後に ====== -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="sec-head">最後に</h2>
+    <p class="text">ここまでご確認いただき、ありがとうございます。</p>
+    <p class="text">参加審査は、誰かを落とすためではなく、</p>
+    <div class="note-box">
+      <p class="text">「エルラボで本当にお力になれそうか」</p>
+      <p class="text">「お互いに納得した状態で始められそうか」</p>
+    </div>
+    <p class="text">を確認するために行っています。</p>
+    <p class="text">無理におすすめしたり、面談中に参加を決めてもらったりすることはありません。</p>
+    <p class="text">エルラボ2.0の商品内容をご確認いただき、</p>
+    <div class="note-box">
+      <p class="text">「自分の場合もサポート可能か聞いてみたい」</p>
+      <p class="text">「参加を具体的に考えたい」</p>
+    </div>
+    <p class="text">と思っていただけましたら、ご都合のよい日時をお選びください。</p>
+
+    <div class="btn-area">
+      <a class="btn btn-primary" href="#">参加審査面談の日程を選ぶ</a>
+    </div>
+    <p class="text soft center" style="margin-top:16px;font-size:13px;">※日程の送信後、公式LINEの友だち追加と所定の手続をもって本予約となります。</p>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="lp-footer">
+  <div class="org">エルラボ2.0</div>
+  <nav class="legal-links">
+    <a href="https://l-mine.com/about" target="_blank" rel="noopener">特定商取引法に基づく表記</a>
+    <span class="sep">/</span>
+    <a href="https://l-mine.com/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>
+    <span class="sep">/</span>
+    <a href="https://l-mine.com/mensekizikou" target="_blank" rel="noopener">免責事項</a>
+    <span class="sep">/</span>
+    <a href="https://l-mine.com/term" target="_blank" rel="noopener">利用規約</a>
+  </nav>
+  <div class="copyright">© 2026 エルラボ2.0 All rights reserved.</div>
+</footer>
+
+</div>
+
+</body>
+</html>
