@@ -10,6 +10,8 @@
 <style>
   /* ページ全体（720px幅カードの外側）を黒で塗りつぶす */
   html, body { margin: 0; padding: 0; background: #0d0a08; }
+  /* フルブリード（特集バンド）で横スクロールが出ないように */
+  body { overflow-x: hidden; }
 </style>
 </head>
 <body>
@@ -244,27 +246,39 @@
   }
 
   /* ====== Profile（面談担当者プロフィール：横型）====== */
+  /* PCではLPの720px幅を超えて画面いっぱいの「特集バンド」に広げる */
   .shinsa-lp .profile-section {
     background: var(--bg);
-    padding: 48px 24px;
+    padding: 56px 24px;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
   .shinsa-lp .profile-card {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     background: var(--bg-card);
     border: 1px solid var(--line);
     border-left: 3px solid var(--accent);
     border-radius: 8px;
-    padding: 30px 32px;
+    padding: 32px 38px;
     display: flex;
     align-items: flex-start;
-    gap: 28px;
+    gap: 36px;
     box-shadow: var(--shadow);
+  }
+  /* PCでは実績/活動内容/想いを2列に並べて縦長を解消 */
+  @media (min-width: 641px) {
+    .shinsa-lp .profile-card .p-secs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 32px;
+    }
+    .shinsa-lp .profile-card .p-secs .p-sec-activity { grid-row: span 2; }
   }
   .shinsa-lp .profile-card .p-photo {
     flex: 0 0 auto;
-    width: 150px;
-    height: 180px;
+    width: 190px;
+    height: 230px;
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid var(--line);
@@ -315,16 +329,19 @@
     background: var(--accent);
     border-radius: 50%;
   }
-  @media (max-width: 520px) {
+  @media (max-width: 640px) {
     .shinsa-lp .profile-card {
       flex-direction: column;
       align-items: center;
       gap: 20px;
       padding: 28px 22px;
     }
-    .shinsa-lp .profile-card .p-photo { width: 140px; height: 170px; }
+    .shinsa-lp .profile-card .p-photo { width: 150px; height: 180px; }
     .shinsa-lp .profile-card .p-name { text-align: center; }
     .shinsa-lp .profile-card .p-role { text-align: center; }
+    /* スマホでは実績/活動内容/想いを1列で縦に */
+    .shinsa-lp .profile-card .p-secs { display: block; }
+    .shinsa-lp .profile-card .p-sec { margin-bottom: 16px; }
   }
 
   /* =========================================================
@@ -612,32 +629,34 @@
       <div class="p-role">講師紹介</div>
       <div class="p-name">行動経済アナリスト「とーる」</div>
 
-      <div class="p-sec">
-        <div class="p-sec-head">実績</div>
-        <ul class="p-list">
-          <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
-          <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
-          <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
-          <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
-        </ul>
-      </div>
+      <div class="p-secs">
+        <div class="p-sec">
+          <div class="p-sec-head">実績</div>
+          <ul class="p-list">
+            <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
+            <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
+            <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
+            <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
+          </ul>
+        </div>
 
-      <div class="p-sec">
-        <div class="p-sec-head">活動内容</div>
-        <ul class="p-list">
-          <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
-          <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
-          <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
-          <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
-          <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
-        </ul>
-      </div>
+        <div class="p-sec p-sec-activity">
+          <div class="p-sec-head">活動内容</div>
+          <ul class="p-list">
+            <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
+            <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
+            <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
+            <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
+            <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
+          </ul>
+        </div>
 
-      <div class="p-sec">
-        <div class="p-sec-head">想い</div>
-        <ul class="p-list">
-          <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
-        </ul>
+        <div class="p-sec">
+          <div class="p-sec-head">想い</div>
+          <ul class="p-list">
+            <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
