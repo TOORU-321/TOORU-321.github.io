@@ -29,7 +29,7 @@ NAV = [
     ("動画・オンラインコース視聴", "https://l-mine.com/onlinecourse-oshirase", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
     ("お問い合わせ", "https://l-mine.com/contact-us", False),
-    ("エルラボ2.0", "https://l-mine.com/l-mine-2.0", False),
+    ("エルラボ2.0", "https://l-mine.com/l-mine-2.0.2026", False),
     ("ログイン", "https://l-mine.com/signin", False),
 ]
 FOOT_LINKS = [
