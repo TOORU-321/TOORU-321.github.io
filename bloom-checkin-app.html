@@ -163,7 +163,7 @@ var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2
 var state={ uid:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
-  _newq:'Q2', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
+  _newq:'Q2', _newtaskText:'', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
   coachTab:'list', _karte:null, weekDates:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -207,7 +207,7 @@ async function loadActivity(){
 function q2ratio(){ var done=state.tasks.filter(function(t){return state.todayDone[t.id];}); if(!done.length) return 0; return Math.round(done.filter(function(t){return t.q==='Q2';}).length/done.length*100); }
 async function saveKsf(){ var e=document.getElementById('ksf'); if(!e) return; state.ksf=e.value; try{ await db.doc('ksf/'+state.uid+'_'+monthKey()).set({uid:state.uid,month:monthKey(),text:state.ksf,updatedAt:Date.now()},{merge:true}); toast('KSFを保存しました'); }catch(err2){ toast('保存に失敗: '+err2.code); } }
 function setNewQ(q){ state._newq=q; render(); }
-async function addTask(){ var ti=document.getElementById('newtask'); if(!ti||!ti.value.trim()) return; var q=state._newq||'Q2'; var text=ti.value.trim(); try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
+async function addTask(){ var ti=document.getElementById('newtask'); var text=((ti&&ti.value)||state._newtaskText||'').trim(); if(!text){ toast('やることを入力してください'); return; } var q=state._newq||'Q2'; state._newtaskText=''; try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
 async function cycleTask(id){ var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return; t.q=order[(order.indexOf(t.q)+1)%4]; render(); try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); } }
 async function delTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); state._taskMenu=null; render(); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
 function toggleDone(id){ saveRefl(); state.todayDone[id]=!state.todayDone[id]; render(); }
@@ -280,7 +280,7 @@ function viewPlan(){
   '<div class="card"><h2>今週のタスクを行列で仕分け</h2><p class="muted">マスをタップ＝象限を移動。<b>🌱第2象限（本丸）</b>を増やせるかが成果を分けます。</p>'+
     '<div class="mtx"><div class="ax"></div><div class="ax">⏰ 緊急</div><div class="ax">緊急でない</div>'+
       '<div class="ax v">重要</div>'+quadBox('Q1')+quadBox('Q2')+'<div class="ax v">重要でない</div>'+quadBox('Q3')+quadBox('Q4')+'</div>'+
-    '<div style="height:14px"></div><label class="fld">タスクを追加</label><input id="newtask" placeholder="やることを入力">'+
+    '<div style="height:14px"></div><label class="fld">タスクを追加</label><input id="newtask" oninput="state._newtaskText=this.value" value="'+escAttr(state._newtaskText||'')+'" placeholder="やることを入力">'+
     '<div class="qsel">'+sel+'</div><div style="height:10px"></div><button class="btn ghost" onclick="addTask()">＋ この象限に追加</button>'+
     '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>'+(state._taskMenu?taskMenuHtml():'');
 }
