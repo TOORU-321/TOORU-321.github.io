@@ -340,6 +340,7 @@ async function loadCoach(){
       for(var w=0;w<state.weekDates.length;w++){ var ck=null; try{ var cd=await db.doc('checkins/'+s.uid+'_'+state.weekDates[w].key).get(); if(cd.exists) ck=cd.data(); }catch(e){} rec.wk.push(dayStatus(ck)); }
       try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){}
       try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){}
+      rec.tasks=[]; try{ var tq=await db.collection('tasks').where('uid','==',s.uid).get(); tq.forEach(function(d){var x=d.data(); rec.tasks.push({text:x.text,q:x.q});}); }catch(e){}
       var last=rec.wk[rec.wk.length-1]; rec.reported=last.st!=='none'; rec.done=last.done; rec.q2=last.q2; rec.reflection=last.reflection;
       var sil=0; for(var w2=rec.wk.length-1;w2>=0;w2--){ if(rec.wk[w2].st==='none')sil++; else break; } rec.silent=sil;
       var stk=0; for(var w3=rec.wk.length-1;w3>=0;w3--){ if(rec.wk[w3].st==='done')stk++; else break; } rec.streak=stk;
@@ -392,6 +393,18 @@ function coachWeek(){
   '<div class="card"><h2>直近1週間（全員）</h2><div style="overflow-x:auto"><table><thead><tr>'+head+'</tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<div style="margin-top:10px;font-size:12px;color:var(--sub)">✓ 提出（達成あり）／ ½ 提出（達成なし）／ ・ 未報告</div></div>';
 }
+function coachTasksGrid(s){
+  var ts=s.tasks||[];
+  if(!ts.length) return '<p class="muted">まだタスクが登録されていません。</p>';
+  var out=['Q1','Q2','Q3','Q4'].map(function(q){
+    var items=ts.filter(function(t){return t.q===q;});
+    if(!items.length) return '';
+    var hi=q==='Q2';
+    return '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:800;color:'+(hi?'var(--pp-d)':'var(--sub)')+'">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'（本丸）':'')+'（'+items.length+'）</div>'+
+      items.map(function(t){return '<div style="font-size:13px;margin-top:4px;padding:4px 8px;border-left:3px solid '+(hi?'var(--pp)':'var(--line)')+'">'+esc(t.text)+'</div>';}).join('')+'</div>';
+  }).join('');
+  return out||'<p class="muted">タスクなし</p>';
+}
 function coachKarte(){
   var ss=state.coachStudents;
   if(!ss.length) return '<div class="card muted">受講生がいません。</div>';
@@ -416,6 +429,7 @@ function coachKarte(){
     '<div class="hint"><ul style="margin:0;padding-left:18px">'+agenda.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul></div>'+
     '<div style="margin-top:12px"><label class="fld">アドバイス（生徒に表示）</label><div style="display:flex;gap:6px"><input id="adv_'+s.uid+'" value="'+escAttr(s.advice||'')+'" placeholder="一言アドバイス"><button class="btn sm" onclick="saveAdvice(\''+s.uid+'\')">送信</button></div></div>'+
   '</div>'+
+  '<div class="card"><h2>現在のタスク（行列）</h2>'+coachTasksGrid(s)+'</div>'+
   '<div class="card"><h2>直近1週間の記録</h2>'+days+'</div>';
 }
 async function saveAdvice(uid){
