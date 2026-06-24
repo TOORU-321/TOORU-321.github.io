@@ -163,7 +163,7 @@ var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2
 var state={ uid:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
-  _newq:'Q2', _refl:'', _openTerm:null, popupQueue:[],
+  _newq:'Q2', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
   coachTab:'list', _karte:null, weekDates:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -209,7 +209,7 @@ async function saveKsf(){ var e=document.getElementById('ksf'); if(!e) return; s
 function setNewQ(q){ state._newq=q; render(); }
 async function addTask(){ var ti=document.getElementById('newtask'); if(!ti||!ti.value.trim()) return; var q=state._newq||'Q2'; var text=ti.value.trim(); try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
 async function cycleTask(id){ var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return; t.q=order[(order.indexOf(t.q)+1)%4]; render(); try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); } }
-async function delTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); render(); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
+async function delTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); state._taskMenu=null; render(); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
 function toggleDone(id){ saveRefl(); state.todayDone[id]=!state.todayDone[id]; render(); }
 function saveRefl(){ var e=document.getElementById('refl'); if(e) state.reflection=e.value; }
 async function submitDay(){
@@ -249,9 +249,24 @@ function viewToday(){
     '<button class="btn ghost" style="margin-top:8px" onclick="restDay()">🌙 今日はお休みにする</button>'+
   '</div>';
 }
+function openTaskMenu(id){ state._taskMenu=id; render(); }
+function closeTaskMenu(){ state._taskMenu=null; render(); }
+async function completeTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); state._taskMenu=null; render(); toast('完了！🎉 おつかれさま'); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
+function taskMenuHtml(){
+  var t=state.tasks.find(function(x){return x.id===state._taskMenu;}); if(!t) return '';
+  return '<div style="position:fixed;inset:0;background:rgba(20,15,40,.45);display:grid;place-items:center;z-index:60;padding:20px" onclick="closeTaskMenu()">'+
+    '<div style="background:#fff;border-radius:18px;max-width:320px;width:100%;padding:20px;box-shadow:var(--shadow)" onclick="event.stopPropagation()">'+
+      '<div style="font-weight:800;margin-bottom:2px">'+esc(t.text)+'</div>'+
+      '<div class="muted" style="font-size:12px;margin-bottom:14px">'+QMETA[t.q].ic+' '+QMETA[t.q].name+'</div>'+
+      '<button class="btn" style="background:var(--green)" onclick="completeTask(\''+t.id+'\')">✅ 完了</button>'+
+      '<button class="btn ghost" style="margin-top:8px" onclick="cycleTask(\''+t.id+'\')">↔ 象限を移動（タップで次へ）</button>'+
+      '<button class="btn" style="margin-top:8px;background:var(--red-l);color:var(--red)" onclick="delTask(\''+t.id+'\')">🗑 削除</button>'+
+      '<button class="btn ghost" style="margin-top:8px;background:transparent;color:var(--sub)" onclick="closeTaskMenu()">閉じる</button>'+
+    '</div></div>';
+}
 function quadBox(q){
   var list=state.tasks.filter(function(t){return t.q===q;});
-  var chips=list.map(function(t){ return '<div class="chip" onclick="cycleTask(\''+t.id+'\')" title="タップで象限を移動"><span>'+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
+  var chips=list.map(function(t){ return '<div class="chip" onclick="openTaskMenu(\''+t.id+'\')" title="タップで操作"><span>'+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
   var hi=q==='Q2';
   return '<div class="qd2 '+QMETA[q].cl+'"><div class="hd">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'<span class="badge-honmaru">本丸</span>':'')+'<span class="cnt">'+list.length+'</span></div><div class="ax2">'+QMETA[q].axis+'</div>'+chips+'</div>';
 }
@@ -267,7 +282,7 @@ function viewPlan(){
       '<div class="ax v">重要</div>'+quadBox('Q1')+quadBox('Q2')+'<div class="ax v">重要でない</div>'+quadBox('Q3')+quadBox('Q4')+'</div>'+
     '<div style="height:14px"></div><label class="fld">タスクを追加</label><input id="newtask" placeholder="やることを入力">'+
     '<div class="qsel">'+sel+'</div><div style="height:10px"></div><button class="btn ghost" onclick="addTask()">＋ この象限に追加</button>'+
-    '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>';
+    '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>'+(state._taskMenu?taskMenuHtml():'');
 }
 function viewFeed(){
   var items=state.activity.map(function(f){ var label=f.type==='checkin'?'別の方がタスクを提出しました':'コミュニティで動きがありました'; return '<div class="feed-item"><span class="dot"></span><span>'+label+'</span><time>'+timeAgo(f.at)+'</time></div>'; }).join('')||'<div class="muted">まだ動きがありません。最初の一歩を踏み出しましょう。</div>';
