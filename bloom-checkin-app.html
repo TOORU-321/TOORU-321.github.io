@@ -131,6 +131,26 @@
   <div class="onb-foot"><div class="dots"><i class="on"></i><i></i><i></i><i></i></div><button class="btn max" id="onb-btn" onclick="onbNext()">次へ</button></div>
 </div>
 
+<div id="authscreen" class="onb">
+  <div style="margin:auto;max-width:360px;width:100%;padding:28px">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="logo" style="margin:0 auto 10px;width:48px;height:48px;font-size:24px">B</div>
+      <div style="font-weight:800;font-size:20px" id="auth-title">ログイン</div>
+      <div class="muted" style="font-size:12px">Bloom チェックイン</div>
+    </div>
+    <div id="auth-err" style="display:none;background:var(--red-l);color:var(--red);font-size:12px;font-weight:700;padding:8px 11px;border-radius:10px;margin-bottom:12px"></div>
+    <label class="fld">メールアドレス</label>
+    <input id="au-email" type="email" placeholder="you@example.com" autocomplete="email">
+    <div style="height:10px"></div>
+    <label class="fld">パスワード</label>
+    <input id="au-pass" type="password" placeholder="6文字以上" autocomplete="current-password">
+    <div style="height:16px"></div>
+    <button class="btn" id="au-submit" onclick="authSubmit()">ログイン</button>
+    <div style="text-align:center;margin-top:14px"><a id="auth-toggle" onclick="authToggle()" style="color:var(--pp);font-weight:700;font-size:13px;cursor:pointer">アカウントを作る（新規登録）</a></div>
+    <div style="text-align:center;margin-top:10px"><a onclick="doReset()" style="color:var(--sub);font-size:12px;cursor:pointer">パスワードを忘れた方</a></div>
+  </div>
+</div>
+
 <div id="ov" class="ov"><div class="modal">
   <div class="tag" id="ov-tag"></div><h3 id="ov-title"></h3><p class="muted" id="ov-body"></p>
   <div style="height:14px"></div><button class="btn" id="ov-btn" onclick="closeOv()">確認しました</button>
@@ -160,7 +180,7 @@ var GAS_REPORT_URL='https://script.google.com/macros/s/AKfycbwf-piJrr7O1-srzHw4Y
 var NOTIFY_KEY='bloom-notify-7Xk2';
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
-var state={ uid:null, isCoach:false, role:'student', tab:'today',
+var state={ uid:null, email:'', _authMode:'login', isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
   _newq:'Q2', _newtaskText:'', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
@@ -172,10 +192,10 @@ function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return
 function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
 function err(e){ console.error(e); }
 
-auth.signInAnonymously().catch(function(e){
-  document.getElementById('loading').innerHTML='<div class="card" style="max-width:340px">サインインに失敗しました。<br><span class="muted">'+esc(e.message)+'</span></div>';
+auth.onAuthStateChanged(function(user){
+  if(user){ state.uid=user.uid; state.email=user.email||''; var a=document.getElementById('authscreen'); if(a)a.classList.remove('on'); boot(); }
+  else { document.getElementById('loading').classList.add('hide'); showAuth(); }
 });
-auth.onAuthStateChanged(function(user){ if(!user) return; state.uid=user.uid; boot(); });
 
 async function boot(){
   try{ var roleDoc=await db.doc('roles/coach').get(); state.isCoach = roleDoc.exists && (roleDoc.data().uids||[]).indexOf(state.uid)>=0; }catch(e){ state.isCoach=false; }
@@ -335,7 +355,7 @@ function viewMenu(){
     '<a class="sc" href="'+VIDEO_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--green-l)">▶</span><span><b>無料動画</b><br><span class="muted" style="font-size:12px">メンバー向けオンライン講座</span></span><span class="arr">→</span></a>'+
     '<a class="sc" href="'+ZOOM_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:#E6F1FB">📅</span><span><b>ZOOMの予定を組む</b><br><span class="muted" style="font-size:12px">面談の予約はこちら</span></span><span class="arr">→</span></a></div>'+
   '<div class="card"><h2>📖 用語解説</h2><p class="muted" style="margin-bottom:2px">ビジネス初心者向け。用語をタップすると説明が開きます。</p>'+renderGlossary()+'</div>'+
-  '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>';
+  '<div class="card"><h2>お知らせ一覧</h2>'+anns+'</div>'+'<div class="card"><div class="muted" style="font-size:12px">ログイン中：'+esc(state.email||'')+'</div><button class="btn ghost" style="margin-top:10px" onclick="doLogout()">ログアウト</button></div>';
 }
 
 /* ===== コーチ ===== */
@@ -376,7 +396,7 @@ function coachView(){
   }
   var tabs='<div class="ctabs">'+['list','week','karte'].map(function(t){var lbl={list:'今日の一覧',week:'直近1週間',karte:'受講生カルテ'}[t]; return '<button class="'+(state.coachTab===t?'on':'')+'" onclick="setCoachTab(\''+t+'\')">'+lbl+'</button>';}).join('')+'</div>';
   var body=state.coachTab==='week'?coachWeek():state.coachTab==='karte'?coachKarte():coachList();
-  return tabs+body;
+  return tabs+body+'<div style="margin-top:10px;text-align:right"><button class="btn ghost sm" onclick="doLogout()">ログアウト（'+esc(state.email||'')+'）</button></div>';
 }
 function coachList(){
   var ss=state.coachStudents;
@@ -474,6 +494,27 @@ function render(){
   if(state.role==='student'){ var v={today:viewToday,plan:viewPlan,feed:viewFeed,menu:viewMenu}[state.tab]; document.getElementById('s-body').innerHTML=v(); }
   else{ document.getElementById('c-body').innerHTML=coachView(); }
 }
+
+function showAuth(){ renderAuth(); document.getElementById('authscreen').classList.add('on'); }
+function renderAuth(){
+  var login=state._authMode!=='signup';
+  document.getElementById('auth-title').textContent=login?'ログイン':'新規登録';
+  document.getElementById('au-submit').textContent=login?'ログイン':'登録する';
+  document.getElementById('au-pass').setAttribute('autocomplete',login?'current-password':'new-password');
+  document.getElementById('auth-toggle').textContent=login?'アカウントを作る（新規登録）':'ログインに戻る';
+}
+function authToggle(){ state._authMode=(state._authMode==='signup')?'login':'signup'; authErr(''); renderAuth(); }
+function authErr(m){ var e=document.getElementById('auth-err'); e.textContent=m||''; e.style.display=m?'block':'none'; }
+function authMsg(e){ var c=(e&&e.code)||''; if(c.indexOf('email-already-in-use')>=0) return 'このメールは登録済みです。ログインしてください。'; if(c.indexOf('invalid-email')>=0) return 'メールアドレスの形式が正しくありません。'; if(c.indexOf('weak-password')>=0) return 'パスワードは6文字以上にしてください。'; if(c.indexOf('wrong-password')>=0||c.indexOf('invalid-credential')>=0||c.indexOf('invalid-login')>=0) return 'メールまたはパスワードが違います。'; if(c.indexOf('user-not-found')>=0) return 'アカウントが見つかりません。新規登録してください。'; if(c.indexOf('too-many-requests')>=0) return '試行が多すぎます。少し待ってからお試しください。'; return 'エラー: '+((e&&e.message)||c); }
+async function authSubmit(){
+  var em=(document.getElementById('au-email').value||'').trim(); var pw=document.getElementById('au-pass').value||'';
+  if(!em||!pw){ authErr('メールアドレスとパスワードを入力してください'); return; }
+  var btn=document.getElementById('au-submit'); btn.disabled=true; authErr('');
+  try{ if(state._authMode==='signup'){ await auth.createUserWithEmailAndPassword(em,pw); } else { await auth.signInWithEmailAndPassword(em,pw); } }
+  catch(e){ authErr(authMsg(e)); btn.disabled=false; }
+}
+async function doReset(){ var em=(document.getElementById('au-email').value||'').trim(); if(!em){ authErr('メールアドレスを入力してから押してください'); return; } try{ await auth.sendPasswordResetEmail(em); alert('パスワード再設定メールを送りました。受信トレイをご確認ください。'); authErr(''); }catch(e){ authErr(authMsg(e)); } }
+function doLogout(){ if(!confirm('ログアウトしますか？')) return; auth.signOut().then(function(){ location.reload(); }); }
 
 function showOv(it){ document.getElementById('ov-tag').textContent=it.tag; document.getElementById('ov-title').textContent=it.title; document.getElementById('ov-body').textContent=it.body; document.getElementById('ov-btn').textContent=it.btn||'確認しました'; document.getElementById('ov').classList.add('on'); }
 function closeOv(){ document.getElementById('ov').classList.remove('on'); if(state.popupQueue.length) showOv(state.popupQueue.shift()); }
