@@ -182,7 +182,7 @@ var SHEET_URL='https://docs.google.com/spreadsheets/d/1GJl922Lfd14dI8fXuzoZen1FR
 var HIDE_NAMES=['りおっぺ','ともこ'];
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
-var state={ uid:null, email:'', _authMode:'login', isCoach:false, role:'student', tab:'today',
+var state={ uid:null, email:'', _authMode:'login', _editAnn:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
   _newq:'Q2', _newtaskText:'', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
@@ -261,7 +261,7 @@ function viewToday(){
     '<div class="stat"><div class="n">'+state.checkinDays+'</div><div class="l">報告した日数</div></div>'+
     '<div style="text-align:center">'+ring(q2ratio())+'<div class="l" style="font-size:11px;font-weight:700;color:var(--pp-d)">第2象限の割合</div></div>'+
   '</div></div>'+
-  (ann?'<div class="card" style="border-left:4px solid var(--pp)"><div class="muted" style="font-weight:700;color:var(--pp-d)">📣 '+esc(ann.title)+'</div><div class="muted" style="margin-top:2px">'+esc(ann.body)+'</div></div>':'')+
+  (ann?'<div class="card" style="border-left:4px solid var(--pp)"><div class="muted" style="font-weight:700;color:var(--pp-d)">📣 '+esc(ann.title)+' <span style="font-weight:400;font-size:11px;color:var(--sub)">'+fmtDate(ann.at)+'</span></div><div class="muted" style="margin-top:2px">'+esc(ann.body)+'</div></div>':'')+
   '<div class="card"><h2>今日のチェックイン</h2>'+
     '<p class="muted" style="margin-bottom:12px">「設計」で行列に置いた①②のタスクです。できたら ○ をタップ。</p>'+
     (rows||'<p class="muted">「設計」タブでKSFとタスクを登録しましょう。</p>')+
@@ -350,7 +350,7 @@ function renderGlossary(){
   }).join('');
 }
 function viewMenu(){
-  var anns=state.announcements.map(function(a){ return '<div class="feed-item"><span class="dot"></span><span><b>'+esc(a.title)+'</b><br><span class="muted">'+esc(a.body)+'</span></span></div>'; }).join('')||'<div class="muted">お知らせはまだありません。</div>';
+  var anns=state.announcements.slice(0,3).map(function(a){ return '<div class="feed-item"><span class="dot"></span><span><b>'+esc(a.title)+'</b> <span class="muted" style="font-size:11px">'+fmtDate(a.at)+'</span><br><span class="muted">'+esc(a.body)+'</span></span></div>'; }).join('')||'<div class="muted">お知らせはまだありません。</div>';
   return ''+
   '<div class="card"><h2>ショートカット</h2><p class="muted" style="margin-bottom:12px">とーるさんのコンテンツへ。</p>'+
     '<a class="sc" href="'+COLUMN_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--pp-l)">📝</span><span><b>僕のコラム</b><br><span class="muted" style="font-size:12px">考え方を深める読みもの</span></span><span class="arr">→</span></a>'+
@@ -413,9 +413,7 @@ function coachList(){
   return ''+
   '<div class="card" style="display:flex;gap:10px;align-items:center"><span class="pill rd">要フォロー '+stalled+'名</span><span class="muted">未報告・滞り・第2象限が低い人を上に。右端で生徒にアドバイス送信。</span></div>'+
   '<div class="card"><h2>今日の一覧（'+ss.length+'名）</h2><div style="overflow-x:auto"><table><thead><tr><th>名前</th><th>今月のKSF</th><th>今日</th><th>達成</th><th>第2象限</th><th>ふりかえり</th><th>アドバイス（生徒に表示）</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
-  '<div class="card"><h2>お知らせを投稿</h2><label class="fld">タイトル</label><input id="an-title" placeholder="例：今週のテーマ"><div style="height:8px"></div>'+
-    '<label class="fld">本文</label><textarea id="an-body" placeholder="受講生へのメッセージ"></textarea><div style="height:12px"></div>'+
-    '<button class="btn" onclick="postAnnounce()">投稿する</button></div>';
+  coachAnnounceCard();
 }
 function coachWeek(){
   var ss=state.coachStudents; var ICON={done:'✓',part:'½',none:'・'};
@@ -474,11 +472,31 @@ async function saveAdvice(uid){
   try{ await db.doc('advice/'+uid).set({uid:uid,text:el.value,by:state.uid,at:Date.now()},{merge:true}); toast('アドバイスを送信しました'); var s=state.coachStudents.find(function(x){return x.uid===uid;}); if(s)s.advice=el.value; }
   catch(e){ toast('保存に失敗: '+(e.code||e.message)); }
 }
+function fmtDate(ts){ if(!ts) return ''; var d=new Date(ts); return (d.getMonth()+1)+'/'+d.getDate(); }
 async function postAnnounce(){
   var t=document.getElementById('an-title'),b=document.getElementById('an-body');
   if(!t.value.trim()){ toast('タイトルを入力してください'); return; }
-  try{ await db.collection('announcements').add({title:t.value.trim(),body:b.value.trim(),publishedAt:Date.now()}); toast('投稿しました'); await loadAnnouncements(); render(); }
-  catch(e){ toast('投稿に失敗: '+e.code); }
+  try{
+    if(state._editAnn){ await db.doc('announcements/'+state._editAnn).update({title:t.value.trim(),body:b.value.trim()}); state._editAnn=null; toast('更新しました'); }
+    else { await db.collection('announcements').add({title:t.value.trim(),body:b.value.trim(),publishedAt:Date.now()}); toast('投稿しました'); }
+    await loadAnnouncements(); render();
+  }catch(e){ toast('保存に失敗: '+(e.code||e.message)); }
+}
+function editAnnounce(id){ state._editAnn=id; render(); }
+function cancelEditAnn(){ state._editAnn=null; render(); }
+async function deleteAnnounce(id){ if(!confirm('このお知らせを削除しますか？')) return; try{ await db.doc('announcements/'+id).delete(); if(state._editAnn===id) state._editAnn=null; toast('削除しました'); await loadAnnouncements(); render(); }catch(e){ toast('削除に失敗: '+(e.code||e.message)); } }
+function coachAnnounceCard(){
+  var ed=state._editAnn?state.announcements.find(function(a){return a.id===state._editAnn;}):null;
+  var editT=ed?ed.title:''; var editB=ed?ed.body:'';
+  var annList=state.announcements.map(function(a){
+    return '<div class="feed-item"><span style="flex:1"><b>'+esc(a.title)+'</b> <span class="muted" style="font-size:11px">'+fmtDate(a.at)+'</span><br><span class="muted">'+esc(a.body)+'</span></span><span style="display:flex;gap:6px;flex:none;align-items:center"><button class="btn sm ghost" onclick="editAnnounce(\''+a.id+'\')">編集</button><button class="btn sm" style="background:var(--red-l);color:var(--red)" onclick="deleteAnnounce(\''+a.id+'\')">削除</button></span></div>';
+  }).join('')||'<div class="muted" style="font-size:13px">まだありません</div>';
+  return '<div class="card"><h2>お知らせ</h2>'+
+    '<label class="fld">タイトル</label><input id="an-title" placeholder="例：今週のテーマ" value="'+escAttr(editT)+'"><div style="height:8px"></div>'+
+    '<label class="fld">本文</label><textarea id="an-body" placeholder="受講生へのメッセージ">'+esc(editB)+'</textarea><div style="height:12px"></div>'+
+    '<button class="btn" onclick="postAnnounce()">'+(state._editAnn?'更新する':'投稿する')+'</button>'+
+    (state._editAnn?'<button class="btn ghost" style="margin-top:8px" onclick="cancelEditAnn()">編集をやめる</button>':'')+
+    '<div style="height:14px"></div><div style="font-weight:700;font-size:13px">投稿済み（編集・削除できます）</div>'+annList+'</div>';
 }
 
 function setRole(r){
