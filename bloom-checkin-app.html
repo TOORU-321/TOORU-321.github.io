@@ -213,7 +213,7 @@ async function boot(){
 
 async function loadStudent(){
   try{ var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get(); state.ksf = kdoc.exists ? (kdoc.data().text||'') : ''; }catch(e){ err(e); }
-  try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q}); }); }catch(e){ err(e); }
+  try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q,done:!!x.done}); }); }catch(e){ err(e); }
   try{ var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; } }catch(e){ err(e); }
   try{ var ad=await db.doc('advice/'+state.uid).get(); state.advice = ad.exists?(ad.data().text||''):''; }catch(e){ state.advice=''; }
   await loadAnnouncements(); await loadActivity();
@@ -246,7 +246,7 @@ async function submitDay(){
   }catch(e){ toast('送信に失敗: '+e.code); }
 }
 function restDay(){ alert('🌙 今日はお休みを記録しました。\nしっかり休むことも大切な選択です。よく休むと明日のクオリティも上がります。ゆっくりしてくださいね。'); }
-function todayTasks(){ return state.tasks.filter(function(t){return t.q==='Q1'||t.q==='Q2';}); }
+function todayTasks(){ return state.tasks.filter(function(t){return (t.q==='Q1'||t.q==='Q2') && !t.done;}); }
 
 function ring(p){ return '<div class="ring" style="background:conic-gradient(var(--pp) '+(p*3.6)+'deg,var(--pp-l) 0)"><div class="in">'+p+'%</div></div>'; }
 function viewToday(){
@@ -273,14 +273,15 @@ function viewToday(){
 }
 function openTaskMenu(id){ state._taskMenu=id; render(); }
 function closeTaskMenu(){ state._taskMenu=null; render(); }
-async function completeTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); state._taskMenu=null; render(); toast('完了！🎉 おつかれさま'); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
+async function completeTask(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(t)t.done=true; state._taskMenu=null; render(); toast('完了！🎉 おつかれさま'); try{ await db.doc('tasks/'+id).update({done:true,completedAt:Date.now()}); }catch(e){ err(e); } }
+async function uncompleteTask(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(t)t.done=false; state._taskMenu=null; render(); toast('未完了に戻しました'); try{ await db.doc('tasks/'+id).update({done:false}); }catch(e){ err(e); } }
 function taskMenuHtml(){
   var t=state.tasks.find(function(x){return x.id===state._taskMenu;}); if(!t) return '';
   return '<div style="position:fixed;inset:0;background:rgba(20,15,40,.45);display:grid;place-items:center;z-index:60;padding:20px" onclick="closeTaskMenu()">'+
     '<div style="background:#fff;border-radius:18px;max-width:320px;width:100%;padding:20px;box-shadow:var(--shadow)" onclick="event.stopPropagation()">'+
       '<div style="font-weight:800;margin-bottom:2px">'+esc(t.text)+'</div>'+
       '<div class="muted" style="font-size:12px;margin-bottom:14px">'+QMETA[t.q].ic+' '+QMETA[t.q].name+'</div>'+
-      '<button class="btn" style="background:var(--green)" onclick="completeTask(\''+t.id+'\')">✅ 完了</button>'+
+      (t.done?'<button class="btn" style="background:var(--amber)" onclick="uncompleteTask(\''+t.id+'\')">↩ 未完了に戻す</button>':'<button class="btn" style="background:var(--green)" onclick="completeTask(\''+t.id+'\')">✅ 完了</button>')+
       '<button class="btn ghost" style="margin-top:8px" onclick="cycleTask(\''+t.id+'\')">↔ 象限を移動（タップで次へ）</button>'+
       '<button class="btn" style="margin-top:8px;background:var(--red-l);color:var(--red)" onclick="delTask(\''+t.id+'\')">🗑 削除</button>'+
       '<button class="btn ghost" style="margin-top:8px;background:transparent;color:var(--sub)" onclick="closeTaskMenu()">閉じる</button>'+
@@ -288,7 +289,7 @@ function taskMenuHtml(){
 }
 function quadBox(q){
   var list=state.tasks.filter(function(t){return t.q===q;});
-  var chips=list.map(function(t){ return '<div class="chip" onclick="openTaskMenu(\''+t.id+'\')" title="タップで操作"><span>'+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
+  var chips=list.map(function(t){ return '<div class="chip" onclick="openTaskMenu(\''+t.id+'\')" title="タップで操作"'+(t.done?' style="opacity:.55"':'')+'><span style="'+(t.done?'text-decoration:line-through;color:var(--sub)':'')+'">'+(t.done?'✓ ':'')+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
   var hi=q==='Q2';
   return '<div class="qd2 '+QMETA[q].cl+'"><div class="hd">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'<span class="badge-honmaru">本丸</span>':'')+'<span class="cnt">'+list.length+'</span></div><div class="ax2">'+QMETA[q].axis+'</div>'+chips+'</div>';
 }
@@ -377,7 +378,7 @@ async function loadCoach(){
       for(var w=0;w<state.weekDates.length;w++){ var ck=null; try{ var cd=await db.doc('checkins/'+s.uid+'_'+state.weekDates[w].key).get(); if(cd.exists) ck=cd.data(); }catch(e){} rec.wk.push(dayStatus(ck)); }
       try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){}
       try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){}
-      rec.tasks=[]; try{ var tq=await db.collection('tasks').where('uid','==',s.uid).get(); tq.forEach(function(d){var x=d.data(); rec.tasks.push({text:x.text,q:x.q});}); }catch(e){}
+      rec.tasks=[]; try{ var tq=await db.collection('tasks').where('uid','==',s.uid).get(); tq.forEach(function(d){var x=d.data(); rec.tasks.push({text:x.text,q:x.q,done:!!x.done});}); }catch(e){}
       var last=rec.wk[rec.wk.length-1]; rec.reported=last.st!=='none'; rec.done=last.done; rec.q2=last.q2; rec.reflection=last.reflection;
       var sil=0; for(var w2=rec.wk.length-1;w2>=0;w2--){ if(rec.wk[w2].st==='none')sil++; else break; } rec.silent=sil;
       var stk=0; for(var w3=rec.wk.length-1;w3>=0;w3--){ if(rec.wk[w3].st==='done')stk++; else break; } rec.streak=stk;
@@ -436,7 +437,7 @@ function coachTasksGrid(s){
     if(!items.length) return '';
     var hi=q==='Q2';
     return '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:800;color:'+(hi?'var(--pp-d)':'var(--sub)')+'">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'（本丸）':'')+'（'+items.length+'）</div>'+
-      items.map(function(t){return '<div style="font-size:13px;margin-top:4px;padding:4px 8px;border-left:3px solid '+(hi?'var(--pp)':'var(--line)')+'">'+esc(t.text)+'</div>';}).join('')+'</div>';
+      items.map(function(t){return '<div style="font-size:13px;margin-top:4px;padding:4px 8px;border-left:3px solid '+(t.done?'var(--green)':hi?'var(--pp)':'var(--line)')+';'+(t.done?'text-decoration:line-through;color:var(--sub)':'')+'">'+(t.done?'✓ ':'')+esc(t.text)+'</div>';}).join('')+'</div>';
   }).join('');
   return out||'<p class="muted">タスクなし</p>';
 }
