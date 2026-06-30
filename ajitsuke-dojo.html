@@ -636,6 +636,174 @@ img { display: block; max-width: 100%; }
   color: var(--c-text);
 }
 
+/* 3姉妹レシピ（アコーディオン） */
+.recipe-toggle {
+  width: 100%;
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--r-2);
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+.recipe-toggle:active { background: var(--c-surface-3); transform: scale(0.99); }
+.recipe-toggle .rt-arrow {
+  font-size: 9px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--c-accent-d);
+}
+.recipe-toggle.open .rt-arrow { transform: rotate(180deg); }
+.recipe-toggle .rt-icon { font-size: 14px; }
+
+.recipe-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.recipe-detail.open {
+  max-height: 2400px;
+  margin-top: 10px;
+}
+.recipe-inner {
+  background: var(--c-surface-2);
+  border: 1px solid var(--c-border-2);
+  border-radius: var(--r-2);
+  padding: 16px 16px 14px;
+}
+.recipe-subtitle {
+  font-family: var(--f-serif);
+  font-size: 12px;
+  color: var(--c-gold-d);
+  letter-spacing: 0.06em;
+  text-align: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--c-divider);
+}
+.recipe-section { margin-bottom: 14px; }
+.recipe-section:last-child { margin-bottom: 0; }
+.recipe-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 8px;
+}
+.recipe-section-label .rl-icon { font-size: 13px; }
+.recipe-list, .recipe-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.recipe-list li {
+  font-size: 12px;
+  color: var(--c-text);
+  padding: 3px 0 3px 14px;
+  position: relative;
+  line-height: 1.7;
+}
+.recipe-list li::before {
+  content: '・';
+  position: absolute;
+  left: 0;
+  color: var(--c-gold);
+  font-weight: 700;
+}
+.recipe-steps {
+  counter-reset: rstep;
+}
+.recipe-steps li {
+  font-size: 12px;
+  color: var(--c-text);
+  padding: 5px 0 5px 24px;
+  position: relative;
+  line-height: 1.75;
+  counter-increment: rstep;
+}
+.recipe-steps li::before {
+  content: counter(rstep);
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 17px;
+  height: 17px;
+  background: var(--c-accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 9.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.recipe-notes {
+  background: rgba(184,146,84,0.06);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.recipe-notes ul { list-style: none; padding: 0; margin: 0; }
+.recipe-notes li {
+  font-size: 11px;
+  color: var(--c-text-2);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.75;
+}
+.recipe-notes li + li { margin-top: 4px; }
+.recipe-notes li::before {
+  content: '※';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--c-warn);
+  font-size: 10px;
+  font-weight: 700;
+}
+.recipe-alt {
+  background: rgba(212,133,106,0.06);
+  border: 1px solid rgba(212,133,106,0.20);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.recipe-alt-title {
+  font-family: var(--f-serif);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-accent-d);
+  margin-bottom: 4px;
+}
+.recipe-alt-text {
+  font-size: 11.5px;
+  color: var(--c-text-2);
+  line-height: 1.8;
+}
+.recipe-storage {
+  background: var(--c-gold-l);
+  color: var(--c-gold-d);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+  letter-spacing: 0.04em;
+}
+
 /* ============================================================
    GOLDEN RATIOS
    ============================================================ */
@@ -1536,7 +1704,7 @@ img { display: block; max-width: 100%; }
     <section class="screen" data-screen="sisters">
       <button class="back" onclick="goto('home')"><svg><use href="#i-back"/></svg>ホーム</button>
       <img class="screen-banner" src="https://columns.l-mine.com/assets/titles/taitoru2.jpg" alt="3姉妹の顔ぶれ" onerror="this.style.display='none'">
-      <p class="page-sub">つゆ子・お酢子・だし子を仕込みましょう。<br>「仕込んだ」→ 数日寝かせて → 「完成」をタップしてください。</p>
+      <p class="page-sub">つゆ子・お酢子・だし子を仕込みましょう。<br>「仕込んだ」→「完成」をタップしてください。</p>
       <div id="sisterList" class="stagger-fast"></div>
     </section>
 
@@ -1676,9 +1844,91 @@ const CONFIG = {
 // DATA
 // ===========================================================
 const SISTERS = [
-  { id: 'tsuyuko', name: 'つゆ子', tag: 'TSUYUKO', desc: '醤油・みりん・かつおだしのバランスで、煮物・うどん・親子丼の味がピタッと決まる万能めんつゆ。' },
-  { id: 'osuko',   name: 'お酢子', tag: 'OSUKO',   desc: '酢の物・南蛮漬け・ピクルスまで万能。冷蔵庫に1本あると献立が広がる万能合わせ酢。' },
-  { id: 'dashiko', name: 'だし子', tag: 'DASHIKO', desc: 'お味噌汁・茶碗蒸し・卯の花のベース。市販の顆粒だしを卒業できる万能だし。' },
+  {
+    id: 'tsuyuko', name: 'つゆ子', tag: 'TSUYUKO',
+    desc: '醤油・みりん・かつおだしのバランスで、煮物・炒め物・うどん・親子丼の味がピタッと決まる万能めんつゆ。',
+    recipe: {
+      subtitle: '手作りめんつゆ',
+      ingredients: [
+        '清酒：200cc',
+        'しょうゆ：200cc',
+        '本みりん：200cc（＋50cc）',
+        '出汁パック：1包',
+        '　又は、昆布1枚：5〜10cm',
+        '　　　　かつおぶし：10〜30g',
+      ],
+      notes: [
+        'みりんは「本みりん」、酒は「清酒」を使う',
+        'みりん風調味料や料理酒は添加物が多いので避ける',
+        '昆布・かつお節は、調味料（アミノ酸）などの添加物が入っていないだしパックで代用してもOK',
+      ],
+      stepsTitle: '昆布とかつお節で作る場合',
+      steps: [
+        'しょうゆ、みりん、酒とだし昆布を鍋に入れる',
+        '弱火で加熱し、沸騰直前に昆布を取り出す',
+        '沸騰したら火をさらに弱めて、かつお節を入れる',
+        '約10分、コトコトと煮出す（アクがあれば取る）',
+        '10分後、火を止めて冷ます',
+        '冷めたら、キッチンペーパーを広げたざるでこす',
+        '使いやすい容器に移す',
+      ],
+      altSteps: {
+        title: 'だしパックで作る場合',
+        text: 'しょうゆ、みりん、酒とだしパックを鍋に入れる。あとの作り方は一緒で、濾さずにだしパックを取り出す。',
+      },
+      storage: '2ヵ月（冷蔵）',
+    },
+  },
+  {
+    id: 'osuko', name: 'お酢子', tag: 'OSUKO',
+    desc: '酢の物・南蛮漬け・ピクルスまで万能。冷蔵庫に1本あると献立が広がる万能合わせ酢。',
+    recipe: {
+      subtitle: '無添加手作り合わせ調味料（酢の物）',
+      ingredients: [
+        '水：100cc',
+        '酢：100cc',
+        '砂糖：50g〜70g',
+        '塩：5g〜10g',
+        '昆布：10cm',
+        '鷹の爪：1本',
+      ],
+      notes: [
+        '塩と砂糖は減らしすぎると保存がきかなくなるので注意する',
+        '鷹の爪は辛みではなく保存のために入れるので、種はとる',
+      ],
+      stepsTitle: '作り方',
+      steps: [
+        '昆布、水、酢、砂糖、塩を弱火で加熱し、沸騰直前に昆布を取り出す',
+        '沸騰してから3分ほど加熱する',
+        '鷹の爪と一緒に保存する',
+      ],
+      storage: '3ヵ月　※常温OK',
+    },
+  },
+  {
+    id: 'dashiko', name: 'だし子', tag: 'DASHIKO',
+    desc: 'お味噌汁・茶碗蒸し・うどんつゆのベース。市販の顆粒だしを卒業できる万能だし。',
+    recipe: {
+      subtitle: '白だし代わり',
+      ingredients: [
+        '清酒：200cc',
+        'しょうゆ：170cc',
+        '本みりん：200cc（＋50cc）',
+        '出汁パック：1包',
+        '　又は、昆布1枚：5〜10cm',
+        '　　　　かつおぶし：10〜30g',
+      ],
+      notes: [],
+      stepsTitle: '作り方',
+      steps: [
+        '鍋に調味料と昆布を入れる（だしパックを入れる）',
+        '弱火で加熱し、沸騰直前に昆布を取り出す',
+        '沸騰したら、かつおぶしを入れて弱火で10分ほど煮詰める',
+        'アルコールが飛んだらそのまま冷まし、冷めたらこす',
+      ],
+      storage: '2ヵ月（冷蔵）',
+    },
+  },
 ];
 
 const RATIOS = [];  // 黄金比図鑑は廃止（3姉妹は分量で、対比/比率ではない）
@@ -2085,10 +2335,55 @@ function renderSisters() {
           <button class="btn ${st !== 'unmade' ? 'btn-secondary' : 'btn-primary'}" ${st === 'done' ? 'disabled' : ''} onclick="sisterAction('${s.id}','making')">${st === 'unmade' ? '仕込みました' : '仕込み直す'}</button>
           <button class="btn btn-primary" ${st !== 'making' ? 'disabled' : ''} onclick="sisterAction('${s.id}','done')">完成しました</button>
         </div>
+        ${s.recipe ? renderRecipeBlock(s) : ''}
       </div>
     `;
   }).join('');
   document.getElementById('sisterList').innerHTML = html;
+}
+
+function renderRecipeBlock(s) {
+  const r = s.recipe;
+  const notesHtml = (r.notes && r.notes.length) ? `
+    <div class="recipe-notes">
+      <ul>${r.notes.map(n => `<li>${n}</li>`).join('')}</ul>
+    </div>
+  ` : '';
+  const altHtml = r.altSteps ? `
+    <div class="recipe-alt">
+      <div class="recipe-alt-title">${r.altSteps.title}</div>
+      <div class="recipe-alt-text">${r.altSteps.text}</div>
+    </div>
+  ` : '';
+  return `
+    <button class="recipe-toggle" onclick="toggleSisterRecipe('${s.id}', this)">
+      <span class="rt-icon">📖</span>
+      <span>${s.name} のレシピを見る</span>
+      <span class="rt-arrow">▼</span>
+    </button>
+    <div class="recipe-detail" id="recipe-${s.id}">
+      <div class="recipe-inner">
+        <div class="recipe-subtitle">${r.subtitle}</div>
+        <div class="recipe-section">
+          <div class="recipe-section-label"><span class="rl-icon">📝</span>材料</div>
+          <ul class="recipe-list">${r.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+        ${notesHtml}
+        <div class="recipe-section">
+          <div class="recipe-section-label"><span class="rl-icon">👩‍🍳</span>${r.stepsTitle}</div>
+          <ol class="recipe-steps">${r.steps.map(step => `<li>${step}</li>`).join('')}</ol>
+        </div>
+        ${altHtml}
+        <div class="recipe-storage">📦 保存期間：${r.storage}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleSisterRecipe(id, btn) {
+  const detail = document.getElementById('recipe-' + id);
+  if (detail) detail.classList.toggle('open');
+  if (btn) btn.classList.toggle('open');
 }
 function sisterAction(id, target) {
   state.sisters[id] = target;
@@ -2327,6 +2622,7 @@ function adminEndCourse() {
 // 公開
 window.goto = goto;
 window.sisterAction = sisterAction;
+window.toggleSisterRecipe = toggleSisterRecipe;
 window.toggleRecipe = toggleRecipe;
 window.openLine = openLine;
 window.openOpenChat = openOpenChat;
