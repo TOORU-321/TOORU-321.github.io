@@ -1507,18 +1507,6 @@ img { display: block; max-width: 100%; }
           </div>
         </button>
 
-        <button class="prog" onclick="goto('golden')">
-          <div class="prog-icon"><svg><use href="#i-key"/></svg></div>
-          <div class="prog-body">
-            <div class="prog-title">㊙ 3姉妹の黄金比</div>
-            <div class="prog-sub">3姉妹の比率を覚える</div>
-            <div class="prog-bar"><div class="prog-bar-fill" id="barGolden"></div></div>
-          </div>
-          <div class="prog-meta">
-            <div class="prog-count"><span id="cntGolden">0</span><small>/3</small></div>
-          </div>
-        </button>
-
         <button class="prog" onclick="goto('recipes')">
           <div class="prog-icon"><svg><use href="#i-bowl"/></svg></div>
           <div class="prog-body">
@@ -1550,14 +1538,6 @@ img { display: block; max-width: 100%; }
       <img class="screen-banner" src="https://columns.l-mine.com/assets/titles/taitoru2.jpg" alt="3姉妹の顔ぶれ" onerror="this.style.display='none'">
       <p class="page-sub">つゆ子・お酢子・だし子を仕込みましょう。<br>「仕込んだ」→ 数日寝かせて → 「完成」をタップしてください。</p>
       <div id="sisterList" class="stagger-fast"></div>
-    </section>
-
-    <!-- ============== GOLDEN ============== -->
-    <section class="screen" data-screen="golden">
-      <button class="back" onclick="goto('home')"><svg><use href="#i-back"/></svg>ホーム</button>
-      <h2 class="page-h">㊙ 3姉妹の黄金比</h2>
-      <p class="page-sub">3姉妹（つゆ子・お酢子・だし子）の黄金比をタップして開放しましょう。<br>すべて開けば「黄金比マスター」のバッジが付きます。</p>
-      <div class="ratio-grid stagger-fast" id="ratioGrid"></div>
     </section>
 
     <!-- ============== RECIPES ============== -->
@@ -1701,11 +1681,7 @@ const SISTERS = [
   { id: 'dashiko', name: 'だし子', tag: 'DASHIKO', desc: 'お味噌汁・茶碗蒸し・卯の花のベース。市販の顆粒だしを卒業できる万能だし。' },
 ];
 
-const RATIOS = [
-  { id: 'r1', name: 'つゆ子の黄金比', formula: '1 : 1 : 1', use: '醤油・みりん・だし' },
-  { id: 'r2', name: 'お酢子の黄金比', formula: '2 : 1 : 1', use: '酢・砂糖・醤油' },
-  { id: 'r3', name: 'だし子の黄金比', formula: '10 : 1 : 1', use: '水・昆布・かつお' },
-];
+const RATIOS = [];  // 黄金比図鑑は廃止（3姉妹は分量で、対比/比率ではない）
 
 // icon = Twemoji codepoint (unified across all devices)
 const TWEMOJI_BASE = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/';
@@ -1742,10 +1718,6 @@ const BADGES = [
   { id: 'b_o', cat: '仕込み',       icon: '🍶', name: 'お酢子完成', cond: s => s.sisters.osuko === 'done' },
   { id: 'b_d', cat: '仕込み',       icon: '🍶', name: 'だし子完成', cond: s => s.sisters.dashiko === 'done' },
   { id: 'b_3', cat: '仕込み',       icon: '👯', name: '3姉妹そろい踏み', cond: s => Object.values(s.sisters).every(v => v === 'done') },
-  { id: 'r1', cat: '黄金比',         icon: '🔑', name: 'つゆ子の比', cond: s => s.ratios.includes('r1') },
-  { id: 'r2', cat: '黄金比',         icon: '🔑', name: 'お酢子の比', cond: s => s.ratios.includes('r2') },
-  { id: 'r3', cat: '黄金比',         icon: '🔑', name: 'だし子の比', cond: s => s.ratios.includes('r3') },
-  { id: 'rall', cat: '黄金比',       icon: '👑', name: '黄金比マスター', cond: s => s.ratios.length >= RATIOS.length },
   { id: 'd5',  cat: '料理達成',     icon: '🍳', name: '5品達成', cond: s => s.recipes.length >= 5 },
   { id: 'd10', cat: '料理達成',     icon: '🍳', name: '10品達成', cond: s => s.recipes.length >= 10 },
   { id: 'd15', cat: '料理達成',     icon: '🍳', name: '15品達成', cond: s => s.recipes.length >= 15 },
@@ -1755,19 +1727,18 @@ const BADGES = [
   { id: 'kj',  cat: '麹卒業生',     icon: '🎓', name: '麹アプリ卒業生', cond: s => s.flags.kojiGraduate },
   { id: 'grad', cat: '卒業',        icon: '🏆', name: '味付け道場 卒業', cond: s =>
       Object.values(s.sisters).every(v => v === 'done') &&
-      s.ratios.length >= RATIOS.length &&
       s.recipes.length >= RECIPES.length },
 ];
 
 const TUTORIAL = [
   { step: 'STEP 01', title: 'ようこそ', char: 'kayomamaprofile',
-    body: 'はじめまして、かよママです。<br><br>この3週間で、レシピを見なくても味が決まる「黄金比」を、手に馴染ませていきましょう。一緒に楽しくいきましょうね。' },
+    body: 'はじめまして、かよママです。<br><br>この3週間で、レシピを見なくても味が決まる「3姉妹（つゆ子・お酢子・だし子）」を、手に馴染ませていきましょう。一緒に楽しくいきましょうね。' },
   { step: 'STEP 02', title: '講座の日程', char: 'kayo3',
     body: '<strong>7/4（土）21:30〜23:00</strong><br>Zoomで仕組み座学＋3姉妹を仕込みます。<br><br><strong>7/5（日）21:30〜23:00</strong><br>3姉妹を使ったおうちごはん作り。<br><br>どちらも見るだけ参加でOKです。' },
   { step: 'STEP 03', title: '3姉妹を仕込む', char: 'kayo2',
     body: 'つゆ子・お酢子・だし子の3つを仕込んで、まずは台所の「土台」を整えます。<br><br>アプリで仕込みの状態を記録できます。' },
-  { step: 'STEP 04', title: '黄金比と料理図鑑', char: 'kayo1',
-    body: '3姉妹（つゆ子・お酢子・だし子）の「黄金比」をタップして開放。<br><br>3姉妹を使った25品の料理は、作れたらタップでチェック。節目でバッジがもらえます。' },
+  { step: 'STEP 04', title: '料理図鑑', char: 'kayo1',
+    body: '3姉妹を使った25品の料理は、作れたらタップでチェック。<br><br>5・10・15・20・25品の節目でバッジがもらえます。' },
   { step: 'STEP 05', title: '困った時は', char: 'kayo4',
     body: '3週間、なんでも質問できます。<br><br>仲間と学ぶ「オープンチャット」もぜひのぞいてみてくださいね。' },
   { step: 'STEP 06', title: 'お名前を教えてください', char: 'kayo3',
@@ -1828,7 +1799,6 @@ function refresh() {
   updateFeature();
   updateProgressBars();
   renderSisters();
-  renderRatios();
   renderRecipes();
   renderBadges();
   renderKojiSettings();
@@ -2090,8 +2060,6 @@ function updateProgressBars() {
   const sDone = Object.values(state.sisters).filter(v => v === 'done').length;
   countUp(document.getElementById('cntSisters'), sDone);
   document.getElementById('barSisters').style.width = (sDone/3*100) + '%';
-  countUp(document.getElementById('cntGolden'), state.ratios.length);
-  document.getElementById('barGolden').style.width = (state.ratios.length/RATIOS.length*100) + '%';
   countUp(document.getElementById('cntRecipes'), state.recipes.length);
   document.getElementById('barRecipes').style.width = (state.recipes.length/25*100) + '%';
 }
@@ -2136,28 +2104,7 @@ function sisterAction(id, target) {
 // ===========================================================
 // RATIOS
 // ===========================================================
-function renderRatios() {
-  const html = RATIOS.map((r, i) => {
-    const open = state.ratios.includes(r.id);
-    return `
-      <button class="ratio ${open ? '' : 'locked'}" ${open ? '' : 'onclick="unlockRatio(\'' + r.id + '\')"'}>
-        <div class="ratio-no">NO.${String(i+1).padStart(2,'0')}</div>
-        <div class="ratio-name serif">${r.name}</div>
-        <div class="ratio-formula">${r.formula}</div>
-        <div class="ratio-use">${r.use}</div>
-      </button>
-    `;
-  }).join('');
-  document.getElementById('ratioGrid').innerHTML = html;
-}
-function unlockRatio(id) {
-  if (state.ratios.includes(id)) return;
-  state.ratios.push(id);
-  const r = RATIOS.find(x => x.id === id);
-  toast(r.name + ' を覚えました');
-  sendToSheet('ratio-unlock', { id, name: r.name });
-  refresh();
-}
+// 黄金比図鑑は廃止（3姉妹は分量で、対比/比率ではないため）
 
 // ===========================================================
 // RECIPES
@@ -2358,7 +2305,6 @@ function adminReset() {
 function adminFillDemo() {
   state.sisters = { tsuyuko: 'done', osuko: 'making', dashiko: 'unmade' };
   state.sistersAt = { tsuyuko: new Date(Date.now()-3*86400000).toISOString(), osuko: new Date().toISOString(), dashiko: null };
-  state.ratios = ['r1','r2','r3'];
   state.recipes = ['d01','d02','d05','d08','d14','d15','d17'];
   refresh();
   toast('デモデータを入れました');
@@ -2366,7 +2312,6 @@ function adminFillDemo() {
 function adminUnlockAll() {
   state.sisters = { tsuyuko: 'done', osuko: 'done', dashiko: 'done' };
   state.sistersAt = { tsuyuko: new Date().toISOString(), osuko: new Date().toISOString(), dashiko: new Date().toISOString() };
-  state.ratios = RATIOS.map(r => r.id);
   state.recipes = RECIPES.map(r => r.id);
   state.flags = { openedChat: true, kojiGraduate: true, ended: false };
   refresh();
@@ -2382,7 +2327,6 @@ function adminEndCourse() {
 // 公開
 window.goto = goto;
 window.sisterAction = sisterAction;
-window.unlockRatio = unlockRatio;
 window.toggleRecipe = toggleRecipe;
 window.openLine = openLine;
 window.openOpenChat = openOpenChat;
