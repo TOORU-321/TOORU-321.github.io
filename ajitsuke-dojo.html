@@ -934,6 +934,28 @@ img { display: block; max-width: 100%; }
   font-weight: 600;
 }
 
+/* 使い方画面 末尾のクレジット */
+.usage-credits {
+  margin-top: 28px;
+  padding: 18px 18px 8px;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--c-text-3);
+  line-height: 2.1;
+  letter-spacing: 0.04em;
+  border-top: 1px dashed var(--c-divider);
+}
+.usage-credits .credit-line {
+  display: block;
+}
+.usage-credits a {
+  color: var(--c-text-2);
+  text-decoration: underline;
+  text-decoration-color: rgba(168,144,120,0.35);
+  text-underline-offset: 2px;
+}
+.usage-credits a:hover { color: var(--c-accent); }
+
 /* ============================================================
    FAREWELL
    ============================================================ */
@@ -1580,6 +1602,11 @@ img { display: block; max-width: 100%; }
           <div class="onb-hint" id="kojiSetHint"></div>
           <button class="onb-btn" onclick="enterKojiFromSettings()">確認する</button>
         </div>
+      </div>
+
+      <div class="usage-credits">
+        <span class="credit-line">監修：<a href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1" target="_blank" rel="noopener">かよママ</a></span>
+        <span class="credit-line">作成：<a href="https://www.instagram.com/tooru_lab?igsh=ZWcxcTA2OGJtajE0&amp;utm_source=qr" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a></span>
       </div>
     </section>
 
