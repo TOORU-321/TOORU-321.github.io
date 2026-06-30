@@ -203,7 +203,7 @@ var ZOOM_REMIND_DAYS=[10,20,30];
 var GAS_REPORT_URL='https://script.google.com/macros/s/AKfycbwf-piJrr7O1-srzHw4YDJRl_jFZBbZzAYsaEYZOIiT_I-H-vTZvtTxnW-Wltx8xVs04g/exec';
 var NOTIFY_KEY='bloom-notify-7Xk2';
 var SHEET_URL='https://docs.google.com/spreadsheets/d/1GJl922Lfd14dI8fXuzoZen1FRSLAsvFxFK30OJWe5t8/edit';
-var HIDE_NAMES=['りおっぺ','ともこ'];
+var HIDE_UIDS=['23NwvjCVRQSLXVscK6hptPsPde42','5Ri0ohFOU1eZ4RKjWiGDqBnGoC43','MJ9qEV9EDbfcjWkzwx73SmeP3im1','Qk9ILm0JYwfHcubefKZaVEOCOMn1','sA0CSaoW9GO7jhU7bfHP4ruYW842'];
 var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2:{name:'計画的にやる',axis:'重要 × 緊急でない',ic:'🌱',cl:'q2'},Q3:{name:'減らす・任せる',axis:'重要でない × 緊急',ic:'🤝',cl:'q3'},Q4:{name:'やめる',axis:'重要でない × 緊急でない',ic:'💤',cl:'q4'}};
 
 var state={ uid:null, email:'', _authMode:'login', _editAnn:null, isCoach:false, role:'student', tab:'today',
@@ -396,7 +396,7 @@ async function loadCoach(){
   state.weekDates=[]; for(var d=6; d>=0; d--){ var dt=new Date(); dt.setDate(dt.getDate()-d); var key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); state.weekDates.push({key:key,label:(dt.getMonth()+1)+'/'+dt.getDate()}); }
   try{
     var us=await db.collection('users').where('role','==','student').get();
-    var list=[]; us.forEach(function(d){ var x=d.data(); if(HIDE_NAMES.indexOf(x.name)<0) list.push(x); });
+    var list=[]; us.forEach(function(d){ var x=d.data(); if(HIDE_UIDS.indexOf(x.uid)<0) list.push(x); });
     for(var i=0;i<list.length;i++){
       var s=list[i]; var rec={name:s.name||'(無名)',uid:s.uid,ksf:'',advice:'',wk:[]};
       for(var w=0;w<state.weekDates.length;w++){ var ck=null; try{ var cd=await db.doc('checkins/'+s.uid+'_'+state.weekDates[w].key).get(); if(cd.exists) ck=cd.data(); }catch(e){} rec.wk.push(dayStatus(ck)); }
