@@ -1510,12 +1510,12 @@ img { display: block; max-width: 100%; }
         <button class="prog" onclick="goto('golden')">
           <div class="prog-icon"><svg><use href="#i-key"/></svg></div>
           <div class="prog-body">
-            <div class="prog-title">㊙ 黄金比図鑑</div>
-            <div class="prog-sub">味が決まる比率を覚える</div>
+            <div class="prog-title">㊙ 3姉妹の黄金比</div>
+            <div class="prog-sub">3姉妹の比率を覚える</div>
             <div class="prog-bar"><div class="prog-bar-fill" id="barGolden"></div></div>
           </div>
           <div class="prog-meta">
-            <div class="prog-count"><span id="cntGolden">0</span><small>/6</small></div>
+            <div class="prog-count"><span id="cntGolden">0</span><small>/3</small></div>
           </div>
         </button>
 
@@ -1555,8 +1555,8 @@ img { display: block; max-width: 100%; }
     <!-- ============== GOLDEN ============== -->
     <section class="screen" data-screen="golden">
       <button class="back" onclick="goto('home')"><svg><use href="#i-back"/></svg>ホーム</button>
-      <h2 class="page-h">㊙ 黄金比図鑑</h2>
-      <p class="page-sub">講座で学ぶ黄金比をタップして開放しましょう。<br>すべて開けば「黄金比マスター」のバッジが付きます。</p>
+      <h2 class="page-h">㊙ 3姉妹の黄金比</h2>
+      <p class="page-sub">3姉妹（つゆ子・お酢子・だし子）の黄金比をタップして開放しましょう。<br>すべて開けば「黄金比マスター」のバッジが付きます。</p>
       <div class="ratio-grid stagger-fast" id="ratioGrid"></div>
     </section>
 
@@ -1702,12 +1702,9 @@ const SISTERS = [
 ];
 
 const RATIOS = [
-  { id: 'r1', name: 'つゆ子の比', formula: '1 : 1 : 1', use: '醤油・みりん・だし' },
-  { id: 'r2', name: 'お酢子の比', formula: '2 : 1 : 1', use: '酢・砂糖・醤油' },
-  { id: 'r3', name: 'だし子の比', formula: '10 : 1 : 1', use: '水・昆布・かつお' },
-  { id: 'r4', name: '煮物の比',   formula: '8 : 1 : 1', use: 'だし・醤油・みりん' },
-  { id: 'r5', name: '和え物の比', formula: '3 : 1 : 1', use: 'だし・醤油・酢' },
-  { id: 'r6', name: '照り焼きの比', formula: '1 : 1 : 1 : 1', use: '醤油・みりん・酒・砂糖' },
+  { id: 'r1', name: 'つゆ子の黄金比', formula: '1 : 1 : 1', use: '醤油・みりん・だし' },
+  { id: 'r2', name: 'お酢子の黄金比', formula: '2 : 1 : 1', use: '酢・砂糖・醤油' },
+  { id: 'r3', name: 'だし子の黄金比', formula: '10 : 1 : 1', use: '水・昆布・かつお' },
 ];
 
 // icon = Twemoji codepoint (unified across all devices)
@@ -1748,9 +1745,6 @@ const BADGES = [
   { id: 'r1', cat: '黄金比',         icon: '🔑', name: 'つゆ子の比', cond: s => s.ratios.includes('r1') },
   { id: 'r2', cat: '黄金比',         icon: '🔑', name: 'お酢子の比', cond: s => s.ratios.includes('r2') },
   { id: 'r3', cat: '黄金比',         icon: '🔑', name: 'だし子の比', cond: s => s.ratios.includes('r3') },
-  { id: 'r4', cat: '黄金比',         icon: '🔑', name: '煮物の比', cond: s => s.ratios.includes('r4') },
-  { id: 'r5', cat: '黄金比',         icon: '🔑', name: '和え物の比', cond: s => s.ratios.includes('r5') },
-  { id: 'r6', cat: '黄金比',         icon: '🔑', name: '照り焼きの比', cond: s => s.ratios.includes('r6') },
   { id: 'rall', cat: '黄金比',       icon: '👑', name: '黄金比マスター', cond: s => s.ratios.length >= RATIOS.length },
   { id: 'd5',  cat: '料理達成',     icon: '🍳', name: '5品達成', cond: s => s.recipes.length >= 5 },
   { id: 'd10', cat: '料理達成',     icon: '🍳', name: '10品達成', cond: s => s.recipes.length >= 10 },
@@ -1773,7 +1767,7 @@ const TUTORIAL = [
   { step: 'STEP 03', title: '3姉妹を仕込む', char: 'kayo2',
     body: 'つゆ子・お酢子・だし子の3つを仕込んで、まずは台所の「土台」を整えます。<br><br>アプリで仕込みの状態を記録できます。' },
   { step: 'STEP 04', title: '黄金比と料理図鑑', char: 'kayo1',
-    body: '講座で出てくる「黄金比」をタップして開放。<br><br>3姉妹を使った25品の料理は、作れたらタップでチェック。節目でバッジがもらえます。' },
+    body: '3姉妹（つゆ子・お酢子・だし子）の「黄金比」をタップして開放。<br><br>3姉妹を使った25品の料理は、作れたらタップでチェック。節目でバッジがもらえます。' },
   { step: 'STEP 05', title: '困った時は', char: 'kayo4',
     body: '3週間、なんでも質問できます。<br><br>仲間と学ぶ「オープンチャット」もぜひのぞいてみてくださいね。' },
   { step: 'STEP 06', title: 'お名前を教えてください', char: 'kayo3',
