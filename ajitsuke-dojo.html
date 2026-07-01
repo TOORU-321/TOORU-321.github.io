@@ -636,6 +636,142 @@ img { display: block; max-width: 100%; }
   color: var(--c-text);
 }
 
+/* 先行予約 選択モーダル */
+.preorder-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(46, 33, 24, 0.7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+.preorder-modal.hidden { display: none; }
+.preorder-modal-card {
+  background: linear-gradient(180deg, #FFF6E6 0%, #FFFFFF 100%);
+  border-radius: var(--r-4);
+  padding: 28px 22px 22px;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+  animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  border: 1.5px solid var(--c-gold);
+}
+.preorder-modal-emoji {
+  font-size: 36px;
+  margin-bottom: 4px;
+}
+.preorder-modal-title {
+  font-family: var(--f-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+.preorder-modal-sub {
+  font-size: 12.5px;
+  color: var(--c-text-2);
+  line-height: 1.9;
+  margin-bottom: 18px;
+}
+.preorder-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.preorder-option { display: block; cursor: pointer; }
+.preorder-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.preorder-option-box {
+  background: #fff;
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-2);
+  padding: 12px 44px 12px 14px;
+  text-align: left;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+.preorder-option-box::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--c-border);
+  border-radius: 50%;
+  transition: all 0.2s;
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.preorder-option input:checked ~ .preorder-option-box {
+  background: linear-gradient(135deg, #FFF6E6 0%, #FFE8DC 100%);
+  border-color: var(--c-accent);
+  box-shadow: 0 2px 10px rgba(212,133,106,0.20);
+}
+.preorder-option input:checked ~ .preorder-option-box::after {
+  background-color: var(--c-accent);
+  border-color: var(--c-accent);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3'><polyline points='5 12 10 17 19 8'/></svg>");
+}
+.preorder-option-when {
+  background: var(--c-gold);
+  color: #fff;
+  padding: 4px 11px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.preorder-option-what {
+  font-family: var(--f-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-ink);
+  letter-spacing: 0.03em;
+}
+.preorder-submit {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-d) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-pill);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  box-shadow: 0 3px 10px rgba(212,133,106,0.3);
+  margin-bottom: 8px;
+}
+.preorder-submit:active { transform: scale(0.98); }
+.preorder-cancel {
+  background: none;
+  border: none;
+  color: var(--c-text-3);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 8px;
+  cursor: pointer;
+}
+
 /* 先行予約カード（サポート残り3日以内で有効化） */
 .preorder-card {
   display: none;
@@ -1778,11 +1914,11 @@ img { display: block; max-width: 100%; }
       <!-- 先行予約カード（サポート残り3日以内で有効化） -->
       <div class="preorder-card" id="preorderCard">
         <div class="preorder-eyebrow">🌸 NEW ARRIVAL</div>
-        <div class="preorder-title">次の中規模企画 先行予約</div>
+        <div class="preorder-title">かよママ 次のサポート</div>
         <div class="preorder-msg">
-          かよママの次の企画の <strong>先行予約</strong> が始まりました。<br>
-          ご希望の方はボタンをタップしてください。<br>
-          後日、かよママから直接ご案内いたします。
+          <strong>8月 単発レシピ</strong> と <strong>9月 献立サポート</strong> の<br>
+          <strong>先行予約</strong> が始まりました。<br>
+          ご興味のある方はボタンからお進みください。
         </div>
         <button class="preorder-btn" id="preorderBtn" onclick="requestPreorder()">先行予約を希望する</button>
       </div>
@@ -1901,6 +2037,36 @@ img { display: block; max-width: 100%; }
 
 <!-- Toast -->
 <div class="toast hidden" id="toast"></div>
+
+<!-- 先行予約 選択モーダル -->
+<div class="preorder-modal hidden" id="preorderModal">
+  <div class="preorder-modal-card">
+    <div class="preorder-modal-emoji">🌸</div>
+    <div class="preorder-modal-title">かよママ 次のサポート</div>
+    <div class="preorder-modal-sub">
+      ご興味のあるサポートに<br>
+      チェックを入れてください（複数選択OK）
+    </div>
+    <div class="preorder-options">
+      <label class="preorder-option">
+        <input type="checkbox" id="popt-aug">
+        <div class="preorder-option-box">
+          <div class="preorder-option-when">8月</div>
+          <div class="preorder-option-what">単発レシピ</div>
+        </div>
+      </label>
+      <label class="preorder-option">
+        <input type="checkbox" id="popt-sep">
+        <div class="preorder-option-box">
+          <div class="preorder-option-when">9月</div>
+          <div class="preorder-option-what">献立サポート</div>
+        </div>
+      </label>
+    </div>
+    <button class="preorder-submit" onclick="submitPreorder()">送信する</button>
+    <button class="preorder-cancel" onclick="closePreorderModal()">キャンセル</button>
+  </div>
+</div>
 
 <!-- Celebrate -->
 <div class="celebrate hidden" id="celebrate">
@@ -2098,7 +2264,7 @@ const DEFAULT_STATE = {
   ratios: [],
   recipes: [],
   badges: [],
-  flags: { openedChat: false, kojiGraduate: false, ended: false, preorderNotified: false, preorderRequested: false },
+  flags: { openedChat: false, kojiGraduate: false, ended: false, preorderNotified: false, preorderRequested: false, preorderChoices: '' },
 };
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
@@ -2661,15 +2827,50 @@ function updatePreorderCard() {
 }
 
 function requestPreorder() {
-  if (state.flags.preorderRequested) return;
+  if (state.flags.preorderRequested) {
+    toast('すでにご希望を受付済みです');
+    return;
+  }
+  const modal = document.getElementById('preorderModal');
+  const augEl = document.getElementById('popt-aug');
+  const sepEl = document.getElementById('popt-sep');
+  if (augEl) augEl.checked = false;
+  if (sepEl) sepEl.checked = false;
+  if (modal) modal.classList.remove('hidden');
+}
+
+function closePreorderModal() {
+  const modal = document.getElementById('preorderModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function submitPreorder() {
+  const augEl = document.getElementById('popt-aug');
+  const sepEl = document.getElementById('popt-sep');
+  const augChecked = augEl && augEl.checked;
+  const sepChecked = sepEl && sepEl.checked;
+  if (!augChecked && !sepChecked) {
+    toast('ご興味のあるものを選んでください');
+    return;
+  }
+  const choices = [];
+  if (augChecked) choices.push('8月 単発レシピ');
+  if (sepChecked) choices.push('9月 献立サポート');
+  const choicesStr = choices.join(' / ');
+
   state.flags.preorderRequested = true;
-  sendToSheet('next-booking', { name: state.userName });
-  celebrate(
-    '先行予約を承りました',
-    'ありがとうございます🌸<br>後日、かよママから改めて<br>ご案内いたします。',
-    'kayo3',
-    'RECEIVED'
-  );
+  state.flags.preorderChoices = choicesStr;
+  sendToSheet('next-booking', { name: state.userName, choices: choicesStr });
+
+  closePreorderModal();
+  setTimeout(() => {
+    celebrate(
+      'ありがとうございます！',
+      '追って詳細を<br>お送りしますね🌸',
+      'kayo3',
+      'RECEIVED'
+    );
+  }, 250);
   refresh();
 }
 
@@ -2799,6 +3000,8 @@ window.adminUnlockAll = adminUnlockAll;
 window.adminEndCourse = adminEndCourse;
 window.adminPreorderWindow = adminPreorderWindow;
 window.requestPreorder = requestPreorder;
+window.submitPreorder = submitPreorder;
+window.closePreorderModal = closePreorderModal;
 </script>
 </body>
 </html>
