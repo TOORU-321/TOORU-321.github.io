@@ -636,6 +636,81 @@ img { display: block; max-width: 100%; }
   color: var(--c-text);
 }
 
+/* 先行予約カード（サポート残り3日以内で有効化） */
+.preorder-card {
+  display: none;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #FFF6E6 0%, #FFE8DC 100%);
+  border: 1.5px solid var(--c-accent);
+  border-radius: var(--r-3);
+  padding: 16px 18px 18px;
+  box-shadow: 0 4px 14px rgba(212,133,106,0.20);
+  position: relative;
+  overflow: hidden;
+}
+.preorder-card.on { display: block; animation: preorderSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes preorderSlide {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.preorder-card::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle, rgba(212,133,106,0.14) 0%, transparent 70%);
+}
+.preorder-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--c-accent-d);
+  font-weight: 600;
+  margin-bottom: 6px;
+  position: relative;
+}
+.preorder-title {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+  position: relative;
+}
+.preorder-msg {
+  font-size: 12px;
+  color: var(--c-text-2);
+  line-height: 1.8;
+  margin-bottom: 14px;
+  position: relative;
+}
+.preorder-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-d) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-pill);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(212,133,106,0.3);
+  transition: transform 0.15s;
+  position: relative;
+}
+.preorder-btn:active { transform: scale(0.98); }
+.preorder-btn.done {
+  background: var(--c-surface-3);
+  color: var(--c-text-2);
+  box-shadow: none;
+  cursor: default;
+}
+.preorder-btn.done::before { content: '✓ '; }
+
 /* 3姉妹レシピ（アコーディオン） */
 .recipe-toggle {
   width: 100%;
@@ -1620,6 +1695,7 @@ img { display: block; max-width: 100%; }
     <button onclick="adminFillDemo()">デモ</button>
     <button onclick="adminUnlockAll()">全解放</button>
     <button onclick="adminEndCourse()">講座終了</button>
+    <button onclick="adminPreorderWindow()">先行予約OPEN</button>
     <span class="tag">ADMIN</span>
   </div>
 
@@ -1698,6 +1774,18 @@ img { display: block; max-width: 100%; }
         </div>
         <div class="community-arrow"><svg><use href="#i-chevron"/></svg></div>
       </button>
+
+      <!-- 先行予約カード（サポート残り3日以内で有効化） -->
+      <div class="preorder-card" id="preorderCard">
+        <div class="preorder-eyebrow">🌸 NEW ARRIVAL</div>
+        <div class="preorder-title">次の中規模企画 先行予約</div>
+        <div class="preorder-msg">
+          かよママの次の企画の <strong>先行予約</strong> が始まりました。<br>
+          ご希望の方はボタンをタップしてください。<br>
+          後日、かよママから直接ご案内いたします。
+        </div>
+        <button class="preorder-btn" id="preorderBtn" onclick="requestPreorder()">先行予約を希望する</button>
+      </div>
     </section>
 
     <!-- ============== SISTERS ============== -->
@@ -2010,7 +2098,7 @@ const DEFAULT_STATE = {
   ratios: [],
   recipes: [],
   badges: [],
-  flags: { openedChat: false, kojiGraduate: false, ended: false },
+  flags: { openedChat: false, kojiGraduate: false, ended: false, preorderNotified: false, preorderRequested: false },
 };
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
@@ -2039,6 +2127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       triggerStagger(home);
       replayProgressBars(home);
     }
+    maybeShowPreorderPopup();
   }
   renderUsage();
 });
@@ -2048,6 +2137,7 @@ function refresh() {
   updateDays();
   updateFeature();
   updateProgressBars();
+  updatePreorderCard();
   renderSisters();
   renderRecipes();
   renderBadges();
@@ -2538,6 +2628,67 @@ function openOpenChat()  { state.flags.openedChat = true; refresh(); window.open
 function openNext()      { sendToSheet('next-booking', { name: state.userName }); window.open(CONFIG.NEXT_BOOKING_URL, '_blank'); }
 
 // ===========================================================
+// 先行予約（サポート残り3日以内で有効化）
+// ===========================================================
+function isPreorderAvailable() {
+  const start = state.startedAt ? new Date(state.startedAt) : new Date(CONFIG.COURSE_START);
+  const end = new Date(start);
+  end.setDate(end.getDate() + CONFIG.SUPPORT_DAYS);
+  const diff = end - Date.now();
+  const daysLeft = Math.ceil(diff / 86400000);
+  // 残り3日以内から、講座終了30日後まで有効
+  return daysLeft <= 3;
+}
+
+function updatePreorderCard() {
+  const card = document.getElementById('preorderCard');
+  const btn = document.getElementById('preorderBtn');
+  if (!card || !btn) return;
+  if (isPreorderAvailable()) {
+    card.classList.add('on');
+    if (state.flags.preorderRequested) {
+      btn.classList.add('done');
+      btn.textContent = 'ご希望を承りました';
+      btn.disabled = true;
+    } else {
+      btn.classList.remove('done');
+      btn.textContent = '先行予約を希望する';
+      btn.disabled = false;
+    }
+  } else {
+    card.classList.remove('on');
+  }
+}
+
+function requestPreorder() {
+  if (state.flags.preorderRequested) return;
+  state.flags.preorderRequested = true;
+  sendToSheet('next-booking', { name: state.userName });
+  celebrate(
+    '先行予約を承りました',
+    'ありがとうございます🌸<br>後日、かよママから改めて<br>ご案内いたします。',
+    'kayo3',
+    'RECEIVED'
+  );
+  refresh();
+}
+
+function maybeShowPreorderPopup() {
+  if (!isPreorderAvailable()) return;
+  if (state.flags.preorderNotified) return;
+  state.flags.preorderNotified = true;
+  persist();
+  setTimeout(() => {
+    celebrate(
+      '先行予約、はじまりました',
+      'かよママの次の中規模企画の<br><strong>先行予約</strong>ができるようになりました🌸<br><br>ホーム画面からいつでも<br>お申し込みいただけます。',
+      'kayo3',
+      'PREORDER OPEN'
+    );
+  }, 1400);
+}
+
+// ===========================================================
 // GAS
 // ===========================================================
 async function sendToSheet(action, payload) {
@@ -2618,6 +2769,16 @@ function adminEndCourse() {
   goto('farewell');
   toast('講座終了状態にしました');
 }
+function adminPreorderWindow() {
+  // サポート残り3日の状態を作る（21-3=18日前スタート）
+  state.startedAt = new Date(Date.now() - 18*86400000).toISOString();
+  state.flags.preorderNotified = false;
+  state.flags.preorderRequested = false;
+  refresh();
+  goto('home');
+  toast('先行予約ウィンドウ突入状態にしました');
+  setTimeout(maybeShowPreorderPopup, 400);
+}
 
 // 公開
 window.goto = goto;
@@ -2636,6 +2797,8 @@ window.adminReset = adminReset;
 window.adminFillDemo = adminFillDemo;
 window.adminUnlockAll = adminUnlockAll;
 window.adminEndCourse = adminEndCourse;
+window.adminPreorderWindow = adminPreorderWindow;
+window.requestPreorder = requestPreorder;
 </script>
 </body>
 </html>
