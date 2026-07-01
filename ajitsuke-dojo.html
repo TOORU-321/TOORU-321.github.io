@@ -769,6 +769,47 @@ img { display: block; max-width: 100%; }
   color: var(--c-ink);
   letter-spacing: 0.03em;
 }
+/* 8月 単発レッスンの告知だけ枠（チェック対象外） */
+.preorder-note {
+  background: rgba(255,251,242,0.9);
+  border: 1px dashed var(--c-gold);
+  border-radius: var(--r-2);
+  padding: 12px 14px;
+  margin: 4px 0 16px;
+  text-align: left;
+}
+.preorder-note-head {
+  font-family: var(--f-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.preorder-note-tag {
+  background: var(--c-gold);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  letter-spacing: 0.05em;
+}
+.preorder-note-body {
+  font-size: 11.5px;
+  color: var(--c-text-2);
+  line-height: 1.7;
+}
+.preorder-note-body a {
+  color: var(--c-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
 .preorder-submit {
   width: 100%;
   padding: 13px;
@@ -2013,8 +2054,8 @@ img { display: block; max-width: 100%; }
         <p id="farewellCount">獲得バッジ：— 個</p>
       </div>
       <div class="farewell-next">
-        <h3>📅 次の中規模企画 先行予約</h3>
-        <p>講座はここでひと区切り。次の中規模企画の先行予約が始まっています。<br>受講生だけの優先案内です。</p>
+        <h3>📅 次のサポート企画 先行予約</h3>
+        <p>講座はここでひと区切り。次のサポート企画の先行予約が始まっています。<br>受講生だけの優先案内です。</p>
         <button class="farewell-btn" onclick="openNext()">先行予約フォームへ</button>
       </div>
     </section>
@@ -2072,18 +2113,6 @@ img { display: block; max-width: 100%; }
     </div>
     <div class="preorder-options">
       <label class="preorder-option">
-        <input type="checkbox" id="popt-aug">
-        <div class="preorder-option-box">
-          <div class="preorder-option-head">
-            <div class="preorder-option-when">8月</div>
-            <div class="preorder-option-what">単発レシピ</div>
-          </div>
-          <div class="preorder-option-detail">
-            食卓にすぐ加わる、<br>新しい定番おかずのレッスン
-          </div>
-        </div>
-      </label>
-      <label class="preorder-option">
         <input type="checkbox" id="popt-sep">
         <div class="preorder-option-box">
           <div class="preorder-option-head">
@@ -2095,7 +2124,32 @@ img { display: block; max-width: 100%; }
           </div>
         </div>
       </label>
+      <label class="preorder-option">
+        <input type="checkbox" id="popt-sub">
+        <div class="preorder-option-box">
+          <div class="preorder-option-head">
+            <div class="preorder-option-when">月額</div>
+            <div class="preorder-option-what">サブスクコミュニティ</div>
+          </div>
+          <div class="preorder-option-detail">
+            毎日の台所を、ずっと支える<br>継続サポートコミュニティ
+          </div>
+        </div>
+      </label>
     </div>
+
+    <!-- 8月は"告知だけ"（チェック対象外） -->
+    <div class="preorder-note">
+      <div class="preorder-note-head">
+        <span class="preorder-note-tag">8月</span>
+        単発レッスンも準備中
+      </div>
+      <div class="preorder-note-body">
+        詳細は <a href="https://www.instagram.com/kayocookingclass?igsh=aDg3Y3JzZ2puODZ1"
+                 target="_blank" rel="noopener">かよママInstagram</a> でお知らせします。
+      </div>
+    </div>
+
     <button class="preorder-submit" onclick="submitPreorder()">送信する</button>
     <button class="preorder-cancel" onclick="closePreorderModal()">キャンセル</button>
   </div>
@@ -2865,10 +2919,10 @@ function requestPreorder() {
     return;
   }
   const modal = document.getElementById('preorderModal');
-  const augEl = document.getElementById('popt-aug');
   const sepEl = document.getElementById('popt-sep');
-  if (augEl) augEl.checked = false;
+  const subEl = document.getElementById('popt-sub');
   if (sepEl) sepEl.checked = false;
+  if (subEl) subEl.checked = false;
   if (modal) modal.classList.remove('hidden');
 }
 
@@ -2878,17 +2932,17 @@ function closePreorderModal() {
 }
 
 function submitPreorder() {
-  const augEl = document.getElementById('popt-aug');
   const sepEl = document.getElementById('popt-sep');
-  const augChecked = augEl && augEl.checked;
+  const subEl = document.getElementById('popt-sub');
   const sepChecked = sepEl && sepEl.checked;
-  if (!augChecked && !sepChecked) {
+  const subChecked = subEl && subEl.checked;
+  if (!sepChecked && !subChecked) {
     toast('ご興味のあるものを選んでください');
     return;
   }
   const choices = [];
-  if (augChecked) choices.push('8月 単発レシピ');
   if (sepChecked) choices.push('9月 献立サポート');
+  if (subChecked) choices.push('サブスクコミュニティ');
   const choicesStr = choices.join(' / ');
 
   state.flags.preorderRequested = true;
@@ -2915,7 +2969,7 @@ function maybeShowPreorderPopup() {
   setTimeout(() => {
     celebrate(
       '先行予約、はじまりました',
-      'かよママの次の中規模企画の<br><strong>先行予約</strong>ができるようになりました🌸<br><br>ホーム画面からいつでも<br>お申し込みいただけます。',
+      'かよママの次のサポート企画の<br><strong>先行予約</strong>ができるようになりました🌸<br><br>ホーム画面からいつでも<br>お申し込みいただけます。',
       'kayo3',
       'PREORDER OPEN'
     );
