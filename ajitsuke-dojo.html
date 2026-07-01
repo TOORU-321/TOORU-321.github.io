@@ -696,20 +696,16 @@ img { display: block; max-width: 100%; }
   background: #fff;
   border: 2px solid var(--c-border);
   border-radius: var(--r-2);
-  padding: 12px 44px 12px 14px;
+  padding: 14px 46px 14px 14px;
   text-align: left;
   transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 12px;
   position: relative;
 }
 .preorder-option-box::after {
   content: '';
   position: absolute;
   right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 16px;
   width: 20px;
   height: 20px;
   border: 2px solid var(--c-border);
@@ -718,6 +714,19 @@ img { display: block; max-width: 100%; }
   background-size: 12px;
   background-position: center;
   background-repeat: no-repeat;
+}
+.preorder-option-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.preorder-option-detail {
+  font-size: 11.5px;
+  color: var(--c-text-2);
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  padding-left: 2px;
 }
 .preorder-option input:checked ~ .preorder-option-box {
   background: linear-gradient(135deg, #FFF6E6 0%, #FFE8DC 100%);
@@ -2051,15 +2060,25 @@ img { display: block; max-width: 100%; }
       <label class="preorder-option">
         <input type="checkbox" id="popt-aug">
         <div class="preorder-option-box">
-          <div class="preorder-option-when">8月</div>
-          <div class="preorder-option-what">単発レシピ</div>
+          <div class="preorder-option-head">
+            <div class="preorder-option-when">8月</div>
+            <div class="preorder-option-what">単発レシピ</div>
+          </div>
+          <div class="preorder-option-detail">
+            食卓にすぐ加わる、<br>新しい定番おかずのレッスン
+          </div>
         </div>
       </label>
       <label class="preorder-option">
         <input type="checkbox" id="popt-sep">
         <div class="preorder-option-box">
-          <div class="preorder-option-when">9月</div>
-          <div class="preorder-option-what">献立サポート</div>
+          <div class="preorder-option-head">
+            <div class="preorder-option-when">9月</div>
+            <div class="preorder-option-what">献立サポート</div>
+          </div>
+          <div class="preorder-option-detail">
+            毎日の献立が"組み立て"で決まる、<br>1ヶ月のオンライン伴走
+          </div>
         </div>
       </label>
     </div>
