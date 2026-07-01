@@ -145,23 +145,7 @@ img { display: block; max-width: 100%; }
   flex-direction: column;
   padding-bottom: 80px;
   z-index: 1;
-  background-image:
-    url('https://columns.l-mine.com/assets/backgrounds/haikei3.png');
-  background-position: top center;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
-}
-.app::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(250,244,235,0.30) 0%,
-    rgba(250,244,235,0.65) 18%,
-    rgba(250,244,235,0.92) 32%,
-    var(--c-bg) 48%);
-  pointer-events: none;
-  z-index: 0;
+  background: var(--c-bg);
 }
 .app > * { position: relative; z-index: 1; }
 
@@ -207,9 +191,9 @@ img { display: block; max-width: 100%; }
 .app-header {
   position: sticky;
   top: 0;
-  background: rgba(255,251,242,0.85);
-  backdrop-filter: saturate(140%) blur(10px);
-  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  background: rgba(255,251,242,0.94);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid var(--c-border-2);
   padding: 14px 20px 12px;
   display: flex;
@@ -266,12 +250,40 @@ img { display: block; max-width: 100%; }
   flex: 1;
   padding: 20px 20px 24px;
 }
-.screen { display: none; animation: screenIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+.screen {
+  display: none;
+  animation: screenIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  background-position: top center;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
 .screen.active { display: block; }
 @keyframes screenIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* 画面別の背景イラスト（3枚をローテーション） */
+.screen[data-screen="home"]     { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei1.png'); }
+.screen[data-screen="sisters"]  { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei3.png'); }
+.screen[data-screen="recipes"]  { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei2.png'); }
+.screen[data-screen="badges"]   { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei1.png'); }
+.screen[data-screen="usage"]    { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei3.png'); }
+.screen[data-screen="farewell"] { background-image: url('https://columns.l-mine.com/assets/backgrounds/haikei2.png'); }
+/* 背景の上に薄いベール（文字の可読性確保） */
+.screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(250,244,235,0.55) 0%,
+    rgba(250,244,235,0.82) 16%,
+    rgba(250,244,235,0.96) 28%,
+    var(--c-bg) 42%);
+  pointer-events: none;
+  z-index: 0;
+}
+.screen > * { position: relative; z-index: 1; }
 
 .back {
   display: inline-flex;
@@ -291,12 +303,14 @@ img { display: block; max-width: 100%; }
   color: var(--c-ink);
   letter-spacing: 0.03em;
   margin-bottom: 6px;
+  text-shadow: 0 1px 0 rgba(250,244,235,0.85);
 }
 .page-sub {
   font-size: 13px;
   color: var(--c-text-2);
   line-height: 1.9;
   margin-bottom: var(--s-5);
+  text-shadow: 0 1px 0 rgba(250,244,235,0.85);
 }
 
 .section-h {
@@ -1172,7 +1186,7 @@ img { display: block; max-width: 100%; }
   background-position: center;
   background-repeat: no-repeat;
 }
-.recipe-emoji { font-size: 24px; margin-bottom: 4px; filter: grayscale(0.5) opacity(0.55); }
+.recipe-emoji { font-size: 24px; margin-bottom: 4px; filter: grayscale(0.55) opacity(0.5); }
 .recipe.done .recipe-emoji { filter: none; }
 .recipe-name {
   font-size: 12px;
@@ -1720,8 +1734,8 @@ img { display: block; max-width: 100%; }
 /* Recipe icon — refined card with Twemoji image */
 .recipe-emoji {
   display: block;
-  width: 38px;
-  height: 38px;
+  width: 72px;
+  height: 72px;
   margin: 0 auto 6px;
   object-fit: contain;
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
@@ -2206,34 +2220,34 @@ const SISTERS = [
 
 const RATIOS = [];  // 黄金比図鑑は廃止（3姉妹は分量で、対比/比率ではない）
 
-// icon = Twemoji codepoint (unified across all devices)
-const TWEMOJI_BASE = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/';
+// icon = 独自の水彩キャラ画像（assets/dishes/d01-d25.png）
+const DISH_BASE = 'https://columns.l-mine.com/assets/dishes/';
 const RECIPES = [
-  { id: 'd01', name: 'ぶっかけうどん',   code: '1f35c', use: 'つゆ子' },
-  { id: 'd02', name: '野菜の焼き浸し',   code: '1f346', use: 'だし子' },
-  { id: 'd03', name: '親子丼',           code: '1f35a', use: 'つゆ子' },
-  { id: 'd04', name: '筑前煮',           code: '1f955', use: 'つゆ子' },
-  { id: 'd05', name: '肉じゃが',         code: '1f954', use: 'つゆ子' },
-  { id: 'd06', name: '煮魚',             code: '1f41f', use: 'つゆ子' },
-  { id: 'd07', name: 'おろし煮',         code: '1f372', use: 'つゆ子' },
-  { id: 'd08', name: 'ハンバーグ',       code: '1f354', use: 'つゆ子' },
-  { id: 'd09', name: '照り焼き',         code: '1f357', use: 'つゆ子' },
-  { id: 'd10', name: '焼きうどん',       code: '1f35d', use: 'つゆ子' },
-  { id: 'd11', name: '和風パスタ',       code: '1f365', use: 'つゆ子' },
-  { id: 'd12', name: '酢の物',           code: '1f952', use: 'お酢子' },
-  { id: 'd13', name: 'もずく酢',         code: '1f30a', use: 'お酢子' },
-  { id: 'd14', name: 'マリネ',           code: '1fad2', use: 'お酢子' },
-  { id: 'd15', name: 'ラペ',             code: '1f336', use: 'お酢子' },
-  { id: 'd16', name: '南蛮漬け',         code: '1f420', use: 'お酢子' },
-  { id: 'd17', name: '海老チリ',         code: '1f364', use: '合わせ技' },
-  { id: 'd18', name: '酢豚',             code: '1f969', use: 'お酢子' },
-  { id: 'd19', name: 'うどんだし',       code: '1f963', use: 'だし子' },
-  { id: 'd20', name: 'けんちん汁',       code: '1f375', use: 'だし子' },
-  { id: 'd21', name: '中華スープ',       code: '1f95f', use: 'だし子' },
-  { id: 'd22', name: 'お浸し',           code: '1f96c', use: 'だし子' },
-  { id: 'd23', name: '和風ドレッシング', code: '1f962', use: 'お酢子' },
-  { id: 'd24', name: '中華ダレ',         code: '1f9c2', use: '合わせ技' },
-  { id: 'd25', name: '洋食ドレッシング', code: '1f957', use: 'お酢子' },
+  { id: 'd01', name: 'ぶっかけうどん',   use: 'つゆ子' },
+  { id: 'd02', name: '野菜の焼き浸し',   use: 'だし子' },
+  { id: 'd03', name: '親子丼',           use: 'つゆ子' },
+  { id: 'd04', name: '筑前煮',           use: 'つゆ子' },
+  { id: 'd05', name: '肉じゃが',         use: 'つゆ子' },
+  { id: 'd06', name: '煮魚',             use: 'つゆ子' },
+  { id: 'd07', name: 'おろし煮',         use: 'つゆ子' },
+  { id: 'd08', name: 'ハンバーグ',       use: 'つゆ子' },
+  { id: 'd09', name: '照り焼き',         use: 'つゆ子' },
+  { id: 'd10', name: '焼きうどん',       use: 'つゆ子' },
+  { id: 'd11', name: '和風パスタ',       use: 'つゆ子' },
+  { id: 'd12', name: '酢の物',           use: 'お酢子' },
+  { id: 'd13', name: 'もずく酢',         use: 'お酢子' },
+  { id: 'd14', name: 'マリネ',           use: 'お酢子' },
+  { id: 'd15', name: 'ラペ',             use: 'お酢子' },
+  { id: 'd16', name: '南蛮漬け',         use: 'お酢子' },
+  { id: 'd17', name: '海老チリ',         use: '合わせ技' },
+  { id: 'd18', name: '酢豚',             use: 'お酢子' },
+  { id: 'd19', name: 'うどんだし',       use: 'だし子' },
+  { id: 'd20', name: 'けんちん汁',       use: 'だし子' },
+  { id: 'd21', name: '中華スープ',       use: 'だし子' },
+  { id: 'd22', name: 'お浸し',           use: 'だし子' },
+  { id: 'd23', name: '和風ドレッシング', use: 'お酢子' },
+  { id: 'd24', name: '中華ダレ',         use: '合わせ技' },
+  { id: 'd25', name: '洋食ドレッシング', use: 'お酢子' },
 ];
 
 const BADGES = [
@@ -2684,7 +2698,7 @@ function renderRecipes() {
     const done = state.recipes.includes(r.id);
     return `
       <button class="recipe ${done ? 'done' : ''}" onclick="toggleRecipe('${r.id}')">
-        <img class="recipe-emoji" src="${TWEMOJI_BASE}${r.code}.svg" alt="" loading="lazy">
+        <img class="recipe-emoji" src="${DISH_BASE}${r.id}.png" alt="" loading="lazy">
         <div class="recipe-name">${r.name}</div>
         <div class="recipe-tag">${r.use}</div>
       </button>
