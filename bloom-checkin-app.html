@@ -4,26 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>エルラボ2.0タスクコーチ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F6F5FB; --card:#fff; --ink:#1E1B2E; --sub:#6B6880; --line:#E7E4F2;
-    --pp:#6C5CE7; --pp-d:#534AB7; --pp-l:#EEEDFE; --pp-mid:#AFA9EC;
-    --green:#1D9E75; --green-l:#E1F5EE; --amber:#D8861E; --amber-l:#FBF0DE;
-    --red:#D4537E; --red-l:#FBEAF0; --shadow:0 1px 3px rgba(40,30,80,.06),0 8px 24px rgba(40,30,80,.05);
+    --bg:#F2F3F5; --card:#fff; --ink:#10171f; --sub:#5B6673; --line:#E4E7EB;
+    --pp:#1F2A37; --pp-d:#10171f; --pp-l:#EEF1F4; --pp-mid:#98A2AF;
+    --green:#2F8F6B; --green-l:#E4F1EB; --amber:#C08A22; --amber-l:#F7EEDA;
+    --red:#B8312F; --red-l:#F7E5E4; --shadow:0 1px 3px rgba(40,30,80,.06),0 8px 24px rgba(40,30,80,.05);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,system-ui,sans-serif;
     background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
-  .topbar{position:sticky;top:0;z-index:40;background:#1E1B2E;color:#fff;display:flex;align-items:center;
+  .topbar{position:sticky;top:0;z-index:40;background:#10171f;color:#fff;display:flex;align-items:center;
     justify-content:space-between;padding:8px 14px;font-size:13px;gap:10px}
   .topbar .uid{font-size:10px;color:#9d97c0;max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
-  .seg{display:inline-flex;background:#37334d;border-radius:999px;padding:3px;gap:2px}
+  .seg{display:inline-flex;background:#1a2531;border-radius:999px;padding:3px;gap:2px}
   .seg button{border:0;background:transparent;color:#cfc9e6;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
-  .seg button.on{background:#fff;color:#1E1B2E}
+  .seg button.on{background:#fff;color:#10171f}
   .wrap{max-width:440px;margin:0 auto;padding:16px 16px 96px}
   .wrap.coach{max-width:980px}
   .appbar{display:flex;align-items:center;gap:10px;margin:6px 2px 16px}
-  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7F77DD,#534AB7);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#1a2531,#10171f);display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;box-shadow:var(--shadow)}
   .appbar h1{font-size:18px;font-weight:800}.appbar small{display:block;color:var(--sub);font-size:11px;font-weight:600}
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
   .card h2{font-size:15px;font-weight:800;margin-bottom:4px}
@@ -49,7 +52,7 @@
   .mtx{display:grid;grid-template-columns:20px 1fr 1fr;grid-template-rows:20px 1fr 1fr;gap:8px;margin-top:12px}
   .ax{display:grid;place-items:center;font-size:10px;font-weight:800;color:var(--sub)}.ax.v{writing-mode:vertical-rl;text-orientation:upright}
   .qd2{border-radius:14px;padding:10px;min-height:110px;border:1.5px solid transparent}
-  .qd2.q1{background:#FEF3EF;border-color:#F0997B}.qd2.q2{background:#F1EFFE;border-color:var(--pp)}.qd2.q3{background:#FCF5E8;border-color:#E7C06A}.qd2.q4{background:#F4F4F2;border-color:#D7D5CD}
+  .qd2.q1{background:#FEF3EF;border-color:#F0997B}.qd2.q2{background:#F7EEDA;border-color:var(--pp)}.qd2.q3{background:#FCF5E8;border-color:#E7C06A}.qd2.q4{background:#F4F4F2;border-color:#D7D5CD}
   .qd2 .hd{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:800}.qd2 .cnt{margin-left:auto;font-size:11px;font-weight:800;background:#fff;border-radius:999px;padding:1px 8px;color:var(--sub)}
   .qd2 .ax2{font-size:10px;color:var(--sub);font-weight:700;margin-bottom:8px}
   .chip{display:flex;align-items:center;gap:6px;background:#fff;border-radius:10px;padding:7px 9px;margin-bottom:6px;font-size:12.5px;box-shadow:0 1px 2px rgba(40,30,80,.07);cursor:pointer}
@@ -60,7 +63,7 @@
   .qsel button.on{border-color:var(--pp);background:var(--pp-l);color:var(--pp-d)}
   .badge-honmaru{font-size:9px;background:var(--pp);color:#fff;padding:2px 6px;border-radius:6px;margin-left:4px}
   .hint{font-size:12px;color:var(--pp-d);background:var(--pp-l);border-radius:10px;padding:8px 11px;margin:8px 0}
-  .ksf-hero{background:linear-gradient(135deg,#534AB7,#7F77DD);color:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .ksf-hero{background:linear-gradient(135deg,#10171f,#1a2531);color:#fff;border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
   .ksf-hero .lbl{font-size:11px;font-weight:800;opacity:.9}.ksf-hero .goal{font-size:18px;font-weight:800;line-height:1.45;margin-top:5px}
   .ksf-hero textarea{margin-top:12px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff}
   .feed-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13px}.feed-item:last-child{border:0}
@@ -114,6 +117,17 @@
     th,td{padding:12px 12px}
     table{font-size:13.5px}
   }
+  /* ===== エルラボ ブランドアクセント ===== */
+  body{font-family:"Noto Sans JP",-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,system-ui,sans-serif}
+  h1,h2,.stat .n{font-weight:900}
+  .logo{color:#E2A83A;font-weight:900}
+  .ksf-hero .lbl{color:#E2A83A;opacity:1}
+  .ksf-hero .goal{color:#fff}
+  .badge-honmaru{background:#E2A83A;color:#10171f}
+  .qd2.q2{border-color:#C08A22;background:#FBF3E1}
+  .nav button.on{color:#C08A22}
+  .pill.pp{background:var(--pp-l);color:var(--pp-d)}
+  .btn{letter-spacing:.02em}
 </style>
 </head>
 <body>
@@ -134,10 +148,10 @@
   <div id="s-body"></div>
 </div>
 <div id="nav" class="nav">
-  <button data-tab="today" class="on" onclick="setTab('today')"><span class="i">✓</span>今日</button>
-  <button data-tab="plan" onclick="setTab('plan')"><span class="i">◎</span>設計</button>
-  <button data-tab="feed" onclick="setTab('feed')"><span class="i">◍</span>みんな</button>
-  <button data-tab="menu" onclick="setTab('menu')"><span class="i">≡</span>メニュー</button>
+  <button data-tab="today" class="on" onclick="setTab('today')"><span class="i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>今日</button>
+  <button data-tab="plan" onclick="setTab('plan')"><span class="i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>設計</button>
+  <button data-tab="feed" onclick="setTab('feed')"><span class="i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>みんな</button>
+  <button data-tab="menu" onclick="setTab('menu')"><span class="i"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></span>メニュー</button>
 </div>
 
 <div id="coach" class="wrap coach hide">
@@ -281,7 +295,7 @@ function viewToday(){
   return ''+
   '<div style="font-weight:800;font-size:16px;margin:0 2px 12px">'+hello+' 👋</div>'+
   (state.advice?'<div class="card" style="border-left:4px solid var(--green)"><div class="muted" style="font-weight:700;color:var(--green)">💬 コーチからのアドバイス</div><div style="margin-top:4px;font-size:14px">'+esc(state.advice)+'</div></div>':'')+
-  '<div class="card" style="background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div class="row" style="align-items:center">'+
+  '<div class="card" style="background:linear-gradient(135deg,#EEF1F4,#F2F3F5)"><div class="row" style="align-items:center">'+
     '<div class="stat"><div class="n">'+state.checkinDays+'</div><div class="l">報告した日数</div></div>'+
     '<div style="text-align:center">'+ring(q2ratio())+'<div class="l" style="font-size:11px;font-weight:700;color:var(--pp-d)">第2象限の割合</div></div>'+
   '</div></div>'+
@@ -334,7 +348,7 @@ function viewPlan(){
 function viewFeed(){
   var items=state.activity.map(function(f){ var label=f.type==='checkin'?'別の方がタスクを提出しました':'コミュニティで動きがありました'; return '<div class="feed-item"><span class="dot"></span><span>'+label+'</span><time>'+timeAgo(f.at)+'</time></div>'; }).join('')||'<div class="muted">まだ動きがありません。最初の一歩を踏み出しましょう。</div>';
   return ''+
-  '<div class="card" style="text-align:center;background:linear-gradient(135deg,#EEEDFE,#F6F5FB)"><div style="font-size:30px;font-weight:800;color:var(--pp-d)">'+state.todayCount+'人</div><div class="muted" style="font-weight:700">が今日チェックインしました</div></div>'+
+  '<div class="card" style="text-align:center;background:linear-gradient(135deg,#EEF1F4,#F2F3F5)"><div style="font-size:30px;font-weight:800;color:var(--pp-d)">'+state.todayCount+'人</div><div class="muted" style="font-weight:700">が今日チェックインしました</div></div>'+
   '<div class="card"><h2>みんなの動き</h2><p class="muted" style="margin-bottom:6px">※ 名前や内容は表示されません。仲間が動いている実感だけ共有します。</p>'+items+'</div>';
 }
 var GLOSSARY=[
@@ -586,7 +600,7 @@ async function onbNext(){
 }
 
 function timeAgo(ts){ if(!ts) return ''; var s=Math.floor((Date.now()-ts)/1000); if(s<60) return 'たった今'; if(s<3600) return Math.floor(s/60)+'分前'; if(s<86400) return Math.floor(s/3600)+'時間前'; return Math.floor(s/86400)+'日前'; }
-function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1B2E;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
+function toast(m){ var t=document.createElement('div'); t.textContent=m; t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#10171f;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:700;z-index:100;box-shadow:var(--shadow)'; document.body.appendChild(t); setTimeout(function(){t.remove();},2200); }
 function copyUid(){ if(state.uid){ navigator.clipboard && navigator.clipboard.writeText(state.uid); toast('UIDをコピーしました'); } }
 </script>
 </body>
