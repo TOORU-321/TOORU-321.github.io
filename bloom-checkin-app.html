@@ -130,7 +130,7 @@
 </div>
 
 <div id="student" class="wrap">
-  <div class="appbar"><div class="logo">エ</div><div><h1>エルラボ2.0タスクコーチ</h1><small id="comm">僕のコミュニティ</small></div></div>
+  <div class="appbar"><div class="logo">エ</div><div><h1>エルラボ2.0タスクコーチ</h1><small id="comm">エルラボ2.0</small></div></div>
   <div id="s-body"></div>
 </div>
 <div id="nav" class="nav">
@@ -377,7 +377,7 @@ function renderGlossary(){
 function viewMenu(){
   var anns=state.announcements.slice(0,3).map(function(a){ return '<div class="feed-item"><span class="dot"></span><span><b>'+esc(a.title)+'</b> <span class="muted" style="font-size:11px">'+fmtDate(a.at)+'</span><br><span class="muted">'+esc(a.body)+'</span></span></div>'; }).join('')||'<div class="muted">お知らせはまだありません。</div>';
   return ''+
-  '<div class="card"><h2>ショートカット</h2><p class="muted" style="margin-bottom:12px">僕のコンテンツへ。</p>'+
+  '<div class="card"><h2>ショートカット</h2><p class="muted" style="margin-bottom:12px">動画コンテンツへ。</p>'+
     '<a class="sc" href="'+COLUMN_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--pp-l)">📝</span><span><b>僕のコラム</b><br><span class="muted" style="font-size:12px">考え方を深める読みもの</span></span><span class="arr">→</span></a>'+
     '<a class="sc" href="'+VIDEO_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:var(--green-l)">▶</span><span><b>無料動画</b><br><span class="muted" style="font-size:12px">メンバー向けオンライン講座</span></span><span class="arr">→</span></a>'+
     '<a class="sc" href="'+ZOOM_URL+'" target="_blank" rel="noopener"><span class="ic" style="background:#E6F1FB">📅</span><span><b>ZOOMの予定を組む</b><br><span class="muted" style="font-size:12px">面談の予約はこちら</span></span><span class="arr">→</span></a></div>'+
@@ -502,7 +502,7 @@ async function postAnnounce(){
   var t=document.getElementById('an-title'),b=document.getElementById('an-body');
   if(!t.value.trim()){ toast('タイトルを入力してください'); return; }
   try{
-    if(state._editAnn){ await db.doc('announcements/'+state._editAnn).update({title:t.value.trim(),body:b.value.trim()}); state._editAnn=null; toast('更新しました'); }
+    if(state._editAnn){ await db.doc('announcements/'+state._editAnn).update({title:t.value.trim(),body:b.value.trim(),publishedAt:Date.now()}); state._editAnn=null; toast('更新しました'); }
     else { await db.collection('announcements').add({title:t.value.trim(),body:b.value.trim(),publishedAt:Date.now()}); toast('投稿しました'); }
     await loadAnnouncements(); render();
   }catch(e){ toast('保存に失敗: '+(e.code||e.message)); }
@@ -565,7 +565,7 @@ function showOv(it){ document.getElementById('ov-tag').textContent=it.tag; docum
 function closeOv(){ document.getElementById('ov').classList.remove('on'); if(state.popupQueue.length) showOv(state.popupQueue.shift()); }
 function buildPopups(){
   state.popupQueue=[];
-  if(state.announcements[0]){ var a=state.announcements[0]; state.popupQueue.push({tag:'📣 僕からのお知らせ',title:a.title,body:a.body}); }
+  if(state.announcements[0]){ var a=state.announcements[0]; var seenAnn=''; try{ seenAnn=localStorage.getItem('lab_seen_ann')||''; }catch(e){} if(String(a.at)!==seenAnn){ state.popupQueue.push({tag:'📣 とーるからのお知らせ',title:a.title,body:a.body+'\n\n（このお知らせはメニュー→お知らせ一覧でいつでも見られます）'}); try{ localStorage.setItem('lab_seen_ann',String(a.at)); }catch(e){} } }
   if(state.checkinDays>=5){ state.popupQueue.push({tag:'🌙 ひとやすみのご提案',title:state.checkinDays+'日報告、おつかれさまです！',body:'がんばり屋さんですね。でも大丈夫ですか？無理は禁物です。今日はしっかり休むのも立派な選択ですよ。',btn:'休むのも大事だね'}); }
   if(ZOOM_REMIND_DAYS.indexOf(new Date().getDate())>=0){ state.popupQueue.push({tag:'📅 リマインド',title:'ZOOM予約してますか？',body:'今月の面談がまだの方は、メニューの「ZOOMの予定を組む」から予約しておきましょう。',btn:'メニューで予約する'}); }
   if(state.popupQueue.length) showOv(state.popupQueue.shift());
