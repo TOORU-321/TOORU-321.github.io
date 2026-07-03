@@ -1089,6 +1089,27 @@ a{text-decoration:none}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+/* ===== レイアウト刷新（①タイトルのみ ②スクロール不要 ③イラスト固定背景 ④章は動画下） ===== */
+.library-hero{display:none}
+.app-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.4;filter:saturate(.85) contrast(1.02) brightness(.5)}
+.app-veil{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1200px 760px at 50% -6%, rgba(9,11,17,.26), rgba(7,9,13,.86) 74%)}
+.app-title{position:relative;z-index:2;text-align:center;padding:28px 20px 0}
+.app-title h2{font-family:var(--mincho);font-weight:800;font-size:clamp(20px,2.6vw,30px);letter-spacing:.1em;color:#fff;margin:7px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
+.vlayout{margin-top:0;padding-top:20px}
+/* 左：コース名だけ／アクティブ強調 */
+.course.active .course-head{color:#f0d69c}
+.course.active{background:linear-gradient(135deg,rgba(227,195,129,.12),rgba(227,195,129,.03));border-color:rgba(227,195,129,.22);box-shadow:inset 3px 0 0 var(--gold)}
+/* ④ 動画下の章リスト */
+.chapter-list{margin-top:20px;padding-top:4px;display:flex;flex-direction:column;gap:2px}
+.chapter-list:empty{display:none}
+.ch-item{width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--lm-border);cursor:pointer;font-family:var(--gothic);color:#bdbbb2;font-size:13px;padding:12px 8px;display:flex;gap:12px;align-items:center;transition:color .18s,background .18s;border-radius:8px}
+.ch-item:first-child{border-top:none}
+.ch-item:hover{color:#e8d3a3;background:rgba(227,195,129,.05)}
+.ch-item.active{color:#f0d69c;background:rgba(227,195,129,.10)}
+.ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px}
+.ch-item.active .ch-no{color:#d8b870}
+.ch-item .ch-t{flex:1;line-height:1.5}
+
 
 
 </style>
@@ -1116,19 +1137,14 @@ a{text-decoration:none}
   </div>
 </header>
 
-<section class="library-hero">
-  <img class="library-hero-bg" src="assets/videosamune.jpg" alt="">
-  <div class="library-hero-inner">
-    <div class="library-kicker">Member Library</div>
-    <h2>イラスト背景の世界観の中で、<br>一覧から講座を選んで視聴する。</h2>
-    <p>上部はビジュアルで世界観を見せ、下に一覧、その先にコンテンツを配置。<br>「エルラボ＋」の視聴体験が、ただの動画置き場ではなく、会員制ライブラリらしい導線になるように整えています。</p>
-    <div class="library-hero-meta">
-      <span>Illustration Background</span>
-      <span>Course Library</span>
-      <span>Premium Viewing Experience</span>
-    </div>
-  </div>
-</section>
+<!-- ③ イラストをメイン背景に（固定・全画面） -->
+<img class="app-bg" src="assets/videosamune.jpg" alt="">
+<div class="app-veil"></div>
+<!-- ① タイトルのみ -->
+<div class="app-title">
+  <div class="library-kicker">Member Library</div>
+  <h2>動画ライブラリ</h2>
+</div>
 
 
 <div class="vlayout">
@@ -1151,6 +1167,7 @@ a{text-decoration:none}
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
       <div class="vfiled" id="vfiled"></div>
+      <div class="chapter-list" id="chapterList"></div>
     </div>
   </main>
 </div>
@@ -1476,54 +1493,46 @@ function render(){
     const el = document.createElement("section");
     el.className = "course" + (multi ? " multi" : " single"); el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
-    const toggle = multi ? `<span class="c-toggle" data-toggle>＋</span>` : "";
     let badge;
     if(course.locked && !hasAccess(course)) badge = `<span class="c-lock">🔒</span>`;
     else if(multi)                          badge = `<span class="c-tag">${course.videos.length}本</span>`;
     else                                    badge = "";
-    head.innerHTML = `${toggle}<span class="c-tw">${course.name}</span>${badge}`;
+    head.innerHTML = `<span class="c-tw">${course.name}</span>${badge}`;
     head.addEventListener("click", () => onCourseClick(ci)); el.appendChild(head);
-    if(multi){
-      const chWrap = document.createElement("div"); chWrap.className = "chapters";
-      course.videos.forEach((v, vi) => {
-        const ch = document.createElement("button"); ch.className = "chapter"; ch.dataset.ci = ci; ch.dataset.vi = vi;
-        ch.innerHTML = `<span class="ch-no">${String(vi+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
-        ch.addEventListener("click", () => select(ci, vi)); chWrap.appendChild(ch);
-      });
-      el.appendChild(chWrap);
-    }
-    wrap.appendChild(el);
+    wrap.appendChild(el);   // ★左はコース名のみ（章は動画下に表示）
   });
   courseEls = [...wrap.querySelectorAll(".course")];
   document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
 }
-function onCourseClick(ci){
-  const course = COURSES[ci]; const el = courseEls[ci];
-  if(course.videos.length === 1){ select(ci, 0); return; }
-  const willOpen = !el.classList.contains("open");
-  courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
-  if(willOpen){ el.classList.add("open"); const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−"; }
+// コース選択 ＝ 1本目を再生し、章は動画下に出す
+function onCourseClick(ci){ select(ci, 0); }
+// ④ 動画下に章一覧を描画（複数本のときだけ）
+function renderChapters(ci, vi){
+  const cont = document.getElementById("chapterList");
+  cont.innerHTML = "";
+  const course = COURSES[ci];
+  if(!course || (course.videos || []).length <= 1) return;
+  course.videos.forEach((v, i) => {
+    const b = document.createElement("button");
+    b.className = "ch-item" + (i === vi ? " active" : "");
+    b.innerHTML = `<span class="ch-no">${String(i+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
+    b.addEventListener("click", () => select(ci, i));
+    cont.appendChild(b);
+  });
 }
 function select(ci, vi){
   const course = COURSES[ci]; if(!course) return;
   const v = course.videos[vi]; if(!v) return;
   curCourse = ci; curVideo = vi;
   const locked = !hasAccess(course);
-  courseEls.forEach(c => c.classList.remove("active"));
-  wrap.querySelectorAll(".chapter").forEach(c => c.classList.remove("active"));
-  const el = courseEls[ci];
-  if(course.videos.length === 1){ el.classList.add("active"); }
-  else {
-    courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
-    el.classList.add("open"); const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
-    const ch = el.querySelector(`.chapter[data-vi="${vi}"]`); if(ch) ch.classList.add("active");
-  }
+  courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
   vkick.textContent  = course.videos.length > 1 ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}` : course.name;
   vtitle.textContent = v.t;
   if(locked){ vframe.classList.add("locked"); viframe.src = ""; setLockScreen(course); }
   else { vframe.classList.remove("locked"); viframe.src = embedUrl(v); }
   let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
   vfiled.innerHTML = meta;
+  renderChapters(ci, vi);   // ④ 章を動画下に表示
 }
 </script>
 </body>
