@@ -371,20 +371,43 @@ async function loadCourses(){
 async function fetchFromSheet(){
   const txt  = await fetch(SHEET_URL, {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
   const json = JSON.parse(txt.replace(/^[^{]*/, "").replace(/;?\s*$/, ""));   // JSONP風ラッパーを除去
-  const rows = (json.table && json.table.rows) ? json.table.rows : [];
-  const cell = (r,i)=> (r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
-  const map  = new Map();   // コース名 → コースオブジェクト（出現順を保持）
-  rows.forEach(r => {
-    const cname = cell(r,0), title = cell(r,1), url = cell(r,2), kind = cell(r,3), tag = cell(r,4);
-    if(!cname || !url || cname === "コース名") return;   // 空行・見出し行はスキップ
+  return coursesFromGviz(json);
+}
+
+// gviz JSON → COURSES（列は見出し名で解決＝順番が変わってもOK／並び順で整列）
+function coursesFromGviz(json){
+  const table = json.table || {};
+  const cols  = (table.cols || []).map(c => String(c.label || "").trim());
+  const find  = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
+  const iName  = find(["コース名"], 0);
+  const iTitle = find(["章タイトル","タイトル"], 1);
+  const iUrl   = find(["動画URL","URL","動画"], 2);
+  const iKind  = find(["種別","公開","公開状態"], 3);
+  const iTag   = find(["必要タグ","タグ"], 4);
+  const iOrder = find(["並び順","順番","順","order"], 5);
+
+  const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
+  const map  = new Map();   // コース名 → コースオブジェクト
+  let seq = 0;
+  (table.rows || []).forEach(r => {
+    const cname = cell(r,iName), title = cell(r,iTitle), url = cell(r,iUrl);
+    if(!cname || !url || cname === "コース名") return;        // 見出し・空行スキップ
     const pv = parseVideoUrl(url);
     if(!pv) return;
+    const kind = cell(r,iKind), tag = cell(r,iTag);
+    const on   = parseFloat(cell(r,iOrder));
+    const ord  = isNaN(on) ? (++seq) : on;
     if(!map.has(cname)){
-      map.set(cname, { name:cname, locked:(kind.indexOf("会員")>=0||kind.indexOf("有料")>=0), requiredTag:(tag||null), videos:[] });
+      map.set(cname, { name:cname, tier:(kind||"無料"), locked:(kind.indexOf("会員")>=0||kind.indexOf("有料")>=0), requiredTag:(tag||null), _order:Infinity, videos:[] });
     }
-    map.get(cname).videos.push({ t:title||cname, platform:pv.platform, id:pv.id });
+    const c = map.get(cname);
+    c.videos.push({ t:title||cname, platform:pv.platform, id:pv.id, _order:ord });
+    if(ord < c._order) c._order = ord;
   });
-  return [...map.values()];
+  const list = [...map.values()];
+  list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));   // 章を並び順で整列
+  list.sort((a,b)=> a._order - b._order);                          // コースも並び順で整列
+  return list;
 }
 
 // URL / 埋め込みコード / ID から platform と id を抽出（URLを貼るだけでOKにする）
