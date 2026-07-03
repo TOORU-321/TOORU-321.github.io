@@ -95,7 +95,7 @@
 .vstate{color:var(--ink-soft);font-size:13px;padding:18px 4px;line-height:1.8}
 
 /* ログインモーダル */
-.loginmodal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(16,16,21,.55)}
+.loginmodal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(16,16,21,.55)}
 .loginmodal[hidden]{display:none}
 .lm-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:380px;width:100%;padding:34px 30px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
 .lm-x{position:absolute;top:10px;right:14px;background:none;border:none;font-size:22px;line-height:1;color:var(--ink-soft);cursor:pointer}
@@ -129,6 +129,8 @@
 .entry-inner{position:relative;z-index:2;max-width:440px}
 .entry-mark{font-family:var(--serif-en);font-size:13px;letter-spacing:.4em;text-transform:uppercase;color:#e8cf98;margin-bottom:14px}
 .entry-brand{font-family:var(--mincho);font-weight:800;font-size:clamp(32px,7vw,46px);letter-spacing:.12em;color:#fff;text-shadow:0 2px 26px rgba(0,0,0,.6)}
+.brand-plus{font-size:.42em;vertical-align:0.9em;color:var(--gold-2);font-weight:700;margin-left:1px}
+.appbar-brand .brand-plus{font-size:.5em;vertical-align:0.75em;color:var(--gold)}
 .entry-lead{color:#dbd4c6;font-size:13.5px;line-height:1.9;margin:18px 0 32px;text-shadow:0 1px 12px rgba(0,0,0,.55)}
 .entry-btns{display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto}
 .entry-login{padding:15px;border:none;border-radius:999px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer;letter-spacing:.05em}
@@ -159,7 +161,7 @@
 .bottom-nav .nav-label .soon-tag{font-size:8px;font-weight:400;color:#fff;background:var(--line-2);border-radius:999px;padding:1px 5px;letter-spacing:.03em;margin-left:2px}
 
 /* ── お知らせパネル ── */
-.newsmodal{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;background:rgba(16,16,21,.55);overflow:auto}
+.newsmodal{position:fixed;inset:0;z-index:190;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;background:rgba(16,16,21,.55);overflow:auto}
 .newsmodal[hidden]{display:none}
 .news-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:560px;width:100%;padding:26px 28px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
 .news-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--gold);padding-bottom:10px}
@@ -191,7 +193,7 @@
   <img class="entry-bg" src="assets/videosamune.jpg" alt="">
   <div class="entry-inner">
     <div class="entry-mark">L-MINE</div>
-    <div class="entry-brand">エルラボ＋</div>
+    <div class="entry-brand">エルラボ<span class="brand-plus">＋</span></div>
     <p class="entry-lead">ログインして続きから、<br>またはゲストとして無料コンテンツを視聴できます。</p>
     <div class="entry-btns">
       <button class="entry-login" id="entryLogin">ログイン</button>
@@ -203,7 +205,7 @@
 <!-- ② コンテンツ格納ページ（ライブラリ） -->
 <div id="library" hidden>
 <header class="appbar">
-  <div class="appbar-brand">エルラボ＋</div>
+  <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span></div>
   <div class="appbar-right">
     <button class="member-ctl" id="memberBtn">ログイン</button>
   </div>
@@ -235,8 +237,6 @@
     </div>
   </main>
 </div>
-
-<footer><div class="foot-inner"><div class="foot-links"><a href="https://l-mine.com/term">利用規約</a><a href="https://l-mine.com/about">特定商取引法に基づく表示</a><a href="https://l-mine.com/privacy">プライバシーポリシー</a><a href="https://l-mine.com/mensekizikou">免責事項</a></div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
 
 <!-- 下部ナビ（タスクアプリ風メニュー：アイコン＋ラベル） -->
 <nav class="bottom-nav">
