@@ -1092,7 +1092,18 @@ a{text-decoration:none}
 /* ===== レイアウト刷新（①タイトルのみ ②スクロール不要 ③イラスト固定背景 ④章は動画下） ===== */
 .library-hero{display:none}
 .app-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.4;filter:saturate(.85) contrast(1.02) brightness(.5)}
+.app-bg--m{display:none}
 .app-veil{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(1200px 760px at 50% -6%, rgba(9,11,17,.26), rgba(7,9,13,.86) 74%)}
+/* ① スマホは縦長イラストを背景に */
+@media(max-width:700px){
+  .app-bg--pc{display:none}
+  .app-bg--m{display:block;opacity:.5;filter:saturate(.92) contrast(1.02) brightness(.62)}
+}
+/* ③ 販売ボタン非表示用 ④ アクセスパス無しは内容物を隠す */
+.lockscreen .lk-btn[hidden]{display:none}
+.vmeta.meta-locked .vfiled,
+.vmeta.meta-locked .vnav,
+.vmeta.meta-locked .chapter-list{display:none}
 .app-title{position:relative;z-index:2;text-align:center;padding:28px 20px 0}
 .app-title h2{font-family:var(--mincho);font-weight:800;font-size:clamp(20px,2.6vw,30px);letter-spacing:.1em;color:#fff;margin:7px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
 .vlayout{margin-top:0;padding-top:20px}
@@ -1158,7 +1169,8 @@ a{text-decoration:none}
 </header>
 
 <!-- ③ イラストをメイン背景に（固定・全画面） -->
-<img class="app-bg" src="assets/videosamune.jpg" alt="">
+<img class="app-bg app-bg--pc" src="assets/videosamune.jpg" alt="">
+<img class="app-bg app-bg--m" src="assets/haikei.tatenaga.webp" alt="" onerror="this.onerror=null;this.src='assets/videosamune.jpg'">
 <div class="app-veil"></div>
 <!-- ① タイトルのみ -->
 <div class="app-title">
@@ -1334,22 +1346,24 @@ function setLockScreen(course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
+  b.hidden = false; b.removeAttribute("target"); b.onclick = null;
   if(!SESSION || !SESSION.email){
-    t.textContent = "会員ログインが必要です";
-    d.textContent = "ご登録済みのメールアドレスでログインすると視聴できます。";
+    // 未ログイン：ログイン導線だけ残す
+    t.textContent = "アクセスパスが必要です";
+    d.textContent = "会員のメールアドレスでログインすると視聴できます。";
     b.textContent = "ログイン →";
-    b.removeAttribute("target"); b.setAttribute("href", "#");
+    b.setAttribute("href", "#");
     b.onclick = (ev) => { ev.preventDefault(); openLogin(); };
   } else if(!SESSION.active){
-    t.textContent = "ご契約が有効ではありません";
-    d.textContent = "サブスクのご契約状態をご確認ください。";
-    b.textContent = "登録・更新する →";
-    b.onclick = null; b.setAttribute("target", "_blank"); b.href = course.registerUrl || REGISTER_URL;
+    // 契約が無効：メッセージのみ（販売ページは今後追加）
+    t.textContent = "アクセスパスが必要です";
+    d.textContent = "ご契約状態をご確認のうえ、再度お試しください。";
+    b.hidden = true;
   } else {
-    t.textContent = "このコースの視聴権がありません";
-    d.textContent = "対象の講座をご購入・ご登録いただくと視聴できます。";
-    b.textContent = "今すぐ登録する →";
-    b.onclick = null; b.setAttribute("target", "_blank"); b.href = course.registerUrl || REGISTER_URL;
+    // 有料コンテンツ・タグ無し：現状はメッセージのみ（販売ページは今後追加）
+    t.textContent = "アクセスパスが必要です";
+    d.textContent = "このコンテンツの視聴にはアクセスパスが必要です。";
+    b.hidden = true;
   }
 }
 async function doLogin(){
@@ -1555,11 +1569,25 @@ function select(ci, vi){
   const v = course.videos[vi]; if(!v) return;
   curCourse = ci; curVideo = vi;
   const locked = !hasAccess(course);
+  const vmeta  = document.querySelector(".vmeta");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+
+  if(locked){
+    // ④ アクセスパス無し：動画も内容物（章・前後・補足）も出さない
+    vmeta.classList.add("meta-locked");
+    vframe.classList.add("locked"); viframe.src = ""; setLockScreen(course);
+    vkick.textContent  = course.name;
+    vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
+    vfiled.innerHTML   = "";
+    document.getElementById("vnav").hidden = true;
+    document.getElementById("chapterList").innerHTML = "";
+    return;
+  }
+
+  vmeta.classList.remove("meta-locked");
+  vframe.classList.remove("locked"); viframe.src = embedUrl(v);
   vkick.textContent  = course.videos.length > 1 ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}` : course.name;
   vtitle.textContent = v.t;
-  if(locked){ vframe.classList.add("locked"); viframe.src = ""; setLockScreen(course); }
-  else { vframe.classList.remove("locked"); viframe.src = embedUrl(v); }
   let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
   vfiled.innerHTML = meta;
   renderVnav(ci, vi);       // ③ コース内 前へ／次へ
