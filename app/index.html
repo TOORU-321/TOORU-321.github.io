@@ -10,9 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/column.css">
 <style>
-/* ===== 会員動画アプリ（/videos/ と同デザイン：ダーク×ゴールド） ===== */
-
-/* ── ヒーロー（page-head 上書き：videosamune.jpg 背景・画像比率3:1） ── */
+/* ===== 会員動画アプリ エルラボ＋（ダーク×ゴールド） ===== */
 .page-head{position:relative;overflow:hidden;height:33.34vw;min-height:210px;max-height:330px;display:grid;place-items:center;padding:24px;text-align:center;border-bottom:none;background:#14141a}
 @media(max-width:600px){.page-head{height:auto;min-height:230px;max-height:260px}}
 .page-head .ph-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
@@ -24,34 +22,25 @@
 .page-head h1{font-family:var(--mincho);font-weight:800;font-size:clamp(26px,4vw,38px);margin-top:11px;letter-spacing:.14em;color:#fff;text-shadow:0 2px 26px rgba(0,0,0,.6)}
 .page-head p{color:#ddd6c9;font-size:13px;margin-top:12px;letter-spacing:.04em;line-height:1.85;text-shadow:0 1px 14px rgba(0,0,0,.5)}
 .page-head .hr{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--gold-2),transparent);margin:18px auto 0}
-
 .vlayout{max-width:1140px;margin:0 auto;padding:60px 28px 0;display:grid;grid-template-columns:336px minmax(0,1fr);gap:54px;align-items:start}
 @media(max-width:900px){.vlayout{grid-template-columns:1fr;gap:34px;padding-top:38px}}
-
-/* ── 左：コース一覧（アコーディオン） ── */
 .vlist{align-self:start}
 @media(max-width:900px){.vlist{order:2}}
 .vlist .listhead{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--serif-en);font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);padding-bottom:11px;border-bottom:1px solid var(--gold);margin-bottom:2px}
 .vlist .listhead .lh-count{font-family:var(--gothic);font-size:11px;letter-spacing:.02em;color:var(--ink-soft);text-transform:none}
-
-/* コース行（第1階層） */
 .course{border-bottom:1px solid var(--line);position:relative}
 .course-head{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--mincho);font-weight:700;color:var(--ink);font-size:14.5px;line-height:1.55;padding:16px 8px 16px 16px;display:flex;gap:12px;align-items:center;transition:color .18s}
 .course-head::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:2px;height:0;background:var(--gold);transition:height .2s}
 .course.open>.course-head::before,.course.single.active>.course-head::before{height:62%}
 .course-head:hover{color:var(--gold)}
 .course-head .c-tw{flex:1}
-/* 単発コースは再生ヒント（▷）をホバー表示 */
 .course.single .course-head .c-tw::after{content:"▷";font-size:10px;color:var(--line-2);margin-left:9px;vertical-align:1px;transition:color .18s}
 .course.single:hover .course-head .c-tw::after,.course.single.active .course-head .c-tw::after{color:var(--gold)}
 .course.single.active .course-head{color:var(--gold)}
-/* 開閉トグル（丸囲みの＋／−） */
 .course-head .c-toggle{font-family:var(--gothic);font-size:13px;line-height:1;color:var(--gold);width:21px;height:21px;border:1px solid var(--line-2);border-radius:50%;display:inline-grid;place-items:center;transition:.2s;flex:none}
 .course.open .course-head .c-toggle{background:var(--gold);color:#fff;border-color:var(--gold)}
 .course-head .c-lock{color:var(--gold);font-size:13px}
 .course-head .c-tag{font-size:10px;font-weight:400;letter-spacing:.04em;color:var(--ink-soft);border:1px solid var(--line-2);border-radius:999px;padding:2px 9px;white-space:nowrap;font-family:var(--gothic)}
-
-/* 章リスト（第2階層・展開部）— 左に細い背骨ライン */
 .chapters{display:none;margin:0 0 8px;padding:4px 0 4px 16px;border-left:1px solid var(--line-2);margin-left:7px}
 .course.open .chapters{display:block}
 .chapter{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);color:var(--ink-2);font-size:13px;line-height:1.65;padding:9px 6px 9px 12px;display:flex;gap:11px;align-items:flex-start;position:relative;transition:color .18s}
@@ -62,8 +51,6 @@
 .chapter .ch-no{font-family:var(--serif-en);font-size:12px;color:var(--ink-soft);min-width:18px;padding-top:1px}
 .chapter.active .ch-no{color:var(--gold)}
 .chapter .ch-t{flex:1}
-
-/* ── 右：プレイヤー ── */
 .vplayer{align-self:start}
 @media(max-width:900px){.vplayer{order:1}}
 .vframe{position:relative;aspect-ratio:16/9;background:#0f0f14;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;box-shadow:0 28px 56px -30px rgba(16,16,24,.55),0 6px 16px -10px rgba(16,16,24,.3)}
@@ -76,13 +63,6 @@
 .vmeta .vfiled{margin-top:18px;padding-top:15px;border-top:1px solid var(--line-2);display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);min-height:1px}
 .vmeta .vfiled a.col-link{color:var(--ink-2);border-bottom:1px solid var(--line-2);padding-bottom:2px;font-size:12px}
 .vmeta .vfiled a.col-link:hover{color:var(--gold);border-color:var(--gold)}
-
-/* ヘッダーナビ（公式サイト準拠の9項目） */
-.masthead .nav{gap:18px;font-size:13px;flex-wrap:wrap;justify-content:flex-end}
-.masthead .nav a.login{color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:5px 16px}
-.masthead .nav a.login:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
-
-/* 🔒 登録が必要です画面（フェーズ②でログイン判定に差し替え） */
 .lockscreen{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:30px;background:linear-gradient(rgba(17,17,20,.86),rgba(17,17,20,.9));color:#fff}
 .vframe.locked .lockscreen{display:flex}
 .lockscreen .lk-ico{font-size:30px}
@@ -90,11 +70,7 @@
 .lockscreen .lk-d{font-size:12.5px;color:#e7e2d8;line-height:1.9;max-width:380px}
 .lockscreen .lk-btn{margin-top:6px;display:inline-block;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));padding:11px 26px;border-radius:999px;letter-spacing:.04em}
 .lockscreen .lk-btn:hover{filter:brightness(1.06)}
-
-/* ローディング／エラー表示 */
 .vstate{color:var(--ink-soft);font-size:13px;padding:18px 4px;line-height:1.8}
-
-/* ログインモーダル */
 .loginmodal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(16,16,21,.55)}
 .loginmodal[hidden]{display:none}
 .lm-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:380px;width:100%;padding:34px 30px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
@@ -107,21 +83,8 @@
 .lm-go{width:100%;padding:12px;border:none;border-radius:999px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer;letter-spacing:.04em}
 .lm-go:hover{filter:brightness(1.05)}
 .lm-msg{font-size:12px;color:var(--gold);margin-top:12px;min-height:1em;text-align:center;line-height:1.6}
-
-/* アプリ内セクションメニュー（将来の拡張・準備中つき） */
-.appmenu{max-width:1140px;margin:0 auto;padding:20px 28px 0;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;border-bottom:1px solid var(--line)}
-@media(max-width:640px){.appmenu{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}}
-.am-item{position:relative;font-family:var(--gothic);font-size:13.5px;letter-spacing:.04em;color:var(--ink-2);padding:12px 16px;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;cursor:pointer}
-.am-item:hover{color:var(--gold)}
-.am-item.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
-.am-item.soon{color:var(--ink-soft);cursor:default}
-.am-item.soon:hover{color:var(--ink-soft)}
-.am-item .soon-tag{font-size:9px;letter-spacing:.06em;color:#fff;background:var(--line-2);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:1.5px}
-/* トースト（準備中の通知） */
-.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;font-size:12.5px;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 14px 34px -14px rgba(0,0,0,.55)}
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;font-size:12.5px;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:220;box-shadow:0 14px 34px -14px rgba(0,0,0,.55)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ── ① 初回ゲート（ENTRY） ── */
 .entry{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;background:#12121a;overflow:hidden}
 .entry[hidden]{display:none}
 .entry-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.5}
@@ -137,8 +100,6 @@
 .entry-login:hover{filter:brightness(1.07)}
 .entry-guest{padding:13px;border:1px solid rgba(255,255,255,.35);border-radius:999px;font-size:14px;color:#fff;background:transparent;cursor:pointer;letter-spacing:.05em;transition:.15s}
 .entry-guest:hover{border-color:var(--gold-2);color:var(--gold-2)}
-
-/* ── ② アプリ上部バー（サイトのヘッダーは廃止・自己完結） ── */
 .appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--paper);border-bottom:1px solid var(--line-2)}
 .appbar-brand{font-family:var(--mincho);font-weight:800;font-size:18px;letter-spacing:.06em;color:var(--ink)}
 .appbar-right{display:flex;align-items:center;gap:14px}
@@ -147,8 +108,6 @@
 .member-exit{font-family:var(--gothic);font-size:12.5px;color:var(--ink-soft);border:none;background:none;cursor:pointer;padding:6px 6px}
 .member-exit:hover{color:var(--gold)}
 .vlayout{padding-top:34px}
-
-/* ── 下部ナビ（タスクアプリ風：アイコン＋ラベル） ── */
 #library{padding-bottom:66px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:62px;background:var(--paper);border-top:1px solid var(--line-2);z-index:100;display:flex;justify-content:center;align-items:stretch;box-shadow:0 -2px 14px rgba(20,20,26,.07)}
 .bottom-nav .nav-item{flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:color .2s;position:relative;font-family:var(--gothic)}
@@ -161,8 +120,6 @@
 .bottom-nav .nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .bottom-nav .nav-label{font-size:10px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .bottom-nav .nav-label .soon-tag{font-size:8px;font-weight:400;color:#fff;background:var(--line-2);border-radius:999px;padding:1px 5px;letter-spacing:.03em;margin-left:2px}
-
-/* ── お知らせパネル ── */
 .newsmodal{position:fixed;inset:0;z-index:190;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;background:rgba(16,16,21,.55);overflow:auto}
 .newsmodal[hidden]{display:none}
 .news-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:560px;width:100%;padding:26px 28px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
@@ -188,10 +145,955 @@
 .nf-btns{display:flex;gap:10px;margin-top:14px}
 .nf-save{flex:1;padding:11px;border:none;border-radius:999px;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer}
 .nf-cancel{padding:11px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;color:var(--ink-2);background:none;cursor:pointer}
+
+
+/* ===== 追加改修：視聴ページを「イラスト背景 → 一覧 → コンテンツ」構成へ ===== */
+body{
+  background:
+    radial-gradient(1200px 420px at 50% -8%, rgba(201,165,97,.09), rgba(201,165,97,0) 62%),
+    linear-gradient(180deg, #f7f3eb 0%, #f5f1e8 46%, #f7f4ee 100%);
+}
+#library{
+  background:transparent;
+}
+.library-hero{
+  position:relative;
+  overflow:hidden;
+  padding:92px 24px 86px;
+  min-height:360px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  isolation:isolate;
+  background:#151722;
+  border-bottom:1px solid rgba(180,146,81,.18);
+}
+.library-hero-bg{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center center; z-index:-3; opacity:.88; transform:scale(1.04);
+  filter:saturate(.92) contrast(1.02) brightness(.7);
+}
+.library-hero::before{
+  content:""; position:absolute; inset:0; z-index:-2;
+  background:
+    radial-gradient(1100px 420px at 50% 40%, rgba(7,10,19,.12), rgba(9,10,16,.78) 70%),
+    linear-gradient(180deg, rgba(8,10,17,.50) 0%, rgba(9,10,16,.32) 28%, rgba(10,12,20,.84) 100%);
+}
+.library-hero::after{
+  content:""; position:absolute; inset:auto 0 0; height:120px; z-index:-1;
+  background:linear-gradient(180deg, rgba(9,11,17,0), rgba(9,11,17,.96) 94%);
+}
+.library-hero-inner{
+  position:relative; z-index:2; width:min(1160px, 100%);
+  color:#fff; text-align:center;
+}
+.library-kicker{
+  display:inline-flex; align-items:center; gap:12px;
+  font-family:var(--serif-en); font-size:12px; letter-spacing:.36em; text-transform:uppercase;
+  color:#ecd7a9; margin-bottom:18px;
+}
+.library-kicker::before,.library-kicker::after{
+  content:""; width:34px; height:1px; background:linear-gradient(90deg, transparent, rgba(232,207,152,.95), transparent);
+}
+.library-hero h2{
+  font-family:var(--mincho); font-weight:800; font-size:clamp(28px, 4.2vw, 46px);
+  line-height:1.42; letter-spacing:.12em; margin:0;
+  text-shadow:0 10px 38px rgba(0,0,0,.28);
+}
+.library-hero p{
+  max-width:760px; margin:18px auto 0; color:#e7dece; line-height:2; font-size:14px; letter-spacing:.03em;
+  text-shadow:0 2px 18px rgba(0,0,0,.3);
+}
+.library-hero-meta{
+  margin-top:28px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center;
+}
+.library-hero-meta span{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:999px;
+  color:#fff; font-size:12.5px; letter-spacing:.04em;
+  border:1px solid rgba(234,212,161,.34);
+  background:rgba(255,255,255,.08); backdrop-filter:blur(10px);
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
+}
+.library-hero-meta span::before{
+  content:""; width:6px; height:6px; border-radius:50%; background:var(--gold);
+  box-shadow:0 0 0 5px rgba(195,156,86,.14);
+}
+.vlayout{
+  position:relative; z-index:3; margin-top:-58px; padding:0 28px 98px;
+  align-items:start;
+}
+.vlist,.vplayer{
+  position:relative;
+}
+.vlist::before,.vplayer::before{ display:none; }
+.vlist{
+  padding:26px 24px 22px;
+}
+.vplayer{
+  padding:28px 28px 30px;
+}
+.vlist .listhead{
+  padding-bottom:14px; margin-bottom:10px;
+  border-bottom:1px solid rgba(180,146,81,.28);
+}
+.vframe{
+  border-radius:20px;
+  border:1px solid rgba(183,148,83,.2);
+  box-shadow:0 26px 70px -34px rgba(10,16,27,.44), 0 14px 24px -18px rgba(10,16,27,.26);
+}
+.vmeta{
+  margin-top:24px; padding:0 2px;
+}
+.course{border-bottom:1px solid rgba(179,156,112,.16)}
+.course:last-child{border-bottom:none}
+.course-head{
+  position:relative; border-radius:14px; padding:16px 12px 16px 16px;
+}
+.course-head:hover{
+  background:linear-gradient(135deg, rgba(195,156,86,.07), rgba(195,156,86,.02));
+}
+.course.open .course-head,
+.course.single.active .course-head{
+  background:linear-gradient(135deg, rgba(195,156,86,.10), rgba(195,156,86,.03));
+}
+.chapters{
+  margin:6px 0 10px; padding:6px 0 6px 16px; margin-left:10px;
+  border-left:1px solid rgba(191,164,109,.26);
+}
+.chapter{
+  border-radius:12px; padding:10px 8px 10px 12px;
+}
+.chapter:hover,.chapter.active{
+  background:linear-gradient(135deg, rgba(195,156,86,.08), rgba(195,156,86,.02));
+}
+.vmeta .np{
+  color:var(--gold-2); letter-spacing:.3em;
+}
+.vmeta h1{
+  font-size:clamp(24px, 3.15vw, 34px);
+}
+.vmeta .vfiled{
+  margin-top:20px; padding-top:18px;
+  border-top:1px solid rgba(191,164,109,.22);
+}
+.appbar{
+  background:rgba(249,246,239,.84);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(191,164,109,.18);
+  box-shadow:0 10px 30px rgba(10,16,27,.06);
+}
+.bottom-nav{
+  left:50%; right:auto; bottom:18px; transform:translateX(-50%);
+  width:min(760px, calc(100% - 20px)); height:68px; border-radius:20px;
+  border:1px solid rgba(191,164,109,.18);
+  background:rgba(250,247,241,.92); backdrop-filter:blur(16px);
+  box-shadow:0 18px 36px rgba(10,16,27,.12);
+}
+.bottom-nav .nav-item{max-width:none}
+.bottom-nav .nav-item.active::after{top:7px; height:3px; width:34px; border-radius:999px}
+.loginmodal,.newsmodal{
+  backdrop-filter:blur(6px);
+}
+.lm-card,.news-card{
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(251,247,239,.94));
+  border:1px solid rgba(191,164,109,.18);
+  box-shadow:0 34px 70px -32px rgba(10,16,27,.30);
+}
+@media (max-width: 900px){
+  .library-hero{padding:78px 18px 62px; min-height:320px}
+  .library-hero h2{letter-spacing:.08em}
+  .library-hero p{font-size:13px; line-height:1.9}
+  .vlayout{margin-top:-38px; padding:0 16px 96px; gap:20px}
+  .vplayer{padding:20px}
+  .vlist{padding:20px}
+}
+@media (max-width: 640px){
+  .library-kicker{font-size:10.5px; letter-spacing:.28em}
+  .library-kicker::before,.library-kicker::after{width:20px}
+  .library-hero{padding:74px 14px 54px; min-height:300px}
+  .library-hero h2{font-size:clamp(24px, 7vw, 34px); line-height:1.5}
+  .library-hero p{margin-top:14px; font-size:12.5px}
+  .library-hero-meta{margin-top:20px; gap:8px}
+  .library-hero-meta span{font-size:11.5px; padding:9px 12px}
+  .vlayout{margin-top:-26px; padding:0 12px 102px}
+  .vlist::before,.vplayer::before{border-radius:18px}
+  .vlist,.vplayer{padding:16px}
+  .vframe{border-radius:16px}
+  .bottom-nav{bottom:10px; width:calc(100% - 12px); height:64px; border-radius:18px}
+  .bottom-nav .nav-label{font-size:9px}
+}
+
+
+
+/* ===== 入室演出：左右の扉が開く（CSSのみ／JS変更なし） ===== */
+#library:not([hidden])::before,
+#library:not([hidden])::after{
+  content:"";
+  position:fixed;
+  top:0;
+  bottom:0;
+  width:50.5vw;
+  z-index:9999;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.035), transparent 10%, transparent 90%, rgba(255,255,255,.025)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 68px),
+    radial-gradient(680px 420px at 50% 42%, rgba(185,148,78,.12), transparent 68%),
+    linear-gradient(180deg, #181b28 0%, #10131e 52%, #0b0e17 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(231,205,147,.08),
+    inset 0 0 80px rgba(0,0,0,.30),
+    0 0 80px rgba(0,0,0,.42);
+  animation-duration:1.28s;
+  animation-timing-function:cubic-bezier(.76,0,.24,1);
+  animation-fill-mode:forwards;
+  will-change:transform,opacity;
+}
+#library:not([hidden])::before{
+  left:0;
+  border-right:1px solid rgba(236,208,145,.58);
+  box-shadow:
+    inset -18px 0 30px rgba(0,0,0,.28),
+    inset 0 0 0 1px rgba(231,205,147,.07),
+    18px 0 38px rgba(0,0,0,.30);
+  animation-name:lmDoorLeft;
+}
+#library:not([hidden])::after{
+  right:0;
+  border-left:1px solid rgba(236,208,145,.58);
+  box-shadow:
+    inset 18px 0 30px rgba(0,0,0,.28),
+    inset 0 0 0 1px rgba(231,205,147,.07),
+    -18px 0 38px rgba(0,0,0,.30);
+  animation-name:lmDoorRight;
+}
+@keyframes lmDoorLeft{
+  0%{transform:translateX(0);opacity:1}
+  20%{transform:translateX(-1.5%);opacity:1}
+  76%{opacity:1}
+  100%{transform:translateX(-103%);opacity:0}
+}
+@keyframes lmDoorRight{
+  0%{transform:translateX(0);opacity:1}
+  20%{transform:translateX(1.5%);opacity:1}
+  76%{opacity:1}
+  100%{transform:translateX(103%);opacity:0}
+}
+#library:not([hidden]) .appbar,
+#library:not([hidden]) .library-hero,
+#library:not([hidden]) .vlayout,
+#library:not([hidden]) .bottom-nav{
+  animation:lmSceneReveal .82s cubic-bezier(.2,.7,.2,1) both;
+}
+#library:not([hidden]) .library-hero{animation-delay:.28s}
+#library:not([hidden]) .vlayout{animation-delay:.42s}
+#library:not([hidden]) .bottom-nav{animation-delay:.58s}
+@keyframes lmSceneReveal{
+  from{opacity:0;transform:translateY(16px) scale(.992);filter:blur(4px)}
+  to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+}
+@media (prefers-reduced-motion: reduce){
+  #library:not([hidden])::before,
+  #library:not([hidden])::after,
+  #library:not([hidden]) .appbar,
+  #library:not([hidden]) .library-hero,
+  #library:not([hidden]) .vlayout,
+  #library:not([hidden]) .bottom-nav{
+    animation:none!important;
+  }
+}
+
+</style>
+
+<style>
+/* =========================================================
+   エルラボ＋ Professional UI Override
+   機能・HTML構造・JSには触れず、見た目のみを上書き
+   ========================================================= */
+:root{
+  --gold:#b99455;
+  --gold-2:#e3c381;
+  --ink:#f7f4ec;
+  --ink-2:#c9c5bb;
+  --ink-soft:#929087;
+  --paper:#11151d;
+  --line:rgba(227,195,129,.10);
+  --line-2:rgba(227,195,129,.20);
+  --gothic:"Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mincho:"Shippori Mincho B1","Yu Mincho",serif;
+  --serif-en:"Cormorant Garamond",Georgia,serif;
+  --lm-bg:#090c12;
+  --lm-bg-2:#0e121a;
+  --lm-surface:#121720;
+  --lm-surface-2:#171d27;
+  --lm-surface-3:#1d2430;
+  --lm-border:rgba(225,197,139,.14);
+  --lm-border-strong:rgba(225,197,139,.28);
+  --lm-text:#f7f4ec;
+  --lm-muted:#a8a49b;
+  --lm-shadow:0 24px 70px rgba(0,0,0,.34);
+  --lm-radius:22px;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--lm-bg)}
+body{
+  margin:0;
+  min-width:320px;
+  min-height:100vh;
+  overflow-x:hidden;
+  color:var(--lm-text);
+  background:
+    radial-gradient(900px 520px at 88% -8%,rgba(185,148,85,.10),transparent 62%),
+    radial-gradient(760px 520px at -10% 30%,rgba(74,91,124,.12),transparent 64%),
+    linear-gradient(180deg,var(--lm-bg-2),var(--lm-bg));
+  font-family:var(--gothic);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button,input,textarea{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+a{text-decoration:none}
+::selection{background:rgba(227,195,129,.28);color:#fff}
+
+/* ---------- Entry / Welcome ---------- */
+.entry{
+  isolation:isolate;
+  padding:clamp(22px,4vw,48px);
+  background:#080b11;
+}
+.entry::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 43%,rgba(227,195,129,.18),transparent 22%),
+    radial-gradient(circle at 20% 75%,rgba(63,80,117,.20),transparent 30%);
+  animation:lmAura 12s ease-in-out infinite alternate;
+}
+.entry::after{
+  z-index:2;
+  background:
+    linear-gradient(180deg,rgba(5,7,11,.52),rgba(7,9,14,.83)),
+    radial-gradient(760px 520px at 50% 42%,rgba(11,14,22,.20),rgba(5,7,11,.92));
+}
+.entry-bg{
+  opacity:.48;
+  filter:saturate(.72) contrast(1.04) brightness(.72);
+  transform:scale(1.035);
+  animation:lmHeroDrift 18s ease-in-out infinite alternate;
+}
+.entry-inner{
+  z-index:3;
+  width:min(100%,480px);
+  max-width:none;
+  padding:clamp(34px,6vw,58px) clamp(26px,5vw,52px);
+  border:1px solid rgba(238,214,163,.18);
+  border-radius:30px;
+  background:linear-gradient(145deg,rgba(19,23,33,.78),rgba(10,13,20,.58));
+  box-shadow:0 40px 100px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(22px) saturate(1.15);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);
+  animation:lmEntryIn .9s cubic-bezier(.2,.8,.2,1) both;
+}
+.entry-inner::before{
+  content:"";
+  display:block;
+  width:42px;
+  height:1px;
+  margin:0 auto 20px;
+  background:linear-gradient(90deg,transparent,var(--gold-2),transparent);
+  box-shadow:0 0 18px rgba(227,195,129,.45);
+}
+.entry-mark{
+  margin-bottom:16px;
+  color:#d9bd81;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.48em;
+  text-indent:.48em;
+  opacity:.92;
+}
+.entry-brand{
+  position:relative;
+  font-size:clamp(38px,7vw,54px);
+  line-height:1.25;
+  letter-spacing:.15em;
+  text-indent:.15em;
+  background:linear-gradient(110deg,#fff 10%,#f4ead5 42%,#d9bd81 55%,#fff 74%);
+  background-size:220% auto;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  text-shadow:none;
+  animation:lmTitleGlow 7s ease-in-out infinite;
+}
+.brand-plus{color:var(--gold-2);filter:drop-shadow(0 0 8px rgba(227,195,129,.38))}
+.entry-lead{
+  max-width:330px;
+  margin:21px auto 34px;
+  color:#c9c4b9;
+  font-size:13.5px;
+  line-height:2;
+  letter-spacing:.035em;
+  text-shadow:none;
+}
+.entry-btns{max-width:320px;gap:13px}
+.entry-login,.entry-guest,.lm-go,.lk-btn,.nf-save,.news-new{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease,color .24s ease,filter .24s ease;
+}
+.entry-login::after,.lm-go::after,.lk-btn::after,.nf-save::after,.news-new::after{
+  content:"";
+  position:absolute;
+  inset:-80% auto -80% -45%;
+  z-index:-1;
+  width:34%;
+  transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  transition:left .55s ease;
+}
+.entry-login:hover::after,.lm-go:hover::after,.lk-btn:hover::after,.nf-save:hover::after,.news-new:hover::after{left:115%}
+.entry-login{
+  min-height:54px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(135deg,#d7b871,#a87d3f);
+  box-shadow:0 16px 36px rgba(155,112,51,.25),inset 0 1px 0 rgba(255,255,255,.25);
+  font-size:14.5px;
+  letter-spacing:.08em;
+}
+.entry-login:hover{transform:translateY(-2px);box-shadow:0 20px 44px rgba(155,112,51,.34);filter:none}
+.entry-login:active{transform:translateY(0) scale(.985)}
+.entry-guest{
+  min-height:50px;
+  border-color:rgba(255,255,255,.20);
+  background:rgba(255,255,255,.025);
+  color:#d7d2c8;
+  backdrop-filter:blur(8px);
+}
+.entry-guest:hover{transform:translateY(-2px);border-color:rgba(227,195,129,.56);color:#ecd7aa;background:rgba(227,195,129,.055)}
+.entry-guest:active{transform:translateY(0) scale(.985)}
+
+/* ---------- Main shell / App bar ---------- */
+#library{
+  min-height:100vh;
+  padding-bottom:108px;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.008),transparent 240px),
+    radial-gradient(900px 520px at 80% 10%,rgba(185,148,85,.07),transparent 66%);
+  animation:lmLibraryIn .55s ease both;
+}
+#library[hidden]{display:none}
+.appbar{
+  min-height:72px;
+  padding:0 clamp(18px,4vw,48px);
+  background:rgba(11,14,21,.76);
+  border-bottom:1px solid var(--lm-border);
+  box-shadow:0 10px 34px rgba(0,0,0,.12);
+  backdrop-filter:blur(18px) saturate(1.2);
+  -webkit-backdrop-filter:blur(18px) saturate(1.2);
+  animation:lmBarIn .55s ease both;
+}
+.appbar::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(227,195,129,.38),transparent);
+  opacity:.7;
+}
+.appbar-brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  color:#f6f1e7;
+  font-size:19px;
+  letter-spacing:.09em;
+}
+.appbar-brand::before{
+  content:"";
+  width:28px;
+  height:28px;
+  flex:none;
+  border:1px solid rgba(227,195,129,.42);
+  border-radius:9px;
+  background:
+    linear-gradient(135deg,rgba(227,195,129,.18),transparent),
+    radial-gradient(circle,var(--gold-2) 0 2px,transparent 3px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 5px 18px rgba(0,0,0,.18);
+}
+.appbar-brand .brand-plus{color:var(--gold-2)}
+.appbar-right{gap:10px}
+.member-ctl{
+  min-height:38px;
+  padding:8px 17px;
+  border-color:rgba(227,195,129,.44);
+  color:#e2c788;
+  background:rgba(227,195,129,.035);
+  font-size:12px;
+  letter-spacing:.025em;
+}
+.member-ctl:hover{transform:translateY(-1px);background:linear-gradient(135deg,#caa75f,#a87d3f);border-color:transparent;color:#fff;box-shadow:0 10px 24px rgba(155,112,51,.20)}
+.member-exit{color:#8f918f;transition:color .2s ease,transform .2s ease}
+.member-exit:hover{color:#e2c788;transform:translateY(-1px)}
+
+/* ---------- Content layout ---------- */
+.vlayout{
+  width:min(100%,1280px);
+  max-width:1280px;
+  padding:42px clamp(18px,4vw,48px) 20px;
+  grid-template-columns:minmax(280px,330px) minmax(0,1fr);
+  gap:clamp(28px,4vw,52px);
+}
+.vlist{
+  position:sticky;
+  top:96px;
+  max-height:calc(100vh - 132px);
+  overflow:auto;
+  padding:22px 18px 18px;
+  border:1px solid var(--lm-border);
+  border-radius:20px;
+  background:linear-gradient(160deg,rgba(24,30,40,.90),rgba(15,19,27,.90));
+  box-shadow:0 20px 58px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.025);
+  scrollbar-width:thin;
+  scrollbar-color:rgba(227,195,129,.22) transparent;
+  animation:lmSideIn .65s .08s cubic-bezier(.2,.8,.2,1) both;
+}
+.vlist::-webkit-scrollbar{width:5px}
+.vlist::-webkit-scrollbar-thumb{background:rgba(227,195,129,.20);border-radius:99px}
+.vlist .listhead{
+  margin:0 4px 8px;
+  padding:0 0 15px;
+  border-bottom:1px solid var(--lm-border-strong);
+  color:#f1e9d9;
+  font-size:13px;
+  letter-spacing:.22em;
+}
+.vlist .listhead::before{
+  content:"";
+  width:6px;
+  height:6px;
+  margin-right:9px;
+  display:inline-block;
+  border-radius:50%;
+  background:var(--gold-2);
+  box-shadow:0 0 0 5px rgba(227,195,129,.09),0 0 16px rgba(227,195,129,.34);
+  vertical-align:1px;
+}
+.vlist .listhead .lh-count{color:#8e918f;font-size:10.5px}
+.course{
+  margin:5px 0;
+  border:1px solid transparent;
+  border-bottom-color:rgba(255,255,255,.045);
+  border-radius:13px;
+  overflow:hidden;
+  transition:background .22s ease,border-color .22s ease,transform .22s ease,box-shadow .22s ease;
+}
+.course:hover{background:rgba(255,255,255,.025);border-color:rgba(227,195,129,.10);transform:translateX(2px)}
+.course.open,.course.single.active{
+  background:linear-gradient(135deg,rgba(227,195,129,.10),rgba(227,195,129,.025));
+  border-color:rgba(227,195,129,.20);
+  box-shadow:inset 3px 0 0 var(--gold),0 8px 24px rgba(0,0,0,.10);
+}
+.course-head{
+  min-height:56px;
+  padding:14px 11px 14px 14px;
+  color:#e8e4db;
+  font-family:var(--gothic);
+  font-size:13.5px;
+  font-weight:600;
+  letter-spacing:.01em;
+}
+.course-head::before{display:none}
+.course-head:hover,.course.single.active .course-head{color:#f0d69c}
+.course-head .c-toggle{
+  width:24px;
+  height:24px;
+  border-color:rgba(227,195,129,.24);
+  color:#d8b870;
+  background:rgba(227,195,129,.025);
+  font-weight:400;
+}
+.course.open .course-head .c-toggle{background:linear-gradient(135deg,#d2b16d,#a87d3f);border-color:transparent;color:white;box-shadow:0 6px 16px rgba(155,112,51,.22)}
+.course-head .c-tag{
+  padding:3px 9px;
+  border-color:rgba(227,195,129,.17);
+  background:rgba(227,195,129,.04);
+  color:#9f9d95;
+  font-size:9px;
+}
+.course-head .c-lock{font-size:12px;filter:grayscale(.15)}
+.course.single .course-head .c-tw::after{color:rgba(227,195,129,.32);transition:transform .2s ease,color .2s ease}
+.course.single:hover .course-head .c-tw::after{display:inline-block;transform:translateX(3px)}
+.chapters{
+  margin:0 10px 10px 22px;
+  padding:4px 0 4px 12px;
+  border-left:1px solid rgba(227,195,129,.16);
+}
+.course.open .chapters{animation:lmChapterIn .24s ease both}
+.chapter{
+  margin:2px 0;
+  padding:9px 10px;
+  border-radius:9px;
+  color:#aaa9a4;
+  font-size:12.5px;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.chapter::before{left:-16px;width:6px;height:6px;box-shadow:0 0 0 4px rgba(227,195,129,.09)}
+.chapter:hover{background:rgba(255,255,255,.025);color:#e8d3a3;transform:translateX(2px)}
+.chapter.active{background:rgba(227,195,129,.08);color:#f0d69c}
+.chapter .ch-no{color:#6f7478;font-size:11px}
+.chapter.active .ch-no{color:#d8b870}
+
+.vplayer{
+  min-width:0;
+  animation:lmPlayerIn .7s .12s cubic-bezier(.2,.8,.2,1) both;
+}
+.vframe{
+  border:1px solid rgba(227,195,129,.20);
+  border-radius:22px;
+  background:#05070a;
+  box-shadow:0 30px 80px rgba(0,0,0,.38),0 1px 0 rgba(255,255,255,.04),0 0 0 8px rgba(255,255,255,.012);
+  transform:translateZ(0);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,border-color .35s ease;
+}
+.vframe::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+}
+.vframe:hover{transform:translateY(-3px);border-color:rgba(227,195,129,.31);box-shadow:0 38px 90px rgba(0,0,0,.43),0 0 0 8px rgba(227,195,129,.018)}
+.vmeta{
+  margin-top:24px;
+  padding:26px 28px 24px;
+  border:1px solid var(--lm-border);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(22,27,37,.82),rgba(13,17,24,.72));
+  box-shadow:0 18px 50px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.022);
+}
+.vmeta .np{
+  color:#d8b870;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.28em;
+}
+.vmeta .np::before{
+  width:6px;
+  height:6px;
+  background:#e2c47f;
+  box-shadow:0 0 0 5px rgba(227,195,129,.09),0 0 14px rgba(227,195,129,.48);
+  animation:lmPulse 2.2s ease-in-out infinite;
+}
+.vmeta .kick{margin-top:15px;color:#8f918f;font-size:11.5px;letter-spacing:.08em}
+.vmeta h1{
+  margin-top:8px;
+  color:#f5f1e8;
+  font-size:clamp(22px,3vw,31px);
+  line-height:1.55;
+  letter-spacing:.025em;
+}
+.vmeta .vfiled{margin-top:20px;padding-top:16px;border-color:rgba(227,195,129,.11)}
+.vmeta .vfiled a.col-link{color:#bdb8ad;border-color:rgba(227,195,129,.20);transition:color .2s ease,border-color .2s ease}
+.vmeta .vfiled a.col-link:hover{color:#efd69e;border-color:#efd69e}
+.vstate{color:#8e918f;text-align:center;padding:30px 12px}
+
+/* ---------- Locked state ---------- */
+.lockscreen{
+  gap:12px;
+  padding:clamp(24px,5vw,48px);
+  background:
+    radial-gradient(500px 260px at 50% 48%,rgba(185,148,85,.12),transparent 72%),
+    rgba(5,7,11,.91);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.lockscreen .lk-ico{font-size:28px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));animation:lmLockFloat 3s ease-in-out infinite}
+.lockscreen .lk-t{color:#f6f0e4;font-size:clamp(17px,2.5vw,21px)}
+.lockscreen .lk-d{max-width:420px;color:#aaa69d;font-size:12px}
+.lockscreen .lk-btn{
+  margin-top:10px;
+  padding:12px 27px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(135deg,#d7b871,#a87d3f);
+  box-shadow:0 14px 32px rgba(155,112,51,.23);
+}
+.lockscreen .lk-btn:hover{transform:translateY(-2px);filter:none;box-shadow:0 18px 40px rgba(155,112,51,.32)}
+
+/* ---------- Bottom navigation ---------- */
+.bottom-nav{
+  left:50%;
+  right:auto;
+  bottom:18px;
+  width:min(calc(100% - 32px),650px);
+  height:70px;
+  padding:7px;
+  transform:translateX(-50%);
+  border:1px solid rgba(227,195,129,.16);
+  border-radius:22px;
+  background:rgba(16,20,28,.88);
+  box-shadow:0 20px 54px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035);
+  backdrop-filter:blur(20px) saturate(1.2);
+  -webkit-backdrop-filter:blur(20px) saturate(1.2);
+  animation:lmNavIn .7s .2s cubic-bezier(.2,.8,.2,1) both;
+}
+.bottom-nav .nav-item{
+  max-width:none;
+  min-width:0;
+  border-radius:15px;
+  color:#777d82;
+  transition:background .22s ease,color .22s ease,transform .22s ease;
+}
+.bottom-nav .nav-item:hover{color:#e0c685;background:rgba(227,195,129,.045);transform:translateY(-1px)}
+.bottom-nav .nav-item.active{
+  color:#edd395;
+  background:linear-gradient(135deg,rgba(227,195,129,.13),rgba(227,195,129,.045));
+}
+.bottom-nav .nav-item.active::after{
+  top:auto;
+  bottom:3px;
+  width:18px;
+  height:2px;
+  border-radius:99px;
+  background:#e0c179;
+  box-shadow:0 0 10px rgba(227,195,129,.42);
+}
+.bottom-nav .nav-item.soon,.bottom-nav .nav-item.soon:hover{color:#50565c;background:transparent;transform:none}
+.bottom-nav .nav-icon{width:23px;height:23px;transition:transform .22s ease}
+.bottom-nav .nav-item.active .nav-icon{transform:translateY(-1px) scale(1.04)}
+.bottom-nav .nav-icon svg{width:21px;height:21px;stroke-width:1.65}
+.bottom-nav .nav-label{font-size:9.5px;font-weight:500;letter-spacing:.035em}
+.bottom-nav .nav-label .soon-tag{background:#343a42;color:#777d82}
+
+/* ---------- Modal / News / Forms ---------- */
+.loginmodal,.newsmodal{
+  background:rgba(3,5,8,.74);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  animation:lmOverlayIn .2s ease both;
+}
+.lm-card,.news-card{
+  border:1px solid rgba(227,195,129,.19);
+  border-radius:24px;
+  background:
+    radial-gradient(500px 220px at 100% 0,rgba(185,148,85,.10),transparent 60%),
+    linear-gradient(150deg,#181e28,#10141b);
+  box-shadow:0 40px 110px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.035);
+  animation:lmModalIn .34s cubic-bezier(.2,.8,.2,1) both;
+}
+.lm-card{max-width:420px;padding:40px 34px 34px}
+.news-card{max-width:650px;padding:30px 32px 34px}
+.lm-x{
+  top:13px;
+  right:15px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#777d82;
+  font-size:20px;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.lm-x:hover{color:#eed49a;background:rgba(227,195,129,.08);transform:rotate(4deg)}
+.lm-h{color:#f5f0e7;font-size:22px;letter-spacing:.04em}
+.lm-p{color:#9c9e9a;font-size:12.5px}
+.lm-card input,.news-form input[type=text],.news-form input[type=date],.news-form textarea{
+  border:1px solid rgba(227,195,129,.15);
+  border-radius:12px;
+  background:rgba(5,8,13,.42);
+  color:#f3efe7;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.lm-card input{min-height:50px;padding:13px 15px}
+.lm-card input::placeholder,.news-form input::placeholder,.news-form textarea::placeholder{color:#5f656a}
+.lm-card input:focus,.news-form input:focus,.news-form textarea:focus{
+  border-color:rgba(227,195,129,.58);
+  background:rgba(5,8,13,.62);
+  box-shadow:0 0 0 4px rgba(227,195,129,.075);
+  outline:none;
+}
+.lm-go{
+  min-height:50px;
+  border:1px solid rgba(255,255,255,.09);
+  background:linear-gradient(135deg,#d7b871,#a87d3f);
+  box-shadow:0 14px 30px rgba(155,112,51,.20);
+}
+.lm-go:hover{transform:translateY(-2px);filter:none;box-shadow:0 18px 38px rgba(155,112,51,.29)}
+.lm-msg{color:#e0bd74}
+.news-head{margin-bottom:8px;padding-bottom:16px;border-color:rgba(227,195,129,.22)}
+.news-new{
+  padding:8px 15px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(135deg,#d2b16d,#a87d3f);
+}
+.news-new:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(155,112,51,.22)}
+.news-item{
+  margin:4px 0;
+  padding:18px 14px;
+  border:1px solid transparent;
+  border-bottom-color:rgba(255,255,255,.055);
+  border-radius:12px;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.news-item:hover{background:rgba(255,255,255,.022);border-color:rgba(227,195,129,.10);transform:translateX(2px)}
+.ni-date{color:#caaa66;font-size:11px}
+.ni-title{color:#eee9df;font-size:15px}
+.ni-body{color:#aaa9a4;font-size:12.5px}
+.ni-body a{color:#dfc17d;border-color:rgba(227,195,129,.24)}
+.ni-admin button{
+  border-color:rgba(227,195,129,.15);
+  color:#878b8c;
+  border-radius:8px;
+  background:rgba(255,255,255,.018);
+}
+.ni-admin button:hover{border-color:rgba(227,195,129,.42);color:#e2c788}
+.news-form{border-color:rgba(227,195,129,.15)}
+.news-form label,.nf-check{color:#8f928f}
+.news-form input[type=text],.news-form input[type=date],.news-form textarea{padding:11px 13px}
+.nf-btns{gap:11px}
+.nf-save{
+  min-height:44px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(135deg,#d2b16d,#a87d3f);
+}
+.nf-save:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(155,112,51,.20)}
+.nf-cancel{
+  border-color:rgba(227,195,129,.14);
+  color:#9a9c99;
+  background:rgba(255,255,255,.018);
+  transition:border-color .2s ease,color .2s ease,background .2s ease;
+}
+.nf-cancel:hover{border-color:rgba(227,195,129,.36);color:#e1c886;background:rgba(227,195,129,.04)}
+
+/* ---------- Toast ---------- */
+.toast{
+  bottom:104px;
+  padding:12px 20px;
+  border:1px solid rgba(227,195,129,.18);
+  background:rgba(22,27,36,.96);
+  color:#eee9df;
+  box-shadow:0 18px 45px rgba(0,0,0,.38);
+  backdrop-filter:blur(12px);
+}
+.toast.show{animation:lmToastIn .32s cubic-bezier(.2,.8,.2,1) both}
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){
+  .appbar{min-height:66px;padding:0 18px}
+  .vlayout{width:100%;max-width:100%;grid-template-columns:minmax(0,1fr)}
+  .appbar-brand{font-size:17px}
+  .appbar-brand::before{width:25px;height:25px;border-radius:8px}
+  .vlayout{padding:26px 18px 18px;gap:24px}
+  .vplayer{order:1}
+  .vlist{
+    order:2;
+    position:relative;
+    top:auto;
+    max-height:none;
+    padding:18px 14px 15px;
+    border-radius:18px;
+  }
+  .vmeta{padding:22px 22px 20px}
+  .vframe{border-radius:18px}
+}
+
+@media(max-width:600px){
+  #library{padding-bottom:92px}
+  .entry{padding:18px}
+  .entry-inner{padding:34px 22px;border-radius:24px}
+  .entry-mark{font-size:10.5px}
+  .entry-brand{font-size:36px}
+  .entry-lead{margin:18px auto 28px;font-size:12.5px}
+  .entry-login{min-height:51px}
+  .entry-guest{min-height:47px}
+  .appbar{min-height:62px;padding:0 14px}
+  .appbar-brand{gap:8px;font-size:15.5px}
+  .appbar-brand::before{width:23px;height:23px}
+  .member-ctl{min-height:34px;padding:7px 12px;font-size:10.5px;max-width:156px;overflow:hidden;text-overflow:ellipsis}
+  .member-exit{font-size:11px}
+  .vlayout{padding:18px 12px 12px;gap:18px}
+  .vframe{border-radius:14px;box-shadow:0 20px 54px rgba(0,0,0,.36),0 0 0 5px rgba(255,255,255,.01)}
+  .vframe:hover{transform:none}
+  .vmeta{margin-top:14px;padding:19px 17px 18px;border-radius:15px}
+  .vmeta .np{font-size:9.5px}
+  .vmeta .kick{margin-top:12px;font-size:10.5px}
+  .vmeta h1{font-size:20px;line-height:1.55}
+  .vlist{padding:16px 11px 12px;border-radius:15px}
+  .vlist .listhead{padding:0 4px 12px;font-size:11px}
+  .course-head{min-height:52px;padding:12px 9px 12px 11px;font-size:12.5px}
+  .chapter{font-size:11.5px;padding:8px}
+  .bottom-nav{
+    bottom:8px;
+    width:calc(100% - 16px);
+    height:65px;
+    padding:5px;
+    border-radius:19px;
+  }
+  .bottom-nav .nav-icon,.bottom-nav .nav-icon svg{width:20px;height:20px}
+  .bottom-nav .nav-label{font-size:8.5px}
+  .bottom-nav .nav-label .soon-tag{display:none}
+  .toast{bottom:86px;max-width:calc(100% - 28px);text-align:center;font-size:11.5px}
+  .loginmodal{padding:16px}
+  .newsmodal{padding:20px 10px}
+  .lm-card{padding:36px 22px 26px;border-radius:20px}
+  .news-card{padding:26px 17px 24px;border-radius:20px}
+  .lm-h{font-size:19px}
+  .news-item{padding:15px 9px}
+  .nf-btns{flex-direction:column}
+  .nf-cancel{width:100%}
+}
+
+/* ---------- Motion ---------- */
+@keyframes lmHeroDrift{
+  0%{transform:scale(1.035) translate3d(-.4%,0,0)}
+  100%{transform:scale(1.09) translate3d(.7%,-.5%,0)}
+}
+@keyframes lmAura{
+  0%{transform:translate3d(-1%,1%,0) scale(.98);opacity:.72}
+  100%{transform:translate3d(1%,-1%,0) scale(1.04);opacity:1}
+}
+@keyframes lmEntryIn{
+  from{opacity:0;transform:translateY(18px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes lmTitleGlow{
+  0%,100%{background-position:100% center}
+  50%{background-position:0 center}
+}
+@keyframes lmLibraryIn{from{opacity:0}to{opacity:1}}
+@keyframes lmBarIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lmSideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes lmPlayerIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lmNavIn{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes lmChapterIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lmPulse{0%,100%{opacity:.65;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes lmLockFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes lmOverlayIn{from{opacity:0}to{opacity:1}}
+@keyframes lmModalIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes lmToastIn{from{opacity:0;transform:translateX(-50%) translateY(14px) scale(.97)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+
+
 </style>
 </head>
 <body>
-<!-- ① 初回ゲート（ログイン / ゲスト参加） -->
 <section class="entry" id="entry">
   <img class="entry-bg" src="assets/videosamune.jpg" alt="">
   <div class="entry-inner">
@@ -205,7 +1107,6 @@
   </div>
 </section>
 
-<!-- ② コンテンツ格納ページ（ライブラリ） -->
 <div id="library" hidden>
 <header class="appbar">
   <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span></div>
@@ -215,14 +1116,26 @@
   </div>
 </header>
 
+<section class="library-hero">
+  <img class="library-hero-bg" src="assets/videosamune.jpg" alt="">
+  <div class="library-hero-inner">
+    <div class="library-kicker">Member Library</div>
+    <h2>イラスト背景の世界観の中で、<br>一覧から講座を選んで視聴する。</h2>
+    <p>上部はビジュアルで世界観を見せ、下に一覧、その先にコンテンツを配置。<br>「エルラボ＋」の視聴体験が、ただの動画置き場ではなく、会員制ライブラリらしい導線になるように整えています。</p>
+    <div class="library-hero-meta">
+      <span>Illustration Background</span>
+      <span>Course Library</span>
+      <span>Premium Viewing Experience</span>
+    </div>
+  </div>
+</section>
+
+
 <div class="vlayout">
-  <!-- 左：コース一覧 -->
   <aside class="vlist">
     <div class="listhead"><span>Courses</span><span class="lh-count" id="lhCount"></span></div>
     <div id="vcourses"><div class="vstate" id="vstate">コースを読み込み中…</div></div>
   </aside>
-
-  <!-- 右：プレイヤー -->
   <main class="vplayer">
     <div class="vframe" id="vframe">
       <iframe id="viframe" src="" title="動画プレイヤー" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
@@ -242,7 +1155,6 @@
   </main>
 </div>
 
-<!-- 下部ナビ（タスクアプリ風メニュー：アイコン＋ラベル） -->
 <nav class="bottom-nav">
   <button class="nav-item active" id="nav-videos">
     <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><polygon points="10 8.5 15.5 11.5 10 14.5"/></svg></div>
@@ -267,7 +1179,6 @@
 </nav>
 </div><!-- /#library -->
 
-<!-- 会員ログインモーダル -->
 <div class="loginmodal" id="loginModal" hidden>
   <div class="lm-card">
     <button class="lm-x" id="lmClose" aria-label="閉じる">×</button>
@@ -279,7 +1190,6 @@
   </div>
 </div>
 
-<!-- お知らせパネル -->
 <div class="newsmodal" id="newsModal" hidden>
   <div class="news-card">
     <button class="lm-x" id="newsClose" aria-label="閉じる">×</button>
@@ -309,17 +1219,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* =========================================================
-   会員動画アプリ（データ駆動版）
-   ・コース一覧は data/courses.json から読み込む
-   ・コースを追加＝ courses.json に1件足すだけ（コード変更不要）
-   ・将来：DATA_URL をGoogleスプレッドシートのJSON/CSV出力に差し替えれば「シート更新→反映」に
-   ・locked:true のコースは🔒。今は「登録が必要」画面（フェーズ②でログイン判定に差し替え）
-   ========================================================= */
-// ▼ データソース：まずGoogleスプレッドシートを読む → 読めない時は同梱JSONにフォールバック
-const SHEET_ID     = "1OhHer1LIF0BmcDaeV2G5e8TVkDB_XQFZzuEcz3sJkT4"; // 「L-MINE 動画コース管理（会員アプリ用）」
+const SHEET_ID     = "1OhHer1LIF0BmcDaeV2G5e8TVkDB_XQFZzuEcz3sJkT4";
 const SHEET_URL    = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json";
-const DATA_URL     = "data/courses.json";                 // フォールバック（スプシ未共有時）
+const DATA_URL     = "data/courses.json";
 const REGISTER_URL = "https://l-mine.com/onlinecourse";
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
 function embedUrl(v){
@@ -327,10 +1229,8 @@ function embedUrl(v){
   if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
   return "";
 }
-
 let COURSES = [];
 let courseEls = [];
-
 const vframe  = document.getElementById("vframe");
 const viframe = document.getElementById("viframe");
 const vkick   = document.getElementById("vkick");
@@ -339,11 +1239,10 @@ const vfiled  = document.getElementById("vfiled");
 const lkbtn   = document.getElementById("lkbtn");
 const wrap    = document.getElementById("vcourses");
 
-/* ===== 会員ログイン＋視聴権判定（②GAS門番と連携） ===== */
 const GAS_URL     = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
 const SESSION_KEY = "lmine_member";
 const GUEST_KEY   = "lmine_guest";
-let SESSION   = null;             // { email, name, tags:[], active }
+let SESSION   = null;
 let curCourse = null, curVideo = null;
 
 function loadSession(){
@@ -352,21 +1251,18 @@ function loadSession(){
 }
 function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.stringify(s)); updateMemberUI(); }
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
-
 function updateMemberUI(){
   const btn  = document.getElementById("memberBtn");
   const exit = document.getElementById("exitBtn");
   if(!btn) return;
   if(SESSION && SESSION.email){
     btn.textContent = (SESSION.name || "会員") + "｜ログアウト";
-    if(exit) exit.hidden = true;         // 会員はログアウトが退室を兼ねる
+    if(exit) exit.hidden = true;
   } else {
     btn.textContent = "ログイン";
-    if(exit) exit.hidden = false;        // ゲストは「退室」を表示
+    if(exit) exit.hidden = false;
   }
 }
-
-// ① ゲート ⇄ ② ライブラリ の切り替え
 function enterLibrary(){
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
@@ -381,18 +1277,14 @@ function exitToEntry(){
 function initEntry(){
   const isMember = !!(SESSION && SESSION.email);
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
-  if(isMember || isGuest) enterLibrary();   // 既に入っている人はゲートを飛ばす
+  if(isMember || isGuest) enterLibrary();
 }
-
-// このコースを視聴できるか？
 function hasAccess(course){
-  if(!course.locked) return true;                    // 無料
-  if(!SESSION || !SESSION.active) return false;      // 未ログイン or 契約無効
-  if(!course.requiredTag) return true;               // 会員なら誰でも（タグ指定なし）
+  if(!course.locked) return true;
+  if(!SESSION || !SESSION.active) return false;
+  if(!course.requiredTag) return true;
   return (SESSION.tags || []).includes(course.requiredTag);
 }
-
-// ロック画面の内容を状態で出し分け
 function setLockScreen(course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
@@ -415,8 +1307,6 @@ function setLockScreen(course){
     b.onclick = null; b.setAttribute("target", "_blank"); b.href = course.registerUrl || REGISTER_URL;
   }
 }
-
-// ログイン処理（GASで照合）
 async function doLogin(){
   const emailEl = document.getElementById("lmEmail");
   const msg     = document.getElementById("lmMsg");
@@ -433,27 +1323,16 @@ async function doLogin(){
       render();
       if(curCourse != null) select(curCourse, curVideo);
     } else {
-      msg.textContent = (res.error === "not_member")
-        ? "このメールアドレスは会員リストに見つかりませんでした。"
-        : "ログインできませんでした。";
+      msg.textContent = (res.error === "not_member") ? "このメールアドレスは会員リストに見つかりませんでした。" : "ログインできませんでした。";
     }
-  } catch(e){
-    msg.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。";
-  }
+  } catch(e){ msg.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。"; }
 }
-
-function openLogin(){
-  document.getElementById("loginModal").hidden = false;
-  setTimeout(() => document.getElementById("lmEmail").focus(), 50);
-}
+function openLogin(){ document.getElementById("loginModal").hidden = false; setTimeout(() => document.getElementById("lmEmail").focus(), 50); }
 function closeLogin(){ document.getElementById("loginModal").hidden = true; }
-
-// UI配線
 document.getElementById("memberBtn").addEventListener("click", (e) => {
   e.preventDefault();
-  if(SESSION && SESSION.email){
-    if(confirm("ログアウトしますか？")){ exitToEntry(); }
-  } else { openLogin(); }
+  if(SESSION && SESSION.email){ if(confirm("ログアウトしますか？")){ exitToEntry(); } }
+  else { openLogin(); }
 });
 document.getElementById("exitBtn").addEventListener("click", exitToEntry);
 document.getElementById("lmGo").addEventListener("click", doLogin);
@@ -461,7 +1340,6 @@ document.getElementById("lmClose").addEventListener("click", closeLogin);
 document.getElementById("lmEmail").addEventListener("keydown", (e) => { if(e.key === "Enter") doLogin(); });
 document.getElementById("loginModal").addEventListener("click", (e) => { if(e.target.id === "loginModal") closeLogin(); });
 
-// セクションメニュー（準備中はトーストで通知）
 let _toastTimer;
 function showToast(msg){
   const t = document.getElementById("toast");
@@ -471,34 +1349,26 @@ function showToast(msg){
 document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
   a.addEventListener("click", (e) => {
     if(a.hasAttribute("data-soon")){ e.preventDefault(); showToast("準備中です。近日公開予定！"); return; }
-    if(a.hasAttribute("data-gated")){                          // タスクコーチ＝会員限定
+    if(a.hasAttribute("data-gated")){
       e.preventDefault();
       if(SESSION && SESSION.email && SESSION.active){ window.open("https://columns.l-mine.com/task-coach.html", "_blank", "noopener"); }
       else { showToast("この機能は会員ログインが必要です。"); }
       return;
     }
-    if(a.id === "nav-news"){ e.preventDefault(); openNews(); return; }             // お知らせ
-    if(a.tagName === "BUTTON"){ window.scrollTo({ top:0, behavior:"smooth" }); }  // 動画一覧
+    if(a.id === "nav-news"){ e.preventDefault(); openNews(); return; }
+    if(a.tagName === "BUTTON"){ window.scrollTo({ top:0, behavior:"smooth" }); }
   });
 });
 
-/* ===== お知らせ（管理者はadminタグで投稿/編集/削除・URL自動リンク） ===== */
 function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin")); }
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function linkify(s){ return escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,"<br>"); }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-
-function openNews(){
-  document.getElementById("newsModal").hidden = false;
-  document.getElementById("newsNew").hidden = !isAdmin();
-  hideNewsForm();
-  loadNews();
-}
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); }
 function closeNews(){ document.getElementById("newsModal").hidden = true; }
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
-
 async function loadNews(){
   const list = document.getElementById("newsList");
   list.innerHTML = `<div class="vstate">読み込み中…</div>`;
@@ -527,14 +1397,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({
-    action: id ? "news_edit" : "news_add",
-    email: (SESSION && SESSION.email) || "",
-    id, date: document.getElementById("nf-date").value,
-    title: document.getElementById("nf-title").value,
-    text: document.getElementById("nf-body").value,
-    pub: document.getElementById("nf-pub").checked ? "TRUE" : "FALSE"
-  });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
@@ -543,202 +1406,123 @@ async function saveNews(){
 }
 async function delNews(n){
   if(!confirm("このお知らせを削除しますか？")) return;
-  const body = new URLSearchParams({ action:"news_del", email:(SESSION && SESSION.email) || "", id:n.id });
+  const body = new URLSearchParams({ action:"news_del", email:(SESSION && SESSION.email)||"", id:n.id });
   try{ const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json()); if(res.ok) loadNews(); }catch(e){}
 }
-
-// お知らせUI 配線
 document.getElementById("newsClose").addEventListener("click", closeNews);
 document.getElementById("newsNew").addEventListener("click", newNews);
 document.getElementById("nfSave").addEventListener("click", saveNews);
 document.getElementById("nfCancel").addEventListener("click", hideNewsForm);
 document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.target.id==="newsModal") closeNews(); });
 
-// 初回ゲートのボタン
 document.getElementById("entryLogin").addEventListener("click", openLogin);
 document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(); });
 
 loadSession();
 initEntry();
-
-// ---- 読み込み：スプシ優先 → JSONフォールバック ----
 loadCourses();
 
 async function loadCourses(){
-  try {
-    COURSES = await fetchFromSheet();
-    if(!COURSES.length) throw new Error("シートが空");
-  } catch(e1){
-    console.warn("スプシ読込み不可 → JSONにフォールバック:", e1.message);
-    try {
-      const data = await fetch(DATA_URL, {cache:"no-store"}).then(r=>r.json());
-      COURSES = (data && data.courses) ? data.courses : [];
-    } catch(e2){
-      console.error(e2);
-      showState("コースの読み込みに失敗しました。");
-      return;
-    }
+  try { COURSES = await fetchFromSheet(); if(!COURSES.length) throw new Error("シートが空"); }
+  catch(e1){
+    try { const data = await fetch(DATA_URL, {cache:"no-store"}).then(r=>r.json()); COURSES = (data && data.courses) ? data.courses : []; }
+    catch(e2){ showState("コースの読み込みに失敗しました。"); return; }
   }
   if(!COURSES.length){ showState("コースがまだありません。"); return; }
-  render();
-  select(0, 0);
+  render(); select(0, 0);
 }
-
-// Googleスプレッドシートのgvizレスポンスを COURSES 構造へ変換
 async function fetchFromSheet(){
   const txt  = await fetch(SHEET_URL, {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
-  const json = JSON.parse(txt.replace(/^[^{]*/, "").replace(/;?\s*$/, ""));   // JSONP風ラッパーを除去
+  const json = JSON.parse(txt.replace(/^[^{]*/, "").replace(/;?\s*$/, ""));
   return coursesFromGviz(json);
 }
-
-// gviz JSON → COURSES（列は見出し名で解決＝順番が変わってもOK／並び順で整列）
 function coursesFromGviz(json){
   const table = json.table || {};
   const cols  = (table.cols || []).map(c => String(c.label || "").trim());
   const find  = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName  = find(["コース名"], 0);
-  const iTitle = find(["章タイトル","タイトル"], 1);
-  const iUrl   = find(["動画URL","URL","動画"], 2);
-  const iKind  = find(["種別","公開","公開状態"], 3);
-  const iTag   = find(["必要タグ","タグ"], 4);
-  const iOrder = find(["並び順","順番","順","order"], 5);
-
+  const iName=find(["コース名"],0), iTitle=find(["章タイトル","タイトル"],1), iUrl=find(["動画URL","URL","動画"],2), iKind=find(["種別","公開","公開状態"],3), iTag=find(["必要タグ","タグ"],4), iOrder=find(["並び順","順番","順","order"],5);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
-  const map  = new Map();   // コース名 → コースオブジェクト
-  let seq = 0;
+  const map  = new Map(); let seq = 0;
   (table.rows || []).forEach(r => {
     const cname = cell(r,iName), title = cell(r,iTitle), url = cell(r,iUrl);
-    if(!cname || !url || cname === "コース名") return;        // 見出し・空行スキップ
-    const pv = parseVideoUrl(url);
-    if(!pv) return;
+    if(!cname || !url || cname === "コース名") return;
+    const pv = parseVideoUrl(url); if(!pv) return;
     const kind = cell(r,iKind), tag = cell(r,iTag);
-    const on   = parseFloat(cell(r,iOrder));
-    const ord  = isNaN(on) ? (++seq) : on;
-    if(!map.has(cname)){
-      map.set(cname, { name:cname, tier:(kind||"無料"), locked:(kind.indexOf("会員")>=0||kind.indexOf("有料")>=0), requiredTag:(tag||null), _order:Infinity, videos:[] });
-    }
-    const c = map.get(cname);
-    c.videos.push({ t:title||cname, platform:pv.platform, id:pv.id, _order:ord });
-    if(ord < c._order) c._order = ord;
+    const on = parseFloat(cell(r,iOrder)); const ord = isNaN(on) ? (++seq) : on;
+    if(!map.has(cname)){ map.set(cname, { name:cname, tier:(kind||"無料"), locked:(kind.indexOf("会員")>=0||kind.indexOf("有料")>=0), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
+    const c = map.get(cname); c.videos.push({ t:title||cname, platform:pv.platform, id:pv.id, _order:ord }); if(ord < c._order) c._order = ord;
   });
   const list = [...map.values()];
-  list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));   // 章を並び順で整列
-  list.sort((a,b)=> a._order - b._order);                          // コースも並び順で整列
+  list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));
+  list.sort((a,b)=> a._order - b._order);
   return list;
 }
-
-// URL / 埋め込みコード / ID から platform と id を抽出（URLを貼るだけでOKにする）
 function parseVideoUrl(s){
-  s = String(s).trim();
-  let m;
+  s = String(s).trim(); let m;
   if((m = s.match(/player\.vimeo\.com\/video\/(\d+)/))) return { platform:"vimeo",   id:m[1] };
   if((m = s.match(/vimeo\.com\/(?:video\/)?(\d+)/)))    return { platform:"vimeo",   id:m[1] };
   if((m = s.match(/youtu\.be\/([\w-]{6,})/)))           return { platform:"youtube", id:m[1] };
   if((m = s.match(/youtube\.com\/embed\/([\w-]{6,})/))) return { platform:"youtube", id:m[1] };
   if((m = s.match(/[?&]v=([\w-]{6,})/)))                return { platform:"youtube", id:m[1] };
-  if(/^\d+$/.test(s))                                   return { platform:"vimeo",   id:s };   // 数字のみ＝Vimeo ID
-  if(/^[\w-]{6,}$/.test(s))                             return { platform:"youtube", id:s };   // 英数字＝YouTube ID
+  if(/^\d+$/.test(s))                                   return { platform:"vimeo",   id:s };
+  if(/^[\w-]{6,}$/.test(s))                             return { platform:"youtube", id:s };
   return null;
 }
-
-function showState(msg){
-  wrap.innerHTML = `<div class="vstate">${msg}</div>`;
-}
-
-// ---- リスト描画 ----
+function showState(msg){ wrap.innerHTML = `<div class="vstate">${msg}</div>`; }
 function render(){
   wrap.innerHTML = "";
   COURSES.forEach((course, ci) => {
     const multi = (course.videos || []).length > 1;
     const el = document.createElement("section");
-    el.className = "course" + (multi ? " multi" : " single");
-    el.dataset.ci = ci;
-
-    const head = document.createElement("button");
-    head.className = "course-head";
+    el.className = "course" + (multi ? " multi" : " single"); el.dataset.ci = ci;
+    const head = document.createElement("button"); head.className = "course-head";
     const toggle = multi ? `<span class="c-toggle" data-toggle>＋</span>` : "";
     let badge;
     if(course.locked && !hasAccess(course)) badge = `<span class="c-lock">🔒</span>`;
     else if(multi)                          badge = `<span class="c-tag">${course.videos.length}本</span>`;
     else                                    badge = "";
     head.innerHTML = `${toggle}<span class="c-tw">${course.name}</span>${badge}`;
-    head.addEventListener("click", () => onCourseClick(ci));
-    el.appendChild(head);
-
+    head.addEventListener("click", () => onCourseClick(ci)); el.appendChild(head);
     if(multi){
-      const chWrap = document.createElement("div");
-      chWrap.className = "chapters";
+      const chWrap = document.createElement("div"); chWrap.className = "chapters";
       course.videos.forEach((v, vi) => {
-        const ch = document.createElement("button");
-        ch.className = "chapter";
-        ch.dataset.ci = ci; ch.dataset.vi = vi;
-        ch.innerHTML =
-          `<span class="ch-no">${String(vi+1).padStart(2,"0")}</span>` +
-          `<span class="ch-t">${v.t}</span>`;
-        ch.addEventListener("click", () => select(ci, vi));
-        chWrap.appendChild(ch);
+        const ch = document.createElement("button"); ch.className = "chapter"; ch.dataset.ci = ci; ch.dataset.vi = vi;
+        ch.innerHTML = `<span class="ch-no">${String(vi+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
+        ch.addEventListener("click", () => select(ci, vi)); chWrap.appendChild(ch);
       });
       el.appendChild(chWrap);
     }
     wrap.appendChild(el);
   });
-
   courseEls = [...wrap.querySelectorAll(".course")];
-  document.getElementById("lhCount").textContent =
-    `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
+  document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
 }
-
-// コース見出しクリック：単発＝即再生 / 複数＝開閉
 function onCourseClick(ci){
-  const course = COURSES[ci];
-  const el = courseEls[ci];
+  const course = COURSES[ci]; const el = courseEls[ci];
   if(course.videos.length === 1){ select(ci, 0); return; }
   const willOpen = !el.classList.contains("open");
   courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
-  if(willOpen){
-    el.classList.add("open");
-    const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
-  }
+  if(willOpen){ el.classList.add("open"); const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−"; }
 }
-
-// 動画を選択して再生
 function select(ci, vi){
-  const course = COURSES[ci];
-  if(!course) return;
-  const v = course.videos[vi];
-  if(!v) return;
+  const course = COURSES[ci]; if(!course) return;
+  const v = course.videos[vi]; if(!v) return;
   curCourse = ci; curVideo = vi;
   const locked = !hasAccess(course);
-
   courseEls.forEach(c => c.classList.remove("active"));
   wrap.querySelectorAll(".chapter").forEach(c => c.classList.remove("active"));
   const el = courseEls[ci];
-  if(course.videos.length === 1){
-    el.classList.add("active");
-  } else {
+  if(course.videos.length === 1){ el.classList.add("active"); }
+  else {
     courseEls.forEach(c => { c.classList.remove("open"); const t=c.querySelector("[data-toggle]"); if(t)t.textContent="＋"; });
-    el.classList.add("open");
-    const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
-    const ch = el.querySelector(`.chapter[data-vi="${vi}"]`);
-    if(ch) ch.classList.add("active");
+    el.classList.add("open"); const t = el.querySelector("[data-toggle]"); if(t) t.textContent="−";
+    const ch = el.querySelector(`.chapter[data-vi="${vi}"]`); if(ch) ch.classList.add("active");
   }
-
-  vkick.textContent  = course.videos.length > 1
-      ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}`
-      : course.name;
+  vkick.textContent  = course.videos.length > 1 ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}` : course.name;
   vtitle.textContent = v.t;
-
-  if(locked){
-    vframe.classList.add("locked");
-    viframe.src = "";
-    setLockScreen(course);
-  } else {
-    vframe.classList.remove("locked");
-    viframe.src = embedUrl(v);
-  }
-
-  let meta = "";
-  if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
+  if(locked){ vframe.classList.add("locked"); viframe.src = ""; setLockScreen(course); }
+  else { vframe.classList.remove("locked"); viframe.src = embedUrl(v); }
+  let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
   vfiled.innerHTML = meta;
 }
 </script>
