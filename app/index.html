@@ -382,13 +382,13 @@ body{
 }
 #library:not([hidden]) .appbar,
 #library:not([hidden]) .library-hero,
-#library:not([hidden]) .vlayout,
-#library:not([hidden]) .bottom-nav{
+#library:not([hidden]) .vlayout{
   animation:lmSceneReveal .82s cubic-bezier(.2,.7,.2,1) both;
 }
 #library:not([hidden]) .library-hero{animation-delay:.28s}
 #library:not([hidden]) .vlayout{animation-delay:.42s}
-#library:not([hidden]) .bottom-nav{animation-delay:.58s}
+/* bottom-nav は中央寄せ transform を保つため専用アニメ(lmNavIn)を使う。
+   lmSceneReveal を当てると translateX(-50%) が消えて右にずれる */
 @keyframes lmSceneReveal{
   from{opacity:0;transform:translateY(16px) scale(.992);filter:blur(4px)}
   to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
@@ -1112,6 +1112,17 @@ a{text-decoration:none}
 .ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px}
 .ch-item.active .ch-no{color:#d8b870}
 .ch-item .ch-t{flex:1;line-height:1.5}
+/* ③ コース内 前へ／次へ */
+.vnav{margin-top:18px;display:flex;gap:10px}
+.vnav[hidden]{display:none}
+.vnav-btn{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:11px 14px;background:linear-gradient(145deg,rgba(227,195,129,.08),rgba(227,195,129,.02));border:1px solid rgba(227,195,129,.18);border-radius:12px;cursor:pointer;font-family:var(--gothic);color:#d8cfb8;text-align:left;transition:background .18s,border-color .18s,transform .18s,opacity .18s}
+.vnav-btn.vnav-next{justify-content:flex-end;text-align:right}
+.vnav-btn:hover{background:linear-gradient(145deg,rgba(227,195,129,.16),rgba(227,195,129,.05));border-color:rgba(227,195,129,.4);transform:translateY(-1px)}
+.vnav-btn:disabled{opacity:.32;cursor:default;pointer-events:none}
+.vnav-ar{font-size:17px;color:#e2c47f;line-height:1}
+.vnav-tx{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
+.vnav-lb{font-size:10px;letter-spacing:.14em;color:#8f918f;text-transform:uppercase}
+.vnav-tt{font-size:12px;color:#e8e2d4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* ① スマホ：コース一覧を上（動画の前）に。章リストは動画下のまま */
 @media(max-width:900px){
   .vlist{order:1}
@@ -1176,6 +1187,14 @@ a{text-decoration:none}
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
       <div class="vfiled" id="vfiled"></div>
+      <div class="vnav" id="vnav" hidden>
+        <button class="vnav-btn" id="vnavPrev" type="button">
+          <span class="vnav-ar">←</span><span class="vnav-tx"><span class="vnav-lb">前の動画</span><span class="vnav-tt" id="vnavPrevT"></span></span>
+        </button>
+        <button class="vnav-btn vnav-next" id="vnavNext" type="button">
+          <span class="vnav-tx"><span class="vnav-lb">次の動画</span><span class="vnav-tt" id="vnavNextT"></span></span><span class="vnav-ar">→</span>
+        </button>
+      </div>
       <div class="chapter-list" id="chapterList"></div>
     </div>
   </main>
@@ -1543,7 +1562,22 @@ function select(ci, vi){
   else { vframe.classList.remove("locked"); viframe.src = embedUrl(v); }
   let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
   vfiled.innerHTML = meta;
+  renderVnav(ci, vi);       // ③ コース内 前へ／次へ
   renderChapters(ci, vi);   // ④ 章を動画下に表示
+}
+// ③ コース内だけで前後の動画へ移動するボタン
+function renderVnav(ci, vi){
+  const nav  = document.getElementById("vnav");
+  const vids = (COURSES[ci] && COURSES[ci].videos) || [];
+  if(vids.length <= 1){ nav.hidden = true; return; }   // 1本コースは非表示
+  nav.hidden = false;
+  const prev = document.getElementById("vnavPrev"), next = document.getElementById("vnavNext");
+  const pv = vids[vi-1], nv = vids[vi+1];
+  prev.disabled = !pv; next.disabled = !nv;
+  document.getElementById("vnavPrevT").textContent = pv ? pv.t : "";
+  document.getElementById("vnavNextT").textContent = nv ? nv.t : "";
+  prev.onclick = () => { if(vi > 0){ select(ci, vi-1); scrollToPlayer(); } };
+  next.onclick = () => { if(vi < vids.length-1){ select(ci, vi+1); scrollToPlayer(); } };
 }
 </script>
 </body>
