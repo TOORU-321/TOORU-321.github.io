@@ -107,6 +107,19 @@
 .lm-go{width:100%;padding:12px;border:none;border-radius:999px;font-size:14px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer;letter-spacing:.04em}
 .lm-go:hover{filter:brightness(1.05)}
 .lm-msg{font-size:12px;color:var(--gold);margin-top:12px;min-height:1em;text-align:center;line-height:1.6}
+
+/* アプリ内セクションメニュー（将来の拡張・準備中つき） */
+.appmenu{max-width:1140px;margin:0 auto;padding:20px 28px 0;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;border-bottom:1px solid var(--line)}
+@media(max-width:640px){.appmenu{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto}}
+.am-item{position:relative;font-family:var(--gothic);font-size:13.5px;letter-spacing:.04em;color:var(--ink-2);padding:12px 16px;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;cursor:pointer}
+.am-item:hover{color:var(--gold)}
+.am-item.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:700}
+.am-item.soon{color:var(--ink-soft);cursor:default}
+.am-item.soon:hover{color:var(--ink-soft)}
+.am-item .soon-tag{font-size:9px;letter-spacing:.06em;color:#fff;background:var(--line-2);border-radius:999px;padding:1px 6px;margin-left:6px;vertical-align:1.5px}
+/* トースト（準備中の通知） */
+.toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;font-size:12.5px;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 14px 34px -14px rgba(0,0,0,.55)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -138,6 +151,15 @@
     <div class="hr"></div>
   </div>
 </div>
+
+<!-- アプリ内セクションメニュー（将来拡張：お知らせ／販売／メルマガ／コラム） -->
+<nav class="appmenu" id="appmenu">
+  <a class="am-item active" data-section="videos" href="#">動画講座</a>
+  <a class="am-item soon" data-soon href="#">お知らせ<span class="soon-tag">準備中</span></a>
+  <a class="am-item soon" data-soon href="#">ストア・販売<span class="soon-tag">準備中</span></a>
+  <a class="am-item soon" data-soon href="#">メルマガ登録<span class="soon-tag">準備中</span></a>
+  <a class="am-item" href="https://columns.l-mine.com/columns/">コラム</a>
+</nav>
 
 <div class="vlayout">
   <!-- 左：コース一覧 -->
@@ -179,6 +201,8 @@
     <div class="lm-msg" id="lmMsg"></div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 /* =========================================================
@@ -304,6 +328,19 @@ document.getElementById("lmGo").addEventListener("click", doLogin);
 document.getElementById("lmClose").addEventListener("click", closeLogin);
 document.getElementById("lmEmail").addEventListener("keydown", (e) => { if(e.key === "Enter") doLogin(); });
 document.getElementById("loginModal").addEventListener("click", (e) => { if(e.target.id === "loginModal") closeLogin(); });
+
+// セクションメニュー（準備中はトーストで通知）
+let _toastTimer;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+}
+document.querySelectorAll("#appmenu .am-item").forEach(a => {
+  a.addEventListener("click", (e) => {
+    if(a.hasAttribute("data-soon")){ e.preventDefault(); showToast("準備中です。近日公開予定！"); }
+  });
+});
 
 loadSession();
 
