@@ -1096,11 +1096,14 @@ a{text-decoration:none}
 .app-title{position:relative;z-index:2;text-align:center;padding:28px 20px 0}
 .app-title h2{font-family:var(--mincho);font-weight:800;font-size:clamp(20px,2.6vw,30px);letter-spacing:.1em;color:#fff;margin:7px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
 .vlayout{margin-top:0;padding-top:20px}
+.vplayer{scroll-margin-top:84px}
 /* 左：コース名だけ／アクティブ強調 */
 .course.active .course-head{color:#f0d69c}
 .course.active{background:linear-gradient(135deg,rgba(227,195,129,.12),rgba(227,195,129,.03));border-color:rgba(227,195,129,.22);box-shadow:inset 3px 0 0 var(--gold)}
 /* ④ 動画下の章リスト */
-.chapter-list{margin-top:20px;padding-top:4px;display:flex;flex-direction:column;gap:2px}
+.chapter-list{margin-top:20px;padding-top:4px;display:flex;flex-direction:column;gap:2px;max-height:46vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(227,195,129,.22) transparent}
+.chapter-list::-webkit-scrollbar{width:5px}
+.chapter-list::-webkit-scrollbar-thumb{background:rgba(227,195,129,.2);border-radius:99px}
 .chapter-list:empty{display:none}
 .ch-item{width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--lm-border);cursor:pointer;font-family:var(--gothic);color:#bdbbb2;font-size:13px;padding:12px 8px;display:flex;gap:12px;align-items:center;transition:color .18s,background .18s;border-radius:8px}
 .ch-item:first-child{border-top:none}
@@ -1109,6 +1112,12 @@ a{text-decoration:none}
 .ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px}
 .ch-item.active .ch-no{color:#d8b870}
 .ch-item .ch-t{flex:1;line-height:1.5}
+/* ① スマホ：コース一覧を上（動画の前）に。章リストは動画下のまま */
+@media(max-width:900px){
+  .vlist{order:1}
+  .vplayer{order:2}
+  .chapter-list{max-height:52vh}
+}
 
 
 
@@ -1504,8 +1513,10 @@ function render(){
   courseEls = [...wrap.querySelectorAll(".course")];
   document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
 }
-// コース選択 ＝ 1本目を再生し、章は動画下に出す
-function onCourseClick(ci){ select(ci, 0); }
+// ③ タップしたら動画（プレイヤー）まで表示を移動
+function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
+// コース選択 ＝ 1本目を再生し、章は動画下に出す＋動画へスクロール
+function onCourseClick(ci){ select(ci, 0); scrollToPlayer(); }
 // ④ 動画下に章一覧を描画（複数本のときだけ）
 function renderChapters(ci, vi){
   const cont = document.getElementById("chapterList");
@@ -1516,7 +1527,7 @@ function renderChapters(ci, vi){
     const b = document.createElement("button");
     b.className = "ch-item" + (i === vi ? " active" : "");
     b.innerHTML = `<span class="ch-no">${String(i+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
-    b.addEventListener("click", () => select(ci, i));
+    b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     cont.appendChild(b);
   });
 }
