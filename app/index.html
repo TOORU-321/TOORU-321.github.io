@@ -1575,7 +1575,7 @@ function select(ci, vi){
   if(locked){
     // ④ アクセスパス無し：動画も内容物（章・前後・補足）も出さない
     vmeta.classList.add("meta-locked");
-    vframe.classList.add("locked"); viframe.src = ""; setLockScreen(course);
+    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(course);
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
     vfiled.innerHTML   = "";
