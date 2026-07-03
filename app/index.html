@@ -475,6 +475,7 @@ function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin"))
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function linkify(s){ return escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,"<br>"); }
+function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 
 function openNews(){
   document.getElementById("newsModal").hidden = false;
@@ -499,7 +500,7 @@ async function loadNews(){
 }
 function newsItemEl(n){
   const el = document.createElement("div"); el.className = "news-item";
-  el.innerHTML = `<div class="ni-date">${escapeHtml(n.date)}</div><div class="ni-title">${escapeHtml(n.title)}</div><div class="ni-body">${linkify(n.body)}</div>`;
+  el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div><div class="ni-body">${linkify(n.body)}</div>`;
   if(isAdmin()){
     const bar = document.createElement("div"); bar.className = "ni-admin";
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
