@@ -1,0 +1,71 @@
+{
+  "_note": "★コースの追加はここに1行(1オブジェクト)足すだけ。locked:true で会員限定(鍵付き)になり requiredTag に必要タグを書く。将来はこのファイルの代わりにGoogleスプレッドシートから読み込む予定(index.htmlのDATA_URLを差し替え)。",
+  "_howto": "1コース = { name, locked, requiredTag, videos:[{t, platform, id}] } / platformは vimeo か youtube / id はURL末尾の番号や英数字",
+  "courses": [
+    {
+      "name": "マーケティングの根本構造を理解する",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "イノベーター理論講義：前編", "platform": "vimeo", "id": "1129387869" },
+        { "t": "イノベーター理論講義：後編", "platform": "vimeo", "id": "1129388099" }
+      ]
+    },
+    {
+      "name": "ビジネス自己啓発育成講座",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "2-1：勉強に取り組むモチベーションを高める方法", "platform": "youtube", "id": "DzIQBibkO4M" },
+        { "t": "2-2：マインドセットの重要性と育成方法", "platform": "youtube", "id": "i7p6f2LQqrk" },
+        { "t": "2-3：自己成長の意識と目標設定", "platform": "youtube", "id": "qfBv1T9KMiI" },
+        { "t": "2-4：自己価値感と自己受容", "platform": "youtube", "id": "mZT9Ogvzrmo" },
+        { "t": "2-5：目標の意味付けと自己動機付け", "platform": "youtube", "id": "k-2cXpLT2E8" },
+        { "t": "2-6：モチベーションの維持と向上", "platform": "youtube", "id": "aHq4RZa_X68" },
+        { "t": "2-7：タイムマネジメントと自己管理のテクニック", "platform": "youtube", "id": "7WmOrqDkiQo" },
+        { "t": "2-8：ビジョンを持つことの意義と具体的な方法", "platform": "youtube", "id": "JVxRsXfweNU" },
+        { "t": "2-9：マーケティング戦略と競争優位の確立", "platform": "youtube", "id": "N8_gH5foTe4" }
+      ]
+    },
+    {
+      "name": "３つの信頼要素",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "３つの信頼要素", "platform": "vimeo", "id": "995703100" }
+      ]
+    },
+    {
+      "name": "購買意欲を高める３つの感情",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "購買意欲を高める３つの感情", "platform": "vimeo", "id": "1087708059" }
+      ]
+    },
+    {
+      "name": "仕組み化ウェビナー（11.09外部セミナー）",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "11.09外部セミナー：仕組み化ウェビナー", "platform": "vimeo", "id": "1087707907" }
+      ]
+    },
+    {
+      "name": "“やりたいこと”と“できること”：前編",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "“やりたいこと”と“できること”：前編", "platform": "vimeo", "id": "982024516" }
+      ]
+    },
+    {
+      "name": "“やりたいこと”と“できること”：後編",
+      "locked": false,
+      "requiredTag": null,
+      "videos": [
+        { "t": "“やりたいこと”と“できること”：後編", "platform": "vimeo", "id": "982017190" }
+      ]
+    }
+  ]
+}
