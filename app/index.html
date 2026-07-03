@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>会員動画講座｜L-MINE ON-LINE</title>
+<title>エルラボ＋｜L-MINE</title>
 <link rel="icon" href="../assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,46 +120,94 @@
 /* トースト（準備中の通知） */
 .toast{position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(18px);background:var(--ink);color:#fff;font-size:12.5px;padding:11px 20px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 14px 34px -14px rgba(0,0,0,.55)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── ① 初回ゲート（ENTRY） ── */
+.entry{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px;background:#12121a;overflow:hidden}
+.entry[hidden]{display:none}
+.entry-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.5}
+.entry::after{content:"";position:absolute;inset:0;z-index:1;background:radial-gradient(720px 460px at 50% 45%, rgba(12,12,18,.5), rgba(9,9,13,.92))}
+.entry-inner{position:relative;z-index:2;max-width:440px}
+.entry-mark{font-family:var(--serif-en);font-size:13px;letter-spacing:.4em;text-transform:uppercase;color:#e8cf98;margin-bottom:14px}
+.entry-brand{font-family:var(--mincho);font-weight:800;font-size:clamp(32px,7vw,46px);letter-spacing:.12em;color:#fff;text-shadow:0 2px 26px rgba(0,0,0,.6)}
+.entry-lead{color:#dbd4c6;font-size:13.5px;line-height:1.9;margin:18px 0 32px;text-shadow:0 1px 12px rgba(0,0,0,.55)}
+.entry-btns{display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto}
+.entry-login{padding:15px;border:none;border-radius:999px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer;letter-spacing:.05em}
+.entry-login:hover{filter:brightness(1.07)}
+.entry-guest{padding:13px;border:1px solid rgba(255,255,255,.35);border-radius:999px;font-size:14px;color:#fff;background:transparent;cursor:pointer;letter-spacing:.05em;transition:.15s}
+.entry-guest:hover{border-color:var(--gold-2);color:var(--gold-2)}
+
+/* ── ② アプリ上部バー（サイトのヘッダーは廃止・自己完結） ── */
+.appbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--paper);border-bottom:1px solid var(--line-2)}
+.appbar-brand{font-family:var(--mincho);font-weight:800;font-size:18px;letter-spacing:.06em;color:var(--ink)}
+.appbar-right{display:flex;align-items:center;gap:14px}
+.member-ctl{font-family:var(--gothic);font-size:13px;color:var(--gold);border:1px solid var(--gold);background:transparent;border-radius:999px;padding:7px 17px;cursor:pointer;white-space:nowrap;transition:.15s}
+.member-ctl:hover{background:var(--gold);color:#fff}
+.vlayout{padding-top:34px}
+
+/* ── 下部ナビ（タスクアプリ風：アイコン＋ラベル） ── */
+#library{padding-bottom:66px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:62px;background:var(--paper);border-top:1px solid var(--line-2);z-index:100;display:flex;justify-content:center;align-items:stretch;box-shadow:0 -2px 14px rgba(20,20,26,.07)}
+.bottom-nav .nav-item{flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--ink-soft);transition:color .2s;position:relative;font-family:var(--gothic)}
+.bottom-nav .nav-item:hover{color:var(--gold)}
+.bottom-nav .nav-item.active{color:var(--gold)}
+.bottom-nav .nav-item.active::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:2.5px;background:var(--gold);border-radius:0 0 2px 2px}
+.bottom-nav .nav-item.soon{color:#c8c3b6;cursor:default}
+.bottom-nav .nav-item.soon:hover{color:#c8c3b6}
+.bottom-nav .nav-icon{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+.bottom-nav .nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bottom-nav .nav-label{font-size:10px;font-weight:600;letter-spacing:.02em;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.bottom-nav .nav-label .soon-tag{font-size:8px;font-weight:400;color:#fff;background:var(--line-2);border-radius:999px;padding:1px 5px;letter-spacing:.03em;margin-left:2px}
+
+/* ── お知らせパネル ── */
+.newsmodal{position:fixed;inset:0;z-index:120;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;background:rgba(16,16,21,.55);overflow:auto}
+.newsmodal[hidden]{display:none}
+.news-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:560px;width:100%;padding:26px 28px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
+.news-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--gold);padding-bottom:10px}
+.news-new{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));border:none;border-radius:999px;padding:7px 15px;cursor:pointer}
+.news-list{display:flex;flex-direction:column}
+.news-item{padding:15px 2px;border-bottom:1px solid var(--line)}
+.ni-date{font-family:var(--serif-en);font-size:12px;color:var(--gold);letter-spacing:.06em}
+.ni-title{font-family:var(--mincho);font-weight:700;font-size:15.5px;color:var(--ink);margin:4px 0 6px}
+.ni-body{font-size:13px;color:var(--ink-2);line-height:1.9;word-break:break-word}
+.ni-body a{color:var(--gold);border-bottom:1px solid var(--line-2)}
+.ni-admin{display:flex;gap:8px;margin-top:10px}
+.ni-admin button{font-size:11px;color:var(--ink-soft);border:1px solid var(--line-2);background:none;border-radius:6px;padding:4px 12px;cursor:pointer}
+.ni-admin button:hover{color:var(--gold);border-color:var(--gold)}
+.news-form{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line-2);display:flex;flex-direction:column;gap:4px}
+.news-form label{font-size:11.5px;color:var(--ink-soft);margin-top:8px}
+.news-form input[type=text],.news-form input[type=date],.news-form textarea{width:100%;padding:9px 11px;border:1px solid var(--line-2);border-radius:6px;font-size:13px;font-family:var(--gothic);color:var(--ink)}
+.news-form textarea{resize:vertical}
+.news-form input:focus,.news-form textarea:focus{outline:none;border-color:var(--gold)}
+.nf-check{flex-direction:row;display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2);margin-top:12px}
+.nf-check input{width:auto}
+.nf-btns{display:flex;gap:10px;margin-top:14px}
+.nf-save{flex:1;padding:11px;border:none;border-radius:999px;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));cursor:pointer}
+.nf-cancel{padding:11px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;color:var(--ink-2);background:none;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="top-rule"></div>
-<header class="masthead">
-  <div class="mast-inner">
-    <a class="brand" href="https://l-mine.com/home"><img class="logo" src="../assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
-    <nav class="nav">
-      <a href="https://l-mine.com/home">ホーム</a>
-      <a href="https://columns.l-mine.com/behavioral-economics-lp.html">行動経済学への想い</a>
-      <a href="https://columns.l-mine.com/columns/">コラム</a>
-      <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
-      <a href="https://l-mine.com/onlinecourse-oshirase">動画・オンラインコース視聴</a>
-      <a href="https://columns.l-mine.com/book-intro-dark.html">KINDLE小説</a>
-      <a href="https://l-mine.com/contact-us">お問い合わせ</a>
-      <a href="https://l-mine.com/l-mine-2.0">エルラボ2.0</a>
-      <a class="login" id="memberBtn" href="#">ログイン</a>
-    </nav>
+<!-- ① 初回ゲート（ログイン / ゲスト参加） -->
+<section class="entry" id="entry">
+  <img class="entry-bg" src="assets/videosamune.jpg" alt="">
+  <div class="entry-inner">
+    <div class="entry-mark">L-MINE</div>
+    <div class="entry-brand">エルラボ＋</div>
+    <p class="entry-lead">ログインして続きから、<br>またはゲストとして無料コンテンツを視聴できます。</p>
+    <div class="entry-btns">
+      <button class="entry-login" id="entryLogin">ログイン</button>
+      <button class="entry-guest" id="entryGuest">ゲストで参加</button>
+    </div>
+  </div>
+</section>
+
+<!-- ② コンテンツ格納ページ（ライブラリ） -->
+<div id="library" hidden>
+<header class="appbar">
+  <div class="appbar-brand">エルラボ＋</div>
+  <div class="appbar-right">
+    <button class="member-ctl" id="memberBtn">ログイン</button>
   </div>
 </header>
-
-<div class="page-head">
-  <img class="ph-bg" src="assets/videosamune.jpg" alt="">
-  <div class="ph-inner">
-    <div class="ornament"></div>
-    <div class="ey">Member Library</div>
-    <h1>会員動画講座</h1>
-    <p>学びを深める動画アーカイブ。</p>
-    <div class="hr"></div>
-  </div>
-</div>
-
-<!-- アプリ内セクションメニュー（将来拡張：お知らせ／販売／メルマガ／コラム） -->
-<nav class="appmenu" id="appmenu">
-  <a class="am-item active" data-section="videos" href="#">動画講座</a>
-  <a class="am-item soon" data-soon href="#">お知らせ<span class="soon-tag">準備中</span></a>
-  <a class="am-item soon" data-soon href="#">ストア・販売<span class="soon-tag">準備中</span></a>
-  <a class="am-item soon" data-soon href="#">メルマガ登録<span class="soon-tag">準備中</span></a>
-  <a class="am-item" href="https://columns.l-mine.com/columns/">コラム</a>
-</nav>
 
 <div class="vlayout">
   <!-- 左：コース一覧 -->
@@ -190,6 +238,31 @@
 
 <footer><div class="foot-inner"><div class="foot-links"><a href="https://l-mine.com/term">利用規約</a><a href="https://l-mine.com/about">特定商取引法に基づく表示</a><a href="https://l-mine.com/privacy">プライバシーポリシー</a><a href="https://l-mine.com/mensekizikou">免責事項</a></div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
 
+<!-- 下部ナビ（タスクアプリ風メニュー：アイコン＋ラベル） -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-videos">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><polygon points="10 8.5 15.5 11.5 10 14.5"/></svg></div>
+    <span class="nav-label">動画一覧</span>
+  </button>
+  <button class="nav-item soon" data-soon>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+    <span class="nav-label">書籍<span class="soon-tag">準備中</span></span>
+  </button>
+  <button class="nav-item" id="nav-news">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+    <span class="nav-label">お知らせ</span>
+  </button>
+  <a class="nav-item" href="https://columns.l-mine.com/columns/" target="_blank" rel="noopener">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+    <span class="nav-label">コラム</span>
+  </a>
+  <button class="nav-item" id="nav-task" data-gated>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <span class="nav-label">タスク</span>
+  </button>
+</nav>
+</div><!-- /#library -->
+
 <!-- 会員ログインモーダル -->
 <div class="loginmodal" id="loginModal" hidden>
   <div class="lm-card">
@@ -199,6 +272,33 @@
     <input type="email" id="lmEmail" placeholder="you@example.com" autocomplete="email">
     <button class="lm-go" id="lmGo">ログイン</button>
     <div class="lm-msg" id="lmMsg"></div>
+  </div>
+</div>
+
+<!-- お知らせパネル -->
+<div class="newsmodal" id="newsModal" hidden>
+  <div class="news-card">
+    <button class="lm-x" id="newsClose" aria-label="閉じる">×</button>
+    <div class="news-head">
+      <div class="lm-h">お知らせ</div>
+      <button class="news-new" id="newsNew" hidden>＋ 新規投稿</button>
+    </div>
+    <div class="news-list" id="newsList"></div>
+    <div class="news-form" id="newsForm" hidden>
+      <input type="hidden" id="nf-id">
+      <label>日付</label>
+      <input type="date" id="nf-date">
+      <label>見出し</label>
+      <input type="text" id="nf-title" placeholder="お知らせのタイトル">
+      <label>本文（URLは自動でリンクになります）</label>
+      <textarea id="nf-body" rows="4" placeholder="本文…"></textarea>
+      <label class="nf-check"><input type="checkbox" id="nf-pub" checked> 公開する</label>
+      <div class="nf-btns">
+        <button class="nf-save" id="nfSave">保存</button>
+        <button class="nf-cancel" id="nfCancel">キャンセル</button>
+      </div>
+      <div class="lm-msg" id="nfMsg"></div>
+    </div>
   </div>
 </div>
 
@@ -238,6 +338,7 @@ const wrap    = document.getElementById("vcourses");
 /* ===== 会員ログイン＋視聴権判定（②GAS門番と連携） ===== */
 const GAS_URL     = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
 const SESSION_KEY = "lmine_member";
+const GUEST_KEY   = "lmine_guest";
 let SESSION   = null;             // { email, name, tags:[], active }
 let curCourse = null, curVideo = null;
 
@@ -252,6 +353,24 @@ function updateMemberUI(){
   const btn = document.getElementById("memberBtn");
   if(!btn) return;
   btn.textContent = (SESSION && SESSION.email) ? ((SESSION.name || "会員") + "｜ログアウト") : "ログイン";
+}
+
+// ① ゲート ⇄ ② ライブラリ の切り替え
+function enterLibrary(){
+  document.getElementById("entry").hidden   = true;
+  document.getElementById("library").hidden = false;
+}
+function exitToEntry(){
+  clearSession();
+  localStorage.removeItem(GUEST_KEY);
+  document.getElementById("library").hidden = true;
+  document.getElementById("entry").hidden   = false;
+  render();
+}
+function initEntry(){
+  const isMember = !!(SESSION && SESSION.email);
+  const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
+  if(isMember || isGuest) enterLibrary();   // 既に入っている人はゲートを飛ばす
 }
 
 // このコースを視聴できるか？
@@ -299,6 +418,7 @@ async function doLogin(){
       saveSession({ email, name: res.name, tags: res.tags || [], active: res.active });
       msg.textContent = "";
       closeLogin();
+      enterLibrary();
       render();
       if(curCourse != null) select(curCourse, curVideo);
     } else {
@@ -321,7 +441,7 @@ function closeLogin(){ document.getElementById("loginModal").hidden = true; }
 document.getElementById("memberBtn").addEventListener("click", (e) => {
   e.preventDefault();
   if(SESSION && SESSION.email){
-    if(confirm("ログアウトしますか？")){ clearSession(); render(); if(curCourse != null) select(curCourse, curVideo); }
+    if(confirm("ログアウトしますか？")){ exitToEntry(); }
   } else { openLogin(); }
 });
 document.getElementById("lmGo").addEventListener("click", doLogin);
@@ -336,13 +456,97 @@ function showToast(msg){
   t.textContent = msg; t.classList.add("show");
   clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
 }
-document.querySelectorAll("#appmenu .am-item").forEach(a => {
+document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
   a.addEventListener("click", (e) => {
-    if(a.hasAttribute("data-soon")){ e.preventDefault(); showToast("準備中です。近日公開予定！"); }
+    if(a.hasAttribute("data-soon")){ e.preventDefault(); showToast("準備中です。近日公開予定！"); return; }
+    if(a.hasAttribute("data-gated")){                          // タスクコーチ＝会員限定
+      e.preventDefault();
+      if(SESSION && SESSION.email && SESSION.active){ window.open("https://columns.l-mine.com/task-coach.html", "_blank", "noopener"); }
+      else { showToast("この機能は会員ログインが必要です。"); }
+      return;
+    }
+    if(a.id === "nav-news"){ e.preventDefault(); openNews(); return; }             // お知らせ
+    if(a.tagName === "BUTTON"){ window.scrollTo({ top:0, behavior:"smooth" }); }  // 動画一覧
   });
 });
 
+/* ===== お知らせ（管理者はadminタグで投稿/編集/削除・URL自動リンク） ===== */
+function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin")); }
+function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+function linkify(s){ return escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,"<br>"); }
+
+function openNews(){
+  document.getElementById("newsModal").hidden = false;
+  document.getElementById("newsNew").hidden = !isAdmin();
+  hideNewsForm();
+  loadNews();
+}
+function closeNews(){ document.getElementById("newsModal").hidden = true; }
+function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
+function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
+
+async function loadNews(){
+  const list = document.getElementById("newsList");
+  list.innerHTML = `<div class="vstate">読み込み中…</div>`;
+  try{
+    const data  = await fetch(GAS_URL + "?action=news&_=" + Date.now()).then(r=>r.json());
+    const items = (data && data.items) || [];
+    if(!items.length){ list.innerHTML = `<div class="vstate">お知らせはまだありません。</div>`; return; }
+    list.innerHTML = "";
+    items.forEach(n => list.appendChild(newsItemEl(n)));
+  }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
+}
+function newsItemEl(n){
+  const el = document.createElement("div"); el.className = "news-item";
+  el.innerHTML = `<div class="ni-date">${escapeHtml(n.date)}</div><div class="ni-title">${escapeHtml(n.title)}</div><div class="ni-body">${linkify(n.body)}</div>`;
+  if(isAdmin()){
+    const bar = document.createElement("div"); bar.className = "ni-admin";
+    const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
+    const bd = document.createElement("button"); bd.textContent = "削除"; bd.onclick = ()=>delNews(n);
+    bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
+  }
+  return el;
+}
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+async function saveNews(){
+  const msg = document.getElementById("nfMsg");
+  if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
+  const id = document.getElementById("nf-id").value;
+  const body = new URLSearchParams({
+    action: id ? "news_edit" : "news_add",
+    email: (SESSION && SESSION.email) || "",
+    id, date: document.getElementById("nf-date").value,
+    title: document.getElementById("nf-title").value,
+    text: document.getElementById("nf-body").value,
+    pub: document.getElementById("nf-pub").checked ? "TRUE" : "FALSE"
+  });
+  msg.textContent = "保存中…";
+  try{
+    const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
+    if(res.ok){ hideNewsForm(); loadNews(); } else { msg.textContent = res.error==="not_admin" ? "管理者権限がありません。" : "保存できませんでした。"; }
+  }catch(e){ msg.textContent = "通信エラーが発生しました。"; }
+}
+async function delNews(n){
+  if(!confirm("このお知らせを削除しますか？")) return;
+  const body = new URLSearchParams({ action:"news_del", email:(SESSION && SESSION.email) || "", id:n.id });
+  try{ const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json()); if(res.ok) loadNews(); }catch(e){}
+}
+
+// お知らせUI 配線
+document.getElementById("newsClose").addEventListener("click", closeNews);
+document.getElementById("newsNew").addEventListener("click", newNews);
+document.getElementById("nfSave").addEventListener("click", saveNews);
+document.getElementById("nfCancel").addEventListener("click", hideNewsForm);
+document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.target.id==="newsModal") closeNews(); });
+
+// 初回ゲートのボタン
+document.getElementById("entryLogin").addEventListener("click", openLogin);
+document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(); });
+
 loadSession();
+initEntry();
 
 // ---- 読み込み：スプシ優先 → JSONフォールバック ----
 loadCourses();
