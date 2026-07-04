@@ -1273,7 +1273,7 @@ a{text-decoration:none}
     <p class="lm-p">メールアドレスとパスワードを設定するだけ（無料）。<br>無料コンテンツがすぐに視聴できます。</p>
     <input type="email" id="rgEmail" placeholder="you@example.com" autocomplete="email">
     <input type="password" id="rgPass" placeholder="パスワード（6文字以上）" autocomplete="new-password">
-    <label class="lm-check"><input type="checkbox" id="rgTerms"> <a href="https://l-mine.com/terms" target="_blank" rel="noopener">利用規約</a>・<a href="https://l-mine.com/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します</label>
+    <label class="lm-check"><input type="checkbox" id="rgTerms"> <a href="https://l-mine.com/term" target="_blank" rel="noopener">利用規約</a>・<a href="https://l-mine.com/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します</label>
     <label class="lm-check"><input type="checkbox" id="rgMail" checked> メールでお知らせ・特典を受け取る（配信解除はいつでも可能）</label>
     <button class="lm-go" id="rgGo">無料で登録する</button>
     <div class="lm-msg" id="rgMsg"></div>
@@ -1315,8 +1315,8 @@ const SHEET_URL    = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gv
 const DATA_URL     = "data/courses.json";
 const REGISTER_URL = "https://l-mine.com/onlinecourse";
 // TODO: 正式な規約・プライバシーポリシーのURLに差し替え
-const TERMS_URL    = "https://l-mine.com/terms";
-const PRIVACY_URL  = "https://l-mine.com/privacy";
+const TERMS_URL    = "https://l-mine.com/term";
+const PRIVACY_URL  = "https://l-mine.com/privacy"; // TODO: 正式URL待ち
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
