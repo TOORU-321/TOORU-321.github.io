@@ -1451,6 +1451,7 @@ function playIntro(){
     if(!playIntro._on) return;
     playIntro._on = false;
     clearTimeout(playIntro._t);
+    try{ vid.pause(); }catch(e){}       // フレームを止めてからフェード
     ov.classList.add("intro-out");
     setTimeout(finish, 720);
   };
@@ -1460,8 +1461,13 @@ function playIntro(){
   document.getElementById("introSkip").onclick = done;
   vid.onended = done;
   vid.onerror = done;
-  vid.onloadedmetadata = () => { clearTimeout(playIntro._t); playIntro._t = setTimeout(done, (vid.duration || 10) * 1000 + 2500); };
-  playIntro._t = setTimeout(done, 13000);   // 保険（固まった時）
+  // ★この動画はアニメが2回収録されているため、前半（尺の半分）で終了させて“1回だけ”に見せる
+  playIntro._stop = 0;
+  const setStop = () => { if(isFinite(vid.duration) && vid.duration > 2){ playIntro._stop = vid.duration / 2 - 0.15; } };
+  vid.ontimeupdate = () => { if(playIntro._stop && vid.currentTime >= playIntro._stop) done(); };
+  vid.onloadedmetadata = setStop;
+  setStop();                                // 既にメタデータ取得済みの場合に備えて即実行
+  playIntro._t = setTimeout(done, 8000);    // 保険（固まった時）
 
   if(mute){ mute.onclick = () => { vid.muted = !vid.muted; mute.textContent = vid.muted ? "🔇" : "🔊"; }; }
   // ★二重再生を防ぐため play() は必ず1回だけ。まずミュートで確実に再生開始し、直後に音を出す。
