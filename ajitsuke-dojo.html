@@ -2445,6 +2445,9 @@ a:focus-visible {
 }
 /* キャラ後ろの白い楕円は削除（キャラの上下に「枠」のように見えてしまうため） */
 .recipe::before { content: none; }
+/* カードの背景を完全不透明に。半透明のままだと body 全体のノイズが透けて
+   キャラの周りに「四角枠っぽい模様」が見えてしまう */
+.recipe { background: #FFFDF7; }
 .recipe.done {
   background:
     radial-gradient(circle at 50% 19%, rgba(255,255,255,0.68), transparent 32%),
