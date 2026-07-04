@@ -1483,6 +1483,67 @@ img { display: block; max-width: 100%; }
 .nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; }
 
 /* ============================================================
+   OPENING VIDEO (first launch only)
+   ============================================================ */
+.opening {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #FBF3E4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: openingFadeIn 0.4s ease-out;
+}
+.opening.hidden { display: none; }
+.opening.leaving { animation: openingFadeOut 0.6s ease-in forwards; }
+@keyframes openingFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes openingFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.opening-video {
+  width: 100%;
+  height: 100%;
+  /* デフォルト（PC）は全体表示：黒帯が出ても収まり優先 */
+  object-fit: contain;
+  background: #FBF3E4;
+}
+/* スマホ縦画面はキャラを中心にフルスクリーン */
+@media (max-aspect-ratio: 1/1) {
+  .opening-video {
+    object-fit: cover;
+    /* キャラは動画のやや右寄り。縦画面ではその位置を中央に見せる */
+    object-position: 60% 50%;
+  }
+}
+.opening-skip {
+  position: absolute;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: 18px;
+  background: rgba(58, 42, 30, 0.55);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  animation: openingSkipShow 0.4s ease-out 1.5s forwards;
+}
+@keyframes openingSkipShow {
+  to { opacity: 1; }
+}
+.opening-skip:active { transform: scale(0.96); }
+
+/* ============================================================
    ONBOARDING
    ============================================================ */
 .onb {
@@ -2671,6 +2732,7 @@ a:focus-visible {
     <button onclick="adminUnlockAll()">全解放</button>
     <button onclick="adminEndCourse()">講座終了</button>
     <button onclick="adminPreorderWindow()">先行予約OPEN</button>
+    <button onclick="adminReplayOpening()">オープニング</button>
     <span class="tag">ADMIN</span>
   </div>
 
@@ -2854,6 +2916,14 @@ a:focus-visible {
   </nav>
 </div>
 
+<!-- Opening video (first launch only) -->
+<div class="opening hidden" id="opening">
+  <video class="opening-video" id="openingVideo" muted playsinline preload="auto" webkit-playsinline>
+    <source src="" type="video/mp4">
+  </video>
+  <button class="opening-skip" id="openingSkip" onclick="skipOpening()">スキップ</button>
+</div>
+
 <!-- Onboarding -->
 <div class="onb hidden" id="onb">
   <div class="onb-top">
@@ -2954,6 +3024,7 @@ const CONFIG = {
   LINE_SOS_URL: 'https://lin.ee/PLACEHOLDER',
   NEXT_BOOKING_URL: 'https://PLACEHOLDER',
   KOJI_SECRET: 'こうじだいすき',
+  OPENING_VIDEO_URL: 'https://columns.l-mine.com/assets/video/opening.mp4',
 };
 
 // ===========================================================
@@ -3126,7 +3197,7 @@ const DEFAULT_STATE = {
   ratios: [],
   recipes: [],
   badges: [],
-  flags: { openedChat: false, kojiGraduate: false, ended: false, preorderNotified: false, preorderRequested: false, preorderChoices: '' },
+  flags: { openedChat: false, kojiGraduate: false, ended: false, preorderNotified: false, preorderRequested: false, preorderChoices: '', openingShown: false },
 };
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
@@ -3145,7 +3216,10 @@ let onbStep = 0;
 document.addEventListener('DOMContentLoaded', () => {
   if (location.search.includes('admin')) document.getElementById('adminBar').classList.add('on');
   load();
-  if (!state.onboarded) {
+  const forceOpening = location.search.includes('opening');
+  if (!state.onboarded && (!state.flags.openingShown || forceOpening)) {
+    showOpening();
+  } else if (!state.onboarded) {
     showOnboarding();
   } else {
     document.getElementById('onb').classList.add('hidden');
@@ -3159,6 +3233,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderUsage();
 });
+
+// ===========================================================
+// OPENING VIDEO (first launch only)
+// ===========================================================
+let openingFinishTimer = null;
+function showOpening() {
+  const wrap = document.getElementById('opening');
+  const video = document.getElementById('openingVideo');
+  if (!wrap || !video) { showOnboarding(); return; }
+
+  // 動画URLをここで注入（DOMContentLoaded前のプリロードを避けるため）
+  const source = video.querySelector('source');
+  if (source && !source.src) {
+    source.src = CONFIG.OPENING_VIDEO_URL;
+    video.load();
+  }
+  wrap.classList.remove('hidden', 'leaving');
+
+  // 再生 → 失敗しても止めずに完了扱いへ
+  const playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {});
+  }
+
+  // 動画が自然に終わったら
+  video.onended = finishOpening;
+  // 保険：動画の再生に問題があっても、8.6秒後に必ず終了
+  clearTimeout(openingFinishTimer);
+  openingFinishTimer = setTimeout(finishOpening, 8600);
+}
+
+function skipOpening() { finishOpening(); }
+
+function finishOpening() {
+  clearTimeout(openingFinishTimer);
+  const wrap = document.getElementById('opening');
+  const video = document.getElementById('openingVideo');
+  if (!wrap) { return; }
+  // 二重発火防止
+  if (wrap.dataset.done === '1') return;
+  wrap.dataset.done = '1';
+
+  state.flags.openingShown = true;
+  persist();
+
+  wrap.classList.add('leaving');
+  setTimeout(() => {
+    wrap.classList.add('hidden');
+    wrap.classList.remove('leaving');
+    try { if (video) { video.pause(); video.currentTime = 0; } } catch(e) {}
+    showOnboarding();
+  }, 600);
+}
+window.skipOpening = skipOpening;
 
 function refresh() {
   updateGreeting();
@@ -3842,6 +3970,14 @@ function adminPreorderWindow() {
   toast('先行予約ウィンドウ突入状態にしました');
   setTimeout(maybeShowPreorderPopup, 400);
 }
+function adminReplayOpening() {
+  // オープニング動画を強制再生（テスト用）
+  const wrap = document.getElementById('opening');
+  if (wrap) wrap.dataset.done = '';
+  state.flags.openingShown = false;
+  persist();
+  showOpening();
+}
 
 // 公開
 window.goto = goto;
@@ -3861,6 +3997,7 @@ window.adminFillDemo = adminFillDemo;
 window.adminUnlockAll = adminUnlockAll;
 window.adminEndCourse = adminEndCourse;
 window.adminPreorderWindow = adminPreorderWindow;
+window.adminReplayOpening = adminReplayOpening;
 window.requestPreorder = requestPreorder;
 window.submitPreorder = submitPreorder;
 window.closePreorderModal = closePreorderModal;
