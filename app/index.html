@@ -1108,19 +1108,32 @@ a{text-decoration:none}
 .app-title h2{font-family:var(--mincho);font-weight:800;font-size:clamp(20px,2.6vw,30px);letter-spacing:.1em;color:#fff;margin:7px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
 .vlayout{margin-top:0;padding-top:20px}
 .vplayer{scroll-margin-top:84px}
-/* 左：コース名だけ／アクティブ強調 */
-.course.active .course-head{color:#f0d69c}
-.course.active{background:linear-gradient(135deg,rgba(227,195,129,.12),rgba(227,195,129,.03));border-color:rgba(227,195,129,.22);box-shadow:inset 3px 0 0 var(--gold)}
-/* ④ 動画下の章リスト */
-.chapter-list{margin-top:20px;padding-top:4px;display:flex;flex-direction:column;gap:2px;max-height:46vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(227,195,129,.22) transparent}
-.chapter-list::-webkit-scrollbar{width:5px}
-.chapter-list::-webkit-scrollbar-thumb{background:rgba(227,195,129,.2);border-radius:99px}
-.chapter-list:empty{display:none}
-.ch-item{width:100%;text-align:left;background:none;border:none;border-top:1px solid var(--lm-border);cursor:pointer;font-family:var(--gothic);color:#bdbbb2;font-size:13px;padding:12px 8px;display:flex;gap:12px;align-items:center;transition:color .18s,background .18s;border-radius:8px}
-.ch-item:first-child{border-top:none}
+/* ===== 左サイド：大タイトル → 章メニュー → 章の中身（3階層アコーディオン） ===== */
+.course{border-top:1px solid var(--lm-border)}
+.course:first-child{border-top:none}
+.course-head{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--mincho);font-weight:700;color:#e8e2d4;font-size:14px;line-height:1.5;padding:14px 8px 14px 4px;display:flex;gap:9px;align-items:center;transition:color .18s}
+.course-head:hover{color:#f0d69c}
+.course.active>.course-head{color:#f0d69c}
+.course-head .c-tw{flex:1;min-width:0}
+.course-head .c-tag{font-family:var(--gothic);font-size:10px;color:#8f918f;border:1px solid rgba(227,195,129,.22);border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none}
+.course-head .c-lock{color:#e0c179;font-size:13px;flex:none}
+.c-caret{font-size:10px;color:#7a7f84;transition:transform .2s,color .2s;flex:none;width:11px;text-align:center}
+.course.open>.course-head .c-caret,.chapgroup.open>.chap-head .c-caret{transform:rotate(90deg);color:#e0c179}
+.course-body{display:none;padding:0 0 10px 3px}
+.course.open>.course-body{display:block}
+/* 章メニュー */
+.chapgroup{margin:2px 0}
+.chap-head{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-weight:600;color:#cfc8ba;font-size:12.5px;padding:9px 8px 9px 6px;display:flex;gap:8px;align-items:center;transition:color .18s,background .18s;border-radius:8px}
+.chap-head:hover{color:#e8d3a3;background:rgba(227,195,129,.04)}
+.chap-head .chap-tw{flex:1;min-width:0}
+.chap-head .chap-ct{font-family:var(--serif-en);font-size:11px;color:#7a7f84;flex:none}
+.chap-items{display:none;padding-left:7px;border-left:1px solid rgba(227,195,129,.14);margin:2px 0 4px 11px}
+.chapgroup.open>.chap-items{display:block}
+/* 章の中身（動画） */
+.ch-item{width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);color:#bdbbb2;font-size:12.5px;padding:9px 8px;display:flex;gap:10px;align-items:flex-start;transition:color .18s,background .18s;border-radius:8px}
 .ch-item:hover{color:#e8d3a3;background:rgba(227,195,129,.05)}
 .ch-item.active{color:#f0d69c;background:rgba(227,195,129,.10)}
-.ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px}
+.ch-item .ch-no{font-family:var(--serif-en);font-size:11px;color:#6f7478;min-width:18px;padding-top:1px}
 .ch-item.active .ch-no{color:#d8b870}
 .ch-item .ch-t{flex:1;line-height:1.5}
 /* ③ コース内 前へ／次へ */
@@ -1224,7 +1237,6 @@ a{text-decoration:none}
           <span class="vnav-tx"><span class="vnav-lb">次の動画</span><span class="vnav-tt" id="vnavNextT"></span></span><span class="vnav-ar">→</span>
         </button>
       </div>
-      <div class="chapter-list" id="chapterList"></div>
     </div>
   </main>
 </div>
@@ -1644,17 +1656,17 @@ function coursesFromGviz(json){
   const table = json.table || {};
   const cols  = (table.cols || []).map(c => String(c.label || "").trim());
   const find  = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName=find(["コース名"],0), iTitle=find(["章タイトル","タイトル"],1), iUrl=find(["動画URL","URL","動画"],2), iKind=find(["種別","公開","公開状態"],3), iTag=find(["必要タグ","タグ"],4), iOrder=find(["並び順","順番","順","order"],5);
+  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iOrder=find(["並び順","順番","順","order"],6);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
   const map  = new Map(); let seq = 0;
   (table.rows || []).forEach(r => {
-    const cname = cell(r,iName), title = cell(r,iTitle), url = cell(r,iUrl);
+    const cname = cell(r,iName), chap = cell(r,iChap), title = cell(r,iTitle), url = cell(r,iUrl);
     if(!cname || !url || cname === "コース名") return;
     const pv = parseVideoUrl(url); if(!pv) return;
     const kind = cell(r,iKind), tag = cell(r,iTag);
     const on = parseFloat(cell(r,iOrder)); const ord = isNaN(on) ? (++seq) : on;
     if(!map.has(cname)){ const rk = kindToRank(kind); map.set(cname, { name:cname, tier:(kind||"無料"), rank:rk, locked:(rk > RANK.guest), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
-    const c = map.get(cname); c.videos.push({ t:title||cname, platform:pv.platform, id:pv.id, _order:ord }); if(ord < c._order) c._order = ord;
+    const c = map.get(cname); c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, _order:ord }); if(ord < c._order) c._order = ord;
   });
   const list = [...map.values()];
   list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));
@@ -1673,41 +1685,66 @@ function parseVideoUrl(s){
   return null;
 }
 function showState(msg){ wrap.innerHTML = `<div class="vstate">${msg}</div>`; }
+// 左サイド：大タイトル → 章メニュー → 章の中身（3階層アコーディオン）
 function render(){
   wrap.innerHTML = "";
   COURSES.forEach((course, ci) => {
-    const multi = (course.videos || []).length > 1;
+    const vids = course.videos || [];
+    const accessible = hasAccess(course);
     const el = document.createElement("section");
-    el.className = "course" + (multi ? " multi" : " single"); el.dataset.ci = ci;
+    el.className = "course"; el.dataset.ci = ci;
+    // 大タイトル
     const head = document.createElement("button"); head.className = "course-head";
-    let badge;
-    if(course.locked && !hasAccess(course)) badge = `<span class="c-lock">🔒</span>`;
-    else if(multi)                          badge = `<span class="c-tag">${course.videos.length}本</span>`;
-    else                                    badge = "";
-    head.innerHTML = `<span class="c-tw">${course.name}</span>${badge}`;
-    head.addEventListener("click", () => onCourseClick(ci)); el.appendChild(head);
-    wrap.appendChild(el);   // ★左はコース名のみ（章は動画下に表示）
+    const badge = (!accessible) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
+    head.innerHTML = `<span class="c-caret">▸</span><span class="c-tw">${course.name}</span>${badge}`;
+    head.addEventListener("click", () => toggleCourse(ci));
+    el.appendChild(head);
+    // 中身（ロック時は列挙しない＝内容物を隠す ④）
+    if(accessible){
+      const body = document.createElement("div"); body.className = "course-body";
+      const hasChap = vids.some(v => v.chapter);
+      if(hasChap){
+        const groups = []; const gmap = new Map();
+        vids.forEach((v, i) => {
+          const key = v.chapter || "その他";
+          if(!gmap.has(key)){ gmap.set(key, { name:key, items:[] }); groups.push(gmap.get(key)); }
+          gmap.get(key).items.push({ v, i });
+        });
+        groups.forEach(g => {
+          const grp = document.createElement("div"); grp.className = "chapgroup";
+          const ch  = document.createElement("button"); ch.className = "chap-head";
+          ch.innerHTML = `<span class="c-caret">▸</span><span class="chap-tw">${g.name}</span><span class="chap-ct">${g.items.length}</span>`;
+          ch.addEventListener("click", () => grp.classList.toggle("open"));
+          grp.appendChild(ch);
+          const items = document.createElement("div"); items.className = "chap-items";
+          g.items.forEach(({v,i}) => items.appendChild(makeItem(ci, i, v)));
+          grp.appendChild(items);
+          body.appendChild(grp);
+        });
+      } else {
+        vids.forEach((v, i) => body.appendChild(makeItem(ci, i, v)));
+      }
+      el.appendChild(body);
+    }
+    wrap.appendChild(el);
   });
   courseEls = [...wrap.querySelectorAll(".course")];
   document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
 }
-// ③ タップしたら動画（プレイヤー）まで表示を移動
+function makeItem(ci, i, v){
+  const b = document.createElement("button"); b.className = "ch-item"; b.dataset.ci = ci; b.dataset.vi = i;
+  b.innerHTML = `<span class="ch-no">${String(i+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
+  b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
+  return b;
+}
 function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
-// コース選択 ＝ 1本目を再生し、章は動画下に出す＋動画へスクロール
-function onCourseClick(ci){ select(ci, 0); scrollToPlayer(); }
-// ④ 動画下に章一覧を描画（複数本のときだけ）
-function renderChapters(ci, vi){
-  const cont = document.getElementById("chapterList");
-  cont.innerHTML = "";
-  const course = COURSES[ci];
-  if(!course || (course.videos || []).length <= 1) return;
-  course.videos.forEach((v, i) => {
-    const b = document.createElement("button");
-    b.className = "ch-item" + (i === vi ? " active" : "");
-    b.innerHTML = `<span class="ch-no">${String(i+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
-    b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
-    cont.appendChild(b);
-  });
+// 大タイトルをタップ：ロックはロック表示のみ／アクセス可は開閉（1本なら即再生）
+function toggleCourse(ci){
+  const course = COURSES[ci]; if(!course) return;
+  if(!hasAccess(course)){ select(ci, 0); scrollToPlayer(); return; }
+  const el = courseEls[ci]; if(!el) return;
+  const open = el.classList.toggle("open");
+  if(open && (course.videos || []).length === 1){ select(ci, 0); scrollToPlayer(); }
 }
 function select(ci, vi){
   const course = COURSES[ci]; if(!course) return;
@@ -1715,7 +1752,7 @@ function select(ci, vi){
   curCourse = ci; curVideo = vi;
   const locked = !hasAccess(course);
   const vmeta  = document.querySelector(".vmeta");
-  courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+  courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));
 
   if(locked){
     // ④ アクセスパス無し：動画も内容物（章・前後・補足）も出さない
@@ -1725,18 +1762,26 @@ function select(ci, vi){
     vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
     vfiled.innerHTML   = "";
     document.getElementById("vnav").hidden = true;
-    document.getElementById("chapterList").innerHTML = "";
     return;
   }
 
   vmeta.classList.remove("meta-locked");
   vframe.classList.remove("locked"); viframe.src = embedUrl(v);
-  vkick.textContent  = course.videos.length > 1 ? `${course.name}　|　Lesson ${String(vi+1).padStart(2,"0")}` : course.name;
+  vkick.textContent  = course.videos.length > 1
+    ? `${course.name}${v.chapter ? "　|　" + v.chapter : ""}　|　${String(vi+1).padStart(2,"0")}`
+    : course.name;
   vtitle.textContent = v.t;
   let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
   vfiled.innerHTML = meta;
-  renderVnav(ci, vi);       // ③ コース内 前へ／次へ
-  renderChapters(ci, vi);   // ④ 章を動画下に表示
+  // 左：選択中のコース・章を開いてアクティブ表示
+  const el = courseEls[ci];
+  if(el){
+    el.classList.add("open");
+    wrap.querySelectorAll(".ch-item.active").forEach(x => x.classList.remove("active"));
+    const item = el.querySelector('.ch-item[data-vi="' + vi + '"]');
+    if(item){ item.classList.add("active"); const grp = item.closest(".chapgroup"); if(grp) grp.classList.add("open"); }
+  }
+  renderVnav(ci, vi);       // コース内 前へ／次へ
 }
 // ③ コース内だけで前後の動画へ移動するボタン
 function renderVnav(ci, vi){
