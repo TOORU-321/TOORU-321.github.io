@@ -2433,12 +2433,13 @@ a:focus-visible {
   gap: 10px;
 }
 .recipe {
-  min-height: 160px;
-  padding: 13px 9px 12px;
+  min-height: 180px;
+  padding: 10px 8px 12px;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  justify-content: flex-start;
   isolation: isolate;
   overflow: hidden;
 }
@@ -2465,11 +2466,20 @@ a:focus-visible {
   box-shadow: 0 5px 12px rgba(111,139,105,0.22);
 }
 .recipe-emoji {
-  width: 78px;
-  height: 78px;
-  margin-bottom: 8px;
+  width: 108px;
+  height: 108px;
+  margin: -4px auto 2px;
+  object-fit: contain;
+  /* PNG内側にある薄い透明フチをカードの外に逃がす */
+  transform: scale(1.08);
+  transform-origin: center 55%;
+  filter: grayscale(0.4) saturate(0.85) opacity(0.6);
 }
-.recipe-name { font-size: 12.5px; }
+.recipe.done .recipe-emoji {
+  filter: drop-shadow(0 1px 2px rgba(201,117,81,0.25));
+  transform: scale(1.14);
+}
+.recipe-name { font-size: 12.5px; margin-top: 2px; }
 .recipe-tag {
   display: inline-flex;
   align-self: center;
@@ -2684,8 +2694,8 @@ a:focus-visible {
   .feature { padding: 16px; }
   .feature-char { width: 62px; height: 62px; }
   .prog { gap: 12px; padding: 16px 14px; }
-  .recipe { min-height: 148px; }
-  .recipe-emoji { width: 70px; height: 70px; }
+  .recipe { min-height: 168px; }
+  .recipe-emoji { width: 94px; height: 94px; }
   .badge-grid { gap: 7px; }
 }
 </style>
