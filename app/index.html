@@ -1134,6 +1134,18 @@ a{text-decoration:none}
 .vnav-tx{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
 .vnav-lb{font-size:10px;letter-spacing:.14em;color:#8f918f;text-transform:uppercase}
 .vnav-tt{font-size:12px;color:#e8e2d4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ===== 会員ランク：新規無料登録の導線・登録フォーム ===== */
+.entry-signup{margin:16px auto 0;display:inline-block;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:12.5px;color:#e0c685;letter-spacing:.03em;padding:6px 8px;opacity:.9;transition:opacity .15s,color .15s}
+.entry-signup:hover{opacity:1;color:#efd69e;text-decoration:underline}
+.member-signup{font-family:var(--gothic);font-size:12px;color:#e0c685;background:rgba(227,195,129,.07);border:1px solid rgba(227,195,129,.28);border-radius:999px;padding:7px 14px;cursor:pointer;white-space:nowrap;transition:.15s}
+.member-signup:hover{background:rgba(227,195,129,.16);border-color:rgba(227,195,129,.5);color:#efd69e}
+@media(max-width:600px){ .member-signup{font-size:10.5px;padding:6px 10px} }
+.lm-check{display:flex;align-items:flex-start;gap:9px;font-family:var(--gothic);font-size:12px;color:#b7b3aa;line-height:1.6;margin:2px 0 12px;cursor:pointer;text-align:left}
+.lm-check input{width:auto!important;min-height:0!important;margin:2px 0 0!important;accent-color:#c9a45a;flex:none}
+.lm-check a{color:#e0c685;border-bottom:1px solid rgba(227,195,129,.4)}
+.lm-check a:hover{color:#efd69e}
+.lm-switch{display:block;width:100%;margin-top:14px;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:12px;color:#9c9e9a;letter-spacing:.02em;padding:6px}
+.lm-switch:hover{color:#e0c685;text-decoration:underline}
 /* ① スマホ：コース一覧を上（動画の前）に。章リストは動画下のまま */
 @media(max-width:900px){
   .vlist{order:1}
@@ -1144,6 +1156,9 @@ a{text-decoration:none}
 
 
 </style>
+<!-- Firebase Authentication（compat SDK：既存の素のscript構成のまま使える） -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 <section class="entry" id="entry">
@@ -1156,6 +1171,7 @@ a{text-decoration:none}
       <button class="entry-login" id="entryLogin">ログイン</button>
       <button class="entry-guest" id="entryGuest">ゲストで参加</button>
     </div>
+    <button class="entry-signup" id="entrySignup">新規無料登録はこちら →</button>
   </div>
 </section>
 
@@ -1164,6 +1180,7 @@ a{text-decoration:none}
   <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span></div>
   <div class="appbar-right">
     <button class="member-exit" id="exitBtn" hidden>退室</button>
+    <button class="member-signup" id="signupBtn" hidden>新規無料登録はこちら</button>
     <button class="member-ctl" id="memberBtn">ログイン</button>
   </div>
 </header>
@@ -1239,11 +1256,28 @@ a{text-decoration:none}
 <div class="loginmodal" id="loginModal" hidden>
   <div class="lm-card">
     <button class="lm-x" id="lmClose" aria-label="閉じる">×</button>
-    <div class="lm-h">会員ログイン</div>
-    <p class="lm-p">ご登録済みのメールアドレスを入力してください。</p>
+    <div class="lm-h">ログイン</div>
+    <p class="lm-p">メールアドレスとパスワードを入力してください。</p>
     <input type="email" id="lmEmail" placeholder="you@example.com" autocomplete="email">
+    <input type="password" id="lmPass" placeholder="パスワード" autocomplete="current-password">
     <button class="lm-go" id="lmGo">ログイン</button>
     <div class="lm-msg" id="lmMsg"></div>
+    <button class="lm-switch" id="toSignup">アカウントをお持ちでない方は　新規無料登録 →</button>
+  </div>
+</div>
+
+<div class="loginmodal" id="regModal" hidden>
+  <div class="lm-card">
+    <button class="lm-x" id="regClose" aria-label="閉じる">×</button>
+    <div class="lm-h">新規無料登録</div>
+    <p class="lm-p">メールアドレスとパスワードを設定するだけ（無料）。<br>無料コンテンツがすぐに視聴できます。</p>
+    <input type="email" id="rgEmail" placeholder="you@example.com" autocomplete="email">
+    <input type="password" id="rgPass" placeholder="パスワード（6文字以上）" autocomplete="new-password">
+    <label class="lm-check"><input type="checkbox" id="rgTerms"> <a href="https://l-mine.com/terms" target="_blank" rel="noopener">利用規約</a>・<a href="https://l-mine.com/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します</label>
+    <label class="lm-check"><input type="checkbox" id="rgMail" checked> メールでお知らせ・特典を受け取る（配信解除はいつでも可能）</label>
+    <button class="lm-go" id="rgGo">無料で登録する</button>
+    <div class="lm-msg" id="rgMsg"></div>
+    <button class="lm-switch" id="toLogin">すでに登録済みの方は　ログイン →</button>
   </div>
 </div>
 
@@ -1280,7 +1314,46 @@ const SHEET_ID     = "1OhHer1LIF0BmcDaeV2G5e8TVkDB_XQFZzuEcz3sJkT4";
 const SHEET_URL    = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json";
 const DATA_URL     = "data/courses.json";
 const REGISTER_URL = "https://l-mine.com/onlinecourse";
+// TODO: 正式な規約・プライバシーポリシーのURLに差し替え
+const TERMS_URL    = "https://l-mine.com/terms";
+const PRIVACY_URL  = "https://l-mine.com/privacy";
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
+
+/* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
+const RANK = { guest:0, free:1, plus:2, support:3 };
+// スプシ「種別」→ 必要ランク
+function kindToRank(kind){
+  const k = String(kind || "");
+  if(/有料|サポート|support/i.test(k))                 return RANK.support; // 対象タグ保有者
+  if(/サブスク|会員|エルラボ|plus|subscrib/i.test(k))  return RANK.plus;    // サブスク会員
+  if(/無料登録|新規登録|登録|リード|free|lead/i.test(k)) return RANK.free;   // メール＋パスワード登録
+  return RANK.guest;                                                        // 無料・空欄
+}
+
+/* ===== Firebase（本人確認：メール＋パスワード） ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBpBpGmxfWhyHq3rzwH2Oa_6IWDIZbOAj8",
+  authDomain: "elabo-plus.firebaseapp.com",
+  projectId: "elabo-plus",
+  storageBucket: "elabo-plus.firebasestorage.app",
+  messagingSenderId: "452649305918",
+  appId: "1:452649305918:web:4bef5bae57aee4d86c4e6f"
+};
+let fbAuth = null;
+try { if(window.firebase){ firebase.initializeApp(firebaseConfig); fbAuth = firebase.auth(); } }
+catch(e){ console.warn("Firebase init failed", e); }
+function fbErrMsg(code){
+  switch(code){
+    case "auth/invalid-email":        return "メールアドレスの形式が正しくありません。";
+    case "auth/user-not-found":       return "アカウントが見つかりません。初めての方は「新規無料登録」からパスワードを設定してください。";
+    case "auth/wrong-password":
+    case "auth/invalid-credential":   return "メールアドレスかパスワードが違います。";
+    case "auth/too-many-requests":    return "試行回数が多すぎます。しばらくおいて再度お試しください。";
+    case "auth/email-already-in-use": return "このメールアドレスは既に登録済みです。「ログイン」からお進みください。";
+    case "auth/weak-password":        return "パスワードは6文字以上にしてください。";
+    default: return "処理に失敗しました。時間をおいて再度お試しください。";
+  }
+}
 function embedUrl(v){
   if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id;
   if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
@@ -1309,15 +1382,18 @@ function loadSession(){
 function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.stringify(s)); updateMemberUI(); }
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
 function updateMemberUI(){
-  const btn  = document.getElementById("memberBtn");
-  const exit = document.getElementById("exitBtn");
+  const btn    = document.getElementById("memberBtn");
+  const exit   = document.getElementById("exitBtn");
+  const signup = document.getElementById("signupBtn");
   if(!btn) return;
   if(SESSION && SESSION.email){
     btn.textContent = (SESSION.name || "会員") + "｜ログアウト";
     if(exit) exit.hidden = true;
+    if(signup) signup.hidden = true;          // 会員には出さない
   } else {
     btn.textContent = "ログイン";
     if(exit) exit.hidden = false;
+    if(signup) signup.hidden = false;         // ゲスト参加中：新規無料登録を出す
   }
 }
 function enterLibrary(){
@@ -1336,66 +1412,132 @@ function initEntry(){
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
   if(isMember || isGuest) enterLibrary();
 }
+// 今のユーザーのランク（0:ゲスト 1:無料登録 2:サブスク）。※supportはコース別にタグ照合
+function currentRank(){
+  if(!SESSION || !SESSION.email) return RANK.guest; // 未ログイン＝ゲスト
+  if(SESSION.active)             return RANK.plus;  // サブスク有効
+  return RANK.free;                                 // アカウント有り（無料登録）
+}
 function hasAccess(course){
-  if(!course.locked) return true;
-  if(!SESSION || !SESSION.active) return false;
-  if(!course.requiredTag) return true;
-  return (SESSION.tags || []).includes(course.requiredTag);
+  const need = course.rank || RANK.guest;
+  if(need >= RANK.support && course.requiredTag){
+    // 有料（タグ指定あり）＝サブスク有効＋対象タグ保有
+    return !!(SESSION && SESSION.active && (SESSION.tags || []).includes(course.requiredTag));
+  }
+  // 有料でもタグ未設定ならサブスク会員扱いにフォールバック
+  const effNeed = (need >= RANK.support) ? RANK.plus : need;
+  return currentRank() >= effNeed;
 }
 function setLockScreen(course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
-  if(!SESSION || !SESSION.email){
-    // 未ログイン：ログイン導線だけ残す
-    t.textContent = "アクセスパスが必要です";
-    d.textContent = "会員のメールアドレスでログインすると視聴できます。";
+  const need = course.rank || RANK.guest;
+  const loggedIn = !!(SESSION && SESSION.email);
+  if(need <= RANK.free){
+    // 無料登録すれば視聴できる（集客）
+    t.textContent = "無料登録で視聴できます";
+    d.textContent = "メールアドレスとパスワードの設定だけ（無料）で、続きを視聴できます。";
+    b.textContent = "無料で登録する →";
+    b.setAttribute("href", "#");
+    b.onclick = (ev) => { ev.preventDefault(); openRegister(); };
+    return;
+  }
+  if(!loggedIn){
+    // 上位ランクだが未ログイン：まずログイン導線
+    t.textContent = "ログインが必要です";
+    d.textContent = "ご登録済みの方はログイン、初めての方は新規無料登録へお進みください。";
     b.textContent = "ログイン →";
     b.setAttribute("href", "#");
     b.onclick = (ev) => { ev.preventDefault(); openLogin(); };
-  } else if(!SESSION.active){
-    // 契約が無効：メッセージのみ（販売ページは今後追加）
-    t.textContent = "アクセスパスが必要です";
-    d.textContent = "ご契約状態をご確認のうえ、再度お試しください。";
+    return;
+  }
+  if(need <= RANK.plus){
+    // サブスク会員限定（販売ページは今後追加）
+    t.textContent = "エルラボ＋メンバー限定です";
+    d.textContent = "エルラボ＋（サブスク）にご登録いただくと視聴できます。";
     b.hidden = true;
   } else {
-    // 有料コンテンツ・タグ無し：現状はメッセージのみ（販売ページは今後追加）
+    // 有料：対象のアクセスパス（タグ）が必要（販売ページは今後追加）
     t.textContent = "アクセスパスが必要です";
-    d.textContent = "このコンテンツの視聴にはアクセスパスが必要です。";
+    d.textContent = "このコンテンツの視聴には対象のアクセスパスが必要です。";
     b.hidden = true;
   }
 }
-async function doLogin(){
-  const emailEl = document.getElementById("lmEmail");
-  const msg     = document.getElementById("lmMsg");
-  const email   = (emailEl.value || "").trim().toLowerCase();
-  if(!email || email.indexOf("@") < 0){ msg.textContent = "メールアドレスを入力してください。"; return; }
-  msg.textContent = "確認中…";
+// Firebaseで本人確認済みのメールを、顧客シート照合でランク確定してから入室
+async function applyTierAndEnter(email, closeFn){
+  let tier = { active:false, tags:[], name: email.split("@")[0] };
   try {
-    const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(email)).then(r => r.json());
-    if(res.ok){
-      saveSession({ email, name: res.name, tags: res.tags || [], active: res.active });
-      msg.textContent = "";
-      closeLogin();
-      enterLibrary();
-      render();
-      if(curCourse != null) select(curCourse, curVideo);
-    } else {
-      msg.textContent = (res.error === "not_member") ? "このメールアドレスは会員リストに見つかりませんでした。" : "ログインできませんでした。";
-    }
-  } catch(e){ msg.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。"; }
+    const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(email) + "&_=" + Date.now()).then(r=>r.json());
+    if(res && res.ok){ tier = { active: !!res.active, tags: res.tags || [], name: res.name || tier.name }; }
+  } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
+  saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, registered:true });
+  if(closeFn) closeFn();
+  enterLibrary();
+  render();
+  if(curCourse != null) select(curCourse, curVideo);
 }
-function openLogin(){ document.getElementById("loginModal").hidden = false; setTimeout(() => document.getElementById("lmEmail").focus(), 50); }
+async function doLogin(){
+  const email = (document.getElementById("lmEmail").value || "").trim().toLowerCase();
+  const pass  = document.getElementById("lmPass").value || "";
+  const msg   = document.getElementById("lmMsg");
+  if(!email || email.indexOf("@") < 0){ msg.textContent = "メールアドレスを入力してください。"; return; }
+  if(!pass){ msg.textContent = "パスワードを入力してください。"; return; }
+  if(!fbAuth){ msg.textContent = "認証を初期化できませんでした。ページを再読み込みしてください。"; return; }
+  msg.textContent = "ログイン中…";
+  try {
+    await fbAuth.signInWithEmailAndPassword(email, pass);
+    msg.textContent = "";
+    await applyTierAndEnter(email, closeLogin);
+  } catch(e){ msg.textContent = fbErrMsg(e && e.code); }
+}
+async function doRegister(){
+  const email = (document.getElementById("rgEmail").value || "").trim().toLowerCase();
+  const pass  = document.getElementById("rgPass").value || "";
+  const terms = document.getElementById("rgTerms").checked;
+  const mail  = document.getElementById("rgMail").checked;
+  const msg   = document.getElementById("rgMsg");
+  if(!email || email.indexOf("@") < 0){ msg.textContent = "メールアドレスを入力してください。"; return; }
+  if(pass.length < 6){ msg.textContent = "パスワードは6文字以上で設定してください。"; return; }
+  if(!terms){ msg.textContent = "利用規約・プライバシーポリシーへの同意が必要です。"; return; }
+  if(!fbAuth){ msg.textContent = "認証を初期化できませんでした。ページを再読み込みしてください。"; return; }
+  msg.textContent = "登録中…";
+  try {
+    await fbAuth.createUserWithEmailAndPassword(email, pass);
+    // 同意記録＋リード保存（ベストエフォート：GAS未対応でもFirebase登録は成立）
+    try {
+      const body = new URLSearchParams({ action:"lead_add", email, terms:"1", privacy:"1", mail: mail?"1":"0" });
+      fetch(GAS_URL, { method:"POST", body });
+    } catch(_e){}
+    msg.textContent = "";
+    await applyTierAndEnter(email, closeRegister);
+  } catch(e){
+    if(e && e.code === "auth/email-already-in-use"){
+      msg.textContent = fbErrMsg(e.code);
+      setTimeout(()=>{ closeRegister(); openLogin(); document.getElementById("lmEmail").value = email; }, 1000);
+    } else { msg.textContent = fbErrMsg(e && e.code); }
+  }
+}
+function openLogin(){ closeRegister(); document.getElementById("loginModal").hidden = false; setTimeout(() => document.getElementById("lmEmail").focus(), 50); }
 function closeLogin(){ document.getElementById("loginModal").hidden = true; }
+function openRegister(){ closeLogin(); const m=document.getElementById("regModal"); if(m){ m.hidden = false; setTimeout(()=>document.getElementById("rgEmail").focus(),50); } }
+function closeRegister(){ const m=document.getElementById("regModal"); if(m) m.hidden = true; }
 document.getElementById("memberBtn").addEventListener("click", (e) => {
   e.preventDefault();
-  if(SESSION && SESSION.email){ if(confirm("ログアウトしますか？")){ exitToEntry(); } }
+  if(SESSION && SESSION.email){ if(confirm("ログアウトしますか？")){ if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} } exitToEntry(); } }
   else { openLogin(); }
 });
-document.getElementById("exitBtn").addEventListener("click", exitToEntry);
+document.getElementById("exitBtn").addEventListener("click", () => { if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} } exitToEntry(); });
 document.getElementById("lmGo").addEventListener("click", doLogin);
 document.getElementById("lmClose").addEventListener("click", closeLogin);
+document.getElementById("lmPass").addEventListener("keydown", (e)=>{ if(e.key === "Enter") doLogin(); });
+document.getElementById("rgGo").addEventListener("click", doRegister);
+document.getElementById("regClose").addEventListener("click", closeRegister);
+document.getElementById("toSignup").addEventListener("click", openRegister);
+document.getElementById("toLogin").addEventListener("click", openLogin);
+const signupBtnEl = document.getElementById("signupBtn"); if(signupBtnEl) signupBtnEl.addEventListener("click", openRegister);
+const entrySignupEl = document.getElementById("entrySignup"); if(entrySignupEl) entrySignupEl.addEventListener("click", openRegister);
 document.getElementById("lmEmail").addEventListener("keydown", (e) => { if(e.key === "Enter") doLogin(); });
 document.getElementById("loginModal").addEventListener("click", (e) => { if(e.target.id === "loginModal") closeLogin(); });
 
@@ -1511,7 +1653,7 @@ function coursesFromGviz(json){
     const pv = parseVideoUrl(url); if(!pv) return;
     const kind = cell(r,iKind), tag = cell(r,iTag);
     const on = parseFloat(cell(r,iOrder)); const ord = isNaN(on) ? (++seq) : on;
-    if(!map.has(cname)){ map.set(cname, { name:cname, tier:(kind||"無料"), locked:(kind.indexOf("会員")>=0||kind.indexOf("有料")>=0), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
+    if(!map.has(cname)){ const rk = kindToRank(kind); map.set(cname, { name:cname, tier:(kind||"無料"), rank:rk, locked:(rk > RANK.guest), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
     const c = map.get(cname); c.videos.push({ t:title||cname, platform:pv.platform, id:pv.id, _order:ord }); if(ord < c._order) c._order = ord;
   });
   const list = [...map.values()];
