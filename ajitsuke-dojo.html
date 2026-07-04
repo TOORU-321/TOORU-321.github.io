@@ -2443,16 +2443,8 @@ a:focus-visible {
   isolation: isolate;
   overflow: hidden;
 }
-.recipe::before {
-  content: '';
-  position: absolute;
-  inset: 9px 10px auto;
-  height: 74px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.58);
-  border: 1px solid rgba(222,199,175,0.34);
-  z-index: -1;
-}
+/* キャラ後ろの白い楕円は削除（キャラの上下に「枠」のように見えてしまうため） */
+.recipe::before { content: none; }
 .recipe.done {
   background:
     radial-gradient(circle at 50% 19%, rgba(255,255,255,0.68), transparent 32%),
