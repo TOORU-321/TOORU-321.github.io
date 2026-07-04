@@ -1835,6 +1835,781 @@ img { display: block; max-width: 100%; }
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* ============================================================
+   DESIGN REFRESH 2026-07 — あたたかい料理手帖 × 味付け道場
+   機能ロジックを触らず、見た目だけを上書きするCSS
+   ============================================================ */
+
+:root {
+  /* Concept palette: 生成り紙・味噌・だし・梅酢。派手さより“整った台所感” */
+  --c-bg:        #F7EFE3;
+  --c-bg-grad-1: #FFF8EA;
+  --c-bg-grad-2: #EFE1CF;
+  --c-surface:   #FFFDF7;
+  --c-surface-2: #FFF8EC;
+  --c-surface-3: #F1E3D0;
+  --c-border:    #DEC7AF;
+  --c-border-2:  #EAD9C4;
+  --c-divider:   rgba(178, 141, 98, 0.24);
+
+  --c-ink:       #2B2118;
+  --c-text:      #3B2C20;
+  --c-text-2:    #725C48;
+  --c-text-3:    #A18870;
+
+  --c-accent:    #C87552;
+  --c-accent-d:  #985437;
+  --c-accent-l:  #FFE6D9;
+
+  --c-gold:      #B69253;
+  --c-gold-d:    #7C6030;
+  --c-gold-l:    #F4E4BF;
+
+  --c-tsuyu:     #805436;
+  --c-su:        #C87561;
+  --c-dashi:     #B69253;
+  --c-good:      #6F8B69;
+  --c-warn:      #C48643;
+
+  --sh-1: 0 1px 0 rgba(255,255,255,0.82) inset, 0 8px 22px rgba(64,45,29,0.055);
+  --sh-2: 0 1px 0 rgba(255,255,255,0.9) inset, 0 12px 30px rgba(64,45,29,0.085);
+  --sh-3: 0 1px 0 rgba(255,255,255,0.92) inset, 0 18px 42px rgba(64,45,29,0.12);
+
+  --r-1: 10px;
+  --r-2: 15px;
+  --r-3: 22px;
+  --r-4: 28px;
+}
+
+html, body {
+  font-size: 15.5px;
+  line-height: 1.78;
+  letter-spacing: 0.025em;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 86% 54% at 50% -14%, rgba(255, 214, 151, 0.34), transparent 66%),
+    radial-gradient(circle at 13% 24%, rgba(201, 117, 82, 0.075), transparent 26%),
+    radial-gradient(circle at 88% 72%, rgba(182, 146, 83, 0.10), transparent 30%),
+    linear-gradient(180deg, #FFF8EC 0%, #F8EFE2 44%, #EFE0CE 100%);
+}
+
+body::before {
+  opacity: 0.34;
+  background-size: 180px 180px;
+}
+
+body::after {
+  opacity: 0.32;
+  background-size: 420px 420px;
+}
+
+.app {
+  background:
+    linear-gradient(180deg, rgba(255,253,247,0.46) 0%, rgba(247,239,227,0.74) 100%);
+  overflow-x: hidden;
+}
+
+@media (min-width: 520px) {
+  .app {
+    border-inline: 1px solid rgba(222,199,175,0.72);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.42) inset,
+      0 24px 70px rgba(64,45,29,0.16);
+  }
+}
+
+button, .btn, .nav-item, .recipe, .prog, .community, .preorder-option-box {
+  -webkit-tap-highlight-color: rgba(201,117,82,0.10);
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(201,117,82,0.32);
+  outline-offset: 3px;
+}
+
+/* Header: スマホアプリっぽさを残しつつ、料理教室の受付札のように */
+.app-header {
+  padding: calc(env(safe-area-inset-top) + 13px) 18px 12px;
+  background:
+    linear-gradient(180deg, rgba(255,253,247,0.96), rgba(255,248,236,0.90));
+  border-bottom: 1px solid rgba(222,199,175,0.66);
+  box-shadow: 0 8px 22px rgba(64,45,29,0.055);
+}
+
+.brand-char,
+.feature-char {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.78), 0 8px 20px rgba(64,45,29,0.10);
+}
+
+.brand-char {
+  width: 42px;
+  height: 42px;
+  border-color: rgba(182,146,83,0.26);
+}
+
+.brand-eng,
+.feature-eyebrow,
+.greeting-eyebrow,
+.section-h-text,
+.preorder-eyebrow,
+.celebrate-eyebrow,
+.usage-step-no,
+.ratio-no {
+  font-feature-settings: 'palt';
+  letter-spacing: 0.28em;
+}
+
+.brand-jp {
+  font-size: 18px;
+  letter-spacing: 0.075em;
+}
+
+.btn-sos {
+  background:
+    linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-d) 100%);
+  padding: 9px 15px;
+  box-shadow: 0 8px 20px rgba(201,117,82,0.20);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s;
+}
+
+.btn-sos:active { transform: translateY(1px) scale(0.98); }
+
+.app-main { padding: 22px 18px 26px; }
+
+.screen {
+  background-size: 108% auto;
+  background-position: 50% -8px;
+}
+
+.screen::before {
+  background:
+    linear-gradient(180deg,
+      rgba(255,248,236,0.50) 0%,
+      rgba(255,248,236,0.84) 14%,
+      rgba(247,239,227,0.96) 32%,
+      rgba(247,239,227,1) 48%);
+}
+
+.screen-banner {
+  border-radius: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(222,199,175,0.70);
+  box-shadow: var(--sh-2);
+  overflow: hidden;
+}
+
+.back {
+  margin-bottom: 14px;
+  padding: 6px 10px 6px 4px;
+  border-radius: var(--r-pill);
+  transition: color .18s, background .18s, transform .18s;
+}
+.back:active { transform: translateX(-2px); }
+@media (hover: hover) {
+  .back:hover { background: rgba(255,253,247,0.72); color: var(--c-accent-d); }
+}
+
+.page-h {
+  position: relative;
+  display: inline-block;
+  font-size: 24px;
+  margin: 4px 0 8px;
+  letter-spacing: 0.075em;
+}
+.page-h::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: -10px;
+  bottom: 1px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(244, 201, 142, 0.34);
+  z-index: -1;
+}
+.page-sub {
+  font-size: 13px;
+  line-height: 1.95;
+  margin-bottom: 24px;
+}
+
+.section-h {
+  margin: 28px 0 16px;
+}
+.section-h::before,
+.section-h::after {
+  background: linear-gradient(90deg, transparent, rgba(182,146,83,0.38), transparent);
+}
+.section-h-text {
+  position: relative;
+  padding: 5px 10px 5px 13px;
+  border-radius: var(--r-pill);
+  background: rgba(255,253,247,0.64);
+  border: 1px solid rgba(222,199,175,0.54);
+  color: var(--c-gold-d);
+}
+
+/* Common card rhythm */
+.greeting,
+.feature,
+.prog,
+.community,
+.sister,
+.recipe-stats,
+.recipe,
+.badge,
+.usage-card,
+.settings-card,
+.farewell-hero,
+.farewell-next,
+.preorder-card,
+.recipe-inner,
+.preorder-modal-card,
+.celebrate-card {
+  background:
+    linear-gradient(180deg, rgba(255,253,247,0.98), rgba(255,248,236,0.96));
+  border: 1px solid rgba(222,199,175,0.68);
+  box-shadow: var(--sh-1);
+}
+
+.greeting,
+.feature,
+.recipe-stats,
+.settings-card,
+.farewell-next {
+  border-radius: var(--r-3);
+}
+
+.greeting {
+  padding: 20px 20px 18px;
+  margin-bottom: 16px;
+}
+.greeting::before {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(182,146,83,0.72), rgba(201,117,82,0.58), transparent);
+}
+.greeting-name {
+  font-size: 19px;
+  letter-spacing: 0.06em;
+}
+.greeting-meta { gap: 9px; flex-wrap: wrap; }
+.chip {
+  padding: 5px 11px;
+  border: 1px solid rgba(222,199,175,0.48);
+  background: rgba(241,227,208,0.78);
+}
+.chip.accent {
+  border-color: rgba(201,117,82,0.20);
+  box-shadow: 0 2px 8px rgba(201,117,82,0.08);
+}
+.chip.gold { border-color: rgba(182,146,83,0.24); }
+.chip.warn {
+  background: #FFE1D8;
+  border-color: rgba(201,117,82,0.22);
+}
+
+.feature {
+  min-height: 108px;
+  padding: 19px;
+  border-radius: 26px;
+  gap: 15px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201,117,82,0.10), transparent 36%),
+    linear-gradient(135deg, rgba(255,253,247,1), rgba(255,244,225,0.96));
+}
+.feature::before {
+  content: '';
+  position: absolute;
+  inset: auto 22px 0 22px;
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(90deg, var(--c-tsuyu), var(--c-su), var(--c-dashi));
+  opacity: 0.28;
+}
+.feature-char {
+  width: 70px;
+  height: 70px;
+  background: #fff8ec;
+  border-color: rgba(222,199,175,0.7);
+}
+.feature-title {
+  font-size: 15.5px;
+  line-height: 1.72;
+}
+
+/* Progress: “今どこまで進んだか”がひと目でわかるカード */
+.progress-list { gap: 12px; }
+.prog {
+  padding: 18px 17px;
+  border-radius: 22px;
+  align-items: stretch;
+  isolation: isolate;
+}
+.prog::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.42) 42%, transparent 58%);
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+}
+.prog-icon {
+  width: 48px;
+  height: 48px;
+  align-self: center;
+  border-radius: 17px;
+  color: var(--c-accent-d);
+  background:
+    radial-gradient(circle at 35% 25%, #FFFFFF, transparent 42%),
+    linear-gradient(135deg, #FFF1DF, #F2E2CB);
+  border: 1px solid rgba(222,199,175,0.70);
+  box-shadow: 0 6px 16px rgba(64,45,29,0.07);
+}
+.prog-title { font-size: 14.5px; letter-spacing: 0.035em; }
+.prog-sub { margin-bottom: 10px; }
+.prog-count { font-size: 24px; }
+.prog-bar,
+.recipe-bar {
+  height: 7px;
+  background: rgba(222,199,175,0.46);
+  border: 1px solid rgba(255,255,255,0.58);
+}
+.prog-bar-fill,
+.recipe-bar-fill {
+  position: relative;
+  background: linear-gradient(90deg, var(--c-gold) 0%, #D6A45E 42%, var(--c-accent) 100%);
+  overflow: hidden;
+}
+.prog-bar-fill::after,
+.recipe-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.48), transparent);
+  transform: translateX(-100%);
+  animation: dojoBarSheen 2.4s ease-in-out infinite;
+}
+
+.community {
+  border-radius: 22px;
+  padding: 17px 18px;
+}
+.community-icon {
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,0.70), transparent 40%),
+    linear-gradient(135deg, var(--c-accent-l), #F8DDC8);
+  border: 1px solid rgba(201,117,82,0.18);
+}
+.community-title { font-size: 13.5px; }
+.community-arrow { transition: transform .18s; }
+.community:active .community-arrow { transform: translateX(3px); }
+
+/* 3姉妹カード */
+.sister {
+  --sister-color: var(--c-tsuyu);
+  padding: 23px 20px 20px;
+  margin-bottom: 14px;
+  border-radius: 25px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(128, 84, 54, 0.12), transparent 36%),
+    linear-gradient(180deg, rgba(255,253,247,0.99), rgba(255,248,236,0.96));
+}
+.sister[data-id="tsuyuko"] { --sister-color: var(--c-tsuyu); }
+.sister[data-id="osuko"] { --sister-color: var(--c-su); }
+.sister[data-id="dashiko"] { --sister-color: var(--c-dashi); }
+.sister[data-id="tsuyuko"] {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(128,84,54,0.12), transparent 36%),
+    linear-gradient(180deg, rgba(255,253,247,0.99), rgba(255,248,236,0.96));
+}
+.sister[data-id="osuko"] {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(200,117,97,0.12), transparent 36%),
+    linear-gradient(180deg, rgba(255,253,247,0.99), rgba(255,248,236,0.96));
+}
+.sister[data-id="dashiko"] {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(182,146,83,0.13), transparent 36%),
+    linear-gradient(180deg, rgba(255,253,247,0.99), rgba(255,248,236,0.96));
+}
+.sister::before {
+  width: 5px;
+  height: 42px;
+  top: 22px;
+  background: var(--sister-color);
+  opacity: 0.9;
+}
+.sister::after {
+  content: '';
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px dashed rgba(182,146,83,0.30);
+  opacity: .36;
+  pointer-events: none;
+}
+.sister-name { font-size: 25px; }
+.sister-tag {
+  color: var(--c-gold-d);
+  background: rgba(244,228,191,0.84);
+  border: 1px solid rgba(182,146,83,0.20);
+}
+.sister-desc { font-size: 12.5px; }
+.sister-state {
+  border: 1px solid rgba(222,199,175,0.46);
+  box-shadow: 0 4px 12px rgba(64,45,29,0.045);
+}
+.sister-state.making {
+  background: #F6E8C8;
+}
+.sister-state.done {
+  background: #DFEBD8;
+  border-color: rgba(111,139,105,0.25);
+}
+
+/* Buttons */
+.btn,
+.onb-btn,
+.preorder-submit,
+.preorder-btn,
+.celebrate-btn,
+.farewell-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(201,117,82,0.18);
+}
+.btn-primary,
+.onb-btn,
+.preorder-submit,
+.preorder-btn,
+.celebrate-btn,
+.farewell-btn {
+  background: linear-gradient(135deg, #D2835F 0%, var(--c-accent) 48%, var(--c-accent-d) 100%);
+}
+.btn-secondary,
+.onb-btn.ghost {
+  background: rgba(241,227,208,0.82);
+  color: var(--c-text);
+  border: 1px solid rgba(222,199,175,0.70);
+  box-shadow: none;
+}
+.btn:disabled {
+  background: rgba(241,227,208,0.64);
+  color: rgba(114,92,72,0.72);
+}
+.btn:not(:disabled):active,
+.onb-btn:active,
+.preorder-submit:active,
+.preorder-btn:active,
+.celebrate-btn:active,
+.farewell-btn:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.recipe-toggle {
+  background: rgba(255,248,236,0.86);
+  border-color: rgba(222,199,175,0.70);
+  border-radius: 16px;
+}
+.recipe-toggle.open {
+  background: rgba(244,228,191,0.44);
+  border-color: rgba(182,146,83,0.34);
+}
+.recipe-detail.open { margin-top: 11px; }
+.recipe-inner {
+  border-radius: 17px;
+  padding: 17px 16px 15px;
+}
+.recipe-subtitle {
+  color: var(--c-gold-d);
+  border-bottom-color: rgba(182,146,83,0.28);
+}
+.recipe-steps li::before {
+  background: linear-gradient(135deg, var(--c-accent), var(--c-accent-d));
+  box-shadow: 0 3px 8px rgba(201,117,82,0.16);
+}
+.recipe-storage {
+  background: rgba(244,228,191,0.78);
+  border: 1px solid rgba(182,146,83,0.20);
+}
+
+/* Recipe grid: 図鑑感を強める */
+.recipe-stats {
+  padding: 20px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(182,146,83,0.11), transparent 34%),
+    linear-gradient(180deg, rgba(255,253,247,0.99), rgba(255,248,236,0.96));
+}
+.recipe-count { font-size: 34px; }
+.recipe-grid {
+  gap: 10px;
+}
+.recipe {
+  min-height: 160px;
+  padding: 13px 9px 12px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+.recipe::before {
+  content: '';
+  position: absolute;
+  inset: 9px 10px auto;
+  height: 74px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.58);
+  border: 1px solid rgba(222,199,175,0.34);
+  z-index: -1;
+}
+.recipe.done {
+  background:
+    radial-gradient(circle at 50% 19%, rgba(255,255,255,0.68), transparent 32%),
+    linear-gradient(135deg, #FFF7E4, #FFE7D2);
+}
+.recipe.done::after {
+  width: 18px;
+  height: 18px;
+  top: 8px;
+  right: 8px;
+  box-shadow: 0 5px 12px rgba(111,139,105,0.22);
+}
+.recipe-emoji {
+  width: 78px;
+  height: 78px;
+  margin-bottom: 8px;
+}
+.recipe-name { font-size: 12.5px; }
+.recipe-tag {
+  display: inline-flex;
+  align-self: center;
+  margin-top: 7px;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: rgba(241,227,208,0.72);
+  color: var(--c-text-2);
+}
+.recipe.done .recipe-tag {
+  background: rgba(182,146,83,0.18);
+  color: var(--c-gold-d);
+}
+
+/* Badges */
+.badge-cat { margin-bottom: 26px; }
+.badge-cat-head {
+  padding: 0 2px;
+}
+.badge-cat-name { font-size: 15px; }
+.badge-grid { gap: 9px; }
+.badge {
+  border-radius: 19px;
+  background: rgba(255,253,247,0.82);
+}
+.badge.earned {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,255,255,0.80), transparent 36%),
+    linear-gradient(135deg, #FFF6E2 0%, #FFE7D2 100%);
+  box-shadow: 0 8px 20px rgba(182,146,83,0.14);
+}
+.badge-em { font-size: 25px; }
+.badge.earned::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 15px;
+  border: 1px dashed rgba(182,146,83,0.34);
+  pointer-events: none;
+}
+
+/* Usage / onboarding */
+.usage-card {
+  padding: 23px 21px 22px;
+  border-radius: 25px;
+  text-align: center;
+}
+.usage-char {
+  width: 92px;
+  filter: drop-shadow(0 9px 12px rgba(64,45,29,0.10));
+}
+.usage-body {
+  background: rgba(255,248,236,0.55);
+  border: 1px solid rgba(222,199,175,0.42);
+  border-radius: 16px;
+  padding: 14px 15px;
+}
+.onb {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,215,150,0.34), transparent 34%),
+    linear-gradient(180deg, #FFF8EC 0%, #F7EFE3 66%, #EFE0CE 100%);
+}
+.onb-char {
+  width: 142px;
+  filter: drop-shadow(0 12px 16px rgba(64,45,29,0.12));
+}
+.onb-title { font-size: 25px; }
+.onb-body {
+  border-radius: 23px;
+  box-shadow: var(--sh-2);
+}
+.onb-input {
+  border-radius: 18px;
+  background: rgba(255,253,247,0.95);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.82) inset;
+}
+.onb-dot {
+  height: 4px;
+  border-radius: 999px;
+}
+.onb-dot.active {
+  background: linear-gradient(90deg, var(--c-gold), var(--c-accent));
+}
+
+/* Modal / toast */
+.preorder-modal,
+.celebrate {
+  background: rgba(43,33,24,0.52);
+  backdrop-filter: blur(10px) saturate(1.08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+}
+.preorder-modal-card,
+.celebrate-card {
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% -4%, rgba(244,228,191,0.58), transparent 32%),
+    linear-gradient(180deg, #FFF9EB 0%, #FFFDF7 100%);
+  border-color: rgba(182,146,83,0.55);
+  box-shadow: 0 24px 60px rgba(28,20,14,0.30);
+}
+.preorder-option-box {
+  border-radius: 18px;
+  background: rgba(255,253,247,0.96);
+}
+.preorder-option input:checked ~ .preorder-option-box {
+  background: linear-gradient(135deg, #FFF6E6 0%, #FFE5D8 100%);
+  box-shadow: 0 8px 22px rgba(201,117,82,0.15);
+}
+.preorder-note {
+  border-radius: 18px;
+  background: rgba(255,248,236,0.86);
+}
+.toast {
+  background: rgba(43,33,24,0.94);
+  box-shadow: 0 14px 36px rgba(28,20,14,0.24);
+}
+
+/* Farewell */
+.farewell-hero {
+  background:
+    radial-gradient(circle at 50% 14%, rgba(255,255,255,0.56), transparent 34%),
+    linear-gradient(180deg, var(--c-gold-l), var(--c-surface));
+  border-radius: 28px;
+}
+.farewell-hero img { filter: drop-shadow(0 10px 16px rgba(64,45,29,0.11)); }
+
+/* Bottom navigation: 現在地を“丸い札”で見せる */
+.nav {
+  padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255,253,247,0.90);
+  border-top: 1px solid rgba(222,199,175,0.70);
+  box-shadow: 0 -12px 28px rgba(64,45,29,0.065);
+  gap: 4px;
+}
+.nav-item {
+  padding: 8px 0 7px;
+  border-radius: 18px;
+  transition: color .2s, background .2s, transform .18s;
+}
+.nav-item.active {
+  color: var(--c-accent-d);
+  background: linear-gradient(180deg, rgba(255,230,217,0.82), rgba(244,228,191,0.38));
+  box-shadow: 0 6px 15px rgba(201,117,82,0.10);
+}
+.nav-item.active svg {
+  filter: drop-shadow(0 4px 8px rgba(201,117,82,0.18));
+}
+.nav-item:active { transform: translateY(1px) scale(0.98); }
+.nav-label { font-size: 10.5px; }
+
+/* Motion: 料理の湯気くらいの控えめな演出 */
+@keyframes dojoBarSheen {
+  0%, 38% { transform: translateX(-110%); opacity: 0; }
+  48% { opacity: .82; }
+  72%, 100% { transform: translateX(120%); opacity: 0; }
+}
+@keyframes dojoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes dojoSoftIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes dojoSoftPop {
+  0% { transform: scale(0.94); opacity: 0; }
+  70% { transform: scale(1.015); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes dojoPulseDot {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.55); opacity: .42; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .screen.active { animation: dojoSoftIn 0.42s cubic-bezier(0.16, 1, 0.3, 1); }
+  .feature-char,
+  .usage-char,
+  .onb-char { animation: dojoFloat 4.8s ease-in-out infinite; }
+  .preorder-modal-card,
+  .celebrate-card { animation: dojoSoftPop .42s cubic-bezier(0.16, 1, 0.3, 1); }
+  .sister-state.making .dot { animation: dojoPulseDot 1.7s ease-in-out infinite; }
+  .prog:active::before { animation: cardSheen .44s ease-out; }
+}
+
+@keyframes cardSheen {
+  from { transform: translateX(-120%); opacity: 0.2; }
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+@media (hover: hover) {
+  .btn-sos:hover,
+  .preorder-btn:hover,
+  .preorder-submit:hover,
+  .celebrate-btn:hover,
+  .farewell-btn:hover,
+  .btn-primary:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 11px 24px rgba(201,117,82,0.22);
+  }
+  .sister:hover,
+  .usage-card:hover,
+  .badge.earned:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sh-2);
+  }
+  .nav-item:hover { background: rgba(255,248,236,0.70); }
+}
+
+@media (max-width: 360px) {
+  .app-main { padding-inline: 14px; }
+  .feature { padding: 16px; }
+  .feature-char { width: 62px; height: 62px; }
+  .prog { gap: 12px; padding: 16px 14px; }
+  .recipe { min-height: 148px; }
+  .recipe-emoji { width: 70px; height: 70px; }
+  .badge-grid { gap: 7px; }
+}
 </style>
 </head>
 <body>
