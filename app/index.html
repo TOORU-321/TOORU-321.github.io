@@ -1437,11 +1437,13 @@ function enterLibrary(withIntro){
 }
 // ③ ログイン/ゲスト参加の直後に1回だけ流すオープニング動画（スキップ可・音あり/ミュート切替）
 function playIntro(){
+  if(playIntro._shown) return;         // ★このページ表示中は絶対に1回だけ（二重再生を確実に防止）
+  playIntro._shown = true;
   const ov   = document.getElementById("introOverlay");
   const vid  = document.getElementById("introVideo");
   const mute = document.getElementById("introMute");
   if(!ov || !vid) return;
-  if(playIntro._on) return;            // 二重再生ガード（1回だけ）
+  if(playIntro._on) return;
   playIntro._on = true;
 
   const finish = () => { ov.hidden = true; ov.classList.remove("intro-out"); try{ vid.pause(); vid.currentTime = 0; }catch(e){} };
