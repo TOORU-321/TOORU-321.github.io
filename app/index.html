@@ -1108,9 +1108,24 @@ a{text-decoration:none}
 /* ③ 販売ボタン非表示用 ④ アクセスパス無しは内容物を隠す */
 .lockscreen .lk-btn[hidden]{display:none}
 .vmeta.meta-locked .vfiled,
+.vmeta.meta-locked .vsupp,
+.vmeta.meta-locked .vattach,
 .vmeta.meta-locked .vnav,
 .vmeta.meta-locked .chapter-tabs,
 .vmeta.meta-locked .chapter-list{display:none}
+/* ② 補足テキスト ③ 添付要素 */
+.vsupp{margin-top:18px;padding-top:16px;border-top:1px solid var(--lm-border);font-family:var(--gothic);font-size:13px;line-height:1.9;color:#c8c3b8;white-space:normal;word-break:break-word}
+.vsupp[hidden]{display:none}
+.vsupp a{color:#e0c685;border-bottom:1px solid rgba(227,195,129,.4);word-break:break-all}
+.vattach{margin-top:20px}
+.vattach[hidden]{display:none}
+.vattach-h{font-family:var(--serif-en);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#d8b870;margin-bottom:12px;display:flex;align-items:center;gap:9px}
+.vattach-h::before{content:"";width:6px;height:6px;border-radius:50%;background:#e2c47f;box-shadow:0 0 0 4px rgba(227,195,129,.12)}
+.vattach-list{display:flex;flex-wrap:wrap;gap:10px}
+.attach-btn{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;background:linear-gradient(145deg,rgba(227,195,129,.12),rgba(227,195,129,.04));border:1px solid rgba(227,195,129,.28);border-radius:12px;font-family:var(--gothic);font-size:13px;font-weight:600;color:#ecd7aa;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.attach-btn:hover{background:linear-gradient(145deg,rgba(227,195,129,.2),rgba(227,195,129,.07));border-color:rgba(227,195,129,.5);transform:translateY(-1px)}
+.attach-ico{font-size:14px}
+@media(max-width:600px){ .attach-btn{width:100%;justify-content:center} .vsupp{font-size:12.5px} }
 .app-title{position:relative;z-index:2;text-align:center;padding:28px 20px 0}
 .app-title h2{font-family:var(--serif-en);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:.06em;color:#fff;margin:6px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
 .vlayout{margin-top:0;padding-top:20px}
@@ -1265,6 +1280,8 @@ a{text-decoration:none}
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
       <div class="vfiled" id="vfiled"></div>
+      <div class="vsupp" id="vsupp" hidden></div>
+      <div class="vattach" id="vattach" hidden></div>
       <div class="chapter-tabs" id="chapterTabs" hidden></div>
       <div class="chapter-list" id="chapterList"></div>
       <div class="vnav" id="vnav" hidden>
@@ -1405,7 +1422,7 @@ function fbErrMsg(code){
   }
 }
 function embedUrl(v){
-  if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id;
+  if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id + (v.hash ? "?h=" + v.hash : "");
   if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
   return "";
 }
@@ -1657,6 +1674,18 @@ function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin"))
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function linkify(s){ return escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,"<br>"); }
+// 添付要素セル → リンクボタン群（1行1件・「ラベル | URL」または URL のみ）
+function renderAttach(text){
+  return String(text).split(/\r?\n/).map(s=>s.trim()).filter(Boolean).map(line=>{
+    let label="", url="";
+    let m = line.match(/^(.*?)\s*[|｜:：]\s*(https?:\/\/\S+)\s*$/);
+    if(m){ label=m[1].trim(); url=m[2]; }
+    else { const um=line.match(/(https?:\/\/\S+)/); if(um){ url=um[1]; label=line.replace(um[1],"").replace(/[|｜:：]/g,"").trim(); } }
+    if(!url) return "";
+    if(!label) label="資料を開く";
+    return `<a class="attach-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener"><span class="attach-ico">📎</span><span class="attach-tx">${escapeHtml(label)}</span></a>`;
+  }).filter(Boolean).join("");
+}
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); }
 function closeNews(){ document.getElementById("newsModal").hidden = true; }
@@ -1734,19 +1763,26 @@ async function fetchFromSheet(){
 }
 function coursesFromGviz(json){
   const table = json.table || {};
-  const cols  = (table.cols || []).map(c => String(c.label || "").trim());
-  const find  = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iOrder=find(["並び順","順番","順","order"],6);
+  let cols = (table.cols || []).map(c => String(c.label || "").trim());
+  let rows = table.rows || [];
+  // gvizが見出しをラベルとして認識しない場合は、先頭行を見出しとして使う
+  if(cols.every(c => c === "") && rows.length){
+    cols = (rows[0].c || []).map(c => (c && c.v != null) ? String(c.v).trim() : "");
+    rows = rows.slice(1);
+  }
+  const find = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
+  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iOrder=find(["並び順","順番","順","order"],-1);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
-  const map  = new Map(); let seq = 0;
-  (table.rows || []).forEach(r => {
+  const map = new Map(); let ri = 0;
+  rows.forEach(r => {
     const cname = cell(r,iName), chap = cell(r,iChap), title = cell(r,iTitle), url = cell(r,iUrl);
     if(!cname || !url || cname === "コース名") return;
     const pv = parseVideoUrl(url); if(!pv) return;
-    const kind = cell(r,iKind), tag = cell(r,iTag);
-    const on = parseFloat(cell(r,iOrder)); const ord = isNaN(on) ? (++seq) : on;
+    ri++;   // シート上の並び順（上から）
+    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach);
+    const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     if(!map.has(cname)){ const rk = kindToRank(kind); map.set(cname, { name:cname, tier:(kind||"無料"), rank:rk, locked:(rk > RANK.guest), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
-    const c = map.get(cname); c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, _order:ord }); if(ord < c._order) c._order = ord;
+    const c = map.get(cname); c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, _order:ord }); if(ord < c._order) c._order = ord;
   });
   const list = [...map.values()];
   list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));
@@ -1755,8 +1791,9 @@ function coursesFromGviz(json){
 }
 function parseVideoUrl(s){
   s = String(s).trim(); let m;
-  if((m = s.match(/player\.vimeo\.com\/video\/(\d+)/))) return { platform:"vimeo",   id:m[1] };
-  if((m = s.match(/vimeo\.com\/(?:video\/)?(\d+)/)))    return { platform:"vimeo",   id:m[1] };
+  const vh = () => (s.match(/[?&]h=([0-9a-zA-Z]+)/) || [])[1] || null;   // 限定公開ハッシュ ?h=xxxx
+  if((m = s.match(/player\.vimeo\.com\/video\/(\d+)(?:\/([0-9a-zA-Z]+))?/))) return { platform:"vimeo", id:m[1], hash:m[2]||vh() };
+  if((m = s.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/([0-9a-zA-Z]+))?/)))    return { platform:"vimeo", id:m[1], hash:m[2]||vh() };
   if((m = s.match(/youtu\.be\/([\w-]{6,})/)))           return { platform:"youtube", id:m[1] };
   if((m = s.match(/youtube\.com\/embed\/([\w-]{6,})/))) return { platform:"youtube", id:m[1] };
   if((m = s.match(/[?&]v=([\w-]{6,})/)))                return { platform:"youtube", id:m[1] };
@@ -1856,6 +1893,8 @@ function select(ci, vi){
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
     vfiled.innerHTML   = "";
+    document.getElementById("vsupp").hidden = true;   document.getElementById("vsupp").innerHTML = "";
+    document.getElementById("vattach").hidden = true; document.getElementById("vattach").innerHTML = "";
     document.getElementById("vnav").hidden = true;
     document.getElementById("chapterTabs").hidden = true;
     document.getElementById("chapterTabs").innerHTML = "";
@@ -1869,8 +1908,15 @@ function select(ci, vi){
     ? `${course.name}${v.chapter ? "　|　" + v.chapter : ""}`
     : course.name;
   vtitle.textContent = v.t;
-  let meta = ""; if(v.column) meta += `<a class="col-link" href="${v.column}">補足はこちら →</a>`;
-  vfiled.innerHTML = meta;
+  vfiled.innerHTML = "";
+  // ② 補足（本文・改行/URLはそのままリンク化）
+  const supp = document.getElementById("vsupp");
+  if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
+  // ③ 添付要素（ワーク・課題シート等のリンクボタン）
+  const att = document.getElementById("vattach");
+  const attHtml = v.attach ? renderAttach(v.attach) : "";
+  if(attHtml){ att.innerHTML = `<div class="vattach-h">添付要素</div><div class="vattach-list">${attHtml}</div>`; att.hidden = false; }
+  else { att.innerHTML = ""; att.hidden = true; }
   renderChapterUI(ci, vi);  // ② 章選択 ③ 中身
   renderVnav(ci, vi);       // コース内 前へ／次へ
 }
