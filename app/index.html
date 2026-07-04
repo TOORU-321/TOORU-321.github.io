@@ -68,6 +68,11 @@
 .vmeta .vfiled a.col-link:hover{color:var(--gold);border-color:var(--gold)}
 .lockscreen{position:absolute;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:30px;background:linear-gradient(rgba(17,17,20,.86),rgba(17,17,20,.9));color:#fff}
 .vframe.locked .lockscreen{display:flex}
+/* スマホ：ロック時は動画枠(16:9)に収めず内容の高さに合わせて伸ばす（ボタン切れ対策） */
+@media(max-width:900px){
+  .vframe.locked{aspect-ratio:auto}
+  .vframe.locked .lockscreen{position:relative;inset:auto;min-height:52vw;padding:30px 22px}
+}
 .lockscreen .lk-ico{font-size:30px}
 .lockscreen .lk-t{font-family:var(--mincho);font-weight:700;font-size:18px;line-height:1.6}
 .lockscreen .lk-d{font-size:12.5px;color:#e7e2d8;line-height:1.9;max-width:380px}
