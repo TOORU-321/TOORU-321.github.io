@@ -1505,6 +1505,23 @@ img { display: block; max-width: 100%; }
   from { opacity: 1; }
   to   { opacity: 0; }
 }
+/* 動画末尾の白フラッシュ → アプリ画面登場 */
+.opening-flash {
+  position: absolute;
+  inset: 0;
+  background: #FFFFFF;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.opening-flash.on {
+  animation: openingFlashBurst 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes openingFlashBurst {
+  0%   { opacity: 0; transform: scale(1); }
+  35%  { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 0; transform: scale(1.14); }
+}
 .opening-video {
   width: 100%;
   height: 100%;
@@ -1915,10 +1932,10 @@ img { display: block; max-width: 100%; }
   --c-border-2:  #EAD9C4;
   --c-divider:   rgba(178, 141, 98, 0.24);
 
-  --c-ink:       #2B2118;
-  --c-text:      #3B2C20;
-  --c-text-2:    #725C48;
-  --c-text-3:    #A18870;
+  --c-ink:       #1F160E;
+  --c-text:      #2C1F14;
+  --c-text-2:    #543E2C;
+  --c-text-3:    #7C5E42;
 
   --c-accent:    #C87552;
   --c-accent-d:  #985437;
@@ -1952,14 +1969,14 @@ html, body {
 
 body {
   background:
-    radial-gradient(ellipse 86% 54% at 50% -14%, rgba(255, 214, 151, 0.34), transparent 66%),
-    radial-gradient(circle at 13% 24%, rgba(201, 117, 82, 0.075), transparent 26%),
-    radial-gradient(circle at 88% 72%, rgba(182, 146, 83, 0.10), transparent 30%),
-    linear-gradient(180deg, #FFF8EC 0%, #F8EFE2 44%, #EFE0CE 100%);
+    radial-gradient(ellipse 86% 54% at 50% -14%, rgba(255, 210, 148, 0.18), transparent 66%),
+    radial-gradient(circle at 13% 24%, rgba(201, 117, 82, 0.06), transparent 26%),
+    radial-gradient(circle at 88% 72%, rgba(182, 146, 83, 0.07), transparent 30%),
+    linear-gradient(180deg, #F5EAD4 0%, #EDE0C7 46%, #E4D3B4 100%);
 }
 
 body::before {
-  opacity: 0.34;
+  opacity: 0.22;
   background-size: 180px 180px;
 }
 
@@ -2918,9 +2935,10 @@ a:focus-visible {
 
 <!-- Opening video (first launch only) -->
 <div class="opening hidden" id="opening">
-  <video class="opening-video" id="openingVideo" muted playsinline preload="auto" webkit-playsinline>
-    <source src="" type="video/mp4">
+  <video class="opening-video" id="openingVideo" muted autoplay playsinline preload="auto" webkit-playsinline x5-video-player-type="h5-page">
+    <source src="https://columns.l-mine.com/assets/video/opening.mp4" type="video/mp4">
   </video>
+  <div class="opening-flash" id="openingFlash"></div>
   <button class="opening-skip" id="openingSkip" onclick="skipOpening()">スキップ</button>
 </div>
 
@@ -3216,10 +3234,7 @@ let onbStep = 0;
 document.addEventListener('DOMContentLoaded', () => {
   if (location.search.includes('admin')) document.getElementById('adminBar').classList.add('on');
   load();
-  const forceOpening = location.search.includes('opening');
-  if (!state.onboarded && (!state.flags.openingShown || forceOpening)) {
-    showOpening();
-  } else if (!state.onboarded) {
+  if (!state.onboarded) {
     showOnboarding();
   } else {
     document.getElementById('onb').classList.add('hidden');
@@ -3235,57 +3250,74 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===========================================================
-// OPENING VIDEO (first launch only)
+// OPENING VIDEO (after first onboarding — video → flash → home)
 // ===========================================================
 let openingFinishTimer = null;
-function showOpening() {
+let openingOnDone = null;
+const OPENING_VIDEO_MAX_MS = 6000; // 動画尺 + 予備 (実尺は約 4.4秒)
+
+function showOpening(onDone) {
+  openingOnDone = typeof onDone === 'function' ? onDone : null;
   const wrap = document.getElementById('opening');
   const video = document.getElementById('openingVideo');
-  if (!wrap || !video) { showOnboarding(); return; }
+  const flash = document.getElementById('openingFlash');
+  if (!wrap || !video) { if (openingOnDone) openingOnDone(); return; }
 
-  // 動画URLをここで注入（DOMContentLoaded前のプリロードを避けるため）
-  const source = video.querySelector('source');
-  if (source && !source.src) {
-    source.src = CONFIG.OPENING_VIDEO_URL;
-    video.load();
-  }
+  // クリーンな状態から再生
   wrap.classList.remove('hidden', 'leaving');
+  wrap.dataset.done = '';
+  if (flash) flash.classList.remove('on');
 
-  // 再生 → 失敗しても止めずに完了扱いへ
-  const playPromise = video.play();
-  if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise.catch(() => {});
-  }
+  // srcを明示リロード（キャッシュ回避＆再再生対応）
+  try {
+    video.currentTime = 0;
+    video.muted = true;
+    video.playsInline = true;
+    video.load();
+  } catch(e) {}
 
-  // 動画が自然に終わったら
-  video.onended = finishOpening;
-  // 保険：動画の再生に問題があっても、8.6秒後に必ず終了
+  const tryPlay = () => {
+    const p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
+  };
+  tryPlay();
+  video.addEventListener('canplay', tryPlay, { once: true });
+
+  // 動画が自然に終わったら → フラッシュ発火
+  video.onended = () => triggerFlash();
+
+  // 保険：動画尺を超えたら強制フラッシュ
   clearTimeout(openingFinishTimer);
-  openingFinishTimer = setTimeout(finishOpening, 8600);
+  openingFinishTimer = setTimeout(() => triggerFlash(), OPENING_VIDEO_MAX_MS);
 }
 
-function skipOpening() { finishOpening(); }
-
-function finishOpening() {
-  clearTimeout(openingFinishTimer);
+function triggerFlash() {
   const wrap = document.getElementById('opening');
-  const video = document.getElementById('openingVideo');
-  if (!wrap) { return; }
-  // 二重発火防止
-  if (wrap.dataset.done === '1') return;
+  const flash = document.getElementById('openingFlash');
+  if (!wrap || wrap.dataset.done === '1') return;
   wrap.dataset.done = '1';
+  clearTimeout(openingFinishTimer);
 
-  state.flags.openingShown = true;
-  persist();
-
-  wrap.classList.add('leaving');
+  // フラッシュ演出開始
+  if (flash) flash.classList.add('on');
+  // フラッシュのピーク（0.35 * 1.05s ≒ 370ms）でモーダルを閉じ、その後透明化
+  setTimeout(() => {
+    wrap.classList.add('leaving');
+  }, 370);
   setTimeout(() => {
     wrap.classList.add('hidden');
     wrap.classList.remove('leaving');
+    if (flash) flash.classList.remove('on');
+    const video = document.getElementById('openingVideo');
     try { if (video) { video.pause(); video.currentTime = 0; } } catch(e) {}
-    showOnboarding();
-  }, 600);
+    state.flags.openingShown = true;
+    persist();
+    if (openingOnDone) { const cb = openingOnDone; openingOnDone = null; cb(); }
+  }, 1050);
 }
+
+function skipOpening() { triggerFlash(); }
+
 window.skipOpening = skipOpening;
 
 function refresh() {
@@ -3392,10 +3424,25 @@ function finishOnboarding(withKoji) {
     triggerStagger(home);
     replayProgressBars(home);
   }
-  if (withKoji) {
-    celebrate('引継ぎ完了', '麹アプリ卒業生として認証されました。<br>バッジが解放されています。', 'kayo3', 'WELCOME BACK');
+
+  const afterOpening = () => {
+    // ホーム画面のカードを段階表示で登場（フラッシュ後の余韻）
+    if (home) {
+      triggerStagger(home);
+      replayProgressBars(home);
+    }
+    if (withKoji) {
+      celebrate('引継ぎ完了', '麹アプリ卒業生として認証されました。<br>バッジが解放されています。', 'kayo3', 'WELCOME BACK');
+    } else {
+      toast('はじめましょう、' + state.userName + 'さん');
+    }
+  };
+
+  // 初回のみオープニング動画 → フラッシュ → afterOpening
+  if (!state.flags.openingShown) {
+    showOpening(afterOpening);
   } else {
-    toast('はじめましょう、' + state.userName + 'さん');
+    afterOpening();
   }
 }
 
