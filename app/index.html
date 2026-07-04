@@ -1461,10 +1461,14 @@ function playIntro(){
   vid.onloadedmetadata = () => { clearTimeout(playIntro._t); playIntro._t = setTimeout(done, (vid.duration || 10) * 1000 + 2500); };
   playIntro._t = setTimeout(done, 13000);   // 保険（固まった時）
 
-  vid.muted = false;
-  if(mute){ mute.textContent = "🔊"; mute.onclick = () => { vid.muted = !vid.muted; mute.textContent = vid.muted ? "🔇" : "🔊"; }; }
-  const pr = vid.play();                // クリック起点なので基本は音あり。ブロック時のみミュートで再生
-  if(pr && pr.catch) pr.catch(() => { vid.muted = true; if(mute) mute.textContent = "🔇"; try{ vid.play(); }catch(e){} });
+  if(mute){ mute.onclick = () => { vid.muted = !vid.muted; mute.textContent = vid.muted ? "🔇" : "🔊"; }; }
+  // ★二重再生を防ぐため play() は必ず1回だけ。まずミュートで確実に再生開始し、直後に音を出す。
+  vid.muted = true;
+  if(mute) mute.textContent = "🔇";
+  const pr = vid.play();
+  if(pr && pr.then){
+    pr.then(() => { try{ vid.muted = false; }catch(e){} if(mute) mute.textContent = vid.muted ? "🔇" : "🔊"; }).catch(() => {});
+  }
 }
 function exitToEntry(){
   clearSession();
