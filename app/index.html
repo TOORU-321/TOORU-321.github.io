@@ -1125,6 +1125,14 @@ a{text-decoration:none}
 .course-head .c-tw{flex:1;min-width:0}
 .course-head .c-tag{font-family:var(--gothic);font-size:10px;color:#8f918f;border:1px solid rgba(227,195,129,.22);border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none}
 .course-head .c-lock{color:#e0c179;font-size:13px;flex:none}
+/* ランク別バッジ（種別から自動） */
+.c-badges{display:flex;align-items:center;gap:6px;flex:none}
+.c-tier{font-family:var(--gothic);font-size:9.5px;font-weight:600;letter-spacing:.02em;border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none;border:1px solid transparent;line-height:1.5}
+.tier-free{color:#9a9c99;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12)}
+.tier-lead{color:#6fcbb8;background:rgba(111,203,184,.10);border-color:rgba(111,203,184,.32)}
+.tier-member{color:#e6c47f;background:rgba(227,195,129,.10);border-color:rgba(227,195,129,.34)}
+.tier-paid{color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-color:transparent;font-weight:700}
+@media(max-width:600px){ .c-tier{font-size:9px;padding:2px 6px} .c-badges{gap:4px} }
 /* ② 章選択（横並びチップ・多ければ折り返し） */
 .chapter-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .chapter-tabs[hidden]{display:none}
@@ -1757,6 +1765,17 @@ function parseVideoUrl(s){
   return null;
 }
 function showState(msg){ wrap.innerHTML = `<div class="vstate">${msg}</div>`; }
+// ランク別の自動バッジ（無料/登録/メンバー/有料）
+function tierBadge(rank){
+  const map = {
+    [RANK.guest]:   { t:"無料",     c:"tier-free"   },
+    [RANK.free]:    { t:"登録",     c:"tier-lead"   },
+    [RANK.plus]:    { t:"メンバー", c:"tier-member" },
+    [RANK.support]: { t:"有料",     c:"tier-paid"   }
+  };
+  const b = map[rank] || map[RANK.guest];
+  return `<span class="c-tier ${b.c}">${b.t}</span>`;
+}
 // 左サイド：コース名（大タイトル）のみ
 function render(){
   wrap.innerHTML = "";
@@ -1765,8 +1784,9 @@ function render(){
     const el = document.createElement("section");
     el.className = "course"; el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
-    const badge = (!hasAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
-    head.innerHTML = `<span class="c-tw">${course.name}</span>${badge}`;
+    const ti = tierBadge(course.rank || RANK.guest);
+    const stateBadge = (!hasAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
+    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
     wrap.appendChild(el);
