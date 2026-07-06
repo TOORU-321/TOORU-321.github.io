@@ -1182,6 +1182,7 @@ a{text-decoration:none}
 .member-signup:hover{background:rgba(227,195,129,.16);border-color:rgba(227,195,129,.5);color:#efd69e}
 @media(max-width:600px){ .member-signup{font-size:10.5px;padding:6px 10px} }
 .lm-check{display:flex;align-items:flex-start;gap:9px;font-family:var(--gothic);font-size:12px;color:#b7b3aa;line-height:1.6;margin:2px 0 12px;cursor:pointer;text-align:left}
+.lm-note{font-family:var(--gothic);font-size:11px;color:#8f918f;line-height:1.7;text-align:left;margin:0 0 14px;padding:9px 12px;background:rgba(227,195,129,.05);border:1px solid rgba(227,195,129,.14);border-radius:8px}
 .lm-check input{width:auto!important;min-height:0!important;margin:2px 0 0!important;accent-color:#c9a45a;flex:none}
 .lm-check a{color:#e0c685;border-bottom:1px solid rgba(227,195,129,.4)}
 .lm-check a:hover{color:#efd69e}
@@ -1377,7 +1378,7 @@ a{text-decoration:none}
     <input type="email" id="rgEmail" placeholder="you@example.com" autocomplete="email">
     <input type="password" id="rgPass" placeholder="パスワード（6文字以上）" autocomplete="new-password">
     <label class="lm-check"><input type="checkbox" id="rgTerms"> <button type="button" class="lg-inline" data-legal="terms">利用規約</button>・<button type="button" class="lg-inline" data-legal="privacy">プライバシーポリシー</button>に同意します</label>
-    <label class="lm-check"><input type="checkbox" id="rgMail" checked> メールでお知らせ・特典を受け取る（配信解除はいつでも可能）</label>
+    <p class="lm-note">ご登録後、お知らせ・お役立ち情報・特典のメールをお送りします。<br>配信はいつでも解除できます。</p>
     <button class="lm-go" id="rgGo">無料で登録する</button>
     <div class="lm-msg" id="rgMsg"></div>
     <button class="lm-switch" id="toLogin">すでに登録済みの方は　ログイン →</button>
@@ -1649,7 +1650,6 @@ async function doRegister(){
   const email = (document.getElementById("rgEmail").value || "").trim().toLowerCase();
   const pass  = document.getElementById("rgPass").value || "";
   const terms = document.getElementById("rgTerms").checked;
-  const mail  = document.getElementById("rgMail").checked;
   const msg   = document.getElementById("rgMsg");
   if(!email || email.indexOf("@") < 0){ msg.textContent = "メールアドレスを入力してください。"; return; }
   if(pass.length < 6){ msg.textContent = "パスワードは6文字以上で設定してください。"; return; }
@@ -1660,7 +1660,7 @@ async function doRegister(){
     await fbAuth.createUserWithEmailAndPassword(email, pass);
     // 同意記録＋リード保存（ベストエフォート：GAS未対応でもFirebase登録は成立）
     try {
-      const body = new URLSearchParams({ action:"lead_add", email, terms:"1", privacy:"1", mail: mail?"1":"0" });
+      const body = new URLSearchParams({ action:"lead_add", email, terms:"1", privacy:"1", mail:"1" });
       fetch(GAS_URL, { method:"POST", body });
     } catch(_e){}
     msg.textContent = "";
