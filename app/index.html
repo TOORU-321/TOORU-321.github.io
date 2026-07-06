@@ -1232,6 +1232,27 @@ a{text-decoration:none}
 .lg-dl dt{font-family:var(--mincho);font-weight:700;color:#ecd7aa;font-size:14px;margin-top:20px}
 .lg-dl dt:first-child{margin-top:0}
 .lg-dl dd{margin:5px 0 0;padding:0 0 14px;border-bottom:1px solid rgba(255,255,255,.06);line-height:1.85}
+/* ===== アカウントメニュー（右上） ===== */
+.acct-trigger{display:flex;align-items:center;gap:9px;font-family:var(--gothic);font-size:13px;color:#e8dcc0;background:rgba(227,195,129,.08);border:1px solid rgba(227,195,129,.28);border-radius:999px;padding:8px 15px;cursor:pointer;max-width:230px;transition:background .15s,border-color .15s}
+.acct-trigger:hover{background:rgba(227,195,129,.16);border-color:rgba(227,195,129,.5)}
+.acct-trigger .acct-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:155px}
+.acct-trigger .acct-ico{font-size:14px;color:#e0c179;line-height:1}
+.acct-backdrop{position:fixed;inset:0;z-index:290;background:transparent}
+.acct-backdrop[hidden]{display:none}
+.acct-menu{position:fixed;top:66px;right:16px;z-index:295;width:min(280px,calc(100vw - 24px));background:linear-gradient(160deg,#161b25,#0e1219);border:1px solid rgba(227,195,129,.2);border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.5);padding:8px;animation:lmModalIn .2s ease both}
+.acct-menu[hidden]{display:none}
+.acct-head{padding:12px 12px 11px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:6px}
+.acct-email{font-family:var(--gothic);font-size:12.5px;color:#e8e2d4;word-break:break-all;line-height:1.4}
+.acct-status{margin-top:6px;display:inline-block;font-family:var(--gothic);font-size:10.5px;font-weight:600;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-radius:999px;padding:2px 10px}
+.acct-status[hidden]{display:none}
+.acct-body{display:flex;flex-direction:column}
+.acct-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:13.5px;color:#d8d3c8;padding:11px 12px;border-radius:10px;transition:background .15s,color .15s;text-decoration:none}
+.acct-item:hover{background:rgba(227,195,129,.08);color:#f0d69c}
+.acct-item .ai-ico{font-size:15px;width:20px;text-align:center;flex:none}
+.acct-div{height:1px;background:rgba(255,255,255,.07);margin:6px 4px}
+.lm-forgot{display:block;width:100%;margin-top:10px;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:12px;color:#9c9e9a;padding:4px}
+.lm-forgot:hover{color:#e0c685;text-decoration:underline}
+@media(max-width:600px){ .acct-trigger{padding:7px 12px;font-size:12px} .acct-trigger .acct-name{max-width:104px} .acct-menu{top:60px;right:10px} }
 @media(max-width:600px){ .legalmodal{padding:12px} .legal-card{padding:30px 22px 26px;border-radius:16px;max-height:90vh} .legal-h{font-size:19px} .legal-body{font-size:13px} }
 .intro-skip{position:fixed;right:20px;bottom:20px;z-index:1001;font-family:var(--gothic);font-size:13px;font-weight:600;color:#fff;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:11px 22px;cursor:pointer;letter-spacing:.06em;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s,border-color .15s,transform .15s}
 .intro-skip:hover{background:rgba(0,0,0,.72);border-color:#fff;transform:translateY(-1px)}
@@ -1283,11 +1304,20 @@ a{text-decoration:none}
 <header class="appbar">
   <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span></div>
   <div class="appbar-right">
-    <button class="member-exit" id="exitBtn" hidden>退室</button>
-    <button class="member-signup" id="signupBtn" hidden>新規無料登録はこちら</button>
-    <button class="member-ctl" id="memberBtn">ログイン</button>
+    <button class="acct-trigger" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+      <span class="acct-name" id="acctName">メニュー</span>
+      <span class="acct-ico">☰</span>
+    </button>
   </div>
 </header>
+<div class="acct-backdrop" id="acctBackdrop" hidden></div>
+<div class="acct-menu" id="acctMenu" hidden>
+  <div class="acct-head">
+    <div class="acct-email" id="acctEmail"></div>
+    <div class="acct-status" id="acctStatus" hidden></div>
+  </div>
+  <div class="acct-body" id="acctBody"></div>
+</div>
 
 <!-- ③ イラストをメイン背景に（固定・全画面） -->
 <img class="app-bg app-bg--pc" src="assets/videosamune.jpg" alt="">
@@ -1375,6 +1405,7 @@ a{text-decoration:none}
     <input type="password" id="lmPass" placeholder="パスワード" autocomplete="current-password">
     <button class="lm-go" id="lmGo">ログイン</button>
     <div class="lm-msg" id="lmMsg"></div>
+    <button class="lm-forgot" id="lmForgot">パスワードをお忘れの方</button>
     <button class="lm-switch" id="toSignup">アカウントをお持ちでない方は　新規無料登録 →</button>
   </div>
 </div>
@@ -1502,20 +1533,63 @@ function loadSession(){
 }
 function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.stringify(s)); updateMemberUI(); }
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
-function updateMemberUI(){
-  const btn    = document.getElementById("memberBtn");
-  const exit   = document.getElementById("exitBtn");
-  const signup = document.getElementById("signupBtn");
-  if(!btn) return;
-  if(SESSION && SESSION.email){
-    btn.textContent = (SESSION.name || "会員") + "｜ログアウト";
-    if(exit) exit.hidden = true;
-    if(signup) signup.hidden = true;          // 会員には出さない
+function accountStatusLabel(){
+  if(!SESSION || !SESSION.email) return "";
+  const tags = SESSION.tags || [];
+  if(SESSION.active) return tags.includes("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
+  return "無料登録";
+}
+function renderAcctMenu(){
+  const name = document.getElementById("acctName");
+  const email = document.getElementById("acctEmail");
+  const status = document.getElementById("acctStatus");
+  const body = document.getElementById("acctBody");
+  if(!body) return;
+  const member = !!(SESSION && SESSION.email);
+  if(name) name.textContent = member ? (SESSION.name || "アカウント") : "メニュー";
+  if(email) email.textContent = member ? SESSION.email : "ゲストとして閲覧中";
+  if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
+  let html = "";
+  if(member){
+    html += `<button class="acct-item" data-act="resetpw"><span class="ai-ico">🔑</span>パスワード再設定</button>`;
+    html += `<button class="acct-item" data-act="logout"><span class="ai-ico">🚪</span>ログアウト</button>`;
   } else {
-    btn.textContent = "ログイン";
-    if(exit) exit.hidden = false;
-    if(signup) signup.hidden = false;         // ゲスト参加中：新規無料登録を出す
+    html += `<button class="acct-item" data-act="login"><span class="ai-ico">🔓</span>ログイン</button>`;
+    html += `<button class="acct-item" data-act="register"><span class="ai-ico">✍️</span>新規無料登録</button>`;
   }
+  html += `<div class="acct-div"></div>`;
+  html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
+  html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
+  html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
+  html += `<button class="acct-item" data-legal="tokusho"><span class="ai-ico">📄</span>特定商取引法</button>`;
+  body.innerHTML = html;
+}
+function updateMemberUI(){ renderAcctMenu(); }
+function openMenu(){ document.getElementById("acctMenu").hidden = false; document.getElementById("acctBackdrop").hidden = false; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","true"); }
+function closeMenu(){ document.getElementById("acctMenu").hidden = true; document.getElementById("acctBackdrop").hidden = true; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","false"); }
+function toggleMenu(){ document.getElementById("acctMenu").hidden ? openMenu() : closeMenu(); }
+function logout(){
+  if(!confirm("ログアウトしますか？")) return;
+  if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} }
+  exitToEntry();
+}
+function resetPassword(){
+  const email = (SESSION && SESSION.email) || "";
+  if(!email){ showToast("ログイン後にご利用いただけます。"); return; }
+  if(!fbAuth){ showToast("認証を初期化できませんでした。"); return; }
+  if(!confirm(email + " にパスワード再設定メールを送信します。よろしいですか？")) return;
+  fbAuth.sendPasswordResetEmail(email)
+    .then(()=> showToast("再設定メールを送信しました。メールをご確認ください。"))
+    .catch(()=> showToast("送信に失敗しました。時間をおいて再度お試しください。"));
+}
+function resetPasswordPrompt(){
+  let email = (document.getElementById("lmEmail").value || "").trim().toLowerCase();
+  if(!email){ email = (prompt("パスワード再設定メールを送るアドレスを入力してください") || "").trim().toLowerCase(); }
+  if(!email || email.indexOf("@") < 0){ return; }
+  if(!fbAuth){ showToast("認証を初期化できませんでした。"); return; }
+  fbAuth.sendPasswordResetEmail(email)
+    .then(()=> { document.getElementById("lmMsg").textContent = "再設定メールを送信しました。メールをご確認ください。"; })
+    .catch((e)=> { document.getElementById("lmMsg").textContent = (e && e.code === "auth/user-not-found") ? "そのメールのアカウントが見つかりません。初めての方は「新規無料登録」へ。" : "送信に失敗しました。時間をおいて再度お試しください。"; });
 }
 function enterLibrary(withIntro){
   document.getElementById("entry").hidden   = true;
@@ -1688,12 +1762,20 @@ function openLogin(){ closeRegister(); document.getElementById("loginModal").hid
 function closeLogin(){ document.getElementById("loginModal").hidden = true; }
 function openRegister(){ closeLogin(); const m=document.getElementById("regModal"); if(m){ m.hidden = false; setTimeout(()=>document.getElementById("rgEmail").focus(),50); } }
 function closeRegister(){ const m=document.getElementById("regModal"); if(m) m.hidden = true; }
-document.getElementById("memberBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  if(SESSION && SESSION.email){ if(confirm("ログアウトしますか？")){ if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} } exitToEntry(); } }
-  else { openLogin(); }
+// アカウントメニュー（右上）
+document.getElementById("menuBtn").addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); });
+document.getElementById("acctBackdrop").addEventListener("click", closeMenu);
+document.getElementById("acctBody").addEventListener("click", (e) => {
+  const it = e.target.closest("[data-act]");
+  closeMenu();
+  if(!it) return;   // data-legal はドキュメントの委譲で処理
+  const act = it.getAttribute("data-act");
+  if(act === "resetpw") resetPassword();
+  else if(act === "logout") logout();
+  else if(act === "login") openLogin();
+  else if(act === "register") openRegister();
 });
-document.getElementById("exitBtn").addEventListener("click", () => { if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} } exitToEntry(); });
+document.getElementById("lmForgot").addEventListener("click", resetPasswordPrompt);
 document.getElementById("lmGo").addEventListener("click", doLogin);
 document.getElementById("lmClose").addEventListener("click", closeLogin);
 document.getElementById("lmPass").addEventListener("keydown", (e)=>{ if(e.key === "Enter") doLogin(); });
@@ -1701,7 +1783,6 @@ document.getElementById("rgGo").addEventListener("click", doRegister);
 document.getElementById("regClose").addEventListener("click", closeRegister);
 document.getElementById("toSignup").addEventListener("click", openRegister);
 document.getElementById("toLogin").addEventListener("click", openLogin);
-const signupBtnEl = document.getElementById("signupBtn"); if(signupBtnEl) signupBtnEl.addEventListener("click", openRegister);
 const entrySignupEl = document.getElementById("entrySignup"); if(entrySignupEl) entrySignupEl.addEventListener("click", openRegister);
 // 法務文書：アプリ内ビューアで表示
 document.addEventListener("click", (e) => { const t = e.target.closest("[data-legal]"); if(t){ e.preventDefault(); openLegal(t.getAttribute("data-legal")); } });
