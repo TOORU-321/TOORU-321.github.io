@@ -1164,6 +1164,12 @@ a{text-decoration:none}
 .ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px;padding-top:1px}
 .ch-item.active .ch-no{color:#d8b870}
 .ch-item .ch-t{flex:1;line-height:1.5}
+/* 動画1本ごとのロック表示 */
+.ch-item.ch-locked .ch-t{color:#8f918f}
+.ch-item.ch-locked .ch-no{color:#5f6469}
+.ch-item .ch-lockmark{font-size:12px;flex:none;opacity:.9}
+.chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
+.chap-tab.chap-locked.active{color:#1c1a14;border-style:solid}
 /* ③ コース内 前へ／次へ */
 .vnav{margin-top:18px;display:flex;gap:10px}
 .vnav[hidden]{display:none}
@@ -1575,22 +1581,25 @@ function currentRank(){
   if(SESSION.active)             return RANK.plus;  // サブスク有効
   return RANK.free;                                 // アカウント有り（無料登録）
 }
-function hasAccess(course){
-  const need = course.rank || RANK.guest;
-  if(need >= RANK.support && course.requiredTag){
+// 動画1本ごとのアクセス判定（種別・必要タグは動画ごと）
+function videoAccessible(v){
+  const need = (v && v.rank) || RANK.guest;
+  if(need >= RANK.support && v && v.requiredTag){
     // 有料（タグ指定あり）＝サブスク有効＋対象タグ保有
-    return !!(SESSION && SESSION.active && (SESSION.tags || []).includes(course.requiredTag));
+    return !!(SESSION && SESSION.active && (SESSION.tags || []).includes(v.requiredTag));
   }
   // 有料でもタグ未設定ならサブスク会員扱いにフォールバック
   const effNeed = (need >= RANK.support) ? RANK.plus : need;
   return currentRank() >= effNeed;
 }
-function setLockScreen(course){
+// コース内に1本でも視聴できる動画があるか（＝コースに入れるか）
+function hasAnyAccess(course){ return (course.videos || []).some(videoAccessible); }
+function setLockScreen(need){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
-  const need = course.rank || RANK.guest;
+  need = need || RANK.guest;
   const loggedIn = !!(SESSION && SESSION.email);
   if(need <= RANK.free){
     // 無料登録すれば視聴できる（集客）
@@ -1931,8 +1940,12 @@ function coursesFromGviz(json){
     ri++;   // シート上の並び順（上から）
     const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach);
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
-    if(!map.has(cname)){ const rk = kindToRank(kind); map.set(cname, { name:cname, tier:(kind||"無料"), rank:rk, locked:(rk > RANK.guest), requiredTag:(tag||null), _order:Infinity, videos:[] }); }
-    const c = map.get(cname); c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, _order:ord }); if(ord < c._order) c._order = ord;
+    const rk = kindToRank(kind);
+    if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
+    const c = map.get(cname);
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, rank:rk, requiredTag:(tag||null), _order:ord });
+    if(ord < c._order) c._order = ord;
+    if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
   const list = [...map.values()];
   list.forEach(c => c.videos.sort((a,b)=> a._order - b._order));
@@ -1972,7 +1985,7 @@ function render(){
     el.className = "course"; el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
     const ti = tierBadge(course.rank || RANK.guest);
-    const stateBadge = (!hasAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
+    const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
     head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
@@ -1983,7 +1996,12 @@ function render(){
 }
 function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
 // コースをタップ：1本目を再生＋動画へスクロール
-function onCourseClick(ci){ select(ci, 0); scrollToPlayer(); }
+function onCourseClick(ci){
+  const vids = (COURSES[ci] && COURSES[ci].videos) || [];
+  let vi = vids.findIndex(videoAccessible);   // 最初に視聴できる動画へ
+  if(vi < 0) vi = 0;                          // 全部ロックなら先頭（ロック表示）
+  select(ci, vi); scrollToPlayer();
+}
 // 章ごとにグループ化（出現順）
 function chapterGroups(course){
   const groups = []; const map = new Map();
@@ -2007,9 +2025,10 @@ function renderChapterUI(ci, vi){
   if(hasChapters){
     tabs.hidden = false;
     groups.forEach(g => {
+      const gLocked = g.indices.every(i => !videoAccessible(course.videos[i]));   // 章内が全部ロック
       const chip = document.createElement("button");
-      chip.className = "chap-tab" + (g === activeG ? " active" : "");
-      chip.textContent = g.name || "その他";
+      chip.className = "chap-tab" + (g === activeG ? " active" : "") + (gLocked ? " chap-locked" : "");
+      chip.textContent = (g.name || "その他") + (gLocked ? " 🔒" : "");
       chip.addEventListener("click", () => { select(ci, g.indices[0]); scrollToPlayer(); });
       tabs.appendChild(chip);
     });
@@ -2021,9 +2040,10 @@ function renderChapterUI(ci, vi){
   if(idxs.length <= 1 && !hasChapters) return;
   idxs.forEach((i, pos) => {
     const v = course.videos[i];
+    const vlock = !videoAccessible(v);
     const b = document.createElement("button");
-    b.className = "ch-item" + (i === vi ? " active" : "");
-    b.innerHTML = `<span class="ch-no">${String(pos+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`;
+    b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "");
+    b.innerHTML = `<span class="ch-no">${String(pos+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>` + (vlock ? `<span class="ch-lockmark">🔒</span>` : "");
     b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     list.appendChild(b);
   });
@@ -2032,19 +2052,22 @@ function select(ci, vi){
   const course = COURSES[ci]; if(!course) return;
   const v = course.videos[vi]; if(!v) return;
   curCourse = ci; curVideo = vi;
-  const locked = !hasAccess(course);
-  const vmeta  = document.querySelector(".vmeta");
+  const vmeta = document.querySelector(".vmeta");
+  const supp  = document.getElementById("vsupp");
+  const att   = document.getElementById("vattach");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+  const courseLocked = !hasAnyAccess(course);   // コース全体（1本も視聴できない）
+  const vLocked      = !videoAccessible(v);      // この動画のロック
 
-  if(locked){
-    // ④ アクセスパス無し：動画も内容物（章・中身・前後）も出さない
+  if(courseLocked){
+    // ④ コース全体ロック：動画も内容物（章・中身・前後）も出さない
     vmeta.classList.add("meta-locked");
-    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(course);
+    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v.rank);
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
     vfiled.innerHTML   = "";
-    document.getElementById("vsupp").hidden = true;   document.getElementById("vsupp").innerHTML = "";
-    document.getElementById("vattach").hidden = true; document.getElementById("vattach").innerHTML = "";
+    supp.hidden = true; supp.innerHTML = "";
+    att.hidden = true;  att.innerHTML = "";
     document.getElementById("vnav").hidden = true;
     document.getElementById("chapterTabs").hidden = true;
     document.getElementById("chapterTabs").innerHTML = "";
@@ -2052,22 +2075,28 @@ function select(ci, vi){
     return;
   }
 
+  // コースには入れる（無料枠あり）。動画1本ごとにロック判定
   vmeta.classList.remove("meta-locked");
-  vframe.classList.remove("locked"); viframe.src = embedUrl(v);
   vkick.textContent  = course.videos.length > 1
     ? `${course.name}${v.chapter ? "　|　" + v.chapter : ""}`
     : course.name;
   vtitle.textContent = v.t;
   vfiled.innerHTML = "";
-  // ② 補足（本文・改行/URLはそのままリンク化）
-  const supp = document.getElementById("vsupp");
-  if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
-  // ③ 添付要素（ワーク・課題シート等のリンクボタン）
-  const att = document.getElementById("vattach");
-  const attHtml = v.attach ? renderAttach(v.attach) : "";
-  if(attHtml){ att.innerHTML = `<div class="vattach-h">添付要素</div><div class="vattach-list">${attHtml}</div>`; att.hidden = false; }
-  else { att.innerHTML = ""; att.hidden = true; }
-  renderChapterUI(ci, vi);  // ② 章選択 ③ 中身
+  if(vLocked){
+    // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま
+    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v.rank);
+    supp.hidden = true; supp.innerHTML = "";
+    att.hidden = true;  att.innerHTML = "";
+  } else {
+    vframe.classList.remove("locked"); viframe.src = embedUrl(v);
+    // ② 補足（本文・改行/URLはそのままリンク化）
+    if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
+    // ③ 添付要素（ワーク・課題シート等のリンクボタン）
+    const attHtml = v.attach ? renderAttach(v.attach) : "";
+    if(attHtml){ att.innerHTML = `<div class="vattach-h">添付要素</div><div class="vattach-list">${attHtml}</div>`; att.hidden = false; }
+    else { att.innerHTML = ""; att.hidden = true; }
+  }
+  renderChapterUI(ci, vi);  // ② 章選択 ③ 中身（ロック動画は🔒）
   renderVnav(ci, vi);       // コース内 前へ／次へ
 }
 // ③ コース内だけで前後の動画へ移動するボタン
