@@ -1664,40 +1664,46 @@ function videoAccessible(v){
 }
 // コース内に1本でも視聴できる動画があるか（＝コースに入れるか）
 function hasAnyAccess(course){ return (course.videos || []).some(videoAccessible); }
-function setLockScreen(need){
+// ロック中の講座名（章タイトルの「：N章」より前／無ければコース名）
+function productName(v, course){
+  if(v && v.chapter){ return String(v.chapter).split(/[：:]/)[0].trim(); }
+  return (course && course.name) || "";
+}
+function setLockScreen(v, course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
-  need = need || RANK.guest;
+  const need = (v && v.rank) || RANK.guest;
   const loggedIn = !!(SESSION && SESSION.email);
+
+  // ① 無料登録が必要
   if(need <= RANK.free){
-    // 無料登録すれば視聴できる（集客）
-    t.textContent = "無料登録で視聴できます";
-    d.textContent = "メールアドレスとパスワードの設定だけ（無料）で、続きを視聴できます。";
+    t.textContent = "無料登録が必要です";
+    d.textContent = "メールアドレスとパスワードの設定だけ（無料）で視聴できます。";
     b.textContent = "無料で登録する →";
     b.setAttribute("href", "#");
     b.onclick = (ev) => { ev.preventDefault(); openRegister(); };
     return;
   }
+
+  // ② サブスク限定 ／ ③ 有料商品（アクセスパス）
+  if(need <= RANK.plus){
+    t.textContent = "エルラボ＋の加入が必要です";
+    d.textContent = "エルラボ＋（サブスク）にご加入いただくと視聴できます。";
+  } else {
+    const prod = productName(v, course);
+    t.textContent = (prod ? prod + "の" : "") + "アクセスパスが必要です";
+    d.textContent = "対象のアクセスパス（ご購入）で視聴できます。";
+  }
+
+  // ボタン：未ログインは「ログイン →」。ログイン済み（＝権限不足）は今は非表示。
+  // ★ゆくゆく販売/詳細ページのURLができたら「詳細ページ →」に差し替え
   if(!loggedIn){
-    // 上位ランクだが未ログイン：まずログイン導線
-    t.textContent = "ログインが必要です";
-    d.textContent = "ご登録済みの方はログイン、初めての方は新規無料登録へお進みください。";
     b.textContent = "ログイン →";
     b.setAttribute("href", "#");
     b.onclick = (ev) => { ev.preventDefault(); openLogin(); };
-    return;
-  }
-  if(need <= RANK.plus){
-    // サブスク会員限定（販売ページは今後追加）
-    t.textContent = "エルラボ＋メンバー限定です";
-    d.textContent = "エルラボ＋（サブスク）にご登録いただくと視聴できます。";
-    b.hidden = true;
   } else {
-    // 有料：対象のアクセスパス（タグ）が必要（販売ページは今後追加）
-    t.textContent = "アクセスパスが必要です";
-    d.textContent = "このコンテンツの視聴には対象のアクセスパスが必要です。";
     b.hidden = true;
   }
 }
@@ -2140,7 +2146,7 @@ function select(ci, vi){
   if(courseLocked){
     // ④ コース全体ロック：動画も内容物（章・中身・前後）も出さない
     vmeta.classList.add("meta-locked");
-    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v.rank);
+    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
     vfiled.innerHTML   = "";
@@ -2162,7 +2168,7 @@ function select(ci, vi){
   vfiled.innerHTML = "";
   if(vLocked){
     // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま
-    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v.rank);
+    vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
   } else {
