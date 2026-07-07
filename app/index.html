@@ -836,6 +836,15 @@ a{text-decoration:none}
   box-shadow:0 14px 32px rgba(155,112,51,.23);
 }
 .lockscreen .lk-btn:hover{transform:translateY(-2px);filter:none;box-shadow:0 18px 40px rgba(155,112,51,.32)}
+/* パスワード解除（限定講座） */
+.lk-pw{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;width:min(300px,82%)}
+.lk-pw[hidden]{display:none}
+.lk-pw input{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.3);border-radius:10px;background:rgba(0,0,0,.35);color:#fff;font-size:15px;text-align:center;letter-spacing:.1em;font-family:var(--gothic)}
+.lk-pw input:focus{outline:none;border-color:#e0c179}
+.lk-pw input::placeholder{color:rgba(255,255,255,.45);letter-spacing:.02em}
+.lk-pw-go{padding:11px 28px;border:none;border-radius:999px;font-family:var(--gothic);font-size:14px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);cursor:pointer;transition:filter .15s}
+.lk-pw-go:hover{filter:brightness(1.06)}
+.lk-pw-msg{font-size:12px;color:#f0a5a5;min-height:1em}
 
 /* ---------- Bottom navigation ---------- */
 .bottom-nav{
@@ -1127,7 +1136,8 @@ a{text-decoration:none}
 .attach-ico{font-size:14px}
 @media(max-width:600px){ .attach-btn{width:100%;justify-content:center} .vsupp{font-size:12.5px} }
 .app-title{position:relative;z-index:2;text-align:center;padding:28px 20px 0}
-.app-title h2{font-family:var(--serif-en);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:.06em;color:#fff;margin:6px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
+.app-catch{font-family:var(--mincho);font-weight:700;font-size:clamp(14px,1.8vw,19px);letter-spacing:.09em;color:#efe6d2;margin:11px 0 6px;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.app-title h2{font-family:var(--serif-en);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:.06em;color:#fff;margin:2px 0 0;text-shadow:0 2px 22px rgba(0,0,0,.55)}
 .vlayout{margin-top:0;padding-top:20px}
 .vplayer{scroll-margin-top:84px}
 /* ===== 左サイド：コース名（大タイトル）のみ ===== */
@@ -1325,7 +1335,8 @@ a{text-decoration:none}
 <div class="app-veil"></div>
 <!-- ① タイトルのみ -->
 <div class="app-title">
-  <div class="library-kicker">Member Library</div>
+  <div class="library-kicker">ON-LINE COURSES</div>
+  <div class="app-catch">ひとつ上を目指すオンラインコース</div>
   <h2>Video Hub</h2>
 </div>
 
@@ -1343,6 +1354,11 @@ a{text-decoration:none}
         <div class="lk-t" id="lkTitle">この講座の視聴には登録が必要です</div>
         <div class="lk-d" id="lkDesc">こちらは会員限定の講座です。ご登録いただくと視聴できます。</div>
         <a class="lk-btn" id="lkbtn" href="https://l-mine.com/onlinecourse" target="_blank" rel="noopener">今すぐ登録する →</a>
+        <div class="lk-pw" id="lkPw" hidden>
+          <input type="text" id="lkPwInput" placeholder="パスワードを入力" autocomplete="off" autocapitalize="off" spellcheck="false">
+          <button class="lk-pw-go" id="lkPwGo" type="button">解除する</button>
+          <div class="lk-pw-msg" id="lkPwMsg"></div>
+        </div>
       </div>
     </div>
     <div class="vmeta">
@@ -1669,10 +1685,37 @@ function productName(v, course){
   if(v && v.chapter){ return String(v.chapter).split(/[：:]/)[0].trim(); }
   return (course && course.name) || "";
 }
+// ===== パスワード解除（招待制の限定講座など） =====
+const pwUnlocked = new Set();
+function pwKey(ci, vi){ return ci + ":" + vi; }
+function showPwGate(v, ci, vi){
+  vframe.classList.add("locked"); viframe.src = "about:blank";
+  const t = document.getElementById("lkTitle"), d = document.getElementById("lkDesc"), b = document.getElementById("lkbtn"), pw = document.getElementById("lkPw");
+  t.textContent = "パスワードで視聴できます";
+  d.textContent = "ご案内したパスワードを入力してください。";
+  b.hidden = true;
+  pw.hidden = false;
+  const inp = document.getElementById("lkPwInput"), msg = document.getElementById("lkPwMsg");
+  msg.textContent = ""; inp.value = "";
+  const tryUnlock = () => {
+    const entered = (inp.value || "").trim();
+    if(entered && entered === String(v.pw || "").trim()){
+      pwUnlocked.add(pwKey(ci, vi));
+      pw.hidden = true;
+      select(ci, vi);   // 再選択で再生
+    } else {
+      msg.textContent = "パスワードが違います。";
+    }
+  };
+  document.getElementById("lkPwGo").onclick = tryUnlock;
+  inp.onkeydown = (e) => { if(e.key === "Enter"){ e.preventDefault(); tryUnlock(); } };
+  setTimeout(() => { try{ inp.focus(); }catch(e){} }, 60);
+}
 function setLockScreen(v, course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
+  const pwEl = document.getElementById("lkPw"); if(pwEl) pwEl.hidden = true;   // ティアロック時はパスワード入力を隠す
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
   const need = (v && v.rank) || RANK.guest;
   const loggedIn = !!(SESSION && SESSION.email);
@@ -2014,7 +2057,7 @@ function coursesFromGviz(json){
     rows = rows.slice(1);
   }
   const find = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iOrder=find(["並び順","順番","順","order"],-1);
+  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iOrder=find(["並び順","順番","順","order"],-1);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
   const map = new Map(); let ri = 0;
   rows.forEach(r => {
@@ -2022,12 +2065,12 @@ function coursesFromGviz(json){
     if(!cname || !url || cname === "コース名") return;
     const pv = parseVideoUrl(url); if(!pv) return;
     ri++;   // シート上の並び順（上から）
-    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach);
+    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw);
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
     const c = map.get(cname);
-    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, rank:rk, requiredTag:(tag||null), _order:ord });
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, rank:rk, requiredTag:(tag||null), _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
@@ -2171,7 +2214,13 @@ function select(ci, vi){
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
+  } else if(v.pw && !pwUnlocked.has(pwKey(ci, vi))){
+    // ティア(種別/タグ)はOKだが、パスワード保護あり → パスワード入力を表示
+    supp.hidden = true; supp.innerHTML = "";
+    att.hidden = true;  att.innerHTML = "";
+    showPwGate(v, ci, vi);
   } else {
+    document.getElementById("lkPw").hidden = true;
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     // ② 補足（本文・改行/URLはそのままリンク化）
     if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
