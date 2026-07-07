@@ -1680,6 +1680,20 @@ function videoAccessible(v){
 }
 // コース内に1本でも視聴できる動画があるか（＝コースに入れるか）
 function hasAnyAccess(course){ return (course.videos || []).some(videoAccessible); }
+// 視聴期限：日付をパース（テキスト「2026-07-10」/gvizの Date(2026,6,10) 両対応）。その日いっぱい視聴可
+function parseDeadline(s){
+  s = String(s || "").trim();
+  if(!s) return null;
+  let y, mo, da, m;
+  if((m = s.match(/Date\((\d+),(\d+),(\d+)/))){ y=+m[1]; mo=+m[2]; da=+m[3]; }           // gviz日付セル（月0始まり）
+  else if((m = s.match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/))){ y=+m[1]; mo=+m[2]-1; da=+m[3]; }
+  else return null;
+  return new Date(y, mo, da, 23, 59, 59).getTime();
+}
+function isExpired(v){
+  const d = (v && v.deadline) ? parseDeadline(v.deadline) : null;
+  return d != null && Date.now() > d;
+}
 // ロック中の講座名（章タイトルの「：N章」より前／無ければコース名）
 function productName(v, course){
   if(v && v.chapter){ return String(v.chapter).split(/[：:]/)[0].trim(); }
@@ -2057,7 +2071,7 @@ function coursesFromGviz(json){
     rows = rows.slice(1);
   }
   const find = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iOrder=find(["並び順","順番","順","order"],-1);
+  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iDeadline=find(["視聴期限","期限","視聴期間"],-1), iOrder=find(["並び順","順番","順","order"],-1);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
   const map = new Map(); let ri = 0;
   rows.forEach(r => {
@@ -2065,12 +2079,12 @@ function coursesFromGviz(json){
     if(!cname || !url || cname === "コース名") return;
     const pv = parseVideoUrl(url); if(!pv) return;
     ri++;   // シート上の並び順（上から）
-    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw);
+    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw), deadline = cell(r,iDeadline);
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
     const c = map.get(cname);
-    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, rank:rk, requiredTag:(tag||null), _order:ord });
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, rank:rk, requiredTag:(tag||null), _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
@@ -2183,6 +2197,26 @@ function select(ci, vi){
   const supp  = document.getElementById("vsupp");
   const att   = document.getElementById("vattach");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+
+  // ★ 視聴期間の終了（種別・パスワードより優先）
+  if(isExpired(v)){
+    vmeta.classList.add("meta-locked");
+    vframe.classList.add("locked"); viframe.src = "about:blank";
+    document.getElementById("lkPw").hidden = true;
+    document.getElementById("lkTitle").textContent = "視聴期間が終了しました";
+    document.getElementById("lkDesc").textContent  = "この講座の公開期間は終了しました。次の限定公開をお楽しみに。";
+    document.getElementById("lkbtn").hidden = true;
+    vkick.textContent  = course.name;
+    vtitle.textContent = "🔒 視聴期間が終了しました";
+    vfiled.innerHTML   = "";
+    supp.hidden = true; supp.innerHTML = "";
+    att.hidden  = true; att.innerHTML  = "";
+    document.getElementById("vnav").hidden = true;
+    document.getElementById("chapterTabs").hidden = true; document.getElementById("chapterTabs").innerHTML = "";
+    document.getElementById("chapterList").innerHTML = "";
+    return;
+  }
+
   const courseLocked = !hasAnyAccess(course);   // コース全体（1本も視聴できない）
   const vLocked      = !videoAccessible(v);      // この動画のロック
 
