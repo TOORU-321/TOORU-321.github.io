@@ -1202,6 +1202,8 @@ a{text-decoration:none}
 @media(max-width:600px){ .member-signup{font-size:10.5px;padding:6px 10px} }
 .lm-check{display:flex;align-items:flex-start;gap:9px;font-family:var(--gothic);font-size:12px;color:#b7b3aa;line-height:1.6;margin:2px 0 12px;cursor:pointer;text-align:left}
 .lm-note{font-family:var(--gothic);font-size:11px;color:#8f918f;line-height:1.7;text-align:left;margin:0 0 14px;padding:9px 12px;background:rgba(227,195,129,.05);border:1px solid rgba(227,195,129,.14);border-radius:8px}
+.lm-hint{font-family:var(--gothic);font-size:11.5px;color:#b79a5f;line-height:1.75;text-align:left;margin:0 0 12px;padding:9px 12px;background:rgba(227,195,129,.07);border:1px solid rgba(227,195,129,.2);border-radius:8px}
+.lm-hint b{color:#e0c179;font-weight:700}
 .lm-check input{width:auto!important;min-height:0!important;margin:2px 0 0!important;accent-color:#c9a45a;flex:none}
 .lm-check a{color:#e0c685;border-bottom:1px solid rgba(227,195,129,.4)}
 .lm-check a:hover{color:#efd69e}
@@ -1421,15 +1423,17 @@ a{text-decoration:none}
     <button class="lm-go" id="lmGo">ログイン</button>
     <div class="lm-msg" id="lmMsg"></div>
     <button class="lm-forgot" id="lmForgot">パスワードをお忘れの方</button>
-    <button class="lm-switch" id="toSignup">アカウントをお持ちでない方は　新規無料登録 →</button>
+    <p class="lm-hint">LINE・お電話・既存のお客様で、まだパスワードを設定していない方は、下の「新規登録」から同じメールアドレスで設定してください。</p>
+    <button class="lm-switch" id="toSignup">初めての方・パスワード未設定の方は　新規登録（無料）→</button>
   </div>
 </div>
 
 <div class="loginmodal" id="regModal" hidden>
   <div class="lm-card">
     <button class="lm-x" id="regClose" aria-label="閉じる">×</button>
-    <div class="lm-h">新規無料登録</div>
+    <div class="lm-h">新規登録／パスワード設定</div>
     <p class="lm-p">メールアドレスとパスワードを設定するだけ（無料）。<br>無料コンテンツがすぐに視聴できます。</p>
+    <p class="lm-hint">🔑 LINE・お電話・既存のお客様も、<b>同じメールアドレス</b>でパスワードを設定すれば、これまでのご登録内容がそのまま引き継がれます。</p>
     <input type="email" id="rgEmail" placeholder="you@example.com" autocomplete="email">
     <input type="password" id="rgPass" placeholder="パスワード（6文字以上）" autocomplete="new-password">
     <label class="lm-check"><input type="checkbox" id="rgTerms"> <button type="button" class="lg-inline" data-legal="terms">利用規約</button>・<button type="button" class="lg-inline" data-legal="privacy">プライバシーポリシー</button>に同意します</label>
@@ -1512,9 +1516,9 @@ catch(e){ console.warn("Firebase init failed", e); }
 function fbErrMsg(code){
   switch(code){
     case "auth/invalid-email":        return "メールアドレスの形式が正しくありません。";
-    case "auth/user-not-found":       return "アカウントが見つかりません。初めての方は「新規無料登録」からパスワードを設定してください。";
+    case "auth/user-not-found":       return "アカウントが見つかりません。初めての方は「新規登録」からパスワードを設定してください。";
     case "auth/wrong-password":
-    case "auth/invalid-credential":   return "メールアドレスかパスワードが違います。";
+    case "auth/invalid-credential":   return "メールアドレスかパスワードが違います。パスワードをまだ設定していない方は、下の「新規登録」から同じメールで設定してください。";
     case "auth/too-many-requests":    return "試行回数が多すぎます。しばらくおいて再度お試しください。";
     case "auth/email-already-in-use": return "このメールアドレスは既に登録済みです。「ログイン」からお進みください。";
     case "auth/weak-password":        return "パスワードは6文字以上にしてください。";
@@ -1823,7 +1827,16 @@ async function doLogin(){
     await fbAuth.signInWithEmailAndPassword(email, pass);
     msg.textContent = "";
     await applyTierAndEnter(email, closeLogin);
-  } catch(e){ msg.textContent = fbErrMsg(e && e.code); }
+  } catch(e){
+    const code = e && e.code;
+    if(code === "auth/user-not-found"){
+      // パスワード未設定（名簿にはいるがアカウント未作成）→ 初回設定へ案内
+      msg.textContent = "パスワードが未設定のようです。初回パスワード設定にご案内します…";
+      setTimeout(()=>{ closeLogin(); openRegister(); const el=document.getElementById("rgEmail"); if(el) el.value = email; }, 1300);
+    } else {
+      msg.textContent = fbErrMsg(code);
+    }
+  }
 }
 async function doRegister(){
   const email = (document.getElementById("rgEmail").value || "").trim().toLowerCase();
