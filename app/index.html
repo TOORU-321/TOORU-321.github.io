@@ -1263,6 +1263,12 @@ a{text-decoration:none}
 @keyframes lmEmerge{from{opacity:.35}to{opacity:1}}
 .intro[hidden]{display:none}
 .intro.intro-out{opacity:0;pointer-events:none}
+/* ログイン/登録の処理中ローディング */
+.auth-loading{position:fixed;inset:0;z-index:1200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:rgba(12,14,20,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:lmOverlayIn .2s ease both}
+.auth-loading[hidden]{display:none}
+.al-spin{width:48px;height:48px;border-radius:50%;border:3px solid rgba(227,195,129,.22);border-top-color:#e8c880;animation:alSpin .8s linear infinite}
+.al-tx{font-family:var(--gothic);font-size:14px;font-weight:600;color:#ecd7aa;letter-spacing:.08em}
+@keyframes alSpin{to{transform:rotate(360deg)}}
 .intro-video{width:100%;height:100%;object-fit:cover;background:#000;display:block}
 .intro-mute{position:fixed;left:20px;bottom:20px;z-index:1001;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.4);border-radius:50%;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:background .15s,transform .15s}
 .intro-mute:hover{background:rgba(0,0,0,.72);transform:translateY(-1px)}
@@ -1395,6 +1401,12 @@ a{text-decoration:none}
   </video>
   <button class="intro-mute" id="introMute" type="button" aria-label="音のオン／オフ">🔊</button>
   <button class="intro-skip" id="introSkip" type="button">スキップ ▶</button>
+</div>
+
+<!-- ログイン/登録の処理中ローディング -->
+<div class="auth-loading" id="authLoading" hidden>
+  <div class="al-spin" aria-hidden="true"></div>
+  <div class="al-tx" id="authLoadingTx">ログイン中…</div>
 </div>
 
 <div id="library" hidden>
@@ -1719,6 +1731,8 @@ function resetPasswordPrompt(){
     .then(()=> { document.getElementById("lmMsg").textContent = "再設定メールを送信しました。メールをご確認ください。"; })
     .catch((e)=> { document.getElementById("lmMsg").textContent = (e && e.code === "auth/user-not-found") ? "そのメールのアカウントが見つかりません。初めての方は「新規無料登録」へ。" : "送信に失敗しました。時間をおいて再度お試しください。"; });
 }
+function showAuthLoading(txt){ const el=document.getElementById("authLoading"); if(!el) return; const t=document.getElementById("authLoadingTx"); if(t) t.textContent = txt||"読み込み中…"; el.hidden = false; }
+function hideAuthLoading(){ const el=document.getElementById("authLoading"); if(el) el.hidden = true; }
 function enterLibrary(withIntro){
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
@@ -1982,6 +1996,7 @@ async function applyTierAndEnter(email, closeFn){
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
   saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, registered:true });
   if(closeFn) closeFn();
+  hideAuthLoading();    // ローディングを消してオープニングへ
   enterLibrary(true);   // ③ ログイン/登録直後はオープニング動画
   render();
   if(curCourse != null) select(curCourse, curVideo);
@@ -1994,11 +2009,13 @@ async function doLogin(){
   if(!pass){ msg.textContent = "パスワードを入力してください。"; return; }
   if(!fbAuth){ msg.textContent = "認証を初期化できませんでした。ページを再読み込みしてください。"; return; }
   msg.textContent = "ログイン中…";
+  showAuthLoading("ログイン中…");
   try {
     await fbAuth.signInWithEmailAndPassword(email, pass);
     msg.textContent = "";
     await applyTierAndEnter(email, closeLogin);
   } catch(e){
+    hideAuthLoading();
     const code = e && e.code;
     if(code === "auth/user-not-found"){
       // パスワード未設定（名簿にはいるがアカウント未作成）→ 初回設定へ案内
@@ -2019,6 +2036,7 @@ async function doRegister(){
   if(!terms){ msg.textContent = "利用規約・プライバシーポリシーへの同意が必要です。"; return; }
   if(!fbAuth){ msg.textContent = "認証を初期化できませんでした。ページを再読み込みしてください。"; return; }
   msg.textContent = "登録中…";
+  showAuthLoading("登録中…");
   try {
     await fbAuth.createUserWithEmailAndPassword(email, pass);
     // 同意記録＋リード保存（ベストエフォート：GAS未対応でもFirebase登録は成立）
@@ -2029,6 +2047,7 @@ async function doRegister(){
     msg.textContent = "";
     await applyTierAndEnter(email, closeRegister);
   } catch(e){
+    hideAuthLoading();
     if(e && e.code === "auth/email-already-in-use"){
       msg.textContent = fbErrMsg(e.code);
       setTimeout(()=>{ closeRegister(); openLogin(); document.getElementById("lmEmail").value = email; }, 1000);
