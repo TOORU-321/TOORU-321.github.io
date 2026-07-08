@@ -1168,10 +1168,11 @@ a{text-decoration:none}
 .course.limited.expired{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.02);opacity:.72;box-shadow:none}
 .c-limited{font-family:var(--gothic);font-size:9.5px;font-weight:700;letter-spacing:.02em;color:#2a2114;background:linear-gradient(135deg,#f0c579,#e0a95a);border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none;line-height:1.5}
 .course.limited.expired .c-limited{background:rgba(255,255,255,.12);color:#b8b8b2}
-.c-limit{display:flex;align-items:center;gap:7px;margin:0 14px 12px;padding:6px 10px;border-radius:8px;background:rgba(227,169,90,.12);border:1px solid rgba(227,169,90,.28);font-family:var(--gothic)}
+.c-limit{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin:0 14px 12px;padding:8px 11px;border-radius:8px;background:rgba(227,169,90,.12);border:1px solid rgba(227,169,90,.28);font-family:var(--gothic)}
+.c-limit .cl-top{display:flex;align-items:center;gap:6px}
 .c-limit .cl-ico{font-size:12px}
 .c-limit .cl-tx{font-size:11.5px;color:#e6b877;font-weight:700;letter-spacing:.02em}
-.c-limit .cl-cd{margin-left:auto;font-size:11px;font-weight:700;color:#2a2114;background:#e6b877;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.c-limit .cl-cd{align-self:flex-start;font-size:12px;font-weight:800;color:#2a2114;background:#e6b877;border-radius:999px;padding:3px 12px;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .course.limited.soon .c-limit{background:rgba(240,140,70,.16);border-color:rgba(240,140,70,.4)}
 .course.limited.soon .c-limit .cl-tx{color:#f3ac74}
 .course.limited.soon .c-limit .cl-cd{background:#f0894a;color:#fff}
@@ -1183,7 +1184,8 @@ a{text-decoration:none}
 .vlimit[hidden]{display:none}
 .vlimit .vl-ico{font-size:15px}
 .vlimit b{color:#f0c982;font-weight:800;margin:0 2px}
-.vlimit .vl-cd{color:#2a2114;background:#e6b877;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:700;margin-left:2px}
+.vlimit .vl-cd{color:#2a2114;background:#e6b877;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:700;margin-left:6px;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.cd-over{background:#c96a6a!important;color:#fff!important}
 .vlimit.soon{color:#f3ac74;background:rgba(240,140,70,.14);border-color:rgba(240,140,70,.42)}
 .vlimit.soon b{color:#ffc79a}
 .vlimit.soon .vl-cd{background:#f0894a;color:#fff}
@@ -1834,6 +1836,36 @@ function fmtDateShort(ts){ const d = new Date(ts); return (d.getMonth()+1) + "/"
 function fmtDateFull(ts){ const d = new Date(ts); return d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate(); }
 // 期限の状態クラス（soon=残り1日以下 / expired=終了）
 function deadlineState(ts){ const n = daysLeft(ts); return (n < 0) ? "expired" : (n <= 1 ? "soon" : ""); }
+// ④ カウントダウン（残り d日 hh:mm:ss）。1秒ごとに更新
+function fmtCountdown(ts){
+  const ms = ts - Date.now();
+  if(ms <= 0) return "終了";
+  let s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400); s %= 86400;
+  const h = Math.floor(s / 3600);  s %= 3600;
+  const m = Math.floor(s / 60);    const sec = s % 60;
+  const p = n => String(n).padStart(2, "0");
+  return (d > 0 ? d + "日 " : "") + p(h) + ":" + p(m) + ":" + p(sec);
+}
+function countdownLabel(ts){ const c = fmtCountdown(ts); return c === "終了" ? "終了" : "残り " + c; }
+// data-deadline を持つ全要素を毎秒更新（左メニューのタイマー＋視聴ページのバナー）
+const _cdExpired = new Set();
+function tickCountdowns(){
+  const now = Date.now();
+  document.querySelectorAll("[data-deadline]").forEach(el => {
+    const ts = +el.getAttribute("data-deadline");
+    el.textContent = countdownLabel(ts);
+    if(ts <= now){
+      el.classList.add("cd-over");
+      if(!_cdExpired.has(ts)){   // 期限到達の瞬間だけ：左メニュー＆プレイヤーをロック更新
+        _cdExpired.add(ts); render();
+        if(curCourse != null) select(curCourse, curVideo);
+      }
+    }
+  });
+}
+let _cdStarted = false;
+function startCountdownTicker(){ if(_cdStarted) return; _cdStarted = true; setInterval(tickCountdowns, 1000); }
 // 視聴ページの期限バナー
 function renderVlimit(v){
   const el = document.getElementById("vlimit"); if(!el) return;
@@ -1841,7 +1873,7 @@ function renderVlimit(v){
   if(ts == null){ el.hidden = true; el.innerHTML = ""; return; }
   const st = deadlineState(ts);
   el.className = "vlimit" + (st ? " " + st : "");
-  el.innerHTML = `<span class="vl-ico">⏳</span>視聴期限：<b>${fmtDateFull(ts)}</b> まで<span class="vl-cd">（${deadlineLabel(ts)}）</span>`;
+  el.innerHTML = `<span class="vl-ico">⏳</span>視聴期限：<b>${fmtDateFull(ts)}</b> まで<span class="vl-cd" data-deadline="${ts}">${countdownLabel(ts)}</span>`;
   el.hidden = false;
 }
 // ロック中の講座名（章タイトルの「：N章」より前／無ければコース名）
@@ -2309,13 +2341,14 @@ function render(){
       // ⏳ 小さなタイマー（期限日＋残り日数）
       const timer = document.createElement("div");
       timer.className = "c-limit";
-      timer.innerHTML = `<span class="cl-ico">⏳</span><span class="cl-tx">${fmtDateShort(dl)}まで</span><span class="cl-cd">${deadlineLabel(dl)}</span>`;
+      timer.innerHTML = `<div class="cl-top"><span class="cl-ico">⏳</span><span class="cl-tx">${fmtDateShort(dl)}まで</span></div><div class="cl-cd" data-deadline="${dl}">${countdownLabel(dl)}</div>`;
       el.appendChild(timer);
     }
     wrap.appendChild(el);
   });
   courseEls = [...wrap.querySelectorAll(".course")];
   document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
+  startCountdownTicker();   // ④ 期間限定のカウントダウンを毎秒更新
 }
 function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
 // コースをタップ：1本目を再生＋動画へスクロール
