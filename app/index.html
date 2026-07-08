@@ -1311,6 +1311,8 @@ a{text-decoration:none}
 /* スマホ：左メニュー（コース一覧）を「引き出し（ドロワー）」化 */
 .drawer-toggle,.drawer-backdrop{display:none}
 @media(max-width:900px){
+  /* vlayoutのtransform/filterはfixed子要素を閉じ込める（スタッキング罠）。スマホでは無効化 */
+  .vlayout{transform:none!important;filter:none!important;animation:none!important}
   .vlist{
     position:fixed;top:0;left:0;z-index:200;
     width:min(86vw,340px);height:100vh;height:100dvh;max-height:none;margin:0;
@@ -1407,8 +1409,8 @@ a{text-decoration:none}
 
 <!-- スマホ：左メニュー（コース一覧）を開くタブ -->
 <button class="drawer-toggle" id="drawerToggle" type="button" aria-label="コース一覧を開く" aria-expanded="false"><span class="dt-ar">❯</span><span class="dt-tx">コース</span></button>
-<div class="drawer-backdrop" id="drawerBackdrop"></div>
 <div class="vlayout">
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <aside class="vlist">
     <div class="listhead"><span>Courses</span><span class="lh-count" id="lhCount"></span></div>
     <div id="vcourses"><div class="vstate" id="vstate">コースを読み込み中…</div></div>
