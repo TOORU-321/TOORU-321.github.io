@@ -1308,6 +1308,36 @@ a{text-decoration:none}
   .chapter-list{max-height:52vh}
 }
 
+/* スマホ：左メニュー（コース一覧）を「引き出し（ドロワー）」化 */
+.drawer-toggle,.drawer-backdrop{display:none}
+@media(max-width:900px){
+  .vlist{
+    position:fixed;top:0;left:0;z-index:200;
+    width:min(86vw,340px);height:100vh;height:100dvh;max-height:none;margin:0;
+    padding:74px 16px 26px;border-radius:0 18px 18px 0;
+    background:linear-gradient(160deg,#161d28,#0e131b);
+    box-shadow:6px 0 44px rgba(0,0,0,.55);
+    transform:translateX(-102%);
+    transition:transform .3s cubic-bezier(.2,.8,.2,1);
+    animation:none;overflow-y:auto;
+  }
+  #library.drawer-open .vlist{transform:translateX(0)}
+  .drawer-backdrop{display:block;position:fixed;inset:0;z-index:190;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s}
+  #library.drawer-open .drawer-backdrop{opacity:1;visibility:visible}
+  .drawer-toggle{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    position:fixed;left:0;top:42%;z-index:150;
+    background:linear-gradient(135deg,#e8c880,#caa75f);color:#1c1a14;
+    border:none;padding:13px 9px 13px 6px;border-radius:0 14px 14px 0;
+    font-family:var(--gothic);font-weight:700;letter-spacing:.04em;
+    box-shadow:3px 4px 16px rgba(0,0,0,.42);cursor:pointer;
+    transition:transform .3s ease,opacity .3s ease;
+  }
+  .drawer-toggle .dt-ar{font-size:14px;line-height:1}
+  .drawer-toggle .dt-tx{font-size:10.5px;writing-mode:vertical-rl;letter-spacing:.12em}
+  #library.drawer-open .drawer-toggle{transform:translateX(-102%);opacity:0}
+}
+
 
 
 </style>
@@ -1375,6 +1405,9 @@ a{text-decoration:none}
 </div>
 
 
+<!-- スマホ：左メニュー（コース一覧）を開くタブ -->
+<button class="drawer-toggle" id="drawerToggle" type="button" aria-label="コース一覧を開く" aria-expanded="false"><span class="dt-ar">❯</span><span class="dt-tx">コース</span></button>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
 <div class="vlayout">
   <aside class="vlist">
     <div class="listhead"><span>Courses</span><span class="lh-count" id="lhCount"></span></div>
@@ -1620,6 +1653,11 @@ function updateMemberUI(){ renderAcctMenu(); }
 function openMenu(){ document.getElementById("acctMenu").hidden = false; document.getElementById("acctBackdrop").hidden = false; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","true"); }
 function closeMenu(){ document.getElementById("acctMenu").hidden = true; document.getElementById("acctBackdrop").hidden = true; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","false"); }
 function toggleMenu(){ document.getElementById("acctMenu").hidden ? openMenu() : closeMenu(); }
+// ===== スマホ：コース一覧ドロワー =====
+function isMobile(){ try{ return window.matchMedia("(max-width:900px)").matches; }catch(e){ return false; } }
+function openDrawer(){ const l=document.getElementById("library"); if(l) l.classList.add("drawer-open"); const b=document.getElementById("drawerToggle"); if(b) b.setAttribute("aria-expanded","true"); }
+function closeDrawer(){ const l=document.getElementById("library"); if(l) l.classList.remove("drawer-open"); const b=document.getElementById("drawerToggle"); if(b) b.setAttribute("aria-expanded","false"); }
+function toggleDrawer(){ const l=document.getElementById("library"); if(l && l.classList.contains("drawer-open")) closeDrawer(); else openDrawer(); }
 function logout(){
   if(!confirm("ログアウトしますか？")) return;
   if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} }
@@ -1661,6 +1699,8 @@ function enterLibrary(withIntro){
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
   if(withIntro) playIntro();
+  // スマホ：まだ動画を選んでいなければ、コース一覧のドロワーを開いて見せる
+  if(isMobile() && curCourse == null) setTimeout(openDrawer, withIntro ? 300 : 60);
 }
 // ③ ログイン/ゲスト参加の直後に1回だけ流すオープニング動画（スキップ可・音あり/ミュート切替）
 function playIntro(){
@@ -1944,6 +1984,11 @@ function openLogin(){ closeRegister(); document.getElementById("loginModal").hid
 function closeLogin(){ document.getElementById("loginModal").hidden = true; }
 function openRegister(){ closeLogin(); const m=document.getElementById("regModal"); if(m){ m.hidden = false; setTimeout(()=>document.getElementById("rgEmail").focus(),50); } }
 function closeRegister(){ const m=document.getElementById("regModal"); if(m) m.hidden = true; }
+// スマホ：コース一覧ドロワーの開閉
+document.getElementById("drawerToggle").addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleDrawer(); });
+document.getElementById("drawerBackdrop").addEventListener("click", closeDrawer);
+// PC幅に戻したらドロワー状態はリセット
+window.addEventListener("resize", () => { if(!isMobile()) closeDrawer(); });
 // アカウントメニュー（右上）
 document.getElementById("menuBtn").addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); });
 document.getElementById("acctBackdrop").addEventListener("click", closeMenu);
@@ -2276,7 +2321,9 @@ function onCourseClick(ci){
   const vids = (COURSES[ci] && COURSES[ci].videos) || [];
   let vi = vids.findIndex(videoAccessible);   // 最初に視聴できる動画へ
   if(vi < 0) vi = 0;                          // 全部ロックなら先頭（ロック表示）
-  select(ci, vi); scrollToPlayer();
+  select(ci, vi);
+  closeDrawer();                              // スマホ：選んだらドロワーを閉じて視聴画面へ
+  scrollToPlayer();
 }
 // 章ごとにグループ化（出現順）
 function chapterGroups(course){
