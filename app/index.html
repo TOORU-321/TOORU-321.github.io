@@ -1311,6 +1311,9 @@ a{text-decoration:none}
 .acct-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:13.5px;color:#d8d3c8;padding:11px 12px;border-radius:10px;transition:background .15s,color .15s;text-decoration:none}
 .acct-item:hover{background:rgba(227,195,129,.08);color:#f0d69c}
 .acct-item .ai-ico{font-size:15px;width:20px;text-align:center;flex:none}
+.acct-vip{color:#f0d69c;background:rgba(227,195,129,.08);font-weight:700}
+.acct-vip:hover{background:rgba(227,195,129,.16)}
+.acct-badge{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-radius:999px;padding:2px 8px}
 .acct-div{height:1px;background:rgba(255,255,255,.07);margin:6px 4px}
 .lm-forgot{display:block;width:100%;margin-top:10px;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:12px;color:#9c9e9a;padding:4px}
 .lm-forgot:hover{color:#e0c685;text-decoration:underline}
@@ -1490,10 +1493,6 @@ a{text-decoration:none}
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <span class="nav-label">コラム</span>
   </a>
-  <button class="nav-item" id="nav-task" data-gated>
-    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-    <span class="nav-label">タスク</span>
-  </button>
 </nav>
 </div><!-- /#library -->
 
@@ -1658,6 +1657,7 @@ function renderAcctMenu(){
   if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
   let html = "";
   if(member){
+    if(isVip()) html += `<button class="acct-item acct-vip" data-act="taskapp"><span class="ai-ico">🗂️</span>タスク管理アプリ<span class="acct-badge">VIP</span></button>`;
     html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
     html += `<button class="acct-item" data-act="resetpw"><span class="ai-ico">🔑</span>パスワード再設定</button>`;
     html += `<button class="acct-item" data-act="logout"><span class="ai-ico">🚪</span>ログアウト</button>`;
@@ -1694,10 +1694,11 @@ function changeName(){
   const nv = (prompt("表示名を入力してください（アプリ内の表示に使います）", cur) || "").trim();
   if(!nv || nv === cur) return;
   if(nv.length > 30){ showToast("30文字以内で入力してください。"); return; }
+  try{ localStorage.setItem("lmine_name:" + SESSION.email, nv); }catch(_e){}   // 端末に恒久保存（再ログインでも維持）
   saveSession(Object.assign({}, SESSION, { name: nv }));   // 端末に保存＋メニュー表示更新
   try{
     const body = new URLSearchParams({ action:"set_name", email:SESSION.email, name:nv });
-    fetch(GAS_URL, { method:"POST", body }).catch(()=>{});   // サーバ反映は任意（GAS未対応でも端末側は変わる）
+    fetch(GAS_URL, { method:"POST", body }).catch(()=>{});   // サーバにも反映（別端末用）
   }catch(_e){}
   showToast("表示名を変更しました。");
 }
@@ -1979,6 +1980,7 @@ async function applyTierAndEnter(email, closeFn){
     const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(email) + "&_=" + Date.now()).then(r=>r.json());
     if(res && res.ok){ tier = { active: !!res.active, tags: res.tags || [], name: res.name || tier.name }; }
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
+  try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
   saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, registered:true });
   if(closeFn) closeFn();
   enterLibrary(true);   // ③ ログイン/登録直後はオープニング動画
@@ -2051,7 +2053,8 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   closeMenu();
   if(!it) return;   // data-legal はドキュメントの委譲で処理
   const act = it.getAttribute("data-act");
-  if(act === "changename") changeName();
+  if(act === "taskapp") openTaskApp();
+  else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
   else if(act === "logout") logout();
   else if(act === "login") openLogin();
@@ -2083,18 +2086,18 @@ function showToast(msg){
 document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
   a.addEventListener("click", (e) => {
     if(a.hasAttribute("data-soon")){ e.preventDefault(); showToast("準備中です。近日公開予定！"); return; }
-    if(a.hasAttribute("data-gated")){
-      e.preventDefault();
-      if(SESSION && SESSION.email && SESSION.active){ window.open("https://columns.l-mine.com/task-coach.html", "_blank", "noopener"); }
-      else { showToast("この機能は会員ログインが必要です。"); }
-      return;
-    }
     if(a.id === "nav-news"){ e.preventDefault(); openNews(); return; }
     if(a.tagName === "BUTTON"){ window.scrollTo({ top:0, behavior:"smooth" }); }
   });
 });
 
 function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin")); }
+function isVip(){ return !!(SESSION && (SESSION.tags || []).includes("vip")); }
+// VIP限定：タスク管理アプリを開く（URLはソースに直書きせず難読化）
+function openTaskApp(){
+  if(!isVip()){ showToast("この機能はVIP会員限定です。"); return; }
+  try{ window.open(atob("aHR0cHM6Ly9jb2x1bW5zLmwtbWluZS5j" + "b20vYmxvb20tY2hlY2tpbi1hcHAuaHRtbA=="), "_blank", "noopener"); }catch(e){}
+}
 function todayStr(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 function linkify(s){ return escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,"<br>"); }
