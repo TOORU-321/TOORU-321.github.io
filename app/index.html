@@ -971,6 +971,14 @@ a{text-decoration:none}
 .ni-title{color:#eee9df;font-size:15px}
 .ni-body{color:#aaa9a4;font-size:12.5px}
 .ni-body a{color:#dfc17d;border-color:rgba(227,195,129,.24)}
+.ni-img{display:block;width:100%;max-width:100%;border-radius:12px;margin:10px 0 4px;border:1px solid rgba(227,195,129,.14)}
+.ni-like{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 15px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#b7b6b0;font-family:var(--gothic);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
+.ni-like:hover{background:rgba(227,110,120,.10);border-color:rgba(227,110,120,.34)}
+.ni-like:active{transform:scale(.95)}
+.ni-like .nl-heart{font-size:14px;color:#8a8a86;transition:color .15s}
+.ni-like.liked{background:rgba(227,110,120,.14);border-color:rgba(227,110,120,.4);color:#f0b8bd;cursor:default}
+.ni-like.liked .nl-heart{color:#e56b74}
+.ni-like .nl-count{font-variant-numeric:tabular-nums;font-weight:700}
 .ni-admin button{
   border-color:rgba(227,195,129,.15);
   color:#878b8c;
@@ -1526,8 +1534,10 @@ a{text-decoration:none}
       <input type="date" id="nf-date">
       <label>見出し</label>
       <input type="text" id="nf-title" placeholder="お知らせのタイトル">
-      <label>本文（URLは自動でリンクになります）</label>
-      <textarea id="nf-body" rows="4" placeholder="本文…"></textarea>
+      <label>本文（URL・アンケートのリンクは自動でリンクになります）</label>
+      <textarea id="nf-body" rows="4" placeholder="本文…（Googleフォームのリンクを貼ればアンケートにも）"></textarea>
+      <label>画像URL（任意・画像への直リンク）</label>
+      <input type="text" id="nf-image" placeholder="https://…/photo.jpg">
       <label class="nf-check"><input type="checkbox" id="nf-pub" checked> 公開する</label>
       <div class="nf-btns">
         <button class="nf-save" id="nfSave">保存</button>
@@ -2207,7 +2217,15 @@ async function loadNews(){
 }
 function newsItemEl(n){
   const el = document.createElement("div"); el.className = "news-item";
-  el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div><div class="ni-body">${linkify(n.body)}</div>`;
+  const img = n.image ? `<img class="ni-img" src="${escapeHtml(n.image)}" loading="lazy" alt="" onerror="this.remove()">` : "";
+  el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div>${img}<div class="ni-body">${linkify(n.body)}</div>`;
+  // ♥ いいね（数だけ表示・端末ごとに1回）
+  const liked = localStorage.getItem("lmine_liked_" + n.id) === "1";
+  const like = document.createElement("button");
+  like.className = "ni-like" + (liked ? " liked" : "");
+  like.innerHTML = `<span class="nl-heart">♥</span><span class="nl-count">${n.likes || 0}</span>`;
+  like.onclick = () => likeNews(n.id, like);
+  el.appendChild(like);
   if(isAdmin()){
     const bar = document.createElement("div"); bar.className = "ni-admin";
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
@@ -2216,13 +2234,21 @@ function newsItemEl(n){
   }
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; document.getElementById("nf-image").value=n.image||""; document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function likeNews(id, btn){
+  const key = "lmine_liked_" + id;
+  if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
+  localStorage.setItem(key, "1");
+  btn.classList.add("liked");
+  const cnt = btn.querySelector(".nl-count"); if(cnt) cnt.textContent = String((parseInt(cnt.textContent, 10) || 0) + 1);
+  try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_like", id:String(id) }) }); }catch(e){}
+}
 async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:document.getElementById("nf-image").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
