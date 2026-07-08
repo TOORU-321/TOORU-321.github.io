@@ -845,6 +845,9 @@ a{text-decoration:none}
 .lk-pw-go{padding:11px 28px;border:none;border-radius:999px;font-family:var(--gothic);font-size:14px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);cursor:pointer;transition:filter .15s}
 .lk-pw-go:hover{filter:brightness(1.06)}
 .lk-pw-msg{font-size:12px;color:#f0a5a5;min-height:1em}
+.lk-pwlink{margin-top:12px;background:none;border:none;color:rgba(255,255,255,.66);font-family:var(--gothic);font-size:12.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;transition:color .15s}
+.lk-pwlink:hover{color:#e0c179}
+.lk-pwlink[hidden]{display:none}
 
 /* ---------- Bottom navigation ---------- */
 .bottom-nav{
@@ -1354,6 +1357,7 @@ a{text-decoration:none}
         <div class="lk-t" id="lkTitle">この講座の視聴には登録が必要です</div>
         <div class="lk-d" id="lkDesc">こちらは会員限定の講座です。ご登録いただくと視聴できます。</div>
         <a class="lk-btn" id="lkbtn" href="https://l-mine.com/onlinecourse" target="_blank" rel="noopener">今すぐ登録する →</a>
+        <button class="lk-pwlink" id="lkPwToggle" type="button" hidden>招待パスワードをお持ちの方はこちら →</button>
         <div class="lk-pw" id="lkPw" hidden>
           <input type="text" id="lkPwInput" placeholder="パスワードを入力" autocomplete="off" autocapitalize="off" spellcheck="false">
           <button class="lk-pw-go" id="lkPwGo" type="button">解除する</button>
@@ -1562,6 +1566,7 @@ function renderAcctMenu(){
   if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
   let html = "";
   if(member){
+    html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
     html += `<button class="acct-item" data-act="resetpw"><span class="ai-ico">🔑</span>パスワード再設定</button>`;
     html += `<button class="acct-item" data-act="logout"><span class="ai-ico">🚪</span>ログアウト</button>`;
   } else {
@@ -1584,6 +1589,20 @@ function logout(){
   if(!confirm("ログアウトしますか？")) return;
   if(fbAuth){ try{ fbAuth.signOut(); }catch(_e){} }
   exitToEntry();
+}
+// 表示名の変更（既定はメールの@より前）。端末に即反映＋顧客シートにも保存（次回ログイン以降も維持）
+function changeName(){
+  if(!(SESSION && SESSION.email)){ showToast("ログイン後にご利用いただけます。"); return; }
+  const cur = SESSION.name || "";
+  const nv = (prompt("表示名を入力してください（アプリ内の表示に使います）", cur) || "").trim();
+  if(!nv || nv === cur) return;
+  if(nv.length > 30){ showToast("30文字以内で入力してください。"); return; }
+  saveSession(Object.assign({}, SESSION, { name: nv }));   // 端末に保存＋メニュー表示更新
+  try{
+    const body = new URLSearchParams({ action:"set_name", email:SESSION.email, name:nv });
+    fetch(GAS_URL, { method:"POST", body }).catch(()=>{});   // サーバ反映は任意（GAS未対応でも端末側は変わる）
+  }catch(_e){}
+  showToast("表示名を変更しました。");
 }
 function resetPassword(){
   const email = (SESSION && SESSION.email) || "";
@@ -1680,6 +1699,15 @@ function videoAccessible(v){
 }
 // コース内に1本でも視聴できる動画があるか（＝コースに入れるか）
 function hasAnyAccess(course){ return (course.videos || []).some(videoAccessible); }
+// この動画を今見られるか：種別/タグでOK ＝ または＝ 招待パスワードで解除済み
+function canWatchVideo(v, ci, vi){
+  return videoAccessible(v) || (!!(v && v.pw) && pwUnlocked.has(pwKey(ci, vi)));
+}
+// コース内に1本でも「見られる」動画があるか（パスワード解除も加味）
+function courseWatchable(ci){
+  const c = COURSES[ci]; if(!c) return false;
+  return (c.videos || []).some((vv, idx) => canWatchVideo(vv, ci, idx));
+}
 // 視聴期限：日付をパース（テキスト「2026-07-10」/gvizの Date(2026,6,10) 両対応）。その日いっぱい視聴可
 function parseDeadline(s){
   s = String(s || "").trim();
@@ -1702,34 +1730,40 @@ function productName(v, course){
 // ===== パスワード解除（招待制の限定講座など） =====
 const pwUnlocked = new Set();
 function pwKey(ci, vi){ return ci + ":" + vi; }
-function showPwGate(v, ci, vi){
-  vframe.classList.add("locked"); viframe.src = "about:blank";
-  const t = document.getElementById("lkTitle"), d = document.getElementById("lkDesc"), b = document.getElementById("lkbtn"), pw = document.getElementById("lkPw");
-  t.textContent = "パスワードで視聴できます";
-  d.textContent = "ご案内したパスワードを入力してください。";
-  b.hidden = true;
-  pw.hidden = false;
+// 招待パスワードの「サブ導線」：ティアCTA（無料登録など）に添えて表示する。
+// 「基本は無料登録／招待の人だけパスワード」を1画面で両立。
+function showPwOption(v, ci, vi){
+  const toggle = document.getElementById("lkPwToggle");
+  const pw = document.getElementById("lkPw");
   const inp = document.getElementById("lkPwInput"), msg = document.getElementById("lkPwMsg");
+  toggle.hidden = false;
+  pw.hidden = true;               // 最初は隠す（サブ扱い）
   msg.textContent = ""; inp.value = "";
+  toggle.onclick = () => {
+    toggle.hidden = true; pw.hidden = false;
+    setTimeout(() => { try{ inp.focus(); }catch(e){} }, 50);
+  };
   const tryUnlock = () => {
     const entered = (inp.value || "").trim();
     if(entered && entered === String(v.pw || "").trim()){
       pwUnlocked.add(pwKey(ci, vi));
-      pw.hidden = true;
-      select(ci, vi);   // 再選択で再生
+      select(ci, vi);   // 再選択で再生（パスワードで解除）
     } else {
       msg.textContent = "パスワードが違います。";
     }
   };
   document.getElementById("lkPwGo").onclick = tryUnlock;
   inp.onkeydown = (e) => { if(e.key === "Enter"){ e.preventDefault(); tryUnlock(); } };
-  setTimeout(() => { try{ inp.focus(); }catch(e){} }, 60);
+}
+function hidePwOption(){
+  const toggle = document.getElementById("lkPwToggle"); if(toggle) toggle.hidden = true;
+  const pw = document.getElementById("lkPw"); if(pw) pw.hidden = true;
 }
 function setLockScreen(v, course){
   const t = document.getElementById("lkTitle");
   const d = document.getElementById("lkDesc");
   const b = document.getElementById("lkbtn");
-  const pwEl = document.getElementById("lkPw"); if(pwEl) pwEl.hidden = true;   // ティアロック時はパスワード入力を隠す
+  hidePwOption();   // パスワード導線は一旦隠す（必要なら呼び出し側で showPwOption）
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
   const need = (v && v.rank) || RANK.guest;
   const loggedIn = !!(SESSION && SESSION.email);
@@ -1829,7 +1863,8 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   closeMenu();
   if(!it) return;   // data-legal はドキュメントの委譲で処理
   const act = it.getAttribute("data-act");
-  if(act === "resetpw") resetPassword();
+  if(act === "changename") changeName();
+  else if(act === "resetpw") resetPassword();
   else if(act === "logout") logout();
   else if(act === "login") openLogin();
   else if(act === "register") openRegister();
@@ -2202,7 +2237,7 @@ function select(ci, vi){
   if(isExpired(v)){
     vmeta.classList.add("meta-locked");
     vframe.classList.add("locked"); viframe.src = "about:blank";
-    document.getElementById("lkPw").hidden = true;
+    hidePwOption();
     document.getElementById("lkTitle").textContent = "視聴期間が終了しました";
     document.getElementById("lkDesc").textContent  = "この講座の公開期間は終了しました。次の限定公開をお楽しみに。";
     document.getElementById("lkbtn").hidden = true;
@@ -2217,15 +2252,16 @@ function select(ci, vi){
     return;
   }
 
-  const courseLocked = !hasAnyAccess(course);   // コース全体（1本も視聴できない）
-  const vLocked      = !videoAccessible(v);      // この動画のロック
+  const courseLocked = !courseWatchable(ci);       // コース全体（1本も見られない：種別/タグ/パスワード全部NG）
+  const canWatch     = canWatchVideo(v, ci, vi);   // この動画を今見られるか（種別/タグ or パスワード）
 
   if(courseLocked){
     // ④ コース全体ロック：動画も内容物（章・中身・前後）も出さない
     vmeta.classList.add("meta-locked");
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
+    if(v.pw) showPwOption(v, ci, vi);   // 招待パスワードのサブ導線
     vkick.textContent  = course.name;
-    vtitle.textContent = "🔒 視聴にはアクセスパスが必要です";
+    vtitle.textContent = "🔒 " + document.getElementById("lkTitle").textContent;
     vfiled.innerHTML   = "";
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
@@ -2243,18 +2279,15 @@ function select(ci, vi){
     : course.name;
   vtitle.textContent = v.t;
   vfiled.innerHTML = "";
-  if(vLocked){
-    // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま
+  if(!canWatch){
+    // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま。
+    // 種別/タグ(=無料登録など)のCTAを主に出し、パスワードがあれば「招待の方はこちら」を添える。
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
+    if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
-  } else if(v.pw && !pwUnlocked.has(pwKey(ci, vi))){
-    // ティア(種別/タグ)はOKだが、パスワード保護あり → パスワード入力を表示
-    supp.hidden = true; supp.innerHTML = "";
-    att.hidden = true;  att.innerHTML = "";
-    showPwGate(v, ci, vi);
   } else {
-    document.getElementById("lkPw").hidden = true;
+    hidePwOption();
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     // ② 補足（本文・改行/URLはそのままリンク化）
     if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
