@@ -1161,6 +1161,35 @@ a{text-decoration:none}
 .tier-member{color:#e6c47f;background:rgba(227,195,129,.10);border-color:rgba(227,195,129,.34)}
 .tier-paid{color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-color:transparent;font-weight:700}
 @media(max-width:600px){ .c-tier{font-size:9px;padding:2px 6px} .c-badges{gap:4px} }
+/* 期間限定コース：左メニューで別枠強調＋小さなタイマー */
+.course.limited{margin:10px 8px;border:1.5px solid rgba(227,169,90,.5);border-radius:12px;background:linear-gradient(180deg,rgba(227,169,90,.10),rgba(227,169,90,.03));box-shadow:0 4px 16px rgba(180,120,40,.12);overflow:hidden}
+.course.limited .course-head{padding:13px 10px 8px 14px}
+.course.limited.soon{border-color:rgba(240,140,70,.62);background:linear-gradient(180deg,rgba(240,140,70,.14),rgba(240,140,70,.04))}
+.course.limited.expired{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.02);opacity:.72;box-shadow:none}
+.c-limited{font-family:var(--gothic);font-size:9.5px;font-weight:700;letter-spacing:.02em;color:#2a2114;background:linear-gradient(135deg,#f0c579,#e0a95a);border-radius:999px;padding:2px 8px;white-space:nowrap;flex:none;line-height:1.5}
+.course.limited.expired .c-limited{background:rgba(255,255,255,.12);color:#b8b8b2}
+.c-limit{display:flex;align-items:center;gap:7px;margin:0 14px 12px;padding:6px 10px;border-radius:8px;background:rgba(227,169,90,.12);border:1px solid rgba(227,169,90,.28);font-family:var(--gothic)}
+.c-limit .cl-ico{font-size:12px}
+.c-limit .cl-tx{font-size:11.5px;color:#e6b877;font-weight:700;letter-spacing:.02em}
+.c-limit .cl-cd{margin-left:auto;font-size:11px;font-weight:700;color:#2a2114;background:#e6b877;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.course.limited.soon .c-limit{background:rgba(240,140,70,.16);border-color:rgba(240,140,70,.4)}
+.course.limited.soon .c-limit .cl-tx{color:#f3ac74}
+.course.limited.soon .c-limit .cl-cd{background:#f0894a;color:#fff}
+.course.limited.expired .c-limit{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+.course.limited.expired .c-limit .cl-tx{color:#9a9c99}
+.course.limited.expired .c-limit .cl-cd{background:rgba(255,255,255,.14);color:#c9c9c2}
+/* 視聴ページの期限バナー */
+.vlimit{display:inline-flex;align-items:center;gap:8px;margin:12px 0 4px;padding:9px 15px;border-radius:10px;font-family:var(--gothic);font-size:13px;font-weight:600;color:#e6b877;background:rgba(227,169,90,.12);border:1px solid rgba(227,169,90,.34)}
+.vlimit[hidden]{display:none}
+.vlimit .vl-ico{font-size:15px}
+.vlimit b{color:#f0c982;font-weight:800;margin:0 2px}
+.vlimit .vl-cd{color:#2a2114;background:#e6b877;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:700;margin-left:2px}
+.vlimit.soon{color:#f3ac74;background:rgba(240,140,70,.14);border-color:rgba(240,140,70,.42)}
+.vlimit.soon b{color:#ffc79a}
+.vlimit.soon .vl-cd{background:#f0894a;color:#fff}
+.vlimit.expired{color:#c98d8d;background:rgba(200,90,90,.12);border-color:rgba(200,90,90,.34)}
+.vlimit.expired b{color:#e6a5a5}
+.vlimit.expired .vl-cd{background:#c96a6a;color:#fff}
 /* ② 章選択（横並びチップ・多ければ折り返し） */
 .chapter-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .chapter-tabs[hidden]{display:none}
@@ -1371,6 +1400,7 @@ a{text-decoration:none}
       <div class="np">Now Playing</div>
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
+      <div class="vlimit" id="vlimit" hidden></div>
       <div class="vfiled" id="vfiled"></div>
       <div class="vsupp" id="vsupp" hidden></div>
       <div class="vattach" id="vattach" hidden></div>
@@ -1733,6 +1763,43 @@ function parseDeadline(s){
 function isExpired(v){
   const d = (v && v.deadline) ? parseDeadline(v.deadline) : null;
   return d != null && Date.now() > d;
+}
+// ===== 視聴期限の表示ヘルパー =====
+// コースの期限（動画のうち最も早い期限）。期限付き動画が無ければ null
+function courseDeadline(course){
+  let min = null;
+  (course.videos || []).forEach(v => {
+    const d = (v && v.deadline) ? parseDeadline(v.deadline) : null;
+    if(d != null && (min == null || d < min)) min = d;
+  });
+  return min;
+}
+// 残り日数（0=本日まで／マイナス=終了）。カレンダー日で計算
+function daysLeft(ts){
+  const end = new Date(ts);       end.setHours(0,0,0,0);
+  const today = new Date();       today.setHours(0,0,0,0);
+  return Math.round((end - today) / 86400000);
+}
+// 「あとN日」「本日まで」「終了」
+function deadlineLabel(ts){
+  const n = daysLeft(ts);
+  if(n < 0)  return "終了";
+  if(n === 0) return "本日まで";
+  return "あと" + n + "日";
+}
+function fmtDateShort(ts){ const d = new Date(ts); return (d.getMonth()+1) + "/" + d.getDate(); }
+function fmtDateFull(ts){ const d = new Date(ts); return d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate(); }
+// 期限の状態クラス（soon=残り1日以下 / expired=終了）
+function deadlineState(ts){ const n = daysLeft(ts); return (n < 0) ? "expired" : (n <= 1 ? "soon" : ""); }
+// 視聴ページの期限バナー
+function renderVlimit(v){
+  const el = document.getElementById("vlimit"); if(!el) return;
+  const ts = (v && v.deadline) ? parseDeadline(v.deadline) : null;
+  if(ts == null){ el.hidden = true; el.innerHTML = ""; return; }
+  const st = deadlineState(ts);
+  el.className = "vlimit" + (st ? " " + st : "");
+  el.innerHTML = `<span class="vl-ico">⏳</span>視聴期限：<b>${fmtDateFull(ts)}</b> まで<span class="vl-cd">（${deadlineLabel(ts)}）</span>`;
+  el.hidden = false;
 }
 // ロック中の講座名（章タイトルの「：N章」より前／無ければコース名）
 function productName(v, course){
@@ -2178,14 +2245,25 @@ function render(){
   wrap.innerHTML = "";
   COURSES.forEach((course, ci) => {
     const vids = course.videos || [];
+    const dl = courseDeadline(course);            // 期間限定コースなら期限（ts）
+    const isLimited = dl != null;
     const el = document.createElement("section");
-    el.className = "course"; el.dataset.ci = ci;
+    el.className = "course" + (isLimited ? " limited " + deadlineState(dl) : "");
+    el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
     const ti = tierBadge(course.rank || RANK.guest);
+    const limitBadge = isLimited ? `<span class="c-limited">⏳期間限定</span>` : "";
     const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
-    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
+    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${limitBadge}${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
+    if(isLimited){
+      // ⏳ 小さなタイマー（期限日＋残り日数）
+      const timer = document.createElement("div");
+      timer.className = "c-limit";
+      timer.innerHTML = `<span class="cl-ico">⏳</span><span class="cl-tx">${fmtDateShort(dl)}まで</span><span class="cl-cd">${deadlineLabel(dl)}</span>`;
+      el.appendChild(timer);
+    }
     wrap.appendChild(el);
   });
   courseEls = [...wrap.querySelectorAll(".course")];
@@ -2264,6 +2342,7 @@ function select(ci, vi){
     document.getElementById("lkbtn").hidden = true;
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 視聴期間が終了しました";
+    renderVlimit(v);
     vfiled.innerHTML   = "";
     supp.hidden = true; supp.innerHTML = "";
     att.hidden  = true; att.innerHTML  = "";
@@ -2283,6 +2362,7 @@ function select(ci, vi){
     if(v.pw) showPwOption(v, ci, vi);   // 招待パスワードのサブ導線
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 " + document.getElementById("lkTitle").textContent;
+    renderVlimit(v);
     vfiled.innerHTML   = "";
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
@@ -2299,6 +2379,7 @@ function select(ci, vi){
     ? `${course.name}${v.chapter ? "　|　" + v.chapter : ""}`
     : course.name;
   vtitle.textContent = v.t;
+  renderVlimit(v);
   vfiled.innerHTML = "";
   if(!canWatch){
     // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま。
