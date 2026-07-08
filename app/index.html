@@ -2313,7 +2313,7 @@ async function loadCourses(){
   render(); select(0, 0);
 }
 async function fetchFromSheet(){
-  const txt  = await fetch(SHEET_URL, {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
+  const txt  = await fetch(SHEET_URL + "&_=" + Date.now(), {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
   // gvizは google.visualization.Query.setResponse({...}); で包まれている。
   // 最初の { から最後の } までを取り出して確実にパース（末尾の ); 対策）
   const s = txt.indexOf("{"), e = txt.lastIndexOf("}");
