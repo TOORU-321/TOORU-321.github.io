@@ -2390,16 +2390,15 @@ function render(){
     el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
     const ti = tierBadge(course.rank || RANK.guest);
-    const limitBadge = isLimited ? `<span class="c-limited">⏳期間限定</span>` : "";
     const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
-    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${limitBadge}${ti}${stateBadge}</span>`;
+    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
     if(isLimited){
-      // ⏳ 小さなタイマー（期限日＋残り日数）
+      // ⏳ 「期間限定」＋期限日＋カウントダウン（見出し行を圧迫しないよう別枠にまとめる）
       const timer = document.createElement("div");
       timer.className = "c-limit";
-      timer.innerHTML = `<div class="cl-top"><span class="cl-ico">⏳</span><span class="cl-tx">${fmtDateShort(dl)}まで</span></div><div class="cl-cd" data-deadline="${dl}">${countdownLabel(dl)}</div>`;
+      timer.innerHTML = `<div class="cl-top"><span class="cl-ico">⏳</span><span class="cl-tx">期間限定 ・ ${fmtDateShort(dl)}まで</span></div><div class="cl-cd" data-deadline="${dl}">${countdownLabel(dl)}</div>`;
       el.appendChild(timer);
     }
     wrap.appendChild(el);
