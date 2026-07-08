@@ -1716,9 +1716,17 @@ function courseWatchable(ci){
 function parseDeadline(s){
   s = String(s || "").trim();
   if(!s) return null;
+  // 全角数字→半角（例：７月１０日 → 7月10日）
+  s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
   let y, mo, da, m;
-  if((m = s.match(/Date\((\d+),(\d+),(\d+)/))){ y=+m[1]; mo=+m[2]; da=+m[3]; }           // gviz日付セル（月0始まり）
-  else if((m = s.match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/))){ y=+m[1]; mo=+m[2]-1; da=+m[3]; }
+  if((m = s.match(/Date\((\d+),(\d+),(\d+)/))){ y=+m[1]; mo=+m[2]; da=+m[3]; }               // gviz日付セル（月0始まり）
+  else if((m = s.match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/))){ y=+m[1]; mo=+m[2]-1; da=+m[3]; }  // 年あり
+  else if((m = s.match(/(\d{1,2})[\/月](\d{1,2})/))){                                          // 年なし「7月10日」「7/10」→直近の日付として解釈
+    mo = +m[1]-1; da = +m[2];
+    const now = new Date(); y = now.getFullYear();
+    const cand = new Date(y, mo, da, 23, 59, 59).getTime();
+    if(cand < now.getTime() - 86400000*3) y += 1;   // 3日以上前の日付なら翌年扱い
+  }
   else return null;
   return new Date(y, mo, da, 23, 59, 59).getTime();
 }
