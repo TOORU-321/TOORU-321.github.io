@@ -1641,8 +1641,7 @@ function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.str
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
 function accountStatusLabel(){
   if(!SESSION || !SESSION.email) return "";
-  const tags = SESSION.tags || [];
-  if(SESSION.active) return tags.includes("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
+  if(SESSION.active) return hasTag("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
   return "無料登録";
 }
 function renderAcctMenu(){
@@ -2091,8 +2090,10 @@ document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
   });
 });
 
-function isAdmin(){ return !!(SESSION && (SESSION.tags || []).includes("admin")); }
-function isVip(){ return !!(SESSION && (SESSION.tags || []).includes("vip")); }
+// タグ判定は大文字小文字を区別しない（VIP / vip どちらでもOK）
+function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION && (SESSION.tags || []).some(t => String(t).toLowerCase() === n)); }
+function isAdmin(){ return hasTag("admin"); }
+function isVip(){ return hasTag("vip"); }
 // VIP限定：タスク管理アプリを開く（URLはソースに直書きせず難読化）
 function openTaskApp(){
   if(!isVip()){ showToast("この機能はVIP会員限定です。"); return; }
