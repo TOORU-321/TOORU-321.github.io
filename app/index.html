@@ -2337,8 +2337,10 @@ function coursesFromGviz(json){
     const cname = cell(r,iName), chap = cell(r,iChap), title = cell(r,iTitle), url = cell(r,iUrl);
     if(!cname || !url || cname === "コース名") return;
     const pv = parseVideoUrl(url); if(!pv) return;
+    const kind = cell(r,iKind);
+    if(/非公開|非表示|下書き|draft|hidden|private/i.test(kind)) return;   // 種別=非公開 はアプリに出さない
     ri++;   // シート上の並び順（上から）
-    const kind = cell(r,iKind), tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw), deadline = cell(r,iDeadline);
+    const tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw), deadline = cell(r,iDeadline);
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
