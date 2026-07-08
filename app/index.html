@@ -979,6 +979,14 @@ a{text-decoration:none}
 .ni-like.liked{background:rgba(227,110,120,.14);border-color:rgba(227,110,120,.4);color:#f0b8bd;cursor:default}
 .ni-like.liked .nl-heart{color:#e56b74}
 .ni-like .nl-count{font-variant-numeric:tabular-nums;font-weight:700}
+.ni-poll{margin:14px 0 4px;padding:13px 14px;border-radius:12px;background:rgba(227,195,129,.06);border:1px solid rgba(227,195,129,.2)}
+.np-q{font-family:var(--gothic);font-size:12px;font-weight:700;color:#e6c884;letter-spacing:.03em;margin-bottom:9px}
+.np-opts{display:flex;flex-wrap:wrap;gap:8px}
+.np-opt{font-family:var(--gothic);font-size:13px;font-weight:600;color:#e8dcc0;background:rgba(255,255,255,.04);border:1px solid rgba(227,195,129,.28);border-radius:999px;padding:9px 20px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
+.np-opt:hover{background:rgba(227,195,129,.12);border-color:rgba(227,195,129,.5)}
+.np-opt:active{transform:scale(.96)}
+.np-opt.chosen{background:linear-gradient(135deg,#e8c880,#caa75f);color:#1c1a14;border-color:transparent;font-weight:700}
+.np-done{font-family:var(--gothic);font-size:11.5px;color:#7fc9a6;margin-top:9px;min-height:1em}
 .ni-admin button{
   border-color:rgba(227,195,129,.15);
   color:#878b8c;
@@ -1538,6 +1546,8 @@ a{text-decoration:none}
       <textarea id="nf-body" rows="4" placeholder="本文…（Googleフォームのリンクを貼ればアンケートにも）"></textarea>
       <label>画像URL（任意・画像への直リンク）</label>
       <input type="text" id="nf-image" placeholder="https://…/photo.jpg">
+      <label>アンケート選択肢（任意・カンマ区切り　例：参加します,不参加）</label>
+      <input type="text" id="nf-options" placeholder="参加します,不参加">
       <label class="nf-check"><input type="checkbox" id="nf-pub" checked> 公開する</label>
       <div class="nf-btns">
         <button class="nf-save" id="nfSave">保存</button>
@@ -1618,7 +1628,7 @@ const vfiled  = document.getElementById("vfiled");
 const lkbtn   = document.getElementById("lkbtn");
 const wrap    = document.getElementById("vcourses");
 
-const GAS_URL     = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+const GAS_URL     = "https://script.google.com/macros/s/AKfycbwsMD7lO2LqfqesZNEvzSeC582ZNYFDLIR6ZfayVJ8EA4M1VTowwt1BJ_MwYWp4dkCW9A/exec";
 const SESSION_KEY = "lmine_member";
 const GUEST_KEY   = "lmine_guest";
 let SESSION   = null;
@@ -2219,6 +2229,15 @@ function newsItemEl(n){
   const el = document.createElement("div"); el.className = "news-item";
   const img = n.image ? `<img class="ni-img" src="${escapeHtml(n.image)}" loading="lazy" alt="" onerror="this.remove()">` : "";
   el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div>${img}<div class="ni-body">${linkify(n.body)}</div>`;
+  // アンケート（参加します/はい・いいえ 等）→ 回答者を記録
+  if(n.options && n.options.length){
+    const poll = document.createElement("div"); poll.className = "ni-poll";
+    const mine = localStorage.getItem("lmine_reply_" + n.id) || "";
+    const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
+    poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div><div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
+    poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
+    el.appendChild(poll);
+  }
   // ♥ いいね（数だけ表示・端末ごとに1回）
   const liked = localStorage.getItem("lmine_liked_" + n.id) === "1";
   const like = document.createElement("button");
@@ -2234,8 +2253,8 @@ function newsItemEl(n){
   }
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; document.getElementById("nf-image").value=n.image||""; document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-options").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; document.getElementById("nf-image").value=n.image||""; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
 function likeNews(id, btn){
   const key = "lmine_liked_" + id;
   if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
@@ -2244,11 +2263,19 @@ function likeNews(id, btn){
   const cnt = btn.querySelector(".nl-count"); if(cnt) cnt.textContent = String((parseInt(cnt.textContent, 10) || 0) + 1);
   try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_like", id:String(id) }) }); }catch(e){}
 }
+// アンケート回答（ログイン必須：メールと名前を記録して主催者が連絡できるように）
+function replyNews(id, choice, pollEl){
+  if(!(SESSION && SESSION.email)){ showToast("回答するにはログインが必要です。"); openLogin(); return; }
+  localStorage.setItem("lmine_reply_" + id, choice);
+  pollEl.querySelectorAll(".np-opt").forEach(b => b.classList.toggle("chosen", b.textContent === choice));
+  const done = pollEl.querySelector(".np-done"); if(done) done.textContent = `✓「${choice}」で回答しました`;
+  try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_reply", id:String(id), email:SESSION.email, name:SESSION.name||"", choice }) }); }catch(e){}
+}
 async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:document.getElementById("nf-image").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:document.getElementById("nf-image").value, options:document.getElementById("nf-options").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
