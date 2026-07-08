@@ -1404,8 +1404,7 @@ a{text-decoration:none}
       <div class="vfiled" id="vfiled"></div>
       <div class="vsupp" id="vsupp" hidden></div>
       <div class="vattach" id="vattach" hidden></div>
-      <div class="chapter-tabs" id="chapterTabs" hidden></div>
-      <div class="chapter-list" id="chapterList"></div>
+      <!-- 並び順：① 前後の動画 → ② 章内リスト → ③ 章リスト -->
       <div class="vnav" id="vnav" hidden>
         <button class="vnav-btn" id="vnavPrev" type="button">
           <span class="vnav-ar">←</span><span class="vnav-tx"><span class="vnav-lb">前の動画</span><span class="vnav-tt" id="vnavPrevT"></span></span>
@@ -1414,6 +1413,8 @@ a{text-decoration:none}
           <span class="vnav-tx"><span class="vnav-lb">次の動画</span><span class="vnav-tt" id="vnavNextT"></span></span><span class="vnav-ar">→</span>
         </button>
       </div>
+      <div class="chapter-list" id="chapterList"></div>
+      <div class="chapter-tabs" id="chapterTabs" hidden></div>
     </div>
   </main>
 </div>
