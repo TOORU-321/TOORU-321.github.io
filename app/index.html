@@ -1316,7 +1316,7 @@ a{text-decoration:none}
   .vlist{
     position:fixed;top:0;left:0;z-index:200;
     width:min(86vw,340px);height:100vh;height:100dvh;max-height:none;margin:0;
-    padding:74px 16px 26px;border-radius:0 18px 18px 0;
+    padding:74px 16px calc(94px + env(safe-area-inset-bottom,0px));border-radius:0 18px 18px 0;
     background:linear-gradient(160deg,#161d28,#0e131b);
     box-shadow:6px 0 44px rgba(0,0,0,.55);
     transform:translateX(-102%);
