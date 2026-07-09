@@ -1337,6 +1337,10 @@ a{text-decoration:none}
 .acct-vip{color:#f0d69c;background:rgba(227,195,129,.08);font-weight:700}
 .acct-vip:hover{background:rgba(227,195,129,.16)}
 .acct-badge{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-radius:999px;padding:2px 8px}
+.acct-tog{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:999px;padding:3px 11px}
+.acct-tog.on{color:#12281f;background:linear-gradient(135deg,#8fe0c0,#5cc4a2)}
+.acct-tog.off{color:#b7b6b0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16)}
+.acct-tog.na{color:#8f918f;background:rgba(255,255,255,.05)}
 .acct-div{height:1px;background:rgba(255,255,255,.07);margin:6px 4px}
 .lm-forgot{display:block;width:100%;margin-top:10px;background:none;border:none;cursor:pointer;font-family:var(--gothic);font-size:12px;color:#9c9e9a;padding:4px}
 .lm-forgot:hover{color:#e0c685;text-decoration:underline}
@@ -1570,7 +1574,6 @@ a{text-decoration:none}
       <button class="ph-install" id="pwaInstall" type="button" hidden>追加する</button>
       <button class="ph-x" id="pwaHintClose" type="button" aria-label="閉じる">×</button>
     </div>
-    <button class="news-notify" id="newsNotify" type="button" hidden>🔔 新着通知をオンにする</button>
     <div class="news-list" id="newsList"></div>
     <div class="news-form" id="newsForm" hidden>
       <input type="hidden" id="nf-id">
@@ -1703,6 +1706,9 @@ function renderAcctMenu(){
     html += `<button class="acct-item" data-act="exit"><span class="ai-ico">🚪</span>退室（トップへ戻る）</button>`;
   }
   html += `<div class="acct-div"></div>`;
+  const _ns = notifyState();
+  const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
+  html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -2098,6 +2104,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   if(!it) return;   // data-legal はドキュメントの委譲で処理
   const act = it.getAttribute("data-act");
   if(act === "taskapp") openTaskApp();
+  else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
   else if(act === "logout") logout();
@@ -2259,7 +2266,7 @@ function openLegal(key){
 }
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); maybeShowNotifyBtn(); }
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); }
 function closeNews(){ document.getElementById("newsModal").hidden = true; }
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
@@ -2372,19 +2379,36 @@ if("serviceWorker" in navigator){ navigator.serviceWorker.register("firebase-mes
 // ===== Webプッシュ通知（FCM） =====
 const VAPID_KEY = "BAtxAvwJITAJ_q2DHtIajcTI_UEgJQhOlPI3uQ8IlXoV_kfyG3SQyRSVkT83Iyln9RsReuwgcR3By6g7roWif1Y";
 function pushSupported(){ return ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window); }
-function maybeShowNotifyBtn(){
-  const b = document.getElementById("newsNotify"); if(!b) return;
-  if(!pushSupported() || (isIOS() && !isStandalone())){ b.hidden = true; return; }   // iPhoneはホーム画面追加後のみ
-  if(Notification.permission === "granted" && localStorage.getItem("lmine_push") === "1"){
-    b.textContent = "🔔 通知オン中"; b.classList.add("on"); b.disabled = true;
-  } else {
-    b.textContent = "🔔 新着通知をオンにする"; b.classList.remove("on"); b.disabled = false;
+// 通知の状態：on / off / unsupported
+function notifyState(){
+  if(!pushSupported()) return "unsupported";
+  if(Notification.permission === "denied") return "blocked";
+  if(Notification.permission === "granted" && localStorage.getItem("lmine_push") === "1") return "on";
+  return "off";
+}
+// メニューの「通知」トグル
+function toggleNotify(){
+  const s = notifyState();
+  if(s === "unsupported"){
+    if(isIOS()) showToast("iPhoneは「ホーム画面に追加」したアプリから通知をオンにできます（iOS16.4以上）。");
+    else showToast("この端末・ブラウザは通知に対応していません。");
+    return;
   }
-  b.hidden = false;
+  if(s === "blocked"){ showToast("ブラウザで通知がブロックされています。設定から許可してください。"); return; }
+  if(s === "on") disablePush(); else enablePush();
+}
+async function disablePush(){
+  localStorage.setItem("lmine_push", "0");
+  try{ if(firebase.messaging) await firebase.messaging().deleteToken(); }catch(e){}
+  showToast("通知をオフにしました。");
+  renderAcctMenu();
 }
 async function enablePush(){
-  if(!pushSupported()){ showToast("この端末・ブラウザは通知に対応していません。"); return; }
-  if(isIOS() && !isStandalone()){ showToast("iPhoneは先に「ホーム画面に追加」してから、アプリで通知をオンにできます。"); return; }
+  if(!pushSupported()){
+    if(isIOS()) showToast("iPhoneは「ホーム画面に追加」したアプリから通知をオンにできます（iOS16.4以上）。");
+    else showToast("この端末・ブラウザは通知に対応していません。");
+    return;
+  }
   try{
     const perm = await Notification.requestPermission();
     if(perm !== "granted"){ showToast("通知が許可されませんでした。"); return; }
@@ -2395,11 +2419,10 @@ async function enablePush(){
     window._pushToken = token;   // テスト用
     try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){}
     localStorage.setItem("lmine_push", "1");
-    showToast("🔔 新着通知をオンにしました！");
-    maybeShowNotifyBtn();
+    showToast("🔔 通知をオンにしました！");
+    renderAcctMenu();
   }catch(e){ showToast("通知の設定に失敗しました。時間をおいて再度お試しください。"); }
 }
-document.getElementById("newsNotify").addEventListener("click", enablePush);
 let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt = e; });
 function isStandalone(){ try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }catch(e){ return false; } }
