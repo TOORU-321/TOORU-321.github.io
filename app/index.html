@@ -979,6 +979,7 @@ a{text-decoration:none}
 .ni-like.liked{background:rgba(227,110,120,.14);border-color:rgba(227,110,120,.4);color:#f0b8bd;cursor:default}
 .ni-like.liked .nl-heart{color:#e56b74}
 .ni-like .nl-count{font-variant-numeric:tabular-nums;font-weight:700}
+.ni-admin .ni-mailtest{color:#8fdcc0!important;background:rgba(111,203,184,.10)!important;border-color:rgba(111,203,184,.4)!important;font-weight:700}
 .ni-admin .ni-mail{color:#1c1a14!important;background:linear-gradient(135deg,#e8c880,#caa75f)!important;border-color:transparent!important;font-weight:700}
 .ni-poll{margin:14px 0 4px;padding:13px 14px;border-radius:12px;background:rgba(227,195,129,.06);border:1px solid rgba(227,195,129,.2)}
 .np-q{font-family:var(--gothic);font-size:12px;font-weight:700;color:#e6c884;letter-spacing:.03em;margin-bottom:9px}
@@ -2271,10 +2272,11 @@ function newsItemEl(n){
   el.appendChild(like);
   if(isAdmin()){
     const bar = document.createElement("div"); bar.className = "ni-admin";
-    const bml = document.createElement("button"); bml.className = "ni-mail"; bml.textContent = "📧 メール配信"; bml.onclick = ()=>mailNews(n);
+    const bmt = document.createElement("button"); bmt.className = "ni-mailtest"; bmt.textContent = "🧪 自分にテスト"; bmt.onclick = ()=>mailNews(n, true);
+    const bml = document.createElement("button"); bml.className = "ni-mail"; bml.textContent = "📢 全員に配信"; bml.onclick = ()=>mailNews(n, false);
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
     const bd = document.createElement("button"); bd.textContent = "削除"; bd.onclick = ()=>delNews(n);
-    bar.appendChild(bml); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
+    bar.appendChild(bmt); bar.appendChild(bml); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
   }
   return el;
 }
@@ -2289,12 +2291,18 @@ function likeNews(id, btn){
   try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_like", id:String(id) }) }); }catch(e){}
 }
 // 管理者：このお知らせを、配信希望の会員にメール送信（Brevo経由）
-async function mailNews(n){
-  if(!confirm(`「${n.title}」を、メール配信を希望している会員へメール送信します。よろしいですか？`)) return;
-  showToast("メール送信中…");
+async function mailNews(n, test){
+  const myMail = (SESSION && SESSION.email) || "";
+  const msg = test
+    ? `「${n.title}」を、あなた（${myMail}）だけにテスト送信します。よろしいですか？`
+    : `「${n.title}」を、メール配信OKの会員【全員】に送信します。本当に送りますか？`;
+  if(!confirm(msg)) return;
+  showToast(test ? "テスト送信中…" : "メール送信中…");
   try{
-    const res = await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_mail", email:(SESSION && SESSION.email)||"", id:String(n.id) }) }).then(r=>r.json());
-    if(res.ok){ showToast(`✅ ${res.sent}/${res.total}件に送信しました。`); }
+    const body = new URLSearchParams({ action:"news_mail", email:myMail, id:String(n.id) });
+    if(test) body.set("test", "1");
+    const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
+    if(res.ok){ showToast(test ? `✅ 自分に1件テスト送信しました。` : `✅ ${res.sent}/${res.total}件に送信しました。`); }
     else if(res.error === "no_brevo_key"){ showToast("Brevo APIキーが未設定です（GASのスクリプトプロパティ）。"); }
     else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else if(res.error === "no_recipients"){ showToast("送信対象の会員がいません。"); }
