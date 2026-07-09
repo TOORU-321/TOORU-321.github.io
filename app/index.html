@@ -1997,6 +1997,7 @@ async function applyTierAndEnter(email, closeFn){
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
   saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, registered:true });
+  try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email }) }); }catch(_e){}   // 最終ログイン日時を記録（名簿に「最終ログイン」列がある時）
   if(closeFn) closeFn();
   hideAuthLoading();    // ローディングを消してオープニングへ
   enterLibrary(true);   // ③ ログイン/登録直後はオープニング動画
