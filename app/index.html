@@ -6,6 +6,10 @@
 <title>エルラボ＋｜L-MINE</title>
 <link rel="icon" href="../assets/favicon.png">
 <link rel="apple-touch-icon" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="エルラボ＋">
 <meta name="apple-mobile-web-app-title" content="エルラボ＋">
 <meta name="theme-color" content="#12141c">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -971,6 +975,13 @@ a{text-decoration:none}
 .ni-title{color:#eee9df;font-size:15px}
 .ni-body{color:#aaa9a4;font-size:12.5px}
 .ni-body a{color:#dfc17d;border-color:rgba(227,195,129,.24)}
+.pwa-hint{position:relative;display:flex;align-items:flex-start;gap:11px;margin:4px 0 12px;padding:13px 34px 13px 14px;border-radius:12px;background:rgba(227,195,129,.08);border:1px solid rgba(227,195,129,.26)}
+.pwa-hint[hidden]{display:none}
+.pwa-hint .ph-ico{font-size:20px;line-height:1.2;flex:none}
+.pwa-hint .ph-tx{font-family:var(--gothic);font-size:12px;line-height:1.75;color:#d8cfb8}
+.pwa-hint .ph-tx b{color:#ecd7aa;font-weight:700}
+.pwa-hint .ph-install{flex:none;align-self:center;font-family:var(--gothic);font-size:12px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border:none;border-radius:999px;padding:8px 16px;cursor:pointer;white-space:nowrap}
+.pwa-hint .ph-x{position:absolute;top:6px;right:8px;background:none;border:none;color:#8f918f;font-size:18px;line-height:1;cursor:pointer;padding:2px 6px}
 .ni-img{display:block;width:100%;max-width:100%;border-radius:12px;margin:10px 0 4px;border:1px solid rgba(227,195,129,.14)}
 .ni-like{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 15px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#b7b6b0;font-family:var(--gothic);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
 .ni-like:hover{background:rgba(227,110,120,.10);border-color:rgba(227,110,120,.34)}
@@ -1547,6 +1558,12 @@ a{text-decoration:none}
     <div class="news-head">
       <div class="lm-h">お知らせ</div>
       <button class="news-new" id="newsNew" hidden>＋ 新規投稿</button>
+    </div>
+    <div class="pwa-hint" id="pwaHint" hidden>
+      <span class="ph-ico">📲</span>
+      <div class="ph-tx" id="pwaHintTx"></div>
+      <button class="ph-install" id="pwaInstall" type="button" hidden>追加する</button>
+      <button class="ph-x" id="pwaHintClose" type="button" aria-label="閉じる">×</button>
     </div>
     <div class="news-list" id="newsList"></div>
     <div class="news-form" id="newsForm" hidden>
@@ -2236,7 +2253,7 @@ function openLegal(key){
 }
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); }
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); }
 function closeNews(){ document.getElementById("newsModal").hidden = true; }
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
@@ -2342,6 +2359,34 @@ document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.targe
 
 document.getElementById("entryLogin").addEventListener("click", openLogin);
 document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(true); });
+
+// ===== PWA：Service Worker登録＋「ホーム画面に追加」案内 =====
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt = e; });
+function isStandalone(){ try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }catch(e){ return false; } }
+function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+function maybeShowPwaHint(){
+  const el = document.getElementById("pwaHint"); if(!el) return;
+  if(isStandalone() || localStorage.getItem("lmine_pwa_dismiss") === "1"){ el.hidden = true; return; }
+  const tx = document.getElementById("pwaHintTx"), btn = document.getElementById("pwaInstall");
+  if(isIOS()){
+    tx.innerHTML = "<b>ホーム画面に追加</b>すると素早く開けて、<b>新着通知</b>も受け取れます（近日対応）。<br>Safariの<b>共有ボタン</b>［□↑］→「<b>ホーム画面に追加</b>」でOK。";
+    btn.hidden = true;
+  } else {
+    tx.innerHTML = "<b>ホーム画面に追加</b>すると素早く開けて、<b>新着通知</b>も受け取れます（近日対応）。";
+    btn.hidden = !deferredPrompt;
+  }
+  el.hidden = false;
+}
+document.getElementById("pwaHintClose").addEventListener("click", function(){ document.getElementById("pwaHint").hidden = true; try{ localStorage.setItem("lmine_pwa_dismiss","1"); }catch(e){} });
+document.getElementById("pwaInstall").addEventListener("click", async function(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  try{ await deferredPrompt.userChoice; }catch(e){}
+  deferredPrompt = null;
+  document.getElementById("pwaHint").hidden = true;
+});
 
 loadSession();
 initEntry();

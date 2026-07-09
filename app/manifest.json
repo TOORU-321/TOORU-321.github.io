@@ -1,0 +1,16 @@
+{
+  "name": "エルラボ＋",
+  "short_name": "エルラボ＋",
+  "description": "L-MINE 会員向けオンライン講座アプリ",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12141c",
+  "theme_color": "#12141c",
+  "lang": "ja",
+  "icons": [
+    { "src": "../assets/favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../assets/favicon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
