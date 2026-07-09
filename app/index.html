@@ -2429,19 +2429,32 @@ function isStandalone(){ try{ return window.matchMedia("(display-mode: standalon
 function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function maybeShowPwaHint(){
   const el = document.getElementById("pwaHint"); if(!el) return;
-  if(isStandalone() || localStorage.getItem("lmine_pwa_dismiss") === "1"){ el.hidden = true; return; }
+  if(localStorage.getItem("lmine_pwa_dismiss") === "1"){ el.hidden = true; return; }
   const tx = document.getElementById("pwaHintTx"), btn = document.getElementById("pwaInstall");
-  if(isIOS()){
-    tx.innerHTML = "<b>ホーム画面に追加</b>すると素早く開けて、<b>新着通知</b>も受け取れます（近日対応）。<br>Safariの<b>共有ボタン</b>［□↑］→「<b>ホーム画面に追加</b>」でOK。";
+  if(notifyState() === "on"){ el.hidden = true; return; }   // 通知オン済みなら案内不要
+  if(isIOS() && !isStandalone()){
+    // iPhoneのSafari：まずホーム画面に追加 → その後メニューでオン
+    tx.innerHTML = "🔔 <b>新着のお知らせ</b>を通知で受け取れます。まず Safariの<b>共有［□↑］→「ホーム画面に追加」</b>を。追加後、アプリの<b>メニュー（☰）→新着通知</b>でオンにできます。";
     btn.hidden = true;
+  } else if(pushSupported()){
+    // 通知オンにできる（PWA / Android / PC）
+    tx.innerHTML = "🔔 <b>新着のお知らせ</b>を通知で受け取れます。<b>メニュー（☰）→新着通知</b>、または右のボタンからオンに。";
+    btn.hidden = false; btn.textContent = "🔔 オンにする";
   } else {
-    tx.innerHTML = "<b>ホーム画面に追加</b>すると素早く開けて、<b>新着通知</b>も受け取れます（近日対応）。";
-    btn.hidden = !deferredPrompt;
+    // 非対応環境：ホーム画面追加の案内のみ
+    tx.innerHTML = "📲 <b>ホーム画面に追加</b>すると、次回から素早く開けます。";
+    btn.hidden = !deferredPrompt; if(!btn.hidden) btn.textContent = "追加する";
   }
   el.hidden = false;
 }
 document.getElementById("pwaHintClose").addEventListener("click", function(){ document.getElementById("pwaHint").hidden = true; try{ localStorage.setItem("lmine_pwa_dismiss","1"); }catch(e){} });
 document.getElementById("pwaInstall").addEventListener("click", async function(){
+  // 通知オンにできる環境なら「オンにする」、そうでなければPWAインストール
+  if(pushSupported() && notifyState() !== "on" && !(isIOS() && !isStandalone())){
+    enablePush();
+    document.getElementById("pwaHint").hidden = true;
+    return;
+  }
   if(!deferredPrompt) return;
   deferredPrompt.prompt();
   try{ await deferredPrompt.userChoice; }catch(e){}
