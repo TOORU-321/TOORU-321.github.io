@@ -982,6 +982,10 @@ a{text-decoration:none}
 .pwa-hint .ph-tx b{color:#ecd7aa;font-weight:700}
 .pwa-hint .ph-install{flex:none;align-self:center;font-family:var(--gothic);font-size:12px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border:none;border-radius:999px;padding:8px 16px;cursor:pointer;white-space:nowrap}
 .pwa-hint .ph-x{position:absolute;top:6px;right:8px;background:none;border:none;color:#8f918f;font-size:18px;line-height:1;cursor:pointer;padding:2px 6px}
+.news-notify{display:block;width:100%;margin:0 0 14px;padding:12px;border-radius:12px;font-family:var(--gothic);font-size:13.5px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border:none;cursor:pointer;letter-spacing:.03em;transition:filter .15s}
+.news-notify[hidden]{display:none}
+.news-notify:hover{filter:brightness(1.05)}
+.news-notify.on{color:#8fdcc0;background:rgba(111,203,184,.10);border:1px solid rgba(111,203,184,.4);cursor:default}
 .ni-img{display:block;width:100%;max-width:100%;border-radius:12px;margin:10px 0 4px;border:1px solid rgba(227,195,129,.14)}
 .ni-like{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 15px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#b7b6b0;font-family:var(--gothic);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
 .ni-like:hover{background:rgba(227,110,120,.10);border-color:rgba(227,110,120,.34)}
@@ -1386,6 +1390,7 @@ a{text-decoration:none}
 <!-- Firebase Authentication（compat SDK：既存の素のscript構成のまま使える） -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 </head>
 <body>
 <section class="entry" id="entry">
@@ -1565,6 +1570,7 @@ a{text-decoration:none}
       <button class="ph-install" id="pwaInstall" type="button" hidden>追加する</button>
       <button class="ph-x" id="pwaHintClose" type="button" aria-label="閉じる">×</button>
     </div>
+    <button class="news-notify" id="newsNotify" type="button" hidden>🔔 新着通知をオンにする</button>
     <div class="news-list" id="newsList"></div>
     <div class="news-form" id="newsForm" hidden>
       <input type="hidden" id="nf-id">
@@ -2253,7 +2259,7 @@ function openLegal(key){
 }
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); }
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); maybeShowNotifyBtn(); }
 function closeNews(){ document.getElementById("newsModal").hidden = true; }
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
@@ -2361,7 +2367,39 @@ document.getElementById("entryLogin").addEventListener("click", openLogin);
 document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(true); });
 
 // ===== PWA：Service Worker登録＋「ホーム画面に追加」案内 =====
-if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("firebase-messaging-sw.js").catch(function(){}); }
+
+// ===== Webプッシュ通知（FCM） =====
+const VAPID_KEY = "BAtxAvwJITAJ_q2DHtIajcTI_UEgJQhOlPI3uQ8IlXoV_kfyG3SQyRSVkT83Iyln9RsReuwgcR3By6g7roWif1Y";
+function pushSupported(){ return ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window); }
+function maybeShowNotifyBtn(){
+  const b = document.getElementById("newsNotify"); if(!b) return;
+  if(!pushSupported() || (isIOS() && !isStandalone())){ b.hidden = true; return; }   // iPhoneはホーム画面追加後のみ
+  if(Notification.permission === "granted" && localStorage.getItem("lmine_push") === "1"){
+    b.textContent = "🔔 通知オン中"; b.classList.add("on"); b.disabled = true;
+  } else {
+    b.textContent = "🔔 新着通知をオンにする"; b.classList.remove("on"); b.disabled = false;
+  }
+  b.hidden = false;
+}
+async function enablePush(){
+  if(!pushSupported()){ showToast("この端末・ブラウザは通知に対応していません。"); return; }
+  if(isIOS() && !isStandalone()){ showToast("iPhoneは先に「ホーム画面に追加」してから、アプリで通知をオンにできます。"); return; }
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm !== "granted"){ showToast("通知が許可されませんでした。"); return; }
+    const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+    await navigator.serviceWorker.ready;
+    const token = await firebase.messaging().getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if(!token){ showToast("通知トークンを取得できませんでした。"); return; }
+    window._pushToken = token;   // テスト用
+    try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){}
+    localStorage.setItem("lmine_push", "1");
+    showToast("🔔 新着通知をオンにしました！");
+    maybeShowNotifyBtn();
+  }catch(e){ showToast("通知の設定に失敗しました。時間をおいて再度お試しください。"); }
+}
+document.getElementById("newsNotify").addEventListener("click", enablePush);
 let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt = e; });
 function isStandalone(){ try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }catch(e){ return false; } }
