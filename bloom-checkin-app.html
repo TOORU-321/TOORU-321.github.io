@@ -61,6 +61,12 @@
   .chip .x{margin-left:auto;opacity:.4;font-weight:800;padding:0 2px}
   .qd2 .empty{font-size:11px;color:var(--sub);opacity:.65;text-align:center;padding:12px 0}
   .qsel{display:flex;gap:6px;margin-top:8px}
+  .ksel{display:flex;gap:6px;margin-top:6px}
+  .ksel button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 4px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sub);line-height:1.25}
+  .ksel button.on{border-color:var(--pp);background:var(--pp-l);color:var(--pp-d)}
+  .kbadge{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:6px;margin-left:5px;vertical-align:middle;letter-spacing:.02em;white-space:nowrap}
+  .kbadge.recur{background:#E4F1EB;color:#2F8F6B}
+  .kbadge.once{background:#EEF1F4;color:#5B6673}
   .qsel button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 4px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sub);line-height:1.3}
   .qsel button.on{border-color:var(--pp);background:var(--pp-l);color:var(--pp-d)}
   .badge-honmaru{font-size:9px;background:var(--pp);color:#fff;padding:2px 6px;border-radius:6px;margin-left:4px}
@@ -664,11 +670,17 @@ var QMETA={Q1:{name:'すぐやる',axis:'重要 × 緊急',ic:'🔥',cl:'q1'},Q2
 var state={ uid:null, email:'', _authMode:'login', _editAnn:null, isCoach:false, role:'student', tab:'today',
   name:'', ksf:'', tasks:[], todayDone:{}, reflection:'', advice:'',
   announcements:[], activity:[], todayCount:0, streak:0, checkinDays:0,
-  _newq:'Q2', _newtaskText:'', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
+  _newq:'Q2', _newkind:'once', _newtaskText:'', _refl:'', _openTerm:null, _taskMenu:null, popupQueue:[],
   coachTab:'list', _karte:null, weekDates:[], coachStudents:[] };
 
 function todayKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function monthKey(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function tKind(t){ return (t&&t.kind==='recur')?'recur':'once'; }
+function tDoneToday(t){ if(!t) return false; if(t.doneDate) return t.doneDate===todayKey(); return !!t.done; }
+function tActive(t){ if(!t) return false; if(tKind(t)==='recur') return true; if(t.doneDate) return t.doneDate===todayKey(); if(t.done) return false; return true; }
+function kindBadge(t){ return tKind(t)==='recur'?'<span class="kbadge recur">継続</span>':'<span class="kbadge once">単発</span>'; }
+function setNewKind(k){ state._newkind=k; render(); }
+async function toggleKind(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return; t.kind=(tKind(t)==='recur')?'once':'recur'; render(); try{ await db.doc('tasks/'+id).update({kind:t.kind}); }catch(e){ err(e); } }
 function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
 function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
 function err(e){ console.error(e); }
@@ -692,7 +704,7 @@ async function boot(){
 
 async function loadStudent(){
   try{ var kdoc=await db.doc('ksf/'+state.uid+'_'+monthKey()).get(); state.ksf = kdoc.exists ? (kdoc.data().text||'') : ''; }catch(e){ err(e); }
-  try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q,done:!!x.done}); }); }catch(e){ err(e); }
+  try{ var tq=await db.collection('tasks').where('uid','==',state.uid).get(); state.tasks=[]; tq.forEach(function(d){ var x=d.data(); state.tasks.push({id:d.id,text:x.text,q:x.q,done:!!x.done,kind:x.kind||'once',doneDate:x.doneDate||''}); }); }catch(e){ err(e); }
   try{ var c=await db.doc('checkins/'+state.uid+'_'+todayKey()).get(); if(c.exists){ var cd=c.data(); state.todayDone={}; (cd.items||[]).forEach(function(it){ if(it.done) state.todayDone[it.id]=true; }); state.reflection=cd.reflection||''; } }catch(e){ err(e); }
   try{ var ad=await db.doc('advice/'+state.uid).get(); state.advice = ad.exists?(ad.data().text||''):''; }catch(e){ state.advice=''; }
   await loadAnnouncements(); await loadActivity();
@@ -708,7 +720,7 @@ async function loadActivity(){
 function q2ratio(){ var done=state.tasks.filter(function(t){return state.todayDone[t.id];}); if(!done.length) return 0; return Math.round(done.filter(function(t){return t.q==='Q2';}).length/done.length*100); }
 async function saveKsf(){ var e=document.getElementById('ksf'); if(!e) return; state.ksf=e.value; try{ await db.doc('ksf/'+state.uid+'_'+monthKey()).set({uid:state.uid,month:monthKey(),text:state.ksf,updatedAt:Date.now()},{merge:true}); toast('KSFを保存しました'); }catch(err2){ toast('保存に失敗: '+err2.code); } }
 function setNewQ(q){ state._newq=q; render(); }
-async function addTask(){ var ti=document.getElementById('newtask'); var text=((ti&&ti.value)||state._newtaskText||'').trim(); if(!text){ toast('やることを入力してください'); return; } var q=state._newq||'Q2'; state._newtaskText=''; try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
+async function addTask(){ var ti=document.getElementById('newtask'); var text=((ti&&ti.value)||state._newtaskText||'').trim(); if(!text){ toast('やることを入力してください'); return; } var q=state._newq||'Q2'; var k=state._newkind||'once'; state._newtaskText=''; try{ var ref=await db.collection('tasks').add({uid:state.uid,text:text,q:q,kind:k,createdAt:Date.now()}); state.tasks.push({id:ref.id,text:text,q:q,kind:k,doneDate:''}); render(); }catch(e){ toast('追加に失敗: '+e.code); } }
 async function cycleTask(id){ var order=['Q1','Q2','Q3','Q4']; var t=state.tasks.find(function(x){return x.id===id;}); if(!t) return; t.q=order[(order.indexOf(t.q)+1)%4]; render(); try{ await db.doc('tasks/'+id).update({q:t.q}); }catch(e){ err(e); } }
 async function delTask(id){ state.tasks=state.tasks.filter(function(t){return t.id!==id;}); state._taskMenu=null; render(); try{ await db.doc('tasks/'+id).delete(); }catch(e){ err(e); } }
 function toggleDone(id){ saveRefl(); state.todayDone[id]=!state.todayDone[id]; render(); }
@@ -725,7 +737,7 @@ async function submitDay(){
   }catch(e){ toast('送信に失敗: '+e.code); }
 }
 function restDay(){ alert('🌙 今日はお休みを記録しました。\nしっかり休むことも大切な選択です。よく休むと明日のクオリティも上がります。ゆっくりしてくださいね。'); }
-function todayTasks(){ return state.tasks.filter(function(t){return (t.q==='Q1'||t.q==='Q2') && !t.done;}); }
+function todayTasks(){ return state.tasks.filter(function(t){return (t.q==='Q1'||t.q==='Q2') && tActive(t) && !tDoneToday(t);}); }
 
 function ring(p){ return '<div class="ring" style="background:conic-gradient(var(--pp) '+(p*3.6)+'deg,var(--pp-l) 0)"><div class="in">'+p+'%</div></div>'; }
 function viewToday(){
@@ -752,29 +764,30 @@ function viewToday(){
 }
 function openTaskMenu(id){ state._taskMenu=id; render(); }
 function closeTaskMenu(){ state._taskMenu=null; render(); }
-async function completeTask(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(t)t.done=true; state._taskMenu=null; render(); toast('完了！🎉 おつかれさま'); try{ await db.doc('tasks/'+id).update({done:true,completedAt:Date.now()}); }catch(e){ err(e); } }
-async function uncompleteTask(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(t)t.done=false; state._taskMenu=null; render(); toast('未完了に戻しました'); try{ await db.doc('tasks/'+id).update({done:false}); }catch(e){ err(e); } }
+async function completeTask(id){ var d=todayKey(); var t=state.tasks.find(function(x){return x.id===id;}); if(t){t.doneDate=d;t.done=true;} state._taskMenu=null; render(); toast('完了！🎉 おつかれさま'); try{ await db.doc('tasks/'+id).update({doneDate:d,done:true,completedAt:Date.now()}); }catch(e){ err(e); } }
+async function uncompleteTask(id){ var t=state.tasks.find(function(x){return x.id===id;}); if(t){t.doneDate='';t.done=false;} state._taskMenu=null; render(); toast('未完了に戻しました'); try{ await db.doc('tasks/'+id).update({doneDate:'',done:false}); }catch(e){ err(e); } }
 function taskMenuHtml(){
   var t=state.tasks.find(function(x){return x.id===state._taskMenu;}); if(!t) return '';
   return '<div style="position:fixed;inset:0;background:rgba(20,15,40,.45);display:grid;place-items:center;z-index:60;padding:20px" onclick="closeTaskMenu()">'+
     '<div style="background:#fff;border-radius:18px;max-width:320px;width:100%;padding:20px;box-shadow:var(--shadow)" onclick="event.stopPropagation()">'+
       '<div style="font-weight:800;margin-bottom:2px">'+esc(t.text)+'</div>'+
-      '<div class="muted" style="font-size:12px;margin-bottom:14px">'+QMETA[t.q].ic+' '+QMETA[t.q].name+'</div>'+
-      (t.done?'<button class="btn" style="background:var(--amber)" onclick="uncompleteTask(\''+t.id+'\')">↩ 未完了に戻す</button>':'<button class="btn" style="background:var(--green)" onclick="completeTask(\''+t.id+'\')">✅ 完了</button>')+
-      '<button class="btn ghost" style="margin-top:8px" onclick="cycleTask(\''+t.id+'\')">↔ 象限を移動（タップで次へ）</button>'+
+      '<div class="muted" style="font-size:12px;margin-bottom:14px">'+QMETA[t.q].ic+' '+QMETA[t.q].name+' '+kindBadge(t)+'</div>'+
+      (tDoneToday(t)?'<button class="btn" style="background:var(--amber)" onclick="uncompleteTask(\''+t.id+'\')">↩ 未完了に戻す</button>':'<button class="btn" style="background:var(--green)" onclick="completeTask(\''+t.id+'\')">✅ 完了</button>')+
+      '<button class="btn ghost" style="margin-top:8px" onclick="cycleTask(\''+t.id+'\')">↔ 象限を移動（タップで次へ）</button>'+'<button class="btn ghost" style="margin-top:8px" onclick="toggleKind(\''+t.id+'\')">🔁 '+(tKind(t)==='recur'?'単発に変更':'継続に変更')+'</button>'+
       '<button class="btn" style="margin-top:8px;background:var(--red-l);color:var(--red)" onclick="delTask(\''+t.id+'\')">🗑 削除</button>'+
       '<button class="btn ghost" style="margin-top:8px;background:transparent;color:var(--sub)" onclick="closeTaskMenu()">閉じる</button>'+
     '</div></div>';
 }
 function quadBox(q){
-  var list=state.tasks.filter(function(t){return t.q===q;});
-  var chips=list.map(function(t){ return '<div class="chip" onclick="openTaskMenu(\''+t.id+'\')" title="タップで操作"'+(t.done?' style="opacity:.55"':'')+'><span style="'+(t.done?'text-decoration:line-through;color:var(--sub)':'')+'">'+(t.done?'✓ ':'')+esc(t.text)+'</span><span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
+  var list=state.tasks.filter(function(t){return t.q===q && tActive(t);});
+  var chips=list.map(function(t){ var dt=tDoneToday(t); return '<div class="chip" onclick="openTaskMenu(\''+t.id+'\')" title="タップで操作"'+(dt?' style="opacity:.55"':'')+'><span style="flex:1;'+(dt?'text-decoration:line-through;color:var(--sub)':'')+'">'+(dt?'✓ ':'')+esc(t.text)+'</span>'+kindBadge(t)+'<span class="x" onclick="event.stopPropagation();delTask(\''+t.id+'\')">×</span></div>'; }).join('')||'<div class="empty">＋ ここに追加</div>';
   var hi=q==='Q2';
   return '<div class="qd2 '+QMETA[q].cl+'"><div class="hd">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'<span class="badge-honmaru">本丸</span>':'')+'<span class="cnt">'+list.length+'</span></div><div class="ax2">'+QMETA[q].axis+'</div>'+chips+'</div>';
 }
 function viewPlan(){
   var nq=state._newq||'Q2';
   var sel=['Q1','Q2','Q3','Q4'].map(function(q){ return '<button class="'+(nq===q?'on':'')+'" onclick="setNewQ(\''+q+'\')">'+QMETA[q].ic+'<br>'+QMETA[q].name+'</button>'; }).join('');
+  var nk=state._newkind||'once'; var kindSel=[['once','単発','一度きり'],['recur','継続','毎日くり返す']].map(function(a){ return '<button class="'+(nk===a[0]?'on':'')+'" onclick="setNewKind(\''+a[0]+'\')">'+a[1]+'<br><span style="font-weight:400;font-size:9px">'+a[2]+'</span></button>'; }).join('');
   return ''+
   '<div class="ksf-hero"><div class="lbl">🎯 '+monthKey()+' の要（KSF）</div><div class="goal">'+(state.ksf?esc(state.ksf):'まだ未設定')+'</div>'+
     '<textarea id="ksf" placeholder="今月の要を1〜2個で…">'+esc(state.ksf)+'</textarea><div style="height:8px"></div>'+
@@ -783,7 +796,7 @@ function viewPlan(){
     '<div class="mtx"><div class="ax"></div><div class="ax">⏰ 緊急</div><div class="ax">緊急でない</div>'+
       '<div class="ax v">重要</div>'+quadBox('Q1')+quadBox('Q2')+'<div class="ax v">重要でない</div>'+quadBox('Q3')+quadBox('Q4')+'</div>'+
     '<div style="height:14px"></div><label class="fld">タスクを追加</label><input id="newtask" oninput="state._newtaskText=this.value" value="'+escAttr(state._newtaskText||'')+'" placeholder="やることを入力">'+
-    '<div class="qsel">'+sel+'</div><div style="height:10px"></div><button class="btn ghost" onclick="addTask()">＋ この象限に追加</button>'+
+    '<div class="qsel">'+sel+'</div>'+'<div style="height:10px"></div><label class="fld">種別（単発／継続）</label><div class="ksel">'+kindSel+'</div>'+'<div style="height:10px"></div><button class="btn ghost" onclick="addTask()">＋ この象限に追加</button>'+
     '<div class="hint" style="margin-top:12px">💡 多くの人は🔥①と🤝③に追われがち。🌱②に時間を割けると成果が伸びます。</div></div>'+(state._taskMenu?taskMenuHtml():'');
 }
 function viewFeed(){
@@ -857,7 +870,7 @@ async function loadCoach(){
       for(var w=0;w<state.weekDates.length;w++){ var ck=null; try{ var cd=await db.doc('checkins/'+s.uid+'_'+state.weekDates[w].key).get(); if(cd.exists) ck=cd.data(); }catch(e){} rec.wk.push(dayStatus(ck)); }
       try{ var k=await db.doc('ksf/'+s.uid+'_'+monthKey()).get(); rec.ksf=k.exists?(k.data().text||''):''; }catch(e){}
       try{ var ad=await db.doc('advice/'+s.uid).get(); rec.advice=ad.exists?(ad.data().text||''):''; }catch(e){}
-      rec.tasks=[]; try{ var tq=await db.collection('tasks').where('uid','==',s.uid).get(); tq.forEach(function(d){var x=d.data(); rec.tasks.push({text:x.text,q:x.q,done:!!x.done});}); }catch(e){}
+      rec.tasks=[]; try{ var tq=await db.collection('tasks').where('uid','==',s.uid).get(); tq.forEach(function(d){var x=d.data(); rec.tasks.push({text:x.text,q:x.q,done:!!x.done,kind:x.kind||'once',doneDate:x.doneDate||''});}); }catch(e){}
       var last=rec.wk[rec.wk.length-1]; rec.reported=last.st!=='none'; rec.done=last.done; rec.q2=last.q2; rec.reflection=last.reflection;
       var sil=0; for(var w2=rec.wk.length-1;w2>=0;w2--){ if(rec.wk[w2].st==='none')sil++; else break; } rec.silent=sil;
       var stk=0; for(var w3=rec.wk.length-1;w3>=0;w3--){ if(rec.wk[w3].st==='done')stk++; else break; } rec.streak=stk;
@@ -912,11 +925,11 @@ function coachTasksGrid(s){
   var ts=s.tasks||[];
   if(!ts.length) return '<p class="muted">まだタスクが登録されていません。</p>';
   var out=['Q1','Q2','Q3','Q4'].map(function(q){
-    var items=ts.filter(function(t){return t.q===q;});
+    var items=ts.filter(function(t){return t.q===q && tActive(t);});
     if(!items.length) return '';
     var hi=q==='Q2';
     return '<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:800;color:'+(hi?'var(--pp-d)':'var(--sub)')+'">'+QMETA[q].ic+' '+QMETA[q].name+(hi?'（本丸）':'')+'（'+items.length+'）</div>'+
-      items.map(function(t){return '<div style="font-size:13px;margin-top:4px;padding:4px 8px;border-left:3px solid '+(t.done?'var(--green)':hi?'var(--pp)':'var(--line)')+';'+(t.done?'text-decoration:line-through;color:var(--sub)':'')+'">'+(t.done?'✓ ':'')+esc(t.text)+'</div>';}).join('')+'</div>';
+      items.map(function(t){var dt=tDoneToday(t);return '<div style="font-size:13px;margin-top:4px;padding:4px 8px;border-left:3px solid '+(dt?'var(--green)':hi?'var(--pp)':'var(--line)')+';'+(dt?'text-decoration:line-through;color:var(--sub)':'')+'">'+(dt?'✓ ':'')+esc(t.text)+kindBadge(t)+'</div>';}).join('')+'</div>';
   }).join('');
   return out||'<p class="muted">タスクなし</p>';
 }
