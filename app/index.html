@@ -1586,8 +1586,8 @@ a{text-decoration:none}
       <input type="text" id="nf-title" placeholder="お知らせのタイトル">
       <label>本文（URL・アンケートのリンクは自動でリンクになります）</label>
       <textarea id="nf-body" rows="4" placeholder="本文…（Googleフォームのリンクを貼ればアンケートにも）"></textarea>
-      <label>画像URL（任意・画像への直リンク）</label>
-      <input type="text" id="nf-image" placeholder="https://…/photo.jpg">
+      <label>画像URL（任意・直リンク or GoogleドライブURLでOK）</label>
+      <input type="text" id="nf-image" placeholder="https://…/photo.jpg ／ ドライブの共有URLも可">
       <label>アンケート選択肢（任意・カンマ区切り　例：参加します,不参加）</label>
       <input type="text" id="nf-options" placeholder="参加します,不参加">
       <label class="nf-check"><input type="checkbox" id="nf-pub" checked> 公開する</label>
@@ -1619,7 +1619,7 @@ const REGISTER_URL = "https://l-mine.com/onlinecourse";
 const TERMS_URL    = "https://l-mine.com/term";
 const PRIVACY_URL  = "https://l-mine.com/privacy"; // TODO: 正式URL待ち
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
-const APP_VERSION  = "1.0.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.0.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2287,9 +2287,19 @@ async function loadNews(){
     items.forEach(n => list.appendChild(newsItemEl(n)));
   }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
 }
+// 画像URLを整える：GoogleドライブURL（共有リンク）→ 直接表示できる画像URLに変換
+function toImgUrl(u){
+  u = String(u||"").trim();
+  if(!u) return u;
+  if(/drive\.google\.com|docs\.google\.com/.test(u)){
+    const m = u.match(/\/file\/d\/([-\w]{20,})/) || u.match(/[?&]id=([-\w]{20,})/) || u.match(/\/d\/([-\w]{20,})/);
+    if(m) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w1600";
+  }
+  return u;
+}
 function newsItemEl(n){
   const el = document.createElement("div"); el.className = "news-item";
-  const img = n.image ? `<img class="ni-img" src="${escapeHtml(n.image)}" loading="lazy" alt="" onerror="this.remove()">` : "";
+  const img = n.image ? `<img class="ni-img" src="${escapeHtml(toImgUrl(n.image))}" loading="lazy" alt="" onerror="this.remove()">` : "";
   el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div>${img}<div class="ni-body">${linkify(n.body)}</div>`;
   // アンケート（参加します/はい・いいえ 等）→ 回答者を記録
   if(n.options && n.options.length){
