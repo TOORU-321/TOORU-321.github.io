@@ -73,6 +73,9 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .optin p{font-size:13.5px;color:#d7dae0;line-height:1.9;margin-bottom:18px}
 .optin .optin-btn{display:inline-block;background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#fff;font-weight:700;font-size:14px;padding:13px 32px;border-radius:999px;text-decoration:none;letter-spacing:.03em}
 .optin .optin-btn:hover{filter:brightness(1.06)}
+.optin .optin-sub{font-size:12.5px;color:#aeb4be;line-height:1.85;margin:16px 0 0}
+.optin .optin-sub a{color:#fff;text-decoration:underline;text-underline-offset:2px;font-weight:700}
+.optin .optin-sub a:hover{color:var(--gold-2)}
 .body ul{margin:0 0 2.35em;padding-left:1.25em}
 .body li{margin:.25em 0;line-height:1.8}
 .body figure.cimg{margin:2.4em 0;text-align:center}
@@ -182,10 +185,13 @@ footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)
 .lm-pop-mag{display:block;text-align:center;font-weight:700;font-size:13px;color:var(--gold);padding:10px 14px;border-radius:999px;border:1.5px solid var(--gold-2);background:#fffdf7}
 .lm-pop-insta:hover{filter:brightness(1.06)}
 .lm-pop-mag:hover{background:#fbf4e6}
+.lm-pop-app{display:block;text-align:center;font-weight:700;font-size:13px;color:var(--ink-2);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line-2);background:#fff}
+.lm-pop-app:hover{background:#f6f7f9}
 @media(max-width:600px){
   .lm-popup{right:0;left:0;bottom:0;width:auto;max-width:none;border-radius:14px 14px 0 0;border-left:none;border-right:none;border-bottom:none;padding:15px 15px 17px;transform:translateY(100%)}
   .lm-popup.show{transform:translateY(0)}
   .lm-pop-txt{margin-bottom:12px}
-  .lm-pop-btns{flex-direction:row}
+  .lm-pop-btns{flex-direction:row;flex-wrap:wrap}
   .lm-pop-insta,.lm-pop-mag{flex:1;padding:12px 8px;font-size:12.5px}
+  .lm-pop-app{flex-basis:100%;padding:11px 8px;font-size:12.5px}
 }
