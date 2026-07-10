@@ -996,6 +996,8 @@ a{text-decoration:none}
 .ni-like .nl-count{font-variant-numeric:tabular-nums;font-weight:700}
 .ni-admin .ni-mailtest{color:#8fdcc0!important;background:rgba(111,203,184,.10)!important;border-color:rgba(111,203,184,.4)!important;font-weight:700}
 .ni-admin .ni-mail{color:#1c1a14!important;background:linear-gradient(135deg,#e8c880,#caa75f)!important;border-color:transparent!important;font-weight:700}
+.ni-admin .ni-pushtest{color:#9fd0f5!important;background:rgba(55,138,221,.12)!important;border-color:rgba(55,138,221,.4)!important;font-weight:700}
+.ni-admin .ni-push{color:#fff!important;background:linear-gradient(135deg,#4a9be8,#2f7fd0)!important;border-color:transparent!important;font-weight:700}
 .ni-poll{margin:14px 0 4px;padding:13px 14px;border-radius:12px;background:rgba(227,195,129,.06);border:1px solid rgba(227,195,129,.2)}
 .np-q{font-family:var(--gothic);font-size:12px;font-weight:700;color:#e6c884;letter-spacing:.03em;margin-bottom:9px}
 .np-opts{display:flex;flex-wrap:wrap;gap:8px}
@@ -2303,11 +2305,13 @@ function newsItemEl(n){
   el.appendChild(like);
   if(isAdmin()){
     const bar = document.createElement("div"); bar.className = "ni-admin";
-    const bmt = document.createElement("button"); bmt.className = "ni-mailtest"; bmt.textContent = "🧪 自分にテスト"; bmt.onclick = ()=>mailNews(n, true);
-    const bml = document.createElement("button"); bml.className = "ni-mail"; bml.textContent = "📢 全員に配信"; bml.onclick = ()=>mailNews(n, false);
+    const bmt = document.createElement("button"); bmt.className = "ni-mailtest"; bmt.textContent = "🧪 メールtest"; bmt.onclick = ()=>mailNews(n, true);
+    const bml = document.createElement("button"); bml.className = "ni-mail"; bml.textContent = "📢 メール配信"; bml.onclick = ()=>mailNews(n, false);
+    const bpt = document.createElement("button"); bpt.className = "ni-pushtest"; bpt.textContent = "🔔 通知test"; bpt.onclick = ()=>pushNews(n, true);
+    const bp  = document.createElement("button"); bp.className = "ni-push"; bp.textContent = "🔔 通知配信"; bp.onclick = ()=>pushNews(n, false);
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
     const bd = document.createElement("button"); bd.textContent = "削除"; bd.onclick = ()=>delNews(n);
-    bar.appendChild(bmt); bar.appendChild(bml); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
+    bar.appendChild(bmt); bar.appendChild(bml); bar.appendChild(bpt); bar.appendChild(bp); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
   }
   return el;
 }
@@ -2337,6 +2341,24 @@ async function mailNews(n, test){
     else if(res.error === "no_brevo_key"){ showToast("Brevo APIキーが未設定です（GASのスクリプトプロパティ）。"); }
     else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else if(res.error === "no_recipients"){ showToast("送信対象の会員がいません。"); }
+    else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
+// 管理者：このお知らせを、通知オンの端末へプッシュ送信（test=自分の端末だけ）
+async function pushNews(n, test){
+  const msg = test
+    ? `「${n.title}」を、あなたの端末だけにテスト通知します。よろしいですか？`
+    : `「${n.title}」を、通知オンの会員【全員】にプッシュ通知します。送りますか？`;
+  if(!confirm(msg)) return;
+  showToast(test ? "テスト通知中…" : "通知送信中…");
+  try{
+    const body = new URLSearchParams({ action:"news_push", email:(SESSION && SESSION.email) || "", id:String(n.id) });
+    if(test) body.set("test", "1");
+    const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
+    if(res.ok){ showToast(`✅ ${res.sent}/${res.total}件に通知しました。`); }
+    else if(res.error === "no_fcm_credentials"){ showToast("FCMの鍵が未設定です（GASのスクリプトプロパティ）。"); }
+    else if(res.error === "no_tokens"){ showToast(test ? "あなたの端末が通知オンになっていません。" : "通知オンの会員がまだいません。"); }
+    else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
@@ -2423,6 +2445,16 @@ async function enablePush(){
     renderAcctMenu();
   }catch(e){ showToast("通知の設定に失敗しました。時間をおいて再度お試しください。"); }
 }
+// 起動時：既に通知オンなら、トークンを取り直して名簿(プッシュタブ)に保存し直す
+async function refreshPushToken(){
+  if(!pushSupported() || Notification.permission !== "granted" || localStorage.getItem("lmine_push") !== "1") return;
+  try{
+    const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+    await navigator.serviceWorker.ready;
+    const token = await firebase.messaging().getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if(token){ window._pushToken = token; try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){} }
+  }catch(e){}
+}
 let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferredPrompt = e; });
 function isStandalone(){ try{ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }catch(e){ return false; } }
@@ -2465,6 +2497,7 @@ document.getElementById("pwaInstall").addEventListener("click", async function()
 loadSession();
 initEntry();
 loadCourses();
+setTimeout(refreshPushToken, 1500);   // 通知オン端末のトークンを保存し直す
 
 async function loadCourses(){
   try { COURSES = await fetchFromSheet(); if(!COURSES.length) throw new Error("シートが空"); }
