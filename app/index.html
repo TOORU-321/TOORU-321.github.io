@@ -987,6 +987,17 @@ a{text-decoration:none}
 .news-notify:hover{filter:brightness(1.05)}
 .news-notify.on{color:#8fdcc0;background:rgba(111,203,184,.10);border:1px solid rgba(111,203,184,.4);cursor:default}
 .ni-img{display:block;width:100%;max-width:100%;border-radius:12px;margin:10px 0 4px;border:1px solid rgba(227,195,129,.14)}
+/* お知らせ：会員限定モザイク／メール専用バッジ */
+.ni-badge{display:inline-block;font-size:10px;font-weight:700;border-radius:999px;padding:2px 9px;margin-left:8px;vertical-align:middle;line-height:1.6}
+.ni-badge.member{background:linear-gradient(135deg,#f0c579,#e0a95a);color:#2a2114}
+.ni-badge.mail{background:rgba(126,146,206,.18);color:#9fb0d8;border:1px solid rgba(126,146,206,.4)}
+.news-item.locked .ni-title{filter:blur(6px);-webkit-filter:blur(6px);user-select:none;pointer-events:none}
+.news-item.locked .ni-body{filter:blur(5px);-webkit-filter:blur(5px);user-select:none;pointer-events:none;max-height:4.6em;overflow:hidden}
+.news-item.locked .ni-img{filter:blur(16px);-webkit-filter:blur(16px)}
+.ni-lockcta{margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:#e8cf98;background:rgba(227,169,90,.09);border:1px solid rgba(227,169,90,.28);border-radius:12px;padding:11px 15px}
+.ni-lockcta .nl-join{margin-left:auto;padding:8px 17px;border:none;border-radius:999px;font-size:12.5px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e0a95a,#caa75f);cursor:pointer;letter-spacing:.03em}
+.ni-lockcta .nl-join:hover{filter:brightness(1.07)}
+.news-item.mailonly{border:1px dashed rgba(126,146,206,.45);background:rgba(126,146,206,.04)}
 .ni-like{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 15px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#b7b6b0;font-family:var(--gothic);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
 .ni-like:hover{background:rgba(227,110,120,.10);border-color:rgba(227,110,120,.34)}
 .ni-like:active{transform:scale(.95)}
@@ -1591,7 +1602,12 @@ a{text-decoration:none}
       <label class="nf-check"><input type="checkbox" id="nf-imgpos"> 画像を本文の<b>下</b>に表示（オフ＝本文の上）</label>
       <label>アンケート選択肢（任意・カンマ区切り　例：参加します,不参加）</label>
       <input type="text" id="nf-options" placeholder="参加します,不参加">
-      <label class="nf-check"><input type="checkbox" id="nf-pub" checked> 公開する</label>
+      <label>公開範囲</label>
+      <select id="nf-audience">
+        <option value="全員">全員に公開</option>
+        <option value="会員限定">会員限定（有料メンバーのみ／他はモザイク表示）</option>
+      </select>
+      <label class="nf-check"><input type="checkbox" id="nf-pub" checked> アプリに表示する（オフ＝メール専用・一覧に出しません）</label>
       <div class="nf-btns">
         <button class="nf-save" id="nfSave">保存</button>
         <button class="nf-cancel" id="nfCancel">キャンセル</button>
@@ -1620,7 +1636,7 @@ const REGISTER_URL = "https://l-mine.com/onlinecourse";
 const TERMS_URL    = "https://l-mine.com/term";
 const PRIVACY_URL  = "https://l-mine.com/privacy"; // TODO: 正式URL待ち
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
-const APP_VERSION  = "1.1.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.2.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2281,11 +2297,11 @@ async function loadNews(){
   const list = document.getElementById("newsList");
   list.innerHTML = `<div class="vstate">読み込み中…</div>`;
   try{
-    const data  = await fetch(GAS_URL + "?action=news&_=" + Date.now()).then(r=>r.json());
+    const data  = await fetch(GAS_URL + "?action=news&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now()).then(r=>r.json());
     const items = (data && data.items) || [];
     if(!items.length){ list.innerHTML = `<div class="vstate">お知らせはまだありません。</div>`; return; }
     list.innerHTML = "";
-    items.forEach(n => list.appendChild(newsItemEl(n)));
+    items.forEach(n => { const el = newsItemEl(n); if(el) list.appendChild(el); });
   }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
 }
 // 画像URLを整える：GoogleドライブURL（共有リンク）→ 直接表示できる画像URLに変換
@@ -2299,12 +2315,29 @@ function toImgUrl(u){
   return u;
 }
 function newsItemEl(n){
-  const el = document.createElement("div"); el.className = "news-item";
+  const admin = isAdmin();
+  const memberOnly = /会員限定|会員|有料|member/i.test(String(n.audience||""));
+  const mailOnly = (n.pub === false);
+  if(mailOnly && !admin) return null;                                   // メール専用は管理者だけ（GASでも除外済み）
+  const locked = memberOnly && !admin && currentRank() < RANK.plus;     // 無料登録・ゲストはモザイク
+  const el = document.createElement("div"); el.className = "news-item" + (locked ? " locked" : "") + (mailOnly ? " mailonly" : "");
+  let badges = "";
+  if(memberOnly) badges += `<span class="ni-badge member">🔒会員限定</span>`;
+  if(mailOnly) badges += `<span class="ni-badge mail">✉️メール専用</span>`;
   let imgRaw = String(n.image||""); let imgBelow = false;
   if(/^below\|/i.test(imgRaw)){ imgBelow = true; imgRaw = imgRaw.replace(/^below\|/i, ""); }   // 「下」指定
   const img = imgRaw ? `<img class="ni-img" src="${escapeHtml(toImgUrl(imgRaw))}" loading="lazy" alt="" onerror="this.remove()">` : "";
   const bodyHtml = `<div class="ni-body">${linkify(n.body)}</div>`;
-  el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="ni-title">${escapeHtml(n.title)}</div>` + (imgBelow ? bodyHtml + img : img + bodyHtml);
+  el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}${badges}</div><div class="ni-title">${escapeHtml(n.title)}</div>` + (imgBelow ? bodyHtml + img : img + bodyHtml);
+  if(locked){
+    const cta = document.createElement("div"); cta.className = "ni-lockcta";
+    cta.innerHTML = `<span>🔒 このお知らせは<b>会員限定</b>です</span>`;
+    const btn = document.createElement("button"); btn.type = "button"; btn.className = "nl-join";
+    btn.textContent = (SESSION && SESSION.email) ? "会員プランを見る" : "ログイン / 登録";
+    btn.onclick = () => { if(SESSION && SESSION.email){ showToast("会員プランのご案内は準備中です。"); } else { closeNews(); openLogin(); } };
+    cta.appendChild(btn); el.appendChild(cta);
+    return el;   // モザイク時はアンケート・いいねは出さない
+  }
   // アンケート（参加します/はい・いいえ 等）→ 回答者を記録
   if(n.options && n.options.length){
     const poll = document.createElement("div"); poll.className = "ni-poll";
@@ -2333,8 +2366,8 @@ function newsItemEl(n){
   }
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-pub").checked=true; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-pub").checked=true; showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
 function likeNews(id, btn){
   const key = "lmine_liked_" + id;
   if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
@@ -2392,7 +2425,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
