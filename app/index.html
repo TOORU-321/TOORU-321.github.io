@@ -2034,6 +2034,7 @@ async function applyTierAndEnter(email, closeFn){
   enterLibrary(true);   // ③ ログイン/登録直後はオープニング動画
   render();
   if(curCourse != null) select(curCourse, curVideo);
+  maybeAutoEnablePush();   // デフォルトでオン：初回ログイン時に自動で通知許可を促す（iOS除く／明示オフの人は尊重）
 }
 async function doLogin(){
   const email = (document.getElementById("lmEmail").value || "").trim().toLowerCase();
@@ -2453,6 +2454,31 @@ async function refreshPushToken(){
     await navigator.serviceWorker.ready;
     const token = await firebase.messaging().getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
     if(token){ window._pushToken = token; try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){} }
+  }catch(e){}
+}
+// 「デフォルトでオン」：ログイン時に自動で通知を有効化する（設定で明示オフにした人は尊重）
+// ※iPhone(iOS)はブラウザ仕様上、ユーザーのタップ無しでは許可を出せないため自動では聞かず、案内バナー/メニューに任せる
+async function maybeAutoEnablePush(){
+  if(!pushSupported()) return;
+  if(localStorage.getItem("lmine_push") === "0") return;              // ← 設定でオフにした人には二度と自動で聞かない
+  if(Notification.permission === "denied") return;                    // ブラウザ側でブロック済み
+  if(Notification.permission === "granted"){                          // すでに許可済み → オン扱いでトークン保存
+    localStorage.setItem("lmine_push", "1"); refreshPushToken(); renderAcctMenu(); return;
+  }
+  if(localStorage.getItem("lmine_push_asked") === "1") return;        // 自動で聞くのは1回だけ
+  if(isIOS()) return;                                                 // iOSは自動プロンプト不可 → バナー/メニュー誘導
+  localStorage.setItem("lmine_push_asked", "1");
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm !== "granted") return;                                    // 断られても静かに終了（エラー表示なし）
+    const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+    await navigator.serviceWorker.ready;
+    const token = await firebase.messaging().getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if(!token) return;
+    window._pushToken = token;
+    try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){}
+    localStorage.setItem("lmine_push", "1");
+    renderAcctMenu();
   }catch(e){}
 }
 let deferredPrompt = null;
