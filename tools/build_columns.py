@@ -26,7 +26,7 @@ NAV = [
     ("行動経済学への想い", "https://columns.l-mine.com/behavioral-economics-lp.html", False),
     ("コラム", "index.html", True),
     ("オンラインコース一覧", "https://l-mine.com/onlinecourse", False),
-    ("動画・オンラインコース視聴", "https://l-mine.com/onlinecourse-oshirase", False),
+    ("動画・オンラインコース視聴", "https://columns.l-mine.com/elabo-plus-lp.html", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
     ("お問い合わせ", "https://l-mine.com/contact-us", False),
     ("エルラボ2.0", "https://l-mine.com/l-mine-2.0.2026", False),
