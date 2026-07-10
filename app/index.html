@@ -1404,6 +1404,7 @@ a{text-decoration:none}
   <div class="entry-inner">
     <div class="entry-mark">L-MINE</div>
     <div class="entry-brand">エルラボ<span class="brand-plus">＋</span></div>
+    <div class="entry-ver" id="entryVer" style="font-family:var(--serif-en);font-size:11px;letter-spacing:.25em;color:#c9ad74;opacity:.7;margin-top:8px"></div>
     <p class="entry-lead">ログインして続きから、<br>またはゲストとして無料コンテンツを視聴できます。</p>
     <div class="entry-btns">
       <button class="entry-login" id="entryLogin">ログイン</button>
@@ -2525,6 +2526,7 @@ document.getElementById("pwaInstall").addEventListener("click", async function()
 loadSession();
 initEntry();
 loadCourses();
+(function(){ var _ev=document.getElementById("entryVer"); if(_ev) _ev.textContent="v"+APP_VERSION; })();   // ログイン画面にバージョン表示
 setTimeout(refreshPushToken, 1500);   // 通知オン端末のトークンを保存し直す
 
 async function loadCourses(){
