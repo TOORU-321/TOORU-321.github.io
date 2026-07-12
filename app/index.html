@@ -1254,8 +1254,8 @@ a{text-decoration:none}
 .ch-item .ch-no{font-family:var(--serif-en);font-size:12px;color:#6f7478;min-width:20px;padding-top:1px}
 .ch-item.active .ch-no{color:#d8b870}
 .ch-item .ch-t{flex:1;line-height:1.5}
-/* 動画1本ごとのロック表示 */
-.ch-item.ch-locked .ch-t{color:#8f918f}
+/* 動画1本ごとのロック表示：タイトルはモザイク（未購入者に本編タイトルを見せない） */
+.ch-item.ch-locked .ch-t{color:#8f918f;filter:blur(4.5px);-webkit-filter:blur(4.5px);user-select:none;pointer-events:none}
 .ch-item.ch-locked .ch-no{color:#5f6469}
 .ch-item .ch-lockmark{font-size:12px;flex:none;opacity:.9}
 .chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
@@ -1267,6 +1267,7 @@ a{text-decoration:none}
 .vnav-btn.vnav-next{justify-content:flex-end;text-align:right}
 .vnav-btn:hover{background:linear-gradient(145deg,rgba(227,195,129,.16),rgba(227,195,129,.05));border-color:rgba(227,195,129,.4);transform:translateY(-1px)}
 .vnav-btn:disabled{opacity:.32;cursor:default;pointer-events:none}
+.vnav-tt.vnav-locked{filter:blur(4px);-webkit-filter:blur(4px);user-select:none}
 .vnav-ar{font-size:17px;color:#e2c47f;line-height:1}
 .vnav-tx{display:flex;flex-direction:column;gap:2px;min-width:0;overflow:hidden}
 .vnav-lb{font-size:10px;letter-spacing:.14em;color:#8f918f;text-transform:uppercase}
@@ -1636,7 +1637,7 @@ const REGISTER_URL = "https://l-mine.com/onlinecourse";
 const TERMS_URL    = "https://l-mine.com/term";
 const PRIVACY_URL  = "https://l-mine.com/privacy"; // TODO: 正式URL待ち
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
-const APP_VERSION  = "1.2.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.2.2";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -1963,10 +1964,11 @@ function renderVlimit(v){
   el.innerHTML = `<span class="vl-ico">⏳</span>視聴期限：<b>${fmtDateFull(ts)}</b> まで<span class="vl-cd" data-deadline="${ts}">${countdownLabel(ts)}</span>`;
   el.hidden = false;
 }
-// ロック中の講座名（章タイトルの「：N章」より前／無ければコース名）
+// ロック中の講座名＝コース名（タイトル）を使う
 function productName(v, course){
-  if(v && v.chapter){ return String(v.chapter).split(/[：:]/)[0].trim(); }
-  return (course && course.name) || "";
+  if(course && course.name) return String(course.name).trim();
+  if(v && v.chapter) return String(v.chapter).split(/[：:]/)[0].trim();
+  return "";
 }
 // ===== パスワード解除（招待制の限定講座など） =====
 const pwUnlocked = new Set();
@@ -2025,8 +2027,8 @@ function setLockScreen(v, course){
     d.textContent = "エルラボ＋（サブスク）にご加入いただくと視聴できます。";
   } else {
     const prod = productName(v, course);
-    t.textContent = (prod ? prod + "の" : "") + "アクセスパスが必要です";
-    d.textContent = "対象のアクセスパス（ご購入）で視聴できます。";
+    t.textContent = (prod ? "「" + prod + "」の" : "") + "アクセスパスが必要です";
+    d.textContent = "この講座のアクセスパス（ご購入）で視聴できます。";
   }
 
   // ボタン：未ログインは「ログイン →」。ログイン済み（＝権限不足）は今は非表示。
@@ -2797,6 +2799,8 @@ function select(ci, vi){
   if(!canWatch){
     // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま。
     // 種別/タグ(=無料登録など)のCTAを主に出し、パスワードがあれば「招待の方はこちら」を添える。
+    vkick.textContent  = course.name;                    // コース名のみ（章タイトルは伏せる）
+    vtitle.textContent = "🔒 アクセスパスが必要です";     // 本編タイトルは未購入者に見せない
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
     if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
@@ -2823,8 +2827,11 @@ function renderVnav(ci, vi){
   const prev = document.getElementById("vnavPrev"), next = document.getElementById("vnavNext");
   const pv = vids[vi-1], nv = vids[vi+1];
   prev.disabled = !pv; next.disabled = !nv;
-  document.getElementById("vnavPrevT").textContent = pv ? pv.t : "";
-  document.getElementById("vnavNextT").textContent = nv ? nv.t : "";
+  const pvT = document.getElementById("vnavPrevT"), nvT = document.getElementById("vnavNextT");
+  pvT.textContent = pv ? pv.t : "";
+  nvT.textContent = nv ? nv.t : "";
+  pvT.classList.toggle("vnav-locked", !!(pv && !videoAccessible(pv)));   // ロック中はタイトルをモザイク
+  nvT.classList.toggle("vnav-locked", !!(nv && !videoAccessible(nv)));
   prev.onclick = () => { if(vi > 0){ select(ci, vi-1); scrollToPlayer(); } };
   next.onclick = () => { if(vi < vids.length-1){ select(ci, vi+1); scrollToPlayer(); } };
 }
