@@ -45,9 +45,16 @@ LP_URL = "https://l-mine.com/business/the-3-2-1-lab"
 APP_URL = "https://columns.l-mine.com/app/"           # 会員制の動画視聴Webアプリ「エルラボ＋」本体
 ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の案内LP（コラム内の誘導はこちら経由）
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
+ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
 
-# 記事末尾のオプトイン枠（メルマガ主体・n>=TEMPLATE_FROM でエルラボ＋の控えめな1行を追記）
+# 記事末尾のオプトイン枠。n>=ELABO_OPTIN_FROM でエルラボ＋主体、それ未満はメルマガ主体（n>=TEMPLATE_FROM でエルラボ＋の控えめ1行を追記）
 def optin_footer(n):
+    if n >= ELABO_OPTIN_FROM:
+        return f'''    <aside class="optin">
+      <div class="optin-k">動画で学ぶ｜エルラボ＋</div>
+      <p>行動経済学 × SNSビジネスを、体系立てた動画講座で。定期オンライン講義（アーカイブ視聴可）も開催中。まずは、無料の講座から。</p>
+      <a class="optin-btn" href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋を見てみる →</a>
+    </aside>'''
     app_line = (f'\n      <p class="optin-sub">動画でじっくり学びたい方は、会員制の動画視聴アプリ「<a href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋</a>」もご用意しています。</p>'
                 if n >= TEMPLATE_FROM else '')
     return f'''    <aside class="optin">
@@ -56,11 +63,18 @@ def optin_footer(n):
       <a class="optin-btn" href="{LP_URL}" target="_blank" rel="noopener">メルマガ・講座を見てみる →</a>{app_line}
     </aside>'''
 
-# スクロール追従ポップアップ（インスタ誘引＋メルマガ送客）。PC=右下カード／スマホ=下部バー
-# n>=TEMPLATE_FROM で「エルラボ＋」ボタンも並べる
+# スクロール追従ポップアップ。n>=ELABO_OPTIN_FROM でエルラボ＋を主ボタン、それ未満はメルマガ主体
 def popup_html(n):
-    app_btn = (f'\n      <a class="lm-pop-app" href="{ELABO_LP}" target="_blank" rel="noopener">動画で学ぶ｜エルラボ＋</a>'
-               if n >= TEMPLATE_FROM else '')
+    if n >= ELABO_OPTIN_FROM:
+        txt = 'コラムの学びを、動画でもっと深く。会員制アプリ「エルラボ＋」でお届けしています。'
+        btns = (f'      <a class="lm-pop-app lm-pop-app-primary" href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋を見てみる</a>\n'
+                f'      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>')
+    else:
+        txt = 'コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。'
+        app_btn = (f'\n      <a class="lm-pop-app" href="{ELABO_LP}" target="_blank" rel="noopener">動画で学ぶ｜エルラボ＋</a>'
+                   if n >= TEMPLATE_FROM else '')
+        btns = (f'      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>\n'
+                f'      <a class="lm-pop-mag" href="{LP_URL}" target="_blank" rel="noopener">メルマガ『3-2-1ラボ』</a>{app_btn}')
     return f'''<div id="lm-popup" class="lm-popup" aria-hidden="true">
     <button class="lm-pop-close" type="button" aria-label="閉じる">&times;</button>
     <div class="lm-pop-head">
@@ -70,10 +84,9 @@ def popup_html(n):
         <div class="lm-pop-ttl">よかったら、こちらも</div>
       </div>
     </div>
-    <p class="lm-pop-txt">コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。</p>
+    <p class="lm-pop-txt">{txt}</p>
     <div class="lm-pop-btns">
-      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>
-      <a class="lm-pop-mag" href="{LP_URL}" target="_blank" rel="noopener">メルマガ『3-2-1ラボ』</a>{app_btn}
+{btns}
     </div>
   </div>'''
 

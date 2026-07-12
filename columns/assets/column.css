@@ -187,6 +187,8 @@ footer{margin-top:72px;border-top:1px solid var(--line-2);background:var(--card)
 .lm-pop-mag:hover{background:#fbf4e6}
 .lm-pop-app{display:block;text-align:center;font-weight:700;font-size:13px;color:var(--ink-2);padding:10px 14px;border-radius:999px;border:1.5px solid var(--line-2);background:#fff}
 .lm-pop-app:hover{background:#f6f7f9}
+.lm-pop-app-primary{color:#fff;border:none;padding:12px 14px;font-size:13.5px;background:linear-gradient(135deg,var(--gold-2),var(--gold))}
+.lm-pop-app-primary:hover{filter:brightness(1.06);background:linear-gradient(135deg,var(--gold-2),var(--gold))}
 @media(max-width:600px){
   .lm-popup{right:0;left:0;bottom:0;width:auto;max-width:none;border-radius:14px 14px 0 0;border-left:none;border-right:none;border-bottom:none;padding:15px 15px 17px;transform:translateY(100%)}
   .lm-popup.show{transform:translateY(0)}
