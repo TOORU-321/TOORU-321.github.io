@@ -1637,7 +1637,7 @@ const REGISTER_URL = "https://l-mine.com/onlinecourse";
 const TERMS_URL    = "https://l-mine.com/term";
 const PRIVACY_URL  = "https://l-mine.com/privacy"; // TODO: 正式URL待ち
 const platLabel    = { vimeo:"Vimeo", youtube:"YouTube" };
-const APP_VERSION  = "1.2.2";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.2.3";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -1845,6 +1845,8 @@ function exitToEntry(){
 function initEntry(){
   const isMember = !!(SESSION && SESSION.email);
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
+  // ★ずっとログイン状態でも、アプリを開くたびに最終ログインを更新
+  if(isMember){ try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email:SESSION.email }) }); }catch(_e){} }
   if(isMember || isGuest) enterLibrary(false);   // 自動再開時は動画演出なし
 }
 // 今のユーザーのランク（0:ゲスト 1:無料登録 2:サブスク）。※supportはコース別にタグ照合
