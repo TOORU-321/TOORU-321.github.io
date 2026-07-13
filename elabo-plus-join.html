@@ -184,13 +184,14 @@
   }
   .sticky-cta.show{transform:none}
   .sticky-cta .sc-info{min-width:0;line-height:1.4}
-  .sticky-cta .sc-price{display:block;font-size:13.5px;color:var(--ink);font-weight:500;letter-spacing:.02em}
-  .sticky-cta .sc-price small{font-size:11px;color:var(--sub);font-weight:400}
-  .sticky-cta .sc-days{display:block;font-size:11px;color:var(--gold-pale);letter-spacing:.03em}
+  .sticky-cta .sc-price{display:block;font-size:16px;color:var(--ink);font-weight:600;letter-spacing:.02em}
+  .sticky-cta .sc-price small{font-size:12px;color:var(--sub);font-weight:400}
+  .sticky-cta .sc-days{display:block;margin-top:2px;font-size:13px;color:var(--sub);letter-spacing:.03em}
+  .sticky-cta .sc-days .cd{color:var(--gold-pale);font-weight:700;font-size:14.5px;margin-left:4px}
   .sticky-cta .sc-btn{
     flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
-    min-height:48px;padding:0 30px;border-radius:999px;
-    font-family:var(--gothic);font-size:13.5px;font-weight:600;letter-spacing:.1em;
+    min-height:50px;padding:0 32px;border-radius:999px;
+    font-family:var(--gothic);font-size:15px;font-weight:600;letter-spacing:.1em;
     color:#17130c;background:linear-gradient(180deg,#dccb9c 0%,#c5a66b 100%);
     box-shadow:0 8px 22px rgba(185,154,95,.24),inset 0 1px 0 rgba(255,255,255,.44);
     white-space:nowrap;transition:filter .2s ease,transform .15s ease;
@@ -199,8 +200,11 @@
   .sticky-cta .sc-btn:active{transform:translateY(1px)}
   @media (max-width:640px){
     .sticky-cta{padding:9px 15px calc(9px + env(safe-area-inset-bottom,0px));gap:10px}
-    .sticky-cta .sc-price{font-size:12.5px}
-    .sticky-cta .sc-btn{min-height:46px;padding:0 22px;font-size:13px;letter-spacing:.06em}
+    .sticky-cta .sc-price{font-size:14.5px}
+    .sticky-cta .sc-price small{font-size:11px}
+    .sticky-cta .sc-days{font-size:12px}
+    .sticky-cta .sc-days .cd{font-size:13.5px}
+    .sticky-cta .sc-btn{min-height:48px;padding:0 24px;font-size:14px;letter-spacing:.06em}
   }
   @media (prefers-reduced-motion:reduce){.sticky-cta{transition:none}}
 
@@ -773,7 +777,7 @@
     var scEl   = document.getElementById('scDays');
     if(left > 0){
       if(heroEl) heroEl.innerHTML = '　残り<b>' + left + '日</b>';
-      if(scEl)   scEl.innerHTML   = '開幕記念 8月31日まで・残り' + left + '日';
+      if(scEl)   scEl.innerHTML   = '開幕記念 8月31日まで<b class="cd">残り' + left + '日</b>';
     }else{
       if(heroEl) heroEl.innerHTML = '';
       if(scEl)   scEl.textContent = '開幕記念価格の受付は終了しました';
