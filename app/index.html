@@ -2130,6 +2130,28 @@ async function applyTierAndEnter(email, closeFn){
   if(curCourse != null) select(curCourse, curVideo);
   maybeAutoEnablePush();   // デフォルトでオン：初回ログイン時に自動で通知許可を促す（iOS除く／明示オフの人は尊重）
 }
+// 起動時・アプリ復帰時に会員情報を名簿と再照合し、権限が変わっていれば自動で反映（＝加入直後に再ログイン不要で解放）
+let _lastVerifyAt = 0;
+async function refreshSession(force){
+  if(!SESSION || !SESSION.email) return;
+  const nowT = Date.now();
+  if(!force && (nowT - _lastVerifyAt) < 15000) return;   // 短時間の連続呼び出しは抑制
+  _lastVerifyAt = nowT;
+  try{
+    const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(SESSION.email) + "&_=" + nowT).then(r=>r.json());
+    if(!res || !res.ok) return;
+    let name = res.name || SESSION.name;
+    try{ const ln = localStorage.getItem("lmine_name:" + SESSION.email); if(ln) name = ln; }catch(_e){}
+    const before = JSON.stringify({ t:(SESSION.tags||[]), a:!!SESSION.active, s:!!SESSION.subActive });
+    saveSession(Object.assign({}, SESSION, { name, tags: res.tags||[], active: !!res.active, subActive: !!res.subActive }));
+    const after = JSON.stringify({ t:(SESSION.tags||[]), a:!!SESSION.active, s:!!SESSION.subActive });
+    if(before !== after){   // 権限が変わったときだけ再描画（加入直後の自動解放など）
+      render();
+      if(curCourse != null) select(curCourse, curVideo);
+      showToast("会員情報を最新にしました");
+    }
+  }catch(e){ /* 通信失敗時はキャッシュのまま続行 */ }
+}
 async function doLogin(){
   const email = (document.getElementById("lmEmail").value || "").trim().toLowerCase();
   const pass  = document.getElementById("lmPass").value || "";
@@ -2728,7 +2750,11 @@ async function loadCourses(){
   }
   if(!COURSES.length){ showState("コースがまだありません。"); return; }
   render(); select(0, 0);
+  refreshSession(true);   // 起動時：会員情報を名簿と再照合（加入直後の自動解放）
 }
+// アプリに戻ってきたとき（LP/決済から復帰など）も再照合して自動解放
+document.addEventListener("visibilitychange", () => { if(!document.hidden) refreshSession(); });
+window.addEventListener("focus", () => refreshSession());
 async function fetchFromSheet(){
   const txt  = await fetch(SHEET_URL + "&_=" + Date.now(), {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
   // gvizは google.visualization.Query.setResponse({...}); で包まれている。
