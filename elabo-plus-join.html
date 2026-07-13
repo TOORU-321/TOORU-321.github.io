@@ -307,6 +307,28 @@
   .feat .ft b{color:#fff;font-weight:500;display:block;font-size:15.5px;margin-bottom:5px;letter-spacing:.035em}
   .feat .ft span{color:var(--sub);font-size:13px;font-weight:300;line-height:1.95}
 
+  /* concept lead */
+  .lede{max-width:600px;margin:0 auto;color:var(--sub);font-size:14.5px;font-weight:300;line-height:2.25;text-align:center}
+  .lede + .lede{margin-top:22px}
+  .lede b{color:var(--gold-pale);font-weight:500}
+  .lede .em{color:var(--ink);font-weight:400}
+
+  /* instructor profile */
+  .profile{display:flex;gap:32px;align-items:flex-start;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.022),transparent 58%);padding:36px 34px}
+  .profile .ph{flex:0 0 auto;width:150px;height:150px;object-fit:cover;border:1px solid var(--line-strong);filter:saturate(.82) contrast(1.03)}
+  .profile .pb{min-width:0}
+  .profile .prole{font-family:var(--en);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+  .profile .pname{font-family:var(--mincho);font-size:21px;color:#fff;letter-spacing:.045em;margin-bottom:6px}
+  .profile h4{font-size:11px;color:var(--gold-pale);letter-spacing:.14em;margin:20px 0 9px;font-weight:600}
+  .profile ul{list-style:none;margin:0;padding:0}
+  .profile li{position:relative;padding-left:17px;color:var(--sub);font-size:12.5px;font-weight:300;line-height:1.95}
+  .profile li::before{content:"";position:absolute;left:0;top:13px;width:8px;height:1px;background:var(--gold)}
+  @media (max-width:640px){
+    .profile{flex-direction:column;align-items:center;text-align:center;padding:30px 20px;gap:24px}
+    .profile .pb{text-align:left;width:100%}
+    .profile .ph{width:128px;height:128px}
+  }
+
   /* archive flow */
   .flow{
     position:relative;
@@ -569,6 +591,13 @@
 <div class="wrap">
 
   <section class="reveal-group">
+    <div class="eyebrow">Concept</div>
+    <h2 class="sec-h">行動経済学 × マーケティングを、学ぶ。</h2>
+    <p class="lede">「攻略法」ではありません。<br>人の心理、その奥にある<b>原理原則</b>を理解し、<br><span class="em">あなたのビジネスの土台に組み込んでいく</span>。</p>
+    <p class="lede">SNSの最新ノウハウのように、移り変わる話ではなく。<br>時代が変わっても<b>揺るがないビジネスの地盤</b>を、<br>いっしょに整えていきます。</p>
+  </section>
+
+  <section class="reveal-group">
     <div class="eyebrow">What you get</div>
     <h2 class="sec-h">加入して、得られるもの</h2>
     <div class="feat"><div class="no">01</div><div class="ft"><b>講義アーカイブが見放題</b><span>行動経済学のレンズで学ぶ講義が、増え続けます。好きな時に、何度でも。</span></div></div>
@@ -586,6 +615,37 @@
       だから、続けるほどに"見られる講義"が増えていきます。<br>
       リアルタイム参加は必須ではなく、アーカイブでいつでも学べます。
       <div class="live-when">📼 ライブ開催：毎月 第4水曜 21:30〜／不定期追加あり</div>
+    </div>
+  </section>
+
+  <section class="reveal-group">
+    <div class="eyebrow">Instructor</div>
+    <h2 class="sec-h">講師紹介</h2>
+    <div class="profile">
+      <img class="ph" src="assets/toru.jpg" alt="行動経済アナリスト とーる" onerror="this.style.display='none'">
+      <div class="pb">
+        <div class="prole">Behavioral Economics Analyst</div>
+        <div class="pname">行動経済アナリスト「とーる」</div>
+        <h4>実績</h4>
+        <ul>
+          <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
+          <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
+          <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
+          <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
+        </ul>
+        <h4>活動内容</h4>
+        <ul>
+          <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
+          <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
+          <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
+          <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
+          <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
+        </ul>
+        <h4>想い</h4>
+        <ul>
+          <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
+        </ul>
+      </div>
     </div>
   </section>
 
