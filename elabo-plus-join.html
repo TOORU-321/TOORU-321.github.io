@@ -81,6 +81,7 @@
     opacity:.65;
   }
   .topbar .in{
+    position:relative;
     max-width:760px;
     min-height:74px;
     margin:0 auto;
@@ -89,6 +90,23 @@
     align-items:center;
     justify-content:center;
   }
+  .back-app{
+    position:absolute;
+    left:30px;
+    top:50%;
+    transform:translateY(-50%);
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-family:var(--gothic);
+    font-size:12px;
+    font-weight:400;
+    letter-spacing:.04em;
+    color:var(--sub);
+    transition:color .2s ease;
+  }
+  .back-app:hover{color:var(--gold-soft)}
+  .back-app .ar{font-size:13px;line-height:1}
   .topbar .llabo{
     font-family:var(--en);
     font-size:22px;
@@ -583,6 +601,7 @@
     .wrap{padding:0 20px}
     .topbar .in{min-height:64px;padding:14px 20px}
     .topbar .llabo{font-size:19px}
+    .back-app{left:20px;font-size:11px}
     .hero{padding:54px 0 50px}
     .hero .kicker{font-size:10px;letter-spacing:.34em;margin-bottom:22px}
     .hero-img{padding:6px;margin-bottom:34px}
@@ -615,7 +634,7 @@
 </head>
 <body>
 
-<div class="topbar"><div class="in"><span class="llabo en">Llabo</span></div></div>
+<div class="topbar"><div class="in"><a href="https://columns.l-mine.com/app/" class="back-app"><span class="ar">←</span>アプリに戻る</a><span class="llabo en">Llabo</span></div></div>
 
 <header class="hero">
   <div class="wrap reveal-group">
