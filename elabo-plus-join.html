@@ -544,6 +544,7 @@
     #checkout::after{font-size:9.5px;line-height:1.8}
   }
 </style>
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -561,7 +562,7 @@
       <div class="amt">¥1,980<small> / 月（税込）</small></div>
       <div class="fut">今後 <s>¥3,300</s> へ改定予定 ─ 今がいちばんおトク</div>
     </div>
-    <a href="#join" class="cta">加入する<span class="cta-note">いつでも解約OK・カード決済</span></a>
+    <a href="#" onclick="openCheckout();return false;" class="cta">加入する<span class="cta-note">いつでも解約OK・カード決済</span></a>
   </div>
 </header>
 
@@ -601,7 +602,7 @@
         <li>ライブの回はアーカイブに追加</li>
         <li>縛りなし・いつでも解約</li>
       </ul>
-      <a href="#join" class="cta">加入する</a>
+      <a href="#" onclick="openCheckout();return false;" class="cta">加入する</a>
     </div>
   </section>
 
@@ -625,7 +626,7 @@
     <h2 class="sec-h"><span class="brandmark">エルラボ<span class="plus">＋</span></span> に加入する</h2>
     <p class="lead">開幕記念 月額1,980円（税込）／自動更新・いつでも解約OK</p>
     <div id="checkout">
-      <a href="https://buy.stripe.com/eVqfZhcO86CL0uo1ep3gk0b" class="cta payment-cta"><span class="lock" aria-hidden="true"></span>加入する</a>
+      <a href="#" onclick="openCheckout();return false;" class="cta payment-cta"><span class="lock" aria-hidden="true"></span>加入する</a>
       <p class="cnote">ボタンを押すと、安全な決済ページで加入手続き（カード入力）ができます。<br>お手続き完了後、ご登録のメールで視聴のご案内をお送りします。</p>
     </div>
     <p class="cnote"><b>加入後の解約について</b>：決済完了画面とご登録メールで解約手順をご案内します。アプリのメニュー →「お支払い・解約」から、いつでもご自身で手続きできます。</p>
@@ -651,6 +652,68 @@
     }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
     groups.forEach(function(g){ io.observe(g); });
   })();
+</script>
+
+<!-- ===== 埋め込み決済ポップアップ ===== -->
+<style>
+  .pay-modal{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+  .pay-modal.open{display:flex}
+  .pay-backdrop{position:absolute;inset:0;background:rgba(4,5,7,.85);backdrop-filter:blur(5px)}
+  .pay-sheet{position:relative;z-index:1;width:100%;max-width:560px;max-height:92vh;overflow:auto;background:#0d0f12;border:1px solid rgba(208,183,126,.4);box-shadow:0 40px 110px rgba(0,0,0,.65);padding:22px 20px 24px}
+  .pay-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#aaa69d;font-size:26px;line-height:1;cursor:pointer;z-index:3}
+  .pay-close:hover{color:#fff}
+  #embedded-checkout{min-height:220px}
+  .pay-msg{text-align:center;color:#aaa69d;font-family:"Noto Sans JP",sans-serif;font-size:13px;padding:56px 20px}
+  .pay-msg.err{color:#e0a9a9}
+  #payDone{display:none;text-align:center;padding:44px 24px;font-family:"Noto Sans JP",sans-serif}
+  #payDone .mk{width:56px;height:56px;border-radius:50%;border:1.5px solid #c6a15b;color:#c6a15b;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}
+  #payDone h3{font-family:"Shippori Mincho B1",serif;color:#fff;font-size:20px;margin:0 0 12px;letter-spacing:.04em}
+  #payDone p{color:#aaa69d;font-size:13.5px;line-height:1.95;margin:0 0 26px}
+</style>
+<div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="加入手続き">
+  <div class="pay-backdrop" onclick="closeCheckout()"></div>
+  <div class="pay-sheet">
+    <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+    <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
+    <div id="payDone">
+      <div class="mk">✓</div>
+      <h3>ご加入ありがとうございます</h3>
+      <p>ご登録のメールアドレスに、視聴のご案内をお送りします。<br>さっそくアプリで学びをはじめましょう。</p>
+      <a href="https://columns.l-mine.com/app/" class="cta">アプリを開く</a>
+    </div>
+  </div>
+</div>
+<script>
+  var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+  var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+  var SUB_PRICE_ID = "price_1TrzawDffCAQquMFANsJN7YK";   // エルラボ＋オンライン講義 月額1,980円
+  var _stripe = null, _checkout = null;
+  async function openCheckout(){
+    var modal = document.getElementById('payModal');
+    var cont  = document.getElementById('embedded-checkout');
+    var done  = document.getElementById('payDone');
+    done.style.display = 'none';
+    cont.style.display = 'block';
+    cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+    modal.classList.add('open');
+    try{
+      if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+      if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+      var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&price=' + encodeURIComponent(SUB_PRICE_ID) + '&_=' + Date.now()).then(function(x){ return x.json(); });
+      if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+      cont.innerHTML = '';
+      _checkout = await _stripe.initEmbeddedCheckout({
+        clientSecret: r.client_secret,
+        onComplete: function(){ cont.style.display = 'none'; done.style.display = 'block'; }
+      });
+      _checkout.mount('#embedded-checkout');
+    }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+  }
+  function closeCheckout(){
+    document.getElementById('payModal').classList.remove('open');
+    if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+  }
 </script>
 
 </body>
