@@ -44,10 +44,23 @@
   .priceline .fut{font-size:12px;color:var(--mut)}
   .priceline .fut s{color:var(--sub)}
   /* CTA */
-  .cta{display:inline-block;padding:16px 50px;border:1px solid var(--gold);border-radius:2px;font-family:var(--gothic);font-size:15px;font-weight:500;letter-spacing:.14em;color:var(--bg);background:var(--gold);transition:background .2s,color .2s}
-  .cta:hover{background:var(--gold-soft)}
-  .cta.ghost{background:transparent;color:var(--gold-soft)}
-  .cta.ghost:hover{background:rgba(198,161,91,.08)}
+  .cta{position:relative;overflow:hidden;display:inline-block;padding:17px 56px;border:1px solid var(--gold-soft);border-radius:2px;font-family:var(--gothic);font-size:15px;font-weight:600;letter-spacing:.18em;color:#1a160e;background:linear-gradient(135deg,#e6cf97 0%,#c6a15b 55%,#b58748 100%);box-shadow:0 6px 26px rgba(198,161,91,.30), inset 0 1px 0 rgba(255,255,255,.4);transition:box-shadow .35s,transform .25s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(198,161,91,.55), inset 0 1px 0 rgba(255,255,255,.5)}
+  .cta::before{content:"";position:absolute;top:-20%;left:-150%;width:55%;height:140%;background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.75) 50%,transparent 100%);transform:skewX(-22deg);animation:cta-shine 5s ease-in-out infinite;pointer-events:none}
+  @keyframes cta-shine{0%{left:-150%}16%{left:150%}100%{left:150%}}
+  .cta.ghost{background:transparent;color:var(--gold-soft);border-color:var(--line);box-shadow:none}
+  .cta.ghost::before{display:none}
+  .cta.ghost:hover{background:rgba(198,161,91,.08);box-shadow:none;transform:none}
+  /* スクロールでふわっと出現 */
+  .reveal-group > *{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal-group.in > *{opacity:1;transform:none}
+  .reveal-group.in > *:nth-child(2){transition-delay:.07s}
+  .reveal-group.in > *:nth-child(3){transition-delay:.14s}
+  .reveal-group.in > *:nth-child(4){transition-delay:.21s}
+  .reveal-group.in > *:nth-child(5){transition-delay:.28s}
+  .reveal-group.in > *:nth-child(6){transition-delay:.35s}
+  .reveal-group.in > *:nth-child(n+7){transition-delay:.42s}
+  @media (prefers-reduced-motion: reduce){.reveal-group > *{opacity:1;transform:none;transition:none}.cta::before{display:none}}
   .cta-note{display:block;font-size:11.5px;color:var(--mut);letter-spacing:.06em;margin-top:14px;font-weight:300}
   /* セクション */
   section{padding:46px 0}
@@ -100,7 +113,7 @@
 
 <!-- ① ヒーロー -->
 <header class="hero">
-  <div class="wrap">
+  <div class="wrap reveal-group">
     <div class="kicker">Online Lecture Archive</div>
     <img class="hero-img" src="https://drive.google.com/thumbnail?id=1XZnkhkdTMcMUKMucU8b0x3KIFxw6bl29&sz=w1600" alt="エルラボ＋ オンライン講義" onerror="this.style.display='none'">
     <h1>増えていく講義アーカイブを、<br><span class="g">見放題</span>。</h1>
@@ -118,7 +131,7 @@
 <div class="wrap">
 
   <!-- ② 得られること（アーカイブ主役） -->
-  <section>
+  <section class="reveal-group">
     <div class="eyebrow">What you get</div>
     <h2 class="sec-h">加入して、得られるもの</h2>
     <div class="feat"><div class="no">01</div><div class="ft"><b>講義アーカイブが見放題</b><span>行動経済学のレンズで学ぶ講義が、増え続けます。好きな時に、何度でも。</span></div></div>
@@ -128,7 +141,7 @@
   </section>
 
   <!-- ③ アーカイブ＆ライブの流れ -->
-  <section>
+  <section class="reveal-group">
     <div class="eyebrow">Archive &amp; Live</div>
     <h2 class="sec-h">アーカイブが、育っていく。</h2>
     <div class="flow">
@@ -141,7 +154,7 @@
   </section>
 
   <!-- ④ 料金 -->
-  <section>
+  <section class="reveal-group">
     <div class="eyebrow">Plan</div>
     <h2 class="sec-h">料金プラン</h2>
     <div class="plan">
@@ -159,7 +172,7 @@
   </section>
 
   <!-- ⑤ FAQ -->
-  <section>
+  <section class="reveal-group">
     <div class="eyebrow">FAQ</div>
     <h2 class="sec-h">よくある質問</h2>
     <div class="faq">
@@ -175,7 +188,7 @@
 
 <!-- ⑥ 最終CTA / 決済 -->
 <section class="final" id="join">
-  <div class="wrap">
+  <div class="wrap reveal-group">
     <div class="eyebrow">Join</div>
     <h2 class="sec-h"><span class="brandmark">エルラボ<span class="plus">＋</span></span> に加入する</h2>
     <p class="lead">開幕記念 月額1,980円（税込）／自動更新・いつでも解約OK</p>
@@ -197,6 +210,18 @@
     <a href="https://columns.l-mine.com/app/">エルラボ＋アプリ</a>
   </div>
 </footer>
+
+<script>
+  // スクロールでふわっと出現
+  (function(){
+    var groups = document.querySelectorAll('.reveal-group');
+    if(!('IntersectionObserver' in window)){ groups.forEach(function(g){ g.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+    groups.forEach(function(g){ io.observe(g); });
+  })();
+</script>
 
 </body>
 </html>
