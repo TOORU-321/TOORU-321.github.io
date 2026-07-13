@@ -1655,9 +1655,7 @@ a{text-decoration:none}
   .sc-reason{text-align:left;padding:12px 14px;border:1px solid rgba(227,195,129,.22);border-radius:12px;background:rgba(255,255,255,.02);color:#e8e4d8;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
   .sc-reason:hover{border-color:rgba(227,195,129,.5)}
   .sc-reason.sel{border-color:#caa75f;background:linear-gradient(135deg,rgba(227,195,129,.16),rgba(227,195,129,.05));color:#f0d69c;font-weight:600}
-  .sc-note{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid rgba(227,195,129,.2);border-radius:12px;background:rgba(255,255,255,.02);color:#e8e4d8;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;margin-bottom:16px}
-  .sc-note::placeholder{color:#7a7568}
-  .sc-note:focus{outline:none;border-color:rgba(227,195,129,.5)}
+  .sc-multi{text-align:center;font-size:11px;color:#8a8575;margin:2px 0 16px;letter-spacing:.03em}
   .sc-proceed{width:100%;min-height:50px;border:none;border-radius:999px;background:linear-gradient(180deg,#e6c47f,#caa75f);color:#1c1a14;font-size:14px;font-weight:700;letter-spacing:.05em;cursor:pointer;box-shadow:0 8px 22px rgba(202,167,95,.24);margin-bottom:8px;transition:transform .12s ease,filter .2s ease}
   .sc-proceed:hover{filter:brightness(1.04)}
   .sc-proceed:active{transform:translateY(1px)}
@@ -1680,7 +1678,7 @@ a{text-decoration:none}
       <button class="sc-reason" data-reason="一区切りついた">一区切りついた</button>
       <button class="sc-reason" data-reason="その他">その他</button>
     </div>
-    <textarea class="sc-note" id="scNote" rows="2" placeholder="ひとことあれば（任意）"></textarea>
+    <div class="sc-multi">あてはまるものを選んでください（複数選択OK・任意）</div>
     <button class="sc-proceed" id="scProceed">解約手続きへ進む</button>
     <button class="sc-keep" id="scKeep">やっぱり続ける</button>
   </div>
@@ -2204,10 +2202,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   const reasons = document.getElementById("scReasons");
   if(reasons) reasons.addEventListener("click", (e) => {
     const b = e.target.closest(".sc-reason"); if(!b) return;
-    const already = b.classList.contains("sel");
-    reasons.querySelectorAll(".sc-reason").forEach(x => x.classList.remove("sel"));
-    if(!already){ b.classList.add("sel"); _scReason = b.getAttribute("data-reason") || ""; }
-    else { _scReason = ""; }   // 再タップで選択解除
+    b.classList.toggle("sel");   // 複数選択可・再タップで解除
   });
   const pr = document.getElementById("scProceed"); if(pr) pr.addEventListener("click", proceedSubCancel);
   const kp = document.getElementById("scKeep");    if(kp) kp.addEventListener("click", closeSubCancel);
@@ -2249,23 +2244,21 @@ function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION &
 function isAdmin(){ return hasTag("admin"); }
 function isVip(){ return hasTag("vip"); }
 // エルラボ＋（サブスク）だけを対象にした解約フローへ。VIP（月額コンサル）は対象外・非表示。
-let _scReason = "";
 function openSubCancel(){
   if(!SESSION || !SESSION.email){ showToast("ログインが必要です。"); return; }
   if(isVip()){ showToast("月額コンサル会員は対象外です。"); return; }
-  _scReason = "";
   const box = document.getElementById("scReasons");
   if(box) box.querySelectorAll(".sc-reason").forEach(b => b.classList.remove("sel"));
-  const note = document.getElementById("scNote"); if(note) note.value = "";
   document.getElementById("subCancelModal").hidden = false;
 }
 function closeSubCancel(){ const m = document.getElementById("subCancelModal"); if(m) m.hidden = true; }
-// アンケート回答を記録 → エルラボ＋サブスク限定の解約ページへ
+// アンケート回答（複数選択可）を記録 → エルラボ＋サブスク限定の解約ページへ
 async function proceedSubCancel(){
-  const note = (document.getElementById("scNote").value || "").trim();
+  const reason = Array.from(document.querySelectorAll("#scReasons .sc-reason.sel"))
+                      .map(x => x.getAttribute("data-reason")).join("、");
   try{
-    if(_scReason || note){
-      await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"sub_cancel_log", email:SESSION.email, reason:_scReason, note:note }) });
+    if(reason){
+      await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"sub_cancel_log", email:SESSION.email, reason:reason }) });
     }
   }catch(e){ /* 記録は任意。失敗しても解約手続きは続行 */ }
   closeSubCancel();
