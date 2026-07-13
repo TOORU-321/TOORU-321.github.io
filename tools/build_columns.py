@@ -66,8 +66,10 @@ def optin_footer(n):
 # スクロール追従ポップアップ。n>=ELABO_OPTIN_FROM でエルラボ＋を主ボタン、それ未満はメルマガ主体
 def popup_html(n):
     if n >= ELABO_OPTIN_FROM:
-        txt = 'コラムの学びを、動画でもっと深く。会員制アプリ「エルラボ＋」でお届けしています。'
+        # アプリ（主）→ メルマガ → インスタ の順で全3ボタンを表示
+        txt = 'コラムでは書ききれない話を、動画・メルマガ・SNSでも発信しています。気が向いたら、こちらも。'
         btns = (f'      <a class="lm-pop-app lm-pop-app-primary" href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋を見てみる</a>\n'
+                f'      <a class="lm-pop-mag" href="{LP_URL}" target="_blank" rel="noopener">メルマガ『3-2-1ラボ』</a>\n'
                 f'      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>')
     else:
         txt = 'コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。'
