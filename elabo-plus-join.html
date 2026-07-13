@@ -829,6 +829,8 @@
   @media (prefers-reduced-motion:reduce){.pay-modal.open .pay-sheet,.pay-modal.open .pay-backdrop{animation:none}}
   .pay-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#aaa69d;font-size:26px;line-height:1;cursor:pointer;z-index:3}
   .pay-close:hover{color:#fff}
+  .pay-emailnote{margin:2px 4px 14px;padding:10px 12px;border:1px solid rgba(208,183,126,.32);border-radius:12px;background:rgba(208,183,126,.06);color:#d0b77e;font-family:"Noto Sans JP",sans-serif;font-size:11.5px;line-height:1.7;text-align:center}
+  .pay-emailnote b{color:#fff;font-weight:600}
   #embedded-checkout{min-height:220px}
   .pay-msg{text-align:center;color:#aaa69d;font-family:"Noto Sans JP",sans-serif;font-size:13px;padding:56px 20px}
   .pay-msg.err{color:#e0a9a9}
@@ -841,6 +843,7 @@
   <div class="pay-backdrop" onclick="closeCheckout()"></div>
   <div class="pay-sheet">
     <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+    <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
     <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
     <div id="payDone">
       <div class="mk">✓</div>
@@ -854,6 +857,8 @@
   var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
   var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
   var SUB_PRICE_ID = "price_1TrzawDffCAQquMFANsJN7YK";   // エルラボ＋オンライン講義 月額1,980円
+  var PREFILL_EMAIL = "";
+  try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
   var _stripe = null, _checkout = null;
   async function openCheckout(){
     var modal = document.getElementById('payModal');
@@ -862,11 +867,16 @@
     done.style.display = 'none';
     cont.style.display = 'block';
     cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+    var enote = document.getElementById('payEmailNote');
+    if(enote){
+      if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; }
+      else { enote.style.display = 'none'; }
+    }
     modal.classList.add('open');
     try{
       if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
       if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
-      var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&price=' + encodeURIComponent(SUB_PRICE_ID) + '&_=' + Date.now()).then(function(x){ return x.json(); });
+      var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&price=' + encodeURIComponent(SUB_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
       if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
       if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
       cont.innerHTML = '';

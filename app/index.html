@@ -1361,6 +1361,8 @@ a{text-decoration:none}
 .acct-item .ai-ico{font-size:15px;width:20px;text-align:center;flex:none}
 .acct-vip{color:#f0d69c;background:rgba(227,195,129,.08);font-weight:700}
 .acct-vip:hover{background:rgba(227,195,129,.16)}
+.acct-join{color:#f0d69c;background:linear-gradient(135deg,rgba(227,195,129,.14),rgba(227,195,129,.05));font-weight:700}
+.acct-join:hover{background:linear-gradient(135deg,rgba(227,195,129,.22),rgba(227,195,129,.1))}
 .acct-badge{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-radius:999px;padding:2px 8px}
 .acct-tog{margin-left:auto;font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:999px;padding:3px 11px}
 .acct-tog.on{color:#12281f;background:linear-gradient(135deg,#8fe0c0,#5cc4a2)}
@@ -1775,6 +1777,7 @@ function renderAcctMenu(){
   let html = "";
   if(member){
     if(isVip()) html += `<button class="acct-item acct-vip" data-act="taskapp"><span class="ai-ico">🗂️</span>タスク管理アプリ<span class="acct-badge">VIP</span></button>`;
+    if(!SESSION.subActive && !isVip()) html += `<button class="acct-item acct-join" data-act="subjoin"><span class="ai-ico">✨</span>エルラボ＋に加入</button>`;
     html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
     html += `<button class="acct-item" data-act="resetpw"><span class="ai-ico">🔑</span>パスワード再設定</button>`;
     if(SESSION.subActive && !isVip()) html += `<button class="acct-item" data-act="subcancel"><span class="ai-ico">💳</span>お支払い・解約</button>`;
@@ -2191,6 +2194,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
+  else if(act === "subjoin") openSubJoin();
   else if(act === "subcancel") openSubCancel();
   else if(act === "logout") logout();
   else if(act === "login") openLogin();
@@ -2243,6 +2247,12 @@ document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
 function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION && (SESSION.tags || []).some(t => String(t).toLowerCase() === n)); }
 function isAdmin(){ return hasTag("admin"); }
 function isVip(){ return hasTag("vip"); }
+// エルラボ＋加入LPへ。ログインメールを引き継ぎ、決済メール＝ログインメールで揃える（視聴権が確実に反映）。
+function openSubJoin(){
+  const base = "https://columns.l-mine.com/elabo-plus-join.html";
+  const url = (SESSION && SESSION.email) ? (base + "?email=" + encodeURIComponent(SESSION.email)) : base;
+  window.location.href = url;
+}
 // エルラボ＋（サブスク）だけを対象にした解約フローへ。VIP（月額コンサル）は対象外・非表示。
 function openSubCancel(){
   if(!SESSION || !SESSION.email){ showToast("ログインが必要です。"); return; }
