@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VSLマスター講座</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background:#0b0b0d; color:#e9e5db; font-family:'Noto Sans JP',sans-serif; font-weight:300; overflow-x:hidden; }
+  ::selection { background:#c2a26a; color:#0b0b0d; }
+  a { color:#c9ab74; text-decoration:none; }
+  a:hover { color:#e0c68f; }
+  @keyframes lux-fade { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+  .cta { display:inline-block; font-family:'Shippori Mincho B1',serif; letter-spacing:0.14em; color:#0b0b0d; background:linear-gradient(180deg,#e3ca92,#c2a26a); border-radius:2px; transition:background .25s; }
+  .cta:hover { background:linear-gradient(180deg,#eed6a2,#cbab72); color:#0b0b0d; }
+  .faq-item { border:1px solid rgba(194,162,106,0.2); border-radius:5px; margin-bottom:16px; overflow:hidden; background:#121113; }
+  .faq-q { width:100%; text-align:left; background:none; border:0; cursor:pointer; padding:26px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; font-family:'Shippori Mincho B1',serif; }
+  .faq-toggle { color:#c2a26a; font-size:22px; flex:none; transition:transform .3s; }
+  .faq-item.open .faq-toggle { transform:rotate(45deg); }
+  .faq-a { padding:0 28px 28px 62px; font-size:14px; line-height:2; color:#aca79b; letter-spacing:0.02em; animation:lux-fade .3s ease; }
+  .faq-a[hidden] { display:none; }
+  /* 講師プロフィール */
+  .prof-grid { display:grid; grid-template-columns:220px 1fr; gap:44px; align-items:stretch; background:linear-gradient(160deg,#161418,#111012); border:1px solid rgba(194,162,106,0.2); border-radius:8px; padding:40px; }
+  .prof-grid .ph { width:220px; height:100%; min-height:280px; object-fit:cover; object-position:center 18%; border:1px solid rgba(194,162,106,0.4); border-radius:6px; }
+  .prof-grid h4 { font-size:12px; letter-spacing:0.14em; color:#e6cf98; font-weight:700; margin:20px 0 9px; }
+  .prof-grid ul { list-style:none; }
+  .prof-grid li { position:relative; padding-left:18px; font-size:13.5px; line-height:1.95; color:#b3aea1; letter-spacing:0.02em; }
+  .prof-grid li::before { content:""; position:absolute; left:0; top:13px; width:9px; height:1px; background:#c2a26a; }
+  @media (max-width:720px){
+    .prof-grid { grid-template-columns:1fr; gap:26px; padding:30px 22px; text-align:center; }
+    .prof-grid .ph { width:180px; height:230px; min-height:0; margin:0 auto; }
+    .prof-grid .pb { text-align:left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="top" style="position:relative; padding:120px 32px 130px; text-align:center; background:radial-gradient(120% 90% at 50% 0%, #17151a 0%, #0b0b0d 62%); overflow:hidden;">
+  <!-- ③ タイトル背景：フォルダの「vsl」画像を薄く敷く。画像URLをもらったら background-image に設定します。 -->
+  <div id="heroBg" style="position:absolute; inset:0; background-size:cover; background-position:center; opacity:0.12; pointer-events:none; /* background-image:url('VSL_IMAGE_URL'); */"></div>
+  <div style="position:absolute; inset:0; background:radial-gradient(50% 40% at 50% 22%, rgba(194,162,106,0.16), transparent 70%); pointer-events:none;"></div>
+  <div style="position:relative; max-width:920px; margin:0 auto;">
+    <div style="display:inline-flex; align-items:center; gap:12px; margin-bottom:34px;">
+      <span style="width:34px; height:1px; background:linear-gradient(90deg,transparent,#c2a26a);"></span>
+      <span style="font-size:12px; letter-spacing:0.42em; color:#c2a26a; text-transform:uppercase; font-family:'Cormorant Garamond',serif; font-weight:600;">Video Sales Letter</span>
+      <span style="width:34px; height:1px; background:linear-gradient(90deg,#c2a26a,transparent);"></span>
+    </div>
+    <p style="font-family:'Shippori Mincho B1',serif; font-size:16px; letter-spacing:0.18em; color:#c9ab74; margin-bottom:26px;">時間売りビジネスに、終止符を。</p>
+    <h1 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(38px,6vw,72px); line-height:1.32; letter-spacing:0.04em; color:#f5f1e8;">
+      「話すだけで売れる」<br><span style="color:#d9bd85;">動画セールス</span>の全体像を、<br>最短で。
+    </h1>
+    <p style="margin:38px auto 0; max-width:560px; font-size:15px; line-height:2.1; color:#a8a396; letter-spacing:0.03em;">
+      売り込まずに、自然に伝わり、自然に売れる。<br>動画セールスの設計を「22のステップ」で完全マスター。
+    </p>
+    <div style="margin-top:48px;">
+      <a class="cta" href="#offer" style="font-size:17px; padding:19px 58px; box-shadow:0 18px 40px -18px rgba(194,162,106,0.7);">今すぐ受講する</a>
+    </div>
+    <p style="margin-top:56px; font-family:'Cormorant Garamond',serif; font-size:15px; letter-spacing:0.5em; color:#6f6a5f; text-transform:uppercase;">— VSL Master Course —</p>
+  </div>
+</section>
+
+<!-- WORDMARK / VSL とは -->
+<section id="about" style="padding:110px 32px; background:linear-gradient(180deg,#0b0b0d,#100f11);">
+  <div style="max-width:840px; margin:0 auto; text-align:center;">
+    <h2 style="font-family:'Cormorant Garamond',serif; font-weight:600; font-size:clamp(52px,9vw,96px); line-height:1; color:#f5f1e8; letter-spacing:0.02em;">VSL</h2>
+    <p style="margin-top:14px; font-family:'Shippori Mincho B1',serif; font-size:22px; letter-spacing:0.16em; color:#c9ab74;">マスター講座</p>
+    <div style="width:56px; height:1px; background:#c2a26a; margin:44px auto;"></div>
+    <p style="font-family:'Shippori Mincho B1',serif; font-size:21px; letter-spacing:0.08em; color:#e9e5db; margin-bottom:28px;">『VSL』とは？</p>
+    <p style="font-size:16px; line-height:2.15; color:#b3aea1; letter-spacing:0.03em;">
+      VSLとは、<span style="color:#e9e5db;">Video Sales Letter（動画版のセールスレター）</span>のこと。<br><br>
+      この講座では、<span style="color:#d9bd85;">【売り込み感を出さずに伝え、自然に売れる】</span>動画構成を「22のステップ」に分解して、誰でも実践できる形でお伝えします。
+    </p>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section id="curriculum" style="padding:110px 32px; background:#100f11; border-top:1px solid rgba(194,162,106,0.12);">
+  <div style="max-width:1080px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#c2a26a; text-transform:uppercase;">Curriculum</span>
+    </div>
+    <h3 style="text-align:center; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(26px,4vw,38px); letter-spacing:0.06em; color:#f5f1e8; margin-bottom:12px;">以下は、コース内容の一部です</h3>
+    <p style="text-align:center; font-size:14px; letter-spacing:0.1em; color:#8f8a7e; margin-bottom:56px;">計 12 本・約 40 分ほどのショートオンラインコース</p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px;">
+      <div style="background:linear-gradient(160deg,#181619,#121113); border:1px solid rgba(194,162,106,0.16); border-radius:4px; padding:34px 30px;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:rgba(194,162,106,0.32); line-height:1; display:block; margin-bottom:16px;">01</span>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:17px; line-height:1.7; letter-spacing:0.04em; color:#ece7dc;">一瞬で共感を得る「冒頭パート」の作り方</p>
+      </div>
+      <div style="background:linear-gradient(160deg,#181619,#121113); border:1px solid rgba(194,162,106,0.16); border-radius:4px; padding:34px 30px;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:rgba(194,162,106,0.32); line-height:1; display:block; margin-bottom:16px;">02</span>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:17px; line-height:1.7; letter-spacing:0.04em; color:#ece7dc;">買いたくなる人の"購買心理ブロック"を一つずつ解除する方法</p>
+      </div>
+      <div style="background:linear-gradient(160deg,#181619,#121113); border:1px solid rgba(194,162,106,0.16); border-radius:4px; padding:34px 30px;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:rgba(194,162,106,0.32); line-height:1; display:block; margin-bottom:16px;">03</span>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:17px; line-height:1.7; letter-spacing:0.04em; color:#ece7dc;">教育とセールスの"いいとこ取り"をした設計ノウハウ</p>
+      </div>
+      <div style="background:linear-gradient(160deg,#181619,#121113); border:1px solid rgba(194,162,106,0.16); border-radius:4px; padding:34px 30px;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:rgba(194,162,106,0.32); line-height:1; display:block; margin-bottom:16px;">04</span>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:17px; line-height:1.7; letter-spacing:0.04em; color:#ece7dc;">アップセルやワンページファネルにも使えるテンプレ式構成</p>
+      </div>
+      <div style="background:linear-gradient(160deg,#181619,#121113); border:1px solid rgba(194,162,106,0.16); border-radius:4px; padding:34px 30px;">
+        <span style="font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:600; color:rgba(194,162,106,0.32); line-height:1; display:block; margin-bottom:16px;">05</span>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:17px; line-height:1.7; letter-spacing:0.04em; color:#ece7dc;">価格帯別のVSL活用法（10万円以下／30万円以上 etc）</p>
+      </div>
+    </div>
+
+    <!-- VIDEO -->
+    <div style="max-width:780px; margin:64px auto 0;">
+      <div style="position:relative; padding-top:56.25%; border-radius:6px; overflow:hidden; border:1px solid rgba(194,162,106,0.28); box-shadow:0 30px 70px -30px rgba(0,0,0,0.9);">
+        <iframe src="https://player.vimeo.com/video/1082120110?app_id=122963" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:40px; font-family:'Shippori Mincho B1',serif; font-size:clamp(20px,3vw,26px); letter-spacing:0.06em; color:#d9bd85;">🎥 今すぐVSLをマスターして、自動で売れる仕組みをつくる</p>
+    <div style="text-align:center; margin-top:34px;">
+      <a class="cta" href="#offer" style="font-size:16px; padding:17px 50px;">今すぐ受講する</a>
+      <p style="margin-top:16px; font-size:12px; color:#7d786d; letter-spacing:0.04em;">※各動画はマイページにて視聴することができます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOR / AFTER -->
+<section style="padding:110px 32px; background:linear-gradient(180deg,#100f11,#0b0b0d);">
+  <div style="max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:28px;">
+    <div style="background:linear-gradient(160deg,#161418,#111012); border:1px solid rgba(194,162,106,0.16); border-radius:6px; padding:46px 40px;">
+      <p style="font-family:'Shippori Mincho B1',serif; font-size:20px; letter-spacing:0.1em; color:#c9ab74; margin-bottom:32px;">［ こんな方におすすめ ］</p>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.06); align-items:baseline;"><span style="color:#c2a26a; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#cfcabe;">高額セールスに疲れてきた…</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.06); align-items:baseline;"><span style="color:#c2a26a; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#cfcabe;">文章より「話す」ほうが得意</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.06); align-items:baseline;"><span style="color:#c2a26a; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#cfcabe;">動画で商品の魅力を伝えたい</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(255,255,255,0.06); align-items:baseline;"><span style="color:#c2a26a; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#cfcabe;">教育コンテンツで売る力を高めたい</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; align-items:baseline;"><span style="color:#c2a26a; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#cfcabe;">自動化を目指してセールスの仕組みを構築中</span></div>
+    </div>
+    <div style="background:linear-gradient(160deg,#1b1710,#131109); border:1px solid rgba(217,189,133,0.35); border-radius:6px; padding:46px 40px; box-shadow:0 26px 60px -34px rgba(194,162,106,0.4);">
+      <p style="font-family:'Shippori Mincho B1',serif; font-size:20px; letter-spacing:0.1em; color:#e6cf98; margin-bottom:32px;">［ 受講後のあなた ］</p>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(217,189,133,0.14); align-items:baseline;"><span style="color:#e6cf98; font-size:12px; flex:none;">✦</span><span style="font-size:15px; line-height:1.7; color:#efe9dc;">VSLの構成が「なんとなく」ではなく「理論的」に理解できる</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(217,189,133,0.14); align-items:baseline;"><span style="color:#e6cf98; font-size:12px; flex:none;">✦</span><span style="font-size:15px; line-height:1.7; color:#efe9dc;">見込み客の"納得感"を引き出しやすくなる</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; border-bottom:1px solid rgba(217,189,133,0.14); align-items:baseline;"><span style="color:#e6cf98; font-size:12px; flex:none;">✦</span><span style="font-size:15px; line-height:1.7; color:#efe9dc;">自分の商品に合ったVSL導線が設計できる</span></div>
+      <div style="display:flex; gap:16px; padding:15px 0; align-items:baseline;"><span style="color:#e6cf98; font-size:12px; flex:none;">✦</span><span style="font-size:15px; line-height:1.7; color:#efe9dc;">動画を一本作れば、24時間働いてくれる営業マンが完成する</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding:110px 32px; background:#0b0b0d;">
+  <div style="max-width:780px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:52px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#c2a26a; text-transform:uppercase;">Q &amp; A</span>
+      <h3 style="margin-top:10px; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(26px,4vw,36px); letter-spacing:0.08em; color:#f5f1e8;">よくある質問</h3>
+    </div>
+    <div class="faq-item open">
+      <button class="faq-q" type="button">
+        <span style="display:flex; gap:16px; align-items:baseline;"><span style="color:#c2a26a; font-family:'Cormorant Garamond',serif; font-size:20px;">Q.</span><span style="font-size:16px; line-height:1.6; letter-spacing:0.03em; color:#ece7dc;">セールス経験がなくても大丈夫ですか？</span></span>
+        <span class="faq-toggle">＋</span>
+      </button>
+      <div class="faq-a">A. はい、むしろセールスが苦手な人にこそおすすめです。教育型VSLは、売り込みをせずに伝える技術を身につけられます。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" type="button">
+        <span style="display:flex; gap:16px; align-items:baseline;"><span style="color:#c2a26a; font-family:'Cormorant Garamond',serif; font-size:20px;">Q.</span><span style="font-size:16px; line-height:1.6; letter-spacing:0.03em; color:#ece7dc;">顔出しは必要ですか？</span></span>
+        <span class="faq-toggle">＋</span>
+      </button>
+      <div class="faq-a" hidden>A. 必須ではありません。音声＋スライドの形式でも構成できます。</div>
+    </div>
+  </div>
+</section>
+
+<!-- OFFER -->
+<section id="offer" style="padding:120px 32px; background:radial-gradient(120% 80% at 50% 0%, #17151a, #0b0b0d 65%); border-top:1px solid rgba(194,162,106,0.2);">
+  <div style="max-width:1080px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:56px;">
+      <p style="font-size:13px; letter-spacing:0.18em; color:#c2a26a; margin-bottom:18px;">ビジネスの自動化には必須のスキル</p>
+      <h3 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(28px,4.6vw,46px); line-height:1.5; letter-spacing:0.05em; color:#f5f1e8;">今すぐ、オンラインでの収益を<br><span style="color:#d9bd85;">成長・拡大・加速</span>させましょう</h3>
+      <p style="margin-top:26px; font-size:15px; color:#a8a396; letter-spacing:0.04em;">「話すだけで売れる」動画セールスの全体像を、最短で。</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:26px; align-items:start;">
+      <div style="background:linear-gradient(165deg,#1c1810,#100e0a); border:1px solid rgba(217,189,133,0.4); border-radius:8px; padding:44px 40px; box-shadow:0 34px 80px -36px rgba(194,162,106,0.5); text-align:center;">
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:16px; letter-spacing:0.08em; color:#e6cf98;">VSLマスター講座アクセスパス</p>
+        <div style="width:44px; height:1px; background:#c2a26a; margin:26px auto;"></div>
+        <p style="font-family:'Cormorant Garamond',serif; font-weight:600; font-size:64px; line-height:1; color:#f5f1e8;">¥14,200</p>
+        <a class="cta" href="#" style="display:block; margin-top:30px; font-size:17px; padding:19px; border-radius:3px;">今すぐ受講する</a>
+        <p style="margin-top:20px; font-size:12px; color:#8f8a7e; letter-spacing:0.04em;">🔒 100% 安全な購入。データは保護されます。</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:22px;">
+        <div style="background:#121113; border:1px solid rgba(194,162,106,0.2); border-radius:8px; padding:26px; display:flex; gap:20px; align-items:center;">
+          <img src="https://content.app-sources.com/s/388341203119055331/thumbnails/640x480/Images/%E5%BF%9C%E7%94%A8%E7%B7%A8%E3%83%88%E3%83%83%E3%83%97-6708753.png?format=webp" alt="セールスフロー構築講座" style="width:120px; height:auto; border-radius:4px; flex:none;">
+          <div>
+            <p style="font-size:14px; line-height:1.8; color:#cfcabe; letter-spacing:0.02em;">セールスフロー構築講座を先に購入することで、<span style="color:#e6cf98; font-weight:500;">¥9,900</span> で手に入れることができます‼</p>
+            <a href="#" style="display:inline-block; margin-top:12px; font-size:13px; letter-spacing:0.08em; color:#c9ab74;">コース詳細 →</a>
+          </div>
+        </div>
+        <div style="background:#121113; border:1px solid rgba(194,162,106,0.2); border-radius:8px; padding:30px;">
+          <p style="font-family:'Shippori Mincho B1',serif; font-size:18px; letter-spacing:0.06em; color:#e6cf98; margin-bottom:14px;">100% 返金保証</p>
+          <p style="font-size:13px; line-height:1.95; color:#a8a396; letter-spacing:0.02em;">リスクのない購入に自信を持っていただくため、14 日間のアクションベース保証を提供しています。プログラムを試して合わないと感じた場合は、購入後 14 日以内に全額返金いたします。</p>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:40px; font-size:12px; color:#6f6a5f; line-height:1.9;">※当講座は成果を保証するものではありません。詳しくは<a href="legal/tokusho.html">特定商取引法に基づく表記</a>をご確認ください。<br>※返金額はカードの場合Stripe手数料3.6%を引いた額、振込の場合は振込手数料を引いた額を返金いたします。</p>
+  </div>
+</section>
+
+<!-- INSTRUCTOR（テンプレ統一） -->
+<section id="instructor" style="padding:110px 32px; background:linear-gradient(180deg,#0b0b0d,#100f11);">
+  <div style="max-width:900px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:48px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#c2a26a; text-transform:uppercase;">Your Instructor</span>
+      <h3 style="margin-top:10px; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,3.6vw,32px); letter-spacing:0.08em; color:#f5f1e8;">あなたのインストラクター</h3>
+    </div>
+    <div class="prof-grid">
+      <img class="ph" src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.onerror=null;this.src='assets/toru.jpg'">
+      <div class="pb">
+        <p style="font-family:'Cormorant Garamond',serif; font-size:12px; letter-spacing:0.28em; color:#c2a26a; text-transform:uppercase; margin-bottom:6px;">Behavioral Economics Analyst</p>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:22px; letter-spacing:0.05em; color:#f5f1e8; margin-bottom:4px;">行動経済アナリスト「とーる」</p>
+        <h4>実績</h4>
+        <ul>
+          <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
+          <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
+          <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
+          <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
+        </ul>
+        <h4>活動内容</h4>
+        <ul>
+          <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
+          <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
+          <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
+          <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
+          <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
+        </ul>
+        <h4>想い</h4>
+        <ul>
+          <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER（ロゴ削除・法務リンクのみ） -->
+<footer style="background:#08080a; border-top:1px solid rgba(194,162,106,0.14); padding:48px 32px 40px;">
+  <div style="max-width:1080px; margin:0 auto; text-align:center;">
+    <nav style="display:flex; flex-wrap:wrap; gap:26px; justify-content:center; font-size:12px; letter-spacing:0.06em; color:#8f8a7e; margin-bottom:22px;">
+      <a href="legal/terms.html" style="color:#8f8a7e;">利用規約</a>
+      <a href="legal/tokusho.html" style="color:#8f8a7e;">特定商取引法に基づく表記</a>
+      <a href="legal/privacy.html" style="color:#8f8a7e;">プライバシーポリシー</a>
+      <a href="https://columns.l-mine.com/app/" style="color:#8f8a7e;">エルラボ＋アプリ</a>
+    </nav>
+    <p style="font-size:11px; letter-spacing:0.1em; color:#5f5b52;">© 2025 L-MINE 無断複写・転載を禁じます。</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.faq-q').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var item = btn.closest('.faq-item');
+      var ans = item.querySelector('.faq-a');
+      var isOpen = item.classList.toggle('open');
+      ans.hidden = !isOpen;
+    });
+  });
+</script>
+
+</body>
+</html>
