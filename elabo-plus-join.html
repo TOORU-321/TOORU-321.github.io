@@ -165,6 +165,9 @@
   .priceline .amt small{font-size:13px;font-weight:400;color:var(--sub);font-family:var(--gothic);letter-spacing:.02em}
   .priceline .fut{font-size:11.5px;color:var(--mut)}
   .priceline .fut s{color:var(--sub)}
+  .priceline .fut b{color:var(--gold-pale);font-weight:600}
+  .priceline .deadline{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.05em;color:var(--gold-pale)}
+  .priceline .deadline b{color:#fff;font-weight:600}
 
   /* buttons */
   .cta{
@@ -400,6 +403,7 @@
   .plan .pamt small{font-size:13px;font-weight:400;color:var(--sub);font-family:var(--gothic);letter-spacing:.02em}
   .plan .pfut{font-size:11.5px;color:var(--mut);margin-bottom:30px}
   .plan .pfut s{color:var(--sub)}
+  .plan .pfut b{color:var(--gold-pale);font-weight:600}
   .plan ul{list-style:none;padding:0;margin:0 auto 32px;max-width:380px;text-align:left;border-top:1px solid var(--hair)}
   .plan ul li{font-size:13px;color:var(--sub);font-weight:300;padding:13px 8px 13px 30px;position:relative;border-bottom:1px solid var(--hair)}
   .plan ul li::before{content:"";position:absolute;left:8px;top:50%;width:9px;height:1px;background:var(--gold);transform:translateY(-50%)}
@@ -582,7 +586,8 @@
     <div class="priceline">
       <div class="tag">Opening Price</div>
       <div class="amt">¥1,980<small> / 月（税込）</small></div>
-      <div class="fut">今後 <s>¥3,300</s> へ改定予定 ─ 今がいちばんおトク</div>
+      <div class="fut">開幕記念価格　以降 <s>¥3,300</s> へ改定予定</div>
+      <div class="deadline">▷ <b>8月31日まで</b>のご加入限定</div>
     </div>
     <a href="#" onclick="openCheckout();return false;" class="cta">加入する<span class="cta-note">いつでも解約OK・カード決済</span></a>
   </div>
@@ -603,7 +608,8 @@
     <div class="feat"><div class="no">01</div><div class="ft"><b>講義アーカイブが見放題</b><span>行動経済学のレンズで学ぶ講義が、増え続けます。好きな時に、何度でも。</span></div></div>
     <div class="feat"><div class="no">02</div><div class="ft"><b>月イチの収録・公開ライブに参加</b><span>毎月 第4水曜 21:30〜（30分程度）。テーマにより不定期の追加開催も。</span></div></div>
     <div class="feat"><div class="no">03</div><div class="ft"><b>ライブの回はアーカイブに追加</b><span>参加できなくても大丈夫。配信した回はアーカイブに残り、いつでも見返せます。</span></div></div>
-    <div class="feat"><div class="no">04</div><div class="ft"><b>いつでも解約OK</b><span>縛りなし。ご自身のタイミングでいつでも解約できます。</span></div></div>
+    <div class="feat"><div class="no">04</div><div class="ft"><b>メンバー限定のお知らせ・先行案内</b><span>ここだけの"秘密のお知らせ"や、限定案内・先行情報をメンバーだけにお届けします。</span></div></div>
+    <div class="feat"><div class="no">05</div><div class="ft"><b>いつでも解約OK</b><span>縛りなし。ご自身のタイミングでいつでも解約できます。</span></div></div>
   </section>
 
   <section class="reveal-group">
@@ -655,11 +661,12 @@
     <div class="plan">
       <div class="pname"><span class="brandmark">エルラボ<span class="plus">＋</span></span>　オンライン講義</div>
       <div class="pamt">¥1,980<small> / 月（税込）</small></div>
-      <div class="pfut">開幕記念価格　今後 <s>¥3,300</s> へ改定予定</div>
+      <div class="pfut">開幕記念価格 ─ <b>8月31日まで</b>のご加入限定　以降 <s>¥3,300</s> へ改定予定</div>
       <ul>
         <li>講義アーカイブが見放題</li>
         <li>月イチの収録・公開ライブに参加</li>
         <li>ライブの回はアーカイブに追加</li>
+        <li>メンバー限定のお知らせ・先行案内</li>
         <li>縛りなし・いつでも解約</li>
       </ul>
       <a href="#" onclick="openCheckout();return false;" class="cta">加入する</a>
@@ -673,7 +680,7 @@
       <details><summary>これは月額の定期購入ですか？</summary><div class="fa">はい。月額1,980円（税込）の定期課金で、解約されるまで毎月自動で更新されます。いつでもご自身で解約できます。</div></details>
       <details><summary>解約はどうすればいい？</summary><div class="fa">いつでもご自身で解約できます。解約後は次回以降の請求が止まり、期間終了までは引き続き視聴できます。手順は決済完了後のご案内、およびアプリのメニューからご確認いただけます。</div></details>
       <details><summary>ライブに参加できない回があっても大丈夫？</summary><div class="fa">はい。配信した回はアーカイブに残るので、後から好きな時に視聴できます。リアルタイム参加は必須ではありません。</div></details>
-      <details><summary>アーカイブは今どのくらいありますか？</summary><div class="fa">現在は少数からのスタートですが、毎月のライブ配信に合わせて増えていきます。開幕価格は、この立ち上げ時期ならではの価格です。</div></details>
+      <details><summary>アーカイブは今どのくらいありますか？</summary><div class="fa">現在は少数からのスタートですが、毎月のライブ配信に合わせて増えていきます。月額1,980円の開幕記念価格は、この立ち上げ時期ならではの価格です。<b>8月31日までにご加入いただいた方限定</b>で、以降は3,300円へ改定を予定しています。</div></details>
       <details><summary>値上げされたら、今の会員も上がりますか？</summary><div class="fa">開幕価格で加入された方は、できる限り加入時の価格を維持する方針です（詳細は加入時のご案内をご確認ください）。</div></details>
     </div>
   </section>
@@ -684,7 +691,7 @@
   <div class="wrap reveal-group">
     <div class="eyebrow">Join</div>
     <h2 class="sec-h"><span class="brandmark">エルラボ<span class="plus">＋</span></span> に加入する</h2>
-    <p class="lead">開幕記念 月額1,980円（税込）／自動更新・いつでも解約OK</p>
+    <p class="lead">開幕記念 月額1,980円（税込）／<b style="color:var(--gold-pale)">8月31日まで</b>のご加入限定<br>自動更新・いつでも解約OK</p>
     <div id="checkout">
       <a href="#" onclick="openCheckout();return false;" class="cta payment-cta"><span class="lock" aria-hidden="true"></span>加入する</a>
       <p class="cnote">ボタンを押すと、安全な決済ページで加入手続き（カード入力）ができます。<br>お手続き完了後、ご登録のメールで視聴のご案内をお送りします。</p>
