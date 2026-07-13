@@ -168,6 +168,41 @@
   .priceline .fut b{color:var(--gold-pale);font-weight:600}
   .priceline .deadline{display:inline-block;margin-top:9px;font-size:11px;letter-spacing:.05em;color:var(--gold-pale)}
   .priceline .deadline b{color:#fff;font-weight:600}
+  .days-left{color:var(--mut);letter-spacing:.04em}
+  .days-left b{color:var(--gold-pale);font-weight:600}
+
+  /* sticky footer CTA */
+  .sticky-cta{
+    position:fixed;left:0;right:0;bottom:0;z-index:1500;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:11px 20px calc(11px + env(safe-area-inset-bottom,0px));
+    background:rgba(9,10,13,.93);backdrop-filter:blur(16px);
+    border-top:1px solid var(--line-strong);
+    box-shadow:0 -14px 44px rgba(0,0,0,.44);
+    transform:translateY(115%);
+    transition:transform .42s cubic-bezier(.2,.85,.25,1);
+  }
+  .sticky-cta.show{transform:none}
+  .sticky-cta .sc-info{min-width:0;line-height:1.4}
+  .sticky-cta .sc-price{display:block;font-size:13.5px;color:var(--ink);font-weight:500;letter-spacing:.02em}
+  .sticky-cta .sc-price small{font-size:11px;color:var(--sub);font-weight:400}
+  .sticky-cta .sc-days{display:block;font-size:11px;color:var(--gold-pale);letter-spacing:.03em}
+  .sticky-cta .sc-btn{
+    flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+    min-height:48px;padding:0 30px;border-radius:999px;
+    font-family:var(--gothic);font-size:13.5px;font-weight:600;letter-spacing:.1em;
+    color:#17130c;background:linear-gradient(180deg,#dccb9c 0%,#c5a66b 100%);
+    box-shadow:0 8px 22px rgba(185,154,95,.24),inset 0 1px 0 rgba(255,255,255,.44);
+    white-space:nowrap;transition:filter .2s ease,transform .15s ease;
+  }
+  .sticky-cta .sc-btn:hover{filter:brightness(1.05)}
+  .sticky-cta .sc-btn:active{transform:translateY(1px)}
+  @media (max-width:640px){
+    .sticky-cta{padding:9px 15px calc(9px + env(safe-area-inset-bottom,0px));gap:10px}
+    .sticky-cta .sc-price{font-size:12.5px}
+    .sticky-cta .sc-btn{min-height:46px;padding:0 22px;font-size:13px;letter-spacing:.06em}
+  }
+  @media (prefers-reduced-motion:reduce){.sticky-cta{transition:none}}
 
   /* buttons */
   .cta{
@@ -587,7 +622,7 @@
       <div class="tag">Opening Price</div>
       <div class="amt">¥1,980<small> / 月（税込）</small></div>
       <div class="fut">開幕記念価格　以降 <s>¥3,300</s> へ改定予定</div>
-      <div class="deadline">▷ <b>8月31日まで</b>のご加入限定</div>
+      <div class="deadline">▷ <b>8月31日まで</b>のご加入限定<span id="daysLeft" class="days-left"></span></div>
     </div>
     <a href="#" onclick="openCheckout();return false;" class="cta">加入する<span class="cta-note">いつでも解約OK・カード決済</span></a>
   </div>
@@ -718,6 +753,41 @@
       entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
     groups.forEach(function(g){ io.observe(g); });
+  })();
+</script>
+
+<!-- ===== スクロール追従フッター ===== -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="sc-info">
+    <span class="sc-price"><span class="brandmark">エルラボ<span class="plus">＋</span></span>　月額¥1,980<small>（税込）</small></span>
+    <span class="sc-days" id="scDays">開幕記念 8月31日まで</span>
+  </div>
+  <a href="#" class="sc-btn" onclick="openCheckout();return false;">加入する</a>
+</div>
+<script>
+  (function(){
+    // 締切：2026年8月31日 23:59:59（日本時間）
+    var deadline = new Date('2026-08-31T23:59:59+09:00');
+    var left = Math.ceil((deadline - new Date()) / 86400000);
+    var heroEl = document.getElementById('daysLeft');
+    var scEl   = document.getElementById('scDays');
+    if(left > 0){
+      if(heroEl) heroEl.innerHTML = '　残り<b>' + left + '日</b>';
+      if(scEl)   scEl.innerHTML   = '開幕記念 8月31日まで・残り' + left + '日';
+    }else{
+      if(heroEl) heroEl.innerHTML = '';
+      if(scEl)   scEl.textContent = '開幕記念価格の受付は終了しました';
+    }
+    // スクロール追従フッターの表示制御
+    var bar = document.getElementById('stickyCta');
+    var hero = document.querySelector('.hero');
+    var fin  = document.querySelector('.final');
+    if(bar && hero && ('IntersectionObserver' in window)){
+      var heroOut = false, finIn = false;
+      function upd(){ bar.classList.toggle('show', heroOut && !finIn); }
+      new IntersectionObserver(function(e){ heroOut = !e[0].isIntersecting; upd(); }, { threshold:0 }).observe(hero);
+      if(fin) new IntersectionObserver(function(e){ finIn = e[0].isIntersecting; upd(); }, { threshold:0.12 }).observe(fin);
+    }
   })();
 </script>
 
