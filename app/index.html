@@ -2103,8 +2103,23 @@ function setLockScreen(v, course){
   const prod = productName(v, course);
   t.textContent = (prod ? "「" + prod + "」の" : "") + "アクセスパスが必要です";
   d.textContent = "この講座のアクセスパス（ご購入）で視聴できます。";
-  // 未ログインは「ログイン →」。ログイン済み（＝権限不足）は今は非表示。
-  // ★ゆくゆく販売/詳細ページのURLができたら「詳細ページ →」に差し替え
+  const tag = v && v.requiredTag;
+  const lp  = tag ? COURSE_LP[tag] : null;
+  if(lp){
+    // 販売LPがある講座 → 購入導線（ログイン中はメールを引き継ぐ）
+    b.hidden = false;
+    if(loggedIn){
+      b.textContent = "この講座を購入する →";
+      b.setAttribute("href", "#");
+      b.onclick = (ev) => { ev.preventDefault(); openCourseLP(lp); };
+    } else {
+      b.textContent = "ログインして購入する →";
+      b.setAttribute("href", "#");
+      b.onclick = (ev) => { ev.preventDefault(); openLogin(); };
+    }
+    return;
+  }
+  // LP未整備の講座：未ログインは「ログイン →」、ログイン済みは非表示（従来通り）
   if(!loggedIn){
     b.textContent = "ログイン →";
     b.setAttribute("href", "#");
@@ -2282,6 +2297,17 @@ function isVip(){ return hasTag("vip"); }
 // エルラボ＋加入LPへ。ログインメールを引き継ぎ、決済メール＝ログインメールで揃える（視聴権が確実に反映）。
 function openSubJoin(){
   const base = "https://columns.l-mine.com/elabo-plus-join.html";
+  const url = (SESSION && SESSION.email) ? (base + "?email=" + encodeURIComponent(SESSION.email)) : base;
+  window.location.href = url;
+}
+// 各講座LPのマッピング（解放タグ → LPファイル）。LPを作った講座だけ追加していく。
+const COURSE_LP = {
+  "VSL": "course-vsl.html"
+  // 例）"funnel": "course-funnel.html", "ouyou": "course-ouyou.html" …
+};
+// 講座の販売LPへ（ログインメールを引き継ぐ＝決済メールが揃い、購入後に自動解放）
+function openCourseLP(path){
+  const base = "https://columns.l-mine.com/" + path;
   const url = (SESSION && SESSION.email) ? (base + "?email=" + encodeURIComponent(SESSION.email)) : base;
   window.location.href = url;
 }
