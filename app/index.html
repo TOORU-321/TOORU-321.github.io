@@ -1732,6 +1732,7 @@ function renderAcctMenu(){
     if(isVip()) html += `<button class="acct-item acct-vip" data-act="taskapp"><span class="ai-ico">🗂️</span>タスク管理アプリ<span class="acct-badge">VIP</span></button>`;
     html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
     html += `<button class="acct-item" data-act="resetpw"><span class="ai-ico">🔑</span>パスワード再設定</button>`;
+    if(SESSION.subActive && !isVip()) html += `<button class="acct-item" data-act="subcancel"><span class="ai-ico">💳</span>お支払い・解約</button>`;
     html += `<button class="acct-item" data-act="logout"><span class="ai-ico">🚪</span>ログアウト</button>`;
   } else {
     html += `<button class="acct-item" data-act="login"><span class="ai-ico">🔓</span>ログイン</button>`;
@@ -2056,13 +2057,13 @@ function setLockScreen(v, course){
 }
 // Firebaseで本人確認済みのメールを、顧客シート照合でランク確定してから入室
 async function applyTierAndEnter(email, closeFn){
-  let tier = { active:false, tags:[], name: email.split("@")[0] };
+  let tier = { active:false, subActive:false, tags:[], name: email.split("@")[0] };
   try {
     const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(email) + "&_=" + Date.now()).then(r=>r.json());
-    if(res && res.ok){ tier = { active: !!res.active, tags: res.tags || [], name: res.name || tier.name }; }
+    if(res && res.ok){ tier = { active: !!res.active, subActive: !!res.subActive, tags: res.tags || [], name: res.name || tier.name }; }
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
-  saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, registered:true });
+  saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, subActive: tier.subActive, registered:true });
   try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email }) }); }catch(_e){}   // 最終ログイン日時を記録（名簿に「最終ログイン」列がある時）
   if(closeFn) closeFn();
   hideAuthLoading();    // ローディングを消してオープニングへ
@@ -2145,6 +2146,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
+  else if(act === "subcancel") openSubCancel();
   else if(act === "logout") logout();
   else if(act === "login") openLogin();
   else if(act === "register") openRegister();
@@ -2184,6 +2186,20 @@ document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
 function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION && (SESSION.tags || []).some(t => String(t).toLowerCase() === n)); }
 function isAdmin(){ return hasTag("admin"); }
 function isVip(){ return hasTag("vip"); }
+// エルラボ＋（サブスク）だけを対象にした解約フローへ。VIP（月額コンサル）は対象外・非表示。
+async function openSubCancel(){
+  if(!SESSION || !SESSION.email){ showToast("ログインが必要です。"); return; }
+  if(isVip()){ showToast("月額コンサル会員は対象外です。"); return; }
+  if(!confirm("エルラボ＋（サブスク）の解約手続きページを開きます。\n※このサブスクのみが対象で、他のご契約には影響しません。\n※解約後も、お支払い済みの期間の終わりまでは視聴できます。")) return;
+  showToast("解約ページを準備しています…");
+  try{
+    const res = await fetch(GAS_URL + "?action=cancel_portal&email=" + encodeURIComponent(SESSION.email) + "&_=" + Date.now()).then(r=>r.json());
+    if(res && res.ok && res.url){ window.location.href = res.url; }
+    else if(res && res.reason === "no_sub"){ alert("現在、解約できるエルラボ＋サブスクが見つかりませんでした。\n決済に使ったメールアドレスがログインと異なる場合もあります。お手数ですが info@l-mine.com までご連絡ください。"); }
+    else if(res && res.reason === "portal_off"){ alert("解約ページの準備中です。お手数ですが info@l-mine.com までご連絡ください。"); }
+    else { alert("解約ページを開けませんでした。時間をおいて再度お試しいただくか、info@l-mine.com までご連絡ください。"); }
+  }catch(e){ alert("通信エラーが発生しました。時間をおいて再度お試しください。"); }
+}
 // VIP限定：タスク管理アプリを開く（URLはソースに直書きせず難読化）
 function openTaskApp(){
   if(!isVip()){ showToast("この機能はVIP会員限定です。"); return; }
