@@ -1639,6 +1639,53 @@ a{text-decoration:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== 解約プチアンケート ===== -->
+<style>
+  .sc-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px}
+  .sc-modal[hidden]{display:none}
+  .sc-mback{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}
+  .sc-msheet{position:relative;z-index:1;width:100%;max-width:400px;max-height:90vh;overflow:auto;background:#15130d;border:1px solid rgba(227,195,129,.32);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:26px 22px 22px;animation:scpop .42s cubic-bezier(.2,.9,.25,1)}
+  @keyframes scpop{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+  .sc-mclose{position:absolute;top:8px;right:12px;background:none;border:none;color:#8a8575;font-size:24px;line-height:1;cursor:pointer}
+  .sc-mclose:hover{color:#f0d69c}
+  .sc-mhead{text-align:center;margin-bottom:18px}
+  .sc-mtitle{font-size:17px;font-weight:700;color:#f0d69c;letter-spacing:.04em;margin-bottom:8px}
+  .sc-msub{font-size:12.5px;color:#b8b3a3;line-height:1.75}
+  .sc-reasons{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .sc-reason{text-align:left;padding:12px 14px;border:1px solid rgba(227,195,129,.22);border-radius:12px;background:rgba(255,255,255,.02);color:#e8e4d8;font-size:13px;cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .sc-reason:hover{border-color:rgba(227,195,129,.5)}
+  .sc-reason.sel{border-color:#caa75f;background:linear-gradient(135deg,rgba(227,195,129,.16),rgba(227,195,129,.05));color:#f0d69c;font-weight:600}
+  .sc-note{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid rgba(227,195,129,.2);border-radius:12px;background:rgba(255,255,255,.02);color:#e8e4d8;font-size:13px;font-family:inherit;line-height:1.7;resize:vertical;margin-bottom:16px}
+  .sc-note::placeholder{color:#7a7568}
+  .sc-note:focus{outline:none;border-color:rgba(227,195,129,.5)}
+  .sc-proceed{width:100%;min-height:50px;border:none;border-radius:999px;background:linear-gradient(180deg,#e6c47f,#caa75f);color:#1c1a14;font-size:14px;font-weight:700;letter-spacing:.05em;cursor:pointer;box-shadow:0 8px 22px rgba(202,167,95,.24);margin-bottom:8px;transition:transform .12s ease,filter .2s ease}
+  .sc-proceed:hover{filter:brightness(1.04)}
+  .sc-proceed:active{transform:translateY(1px)}
+  .sc-keep{width:100%;min-height:44px;border:none;background:none;color:#b8b3a3;font-size:12.5px;cursor:pointer}
+  .sc-keep:hover{color:#f0d69c}
+</style>
+<div class="sc-modal" id="subCancelModal" hidden role="dialog" aria-modal="true" aria-label="解約前アンケート">
+  <div class="sc-mback" id="subCancelBack"></div>
+  <div class="sc-msheet">
+    <button class="sc-mclose" id="subCancelClose" aria-label="閉じる">×</button>
+    <div class="sc-mhead">
+      <div class="sc-mtitle">解約の前に、ひとつだけ</div>
+      <div class="sc-msub">またいつでも戻ってこられます。<br>よければ理由を教えてください（任意）。</div>
+    </div>
+    <div class="sc-reasons" id="scReasons">
+      <button class="sc-reason" data-reason="料金が合わなかった">料金が合わなかった</button>
+      <button class="sc-reason" data-reason="内容・アーカイブが少なかった">内容・アーカイブが少なかった</button>
+      <button class="sc-reason" data-reason="時間が取れなかった">時間が取れなかった</button>
+      <button class="sc-reason" data-reason="他のサービスを利用する">他のサービスを利用する</button>
+      <button class="sc-reason" data-reason="一区切りついた">一区切りついた</button>
+      <button class="sc-reason" data-reason="その他">その他</button>
+    </div>
+    <textarea class="sc-note" id="scNote" rows="2" placeholder="ひとことあれば（任意）"></textarea>
+    <button class="sc-proceed" id="scProceed">解約手続きへ進む</button>
+    <button class="sc-keep" id="scKeep">やっぱり続ける</button>
+  </div>
+</div>
+
 <script>
 const SHEET_ID     = "1OhHer1LIF0BmcDaeV2G5e8TVkDB_XQFZzuEcz3sJkT4";
 const SHEET_URL    = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:json";
@@ -2152,6 +2199,21 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "register") openRegister();
   else if(act === "exit"){ if(confirm("トップ画面に戻りますか？")){ localStorage.removeItem(GUEST_KEY); exitToEntry(); } }
 });
+// 解約プチアンケートのイベント
+(function(){
+  const reasons = document.getElementById("scReasons");
+  if(reasons) reasons.addEventListener("click", (e) => {
+    const b = e.target.closest(".sc-reason"); if(!b) return;
+    const already = b.classList.contains("sel");
+    reasons.querySelectorAll(".sc-reason").forEach(x => x.classList.remove("sel"));
+    if(!already){ b.classList.add("sel"); _scReason = b.getAttribute("data-reason") || ""; }
+    else { _scReason = ""; }   // 再タップで選択解除
+  });
+  const pr = document.getElementById("scProceed"); if(pr) pr.addEventListener("click", proceedSubCancel);
+  const kp = document.getElementById("scKeep");    if(kp) kp.addEventListener("click", closeSubCancel);
+  const cl = document.getElementById("subCancelClose"); if(cl) cl.addEventListener("click", closeSubCancel);
+  const bk = document.getElementById("subCancelBack");  if(bk) bk.addEventListener("click", closeSubCancel);
+})();
 document.getElementById("lmForgot").addEventListener("click", resetPasswordPrompt);
 document.getElementById("lmGo").addEventListener("click", doLogin);
 document.getElementById("lmClose").addEventListener("click", closeLogin);
@@ -2187,10 +2249,26 @@ function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION &
 function isAdmin(){ return hasTag("admin"); }
 function isVip(){ return hasTag("vip"); }
 // エルラボ＋（サブスク）だけを対象にした解約フローへ。VIP（月額コンサル）は対象外・非表示。
-async function openSubCancel(){
+let _scReason = "";
+function openSubCancel(){
   if(!SESSION || !SESSION.email){ showToast("ログインが必要です。"); return; }
   if(isVip()){ showToast("月額コンサル会員は対象外です。"); return; }
-  if(!confirm("エルラボ＋（サブスク）の解約手続きページを開きます。\n※このサブスクのみが対象で、他のご契約には影響しません。\n※解約後も、お支払い済みの期間の終わりまでは視聴できます。")) return;
+  _scReason = "";
+  const box = document.getElementById("scReasons");
+  if(box) box.querySelectorAll(".sc-reason").forEach(b => b.classList.remove("sel"));
+  const note = document.getElementById("scNote"); if(note) note.value = "";
+  document.getElementById("subCancelModal").hidden = false;
+}
+function closeSubCancel(){ const m = document.getElementById("subCancelModal"); if(m) m.hidden = true; }
+// アンケート回答を記録 → エルラボ＋サブスク限定の解約ページへ
+async function proceedSubCancel(){
+  const note = (document.getElementById("scNote").value || "").trim();
+  try{
+    if(_scReason || note){
+      await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"sub_cancel_log", email:SESSION.email, reason:_scReason, note:note }) });
+    }
+  }catch(e){ /* 記録は任意。失敗しても解約手続きは続行 */ }
+  closeSubCancel();
   showToast("解約ページを準備しています…");
   try{
     const res = await fetch(GAS_URL + "?action=cancel_portal&email=" + encodeURIComponent(SESSION.email) + "&_=" + Date.now()).then(r=>r.json());
