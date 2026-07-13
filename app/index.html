@@ -2205,10 +2205,13 @@ async function doRegister(){
   showAuthLoading("登録中…");
   try {
     await fbAuth.createUserWithEmailAndPassword(email, pass);
-    // 同意記録＋リード保存（ベストエフォート：GAS未対応でもFirebase登録は成立）
+    // 同意記録＋リード保存（確実に届くよう await＋keepalive＋1回リトライ）
     try {
       const body = new URLSearchParams({ action:"lead_add", email, terms:"1", privacy:"1", mail:"1" });
-      fetch(GAS_URL, { method:"POST", body });
+      let r = await fetch(GAS_URL, { method:"POST", body, keepalive:true }).then(x=>x.json()).catch(()=>null);
+      if(!r || !r.ok){   // 取りこぼし時は1回だけ再送
+        await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"lead_add", email, terms:"1", privacy:"1", mail:"1" }), keepalive:true }).catch(()=>{});
+      }
     } catch(_e){}
     msg.textContent = "";
     await applyTierAndEnter(email, closeRegister);
