@@ -3,147 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>エルラボ＋ オンライン講義｜月イチのライブ講義＋アーカイブ見放題</title>
-<meta name="description" content="行動経済アナリストとーるの月イチZOOMライブ講義＋アーカイブ見放題。開幕価格 月額1,980円。">
+<title>エルラボ＋ オンライン講義｜増えていく講義アーカイブが見放題</title>
+<meta name="description" content="行動経済アナリストとーるの講義アーカイブが見放題。月イチの収録・公開ライブを配信し、アーカイブに追加。開幕価格 月額1,980円。">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0f1017; --bg2:#141621; --card:#191b27; --line:rgba(227,195,129,.16);
-    --gold:#e3c381; --gold2:#caa75f; --ink:#efe9dc; --sub:#b9b4a6; --mut:#8a8676;
+    --bg:#0a0b0e; --panel:#0f1013; --ink:#eae4d6; --sub:#9b968a; --mut:#6f6b60;
+    --gold:#c6a15b; --gold-soft:#d8bd86; --line:rgba(198,161,91,.22); --hair:rgba(255,255,255,.07);
     --mincho:"Shippori Mincho B1",serif; --gothic:"Noto Sans JP",sans-serif; --en:"Cormorant Garamond",serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--gothic);line-height:1.9;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:640px;margin:0 auto;padding:0 20px}
-  a{color:var(--gold)}
-  /* ===== ヒーロー ===== */
-  .hero{position:relative;text-align:center;padding:54px 20px 40px;overflow:hidden;background:radial-gradient(680px 420px at 50% 0%, rgba(227,195,129,.12), rgba(15,16,23,0) 70%)}
-  .hero-mark{font-family:var(--en);font-size:13px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
-  .hero-img{max-width:340px;width:78%;border-radius:16px;margin:6px auto 22px;display:block;border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.5)}
-  .hero h1{font-family:var(--mincho);font-weight:800;font-size:clamp(25px,6.2vw,34px);line-height:1.55;letter-spacing:.03em;margin:0 0 14px}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--gothic);font-weight:400;line-height:2;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:660px;margin:0 auto;padding:0 26px}
+  a{color:var(--gold-soft);text-decoration:none}
+  .en{font-family:var(--en)}
+  /* ブランド：エルラボ＋（＋を右上に小さく） */
+  .brandmark{font-family:var(--mincho);font-weight:600;letter-spacing:.14em;position:relative;display:inline-block}
+  .brandmark .plus{font-family:var(--gothic);font-weight:400;font-size:.5em;color:var(--gold);position:absolute;top:-.15em;right:-.72em;letter-spacing:0}
+  /* トップバー */
+  .topbar{border-bottom:1px solid var(--hair)}
+  .topbar .in{max-width:660px;margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:center}
+  .topbar .llabo{font-family:var(--en);font-size:19px;font-weight:600;letter-spacing:.32em;color:var(--gold);padding-left:.32em}
+  /* ヒーロー */
+  .hero{text-align:center;padding:56px 0 40px}
+  .hero .kicker{font-family:var(--en);font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:var(--mut);margin-bottom:26px}
+  .hero-img{width:100%;max-width:560px;display:block;margin:0 auto 34px;filter:grayscale(.1) contrast(1.02)}
+  .hero h1{font-family:var(--mincho);font-weight:600;font-size:clamp(26px,6.4vw,37px);line-height:1.62;letter-spacing:.04em;margin:0 0 20px}
   .hero h1 .g{color:var(--gold)}
-  .hero-lead{color:var(--sub);font-size:14.5px;margin:0 auto 24px;max-width:440px}
-  .price-badge{display:inline-flex;flex-direction:column;gap:2px;background:linear-gradient(180deg,rgba(227,195,129,.14),rgba(227,195,129,.04));border:1px solid var(--line);border-radius:14px;padding:12px 26px;margin-bottom:22px}
-  .price-badge .pb-tag{font-size:11px;letter-spacing:.1em;color:var(--gold)}
-  .price-badge .pb-price{font-family:var(--mincho);font-weight:800;font-size:26px;color:#fff}
-  .price-badge .pb-price small{font-size:13px;font-weight:500;color:var(--sub)}
-  .price-badge .pb-note{font-size:10.5px;color:var(--mut)}
-  .cta{display:inline-block;padding:15px 44px;border:none;border-radius:999px;font-family:var(--gothic);font-size:16px;font-weight:700;letter-spacing:.06em;color:#1c1a14;background:linear-gradient(135deg,var(--gold),var(--gold2));cursor:pointer;text-decoration:none;box-shadow:0 12px 30px rgba(180,140,60,.34);transition:transform .15s,box-shadow .15s}
-  .cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(180,140,60,.44)}
-  .cta-sub{display:block;font-size:11.5px;color:var(--mut);margin-top:10px}
-  /* ===== セクション共通 ===== */
-  section{padding:38px 0}
-  .sec-h{font-family:var(--mincho);font-weight:700;font-size:20px;text-align:center;margin:0 0 22px;letter-spacing:.04em}
-  .sec-h .g{color:var(--gold)}
-  /* ===== 得られること ===== */
-  .benefits{display:flex;flex-direction:column;gap:12px}
-  .bene{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-  .bene .bi{flex:none;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1c1a14;font-weight:800;font-size:15px}
-  .bene .bt{font-size:14.5px}
-  .bene .bt b{color:#fff}
-  /* ===== ライブ講義 ===== */
-  .live{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:26px 22px;text-align:center}
-  .live .lv-when{font-family:var(--mincho);font-size:19px;color:#fff;margin:6px 0 6px}
-  .live .lv-when .g{color:var(--gold)}
-  .live .lv-note{font-size:13px;color:var(--sub)}
-  .live .lv-arch{margin-top:16px;font-size:13px;color:var(--gold);background:rgba(227,195,129,.08);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:inline-block}
-  /* ===== 料金 ===== */
-  .plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 24px;text-align:center;position:relative}
-  .plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1c1a14;font-size:11px;font-weight:700;letter-spacing:.08em;padding:5px 16px;border-radius:999px;white-space:nowrap}
-  .plan-name{font-size:14px;color:var(--sub);margin-top:8px}
-  .plan-price{font-family:var(--mincho);font-weight:800;font-size:44px;color:#fff;line-height:1.1;margin:8px 0 2px}
-  .plan-price small{font-size:15px;font-weight:500;color:var(--sub)}
-  .plan-future{font-size:12.5px;color:var(--mut);margin-bottom:6px}
-  .plan-future s{color:var(--sub)}
-  .plan-feats{list-style:none;padding:0;margin:18px 0 22px;text-align:left;max-width:320px;margin-left:auto;margin-right:auto}
-  .plan-feats li{font-size:13.5px;color:var(--sub);padding:6px 0 6px 26px;position:relative}
-  .plan-feats li::before{content:"✓";position:absolute;left:0;color:var(--gold);font-weight:800}
-  /* ===== FAQ ===== */
-  .faq{display:flex;flex-direction:column;gap:10px}
-  .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .faq summary{padding:15px 18px;font-size:14px;font-weight:700;cursor:pointer;list-style:none;position:relative}
+  .hero .lead{color:var(--sub);font-size:14.5px;font-weight:300;max-width:460px;margin:0 auto 32px}
+  .rule{width:44px;height:1px;background:var(--gold);margin:0 auto;opacity:.7}
+  /* 価格ライン */
+  .priceline{margin:30px auto 30px;max-width:360px}
+  .priceline .tag{font-family:var(--en);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+  .priceline .amt{font-family:var(--mincho);font-weight:600;font-size:40px;color:#fff;line-height:1.2;margin:6px 0 2px}
+  .priceline .amt small{font-size:15px;font-weight:400;color:var(--sub);font-family:var(--gothic)}
+  .priceline .fut{font-size:12px;color:var(--mut)}
+  .priceline .fut s{color:var(--sub)}
+  /* CTA */
+  .cta{display:inline-block;padding:16px 50px;border:1px solid var(--gold);border-radius:2px;font-family:var(--gothic);font-size:15px;font-weight:500;letter-spacing:.14em;color:var(--bg);background:var(--gold);transition:background .2s,color .2s}
+  .cta:hover{background:var(--gold-soft)}
+  .cta.ghost{background:transparent;color:var(--gold-soft)}
+  .cta.ghost:hover{background:rgba(198,161,91,.08)}
+  .cta-note{display:block;font-size:11.5px;color:var(--mut);letter-spacing:.06em;margin-top:14px;font-weight:300}
+  /* セクション */
+  section{padding:46px 0}
+  .eyebrow{font-family:var(--en);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);text-align:center;margin-bottom:10px}
+  .sec-h{font-family:var(--mincho);font-weight:600;font-size:22px;text-align:center;letter-spacing:.05em;margin:0 0 30px}
+  /* 特典リスト（罫線区切り・角丸なし） */
+  .feat{border-top:1px solid var(--hair);padding:20px 4px;display:flex;gap:18px;align-items:baseline}
+  .feat:last-child{border-bottom:1px solid var(--hair)}
+  .feat .no{font-family:var(--en);font-size:15px;color:var(--gold);letter-spacing:.05em;min-width:30px}
+  .feat .ft b{color:#fff;font-weight:500;display:block;font-size:15.5px;margin-bottom:3px;letter-spacing:.02em}
+  .feat .ft span{color:var(--sub);font-size:13.5px;font-weight:300;line-height:1.85}
+  /* アーカイブ＆ライブの説明 */
+  .flow{text-align:center;color:var(--sub);font-size:14px;font-weight:300;line-height:2.1}
+  .flow .big{font-family:var(--mincho);color:#fff;font-size:18px;margin:6px 0 14px;letter-spacing:.03em}
+  .flow .big .g{color:var(--gold)}
+  .flow .live-when{display:inline-block;margin-top:20px;font-size:13px;color:var(--gold-soft);border:1px solid var(--line);padding:11px 20px;letter-spacing:.04em}
+  /* 料金 */
+  .plan{border:1px solid var(--line);padding:38px 26px;text-align:center}
+  .plan .pname{font-size:13px;color:var(--sub);letter-spacing:.06em}
+  .plan .pamt{font-family:var(--mincho);font-weight:600;font-size:46px;color:#fff;line-height:1.15;margin:10px 0 4px}
+  .plan .pamt small{font-size:15px;font-weight:400;color:var(--sub);font-family:var(--gothic)}
+  .plan .pfut{font-size:12.5px;color:var(--mut);margin-bottom:22px}
+  .plan .pfut s{color:var(--sub)}
+  .plan ul{list-style:none;padding:0;margin:0 auto 26px;max-width:300px;text-align:left}
+  .plan ul li{font-size:13.5px;color:var(--sub);font-weight:300;padding:8px 0 8px 22px;position:relative;border-bottom:1px solid var(--hair)}
+  .plan ul li:last-child{border-bottom:none}
+  .plan ul li::before{content:"—";position:absolute;left:0;color:var(--gold)}
+  /* FAQ */
+  .faq details{border-top:1px solid var(--hair)}
+  .faq details:last-child{border-bottom:1px solid var(--hair)}
+  .faq summary{padding:18px 30px 18px 4px;font-size:14px;font-weight:500;cursor:pointer;list-style:none;position:relative;letter-spacing:.02em}
   .faq summary::-webkit-details-marker{display:none}
-  .faq summary::after{content:"＋";position:absolute;right:18px;color:var(--gold)}
+  .faq summary::after{content:"＋";position:absolute;right:6px;top:17px;color:var(--gold);font-weight:300}
   .faq details[open] summary::after{content:"−"}
-  .faq .fa{padding:0 18px 16px;font-size:13.5px;color:var(--sub)}
-  /* ===== 最終CTA / 決済 ===== */
-  .final{text-align:center;padding:44px 20px 20px;background:radial-gradient(600px 380px at 50% 100%, rgba(227,195,129,.10), rgba(15,16,23,0) 70%)}
-  #checkout{max-width:520px;margin:22px auto 0}
-  .checkout-note{font-size:12px;color:var(--mut);margin-top:14px;line-height:1.8}
-  /* ===== フッター ===== */
-  footer{border-top:1px solid rgba(255,255,255,.06);padding:26px 20px 60px;text-align:center;font-size:11.5px;color:var(--mut);line-height:1.9}
+  .faq .fa{padding:0 4px 18px;font-size:13.5px;color:var(--sub);font-weight:300;line-height:1.95}
+  /* 最終CTA / 決済 */
+  .final{text-align:center;padding:52px 0 24px}
+  #checkout{max-width:520px;margin:26px auto 0}
+  .cnote{font-size:12px;color:var(--mut);font-weight:300;margin-top:16px;line-height:1.9}
+  /* フッター */
+  footer{border-top:1px solid var(--hair);padding:30px 26px 64px;text-align:center;font-size:11.5px;color:var(--mut);font-weight:300;letter-spacing:.03em}
   footer a{color:var(--mut)}
-  .foot-links{margin-top:10px;display:flex;gap:8px 16px;flex-wrap:wrap;justify-content:center}
+  .foot-links{margin-top:12px;display:flex;gap:10px 18px;flex-wrap:wrap;justify-content:center}
 </style>
 </head>
 <body>
 
+<!-- トップバー：Llabo -->
+<div class="topbar"><div class="in"><span class="llabo en">Llabo</span></div></div>
+
 <!-- ① ヒーロー -->
 <header class="hero">
-  <div class="hero-mark">L-MINE</div>
-  <img class="hero-img" src="assets/videosamune.jpg" alt="エルラボ＋ オンライン講義" onerror="this.style.display='none'">
-  <h1>“戦術”ではなく<span class="g">“設計”</span>を。<br>月イチのライブ講義で、<br>売れ続ける土台を。</h1>
-  <p class="hero-lead">行動経済学のレンズで学ぶ、月イチのZOOMライブ講義＋アーカイブ見放題。<br>「エルラボ＋ オンライン講義」</p>
-  <div class="price-badge">
-    <span class="pb-tag">🎁 開幕記念プライス</span>
-    <span class="pb-price">月額1,980<small>円（税込）</small></span>
-    <span class="pb-note">アーカイブ充実後は3,300円へ改定予定</span>
+  <div class="wrap">
+    <div class="kicker">Online Lecture Archive</div>
+    <img class="hero-img" src="assets/llabo-hero.jpg" alt="エルラボ＋ オンライン講義" onerror="this.style.display='none'">
+    <h1>増えていく講義アーカイブを、<br><span class="g">見放題</span>。</h1>
+    <p class="lead">月イチの収録・公開ライブを配信。その回はすべてアーカイブに追加され、<br>入るほどに、見返せる講義が増えていきます。</p>
+    <div class="rule"></div>
+    <div class="priceline">
+      <div class="tag">Opening Price</div>
+      <div class="amt">¥1,980<small> / 月（税込）</small></div>
+      <div class="fut">今後 <s>¥3,300</s> へ改定予定 ─ 今がいちばんおトク</div>
+    </div>
+    <a href="#join" class="cta">加入する<span class="cta-note">いつでも解約OK・カード決済</span></a>
   </div>
-  <div><a href="#join" class="cta">加入する →<span class="cta-sub">いつでも解約OK・カード決済</span></a></div>
 </header>
 
 <div class="wrap">
 
-  <!-- ② 得られること -->
+  <!-- ② 得られること（アーカイブ主役） -->
   <section>
-    <h2 class="sec-h">加入すると、<span class="g">得られるもの</span></h2>
-    <div class="benefits">
-      <div class="bene"><div class="bi">✓</div><div class="bt"><b>月イチのZOOMライブ講義に参加</b>／毎月 第4水曜 21:30〜（30分程度）</div></div>
-      <div class="bene"><div class="bi">✓</div><div class="bt"><b>過去のアーカイブが見放題</b>／好きな時に、何度でも学べる</div></div>
-      <div class="bene"><div class="bi">✓</div><div class="bt"><b>不定期の追加講義も</b>／テーマにより特別回を開催することも</div></div>
-      <div class="bene"><div class="bi">✓</div><div class="bt"><b>いつでも解約OK</b>／縛りなし。自分のタイミングで止められます</div></div>
-    </div>
+    <div class="eyebrow">What you get</div>
+    <h2 class="sec-h">加入して、得られるもの</h2>
+    <div class="feat"><div class="no">01</div><div class="ft"><b>講義アーカイブが見放題</b><span>行動経済学のレンズで学ぶ講義が、増え続けます。好きな時に、何度でも。</span></div></div>
+    <div class="feat"><div class="no">02</div><div class="ft"><b>月イチの収録・公開ライブに参加</b><span>毎月 第4水曜 21:30〜（30分程度）。テーマにより不定期の追加開催も。</span></div></div>
+    <div class="feat"><div class="no">03</div><div class="ft"><b>ライブの回はアーカイブに追加</b><span>参加できなくても大丈夫。配信した回はアーカイブに残り、いつでも見返せます。</span></div></div>
+    <div class="feat"><div class="no">04</div><div class="ft"><b>いつでも解約OK</b><span>縛りなし。ご自身のタイミングでいつでも解約できます。</span></div></div>
   </section>
 
-  <!-- ③ ライブ講義について -->
+  <!-- ③ アーカイブ＆ライブの流れ -->
   <section>
-    <h2 class="sec-h">ライブ講義に<span class="g">ついて</span></h2>
-    <div class="live">
-      <div class="lv-when">毎月 <span class="g">第4水曜 21:30〜</span></div>
-      <div class="lv-note">30分程度（内容により変動）／不定期の追加開催あり</div>
-      <div class="lv-arch">📼 参加できない回も、アーカイブでいつでも視聴できます</div>
+    <div class="eyebrow">Archive &amp; Live</div>
+    <h2 class="sec-h">アーカイブが、育っていく。</h2>
+    <div class="flow">
+      <div class="big">収録・公開ライブ　<span class="g">→</span>　アーカイブに追加　<span class="g">→</span>　見放題</div>
+      毎月の収録・公開ライブを配信し、その回をアーカイブへ。<br>
+      だから、続けるほどに"見られる講義"が増えていきます。<br>
+      リアルタイム参加は必須ではなく、アーカイブでいつでも学べます。
+      <div class="live-when">📼 ライブ開催：毎月 第4水曜 21:30〜／不定期追加あり</div>
     </div>
   </section>
 
   <!-- ④ 料金 -->
   <section>
-    <h2 class="sec-h">料金<span class="g">プラン</span></h2>
+    <div class="eyebrow">Plan</div>
+    <h2 class="sec-h">料金プラン</h2>
     <div class="plan">
-      <div class="plan-badge">🎁 開幕記念プライス</div>
-      <div class="plan-name">エルラボ＋ オンライン講義</div>
-      <div class="plan-price">1,980<small>円 / 月（税込）</small></div>
-      <div class="plan-future">アーカイブ充実後は <s>3,300円</s> へ改定予定 ─ 今の加入が一番おトク</div>
-      <ul class="plan-feats">
-        <li>月イチのZOOMライブ講義に参加</li>
-        <li>アーカイブ見放題</li>
-        <li>不定期の追加講義</li>
+      <div class="pname"><span class="brandmark">エルラボ<span class="plus">＋</span></span>　オンライン講義</div>
+      <div class="pamt">¥1,980<small> / 月（税込）</small></div>
+      <div class="pfut">開幕記念価格　今後 <s>¥3,300</s> へ改定予定</div>
+      <ul>
+        <li>講義アーカイブが見放題</li>
+        <li>月イチの収録・公開ライブに参加</li>
+        <li>ライブの回はアーカイブに追加</li>
         <li>縛りなし・いつでも解約</li>
       </ul>
-      <a href="#join" class="cta">加入する →</a>
+      <a href="#join" class="cta">加入する</a>
     </div>
   </section>
 
   <!-- ⑤ FAQ -->
   <section>
-    <h2 class="sec-h">よくある<span class="g">質問</span></h2>
+    <div class="eyebrow">FAQ</div>
+    <h2 class="sec-h">よくある質問</h2>
     <div class="faq">
-      <details><summary>解約はどうすればいい？</summary><div class="fa">いつでもご自身で解約できます。解約後は次回の請求が止まり、期間終了までは視聴できます。※手順は決済完了後のご案内、またはアプリのメニューからご確認いただけます。</div></details>
-      <details><summary>ライブ講義に出られない回があっても大丈夫？</summary><div class="fa">はい。すべてアーカイブに残るので、後から好きな時に視聴できます。リアルタイム参加が必須ではありません。</div></details>
-      <details><summary>支払い方法は？</summary><div class="fa">クレジットカードでのお支払いです。毎月自動で更新され、解約するまで継続します。</div></details>
-      <details><summary>値上げされたら、今の会員も上がる？</summary><div class="fa">開幕価格で加入された方は、できる限り加入時の価格を維持する方針です（詳細は加入時のご案内をご確認ください）。</div></details>
+      <details><summary>これは月額の定期購入ですか？</summary><div class="fa">はい。月額1,980円（税込）の定期課金で、解約されるまで毎月自動で更新されます。いつでもご自身で解約できます。</div></details>
+      <details><summary>解約はどうすればいい？</summary><div class="fa">いつでもご自身で解約できます。解約後は次回以降の請求が止まり、期間終了までは引き続き視聴できます。手順は決済完了後のご案内、およびアプリのメニューからご確認いただけます。</div></details>
+      <details><summary>ライブに参加できない回があっても大丈夫？</summary><div class="fa">はい。配信した回はアーカイブに残るので、後から好きな時に視聴できます。リアルタイム参加は必須ではありません。</div></details>
+      <details><summary>アーカイブは今どのくらいありますか？</summary><div class="fa">現在は少数からのスタートですが、毎月のライブ配信に合わせて増えていきます。開幕価格は、この立ち上げ時期ならではの価格です。</div></details>
+      <details><summary>値上げされたら、今の会員も上がりますか？</summary><div class="fa">開幕価格で加入された方は、できる限り加入時の価格を維持する方針です（詳細は加入時のご案内をご確認ください）。</div></details>
     </div>
   </section>
 
@@ -152,20 +176,20 @@
 <!-- ⑥ 最終CTA / 決済 -->
 <section class="final" id="join">
   <div class="wrap">
-    <h2 class="sec-h">エルラボ＋に<span class="g">加入する</span></h2>
-    <p class="hero-lead">開幕記念 月額1,980円（税込）・いつでも解約OK</p>
+    <div class="eyebrow">Join</div>
+    <h2 class="sec-h"><span class="brandmark">エルラボ<span class="plus">＋</span></span> に加入する</h2>
+    <p class="lead">開幕記念 月額1,980円（税込）／自動更新・いつでも解約OK</p>
     <!-- 埋め込み決済（Stripe Embedded Checkout）：pk_live設定後に有効化 -->
     <div id="checkout">
-      <a href="https://columns.l-mine.com/app/" class="cta">加入手続きへ →</a>
-      <p class="checkout-note">※ ただ今、このページ上での埋め込み決済を準備中です。<br>準備が整うと、ここでカード情報を入力してそのまま加入できます（Stripeの別画面に移動しません）。</p>
+      <a href="https://columns.l-mine.com/app/" class="cta ghost">加入手続きへ</a>
+      <p class="cnote">※ ただ今、このページ上での埋め込み決済（カード入力→そのまま加入）を準備中です。<br>準備が整うと、Stripeの別画面に移動せず、ここで加入が完了します。</p>
     </div>
-    <p class="checkout-note">加入後の<b>解約方法</b>：決済完了画面とご登録メールで「解約手順」をご案内します。アプリのメニュー →「お支払い・解約」からいつでもご自身で手続きできます。</p>
+    <p class="cnote"><b>加入後の解約について</b>：決済完了画面とご登録メールで解約手順をご案内します。アプリのメニュー →「お支払い・解約」から、いつでもご自身で手続きできます。</p>
   </div>
 </section>
 
 <footer>
-  発行：L-MINE（エルマイン）／とーる｜行動経済アナリスト<br>
-  所在地：愛知県名古屋市中川区五女子町3-40 メゾンサンク｜お問い合わせ：<a href="mailto:info@l-mine.com">info@l-mine.com</a>
+  <div>月額1,980円（税込・自動更新）／いつでも解約可能</div>
   <div class="foot-links">
     <a href="legal/terms.html">利用規約</a>
     <a href="legal/privacy.html">プライバシーポリシー</a>
