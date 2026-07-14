@@ -1217,6 +1217,7 @@ a{text-decoration:none}
 .tier-lead{color:#6fcbb8;background:rgba(111,203,184,.10);border-color:rgba(111,203,184,.32)}
 .tier-member{color:#e6c47f;background:rgba(227,195,129,.10);border-color:rgba(227,195,129,.34)}
 .tier-paid{color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-color:transparent;font-weight:700}
+.tier-partial{color:#8bd3a6;background:rgba(139,211,166,.10);border-color:rgba(139,211,166,.34)}
 @media(max-width:600px){ .c-tier{font-size:9px;padding:2px 6px} .c-badges{gap:4px} }
 /* 期間限定コース：左メニューで別枠強調＋小さなタイマー */
 .course.limited{margin:10px 8px;border:1.5px solid rgba(227,169,90,.5);border-radius:12px;background:linear-gradient(180deg,rgba(227,169,90,.10),rgba(227,169,90,.03));box-shadow:0 4px 16px rgba(180,120,40,.12);overflow:hidden}
@@ -2861,7 +2862,11 @@ function render(){
     el.className = "course" + (isLimited ? " limited " + deadlineState(dl) : "");
     el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
-    const ti = tierBadge(course.rank || RANK.guest);
+    const ranks = vids.map(v => (v && v.rank != null) ? v.rank : RANK.guest);
+    const minR = ranks.length ? Math.min.apply(null, ranks) : RANK.guest;
+    const maxR = ranks.length ? Math.max.apply(null, ranks) : RANK.guest;
+    const partiallyFree = (minR <= RANK.free) && (maxR >= RANK.plus);   // 無料〜有料が混在＝一部無料
+    const ti = partiallyFree ? `<span class="c-tier tier-partial">一部無料</span>` : tierBadge(minR);
     const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
     head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
