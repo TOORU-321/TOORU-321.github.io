@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>セールスフロー構築講座</title>
+<link rel="icon" href="assets/app-icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background:#f7f4ee; color:#241f18; font-family:'Noto Sans JP',sans-serif; font-weight:300; overflow-x:hidden; }
+  ::selection { background:#a67c34; color:#fbfaf6; }
+  a { color:#8a6526; text-decoration:none; }
+  a:hover { color:#6f4f1c; }
+  @keyframes lux-fade { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
+  .cta-dark { display:inline-block; font-family:'Shippori Mincho B1',serif; letter-spacing:0.14em; color:#fbfaf6; background:linear-gradient(180deg,#3a3325,#221d15); border-radius:2px; transition:background .25s; }
+  .cta-dark:hover { background:linear-gradient(180deg,#4a4231,#2b2419); color:#fbfaf6; }
+  .cta-gold { display:block; font-family:'Shippori Mincho B1',serif; letter-spacing:0.14em; color:#241f18; background:linear-gradient(180deg,#e3ca92,#c2a26a); border-radius:3px; transition:background .25s; cursor:pointer; }
+  .cta-gold:hover { background:linear-gradient(180deg,#eed6a2,#cbab72); color:#241f18; }
+  .chap { border:1px solid rgba(120,95,45,0.2); border-radius:6px; margin-bottom:14px; overflow:hidden; background:#f7f4ee; }
+  .chap-btn { width:100%; text-align:left; background:none; border:0; cursor:pointer; padding:24px 28px; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+  .chap-toggle { color:#a67c34; font-size:20px; flex:none; transition:transform .3s; }
+  .chap.open .chap-toggle { transform:rotate(45deg); }
+  .chap-body { padding:4px 28px 26px; animation:lux-fade .3s ease; }
+  .chap-body[hidden] { display:none; }
+  /* 講師プロフィール（テンプレ統一・ライト調） */
+  .prof-grid { display:grid; grid-template-columns:220px 1fr; gap:44px; align-items:stretch; background:#fbfaf6; border:1px solid rgba(120,95,45,0.2); border-radius:8px; padding:40px; }
+  .prof-grid .ph { width:220px; height:100%; min-height:280px; object-fit:cover; object-position:center 18%; border:1px solid rgba(166,124,52,0.4); border-radius:6px; }
+  .prof-grid h4 { font-size:12px; letter-spacing:0.14em; color:#a67c34; font-weight:700; margin:20px 0 9px; }
+  .prof-grid ul { list-style:none; }
+  .prof-grid li { position:relative; padding-left:18px; font-size:13.5px; line-height:1.95; color:#5c564a; letter-spacing:0.02em; }
+  .prof-grid li::before { content:""; position:absolute; left:0; top:13px; width:9px; height:1px; background:#a67c34; }
+  @media (max-width:760px){
+    .prof-grid { grid-template-columns:1fr; gap:26px; padding:30px 22px; text-align:center; }
+    .prof-grid .ph { width:180px; height:230px; min-height:0; margin:0 auto; }
+    .prof-grid .pb { text-align:left; }
+  }
+</style>
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="top" style="position:relative; padding:118px 32px 128px; text-align:center; background:radial-gradient(120% 92% at 50% 0%, #fdfbf7 0%, #f2eee5 66%);">
+  <div style="position:absolute; inset:0; background:radial-gradient(44% 36% at 50% 18%, rgba(166,124,52,0.1), transparent 72%); pointer-events:none;"></div>
+  <div style="position:relative; max-width:940px; margin:0 auto;">
+    <div style="display:inline-flex; align-items:center; gap:12px; margin-bottom:30px;">
+      <span style="width:34px; height:1px; background:linear-gradient(90deg,transparent,#a67c34);"></span>
+      <span style="font-size:12px; letter-spacing:0.4em; color:#8a6526; text-transform:uppercase; font-family:'Cormorant Garamond',serif; font-weight:600;">Sales Flow Design</span>
+      <span style="width:34px; height:1px; background:linear-gradient(90deg,#a67c34,transparent);"></span>
+    </div>
+    <p style="font-family:'Shippori Mincho B1',serif; font-size:15px; letter-spacing:0.16em; color:#8a6526; margin-bottom:14px;">心理トリガー × 行動経済学で仕組み化</p>
+    <p style="font-family:'Shippori Mincho B1',serif; font-size:clamp(19px,3vw,26px); letter-spacing:0.14em; color:#3a342a; margin-bottom:34px;">セ ー ル ス フ ロ ー 構 築 講 座</p>
+    <h1 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(34px,5.4vw,62px); line-height:1.4; letter-spacing:0.03em; color:#1f1b14;">
+      売り込まず、自然に<span style="color:#a67c34;">“買いたい”</span>を創る<br><span style="color:#a67c34;">“最先端”</span>の仕組みを完全マスター
+    </h1>
+    <p style="margin:34px auto 0; max-width:560px; font-size:15px; line-height:2.1; color:#5c564a; letter-spacing:0.03em;">～ 見込み客から『買いたい』を引き出す心理学 ～<br>市場規範 × 社会規範で、フォロワーを顧客に変える。</p>
+    <div style="margin-top:46px;">
+      <a class="cta-dark" href="#offer" style="font-size:17px; padding:19px 58px; box-shadow:0 18px 40px -20px rgba(40,32,18,0.5);">今すぐ受講する</a>
+    </div>
+    <p style="margin-top:52px; font-family:'Cormorant Garamond',serif; font-size:15px; letter-spacing:0.46em; color:#a99f8a; text-transform:uppercase;">— Behavioral Economics —</p>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" style="padding:108px 32px; background:#fbfaf6; border-top:1px solid rgba(120,95,45,0.12);">
+  <div style="max-width:860px; margin:0 auto; text-align:center;">
+    <h2 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,3.8vw,36px); line-height:1.5; letter-spacing:0.04em; color:#1f1b14;">SNSで売れる仕組みを<br>本当に理解できていますか？</h2>
+    <div style="width:52px; height:1px; background:#a67c34; margin:40px auto;"></div>
+    <div style="display:flex; flex-direction:column; gap:16px; max-width:640px; margin:0 auto 44px;">
+      <div style="background:#f4f0e7; border-left:2px solid #a67c34; padding:20px 26px; text-align:left; font-family:'Shippori Mincho B1',serif; font-size:16px; line-height:1.7; color:#3a342a;">「フォロワーは増えてきたけど、売上につながらない…」</div>
+      <div style="background:#f4f0e7; border-left:2px solid #a67c34; padding:20px 26px; text-align:left; font-family:'Shippori Mincho B1',serif; font-size:16px; line-height:1.7; color:#3a342a;">「SNS運用はできるが、どうやって商品を売ればいいのかわからない…」</div>
+      <div style="background:#f4f0e7; border-left:2px solid #a67c34; padding:20px 26px; text-align:left; font-family:'Shippori Mincho B1',serif; font-size:16px; line-height:1.7; color:#3a342a;">「ビジネスの流れを作るための正しいステップが知りたい…」</div>
+    </div>
+    <p style="font-size:16px; line-height:2.2; color:#5c564a; letter-spacing:0.03em;">
+      多くの人が「SNSを活用すれば売れる」と考えがちですが、実際には<span style="color:#241f18;">「フォロワーが増える＝売れる」というわけではありません。</span><br><br>
+      どうすれば「売らずに売れる仕組み」を作れるのか？この講座では、SNSから売上につなげるための<span style="color:#a67c34; font-weight:400;">「市場規範 × 社会規範」</span>の戦略を徹底解説します。
+    </p>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section id="benefits" style="padding:108px 32px; background:linear-gradient(180deg,#f7f4ee,#f2eee5);">
+  <div style="max-width:960px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#a67c34; text-transform:uppercase;">What You Get</span>
+    </div>
+    <h3 style="text-align:center; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,4vw,36px); letter-spacing:0.06em; color:#1f1b14; margin-bottom:14px;">この講座で得られるもの</h3>
+    <p style="text-align:center; font-size:14px; letter-spacing:0.06em; color:#78725f; margin-bottom:52px;">単なるSNSの使い方ではなく「フォロワーを顧客に変えるための仕組み」を学ぶ</p>
+    <div id="benefits-list" style="display:flex; flex-direction:column; gap:14px;"></div>
+  </div>
+</section>
+
+<!-- WHY / 7 WALLS -->
+<section style="padding:108px 32px; background:#fbfaf6;">
+  <div style="max-width:900px; margin:0 auto; text-align:center;">
+    <h3 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,4vw,36px); line-height:1.5; letter-spacing:0.05em; color:#1f1b14;">そもそも、なぜ<br>SNSで売れないのか？</h3>
+    <p style="margin:30px auto 0; max-width:620px; font-size:16px; line-height:2.15; color:#5c564a; letter-spacing:0.03em;">
+      フォロワーが増えても売れない最大の理由は、<span style="color:#241f18;">「あることのズレ」</span>にあります。この講座では、その具体的なステップを<span style="color:#a67c34; font-weight:400;">「7つの壁」</span>というフレームワークで解説します。
+    </p>
+    <div style="max-width:720px; margin:48px auto 0;">
+      <img src="https://content.app-sources.com/s/6749129377474963/uploads/Images/4-2331886.png?format=webp" alt="7つの壁フレームワーク" style="width:100%; height:auto; border-radius:8px; border:1px solid rgba(120,95,45,0.18); box-shadow:0 30px 70px -40px rgba(40,32,18,0.5);">
+    </div>
+    <div style="display:inline-flex; align-items:center; gap:12px; margin-top:40px; background:#f4f0e7; border:1px solid rgba(166,124,52,0.35); border-radius:40px; padding:12px 26px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.24em; color:#a67c34; text-transform:uppercase;">Bonus</span>
+      <span style="font-family:'Shippori Mincho B1',serif; font-size:15px; color:#3a342a; letter-spacing:0.03em;">SNSから売れる仕組みを作る実践ワークブック</span>
+    </div>
+    <div style="margin-top:40px;">
+      <a class="cta-dark" href="#offer" style="font-size:16px; padding:17px 50px;">今すぐ受講する</a>
+      <p style="margin-top:16px; font-size:12px; color:#8a8474; letter-spacing:0.04em;">※各動画はマイページにて視聴することができます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHOM + VIDEO -->
+<section style="padding:108px 32px; background:linear-gradient(180deg,#f2eee5,#f7f4ee);">
+  <div style="max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:44px; align-items:center;">
+    <div>
+      <p style="font-family:'Shippori Mincho B1',serif; font-size:20px; letter-spacing:0.1em; color:#a67c34; margin-bottom:28px;">［ こんな方におすすめ ］</p>
+      <div style="display:flex; gap:16px; padding:16px 0; border-bottom:1px solid rgba(40,32,18,0.08); align-items:baseline;"><span style="color:#a67c34; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#3a342a;">SNSでの発信はできているが、売上につながらない人</span></div>
+      <div style="display:flex; gap:16px; padding:16px 0; border-bottom:1px solid rgba(40,32,18,0.08); align-items:baseline;"><span style="color:#a67c34; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#3a342a;">LINEやメルマガを活用したいが、うまく誘導できていない人</span></div>
+      <div style="display:flex; gap:16px; padding:16px 0; border-bottom:1px solid rgba(40,32,18,0.08); align-items:baseline;"><span style="color:#a67c34; font-size:12px; flex:none;">◆</span><span style="font-size:15px; line-height:1.7; color:#3a342a;">売り込みをせずに、自然に商品が売れる仕組みを作りたい人</span></div>
+      <p style="margin-top:26px; font-size:14px; line-height:1.9; color:#5c564a; letter-spacing:0.02em;">この講座は「SNSを活用してビジネスを成功させたいすべての人」に最適な内容です。</p>
+    </div>
+    <div style="position:relative; padding-top:56.25%; border-radius:8px; overflow:hidden; border:1px solid rgba(120,95,45,0.28); box-shadow:0 30px 70px -38px rgba(40,32,18,0.55);">
+      <iframe src="https://player.vimeo.com/video/1082538929?app_id=122963" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section id="curriculum" style="padding:108px 32px; background:#fbfaf6; border-top:1px solid rgba(120,95,45,0.12);">
+  <div style="max-width:900px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#a67c34; text-transform:uppercase;">Curriculum</span>
+    </div>
+    <h3 style="text-align:center; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,4vw,36px); letter-spacing:0.06em; color:#1f1b14; margin-bottom:10px;">全 35 本・100 分越えのオンデマンド講座</h3>
+    <p style="text-align:center; font-size:14px; letter-spacing:0.08em; color:#78725f; margin-bottom:48px;">全 6 章 ＋ 4 大特典</p>
+
+    <div id="chapters"></div>
+
+    <!-- BONUS -->
+    <div style="margin-top:44px; background:linear-gradient(160deg,#2a2419,#201b13); border:1px solid rgba(166,124,52,0.4); border-radius:8px; padding:44px 40px;">
+      <p style="text-align:center; font-family:'Shippori Mincho B1',serif; font-size:20px; letter-spacing:0.14em; color:#d9bd85; margin-bottom:30px;">【 4 大特典 】</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px;">
+        <div style="display:flex; gap:14px; align-items:baseline; background:rgba(255,255,255,0.03); border:1px solid rgba(217,189,133,0.2); border-radius:5px; padding:18px 20px;"><span style="font-family:'Cormorant Garamond',serif; font-size:20px; color:#d9bd85; flex:none;">01</span><span style="font-size:14px; line-height:1.6; color:#ece7dc;">SNSから売れる仕組みを作る実践ワークブック</span></div>
+        <div style="display:flex; gap:14px; align-items:baseline; background:rgba(255,255,255,0.03); border:1px solid rgba(217,189,133,0.2); border-radius:5px; padding:18px 20px;"><span style="font-family:'Cormorant Garamond',serif; font-size:20px; color:#d9bd85; flex:none;">02</span><span style="font-size:14px; line-height:1.6; color:#ece7dc;">心理トリガー実践シート</span></div>
+        <div style="display:flex; gap:14px; align-items:baseline; background:rgba(255,255,255,0.03); border:1px solid rgba(217,189,133,0.2); border-radius:5px; padding:18px 20px;"><span style="font-family:'Cormorant Garamond',serif; font-size:20px; color:#d9bd85; flex:none;">03</span><span style="font-size:14px; line-height:1.6; color:#ece7dc;">売れる仕組み自己診断ワークシート</span></div>
+        <div style="display:flex; gap:14px; align-items:baseline; background:rgba(255,255,255,0.03); border:1px solid rgba(217,189,133,0.2); border-radius:5px; padding:18px 20px;"><span style="font-family:'Cormorant Garamond',serif; font-size:20px; color:#d9bd85; flex:none;">04</span><span style="font-size:14px; line-height:1.6; color:#ece7dc;">売れる導線マップ作成シート</span></div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:40px;">
+      <a class="cta-dark" href="#offer" style="font-size:16px; padding:17px 50px;">今すぐ受講する</a>
+      <p style="margin-top:16px; font-size:12px; color:#8a8474; letter-spacing:0.04em;">※各動画はマイページにて視聴することができます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- OFFER -->
+<section id="offer" style="padding:118px 32px; background:radial-gradient(120% 80% at 50% 0%, #fdfbf7, #f2eee5 68%); border-top:1px solid rgba(120,95,45,0.18);">
+  <div style="max-width:1080px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:54px;">
+      <p style="font-size:13px; letter-spacing:0.16em; color:#a67c34; margin-bottom:18px;">SNSマーケティングには必須の心理学知識</p>
+      <h3 style="font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(26px,4.6vw,44px); line-height:1.5; letter-spacing:0.05em; color:#1f1b14;">今すぐ、オンラインでの収益を<br><span style="color:#a67c34;">成長・拡大・加速</span>させましょう</h3>
+      <p style="margin-top:24px; font-size:15px; color:#5c564a; letter-spacing:0.04em;">売り込まず、自然に“買いたい”を創る“最先端”の仕組みを完全マスター</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:26px; align-items:start;">
+      <div style="background:linear-gradient(165deg,#2c261a,#201b13); border:1px solid rgba(217,189,133,0.4); border-radius:8px; padding:46px 40px; box-shadow:0 34px 80px -40px rgba(40,32,18,0.6); text-align:center;">
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:16px; letter-spacing:0.08em; color:#d9bd85;">セールスフロー構築講座<br>アクセスパス</p>
+        <div style="width:44px; height:1px; background:#a67c34; margin:24px auto;"></div>
+        <p style="font-family:'Cormorant Garamond',serif; font-weight:600; font-size:60px; line-height:1; color:#fbfaf6;">¥49,500</p>
+        <a class="cta-gold" href="#" onclick="openCheckout();return false;" style="margin-top:28px; font-size:17px; padding:19px;">今すぐ受講する</a>
+        <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="クレジットカード決済に対応" style="width:158px; height:auto; margin:22px auto 6px; display:block;">
+        <p style="margin-top:6px; font-size:12px; color:#b5ad98; letter-spacing:0.04em;">🔒 クレジットカードで安全にお支払い。データは保護されます。</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; justify-content:center; background:#fbfaf6; border:1px solid rgba(120,95,45,0.2); border-radius:8px; padding:40px 38px;">
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+          <span style="width:44px; height:44px; flex:none; border-radius:50%; border:1px solid rgba(166,124,52,0.5); display:flex; align-items:center; justify-content:center; color:#a67c34; font-size:18px;">◎</span>
+          <p style="font-family:'Shippori Mincho B1',serif; font-size:20px; letter-spacing:0.06em; color:#241f18;">100% 返金保証</p>
+        </div>
+        <p style="font-size:14px; line-height:2; color:#5c564a; letter-spacing:0.02em;">リスクのない購入に自信を持っていただくため、7 日間のアクションベース保証を提供しています。プログラムを試して合わないと感じた場合は、購入後 7 日以内に全額返金いたします。</p>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:40px; font-size:12px; color:#8a8474; line-height:1.9;">※当講座は成果を保証するものではありません。詳しくは<a href="legal/tokusho.html">特定商取引法に基づく表記</a>をご確認ください。<br>※返金額はカードの場合Stripe手数料3.6%を引いた額、振込の場合は振込手数料を引いた額を返金いたします。</p>
+  </div>
+</section>
+
+<!-- INSTRUCTOR（テンプレ統一） -->
+<section id="instructor" style="padding:108px 32px; background:linear-gradient(180deg,#f7f4ee,#f2eee5);">
+  <div style="max-width:900px; margin:0 auto;">
+    <div style="text-align:center; margin-bottom:46px;">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:13px; letter-spacing:0.4em; color:#a67c34; text-transform:uppercase;">Your Instructor</span>
+      <h3 style="margin-top:10px; font-family:'Shippori Mincho B1',serif; font-weight:700; font-size:clamp(24px,3.6vw,32px); letter-spacing:0.08em; color:#1f1b14;">あなたのインストラクター</h3>
+    </div>
+    <div class="prof-grid">
+      <img class="ph" src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.onerror=null;this.src='assets/toru.jpg'">
+      <div class="pb">
+        <p style="font-family:'Cormorant Garamond',serif; font-size:12px; letter-spacing:0.28em; color:#a67c34; text-transform:uppercase; margin-bottom:6px;">Behavioral Economics Analyst</p>
+        <p style="font-family:'Shippori Mincho B1',serif; font-size:22px; letter-spacing:0.05em; color:#1f1b14; margin-bottom:4px;">行動経済アナリスト「とーる」</p>
+        <h4>実績</h4>
+        <ul>
+          <li>日本営業科学協会 第1回行動経済学検定 2級・1級 合格</li>
+          <li>ディグリーメンバー（行動経済アナリスト）として活動中</li>
+          <li>Amazon Kindle 売れ筋ランキング 6部門1位</li>
+          <li>Udemyオンラインコース 受講者100名以上・特別賞受賞</li>
+        </ul>
+        <h4>活動内容</h4>
+        <ul>
+          <li>SNS・コンテンツを通じて「行動経済学×ビジネス」を発信</li>
+          <li>消費者に寄り添う行動経済学の普及・啓発活動</li>
+          <li>小規模・個人ビジネスパーソンへのビジネスサポート</li>
+          <li>行動経済学を活用したマーケティング支援・コンサルティング</li>
+          <li>オンライン講座・電子書籍による教育コンテンツの提供</li>
+        </ul>
+        <h4>想い</h4>
+        <ul>
+          <li>行動経済学の力で、消費者が賢く・幸せな選択をできる社会へ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER（ロゴ削除・法務リンクのみ） -->
+<footer style="background:#efe9dd; border-top:1px solid rgba(120,95,45,0.16); padding:48px 32px 40px;">
+  <div style="max-width:1080px; margin:0 auto; text-align:center;">
+    <nav style="display:flex; flex-wrap:wrap; gap:26px; justify-content:center; font-size:12px; letter-spacing:0.06em; color:#78725f; margin-bottom:22px;">
+      <a href="legal/terms.html" style="color:#78725f;">利用規約</a>
+      <a href="legal/tokusho.html" style="color:#78725f;">特定商取引法に基づく表記</a>
+      <a href="legal/privacy.html" style="color:#78725f;">プライバシーポリシー</a>
+      <a href="https://columns.l-mine.com/app/" style="color:#78725f;">エルラボ＋アプリ</a>
+    </nav>
+    <p style="font-size:11px; letter-spacing:0.1em; color:#a99f8a;">© 2025 L-MINE 無断複写・転載を禁じます。</p>
+  </div>
+</footer>
+
+<!-- ===== 埋め込み決済ポップアップ（買い切り） ===== -->
+<style>
+  .pay-modal{position:fixed;inset:0;z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+  .pay-modal.open{display:flex}
+  .pay-backdrop{position:absolute;inset:0;background:rgba(36,31,24,.72);backdrop-filter:blur(5px)}
+  .pay-modal.open .pay-backdrop{animation:pay-fade .34s ease both}
+  .pay-sheet{position:relative;z-index:1;width:100%;max-width:560px;max-height:92vh;overflow:auto;background:#fbfaf6;border:1px solid rgba(166,124,52,.4);border-radius:16px;box-shadow:0 40px 110px rgba(40,32,18,.4);padding:26px 22px 28px}
+  .pay-modal.open .pay-sheet{animation:pay-pop .46s cubic-bezier(.18,.9,.24,1) both}
+  @keyframes pay-fade{from{opacity:0}to{opacity:1}}
+  @keyframes pay-pop{0%{opacity:0;transform:translateY(30px) scale(.94)}100%{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.pay-modal.open .pay-sheet,.pay-modal.open .pay-backdrop{animation:none}}
+  .pay-close{position:absolute;top:8px;right:12px;background:none;border:none;color:#8a8474;font-size:26px;line-height:1;cursor:pointer;z-index:3}
+  .pay-close:hover{color:#241f18}
+  .pay-emailnote{margin:2px 4px 14px;padding:10px 12px;border:1px solid rgba(166,124,52,.32);border-radius:10px;background:rgba(166,124,52,.07);color:#8a6526;font-size:11.5px;line-height:1.7;text-align:center}
+  .pay-emailnote b{color:#241f18;font-weight:600}
+  #embedded-checkout{min-height:220px}
+  .pay-msg{text-align:center;color:#78725f;font-size:13px;padding:56px 20px}
+  .pay-msg.err{color:#b4514a}
+  #payDone{display:none;text-align:center;padding:44px 24px}
+  #payDone .mk{width:56px;height:56px;border-radius:50%;border:1.5px solid #a67c34;color:#a67c34;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}
+  #payDone h3{font-family:'Shippori Mincho B1',serif;color:#1f1b14;font-size:20px;margin:0 0 12px;letter-spacing:.04em}
+  #payDone p{color:#5c564a;font-size:13.5px;line-height:1.95;margin:0 0 22px}
+  #payDone .pay-donenote{max-width:380px;margin:20px auto 0;color:#8a8474;font-size:11px;line-height:1.9}
+  #payDone .pay-donenote b{color:#5c564a;font-weight:600}
+</style>
+<div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き">
+  <div class="pay-backdrop" onclick="closeCheckout()"></div>
+  <div class="pay-sheet">
+    <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+    <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
+    <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
+    <div id="payDone">
+      <div class="mk">✓</div>
+      <h3>ご購入ありがとうございます</h3>
+      <p>「セールスフロー構築講座」の視聴権を、ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p>
+      <a href="https://columns.l-mine.com/app/" class="cta-gold" style="display:inline-block; padding:15px 40px; font-size:15px;">アプリを開く</a>
+      <p class="pay-donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  var benefits = [
+    '「市場規範 × 社会規範」2つの視点から考えるSNS戦略',
+    'SNSでの発信とLINE・メルマガの役割を理解し、自然に販売につなげる手法',
+    'フォロワーを違和感なく「教育」し、売上につなげる心理学的アプローチ',
+    'SNSフォロワーの中から「本当にお金を払う気がある人」を見極める方法',
+    '「フロント商品 → バックエンド」へとスムーズに誘導するシナリオ設計',
+  ];
+  document.getElementById('benefits-list').innerHTML = benefits.map(function(b){
+    return '<div style="background:#fbfaf6; border:1px solid rgba(120,95,45,0.16); border-radius:5px; padding:24px 28px; display:flex; gap:20px; align-items:center; box-shadow:0 12px 30px -26px rgba(40,32,18,0.5);">'
+      + '<span style="width:34px; height:34px; flex:none; border-radius:50%; background:#a67c34; color:#fbfaf6; display:flex; align-items:center; justify-content:center; font-size:16px;">✓</span>'
+      + '<span style="font-size:15px; line-height:1.7; color:#3a342a; letter-spacing:0.02em;">' + b + '</span></div>';
+  }).join('');
+
+  var chapters = [
+    { num:'I', label:'第 1 章｜SNSで売れない理由と7つの壁', lessons:[
+      '1-1：SNSで「売れない」本当の理由と心理学的背景','1-2：認知の壁〜比較の壁を突破する戦略','1-3：購買の壁〜愛情の壁を突破する戦略','1-4：フォロワーをファン化し、リピート購入を生み出す戦略','1-5：SNSマーケティングの実践的戦略と長期的な仕組み化','1-6：SNSマーケティングの成功事例と実践的なステップ','1-7：戦略的なコンテンツ設計と投稿方法','1-8：SNSからLINE・メルマガへの誘導テクニック'] },
+    { num:'II', label:'第 2 章｜市場規範へ移行する発信設計', lessons:[
+      '2-1：「売り込み感ゼロ」でフォロワーを増やす発信の仕組み','2-2：市場規範へ移行しやすいフォロワーを集める発信とは？','2-3：市場耐性ピラミッドでターゲットを見極める','2-4：フォロワーが共感しやすいワード・投稿パターン','2-5：SNSから市場規範へ移行する導線設計','2-6：「市場規範」か「社会規範」かが売上を左右する'] },
+    { num:'III', label:'第 3 章｜購買につなげる心理学アプローチ', lessons:[
+      '3-1：フォロワーを自然に購買につなげる心理学的アプローチ','3-2：フォロワーを教育しながら市場規範へ移行する方法','3-3：フォロワーの購入を促す心理的トリガー','3-4：リピート購入を生み出すファン化戦略','3-5：SNSでLINE・メルマガへ誘導する心理戦略'] },
+    { num:'IV', label:'第 4 章｜Kindle × SNS × LINE 戦略', lessons:[
+      '4-1：Kindle電子書籍を活用した市場規範・社会規範戦略','4-2：入口別の電子書籍戦略（SNS経由 vs. Kindle経由）','4-3：SNS×Kindle×LINEで教育を最大化する方法','4-4：市場規範・社会規範戦略の応用','4-5：Kindleを起点にした収益最大化の具体戦略','4-6：コンテンツビジネス展開の全体設計','4-7：「社会規範→市場規範」移行戦略'] },
+    { num:'V', label:'第 5 章｜見込み客の見極めと販売心理', lessons:[
+      '5-1：市場規範へ移行するとフォロワーの行動はこう変わる','5-2：『売るのが怖い』問題を解決するための考え方','5-3：SNSで見込み客を探す方法','5-4：この人は本当にお金を払う気があるのか？の見極め方'] },
+    { num:'VI', label:'第 6 章｜secret …', lessons:['この章の内容は受講者だけの特別コンテンツです。'] },
+  ];
+  document.getElementById('chapters').innerHTML = chapters.map(function(c, i){
+    var lessons = c.lessons.map(function(t){
+      var parts = t.split('：'); var no = (parts[0].indexOf('-') > -1) ? parts[0] : '◆';
+      return '<div style="display:flex; gap:14px; padding:11px 0; border-top:1px solid rgba(40,32,18,0.07); align-items:baseline;">'
+        + '<span style="font-family:\'Cormorant Garamond\',serif; font-size:13px; color:#a67c34; flex:none; min-width:34px;">' + no + '</span>'
+        + '<span style="font-size:14px; line-height:1.7; color:#4a4438; letter-spacing:0.02em;">' + t + '</span></div>';
+    }).join('');
+    return '<div class="chap' + (i===0?' open':'') + '">'
+      + '<button class="chap-btn" type="button">'
+      + '<span style="display:flex; align-items:baseline; gap:18px;"><span style="font-family:\'Cormorant Garamond\',serif; font-size:22px; color:#a67c34;">' + c.num + '</span>'
+      + '<span style="font-family:\'Shippori Mincho B1\',serif; font-size:17px; letter-spacing:0.06em; color:#241f18;">' + c.label + '</span></span>'
+      + '<span class="chap-toggle">＋</span></button>'
+      + '<div class="chap-body"' + (i===0?'':' hidden') + '>' + lessons + '</div></div>';
+  }).join('');
+
+  document.querySelectorAll('.chap-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var chap = btn.closest('.chap');
+      var body = chap.querySelector('.chap-body');
+      var open = chap.classList.toggle('open');
+      body.hidden = !open;
+    });
+  });
+</script>
+
+<script>
+  var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+  var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+  var COURSE_PRICE_ID = "";   // ★セールスフロー構築講座（単発）のStripe価格ID。もらい次第ここに入れます。
+  var PREFILL_EMAIL = "";
+  try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+  var _stripe = null, _checkout = null;
+  async function openCheckout(){
+    var modal = document.getElementById('payModal');
+    var cont  = document.getElementById('embedded-checkout');
+    var done  = document.getElementById('payDone');
+    done.style.display = 'none';
+    cont.style.display = 'block';
+    cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+    var enote = document.getElementById('payEmailNote');
+    if(enote){
+      if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; }
+      else { enote.style.display = 'none'; }
+    }
+    modal.classList.add('open');
+    try{
+      if(!COURSE_PRICE_ID){ cont.innerHTML = '<div class="pay-msg err">ただいま準備中です。お手数ですが info@l-mine.com までご連絡ください。</div>'; return; }
+      if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+      if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+      var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&mode=payment&price=' + encodeURIComponent(COURSE_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
+      if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+      cont.innerHTML = '';
+      _checkout = await _stripe.initEmbeddedCheckout({
+        clientSecret: r.client_secret,
+        onComplete: function(){ cont.style.display = 'none'; done.style.display = 'block'; }
+      });
+      _checkout.mount('#embedded-checkout');
+    }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+  }
+  function closeCheckout(){
+    document.getElementById('payModal').classList.remove('open');
+    if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+  }
+</script>
+
+</body>
+</html>
