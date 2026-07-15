@@ -1547,22 +1547,22 @@ a{text-decoration:none}
 
 
 <nav class="bottom-nav">
-  <button class="nav-item active" id="nav-videos">
-    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><polygon points="10 8.5 15.5 11.5 10 14.5"/></svg></div>
-    <span class="nav-label">動画一覧</span>
-  </button>
-  <button class="nav-item soon" data-soon>
-    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-    <span class="nav-label">書籍<span class="soon-tag">準備中</span></span>
-  </button>
   <button class="nav-item" id="nav-news">
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
     <span class="nav-label">お知らせ</span>
+  </button>
+  <button class="nav-item active" id="nav-videos">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><polygon points="10 8.5 15.5 11.5 10 14.5"/></svg></div>
+    <span class="nav-label">動画一覧</span>
   </button>
   <a class="nav-item" href="https://columns.l-mine.com/columns/" target="_blank" rel="noopener">
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <span class="nav-label">コラム</span>
   </a>
+  <button class="nav-item soon" data-soon>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+    <span class="nav-label">書籍<span class="soon-tag">準備中</span></span>
+  </button>
 </nav>
 </div><!-- /#library -->
 
@@ -2150,6 +2150,7 @@ async function applyTierAndEnter(email, closeFn){
   render();
   if(curCourse != null) select(curCourse, curVideo);
   maybeAutoEnablePush();   // デフォルトでオン：初回ログイン時に自動で通知許可を促す（iOS除く／明示オフの人は尊重）
+  openNews();              // ログイン後の初期画面は「お知らせ」（オープニング動画の下で開き、動画が終わると現れる）
 }
 // 起動時・アプリ復帰時に会員情報を名簿と再照合し、権限が変わっていれば自動で反映（＝加入直後に再ログイン不要で解放）
 let _lastVerifyAt = 0;
