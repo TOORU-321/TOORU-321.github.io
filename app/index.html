@@ -1647,6 +1647,59 @@ a{text-decoration:none}
   </div>
 </div>
 
+<!-- ===== ホーム画面に追加ガイド ===== -->
+<style>
+  .addhome{position:fixed;inset:0;z-index:210;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,9,12,.72);backdrop-filter:blur(5px)}
+  .addhome[hidden]{display:none}
+  .ah-sheet{position:relative;width:100%;max-width:400px;max-height:92vh;overflow:auto;background:#15130d;border:1px solid rgba(227,195,129,.34);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:28px 22px 20px;text-align:center;animation:ahPop .42s cubic-bezier(.2,.9,.25,1)}
+  @keyframes ahPop{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+  .ah-x{position:absolute;top:8px;right:12px;background:none;border:none;color:#8a8575;font-size:24px;line-height:1;cursor:pointer}
+  .ah-x:hover{color:#f0d69c}
+  .ah-icon{width:66px;height:66px;border-radius:15px;display:block;margin:0 auto 14px;box-shadow:0 10px 26px rgba(0,0,0,.5)}
+  .ah-title{font-family:var(--mincho);font-size:19px;font-weight:700;color:#f0d69c;letter-spacing:.04em;margin-bottom:8px}
+  .ah-sub{font-size:12.5px;color:#b8b3a3;line-height:1.75;margin-bottom:16px}
+  .ah-benefits{list-style:none;text-align:left;margin:0 0 18px;padding:14px 14px;background:rgba(227,195,129,.06);border:1px solid rgba(227,195,129,.18);border-radius:12px}
+  .ah-benefits li{font-size:12.5px;color:#e8e4d8;line-height:1.9;letter-spacing:.02em}
+  .ah-benefits li b{color:#f0d69c}
+  .ah-steps{text-align:left;margin-bottom:16px}
+  .ah-step{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:13px;color:#e8e4d8;line-height:1.7;border-bottom:1px solid rgba(255,255,255,.06)}
+  .ah-step:last-child{border-bottom:none}
+  .ah-step b{color:#f0d69c}
+  .ah-n{flex:none;width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#e6c47f,#caa75f);color:#1c1a14;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .ah-share{display:inline-block;border:1px solid rgba(227,195,129,.5);border-radius:5px;padding:0 5px;font-size:11px;color:#f0d69c}
+  .ah-go{width:100%;min-height:50px;border:none;border-radius:999px;background:linear-gradient(180deg,#e6c47f,#caa75f);color:#1c1a14;font-size:14px;font-weight:700;letter-spacing:.05em;cursor:pointer;box-shadow:0 8px 22px rgba(202,167,95,.24)}
+  .ah-go:active{transform:translateY(1px)}
+  .ah-note{font-size:11px;color:#8a8575;line-height:1.8;margin-top:10px}
+  .ah-later{width:100%;min-height:42px;border:none;background:none;color:#b8b3a3;font-size:12.5px;cursor:pointer;margin-top:6px}
+  .ah-later:hover{color:#f0d69c}
+</style>
+<div class="addhome" id="addHomeModal" hidden role="dialog" aria-modal="true" aria-label="ホーム画面に追加">
+  <div class="ah-sheet">
+    <button class="ah-x" id="addHomeClose" aria-label="閉じる">×</button>
+    <img class="ah-icon" src="../assets/app-icon-192.png" alt="">
+    <div class="ah-title">ホーム画面に追加しませんか？</div>
+    <div class="ah-sub">追加すると、エルラボ＋がぐっと使いやすくなります。</div>
+    <ul class="ah-benefits">
+      <li>🔔 <b>新着のお知らせが通知で届く</b></li>
+      <li>⚡ ワンタップで開ける（毎回ログイン不要）</li>
+      <li>📱 アプリのように全画面で見られる</li>
+    </ul>
+    <div id="ahIos" hidden>
+      <div class="ah-steps">
+        <div class="ah-step"><span class="ah-n">1</span><span>画面下の <b>共有ボタン</b> <span class="ah-share">□↑</span> をタップ</span></div>
+        <div class="ah-step"><span class="ah-n">2</span><span>メニューを下にスクロールして<br><b>「ホーム画面に追加」</b>を選ぶ</span></div>
+        <div class="ah-step"><span class="ah-n">3</span><span>右上の <b>「追加」</b> をタップして完了 🎉</span></div>
+      </div>
+      <div class="ah-note">※iPhoneは、ホーム画面に追加したアプリからのみ通知を受け取れます。</div>
+    </div>
+    <div id="ahAndroid" hidden>
+      <button class="ah-go" id="addHomeInstall" hidden>📲 ホーム画面に追加する</button>
+      <div class="ah-note" id="ahManualNote" hidden>ブラウザのメニュー（⋮）から<b>「ホーム画面に追加」</b>／<b>「アプリをインストール」</b>を選んでください。</div>
+    </div>
+    <button class="ah-later" id="addHomeLater">あとで</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- ===== 解約プチアンケート ===== -->
@@ -1799,6 +1852,7 @@ function renderAcctMenu(){
   const _ns = notifyState();
   const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
   html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
+  if(!isStandalone()) html += `<button class="acct-item acct-join" data-act="addhome"><span class="ai-ico">📲</span>ホーム画面に追加</button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -2151,6 +2205,7 @@ async function applyTierAndEnter(email, closeFn){
   if(curCourse != null) select(curCourse, curVideo);
   maybeAutoEnablePush();   // デフォルトでオン：初回ログイン時に自動で通知許可を促す（iOS除く／明示オフの人は尊重）
   openNews();              // ログイン後の初期画面は「お知らせ」（オープニング動画の下で開き、動画が終わると現れる）
+  _ahPending = true;       // お知らせを閉じたら「ホーム画面に追加」を案内（未追加＆スヌーズ中でなければ）
 }
 // 起動時・アプリ復帰時に会員情報を名簿と再照合し、権限が変わっていれば自動で反映（＝加入直後に再ログイン不要で解放）
 let _lastVerifyAt = 0;
@@ -2248,6 +2303,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   if(!it) return;   // data-legal はドキュメントの委譲で処理
   const act = it.getAttribute("data-act");
   if(act === "taskapp") openTaskApp();
+  else if(act === "addhome") openAddHome(true);
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
@@ -2470,7 +2526,11 @@ function openLegal(key){
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); }
-function closeNews(){ document.getElementById("newsModal").hidden = true; }
+let _ahPending = false;   // ログイン直後にお知らせを閉じたタイミングで「ホーム画面に追加」を案内
+function closeNews(){
+  document.getElementById("newsModal").hidden = true;
+  if(_ahPending){ _ahPending = false; setTimeout(function(){ openAddHome(false); }, 350); }
+}
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
 async function loadNews(){
@@ -2739,7 +2799,7 @@ function isStandalone(){ try{ return window.matchMedia("(display-mode: standalon
 function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function maybeShowPwaHint(){
   const el = document.getElementById("pwaHint"); if(!el) return;
-  if(localStorage.getItem("lmine_pwa_dismiss") === "1"){ el.hidden = true; return; }
+  if(addHomeSnoozed()){ el.hidden = true; return; }   // 永久非表示ではなくスヌーズ（期間が過ぎたらまた出す）
   const tx = document.getElementById("pwaHintTx"), btn = document.getElementById("pwaInstall");
   if(notifyState() === "on"){ el.hidden = true; return; }   // 通知オン済みなら案内不要
   if(isIOS() && !isStandalone()){
@@ -2757,7 +2817,7 @@ function maybeShowPwaHint(){
   }
   el.hidden = false;
 }
-document.getElementById("pwaHintClose").addEventListener("click", function(){ document.getElementById("pwaHint").hidden = true; try{ localStorage.setItem("lmine_pwa_dismiss","1"); }catch(e){} });
+document.getElementById("pwaHintClose").addEventListener("click", function(){ document.getElementById("pwaHint").hidden = true; snoozeAddHome(7); });
 document.getElementById("pwaInstall").addEventListener("click", async function(){
   // 通知オンにできる環境なら「オンにする」、そうでなければPWAインストール
   if(pushSupported() && notifyState() !== "on" && !(isIOS() && !isStandalone())){
@@ -2770,6 +2830,42 @@ document.getElementById("pwaInstall").addEventListener("click", async function()
   try{ await deferredPrompt.userChoice; }catch(e){}
   deferredPrompt = null;
   document.getElementById("pwaHint").hidden = true;
+});
+
+/* ===== ホーム画面に追加ガイド（専用モーダル） =====
+ * ・すでに追加済み（standalone）なら出さない
+ * ・「あとで」＝永久非表示ではなく“3日スヌーズ”（また出る）
+ * ・iPhoneは手順を図解、Androidはワンタップ追加ボタン
+ */
+const AH_KEY = "lmine_addhome_snooze";
+function addHomeSnoozed(){ try{ const t = Number(localStorage.getItem(AH_KEY)||0); return !!t && Date.now() < t; }catch(e){ return false; } }
+function snoozeAddHome(days){ try{ localStorage.setItem(AH_KEY, String(Date.now() + days*86400000)); }catch(e){} }
+function openAddHome(force){
+  if(isStandalone()){ if(force) showToast("すでにホーム画面に追加されています。"); return; }
+  if(!force && addHomeSnoozed()) return;
+  const m = document.getElementById("addHomeModal"); if(!m) return;
+  const ios = isIOS();
+  document.getElementById("ahIos").hidden = !ios;
+  document.getElementById("ahAndroid").hidden = ios;
+  if(!ios){
+    const btn = document.getElementById("addHomeInstall"), note = document.getElementById("ahManualNote");
+    if(btn)  btn.hidden  = !deferredPrompt;    // ワンタップ追加が使える端末だけボタン
+    if(note) note.hidden = !!deferredPrompt;   // 使えない端末には手動手順
+  }
+  m.hidden = false;
+}
+function closeAddHome(snoozeDays){
+  const m = document.getElementById("addHomeModal"); if(m) m.hidden = true;
+  if(snoozeDays) snoozeAddHome(snoozeDays);
+}
+document.getElementById("addHomeClose").addEventListener("click", function(){ closeAddHome(3); });
+document.getElementById("addHomeLater").addEventListener("click", function(){ closeAddHome(3); });
+document.getElementById("addHomeInstall").addEventListener("click", async function(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  try{ await deferredPrompt.userChoice; }catch(e){}
+  deferredPrompt = null;
+  closeAddHome(30);
 });
 
 loadSession();
