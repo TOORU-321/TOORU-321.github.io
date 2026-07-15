@@ -1310,7 +1310,9 @@ a{text-decoration:none}
 .auth-loading[hidden]{display:none}
 .al-spin{width:48px;height:48px;border-radius:50%;border:3px solid rgba(227,195,129,.22);border-top-color:#e8c880;animation:alSpin .8s linear infinite}
 .al-tx{font-family:var(--gothic);font-size:14px;font-weight:600;color:#ecd7aa;letter-spacing:.08em}
-.al-img{width:min(300px,74vw);height:auto;border-radius:14px;box-shadow:0 18px 46px rgba(0,0,0,.55);margin-bottom:6px}
+.al-bar{width:min(240px,64vw);height:4px;border-radius:999px;background:rgba(227,195,129,.16);overflow:hidden;position:relative;margin-top:2px}
+.al-bar::after{content:"";position:absolute;left:0;top:0;height:100%;width:42%;border-radius:999px;background:linear-gradient(90deg,rgba(232,200,128,.15),#e8c880 55%,rgba(232,200,128,.15));animation:alBar 1.15s ease-in-out infinite}
+@keyframes alBar{0%{transform:translateX(-110%)}100%{transform:translateX(250%)}}
 @keyframes alSpin{to{transform:rotate(360deg)}}
 /* イントロ動画：右下のマークを覆うマスク（黒背景に馴染ませる） */
 .intro-mask{position:absolute;right:0;bottom:0;width:112px;height:112px;background:#000;z-index:1000;pointer-events:none}
@@ -1460,9 +1462,9 @@ a{text-decoration:none}
 
 <!-- ログイン/登録の処理中ローディング -->
 <div class="auth-loading" id="authLoading" hidden>
-  <img class="al-img" src="https://drive.google.com/thumbnail?id=1Gn6mlFhvTzdy210EWYXrq7j2L3q8AD8T&sz=w800" alt="" onerror="this.remove()">
   <div class="al-spin" aria-hidden="true"></div>
   <div class="al-tx" id="authLoadingTx">ログイン中…</div>
+  <div class="al-bar" aria-hidden="true"></div>
 </div>
 
 <div id="library" hidden>
