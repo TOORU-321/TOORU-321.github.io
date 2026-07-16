@@ -2760,12 +2760,20 @@ async function enablePush(){
 }
 // 起動時：既に通知オンなら、トークンを取り直して名簿(プッシュタブ)に保存し直す
 async function refreshPushToken(){
-  if(!pushSupported() || Notification.permission !== "granted" || localStorage.getItem("lmine_push") !== "1") return;
+  // OSで通知が許可されていれば、毎回トークンを取り直して登録し直す。
+  // ※PWAを入れ直すとlocalStorageが消えてトークンも変わるため、許可済みなら自動で復旧させる。
+  if(!pushSupported() || Notification.permission !== "granted") return;
+  if(localStorage.getItem("lmine_push") === "0") return;   // ★自分でオフにした人は尊重（勝手にオンに戻さない）
   try{
     const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js");
     await navigator.serviceWorker.ready;
     const token = await firebase.messaging().getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
-    if(token){ window._pushToken = token; try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){} }
+    if(token){
+      window._pushToken = token;
+      try{ localStorage.setItem("lmine_push", "1"); }catch(_e){}   // 許可済み＝オン状態として復元
+      try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"push_reg", token: token, email:(SESSION && SESSION.email) || "" }) }); }catch(_e){}
+      renderAcctMenu();   // メニューの表示（オン/オフ）を最新に
+    }
   }catch(e){}
 }
 // 「デフォルトでオン」：ログイン時に自動で通知を有効化する（設定で明示オフにした人は尊重）
