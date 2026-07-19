@@ -1181,6 +1181,9 @@ a{text-decoration:none}
 .vmeta.meta-locked .vnav,
 .vmeta.meta-locked .chapter-tabs,
 .vmeta.meta-locked .chapter-list{display:none}
+/* 公開前（予告）のときは、モジュール一覧だけは見せる＝他の動画を選べるように */
+.vmeta.meta-locked.meta-upcoming .chapter-tabs{display:flex}
+.vmeta.meta-locked.meta-upcoming .chapter-list{display:flex}
 /* ② 補足テキスト ③ 添付要素 */
 .vsupp{margin-top:18px;padding-top:16px;border-top:1px solid var(--lm-border);font-family:var(--gothic);font-size:13px;line-height:1.9;color:#c8c3b8;white-space:normal;word-break:break-word}
 .vsupp[hidden]{display:none}
@@ -3098,11 +3101,13 @@ function select(ci, vi){
   const supp  = document.getElementById("vsupp");
   const att   = document.getElementById("vattach");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+  vmeta.classList.remove("meta-upcoming");   // 毎回リセット（前の動画の状態を持ち越さない）
 
   // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
   if(isUpcoming(v)){
     const st = startTs(v);
     vmeta.classList.add("meta-locked");
+    vmeta.classList.add("meta-upcoming");   // ★モジュール一覧だけは表示させる（他の動画を選べるように）
     vframe.classList.add("locked"); viframe.src = "about:blank";
     hidePwOption();
     document.getElementById("lkTitle").innerHTML = `🎬 ${fmtDateFull(st)} 公開予定`;
