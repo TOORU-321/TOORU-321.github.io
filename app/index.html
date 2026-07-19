@@ -62,6 +62,11 @@
 @media(max-width:900px){.vplayer{order:1}}
 .vframe{position:relative;aspect-ratio:16/9;background:#0f0f14;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;box-shadow:0 28px 56px -30px rgba(16,16,24,.55),0 6px 16px -10px rgba(16,16,24,.3)}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+/* 公開前のサムネイル（ロック画面の下に敷く） */
+.vframe .vthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1}
+.vframe .vthumb[hidden]{display:none}
+/* サムネがある時は、ロック画面の黒幕を薄めて写真を活かす */
+.vframe.has-thumb .lockscreen{background:linear-gradient(rgba(12,12,16,.62),rgba(12,12,16,.76))}
 .vmeta{margin-top:26px}
 .vmeta .np{font-family:var(--serif-en);font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
 .vmeta .np::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(168,132,63,.16)}
@@ -1516,6 +1521,7 @@ a{text-decoration:none}
   </aside>
   <main class="vplayer">
     <div class="vframe" id="vframe">
+      <img id="vthumb" class="vthumb" alt="" hidden>
       <iframe id="viframe" src="" title="動画プレイヤー" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
       <div class="lockscreen">
         <div class="lk-ico">🔒</div>
@@ -1805,6 +1811,44 @@ function embedUrl(v){
   if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id + (v.hash ? "?h=" + v.hash : "");
   if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
   return "";
+}
+/* ===== 公開前サムネイル：動画の初期画面（サムネ）を取得して表示 ===== */
+const _thumbCache = {};   // 同じ動画は1回だけ取りにいく
+async function fetchThumbUrl(v){
+  if(!v || !v.id) return "";
+  const key = v.platform + ":" + v.id;
+  if(_thumbCache[key] !== undefined) return _thumbCache[key];
+  let url = "";
+  try{
+    if(v.platform === "youtube"){
+      url = "https://img.youtube.com/vi/" + v.id + "/maxresdefault.jpg";
+    } else if(v.platform === "vimeo"){
+      // Vimeoの公開oEmbed（APIキー不要）からサムネURLを取得
+      const src = "https://vimeo.com/" + v.id + (v.hash ? "/" + v.hash : "");
+      const r = await fetch("https://vimeo.com/api/oembed.json?width=1280&url=" + encodeURIComponent(src));
+      if(r.ok){ const j = await r.json(); url = j.thumbnail_url || ""; }
+    }
+  }catch(e){ url = ""; }
+  _thumbCache[key] = url;
+  return url;
+}
+// 公開前の動画枠にサムネを敷く（取得できない時は従来どおり黒背景）
+async function showThumb(v){
+  const img = document.getElementById("vthumb"), fr = document.getElementById("vframe");
+  if(!img || !fr) return;
+  const token = (v && v.platform + ":" + v.id) || "";
+  fr._thumbToken = token;                       // 連打対策：最後に選ばれた動画のみ反映
+  img.hidden = true; img.removeAttribute("src"); fr.classList.remove("has-thumb");
+  const url = await fetchThumbUrl(v);
+  if(!url || fr._thumbToken !== token) return;  // 別の動画に切り替わっていたら何もしない
+  img.onload  = () => { if(fr._thumbToken === token){ img.hidden = false; fr.classList.add("has-thumb"); } };
+  img.onerror = () => { img.hidden = true; fr.classList.remove("has-thumb"); };
+  img.src = url;
+}
+function hideThumb(){
+  const img = document.getElementById("vthumb"), fr = document.getElementById("vframe");
+  if(img){ img.hidden = true; img.removeAttribute("src"); }
+  if(fr){ fr.classList.remove("has-thumb"); fr._thumbToken = ""; }
 }
 let COURSES = [];
 let courseEls = [];
@@ -3102,12 +3146,14 @@ function select(ci, vi){
   const att   = document.getElementById("vattach");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
   vmeta.classList.remove("meta-upcoming");   // 毎回リセット（前の動画の状態を持ち越さない）
+  hideThumb();                               // サムネも毎回リセット
 
   // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
   if(isUpcoming(v)){
     const st = startTs(v);
     vmeta.classList.add("meta-locked");
     vmeta.classList.add("meta-upcoming");   // ★モジュール一覧だけは表示させる（他の動画を選べるように）
+    showThumb(v);                           // ★サムネ（再生前の初期画面）を背景に表示
     vframe.classList.add("locked"); viframe.src = "about:blank";
     hidePwOption();
     document.getElementById("lkTitle").innerHTML = `🎬 ${fmtDateFull(st)} 公開予定`;
