@@ -1269,6 +1269,11 @@ a{text-decoration:none}
 .ch-item.ch-locked .ch-t{color:#8f918f;filter:blur(4.5px);-webkit-filter:blur(4.5px);user-select:none;pointer-events:none}
 .ch-item.ch-locked .ch-no{color:#5f6469}
 .ch-item .ch-lockmark{font-size:12px;flex:none;opacity:.9}
+/* 公開前（予告）：タイトルは隠さず、公開日を添える */
+.ch-item.ch-soon .ch-t{color:#b8b3a3}
+.ch-item .ch-soonmark{font-size:10.5px;font-weight:700;flex:none;color:#1c1a14;background:linear-gradient(135deg,#e6c47f,#caa75f);border-radius:999px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
+/* 視聴ページの公開カウントダウン */
+.lk-cd{display:block;margin-top:12px;font-size:13px;font-weight:700;color:#f0d69c;letter-spacing:.04em}
 .chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
 .chap-tab.chap-locked.active{color:#1c1a14;border-style:solid}
 /* ③ コース内 前へ／次へ */
@@ -2027,6 +2032,12 @@ function isExpired(v){
   const d = (v && v.deadline) ? parseDeadline(v.deadline) : null;
   return d != null && Date.now() > d;
 }
+// 公開前（視聴開始日がまだ来ていない）か。未記入＝すぐ公開
+function startTs(v){ return (v && v.start) ? parseStart(v.start) : null; }
+function isUpcoming(v){
+  const s = startTs(v);
+  return s != null && Date.now() < s;
+}
 // ===== 視聴期限の表示ヘルパー =====
 // コースの期限（動画のうち最も早い期限）。期限付き動画が無ければ null
 function courseDeadline(course){
@@ -2066,6 +2077,8 @@ function fmtCountdown(ts){
   return (d > 0 ? d + "日 " : "") + p(h) + ":" + p(m) + ":" + p(sec);
 }
 function countdownLabel(ts){ const c = fmtCountdown(ts); return c === "終了" ? "終了" : "残り " + c; }
+// 公開までのカウントダウン（視聴開始日用）
+function startCountdownLabel(ts){ const c = fmtCountdown(ts); return c === "終了" ? "まもなく公開" : "公開まで " + c; }
 // data-deadline を持つ全要素を毎秒更新（左メニューのタイマー＋視聴ページのバナー）
 const _cdExpired = new Set();
 function tickCountdowns(){
@@ -2079,6 +2092,15 @@ function tickCountdowns(){
         _cdExpired.add(ts); render();
         if(curCourse != null) select(curCourse, curVideo);
       }
+    }
+  });
+  // 公開待ち（data-start）：公開時刻になったら自動で視聴可能に切り替える
+  document.querySelectorAll("[data-start]").forEach(el => {
+    const ts = +el.getAttribute("data-start");
+    el.textContent = startCountdownLabel(ts);
+    if(ts <= now && !_cdExpired.has("s"+ts)){
+      _cdExpired.add("s"+ts); render();
+      if(curCourse != null) select(curCourse, curVideo);
     }
   });
 }
@@ -2932,14 +2954,12 @@ function coursesFromGviz(json){
     if(/非公開|非表示|下書き|draft|hidden|private/i.test(kind)) return;   // 種別=非公開 はアプリに出さない
     ri++;   // シート上の並び順（上から）
     const tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw), deadline = cell(r,iDeadline);
-    // 視聴開始日：未記入ならすぐ公開。日付があれば、その日の0:00になるまでアプリに出さない（予約公開）
-    const startRaw = cell(r,iStart);
-    if(startRaw){ const st = parseStart(startRaw); if(st != null && Date.now() < st) return; }
+    const start = cell(r,iStart);   // 視聴開始日：未記入ならすぐ公開。日付があれば、その日まで「〇日より公開」予告表示
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
     const c = map.get(cname);
-    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, rank:rk, requiredTag:(tag||null), _order:ord });
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
@@ -3053,10 +3073,12 @@ function renderChapterUI(ci, vi){
   if(idxs.length <= 1 && !hasChapters) return;
   idxs.forEach((i, pos) => {
     const v = course.videos[i];
-    const vlock = !videoAccessible(v);
+    const soon = isUpcoming(v);                       // 公開前：タイトルは隠さず「〇/〇公開」と予告
+    const vlock = !soon && !videoAccessible(v);
     const b = document.createElement("button");
-    b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "");
-    b.innerHTML = `<span class="ch-no">${String(pos+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>` + (vlock ? `<span class="ch-lockmark">🔒</span>` : "");
+    b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "") + (soon ? " ch-soon" : "");
+    b.innerHTML = `<span class="ch-no">${String(pos+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`
+      + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vlock ? `<span class="ch-lockmark">🔒</span>` : ""));
     b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     list.appendChild(b);
   });
@@ -3069,6 +3091,29 @@ function select(ci, vi){
   const supp  = document.getElementById("vsupp");
   const att   = document.getElementById("vattach");
   courseEls.forEach((c, i) => c.classList.toggle("active", i === ci));   // 左：選択中コースを強調
+
+  // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
+  if(isUpcoming(v)){
+    const st = startTs(v);
+    vmeta.classList.add("meta-locked");
+    vframe.classList.add("locked"); viframe.src = "about:blank";
+    hidePwOption();
+    document.getElementById("lkTitle").innerHTML = `🎬 ${fmtDateFull(st)} 公開予定`;
+    document.getElementById("lkDesc").innerHTML  = `この動画は <b>${fmtDateFull(st)}</b> から視聴できます。<br>公開までもうしばらくお待ちください。<span class="lk-cd" data-start="${st}">${startCountdownLabel(st)}</span>`;
+    document.getElementById("lkbtn").hidden = true;
+    vkick.textContent  = course.name;
+    vtitle.textContent = "🎬 " + fmtDateFull(st) + " 公開予定";
+    renderVlimit(v);
+    vfiled.innerHTML   = "";
+    // 補足文は見せる（何の動画かは伝えて期待感を持たせる）
+    if(v.supp){ supp.hidden = false; supp.innerHTML = linkify(v.supp); } else { supp.hidden = true; supp.innerHTML = ""; }
+    att.hidden  = true; att.innerHTML  = "";
+    document.getElementById("vnav").hidden = true;
+    document.getElementById("chapterTabs").hidden = true; document.getElementById("chapterTabs").innerHTML = "";
+    document.getElementById("chapterList").innerHTML = "";
+    startCountdownTicker();
+    return;
+  }
 
   // ★ 視聴期間の終了（種別・パスワードより優先）
   if(isExpired(v)){
