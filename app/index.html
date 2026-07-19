@@ -3116,8 +3116,7 @@ function select(ci, vi){
     supp.hidden = true; supp.innerHTML = "";
     att.hidden  = true; att.innerHTML  = "";
     document.getElementById("vnav").hidden = true;
-    document.getElementById("chapterTabs").hidden = true; document.getElementById("chapterTabs").innerHTML = "";
-    document.getElementById("chapterList").innerHTML = "";
+    renderChapterUI(ci, vi);   // ★講座リスト（章タブ・動画一覧）は残す＝他の動画に戻れるように
     startCountdownTicker();
     return;
   }
