@@ -1997,6 +1997,14 @@ function courseWatchable(ci){
   const c = COURSES[ci]; if(!c) return false;
   return (c.videos || []).some((vv, idx) => canWatchVideo(vv, ci, idx));
 }
+// 視聴開始：日付をパース。その日の0:00から公開（未記入＝すぐ公開）
+// ※日付の書き方は「視聴期限」と同じ（2026-07-10 / 7月10日 / gvizのDate(...) など）
+function parseStart(s){
+  const ts = parseDeadline(s);          // 同じ解析を使う（返り値はその日の23:59:59）
+  if(ts == null) return null;
+  const d = new Date(ts);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0).getTime();   // 0:00に戻す
+}
 // 視聴期限：日付をパース（テキスト「2026-07-10」/gvizの Date(2026,6,10) 両対応）。その日いっぱい視聴可
 function parseDeadline(s){
   s = String(s || "").trim();
@@ -2913,7 +2921,7 @@ function coursesFromGviz(json){
     rows = rows.slice(1);
   }
   const find = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
-  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iDeadline=find(["視聴期限","期限","視聴期間"],-1), iOrder=find(["並び順","順番","順","order"],-1);
+  const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iDeadline=find(["視聴期限","期限","視聴期間"],-1), iStart=find(["視聴開始","公開開始","開始","公開日"],-1), iOrder=find(["並び順","順番","順","order"],-1);
   const cell = (r,i)=> (i >= 0 && r.c && r.c[i] && r.c[i].v != null) ? String(r.c[i].v).trim() : "";
   const map = new Map(); let ri = 0;
   rows.forEach(r => {
@@ -2924,6 +2932,9 @@ function coursesFromGviz(json){
     if(/非公開|非表示|下書き|draft|hidden|private/i.test(kind)) return;   // 種別=非公開 はアプリに出さない
     ri++;   // シート上の並び順（上から）
     const tag = cell(r,iTag), supp = cell(r,iSupp), attach = cell(r,iAttach), pw = cell(r,iPw), deadline = cell(r,iDeadline);
+    // 視聴開始日：未記入ならすぐ公開。日付があれば、その日の0:00になるまでアプリに出さない（予約公開）
+    const startRaw = cell(r,iStart);
+    if(startRaw){ const st = parseStart(startRaw); if(st != null && Date.now() < st) return; }
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[] }); }
