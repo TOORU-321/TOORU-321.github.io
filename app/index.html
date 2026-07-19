@@ -2919,7 +2919,12 @@ async function loadCourses(){
     catch(e2){ showState("コースの読み込みに失敗しました。"); return; }
   }
   if(!COURSES.length){ showState("コースがまだありません。"); return; }
-  render(); select(0, 0);
+  render();
+  // 起動時も「今すぐ見られる動画」を初期表示に（公開前・期限切れは飛ばす）
+  const v0 = (COURSES[0] && COURSES[0].videos) || [];
+  let i0 = v0.findIndex(v => videoAccessible(v) && !isUpcoming(v) && !isExpired(v));
+  if(i0 < 0) i0 = 0;
+  select(0, i0);
   refreshSession(true);   // 起動時：会員情報を名簿と再照合（加入直後の自動解放）
 }
 // アプリに戻ってきたとき（LP/決済から復帰など）も再照合して自動解放
@@ -3029,8 +3034,10 @@ function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p
 // コースをタップ：1本目を再生＋動画へスクロール
 function onCourseClick(ci){
   const vids = (COURSES[ci] && COURSES[ci].videos) || [];
-  let vi = vids.findIndex(videoAccessible);   // 最初に視聴できる動画へ
-  if(vi < 0) vi = 0;                          // 全部ロックなら先頭（ロック表示）
+  // 「今すぐ見られる動画」を最初に選ぶ（公開前・期限切れは飛ばす）
+  let vi = vids.findIndex(v => videoAccessible(v) && !isUpcoming(v) && !isExpired(v));
+  if(vi < 0) vi = vids.findIndex(videoAccessible);   // 見られるものが無ければ従来どおり
+  if(vi < 0) vi = 0;                                 // 全部ロックなら先頭（ロック表示）
   select(ci, vi);
   closeDrawer();                              // スマホ：選んだらドロワーを閉じて視聴画面へ
   scrollToPlayer();
@@ -3105,8 +3112,8 @@ function select(ci, vi){
     vtitle.textContent = "🎬 " + fmtDateFull(st) + " 公開予定";
     renderVlimit(v);
     vfiled.innerHTML   = "";
-    // 補足文は見せる（何の動画かは伝えて期待感を持たせる）
-    if(v.supp){ supp.hidden = false; supp.innerHTML = linkify(v.supp); } else { supp.hidden = true; supp.innerHTML = ""; }
+    // 公開前は中身を出さない（タイトルだけ見せて期待感を持たせる）
+    supp.hidden = true; supp.innerHTML = "";
     att.hidden  = true; att.innerHTML  = "";
     document.getElementById("vnav").hidden = true;
     document.getElementById("chapterTabs").hidden = true; document.getElementById("chapterTabs").innerHTML = "";
