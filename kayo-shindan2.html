@@ -687,21 +687,18 @@
   margin-bottom: 12px;
   font-weight: 500;
 }
-.kayo-shindan .ks-result-type {
+.kayo-shindan .ks-result-name {
   font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
   font-size: 22px;
   color: #3D2C1F;
-  letter-spacing: 0.06em;
-  line-height: 1.6;
-  margin-bottom: 6px;
-}
-.kayo-shindan .ks-result-name {
-  font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
-  font-size: 15px;
-  color: #B86E55;
   letter-spacing: 0.05em;
   line-height: 1.7;
   margin-bottom: 20px;
+  font-weight: 500;
+}
+.kayo-shindan .ks-result-name strong {
+  color: #B86E55;
+  font-weight: 500;
 }
 .kayo-shindan .ks-result-summary {
   font-family: 'Hiragino Mincho Pro', 'Yu Mincho', serif;
@@ -1130,8 +1127,7 @@
 
       <!-- Phase 2: Mini Result -->
       <div class="ks-result" id="ksResult">
-        <div class="ks-result-eyebrow">— YOUR TYPE —</div>
-        <div class="ks-result-type serif" id="ksResultType">Type ―</div>
+        <div class="ks-result-eyebrow">— YOUR RESULT —</div>
         <div class="ks-result-name serif" id="ksResultName">―</div>
         <div class="ks-result-summary" id="ksResultSummary">―</div>
         <a class="ks-cta-btn serif" id="ksCtaBtn" href="#" target="_blank" rel="noopener">結果はこちら →</a>
@@ -1165,26 +1161,22 @@
     LOADING_MS: 5000
   };
 
-  // タイプ別情報
+  // タイプ別情報（表示用。key A/B/C/D は内部管理用）
   var TYPES = {
     A: {
-      type: 'Type A',
-      name: 'もっとうまく作りたい、<br>遠慮しがち さん',
+      name: 'もっとうまく作りたい、<br><strong>遠慮しがち さん</strong>',
       summary: 'あなたを縛っているのは、<br>「もっと上手にできるべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     B: {
-      type: 'Type B',
-      name: '今日何にしよう、<br>が口ぐせ さん',
+      name: '今日何にしよう、<br><strong>が口ぐせ さん</strong>',
       summary: 'あなたを縛っているのは、<br>「毎日ちゃんと考えるべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     C: {
-      type: 'Type C',
-      name: 'スマホ片手に、<br>正解探し さん',
+      name: 'スマホ片手に、<br><strong>正解探し さん</strong>',
       summary: 'あなたを縛っているのは、<br>「レシピ通り作るべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     D: {
-      type: 'Type D',
-      name: 'もう回ってる、<br>次いきたい さん',
+      name: 'もう回ってる、<br><strong>次いきたい さん</strong>',
       summary: 'あなたはすでに、"べきべき" を<br>ほどよく手放せている方。<br>次のステージへのヒント、続きでお届けします。'
     }
   };
@@ -1374,7 +1366,6 @@
     }
 
     var t = TYPES[resultType];
-    document.getElementById('ksResultType').textContent = t.type;
     document.getElementById('ksResultName').innerHTML = t.name;
     document.getElementById('ksResultSummary').innerHTML = t.summary;
 
