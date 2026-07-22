@@ -1716,6 +1716,41 @@ a{text-decoration:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== メール案内（セグメント配信・admin） ===== -->
+<div class="ps-modal" id="broadcastModal" hidden role="dialog" aria-modal="true" aria-label="メール案内を送る">
+  <div class="ps-sheet">
+    <button class="ps-x" id="bcClose" aria-label="閉じる">×</button>
+    <div class="ps-title">📧 メール案内を送る</div>
+    <div class="ps-meta">名簿の宛先に、メール＋アプリ通知を一斉送信します。<br>※「メール配信=不可」の方は自動で除外されます。</div>
+    <label class="ps-label">宛先</label>
+    <div class="bc-segs" id="bcSegs">
+      <button class="bc-seg sel" data-seg="all">全員</button>
+      <button class="bc-seg" data-seg="sub">サブスク会員</button>
+      <button class="bc-seg" data-seg="tag">タグ指定</button>
+    </div>
+    <input type="text" class="ps-in" id="bcTag" placeholder="タグ名（例：VIP／insyoku／無料登録）" style="display:none;margin-top:8px">
+    <div class="ps-meta" style="margin:8px 0 0"><span id="bcCount">対象：確認中…</span></div>
+    <label class="ps-label">件名</label>
+    <input type="text" class="ps-in" id="bcSubject" placeholder="例：【期間限定】個別相談のご案内">
+    <label class="ps-label">本文</label>
+    <textarea class="ps-ta" id="bcBody" placeholder="本文…（キャンペーンや個別相談の案内・URLなど）"></textarea>
+    <label class="ps-label" style="display:flex;gap:14px;margin-top:10px">
+      <span style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="bcDoMail" checked> メール</span>
+      <span style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="bcDoPush" checked> アプリ通知</span>
+    </label>
+    <div class="ps-hint">送信元：とーる｜エルラボ＋ &lt;info@l-mine.com&gt;</div>
+    <div class="ps-btns">
+      <button class="ps-test" id="bcTest">🧪 自分にテスト</button>
+      <button class="ps-send" id="bcSend">この宛先に送信</button>
+    </div>
+  </div>
+</div>
+<style>
+  .bc-segs{display:flex;gap:8px;flex-wrap:wrap}
+  .bc-seg{flex:1;min-width:90px;min-height:40px;border:1px solid rgba(227,195,129,.28);border-radius:10px;background:rgba(255,255,255,.03);color:#e8e4d8;font-size:12.5px;font-weight:600;cursor:pointer}
+  .bc-seg.sel{border-color:#caa75f;background:linear-gradient(135deg,rgba(227,195,129,.18),rgba(227,195,129,.06));color:#f0d69c}
+</style>
+
 <!-- ===== 回答者だけに送信（admin） ===== -->
 <style>
   .ni-pollbar{margin-top:8px}
@@ -1944,6 +1979,7 @@ function renderAcctMenu(){
   const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
   html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
   if(!isStandalone()) html += `<button class="acct-item acct-join" data-act="addhome"><span class="ai-ico">📲</span>ホーム画面に追加</button>`;
+  if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="broadcast"><span class="ai-ico">📧</span>メール案内を送る<span class="acct-badge">admin</span></button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -2420,6 +2456,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   const act = it.getAttribute("data-act");
   if(act === "taskapp") openTaskApp();
   else if(act === "addhome") openAddHome(true);
+  else if(act === "broadcast") openBroadcast();
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
@@ -2430,6 +2467,24 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "register") openRegister();
   else if(act === "exit"){ if(confirm("トップ画面に戻りますか？")){ localStorage.removeItem(GUEST_KEY); exitToEntry(); } }
 });
+// メール案内（セグメント配信）モーダルのイベント
+(function(){
+  const md = document.getElementById("broadcastModal");
+  const segs = document.getElementById("bcSegs");
+  if(segs) segs.addEventListener("click", e => {
+    const b = e.target.closest(".bc-seg"); if(!b) return;
+    _bcSeg = b.getAttribute("data-seg");
+    segs.querySelectorAll(".bc-seg").forEach(x => x.classList.toggle("sel", x===b));
+    document.getElementById("bcTag").style.display = (_bcSeg==="tag") ? "block" : "none";
+    bcUpdateCount();
+  });
+  const tag = document.getElementById("bcTag");
+  if(tag){ let t; tag.addEventListener("input", () => { clearTimeout(t); t = setTimeout(bcUpdateCount, 500); }); }
+  const cl = document.getElementById("bcClose"); if(cl) cl.addEventListener("click", closeBroadcast);
+  if(md) md.addEventListener("click", e => { if(e.target === md) closeBroadcast(); });
+  const ts = document.getElementById("bcTest"); if(ts) ts.addEventListener("click", () => doBroadcast(true));
+  const sd = document.getElementById("bcSend"); if(sd) sd.addEventListener("click", () => doBroadcast(false));
+})();
 // 回答者だけに送信モーダルのイベント
 (function(){
   const cl = document.getElementById("psClose"); if(cl) cl.addEventListener("click", closePollSend);
@@ -2788,6 +2843,52 @@ async function mailNews(n, test){
     else if(res.error === "no_brevo_key"){ showToast("Brevo APIキーが未設定です（GASのスクリプトプロパティ）。"); }
     else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else if(res.error === "no_recipients"){ showToast("送信対象の会員がいません。"); }
+    else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
+// 管理者：メール案内（セグメント配信）
+let _bcSeg = "all";
+async function openBroadcast(){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  _bcSeg = "all";
+  document.querySelectorAll("#bcSegs .bc-seg").forEach(b => b.classList.toggle("sel", b.getAttribute("data-seg")==="all"));
+  document.getElementById("bcTag").style.display = "none";
+  document.getElementById("bcTag").value = "";
+  document.getElementById("bcSubject").value = "";
+  document.getElementById("bcBody").value = "";
+  document.getElementById("bcDoMail").checked = true;
+  document.getElementById("bcDoPush").checked = true;
+  document.getElementById("broadcastModal").hidden = false;
+  bcUpdateCount();
+}
+function closeBroadcast(){ document.getElementById("broadcastModal").hidden = true; }
+async function bcUpdateCount(){
+  const c = document.getElementById("bcCount"); if(c) c.textContent = "対象：確認中…";
+  const tag = (document.getElementById("bcTag").value||"").trim();
+  if(_bcSeg === "tag" && !tag){ if(c) c.textContent = "対象：タグを入力してください"; return; }
+  try{
+    const res = await fetch(GAS_URL + "?action=audience_count&email=" + encodeURIComponent(SESSION.email) + "&seg=" + encodeURIComponent(_bcSeg) + "&tag=" + encodeURIComponent(tag) + "&_=" + Date.now()).then(r=>r.json());
+    if(c) c.innerHTML = (res && res.ok) ? `対象：<b style="color:#f0d69c">${res.count}人</b>（配信拒否は除外済み）` : "対象：取得できませんでした";
+  }catch(e){ if(c) c.textContent = "対象：通信エラー"; }
+}
+async function doBroadcast(test){
+  const subject = (document.getElementById("bcSubject").value||"").trim();
+  const body    = (document.getElementById("bcBody").value||"").trim();
+  const tag     = (document.getElementById("bcTag").value||"").trim();
+  const doMail  = document.getElementById("bcDoMail").checked;
+  const doPush  = document.getElementById("bcDoPush").checked;
+  if(!body){ showToast("本文を入力してください。"); return; }
+  if(!doMail && !doPush){ showToast("メールか通知のどちらかは選んでください。"); return; }
+  if(_bcSeg === "tag" && !tag){ showToast("タグ名を入力してください。"); return; }
+  const segLabel = _bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」");
+  if(!test && !confirm(`【${segLabel}】に、メール案内を送信します。よろしいですか？`)) return;
+  showToast(test ? "自分にテスト送信中…" : "送信中…");
+  try{
+    const b = new URLSearchParams({ action:"broadcast", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, mail:doMail?"1":"0", push:doPush?"1":"0" });
+    if(test) b.set("test", "1");
+    const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r=>r.json());
+    if(res && res.ok){ showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`); if(!test) closeBroadcast(); }
+    else if(res && res.error === "no_audience"){ showToast("対象者がいません。"); }
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
