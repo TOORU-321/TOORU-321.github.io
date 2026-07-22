@@ -1716,6 +1716,45 @@ a{text-decoration:none}
 
 <div class="toast" id="toast"></div>
 
+<!-- ===== 回答者だけに送信（admin） ===== -->
+<style>
+  .ni-pollbar{margin-top:8px}
+  .ni-pollsend{background:linear-gradient(135deg,#e0a95a,#caa75f)!important;color:#1c1a14!important;font-weight:700!important;border:none!important}
+  .ps-modal{position:fixed;inset:0;z-index:410;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,9,12,.72);backdrop-filter:blur(5px)}
+  .ps-modal[hidden]{display:none}
+  .ps-sheet{position:relative;width:100%;max-width:440px;max-height:92vh;overflow:auto;background:#15130d;border:1px solid rgba(227,195,129,.34);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:24px 22px 20px}
+  .ps-x{position:absolute;top:8px;right:12px;background:none;border:none;color:#8a8575;font-size:24px;line-height:1;cursor:pointer}
+  .ps-x:hover{color:#f0d69c}
+  .ps-title{font-family:var(--mincho);font-size:17px;font-weight:700;color:#f0d69c;letter-spacing:.03em;margin-bottom:6px}
+  .ps-meta{font-size:12px;color:#b8b3a3;line-height:1.7;margin-bottom:14px}
+  .ps-meta b{color:#f0d69c}
+  .ps-label{display:block;font-size:11.5px;color:#b8b3a3;margin:12px 0 5px;letter-spacing:.03em}
+  .ps-in,.ps-ta{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid rgba(227,195,129,.28);border-radius:10px;background:rgba(255,255,255,.03);color:#e8e4d8;font-size:13.5px;font-family:inherit;line-height:1.75}
+  .ps-in:focus,.ps-ta:focus{outline:none;border-color:rgba(227,195,129,.55)}
+  .ps-ta{resize:vertical;min-height:120px}
+  .ps-hint{font-size:11px;color:#8a8575;margin-top:6px;line-height:1.7}
+  .ps-btns{display:flex;gap:10px;margin-top:18px}
+  .ps-test{flex:1;min-height:46px;border:1px solid rgba(227,195,129,.4);border-radius:999px;background:none;color:#f0d69c;font-size:13px;font-weight:600;cursor:pointer}
+  .ps-send{flex:2;min-height:46px;border:none;border-radius:999px;background:linear-gradient(180deg,#e6c47f,#caa75f);color:#1c1a14;font-size:14px;font-weight:700;letter-spacing:.04em;cursor:pointer}
+  .ps-send:active,.ps-test:active{transform:translateY(1px)}
+</style>
+<div class="ps-modal" id="pollSendModal" hidden role="dialog" aria-modal="true" aria-label="回答者に送信">
+  <div class="ps-sheet">
+    <button class="ps-x" id="psClose" aria-label="閉じる">×</button>
+    <div class="ps-title">📧 回答者だけに送信</div>
+    <div class="ps-meta" id="psMeta"></div>
+    <label class="ps-label">件名</label>
+    <input type="text" class="ps-in" id="psSubject" placeholder="例：【ZOOM】明日の講義URLのご案内">
+    <label class="ps-label">本文</label>
+    <textarea class="ps-ta" id="psBody" placeholder="本文…（ZOOMのURLなどを記載）&#10;改行そのまま・リンクはそのまま貼ればOK"></textarea>
+    <div class="ps-hint">送信元：とーる｜エルラボ＋ &lt;info@l-mine.com&gt;／メール＋アプリ通知が届きます。</div>
+    <div class="ps-btns">
+      <button class="ps-test" id="psTest">🧪 自分にテスト</button>
+      <button class="ps-send" id="psSend">この回答者に送信</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== 解約プチアンケート ===== -->
 <style>
   .sc-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -2391,6 +2430,13 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "register") openRegister();
   else if(act === "exit"){ if(confirm("トップ画面に戻りますか？")){ localStorage.removeItem(GUEST_KEY); exitToEntry(); } }
 });
+// 回答者だけに送信モーダルのイベント
+(function(){
+  const cl = document.getElementById("psClose"); if(cl) cl.addEventListener("click", closePollSend);
+  const md = document.getElementById("pollSendModal"); if(md) md.addEventListener("click", e => { if(e.target === md) closePollSend(); });
+  const ts = document.getElementById("psTest"); if(ts) ts.addEventListener("click", () => doPollSend(true));
+  const sd = document.getElementById("psSend"); if(sd) sd.addEventListener("click", () => doPollSend(false));
+})();
 // 解約プチアンケートのイベント
 (function(){
   const reasons = document.getElementById("scReasons");
@@ -2686,6 +2732,17 @@ function newsItemEl(n){
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
     const bd = document.createElement("button"); bd.textContent = "削除"; bd.onclick = ()=>delNews(n);
     bar.appendChild(bmt); bar.appendChild(bml); bar.appendChild(bpt); bar.appendChild(bp); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
+    // アンケートがある時だけ：回答者だけに送るボタン
+    if(n.options && n.options.length){
+      const pbar = document.createElement("div"); pbar.className = "ni-admin ni-pollbar";
+      n.options.forEach(opt => {
+        const b = document.createElement("button"); b.className = "ni-pollsend";
+        b.textContent = "📧「" + opt + "」の回答者に送信";
+        b.onclick = () => openPollSend(n, opt);
+        pbar.appendChild(b);
+      });
+      el.appendChild(pbar);
+    }
   }
   return el;
 }
@@ -2732,6 +2789,42 @@ async function mailNews(n, test){
     else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else if(res.error === "no_recipients"){ showToast("送信対象の会員がいません。"); }
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
+// 管理者：アンケート回答者だけにメール＋通知を送る
+let _psCtx = null;   // { id, choice, title }
+async function openPollSend(n, choice){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  _psCtx = { id: n.id, choice: choice, title: n.title };
+  document.getElementById("psSubject").value = "";
+  document.getElementById("psBody").value = "";
+  const meta = document.getElementById("psMeta");
+  meta.innerHTML = `お知らせ：<b>${escapeHtml(n.title)}</b><br>対象：「<b>${escapeHtml(choice)}</b>」の回答者　<span id="psCount">（人数を確認中…）</span>`;
+  document.getElementById("pollSendModal").hidden = false;
+  // 対象人数を取得
+  try{
+    const res = await fetch(GAS_URL + "?action=poll_respondents&email=" + encodeURIComponent(SESSION.email) + "&id=" + encodeURIComponent(n.id) + "&choice=" + encodeURIComponent(choice) + "&_=" + Date.now()).then(r=>r.json());
+    const c = document.getElementById("psCount");
+    if(c) c.innerHTML = (res && res.ok) ? `＝ <b>${res.count}人</b>` : "（取得できませんでした）";
+  }catch(e){}
+}
+function closePollSend(){ document.getElementById("pollSendModal").hidden = true; _psCtx = null; }
+async function doPollSend(test){
+  if(!_psCtx) return;
+  const subject = (document.getElementById("psSubject").value||"").trim();
+  const body    = (document.getElementById("psBody").value||"").trim();
+  if(!body){ showToast("本文を入力してください。"); return; }
+  if(!test && !confirm(`「${_psCtx.choice}」の回答者に、メールとアプリ通知を送信します。よろしいですか？`)) return;
+  showToast(test ? "自分にテスト送信中…" : "送信中…");
+  try{
+    const body2 = new URLSearchParams({ action:"poll_send", email:SESSION.email, id:String(_psCtx.id), choice:_psCtx.choice, subject:subject, body:body });
+    if(test) body2.set("test", "1");
+    const res = await fetch(GAS_URL, { method:"POST", body:body2 }).then(r=>r.json());
+    if(res && res.ok){
+      showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`);
+      if(!test) closePollSend();
+    } else if(res && res.error === "no_respondents"){ showToast("対象の回答者がいません。");
+    } else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
 // 管理者：このお知らせを、通知オンの端末へプッシュ送信（test=自分の端末だけ）
