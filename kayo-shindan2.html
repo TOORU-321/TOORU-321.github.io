@@ -869,7 +869,7 @@
   <section class="diagnosis" id="kayoShindanStart">
     <div class="diagnosis-header">
       <div class="diagnosis-eyebrow">— QUESTION —</div>
-      <h2 class="diagnosis-title serif">お料理タイプ診断</h2>
+      <h2 class="diagnosis-title serif">わたしの "お料理べきべき" タイプ診断</h2>
     </div>
 
     <!-- Progress -->
@@ -1154,32 +1154,37 @@
   // CONFIG（プロラインフリー貼付時、ここだけ書き換え）
   // ============================================================
   var CONFIG = {
-    // LINE公式友だち追加URL（診断結果ごとにパラメータ変えたい場合はここで分岐可）
-    LINE_URL: 'https://lin.ee/PLACEHOLDER',
+    // タイプ別 LINE公式友だち追加URL
+    LINE_URLS: {
+      A: 'https://vhutdb31.autosns.app/addfriend/s/fi0GdSrOyX/@115vaudn',
+      B: 'https://vhutdb31.autosns.app/addfriend/s/R3iDnY1TAl/@115vaudn',
+      C: 'https://vhutdb31.autosns.app/addfriend/s/mYPLrm82gT/@115vaudn',
+      D: 'https://vhutdb31.autosns.app/addfriend/s/SZ57fLvWlG/@115vaudn'
+    },
     // ローディング演出秒数
-    LOADING_MS: 4000
+    LOADING_MS: 5000
   };
 
   // タイプ別情報
   var TYPES = {
     A: {
       type: 'Type A',
-      name: '褒められ待ちの<br>"自信レス" 迷子さん',
+      name: 'もっとうまく作りたい、<br>遠慮しがち さん',
       summary: 'あなたを縛っているのは、<br>「もっと上手にできるべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     B: {
       type: 'Type B',
-      name: '脳内パンクの<br>"献立フリーズ" 迷子さん',
+      name: '今日何にしよう、<br>が口ぐせ さん',
       summary: 'あなたを縛っているのは、<br>「毎日ちゃんと考えるべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     C: {
       type: 'Type C',
-      name: 'スマホべったり<br>"レシピ依存" 迷子さん',
+      name: 'スマホ片手に、<br>正解探し さん',
       summary: 'あなたを縛っているのは、<br>「レシピ通り作るべき」という "べきべき"。<br>手放し方のヒント、続きでお届けします。'
     },
     D: {
       type: 'Type D',
-      name: '料理はもう回ってる<br>"次ステージ" さん',
+      name: 'もう回ってる、<br>次いきたい さん',
       summary: 'あなたはすでに、"べきべき" を<br>ほどよく手放せている方。<br>次のステージへのヒント、続きでお届けします。'
     }
   };
@@ -1373,8 +1378,8 @@
     document.getElementById('ksResultName').innerHTML = t.name;
     document.getElementById('ksResultSummary').innerHTML = t.summary;
 
-    // LINE誘引URL（タイプ情報をパラメータで付与、後の分岐に使える）
-    var url = CONFIG.LINE_URL;
+    // LINE誘引URL（タイプ別に分岐）
+    var url = CONFIG.LINE_URLS[resultType] || CONFIG.LINE_URLS.A;
     document.getElementById('ksCtaBtn').href = url;
 
     // タイプをlocalStorageに保存（結果ページで参照可能）
