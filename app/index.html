@@ -1732,8 +1732,11 @@ a{text-decoration:none}
     <div class="ps-meta" style="margin:8px 0 0"><span id="bcCount">対象：確認中…</span></div>
     <label class="ps-label">件名</label>
     <input type="text" class="ps-in" id="bcSubject" placeholder="例：【期間限定】個別相談のご案内">
-    <label class="ps-label">本文</label>
+    <label class="ps-label">本文（URLはそのまま貼ればリンクになります）</label>
     <textarea class="ps-ta" id="bcBody" placeholder="本文…（キャンペーンや個別相談の案内・URLなど）"></textarea>
+    <label class="ps-label">画像URL（任意・直リンク or GoogleドライブURL）</label>
+    <input type="text" class="ps-in" id="bcImage" placeholder="https://…/photo.jpg ／ ドライブの共有URLも可">
+    <label class="ps-label" style="display:flex;align-items:center;gap:7px;margin-top:6px"><input type="checkbox" id="bcImgPos"> 画像を本文の<b>下</b>に表示（オフ＝本文の上）</label>
     <label class="ps-label" style="display:flex;gap:14px;margin-top:10px">
       <span style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="bcDoMail" checked> メール</span>
       <span style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="bcDoPush" checked> アプリ通知</span>
@@ -2856,6 +2859,8 @@ async function openBroadcast(){
   document.getElementById("bcTag").value = "";
   document.getElementById("bcSubject").value = "";
   document.getElementById("bcBody").value = "";
+  document.getElementById("bcImage").value = "";
+  document.getElementById("bcImgPos").checked = false;
   document.getElementById("bcDoMail").checked = true;
   document.getElementById("bcDoPush").checked = true;
   document.getElementById("broadcastModal").hidden = false;
@@ -2875,6 +2880,8 @@ async function doBroadcast(test){
   const subject = (document.getElementById("bcSubject").value||"").trim();
   const body    = (document.getElementById("bcBody").value||"").trim();
   const tag     = (document.getElementById("bcTag").value||"").trim();
+  let   image   = (document.getElementById("bcImage").value||"").trim();
+  if(image && document.getElementById("bcImgPos").checked) image = "below|" + image;   // 本文の下に表示
   const doMail  = document.getElementById("bcDoMail").checked;
   const doPush  = document.getElementById("bcDoPush").checked;
   if(!body){ showToast("本文を入力してください。"); return; }
@@ -2884,7 +2891,7 @@ async function doBroadcast(test){
   if(!test && !confirm(`【${segLabel}】に、メール案内を送信します。よろしいですか？`)) return;
   showToast(test ? "自分にテスト送信中…" : "送信中…");
   try{
-    const b = new URLSearchParams({ action:"broadcast", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, mail:doMail?"1":"0", push:doPush?"1":"0" });
+    const b = new URLSearchParams({ action:"broadcast", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0" });
     if(test) b.set("test", "1");
     const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r=>r.json());
     if(res && res.ok){ showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`); if(!test) closeBroadcast(); }
