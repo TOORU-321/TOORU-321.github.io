@@ -60,6 +60,23 @@
 .chapter .ch-t{flex:1}
 .vplayer{align-self:start}
 @media(max-width:900px){.vplayer{order:1}}
+/* ゲスト/無料会員向け：無料ピックアップ */
+.freepick{margin:0 0 20px;padding:16px 14px 14px;border:1px solid rgba(227,195,129,.28);border-radius:14px;background:linear-gradient(145deg,rgba(227,195,129,.10),rgba(227,195,129,.02))}
+.freepick[hidden]{display:none}
+.freepick .fp-head{margin:0 4px 12px}
+.freepick .fp-ttl{font-family:var(--mincho);font-size:15.5px;font-weight:700;color:#f0d69c;letter-spacing:.03em}
+.freepick .fp-sub{font-size:11.5px;color:#b8b3a3;margin-top:3px}
+.freepick .fp-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.freepick .fp-row::-webkit-scrollbar{height:5px}
+.freepick .fp-row::-webkit-scrollbar-thumb{background:rgba(227,195,129,.3);border-radius:999px}
+.freepick .fp-card{flex:0 0 auto;width:190px;scroll-snap-align:start;background:#14120c;border:1px solid rgba(227,195,129,.2);border-radius:10px;overflow:hidden;cursor:pointer;text-align:left;transition:transform .18s ease,border-color .18s ease}
+.freepick .fp-card:hover{transform:translateY(-2px);border-color:rgba(227,195,129,.5)}
+.freepick .fp-thumb{position:relative;width:100%;aspect-ratio:16/9;background:#0f0f14 center/cover no-repeat;display:block}
+.freepick .fp-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);background:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.35))}
+.freepick .fp-badge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;letter-spacing:.04em;color:#1c1a14;background:linear-gradient(135deg,#e6c47f,#caa75f);border-radius:999px;padding:2px 8px}
+.freepick .fp-meta{padding:9px 10px 11px}
+.freepick .fp-cs{font-size:9.5px;color:#8a8575;letter-spacing:.02em;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.freepick .fp-t{font-size:12px;color:#e8e4d8;line-height:1.5;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .vframe{position:relative;aspect-ratio:16/9;background:#0f0f14;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;box-shadow:0 28px 56px -30px rgba(16,16,24,.55),0 6px 16px -10px rgba(16,16,24,.3)}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 /* 公開前のサムネイル（ロック画面の下に敷く） */
@@ -1520,6 +1537,14 @@ a{text-decoration:none}
     <div id="vcourses"><div class="vstate" id="vstate">コースを読み込み中…</div></div>
   </aside>
   <main class="vplayer">
+    <!-- ゲスト/無料会員向け：無料で見れる注目動画のピックアップ -->
+    <section class="freepick" id="freePick" hidden>
+      <div class="fp-head">
+        <div class="fp-ttl" id="fpTitle">🎁 まずは無料で見てみる</div>
+        <div class="fp-sub" id="fpSub">登録不要。気になる動画をタップ！</div>
+      </div>
+      <div class="fp-row" id="fpRow"></div>
+    </section>
     <div class="vframe" id="vframe">
       <img id="vthumb" class="vthumb" alt="" hidden>
       <iframe id="viframe" src="" title="動画プレイヤー" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
@@ -2021,7 +2046,7 @@ function renderAcctMenu(){
   html += `<div class="acct-ver" style="text-align:center;font-size:11px;color:#7a7a7a;padding:12px 0 2px;letter-spacing:.05em;opacity:.75">エルラボ＋　v${APP_VERSION}</div>`;
   body.innerHTML = html;
 }
-function updateMemberUI(){ renderAcctMenu(); }
+function updateMemberUI(){ renderAcctMenu(); try{ if(typeof renderFreePick==="function") renderFreePick(); }catch(e){} }
 function openMenu(){ document.getElementById("acctMenu").hidden = false; document.getElementById("acctBackdrop").hidden = false; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","true"); }
 function closeMenu(){ document.getElementById("acctMenu").hidden = true; document.getElementById("acctBackdrop").hidden = true; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","false"); }
 function toggleMenu(){ document.getElementById("acctMenu").hidden ? openMenu() : closeMenu(); }
@@ -3305,6 +3330,39 @@ function render(){
   courseEls = [...wrap.querySelectorAll(".course")];
   document.getElementById("lhCount").textContent = `${COURSES.length}講座・${COURSES.reduce((n,c)=>n+(c.videos?c.videos.length:0),0)}本`;
   startCountdownTicker();   // ④ 期間限定のカウントダウンを毎秒更新
+  renderFreePick();         // ゲスト/無料会員向け：無料ピックアップを更新
+}
+// ゲスト・無料会員向け：無料で見れる注目動画を横スクロールで見せる（会員以上は非表示）
+function renderFreePick(){
+  const sec = document.getElementById("freePick"), row = document.getElementById("fpRow");
+  if(!sec || !row) return;
+  if(currentRank() >= RANK.plus){ sec.hidden = true; return; }   // サブスク会員以上は不要
+  const picks = []; const per = {};
+  (COURSES||[]).forEach((c, ci) => {
+    (c.videos||[]).forEach((v, vi) => {
+      if(!(videoAccessible(v) && !isUpcoming(v) && !isExpired(v))) return;   // 今すぐ無料で見れるものだけ
+      per[ci] = per[ci] || 0;
+      if(per[ci] >= 2) return;                                              // 1コース最大2本（多様性）
+      per[ci]++;
+      picks.push({ ci, vi, v, cname:c.name });
+    });
+  });
+  if(!picks.length){ sec.hidden = true; return; }
+  const list = picks.slice(0, 12);
+  const guest = currentRank() <= RANK.guest;
+  document.getElementById("fpTitle").textContent = guest ? "🎁 まずは無料で見てみる" : "🎁 無料で見れる動画";
+  document.getElementById("fpSub").textContent   = guest ? "登録不要。気になる動画をタップ！" : "登録者は、こちらも見放題です。";
+  row.innerHTML = "";
+  list.forEach(p => {
+    const cn = String(p.cname||"").replace(/\n/g," ").trim();
+    const card = document.createElement("button"); card.className = "fp-card";
+    card.innerHTML = `<div class="fp-thumb"><span class="fp-badge">無料</span><span class="fp-play">▶</span></div>`
+      + `<div class="fp-meta"><div class="fp-cs">${escapeHtml(cn)}</div><div class="fp-t">${escapeHtml(p.v.t)}</div></div>`;
+    card.addEventListener("click", () => { select(p.ci, p.vi); scrollToPlayer(); });
+    row.appendChild(card);
+    fetchThumbUrl(p.v).then(url => { if(url){ const th = card.querySelector(".fp-thumb"); if(th) th.style.backgroundImage = 'url("' + url + '")'; } });
+  });
+  sec.hidden = false;
 }
 function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
 // ===== 視聴中オファー（ゲスト→無料登録／無料登録→エルラボ＋メンバー）1日1回・フェード =====
