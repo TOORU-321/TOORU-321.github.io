@@ -3168,11 +3168,8 @@ async function loadCourses(){
   }
   if(!COURSES.length){ showState("コースがまだありません。"); return; }
   render();
-  // 起動時も「今すぐ見られる動画」を初期表示に（公開前・期限切れは飛ばす）
-  const v0 = (COURSES[0] && COURSES[0].videos) || [];
-  let i0 = v0.findIndex(v => videoAccessible(v) && !isUpcoming(v) && !isExpired(v));
-  if(i0 < 0) i0 = 0;
-  select(0, i0);
+  // 起動時も「今すぐ見られる動画」を初期表示に（逆順コースは最新から）
+  select(0, firstShowIndex(COURSES[0]));
   refreshSession(true);   // 起動時：会員情報を名簿と再照合（加入直後の自動解放）
 }
 // アプリに戻ってきたとき（LP/決済から復帰など）も再照合して自動解放
@@ -3279,16 +3276,35 @@ function render(){
   startCountdownTicker();   // ④ 期間限定のカウントダウンを毎秒更新
 }
 function scrollToPlayer(){ const p = document.querySelector(".vplayer"); if(p) p.scrollIntoView({ behavior:"smooth", block:"start" }); }
-// コースをタップ：1本目を再生＋動画へスクロール
+// コースを開いた時に最初に選ぶ動画のindex（逆順コースは「一番上＝最新」から探す）
+function firstShowIndex(course){
+  const vids = (course && course.videos) || [];
+  if(!vids.length) return 0;
+  // 表示順に並べたindex配列（逆順コースは反転済み）
+  const order = orderedIndices(course, vids.map((_, i) => i));
+  // 表示順で「今すぐ見られる動画」を優先
+  let pick = order.find(i => videoAccessible(vids[i]) && !isUpcoming(vids[i]) && !isExpired(vids[i]));
+  if(pick == null) pick = order.find(i => videoAccessible(vids[i]));
+  if(pick == null) pick = order[0];   // 全部ロックなら表示順の先頭（＝逆順なら最新）
+  return pick;
+}
+// コースをタップ：最初の動画を再生＋動画へスクロール
 function onCourseClick(ci){
-  const vids = (COURSES[ci] && COURSES[ci].videos) || [];
-  // 「今すぐ見られる動画」を最初に選ぶ（公開前・期限切れは飛ばす）
-  let vi = vids.findIndex(v => videoAccessible(v) && !isUpcoming(v) && !isExpired(v));
-  if(vi < 0) vi = vids.findIndex(videoAccessible);   // 見られるものが無ければ従来どおり
-  if(vi < 0) vi = 0;                                 // 全部ロックなら先頭（ロック表示）
+  const vi = firstShowIndex(COURSES[ci]);
   select(ci, vi);
   closeDrawer();                              // スマホ：選んだらドロワーを閉じて視聴画面へ
   scrollToPlayer();
+}
+// このコースはリストを逆順（新しい回が上）にするか
+// ※「オンライン講義」系のアーカイブは最新回を上に見せたい
+function isReversedCourse(course){
+  return !!(course && /オンライン講義/.test(String(course.name || "")));
+}
+// 表示順の動画インデックス配列を返す（逆順コースは反転）
+function orderedIndices(course, baseIdxs){
+  const idxs = baseIdxs.slice();
+  if(isReversedCourse(course)) idxs.reverse();
+  return idxs;
 }
 // 章ごとにグループ化（出現順）
 function chapterGroups(course){
@@ -3324,15 +3340,18 @@ function renderChapterUI(ci, vi){
     tabs.hidden = true;
   }
   // ③ 中身（選択中の章／章が無ければ全部）。1本だけなら出さない
-  const idxs = hasChapters ? activeG.indices : (course.videos || []).map((_, i) => i);
+  const baseIdxs = hasChapters ? activeG.indices : (course.videos || []).map((_, i) => i);
+  const idxs = orderedIndices(course, baseIdxs);   // オンライン講義など逆順コースは反転
   if(idxs.length <= 1 && !hasChapters) return;
+  const rev = isReversedCourse(course);   // 逆順コースは番号も「上ほど大きい数字」
   idxs.forEach((i, pos) => {
     const v = course.videos[i];
     const soon = isUpcoming(v);                       // 公開前：タイトルは隠さず「〇/〇公開」と予告
     const vlock = !soon && !videoAccessible(v);
+    const num = rev ? (idxs.length - pos) : (pos + 1);
     const b = document.createElement("button");
     b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "") + (soon ? " ch-soon" : "");
-    b.innerHTML = `<span class="ch-no">${String(pos+1).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`
+    b.innerHTML = `<span class="ch-no">${String(num).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`
       + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vlock ? `<span class="ch-lockmark">🔒</span>` : ""));
     b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     list.appendChild(b);
