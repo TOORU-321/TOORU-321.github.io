@@ -3040,7 +3040,7 @@ document.getElementById("nfCancel").addEventListener("click", hideNewsForm);
 document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.target.id==="newsModal") closeNews(); });
 
 document.getElementById("entryLogin").addEventListener("click", openLogin);
-document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(true); });
+document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(true); openNews(); });
 
 // ===== PWA：Service Worker登録＋「ホーム画面に追加」案内 =====
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("firebase-messaging-sw.js").catch(function(){}); }
