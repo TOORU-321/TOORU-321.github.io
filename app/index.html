@@ -1049,6 +1049,12 @@ a{text-decoration:none}
 .np-opt:active{transform:scale(.96)}
 .np-opt.chosen{background:linear-gradient(135deg,#e8c880,#caa75f);color:#1c1a14;border-color:transparent;font-weight:700}
 .np-done{font-family:var(--gothic);font-size:11.5px;color:#7fc9a6;margin-top:9px;min-height:1em}
+/* ゲスト：回答不可の案内 */
+.np-guest .np-q{color:#c8c3b5;font-weight:600;font-size:13px;opacity:.85}
+.np-guestmsg{font-family:var(--gothic);font-size:12px;color:#e6c884;line-height:1.85;margin:10px 0 12px}
+.np-guestmsg b{color:#f0d69c}
+.np-guestbtn{font-family:var(--gothic);font-size:13px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border:none;border-radius:999px;padding:11px 22px;cursor:pointer;letter-spacing:.03em;box-shadow:0 8px 20px rgba(202,167,95,.22)}
+.np-guestbtn:active{transform:translateY(1px)}
 .ni-admin button{
   border-color:rgba(227,195,129,.15);
   color:#878b8c;
@@ -2824,11 +2830,21 @@ function newsItemEl(n){
   // アンケート（参加します/はい・いいえ 等）→ 回答者を記録
   if(n.options && n.options.length){
     const poll = document.createElement("div"); poll.className = "ni-poll";
-    const mine = localStorage.getItem("lmine_reply_" + n.id) || "";
-    const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
-    poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div><div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
-    poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
-    el.appendChild(poll);
+    if(!(SESSION && SESSION.email)){
+      // ゲスト：回答不可 → 選択肢の場所に「無料登録が必要」の案内＋登録ボタン
+      poll.classList.add("np-guest");
+      poll.innerHTML = `<div class="np-q">${n.options.map(o=>escapeHtml(o)).join(" ／ ")}</div>`
+        + `<div class="np-guestmsg">🔒 回答には<b>無料登録</b>が必要です。<br>登録すると、企画やオンライン講義に参加できます。</div>`
+        + `<button class="np-guestbtn" type="button">無料で登録して参加する →</button>`;
+      poll.querySelector(".np-guestbtn").onclick = () => { closeNews(); openRegister(); };
+      el.appendChild(poll);
+    } else {
+      const mine = localStorage.getItem("lmine_reply_" + n.id) || "";
+      const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
+      poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div><div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
+      poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
+      el.appendChild(poll);
+    }
   }
   // ♥ いいね（数だけ表示・端末ごとに1回）
   const liked = localStorage.getItem("lmine_liked_" + n.id) === "1";
