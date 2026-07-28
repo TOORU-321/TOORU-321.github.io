@@ -158,6 +158,16 @@
 .newsmodal[hidden]{display:none}
 .news-card{position:relative;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;max-width:560px;width:100%;padding:26px 28px 30px;box-shadow:0 30px 70px -30px rgba(16,16,24,.5)}
 .news-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--gold);padding-bottom:10px}
+/* コミュニティ人数バー */
+.comm-bar{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:0 0 16px;padding:11px 14px;border-radius:12px;background:linear-gradient(145deg,rgba(227,195,129,.12),rgba(227,195,129,.03));border:1px solid rgba(227,195,129,.24)}
+.comm-bar[hidden]{display:none}
+.comm-item{display:flex;align-items:baseline;gap:6px;white-space:nowrap}
+.comm-dot{align-self:center;width:8px;height:8px;border-radius:50%;background:#5bd68a;box-shadow:0 0 0 3px rgba(91,214,138,.18);animation:commPulse 2s ease-in-out infinite}
+@keyframes commPulse{0%,100%{opacity:1}50%{opacity:.45}}
+.comm-ico{align-self:center;font-size:13px}
+.comm-n{font-family:var(--serif-en,serif);font-size:18px;font-weight:700;color:#f0d69c;letter-spacing:.01em}
+.comm-l{font-size:11.5px;color:#b8b3a3;letter-spacing:.02em}
+.comm-sep{width:1px;height:20px;background:rgba(227,195,129,.28)}
 .news-new{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));border:none;border-radius:999px;padding:7px 15px;cursor:pointer}
 .news-list{display:flex;flex-direction:column}
 .news-item{padding:15px 2px;border-bottom:1px solid var(--line)}
@@ -1649,6 +1659,11 @@ a{text-decoration:none}
       <div class="lm-h">お知らせ</div>
       <button class="news-new" id="newsNew" hidden>＋ 新規投稿</button>
     </div>
+    <div class="comm-bar" id="commBar" hidden>
+      <div class="comm-item"><span class="comm-dot"></span><span class="comm-n" id="commReg">–</span><span class="comm-l">名 が登録中</span></div>
+      <div class="comm-sep"></div>
+      <div class="comm-item"><span class="comm-ico">👑</span><span class="comm-n" id="commMem">–</span><span class="comm-l">名 がメンバー</span></div>
+    </div>
     <div class="pwa-hint" id="pwaHint" hidden>
       <span class="ph-ico">📲</span>
       <div class="ph-tx" id="pwaHintTx"></div>
@@ -2768,7 +2783,21 @@ function openLegal(key){
 }
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); }
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); loadCommunity(); }
+// コミュニティ人数（登録者数・メンバー数＝VIP）を取得して表示
+let _commLoaded = false;
+async function loadCommunity(){
+  const bar = document.getElementById("commBar"); if(!bar) return;
+  try{
+    const res = await fetch(GAS_URL + "?action=community&_=" + Date.now()).then(r=>r.json());
+    if(res && res.ok){
+      document.getElementById("commReg").textContent = res.registered;
+      document.getElementById("commMem").textContent = res.members;
+      bar.hidden = false;
+      _commLoaded = true;
+    } else if(!_commLoaded){ bar.hidden = true; }
+  }catch(e){ if(!_commLoaded) bar.hidden = true; }
+}
 let _ahPending = false;   // ログイン直後にお知らせを閉じたタイミングで「ホーム画面に追加」を案内
 function closeNews(){
   document.getElementById("newsModal").hidden = true;
