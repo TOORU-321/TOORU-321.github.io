@@ -64,11 +64,20 @@
     .product-card__head:after{content:"38 min";position:absolute;right:18px;top:18px;padding:5px 10px;border-radius:999px;background:#fff;color:var(--blue);font-size:.66rem;font-weight:900;letter-spacing:.08em;box-shadow:var(--soft)}
     .product-card__head h3{margin:8px 0 0;font-size:clamp(1.35rem,5vw,1.95rem);line-height:1.55;font-weight:600}.product-card__body{padding:29px 24px 34px}.specs{margin:0 0 24px;border-top:1px solid var(--line)}.specs__row{display:grid;grid-template-columns:92px 1fr;gap:15px;padding:15px 0;border-bottom:1px solid var(--line);font-size:.89rem}.specs__row dt{margin:0;color:var(--muted);font-weight:800}.specs__row dd{margin:0}.product-price{margin:0 0 19px;text-align:center;color:var(--muted);font-size:.83rem}.product-price strong{display:block;color:var(--ink);font-size:2.35rem;line-height:1.35}
 
+    .product-card__body .cta{display:flex;margin-left:auto;margin-right:auto}
+
+    .guarantee{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;padding:32px 28px;border:1.6px solid var(--gold);border-radius:24px;background:linear-gradient(145deg,#fffdf6,#f4f9fc);box-shadow:0 16px 40px rgba(184,149,85,.12);text-align:center}
+    .guarantee__icon{font-size:2.9rem;line-height:1}
+    .guarantee h2{margin:0 0 10px;font-size:clamp(1.5rem,5.4vw,2.2rem);color:#20415a}
+    .guarantee p{margin:0 0 .55em;color:var(--ink);font-size:.98rem}
+    .guarantee .g-note{color:var(--muted)!important;font-size:.79rem}
+    @media(min-width:700px){.guarantee{grid-template-columns:auto 1fr;text-align:left;gap:28px;padding:34px 42px}}
+
     .profile{display:grid;gap:24px;align-items:center;padding:26px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--soft)}.profile__photo{overflow:hidden;max-width:190px;margin:auto;border-radius:20px;background:#e7edf0;box-shadow:var(--soft)}.profile__photo img{aspect-ratio:4/5;object-fit:cover}.profile h3{margin:0 0 3px;font-size:1.7rem}.profile p{margin-bottom:.95em;color:var(--muted);font-size:.97rem;line-height:1.9}.profile .prof-job{color:var(--blue);font-weight:800;font-size:.87rem;letter-spacing:.03em;margin-bottom:1.1em}
     .faq{display:grid;gap:12px;margin-top:25px}details{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 6px 18px rgba(29,52,72,.035)}summary{position:relative;cursor:pointer;list-style:none;padding:18px 46px 18px 19px;font-weight:800;font-size:.94rem}summary:after{content:"＋";position:absolute;right:18px;top:15px;color:var(--blue);font-size:1.2rem;transition:.25s}details[open] summary:after{transform:rotate(45deg)}summary::-webkit-details-marker{display:none}details p{padding:0 19px 19px;margin:0;color:var(--muted);font-size:.89rem}
 
     .footer{padding:36px 0 105px;color:#9ba6b0;background:#0d1924;text-align:center;font-size:.72rem}.footer a{margin:0 7px;color:#d6dce1;text-decoration:none}
-    .sticky-cta{position:fixed;z-index:30;left:50%;bottom:12px;transform:translateX(-50%);width:min(calc(100% - 22px),530px);padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(12,28,41,.88);backdrop-filter:blur(12px);box-shadow:0 14px 40px rgba(0,0,0,.26)}.sticky-cta a{display:flex;align-items:center;justify-content:center;min-height:49px;border-radius:999px;color:#fff;background:linear-gradient(135deg,#e4c98d,#c3a05c 52%,#a9843f);text-decoration:none;font-weight:700;font-size:.9rem;letter-spacing:.12em;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+    .sticky-cta{position:fixed;z-index:30;left:50%;bottom:12px;transform:translateX(-50%);width:min(calc(100% - 22px),530px);padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(12,28,41,.88);backdrop-filter:blur(12px);box-shadow:0 14px 40px rgba(0,0,0,.26)}.sticky-cta a{display:flex;align-items:center;justify-content:center;gap:5px;min-height:52px;border-radius:999px;color:#fff;background:linear-gradient(135deg,#e4c98d,#c3a05c 52%,#a9843f);text-decoration:none;font-weight:700;font-size:1rem;letter-spacing:.08em;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}.sticky-cta strong{font-size:1.3rem;font-weight:800;letter-spacing:.01em}
 
     .reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease}.reveal.is-visible{opacity:1;transform:none}.delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}
     @keyframes ambient{to{transform:translate3d(2%,1%,0) scale(1.04)}}@keyframes shine{0%,72%{left:-35%}100%{left:120%}}@keyframes pulse{50%{transform:translateX(4px);opacity:.55}}
@@ -85,7 +94,7 @@
     <div class="hero__inner reveal">
       <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a><br>
       <p class="eyebrow">“はじめて”シリーズ 第一弾</p>
-      <h1 class="serif">はじめての<br>SNSマーケティング基礎講座</h1>
+      <h1 class="serif">はじめての<br>SNSマーケティング<br>基礎講座</h1>
       <p class="hero__lead">フォロワーを増やす前に、<br><strong>SNSで“売れる流れ”を知る38分。</strong></p>
       <div class="hero__meta"><span>初心者向け</span><span>全1本・約38分</span><span>買い切り</span></div>
       <p class="price"><strong>3,980円</strong><small>（税込）</small></p>
@@ -145,6 +154,19 @@
       </div>
     </section>
 
+    <section class="section section--ice">
+      <div class="wrap">
+        <div class="guarantee reveal">
+          <div class="guarantee__icon">🛡️</div>
+          <div>
+            <h2 class="serif">3日間の全額返金保証</h2>
+            <p>ご購入後3日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p>
+            <p class="g-note">※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額、銀行振込の場合は振込手数料を差し引いた額となります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section section--paper">
       <div class="wrap">
         <div class="reveal">
@@ -176,7 +198,7 @@
   </main>
 
   <footer class="footer"><div class="wrap"><p><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a><a href="https://columns.l-mine.com/legal/terms.html">利用規約</a><a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a></p><p>© Llabo. All Rights Reserved.</p></div></footer>
-  <div class="sticky-cta"><a href="#purchase">3,980円で講座を見る</a></div>
+  <div class="sticky-cta"><a href="#purchase"><strong>3,980円</strong>で講座を見る</a></div>
 
   <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き"><div class="pay-sheet"><button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button><div id="payEmailNote" class="pay-emailnote" style="display:none"></div><div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div><div id="payDone"><div class="mk">✓</div><h3>ご購入ありがとうございます</h3><p>「はじめてのSNSマーケティング基礎講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p><a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px;font-size:15px">アプリを開く</a><p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p></div></div></div>
 
