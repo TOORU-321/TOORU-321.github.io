@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SNSの「モヤモヤ」をそっと手放す、行動経済学という名のお守り。The 3-2-1 Lab（無料メルマガ）。">
+<title>The 3-2-1 Lab｜行動経済学のお守り</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    body { margin:0; background:#fafafa; }
+    .lab-container {
+        padding: 40px 20px; background-color: #fafafa;
+        font-family: 'Noto Sans JP', sans-serif; color: #111; line-height: 1.8;
+        max-width: 1000px; margin: 0 auto;
+    }
+    .lab-container * { box-sizing: border-box; }
+    .lab-section { margin-bottom: 4rem; }
+    .lab-container h1, .lab-container h2, .lab-container h3,
+    .lab-container p, .lab-container div, .lab-container span, .lab-container li {
+        color: #111 !important; opacity: 1 !important; visibility: visible !important;
+    }
+    .lab-header { text-align: center; margin-bottom: 3rem; }
+    .lab-header-sub { color: #666 !important; font-size: 0.75rem; letter-spacing: 0.2em; margin-bottom: 0.5rem; text-transform: uppercase; }
+    .lab-header-main { background: #fff; border: 1px solid #111; display: inline-block; padding: 8px 24px; }
+    .lab-header-main span { font-family: 'Shippori Mincho', serif; font-size: 24px; font-weight: 700; }
+    .lab-grid-2 { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+    @media (min-width: 768px) { .lab-grid-2 { grid-template-columns: 1fr 1fr; gap: 3rem; } .lab-header-main span { font-size: 28px; } }
+    .lab-hero-title { font-family: 'Shippori Mincho', serif !important; font-size: 1.8rem; line-height: 1.4; margin-bottom: 1.5rem; font-weight: 700; margin-top: 0; }
+    @media (min-width: 768px) { .lab-hero-title { font-size: 2.5rem; } }
+    .lab-lead-text { font-size: 0.95rem; margin-bottom: 2rem; }
+    .lab-note-text { color: #666 !important; font-size: 0.8rem; margin-top: 1rem; }
+    .lab-styled-image { width: 100%; height: auto; display: block; filter: grayscale(100%) contrast(110%); border: 1px solid #222; padding: 8px; background: #fff; }
+    .lab-section-title { font-family: 'Shippori Mincho', serif !important; font-size: 1.5rem; text-align: center; margin-bottom: 2rem; position: relative; padding-bottom: 1rem; font-weight: 700; }
+    .lab-section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 1px; background-color: #111; }
+    .lab-text-center { text-align: center; margin-bottom: 2rem; }
+    .lab-concept-box-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .lab-concept-box { border: 1px solid #222; padding: 1.5rem; background: #fff !important; }
+    .highlight { background: #111 !important; }
+    .lab-box-label { font-size: 14px; font-weight: bold; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem; }
+    .lab-concept-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; font-family: 'Shippori Mincho', serif !important; font-weight: 700; margin-top: 0; }
+    .highlight .lab-box-label { color: #ffffff !important; }
+    .highlight h3 { color: #ffffff !important; }
+    .highlight p { color: #dddddd !important; }
+    .lab-note-box { background-color: #f4f4f4 !important; padding: 1.5rem; border-left: 4px solid #333; margin-bottom: 2rem; font-size: 0.9rem; }
+    .lab-format-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media (min-width: 768px) { .lab-format-grid { grid-template-columns: repeat(3, 1fr); } }
+    .lab-format-item { text-align: center; border: 1px solid #222; padding: 2rem 1rem; background: #fff !important; }
+    .lab-big-number { font-family: 'Shippori Mincho', serif !important; font-size: 3rem; line-height: 1; font-weight: 700; display: block; margin-bottom: 0.5rem; }
+    .lab-format-title-en { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem; }
+    .lab-profile-section { text-align: center; max-width: 600px; margin: 0 auto 6rem auto; }
+    .lab-profile-img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 1px solid #222; padding: 4px; margin: 0 auto 1.5rem auto; }
+    .lab-profile-job { color: #666 !important; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    /* 登録フォーム（コネワン → Brevo/GAS に置き換え） */
+    .lab-signup { display: flex; flex-direction: column; gap: 10px; max-width: 460px; margin: 0 auto; }
+    .lab-profile-section .lab-signup, .hero-content .lab-signup { margin: 0 auto; }
+    @media (min-width: 768px) { .lab-signup { flex-direction: row; } }
+    .lab-input { flex: 1; padding: 15px 16px; border: 1px solid #111; background: #fff; font-size: 1rem; font-family: inherit; border-radius: 0; color: #111; }
+    .lab-input:focus { outline: none; border-color: #000; box-shadow: 0 0 0 2px rgba(0,0,0,.08); }
+    .lab-msg { font-size: 0.85rem; color: #333 !important; margin: 8px 0 0; min-height: 1.2em; }
+    .lab-btn {
+        display: block; width: 100%; background-color: #111 !important; color: #fff !important;
+        padding: 16px 20px; text-decoration: none !important; font-size: 1rem; font-weight: bold;
+        border: 1px solid #111; transition: all 0.3s ease; cursor: pointer; text-align: center;
+        letter-spacing: 0.05em; border-radius: 0; font-family: inherit; white-space: nowrap;
+    }
+    @media (min-width: 768px) { .lab-btn { display: inline-block; width: auto; padding: 16px 32px; } }
+    .lab-btn:hover { background-color: #fff !important; color: #111 !important; }
+    .lab-btn:disabled { opacity: .55; cursor: default; }
+    @media (max-width: 480px) {
+        .lab-container { padding: 30px 16px; }
+        .lab-hero-title { font-size: 1.6rem; }
+        .lab-lead-text { font-size: 0.9rem; }
+    }
+</style>
+</head>
+<body>
+
+<div class="lab-container">
+  <header class="lab-header">
+    <p class="lab-header-sub"><span>Essential Newsletter</span></p>
+    <div class="lab-header-main"><span>The 3-2-1 Lab</span></div>
+  </header>
+
+  <section class="lab-section lab-hero-section">
+    <div class="lab-grid-2">
+      <div class="hero-content">
+        <h1 class="lab-hero-title">SNSの「モヤモヤ」、<br>そろそろ手放しませんか？</h1>
+        <p class="lab-lead-text">
+          「みんなキラキラしてるのに」「毎日投稿しなきゃ」<br>
+          そんな焦りは、あなたが弱いからではありません。<br><br>
+          脳が勝手に反応する『バグ』のせいです。ここは、そんな心のバグから自分を守るために集めた、「行動経済学という名の『お守り』」をこっそり共有する、ちょっと変わった実験室です。
+        </p>
+        <form class="lab-signup" onsubmit="return labSubscribe(this);">
+          <input type="email" name="email" class="lab-input" placeholder="メールアドレス" autocomplete="email" required>
+          <button type="submit" class="lab-btn">まずは一通読んでみる（無料）</button>
+        </form>
+        <p class="lab-msg" data-msg></p>
+        <p class="lab-note-text">※いつでも退室（解除）可能です</p>
+      </div>
+      <div class="hero-image-container">
+        <img alt="The 3-2-1 Lab" class="lab-styled-image" src="https://drive.google.com/thumbnail?id=1A94WU-tafhCUvbkMr3L9W9Sif09dr_sZ&sz=w1200" onerror="this.closest('.hero-image-container').style.display='none'">
+      </div>
+    </div>
+  </section>
+
+  <section class="lab-section">
+    <h2 class="lab-section-title">コンセプト：教科書は捨てました</h2>
+    <p class="lab-text-center">
+      「フォロワーの増やし方」とか、そういうノウハウはここにはありません。<br>
+      僕が欲しいのは、数字より「本質」。<br>
+      SNSの波にのまれないために、僕がやっている「3つの習慣」をシェアします。
+    </p>
+    <div class="lab-concept-box-container">
+      <div class="lab-concept-box">
+        <span class="lab-box-label">Level 1</span>
+        <h3>情報の共有 (Information)</h3>
+        <p>キラキラした成功話じゃなくて、今のSNSで起きている「現状」と「仕組み」を淡々と共有します。舞台裏（アルゴリズム）を知れば、もう無駄に焦ることはありません。</p>
+      </div>
+      <div class="lab-concept-box">
+        <span class="lab-box-label">Level 2</span>
+        <h3>知識の共有 (Knowledge)</h3>
+        <p>「なんで他人と比べて落ち込むの？」その理由を行動経済学で分解します。理由がわかれば、不思議と焦りは消えるんです。</p>
+      </div>
+      <div class="highlight lab-concept-box">
+        <span class="lab-box-label">Level 3 : The Goal</span>
+        <h3>視点の共有 (Perspective)</h3>
+        <p>SNSに使われる側から、自分の人生のために使う側へ。「あ、そういう見方があったか」という視座をお届けします。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lab-section">
+    <h2 class="lab-section-title">不定期に届く、3-2-1のリズム。</h2>
+    <div class="lab-note-box">
+      <strong>【お知らせ：気まぐれに送ります】</strong><br>
+      「毎週〇曜日に送る」とか決めると、義務になっちゃうんでやめました。<br>
+      あなたの通知を埋めるゴミにはなりたくないので、「これ面白い！」と思った時だけ送ります。<br>
+      忘れた頃に届く、友人からの手紙だと思ってください。
+    </div>
+    <p class="lab-text-center" style="margin-bottom:2rem">一応、僕の誕生日（3月21日）にちなんだ型は決まってます。</p>
+    <div class="lab-format-grid">
+      <div class="lab-format-item">
+        <span class="lab-big-number">3</span> <span class="lab-format-title-en">Thoughts</span>
+        <h3>思考の断片</h3>
+        <p>散歩中やカフェでぼーっとしてる時に降りてきた、世の中への違和感や気づきのメモ。</p>
+      </div>
+      <div class="lab-format-item">
+        <span class="lab-big-number">2</span> <span class="lab-format-title-en">Perspectives</span>
+        <h3>外部のレンズ</h3>
+        <p>本、映画、海外のクリエイターの言葉から。「これ深いな」と思った言葉を引用します。</p>
+      </div>
+      <div class="lab-format-item">
+        <span class="lab-big-number">1</span> <span class="lab-format-title-en">Question</span>
+        <h3>一つの問い</h3>
+        <p>答えはなくていいです。読み終わった後、ふとスマホを置いて自分と向き合うための、小さな問いかけ。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lab-section lab-profile-section">
+    <img alt="とーる" class="lab-profile-img" src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w400" onerror="this.style.display='none'">
+    <h3><span style="font-size:22px">とーる</span></h3>
+    <p class="lab-profile-job">行動経済アナリスト / デジタルクリエイター</p>
+    <p style="text-align:left">1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て現在はオンライン講座の制作やLINE構築を専門としており、コンテンツビジネスユーザーのサポートをしています。</p>
+    <p style="text-align:left">&nbsp;</p>
+    <p style="text-align:left"><strong>・</strong>第1回行動経済学検定1級合格</p>
+    <p style="text-align:left">・日本営業科学協会認定“行動経済アナリスト”として活動中</p>
+    <p style="text-align:left"><strong>・</strong>電子書籍Amazon6部門1位、Udemyオンラインコース特別賞受賞</p>
+    <p style="text-align:left">心理学を活用した独自のファネル（導き）設計が得意</p>
+    <p style="text-align:left">&nbsp;</p>
+    <p style="text-align:left">数字やバズを追いかけるだけのSNS運用に疑問を持ち、この場所に店を構えました。「何を」発信するか以上に「どう」健やかに在るか。仕組みを理解することで得られる、静かな自由をお届けします。</p>
+    <div style="margin-top:2rem">
+      <form class="lab-signup" onsubmit="return labSubscribe(this);">
+        <input type="email" name="email" class="lab-input" placeholder="メールアドレス" autocomplete="email" required>
+        <button type="submit" class="lab-btn">まずは一通読んでみる（無料）</button>
+      </form>
+      <p class="lab-msg" data-msg></p>
+    </div>
+    <p class="lab-note-text">※いつでも退室（解除）可能です</p>
+  </section>
+</div>
+
+<script>
+  var GAS_URL = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+  async function labSubscribe(form){
+    var email = (form.email.value || "").trim().toLowerCase();
+    var msg = form.parentNode.querySelector("[data-msg]") || form.querySelector("[data-msg]");
+    var btn = form.querySelector("button");
+    if(!email || email.indexOf("@") < 0){ if(msg) msg.textContent = "メールアドレスを入力してください。"; return false; }
+    btn.disabled = true; if(msg) msg.textContent = "登録中…";
+    try{
+      var res = await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"lab_subscribe", email:email }) }).then(function(r){ return r.json(); });
+      if(res && res.ok){
+        form.style.display = "none";
+        if(msg) msg.textContent = "✓ ご登録ありがとうございます！まもなく最初の手紙が届きます。";
+      } else {
+        btn.disabled = false;
+        if(msg) msg.textContent = "登録に失敗しました。時間をおいて再度お試しください。";
+      }
+    }catch(e){ btn.disabled = false; if(msg) msg.textContent = "通信エラーが発生しました。時間をおいて再度お試しください。"; }
+    return false;
+  }
+</script>
+
+</body>
+</html>
