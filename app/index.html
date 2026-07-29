@@ -3460,8 +3460,12 @@ function masterFromTable(cols, rows){
     const tags = tagsRaw.split(/[,、\/]/).map(s=>s.trim()).filter(Boolean);
     const single = tags.length === 1;
     const score = (single?4:0) + (rec.priceId?2:0) + ((rec.buyUrl||rec.lpUrl)?1:0);
+    const priceNum = parseInt(String(rec.price).replace(/[^\d]/g,""), 10) || 0;
     tags.forEach(t=>{
-      if(!byTag[t] || score > byTag[t]._score){ const o={}; for(const k in rec) o[k]=rec[k]; o._score=score; byTag[t]=o; }
+      const cur = byTag[t];
+      // スコア優先。同点なら「価格が高い方（=定価）」を採用（メルマガ割引の安い行がアプリに出るのを防ぐ）
+      const better = !cur || score > cur._score || (score === cur._score && priceNum > cur._price);
+      if(better){ const o={}; for(const k in rec) o[k]=rec[k]; o._score=score; o._price=priceNum; byTag[t]=o; }
     });
   });
   return byTag;
