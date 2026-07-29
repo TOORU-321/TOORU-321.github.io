@@ -2452,18 +2452,16 @@ function setLockScreen(v, course){
       return;
     }
     const price = formatPrice(course.price);
-    const orig  = (course.campOn && course.campPrice && course.priceBase) ? formatPrice(course.priceBase) : "";
+    const lpM   = course.lpUrl || (tag ? COURSE_LP[tag] : null);
     t.textContent = (prod ? "「" + prod + "」" : "この講座") + "は購入者限定です";
-    d.innerHTML = price
-      ? ("受講料：" + (orig ? "<s style=\"opacity:.55;margin-right:6px\">" + orig + "</s>" : "") + "<b>" + price + "</b>　ご購入で視聴できます。")
-      : "この講座のご購入で視聴できます。";
+    // アプリ内では価格を出さない（受講料はLP／決済画面で提示）
+    d.textContent = lpM ? "コース詳細ページで、内容と受講料をご覧いただけます。" : "ご購入で視聴できます。";
     b.hidden = false; b.setAttribute("href", "#");
     if(!loggedIn){
       b.textContent = "ログインして購入する →";
       b.onclick = (ev)=>{ ev.preventDefault(); openLogin(); };
       return;
     }
-    const lpM = course.lpUrl || (tag ? COURSE_LP[tag] : null);
     if(lpM){                                  // (A) LPがある → コース詳細ボタン
       b.textContent = "コース詳細を見る →";
       b.onclick = (ev)=>{ ev.preventDefault(); openCourseLP(lpM); };
