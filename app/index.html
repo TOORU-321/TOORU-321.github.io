@@ -1277,6 +1277,12 @@ a{text-decoration:none}
 .course.limited.expired .c-limit{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
 .course.limited.expired .c-limit .cl-tx{color:#9a9c99}
 .course.limited.expired .c-limit .cl-cd{background:rgba(255,255,255,.14);color:#c9c9c2}
+/* エルラボ＋（アプリのメイン講義）＝ゴールドの目立つ枠。期間限定(オレンジ)とは別色 */
+.course.elabo{margin:10px 8px;border:1.6px solid rgba(227,195,129,.6);border-radius:12px;background:linear-gradient(180deg,rgba(227,195,129,.14),rgba(227,195,129,.03));box-shadow:0 5px 20px rgba(180,150,60,.18);overflow:hidden}
+.course.elabo .course-head{padding:13px 10px 8px 14px}
+.c-elabo{display:flex;align-items:center;gap:7px;margin:0 14px 12px;padding:8px 11px;border-radius:8px;background:linear-gradient(135deg,rgba(227,195,129,.22),rgba(227,195,129,.07));border:1px solid rgba(227,195,129,.36)}
+.c-elabo .ce-ico{font-size:12px;flex:none}
+.c-elabo .ce-tx{font-size:11.5px;color:#ecca82;font-weight:800;letter-spacing:.03em;line-height:1.4}
 /* 視聴ページの期限バナー */
 .vlimit{display:inline-flex;align-items:center;gap:8px;margin:12px 0 4px;padding:9px 15px;border-radius:10px;font-family:var(--gothic);font-size:13px;font-weight:600;color:#e6b877;background:rgba(227,169,90,.12);border:1px solid rgba(227,169,90,.34)}
 .vlimit[hidden]{display:none}
@@ -3610,8 +3616,9 @@ function render(){
     const vids = course.videos || [];
     const dl = courseDeadline(course);            // 期間限定コースなら期限（ts）
     const isLimited = dl != null;
+    const isElabo = !isLimited && /エルラボ\s*[＋+]/.test(String(course.name || ""));   // エルラボ＋＝メイン講義の目立つ枠
     const el = document.createElement("section");
-    el.className = "course" + (isLimited ? " limited " + deadlineState(dl) : "");
+    el.className = "course" + (isLimited ? " limited " + deadlineState(dl) : (isElabo ? " elabo" : ""));
     el.dataset.ci = ci;
     const head = document.createElement("button"); head.className = "course-head";
     const ranks = vids.map(v => (v && v.rank != null) ? v.rank : RANK.guest);
@@ -3629,6 +3636,12 @@ function render(){
       timer.className = "c-limit";
       timer.innerHTML = `<div class="cl-top"><span class="cl-ico">⏳</span><span class="cl-tx">期間限定 ・ ${fmtDateShort(dl)}まで</span></div><div class="cl-cd" data-deadline="${dl}">${countdownLabel(dl)}</div>`;
       el.appendChild(timer);
+    } else if(isElabo){
+      // ✨ エルラボ＋＝アプリのメイン講義（ゴールド枠＋メンバー限定ラベル）
+      const bar = document.createElement("div");
+      bar.className = "c-elabo";
+      bar.innerHTML = `<span class="ce-ico">✨</span><span class="ce-tx">エルラボ＋ メンバー限定アーカイブ</span>`;
+      el.appendChild(bar);
     }
     wrap.appendChild(el);
   });
