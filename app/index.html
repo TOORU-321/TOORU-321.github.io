@@ -1931,6 +1931,7 @@ const RANK = { guest:0, free:1, plus:2, support:3 };
 // スプシ「種別」→ 必要ランク
 function kindToRank(kind){
   const k = String(kind || "");
+  if(/タグ限定|限定公開|限定共有|限定視聴/.test(k))     return RANK.support; // タグ保有者のみ（限定公開）
   if(/有料|サポート|support/i.test(k))                 return RANK.support; // 対象タグ保有者
   if(/サブスク|会員|エルラボ|plus|subscrib/i.test(k))  return RANK.plus;    // サブスク会員
   if(/無料登録|新規登録|登録|リード|free|lead/i.test(k)) return RANK.free;   // メール＋パスワード登録
@@ -2188,6 +2189,10 @@ function currentRank(){
 // 動画1本ごとのアクセス判定（種別・必要タグは動画ごと）
 function videoAccessible(v){
   const need = (v && v.rank) || RANK.guest;
+  if(v && v.tagOnly){
+    // タグ限定：種別・購入に関係なく、必要タグを持つ人だけ視聴可
+    return !!(v.requiredTag && SESSION && (SESSION.tags || []).includes(v.requiredTag));
+  }
   if(need >= RANK.support && v && v.requiredTag){
     // 有料（タグ指定あり）＝対象タグを持っていれば解放（単発購入者OK・サブスク有無は不問）
     return !!(SESSION && (SESSION.tags || []).includes(v.requiredTag));
@@ -2367,6 +2372,21 @@ function setLockScreen(v, course){
   b.hidden = false; b.removeAttribute("target"); b.onclick = null;
   const need = (v && v.rank) || RANK.guest;
   const loggedIn = !!(SESSION && SESSION.email);
+
+  // ★ タグ限定（限定公開）：対象タグを持つ人だけ視聴可。購入の文言は出さない
+  if(v && v.tagOnly){
+    t.textContent = "🔒 限定公開";
+    d.textContent = "この動画は対象の方のみ視聴できます。";
+    if(loggedIn){
+      b.hidden = true;
+    } else {
+      b.hidden = false;
+      b.textContent = "ログイン →";
+      b.setAttribute("href", "#");
+      b.onclick = (ev) => { ev.preventDefault(); openLogin(); };
+    }
+    return;
+  }
 
   // ① 無料登録が必要
   if(need <= RANK.free){
@@ -3404,6 +3424,7 @@ function coursesFromTable(cols, rows, master){
     const start = cell(r,iStart);   // 視聴開始日：未記入ならすぐ公開。日付があれば、その日まで「〇日より公開」予告表示
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
+    const tagOnly = /タグ限定|限定公開|限定共有|限定視聴/.test(kind);   // 種別=タグ限定 → 必要タグ保有者のみ視聴（購入ではなく限定公開）
     if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[], price:"", buyUrl:"", lpUrl:"" }); }
     const c = map.get(cname);
     // コース単位の販売情報（各コースのどこか1行に入っていれば拾う）
@@ -3411,7 +3432,7 @@ function coursesFromTable(cols, rows, master){
     if(price  && !c.price)  c.price  = price;
     if(buyUrl && !c.buyUrl) c.buyUrl = buyUrl;
     if(lpUrl  && !c.lpUrl)  c.lpUrl  = lpUrl;
-    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), _order:ord });
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), tagOnly:tagOnly, _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
@@ -3777,7 +3798,7 @@ function select(ci, vi){
     // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま。
     // 種別/タグ(=無料登録など)のCTAを主に出し、パスワードがあれば「招待の方はこちら」を添える。
     vkick.textContent  = course.name;                    // コース名のみ（章タイトルは伏せる）
-    vtitle.textContent = "🔒 アクセスパスが必要です";     // 本編タイトルは未購入者に見せない
+    vtitle.textContent = (v && v.tagOnly) ? "🔒 限定公開" : "🔒 アクセスパスが必要です";   // 本編タイトルは伏せる（タグ限定は"限定公開"表記）
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
     if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
