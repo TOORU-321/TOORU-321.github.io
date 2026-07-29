@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="フォロワーを増やす前に、SNSで“売れる流れ”を知る38分。はじめてのSNSマーケティング基礎講座。" />
+  <meta name="robots" content="noindex" />
+  <title>はじめてのSNSマーケティング基礎講座</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root {
+      --bg: #f6f3ed; --paper: #fffdf8; --text: #25231f; --muted: #716b61;
+      --line: #ded8cd; --black: #121212; --gold: #b89958; --gold-dark: #8f7135;
+      --shadow: 0 16px 40px rgba(31, 26, 18, 0.08); --radius: 18px; --max: 760px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--text); background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+      line-height: 1.95; letter-spacing: 0.035em; -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; width: 100%; height: auto; }
+    a { color: inherit; }
+    .wrap { width: min(calc(100% - 36px), var(--max)); margin: 0 auto; }
+    .serif { font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Noto Serif JP", serif; }
+    .hero {
+      min-height: 92vh; display: grid; place-items: center; color: #fff;
+      background: radial-gradient(circle at top, rgba(184, 153, 88, 0.15), transparent 34%), var(--black);
+      text-align: center; padding: 74px 0 68px;
+    }
+    .hero__inner { width: min(calc(100% - 40px), 690px); margin: 0 auto; }
+    .eyebrow { margin: 0 0 26px; color: #d6c6a2; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+    .hero h1 { margin: 0; font-size: clamp(2.05rem, 8vw, 4rem); line-height: 1.38; font-weight: 500; letter-spacing: 0.06em; }
+    .hero__lead { margin: 28px auto 0; max-width: 560px; font-size: clamp(1rem, 3.8vw, 1.28rem); line-height: 1.9; }
+    .hero__sub { margin: 18px auto 0; max-width: 560px; color: #cbc7bf; font-size: 0.9rem; }
+    .price { margin: 28px 0 20px; font-size: 1rem; color: #eee6d3; }
+    .price strong { font-size: 2rem; letter-spacing: 0.03em; }
+    .cta {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: min(100%, 420px); min-height: 58px; padding: 14px 28px;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 999px;
+      background: linear-gradient(135deg, #c8a866, #a78648); color: #fff;
+      text-decoration: none; font-weight: 800; letter-spacing: 0.08em; font-family: inherit; font-size: 1rem; cursor: pointer;
+      box-shadow: 0 12px 30px rgba(184, 153, 88, 0.22);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(184, 153, 88, 0.3); filter: brightness(1.04); }
+    .cta--dark { color: #fff; background: var(--black); box-shadow: none; }
+    .note { margin: 14px 0 0; color: #aaa49b; font-size: 0.74rem; }
+    .section { padding: 86px 0; }
+    .section--paper { background: var(--paper); }
+    .section--black { color: #fff; background: var(--black); }
+    .section__label { margin: 0 0 16px; color: var(--gold-dark); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
+    .section--black .section__label { color: #d0b77f; }
+    .section h2 { margin: 0 0 28px; font-size: clamp(1.7rem, 6vw, 2.55rem); line-height: 1.55; font-weight: 500; letter-spacing: 0.055em; }
+    .section p { margin: 0 0 1.35em; }
+    .lead { font-size: 1.05rem; line-height: 2.05; }
+    .center { text-align: center; }
+    .visual { margin: 40px 0 0; overflow: hidden; border-radius: var(--radius); background: #e9e5dc; box-shadow: var(--shadow); }
+    .visual img { aspect-ratio: 16 / 10; object-fit: cover; filter: grayscale(1); }
+    .visual__placeholder {
+      min-height: 360px; display: grid; place-items: center; padding: 40px; color: #756f65;
+      background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(235,229,216,.7)),
+        repeating-linear-gradient(-45deg, #ece7dd, #ece7dd 8px, #e5dfd4 8px, #e5dfd4 16px);
+      text-align: center; font-size: 0.9rem;
+    }
+    .two-strategies { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 36px; }
+    .strategy-card { padding: 28px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,0.66); }
+    .strategy-card__num { display: inline-grid; place-items: center; width: 38px; height: 38px; margin-bottom: 18px; border-radius: 50%; color: #fff; background: var(--gold); font-size: 0.78rem; font-weight: 800; }
+    .strategy-card h3 { margin: 0 0 12px; font-size: 1.25rem; }
+    .strategy-card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+    .content-list { display: grid; gap: 18px; margin-top: 38px; }
+    .content-item { display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; padding: 23px 0; border-bottom: 1px solid var(--line); }
+    .content-item:first-child { border-top: 1px solid var(--line); }
+    .content-item__num { padding-top: 4px; color: var(--gold-dark); font-family: Georgia, serif; font-size: 1.2rem; }
+    .content-item h3 { margin: 0 0 8px; font-size: 1.08rem; }
+    .content-item p { margin: 0; color: var(--muted); font-size: 0.91rem; line-height: 1.85; }
+    .quote-box { margin-top: 38px; padding: 34px 28px; border-left: 3px solid var(--gold); background: #f2eee6; font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif; font-size: clamp(1.1rem, 4.5vw, 1.35rem); line-height: 2; }
+    .check-list { display: grid; gap: 14px; margin: 30px 0 0; padding: 0; list-style: none; }
+    .check-list li { position: relative; padding: 18px 18px 18px 48px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,0.55); }
+    .check-list li::before { content: "✓"; position: absolute; left: 19px; top: 17px; color: var(--gold-dark); font-weight: 900; }
+    .product-card { overflow: hidden; border-radius: 24px; background: #fff; color: var(--text); box-shadow: 0 24px 60px rgba(0,0,0,.2); }
+    .product-card__head { padding: 36px 28px 26px; text-align: center; background: #f8f5ee; border-bottom: 1px solid var(--line); }
+    .product-card__head h3 { margin: 8px 0 0; font-size: clamp(1.4rem, 5vw, 2rem); line-height: 1.55; font-weight: 500; }
+    .product-card__body { padding: 30px 24px 34px; }
+    .specs { margin: 0 0 28px; border-top: 1px solid var(--line); }
+    .specs__row { display: grid; grid-template-columns: 104px 1fr; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
+    .specs__row dt { margin: 0; color: var(--muted); font-weight: 700; }
+    .specs__row dd { margin: 0; }
+    .product-price { margin: 0 0 20px; text-align: center; font-size: 0.88rem; color: var(--muted); }
+    .product-price strong { display: block; color: var(--text); font-size: 2.35rem; line-height: 1.35; }
+    .profile { display: grid; gap: 24px; align-items: center; }
+    .profile__photo { overflow: hidden; max-width: 240px; margin: 0 auto; border-radius: 18px; background: #e7e2d8; box-shadow: var(--shadow); }
+    .profile__photo img { aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(1); }
+    .profile h3 { margin: 0 0 10px; font-size: 1.65rem; }
+    .profile p { margin-bottom: 1em; color: var(--muted); font-size: 0.92rem; }
+    .faq { display: grid; gap: 12px; margin-top: 30px; }
+    details { border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.66); overflow: hidden; }
+    summary { cursor: pointer; list-style: none; padding: 18px 20px; font-weight: 800; }
+    summary::-webkit-details-marker { display: none; }
+    details p { padding: 0 20px 20px; margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .footer { padding: 38px 0 46px; color: #aaa49b; background: #0b0b0b; text-align: center; font-size: 0.75rem; }
+    .footer a { margin: 0 7px; color: #d5d0c6; text-decoration: none; }
+    .backlink { display:inline-block; margin: 0 0 20px; color:#cbc7bf; font-size:0.82rem; text-decoration:none; }
+    .backlink:hover { color:#fff; }
+    .sticky-cta { position: fixed; z-index: 30; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(calc(100% - 24px), 520px); padding: 8px; border-radius: 999px; background: rgba(18,18,18,.88); backdrop-filter: blur(10px); box-shadow: 0 12px 34px rgba(0,0,0,.24); }
+    .sticky-cta a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, #c8a866, #a78648); text-decoration: none; font-weight: 800; font-size: 0.88rem; letter-spacing: 0.05em; }
+    @media (min-width: 700px) {
+      .two-strategies { grid-template-columns: 1fr 1fr; }
+      .profile { grid-template-columns: 220px 1fr; }
+      .profile__photo { max-width: none; margin: 0; }
+      .product-card__body { padding: 36px 42px 42px; }
+    }
+    @media (max-width: 500px) {
+      .section { padding: 68px 0; }
+      .hero { min-height: 86vh; }
+      .hero h1 { font-size: 2.18rem; }
+      .hero__lead { font-size: 1rem; }
+      .visual__placeholder { min-height: 270px; }
+      .sticky-cta { bottom: 9px; }
+    }
+    /* ===== 決済ポップアップ ===== */
+    .pay-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(10,10,10,.72); backdrop-filter: blur(5px); }
+    .pay-modal.open { display: flex; }
+    .pay-sheet { position: relative; width: 100%; max-width: 460px; max-height: 92vh; overflow: auto; background: #fffdf8; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,.5); padding: 22px 20px 20px; }
+    .pay-close { position: absolute; top: 8px; right: 12px; background: none; border: none; color: #999; font-size: 26px; line-height: 1; cursor: pointer; }
+    .pay-emailnote { font-size: 12px; color: #716b61; background: #f2eee6; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.7; }
+    .pay-emailnote b { color: #25231f; }
+    #embedded-checkout { min-height: 220px; }
+    .pay-msg { text-align: center; color: #999; font-size: 13px; padding: 56px 20px; }
+    .pay-msg.err { color: #c0392b; }
+    #payDone { display: none; text-align: center; padding: 40px 20px; }
+    #payDone .mk { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold-dark); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
+    #payDone h3 { font-size: 20px; margin: 0 0 12px; }
+    #payDone p { color: var(--muted); font-size: 13.5px; line-height: 1.95; margin: 0 0 22px; }
+    #payDone .donenote { max-width: 380px; margin: 20px auto 0; color: #948e83; font-size: 11px; line-height: 1.9; }
+    #payDone .donenote b { color: var(--text); }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero">
+    <div class="hero__inner">
+      <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a>
+      <p class="eyebrow">“はじめて”シリーズ 第一弾</p>
+      <h1 class="serif">はじめての<br>SNSマーケティング<br>基礎講座</h1>
+      <p class="hero__lead">フォロワーを増やす前に、<br>SNSで“売れる流れ”を知る38分。</p>
+      <p class="hero__sub">リーチ戦略とレスポンス戦略から、<br>SNSマーケティングの基本構造をやさしく解説します。</p>
+      <p class="price"><strong>3,980円</strong>（税込）</p>
+      <a class="cta" href="#purchase">今すぐ講座を見る</a>
+      <p class="note">購入後、専用ページですぐに視聴できます。</p>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <p class="section__label">Problem</p>
+        <h2 class="serif">投稿しているのに、<br>なぜか売上につながらない。</h2>
+        <p class="lead">毎日発信している。<br>リールも作っている。<br>ストーリーズも更新している。</p>
+        <p>それでも、なぜか商品は売れない。</p>
+        <p>そんなとき、多くの人は<br>「もっと投稿しなきゃ」<br>「フォロワーを増やさなきゃ」<br>と考えます。</p>
+        <p>ですが、本当に足りていないのは、<br>投稿数ではないかもしれません。</p>
+        <div class="visual">
+          <div class="visual__placeholder">ここにモノクロイラストを入れられます<br>例：投稿を続けても反応がなく、立ち止まる女性</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <p class="section__label">Two Strategies</p>
+        <h2 class="serif">SNSには、<br>2つの戦略があります。</h2>
+        <p>SNSで売れる流れは、大きく分けると、<br>「知ってもらう」と「選んでもらう」の<br>2つでできています。</p>
+        <div class="two-strategies">
+          <article class="strategy-card">
+            <span class="strategy-card__num">01</span>
+            <h3>リーチ戦略</h3>
+            <p>まだ自分を知らない人に存在を届け、認知を広げるための戦略です。</p>
+          </article>
+          <article class="strategy-card">
+            <span class="strategy-card__num">02</span>
+            <h3>レスポンス戦略</h3>
+            <p>見てくれた人との信頼を深め、行動や購入につなげる戦略です。</p>
+          </article>
+        </div>
+        <p style="margin-top:32px;">この2つを混同したまま発信すると、</p>
+        <p>フォロワーは増えても売れない。<br>関係性はあるのに新しい人が来ない。</p>
+        <p>ということが起こります。</p>
+        <div class="center" style="margin-top:34px;">
+          <a class="cta cta--dark" href="#purchase">講座で詳しく学ぶ</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <p class="section__label">What You Learn</p>
+        <h2 class="serif">38分で分かること</h2>
+        <div class="content-list">
+          <article class="content-item">
+            <div class="content-item__num">01</div>
+            <div><h3>リーチ戦略の基本</h3><p>ただ多くの人に届けるのではなく、誰に、どんな印象で届けるのかを理解します。</p></div>
+          </article>
+          <article class="content-item">
+            <div class="content-item__num">02</div>
+            <div><h3>レスポンス戦略の基本</h3><p>投稿を見た人が、共感・信頼・行動へ進む流れを学びます。</p></div>
+          </article>
+          <article class="content-item">
+            <div class="content-item__num">03</div>
+            <div><h3>自分に合う戦略の見つけ方</h3><p>得意な方を伸ばし、苦手な方を仕組みで補う考え方を学びます。</p></div>
+          </article>
+          <article class="content-item">
+            <div class="content-item__num">04</div>
+            <div><h3>SNSで売れる全体の流れ</h3><p>リール、投稿、ストーリーズ、LINEなどを、点ではなく線で捉えられるようになります。</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <p class="section__label">Emotional Value</p>
+        <h2 class="serif">「何を頑張ればいいのか」が、<br>少しずつ見えてくる。</h2>
+        <p>この講座は、すぐに使える投稿テンプレートを渡す講座ではありません。</p>
+        <p>その代わり、</p>
+        <p>なぜ今まで売上につながらなかったのか。<br>自分はどこを整えるべきなのか。<br>これから何を学べばいいのか。</p>
+        <p>その全体像が見えるようになります。</p>
+        <div class="quote-box">フォロワー数だけを見て落ち込む発信から、<br>売れる流れを考える発信へ。</div>
+        <div class="visual">
+          <div class="visual__placeholder">ここにモノクロイラストを入れられます<br>例：霧が晴れ、進む道が見えた女性</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <p class="section__label">Recommended</p>
+        <h2 class="serif">こんな方におすすめです</h2>
+        <ul class="check-list">
+          <li>SNSで発信しているが、売上につながらない</li>
+          <li>フォロワー数ばかり気にしてしまう</li>
+          <li>リールやストーリーズの役割が分からない</li>
+          <li>SNSマーケティングを一度、基礎から整理したい</li>
+          <li>自分に合う発信戦略を知りたい</li>
+          <li>本格的な講座を受ける前に、全体像をつかみたい</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--black" id="purchase">
+      <div class="wrap">
+        <p class="section__label center">Course Details</p>
+        <div class="product-card">
+          <div class="product-card__head">
+            <p class="eyebrow" style="color:#9a8350; margin-bottom:12px;">“はじめて”シリーズ 第一弾</p>
+            <h3 class="serif">はじめての<br>SNSマーケティング基礎講座<br>アクセスパス</h3>
+          </div>
+          <div class="product-card__body">
+            <dl class="specs">
+              <div class="specs__row"><dt>講座内容</dt><dd>SNSマーケティングの基本構造<br>リーチ戦略とレスポンス戦略<br>2つの戦略のバランス設計</dd></div>
+              <div class="specs__row"><dt>動画時間</dt><dd>約38分</dd></div>
+              <div class="specs__row"><dt>動画本数</dt><dd>全1本</dd></div>
+              <div class="specs__row"><dt>視聴方法</dt><dd>購入後、アプリですぐに視聴</dd></div>
+            </dl>
+            <p class="product-price">受講価格<strong>3,980円</strong>税込</p>
+            <a class="cta" href="#" onclick="openCheckout();return false;">3,980円で講座を見る</a>
+            <p class="note center" style="color:#8b857a;">決済完了後、アプリで自動的に視聴できるようになります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <p class="section__label">Instructor</p>
+        <h2 class="serif">講師プロフィール</h2>
+        <div class="profile">
+          <div class="profile__photo">
+            <img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <h3 class="serif">とーる</h3>
+            <p>SNSからLINEへつなぐ導線設計、オンライン講座・会員サイト・販売ファネルの構築支援を行う。</p>
+            <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。</p>
+            <p>行動経済学検定1級。日本営業科学協会認定「行動経済アナリスト」。</p>
+            <p>「売れる手法」だけでなく、無理なく売れ続ける仕組みづくりを伝えている。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <p class="section__label">FAQ</p>
+        <h2 class="serif">よくあるご質問</h2>
+        <div class="faq">
+          <details>
+            <summary>初心者でも受講できますか？</summary>
+            <p>はい。SNSマーケティングを初めて学ぶ方にも分かるよう、専門用語をできるだけ避けて解説しています。</p>
+          </details>
+          <details>
+            <summary>どのSNSを使っている人向けですか？</summary>
+            <p>Instagramを中心に考えやすい内容ですが、Threads、YouTube、Xなど、ほかのSNSにも共通する基礎構造を扱っています。</p>
+          </details>
+          <details>
+            <summary>受講するとすぐ売れるようになりますか？</summary>
+            <p>本講座は、SNSで売れるための全体構造と方向性を理解するための基礎講座です。個別の成果を保証するものではありません。</p>
+          </details>
+          <details>
+            <summary>購入後、どうやって視聴しますか？</summary>
+            <p>決済完了後、ご登録メールに視聴権が反映され、アプリ内で視聴できるようになります。反映まで少しお時間がかかる場合があります。</p>
+          </details>
+        </div>
+        <div class="center" style="margin-top:38px;">
+          <a class="cta cta--dark" href="#" onclick="openCheckout();return false;">今すぐ講座を見る</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>
+        <a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a>
+        <a href="https://columns.l-mine.com/legal/terms.html">利用規約</a>
+        <a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a>
+      </p>
+      <p>© Llabo. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <div class="sticky-cta">
+    <a href="#purchase">3,980円で講座を見る</a>
+  </div>
+
+  <!-- ===== 決済ポップアップ ===== -->
+  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き">
+    <div class="pay-sheet">
+      <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+      <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
+      <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
+      <div id="payDone">
+        <div class="mk">✓</div>
+        <h3>ご購入ありがとうございます</h3>
+        <p>「はじめてのSNSマーケティング基礎講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p>
+        <a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px; font-size:15px;">アプリを開く</a>
+        <p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+    var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+    var COURSE_PRICE_ID = "price_1TsIOVDffCAQquMFL8MPdcOh";   // はじめてのSNSマーケティング基礎講座（定価3,980円・単発）
+    var PREFILL_EMAIL = "";
+    try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+    var _stripe = null, _checkout = null;
+    async function openCheckout(){
+      var modal = document.getElementById('payModal');
+      var cont  = document.getElementById('embedded-checkout');
+      var done  = document.getElementById('payDone');
+      done.style.display = 'none';
+      cont.style.display = 'block';
+      cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+      var enote = document.getElementById('payEmailNote');
+      if(enote){
+        if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; }
+        else { enote.style.display = 'none'; }
+      }
+      modal.classList.add('open');
+      try{
+        if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+        if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+        var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&mode=payment&price=' + encodeURIComponent(COURSE_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
+        if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+        if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+        cont.innerHTML = '';
+        _checkout = await _stripe.initEmbeddedCheckout({
+          clientSecret: r.client_secret,
+          onComplete: function(){ cont.style.display = 'none'; done.style.display = 'block'; }
+        });
+        _checkout.mount('#embedded-checkout');
+      }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+    }
+    function closeCheckout(){
+      document.getElementById('payModal').classList.remove('open');
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+    }
+  </script>
+
+</body>
+</html>
