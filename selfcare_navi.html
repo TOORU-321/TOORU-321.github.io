@@ -314,6 +314,56 @@ body.admin-mode #adminBar{display:block!important}
   #adminBar .adm-state{width:100%;padding:2px 0 4px}
   body.admin-mode{padding-top:64px!important}
 }
+/* Admin Dashboard overlay */
+.dash-overlay{position:fixed;inset:0;z-index:100000;background:rgba(30,25,20,.82);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:60px 12px 20px;overflow-y:auto}
+.dash-panel{width:min(100%,720px);background:var(--paper);border-radius:20px;box-shadow:0 40px 100px rgba(0,0,0,.4);overflow:hidden;font-family:var(--font-sans);color:var(--ink)}
+.dash-head{background:#1a1512;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.dash-title{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;font-weight:700;color:#fff}
+.dash-close{appearance:none;border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:4px 8px;opacity:.8}
+.dash-close:hover{opacity:1}
+.dash-body{padding:22px 22px 18px;background:var(--paper-warm)}
+.dash-loading{text-align:center;color:var(--ink-3);padding:44px 0;font-size:13px;font-family:var(--font-sans)}
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+.dash-stat{background:var(--paper);border:1px solid var(--hairline);border-radius:14px;padding:16px 8px;text-align:center;box-shadow:0 6px 18px rgba(130,91,99,.05)}
+.dash-stat-num{display:block;font-family:var(--font-mono);font-size:26px;color:var(--accent);font-weight:700;letter-spacing:.02em;line-height:1.1;margin-bottom:6px}
+.dash-stat-label{font-size:10px;color:var(--ink-2);letter-spacing:.1em;font-family:var(--font-sans)}
+.dash-section{margin-bottom:22px}
+.dash-h3{font-family:var(--font-serif);font-size:14.5px;color:var(--ink);margin:0 0 12px;font-weight:500;letter-spacing:.05em}
+.dash-section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px}
+.dash-section-head .dash-h3{margin:0}
+.dash-updated{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:.08em}
+.dash-bars{display:flex;flex-direction:column;gap:6px}
+.dash-bar{display:flex;align-items:center;gap:10px;font-size:12px}
+.dash-bar-label{width:130px;flex-shrink:0;color:var(--ink-2);font-size:12px}
+.dash-bar-track{flex:1;height:16px;background:var(--rose-wash);border-radius:8px;overflow:hidden}
+.dash-bar-fill{height:100%;background:linear-gradient(90deg,var(--rose),var(--rose-dark));border-radius:8px;transition:width .4s ease}
+.dash-bar-num{width:32px;text-align:right;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-2);font-weight:700}
+.dash-log{display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;border:1px solid var(--hairline);border-radius:10px;padding:6px;background:var(--paper)}
+.dash-log-row{display:grid;grid-template-columns:56px 40px 1fr 90px 74px;gap:6px;padding:8px;font-size:11.5px;border-radius:6px;transition:background .12s;align-items:center}
+.dash-log-row:hover{background:var(--rose-wash)}
+.dash-log-row .l-time{font-family:var(--font-mono);color:var(--ink-3);font-size:10px}
+.dash-log-row .l-day{color:var(--accent);font-weight:700;font-size:10px;font-family:var(--font-mono);letter-spacing:.08em;text-align:center;background:var(--rose-wash);border-radius:4px;padding:2px 0}
+.dash-log-row .l-name{color:var(--ink);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dash-log-row .l-type{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px}
+.dash-log-row .l-review{text-align:right;color:var(--ink-3);font-weight:600;font-size:10.5px}
+.dash-log-row.is-review-yes .l-review{color:#3d8f66}
+.dash-log-row.is-review-mid .l-review{color:#b58e3a}
+.dash-log-row.is-review-no .l-review{color:#a04452}
+.dash-log-empty{text-align:center;color:var(--ink-3);padding:26px 0;font-size:12px}
+.dash-footer{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--hairline-2);gap:12px}
+.dash-btn{appearance:none;background:#1a1512;color:#fff;border:0;padding:8px 18px;font-family:var(--font-sans);font-size:12px;letter-spacing:.08em;border-radius:6px;cursor:pointer;font-weight:600}
+.dash-btn:hover{background:var(--accent-deep)}
+.dash-auto{font-family:var(--font-sans);font-size:11.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.dash-error{background:#fdecea;border:1px solid #f3c9c1;border-radius:10px;padding:16px;color:#8b2c1a;font-size:12.5px;font-family:var(--font-sans);line-height:1.7}
+@media (max-width:520px){
+  .dash-overlay{padding:70px 8px 16px}
+  .dash-body{padding:18px 14px 14px}
+  .dash-stats{grid-template-columns:repeat(2,1fr)}
+  .dash-log-row{grid-template-columns:52px 36px 1fr 66px;font-size:11px;gap:5px;padding:7px 6px}
+  .dash-log-row .l-type{display:none}
+  .dash-bar-label{width:110px;font-size:11px}
+  .dash-footer{flex-direction:column-reverse;gap:10px;align-items:stretch}
+}
 /* ProLine calendar embed wrapper */
 .calendar-embed-wrap{margin:22px 0 6px;padding:20px 14px 16px;background:var(--paper);border:1px solid var(--hairline);border-radius:14px;box-shadow:var(--shadow-card)}
 .calendar-embed-title{font-family:var(--font-serif);font-size:16px;color:var(--ink);margin:0 0 6px;text-align:center;letter-spacing:.06em;font-weight:500}
@@ -546,7 +596,49 @@ p{color:var(--ink-2);line-height:1.9}
     <button type="button" class="adm-btn" id="admReset">Reset</button>
     <button type="button" class="adm-btn" id="admSkipIntro">Skip Intro</button>
     <button type="button" class="adm-btn" id="admJumpOffer">Offer PopUp</button>
+    <button type="button" class="adm-btn" id="admDashboard">Dashboard</button>
     <button type="button" class="adm-btn" id="admClose">×</button>
+  </div>
+</div>
+
+<!-- Admin Dashboard overlay (only usable when ?admin=1) -->
+<div id="adminDashboard" class="dash-overlay" style="display:none" aria-hidden="true">
+  <div class="dash-panel">
+    <div class="dash-head">
+      <span class="dash-title">SELFCARE NAVI · ADMIN DASHBOARD</span>
+      <button class="dash-close" id="dashClose" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div class="dash-body">
+      <div class="dash-loading" id="dashLoading">読み込み中...</div>
+      <div class="dash-content" id="dashContent" style="display:none">
+        <div class="dash-stats">
+          <div class="dash-stat"><span class="dash-stat-num" id="statParticipants">—</span><span class="dash-stat-label">参加者数</span></div>
+          <div class="dash-stat"><span class="dash-stat-num" id="statDay1">—</span><span class="dash-stat-label">Day 1 完了</span></div>
+          <div class="dash-stat"><span class="dash-stat-num" id="statDay2">—</span><span class="dash-stat-label">Day 2 完了</span></div>
+          <div class="dash-stat"><span class="dash-stat-num" id="statDay3">—</span><span class="dash-stat-label">Day 3 完了</span></div>
+        </div>
+        <div class="dash-section">
+          <h3 class="dash-h3">タイプ分布</h3>
+          <div class="dash-bars" id="typeDist"></div>
+        </div>
+        <div class="dash-section">
+          <h3 class="dash-h3">振り返り分布</h3>
+          <div class="dash-bars" id="reviewDist"></div>
+        </div>
+        <div class="dash-section">
+          <div class="dash-section-head">
+            <h3 class="dash-h3">直近のログ（新しい順）</h3>
+            <span class="dash-updated" id="dashUpdated">—</span>
+          </div>
+          <div class="dash-log" id="dashLog"></div>
+        </div>
+        <div class="dash-footer">
+          <button class="dash-btn" id="dashRefresh" type="button">🔄 更新</button>
+          <label class="dash-auto"><input type="checkbox" id="dashAuto" checked> 30秒ごと自動更新</label>
+        </div>
+      </div>
+      <div class="dash-error" id="dashError" style="display:none"></div>
+    </div>
   </div>
 </div>
 <div id="app" role="main">
@@ -838,6 +930,10 @@ const STORAGE_KEY='selfcareNavi_v4';
 const POPUP_SESSION_KEY='selfcareNavi_v4_popupShown';
 // Apps ScriptのウェブアプリURLをここに貼る（空のままだと送信されない・ローカル完結で動く）
 const ENDPOINT='https://script.google.com/macros/s/AKfycbzqmzVQe0aEV01TfrJztSpCY2_3DFmzN1zMIZO2ziA-xc0lX4iYH-za-sQUqB99o8A/exec';
+// ProLine callbeacon URL（各日の振り返り完了時に叩く）。{uid}があればLINE UIDに置換／無ければ?uid=xxxで付与
+const BEACON_DAY1='';
+const BEACON_DAY2='';
+const BEACON_DAY3='';
 const TYPES={guttari:{id:'guttari',label:'ぐったり迷子さん',tcm:'気虚タイプ',icon:'ぐ',persona:'頑張っているのに痩せない・疲れやすい・続かない',base:{warm:3,flow:0,rest:3,limit:2,relax:1},forbidden:'flow',forbiddenLabel:null,summarySpark:'消耗を増やさないことが、近道になりやすいです',tomokoMsg:'いつもお疲れさまです。頑張り屋さんのあなたには、まず「エネルギーを育てる」ケアが必要です。誰かの真似ではなく、あなたの体を労わることから始めましょう。',tomokoClose:'あなたが頑張ってきたこと、ちゃんと見えています。ここからは、一緒に「貯めて、満たす」整え方をお話しさせてください。',longReason:['今のあなたは、生命活動の源である<strong>「気（エネルギー）」が不足</strong>している状態です。','胃腸の力も少し弱まりやすく、頑張ろうとして食事を減らしたり、激しい運動をするほど、余計に消耗してしまう構造があります。','だからこそ、<strong>「減らす」ではなく「満たす」</strong>。温かいもの、消化にやさしいもの、そして睡眠で「気」を補い、貯めていくことが先決です。'],foodAction:'今日の食事に <strong>さつまいも</strong> や <strong>かぼちゃ</strong> を1品足す'},moyamoya:{id:'moyamoya',label:'もやもや迷子さん',tcm:'気滞タイプ',icon:'も',persona:'ストレスで食べすぎる・イライラ・頭が重い',base:{warm:1,flow:3,rest:0,limit:1,relax:3},forbidden:'rest',forbiddenLabel:null,summarySpark:'こもりを抜くと、思考も体も軽くなりやすいです',tomokoMsg:'いつも頑張りすぎていませんか？完璧を目指すあなたには、まず「ココロの詰まり」を流すケアが必要です。我慢するダイエットは絶対NG。香りでリフレッシュしながら進みましょう。',tomokoClose:'我慢で抑えるダイエット、本当にお疲れさまでした。詰まりをほどく地図、一緒に描きませんか。',longReason:['今のあなたは、ストレスや緊張で<strong>「気」がどこかで詰まっている</strong>状態です。','完璧主義で頑張りすぎると、感情を溜め込んで、ある日突然偏食や過食に走ることが多いです。これは意志の弱さではなく、<strong>「気の滞り」という体の構造のサイン</strong>です。','我慢する食事制限は、滞りをさらに深めます。必要なのは、<strong>香りや軽い動きで気を流すこと</strong>。それから、心の詰まりも一緒にほどけていきます。'],foodAction:'<strong>みかん／柚子／レモン</strong> など香りのある柑橘を1個 or <strong>梅干し</strong> を1粒'},furafura:{id:'furafura',label:'ふらふら迷子さん',tcm:'血虚タイプ',icon:'ふ',persona:'立ちくらみ・顔色がさえない・冷えやすい',base:{warm:3,flow:1,rest:2,limit:3,relax:1},forbidden:'flow',forbiddenLabel:null,summarySpark:'削るより、満たすことから始めるのが合いやすいです',tomokoMsg:'いつも自分のことは後回しにして、誰かのために頑張っていませんか？今のあなたには「血（栄養）」と「休息」が必要です。まずは自分自身を満たすことから始めましょう。',tomokoClose:'誰かのためにずっと頑張ってきたあなたへ。今度は、自分を満たす番です。一緒にその道を組み立てましょう。',longReason:['今のあなたは、全身に栄養を届ける<strong>「血」が不足しやすい</strong>状態です。','自分のことを後回しにして、人のために頑張ることが続くと、血をつくる材料も枯れていきます。「マイナス思考」「立ちくらみ」「目の疲れ」も、性格や疲れではなく、<strong>栄養が足りていないサイン</strong>です。','削るのではなく、温かく、消化にやさしいものを少しずつ満たすこと。そして、<strong>十分な睡眠が一番の腸活</strong>になります。'],foodAction:'<strong>黒豆／黒ごま／ナツメ</strong> のいずれかを1日1回'},pochapocha:{id:'pochapocha',label:'ぽちゃぽちゃ迷子さん',tcm:'水滞タイプ',icon:'ぽ',persona:'むくみ・重だるい・甘いもの／冷たい物が多い',base:{warm:1,flow:3,rest:0,limit:3,relax:1},forbidden:'limit_inverse',forbiddenLabel:'limit',summarySpark:'軽く流して、入れすぎないが基本になりやすいです',tomokoMsg:'周りと自分を比べて、ため息をついていませんか？今のあなたには、ため込んだ「余分な水分と老廃物」を手放すケアが必要です。無理な運動よりも、まずは心と体の巡りを良くすることから始めましょう。',tomokoClose:'比べて落ち込む夜は、もう終わりにしましょう。あなたのリズムで、一緒に進める方法があります。',longReason:['今のあなたは、体の中に<strong>「余分な水分」が溜まりやすい</strong>状態です。','甘いもの・冷たいもの・たくさん食べが続くと、さらに重さがこもります。雨の日に体調を崩しやすいのも、このタイプ特有のサインです。','必要なのは、<strong>「出す」より「入れすぎない」を先にする</strong>こと。食物繊維・温かい食事・少し汗をかく程度の軽い運動で、自分で水を出す力を育てていきます。'],foodAction:'<strong>あずき茶</strong> を1杯 or <strong>わかめのお味噌汁</strong> を1杯'},doyon:{id:'doyon',label:'どよ〜ん迷子さん',tcm:'瘀血タイプ',icon:'ど',persona:'重だるい・肩こり・冷えのぼせ',base:{warm:3,flow:3,rest:1,limit:0,relax:1},forbidden:'limit_inverse',forbiddenLabel:'limit',summarySpark:'温めながら巡らせるのが、抜け道になりやすいです',tomokoMsg:'感情を抑え込んで、気づけば一つのことに縛られていませんか？今のあなたには「巡り」を良くするケアが必要です。滞りを解消して、本来の軽やかなあなたを取り戻しましょう。',tomokoClose:'感情を溜め込んできたあなたへ。巡りを取り戻す道は、ちゃんとあります。一緒に歩きましょう。',longReason:['今のあなたは、体内の<strong>「血」が滞って流れが悪くなっている</strong>状態です。','冷えやストレス、長く座り続けることで、滞りはさらに深くなります。肩こりや頭痛、生理痛、肌のくすみは、性格でも年齢のせいでもなく、<strong>血の巡りが出してくれているサイン</strong>です。','必要なのは、<strong>温めながら、軽くでも動かすこと</strong>。両方を一緒に入れることで、巡りが目を覚まします。'],foodAction:'<strong>生姜</strong> を入れた飲み物 or <strong>青魚</strong>（さば等）を1食'},karakara:{id:'karakara',label:'からから迷子さん',tcm:'陰虚タイプ',icon:'か',persona:'のぼせ・口の渇き・寝つきが悪い',base:{warm:0,flow:1,rest:2,limit:3,relax:3},forbidden:'warm',forbiddenLabel:null,summarySpark:'熱を抜き、潤いを残すことが大切な状態です',tomokoMsg:'いつも好奇心旺盛で動き回っていませんか？今のあなたには「潤い」と「リフレッシュ」が必要です。水分をガブ飲みするのではなく、身体の内側から潤すケアを始めましょう。',tomokoClose:'走り続けてきたあなたへ。鎮める時間も、整え方の一部です。一緒に組み立てましょう。',longReason:['今のあなたは、体内の<strong>「水分（潤い）」が不足して乾いている</strong>状態です。','好奇心旺盛で常に動いている方は、内側の潤いも消耗しがちになります。寝つきの悪さや のぼせ、口の渇きは <strong>潤いが追いついていないサイン</strong> です。','水をガブ飲みしても、ただ流れていくだけ。必要なのは、<strong>潤いを生む食材を内側に届けること</strong> と、夜に「鎮める」時間をつくることです。'],foodAction:'朝に <strong>トマト</strong> を1個 or <strong>豆腐／アボカド</strong> を1品'}};
 const CATEGORIES={warm:{label:'温めるケア',catch:'冷やさない / Warm',reasonRec:'今日は冷やさないことで、体が動きやすくなりやすい状態です。内側からじんわり温めるイメージで。',reasonAvoid:{karakara:'温めすぎは熱がこもりやすい状態です。今日はクールダウンを優先しましょう。',default:'今日は温めすぎより、ほどよく冷やさないくらいでちょうどよいです。'},actions:['白湯をマグカップ1杯ゆっくり飲む','くるぶしまで隠れる靴下に替える','夕食に温かい汁ものを1品足す']},flow:{label:'巡らせるケア',catch:'軽く動かす / Flow',reasonRec:'体を軽く動かすと、こわばりが抜けて思考もすっきりしやすい状態です。激しさは要りません。',reasonAvoid:{guttari:'今日は燃やそうと頑張るより、消耗を増やさない方が合いやすいです。',furafura:'激しく動かすとフラつきやすい状態です。今日は控えめに。',default:'今日は強い燃焼系を頑張るより、ゆるく流すくらいで十分です。'},actions:['肩をゆっくり10回まわす','5分だけ家のまわりを歩く','深呼吸を3回、吐く方を長めに']},rest:{label:'休ませるケア',catch:'消耗を増やさない / Rest',reasonRec:'今日は頑張るより、まず消耗を増やさないことが大切です。回復の余白をつくるイメージで。',reasonAvoid:{moyamoya:'休みすぎはかえってこもりを深めやすい状態です。少し動く方が抜けます。',default:'今日は休みに偏りすぎず、軽く流す方が合いやすいです。'},actions:['夜は予定を1つ減らして早めに横になる','昼休みに5分だけ目を閉じる','夕方以降の刺激物（コーヒー等）を控える']},limit:{label:'出しすぎないケア',catch:'過剰を控える / Limit',reasonRec:'強い刺激や減らしすぎを控えるだけで、体の揺れが小さくなりやすい状態です。',reasonAvoid:{pochapocha:'今日は満たしすぎ＝甘い・冷たい・大盛りが続くと、重さが増しやすい状態です。',doyon:'じっとしすぎ・冷えのままは、滞りを深めやすい状態です。少しでも動かしましょう。',default:'今日は出しすぎ・抜きすぎより、ほどよく整えるのが合いやすいです。'},actions:['食事を抜かず、少なめでも3食とる','カフェインは1日1〜2杯までにする','甘いものは少量で満足させる工夫を']},relax:{label:'ゆるめるケア',catch:'こわばりを解く / Relax',reasonRec:'こわばりや乾きをほどくと、巡りも睡眠も整いやすい状態です。夜の鎮め時間が効きます。',reasonAvoid:{default:'今日はゆるめすぎより、軽く動かすほうが合いやすいです。'},actions:['湯船に5〜10分だけつかる','蒸しタオルで目元を温める','夜のスマホを30分早く閉じる']}};
 const STATE_TAGS=[{id:'tired',label:'疲れやすい',score:{warm:1,flow:0,rest:2,limit:1,relax:0}},{id:'cold',label:'冷えている',score:{warm:2,flow:1,rest:0,limit:0,relax:0}},{id:'swollen',label:'むくみが気になる',score:{warm:0,flow:2,rest:0,limit:1,relax:0}},{id:'heavy',label:'重だるい',score:{warm:0,flow:2,rest:1,limit:0,relax:0}},{id:'irritated',label:'イライラしやすい',score:{warm:0,flow:1,rest:0,limit:0,relax:2}},{id:'sweet',label:'甘いものが欲しい',score:{warm:1,flow:0,rest:1,limit:2,relax:0}},{id:'headheavy',label:'頭が重い',score:{warm:0,flow:1,rest:1,limit:0,relax:2}},{id:'fullgut',label:'食後が重い',score:{warm:0,flow:1,rest:0,limit:2,relax:0}},{id:'lowmood',label:'やる気が出ない',score:{warm:1,flow:0,rest:2,limit:0,relax:1}}];
@@ -913,8 +1009,54 @@ function loadStored(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'
 function saveStored(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch(e){}}
 function genUid(){return 'u_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function getStored(){let d=loadStored();let m=false;if(!d.firstVisitKey){d.firstVisitKey=todayKey();m=true;}if(!d.history){d.history={};m=true;}if(!d.uid){d.uid=genUid();m=true;}if(m)saveStored(d);return d;}
+function captureLineUid(){
+  try{
+    const params=new URLSearchParams(location.search);
+    const luid=params.get('lineUid')||params.get('lineuid');
+    if(luid && luid!=='[[uid]]' && luid.length>0){
+      const d=getStored();
+      if(d.lineUid!==luid){d.lineUid=luid;saveStored(d);}
+    }
+  }catch(e){}
+}
+function fireBeacon(day){
+  const map={1:BEACON_DAY1,2:BEACON_DAY2,3:BEACON_DAY3};
+  let url=map[day]||'';
+  if(!url)return;
+  const stored=getStored();
+  const luid=stored.lineUid||'';
+  if(url.indexOf('{uid}')>=0){
+    url=url.replace('{uid}',encodeURIComponent(luid));
+  }else if(luid){
+    url+=(url.indexOf('?')>=0?'&':'?')+'uid='+encodeURIComponent(luid);
+  }
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(url);
+    }else{
+      fetch(url,{method:'GET',mode:'no-cors',keepalive:true}).catch(function(){});
+    }
+  }catch(e){}
+}
+function beaconAlreadyFired(day){
+  const stored=getStored();
+  return !!(stored.beaconsFired&&stored.beaconsFired[day]);
+}
+function markBeaconFired(day){
+  const d=getStored();
+  d.beaconsFired=d.beaconsFired||{};
+  d.beaconsFired[day]=new Date().toISOString();
+  saveStored(d);
+}
+function maybeFireBeacon(){
+  if(!state.day||!state.review)return;
+  const day=state.day.display;
+  if(beaconAlreadyFired(day))return;
+  fireBeacon(day);
+  markBeaconFired(day);
+}
 function persistType(id){const d=getStored();d.type=id;saveStored(d);}
-function saveToday(){const d=getStored();d.history=d.history||{};d.history[todayKey()]={tags:state.tags.slice(),rec1:state.result?state.result.rec1:null,rec2:state.result?state.result.rec2:null,avoidCat:state.result?state.result.avoidCat:null,done:state.done.slice(),review:state.review};saveStored(d);sendRemote();}
+function saveToday(){const d=getStored();d.history=d.history||{};d.history[todayKey()]={tags:state.tags.slice(),rec1:state.result?state.result.rec1:null,rec2:state.result?state.result.rec2:null,avoidCat:state.result?state.result.avoidCat:null,done:state.done.slice(),review:state.review};saveStored(d);sendRemote();maybeFireBeacon();}
 function sendRemote(){
   if(!ENDPOINT)return;
   try{
@@ -937,7 +1079,8 @@ function sendRemote(){
       avoid:avoidL,
       done:doneCount,
       review:state.review||'',
-      firstVisit:stored.firstVisitKey||''
+      firstVisit:stored.firstVisitKey||'',
+      lineUid:stored.lineUid||''
     };
     const body=JSON.stringify(payload);
     if(navigator.sendBeacon){
@@ -1196,8 +1339,127 @@ function setupAdminBar(){
     bar.style.display='none';
   });
 }
+let dashAutoTimer=null;
+function wireDashboard(){
+  const btn=document.getElementById('admDashboard');
+  const close=document.getElementById('dashClose');
+  const refresh=document.getElementById('dashRefresh');
+  const auto=document.getElementById('dashAuto');
+  const ov=document.getElementById('adminDashboard');
+  if(btn)btn.addEventListener('click',openDashboard);
+  if(close)close.addEventListener('click',closeDashboard);
+  if(refresh)refresh.addEventListener('click',loadDashboardData);
+  if(auto)auto.addEventListener('change',function(){if(auto.checked)startDashAuto();else stopDashAuto();});
+  if(ov)ov.addEventListener('click',function(e){if(e.target===ov)closeDashboard();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov&&ov.style.display!=='none')closeDashboard();});
+}
+function openDashboard(){
+  const ov=document.getElementById('adminDashboard');
+  if(!ov)return;
+  ov.style.display='';
+  ov.setAttribute('aria-hidden','false');
+  loadDashboardData();
+  const auto=document.getElementById('dashAuto');
+  if(auto&&auto.checked)startDashAuto();
+}
+function closeDashboard(){
+  const ov=document.getElementById('adminDashboard');
+  if(!ov)return;
+  ov.style.display='none';
+  ov.setAttribute('aria-hidden','true');
+  stopDashAuto();
+}
+function startDashAuto(){stopDashAuto();dashAutoTimer=setInterval(loadDashboardData,30000);}
+function stopDashAuto(){if(dashAutoTimer){clearInterval(dashAutoTimer);dashAutoTimer=null;}}
+function showDashError(msg){
+  const l=document.getElementById('dashLoading');
+  const c=document.getElementById('dashContent');
+  const e=document.getElementById('dashError');
+  if(l)l.style.display='none';
+  if(c)c.style.display='none';
+  if(e){e.textContent=msg;e.style.display='';}
+}
+function loadDashboardData(){
+  if(!ENDPOINT){showDashError('ENDPOINT が未設定のためデータを取得できません。');return;}
+  const err=document.getElementById('dashError');
+  if(err)err.style.display='none';
+  const content=document.getElementById('dashContent');
+  const loading=document.getElementById('dashLoading');
+  if(loading&&(!content||content.style.display==='none'))loading.style.display='';
+  fetch(ENDPOINT+'?action=summary',{method:'GET'})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.ok)throw new Error(d.error||'unknown response');
+      renderDashboardData(d.rows||[]);
+    })
+    .catch(function(err){showDashError('データ取得エラー: '+err.message);});
+}
+function renderDashboardData(rows){
+  const loading=document.getElementById('dashLoading');
+  const content=document.getElementById('dashContent');
+  if(loading)loading.style.display='none';
+  if(content)content.style.display='';
+  const uids=new Set();
+  const dayCount={1:0,2:0,3:0};
+  const typeMap={};
+  const reviewMap={};
+  rows.forEach(function(r){
+    if(r.UID)uids.add(r.UID);
+    const d=parseInt(r.Day,10);
+    if(dayCount[d]!==undefined)dayCount[d]++;
+    if(r['タイプ'])typeMap[r['タイプ']]=(typeMap[r['タイプ']]||0)+1;
+    if(r['振り返り'])reviewMap[r['振り返り']]=(reviewMap[r['振り返り']]||0)+1;
+  });
+  document.getElementById('statParticipants').textContent=uids.size;
+  document.getElementById('statDay1').textContent=dayCount[1];
+  document.getElementById('statDay2').textContent=dayCount[2];
+  document.getElementById('statDay3').textContent=dayCount[3];
+  const typeOrder=['ぐったり迷子さん','もやもや迷子さん','ふらふら迷子さん','ぽちゃぽちゃ迷子さん','どよ〜ん迷子さん','からから迷子さん'];
+  const typeVals=typeOrder.map(function(t){return typeMap[t]||0;});
+  const typeMax=Math.max(1,Math.max.apply(null,typeVals));
+  const typeDiv=document.getElementById('typeDist');
+  typeDiv.innerHTML=typeOrder.map(function(t,i){
+    const c=typeVals[i];
+    const pct=Math.round((c/typeMax)*100);
+    return '<div class="dash-bar"><span class="dash-bar-label">'+t+'</span><span class="dash-bar-track"><span class="dash-bar-fill" style="width:'+pct+'%"></span></span><span class="dash-bar-num">'+c+'</span></div>';
+  }).join('');
+  const revOrder=['やった','少しやった','できなかった'];
+  const revVals=revOrder.map(function(v){return reviewMap[v]||0;});
+  const revMax=Math.max(1,Math.max.apply(null,revVals));
+  const revDiv=document.getElementById('reviewDist');
+  revDiv.innerHTML=revOrder.map(function(v,i){
+    const c=revVals[i];
+    const pct=Math.round((c/revMax)*100);
+    return '<div class="dash-bar"><span class="dash-bar-label">'+v+'</span><span class="dash-bar-track"><span class="dash-bar-fill" style="width:'+pct+'%"></span></span><span class="dash-bar-num">'+c+'</span></div>';
+  }).join('');
+  const log=document.getElementById('dashLog');
+  const sorted=rows.slice().sort(function(a,b){return String(b['更新時刻']||'').localeCompare(String(a['更新時刻']||''));}).slice(0,25);
+  if(sorted.length===0){
+    log.innerHTML='<div class="dash-log-empty">まだ記録はありません</div>';
+  }else{
+    log.innerHTML=sorted.map(function(r){
+      const rev=r['振り返り']||'—';
+      let cls='';
+      if(rev==='やった')cls=' is-review-yes';
+      else if(rev==='少しやった')cls=' is-review-mid';
+      else if(rev==='できなかった')cls=' is-review-no';
+      const tp=String(r['タイプ']||'—').replace('さん','');
+      return '<div class="dash-log-row'+cls+'">'
+        +'<span class="l-time">'+(r['更新時刻']||'—')+'</span>'
+        +'<span class="l-day">D'+(r.Day||'—')+'</span>'
+        +'<span class="l-name">'+(r['名前']||'—')+'</span>'
+        +'<span class="l-type">'+tp+'</span>'
+        +'<span class="l-review">'+rev+'</span>'
+      +'</div>';
+    }).join('');
+  }
+  const now=new Date();
+  const pad=function(n){return String(n).padStart(2,'0');};
+  document.getElementById('dashUpdated').textContent='最終更新 '+pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+}
 function init(){
   if(handleResetParam())return;
+  captureLineUid();
   state.day=computeDay();
   const stored=getStored();
   if(stored.name)state.name=stored.name;
@@ -1210,6 +1472,7 @@ function init(){
   wireReasonToggle();
   wirePopup();
   setupAdminBar();
+  wireDashboard();
   if(stored.name){
     renderWelcome();
     goScreen(1);
