@@ -231,7 +231,10 @@
         cont.innerHTML = '';
         _checkout = await _stripe.initEmbeddedCheckout({
           clientSecret: r.client_secret,
-          onComplete: function(){ cont.style.display = 'none'; done.style.display = 'block'; }
+          onComplete: function(){
+            // 購入直後アップセル：起業1年目のマーケティング講座へ（メールを引き継ぐ）
+            window.location.href = "https://columns.l-mine.com/upsell-marke.html" + (PREFILL_EMAIL ? ("?email=" + encodeURIComponent(PREFILL_EMAIL)) : "");
+          }
         });
         _checkout.mount('#embedded-checkout');
       }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }

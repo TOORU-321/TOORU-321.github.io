@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>特別なご提案｜起業1年目のマーケティング講座</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root{--paper:#fff;--ink:#18212b;--muted:#66717f;--line:#e5eaf0;--navy:#132335;--blue:#426f91;--blue2:#6d9db9;--ice:#eef6fa;--gold:#b89555;--gold2:#d6b978;--radius:22px;--soft:0 10px 30px rgba(29,52,72,.08)}
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--ink);background:#f6f8fb;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;line-height:1.9;letter-spacing:.025em;-webkit-font-smoothing:antialiased}
+    .serif{font-family:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP",serif}
+    .wrap{width:min(calc(100% - 34px),720px);margin:auto}
+    .thanks{background:linear-gradient(145deg,#101d2a,#1a3042);color:#fff;text-align:center;padding:30px 0 26px}
+    .thanks .mk{width:52px;height:52px;border-radius:50%;border:1.5px solid var(--gold2);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px}
+    .thanks h1{margin:0 0 6px;font-size:1.15rem;font-weight:600}
+    .thanks p{margin:0;color:rgba(255,255,255,.72);font-size:.83rem}
+    .hero{background:radial-gradient(ellipse 90% 60% at 50% 20%,rgba(214,185,120,.16),transparent 60%),linear-gradient(160deg,#16293c,#1d3a52);color:#fff;text-align:center;padding:40px 0 46px}
+    .oto-badge{display:inline-block;margin-bottom:14px;padding:6px 16px;border:1px solid rgba(214,185,120,.5);border-radius:999px;background:rgba(214,185,120,.12);color:#f0dcae;font-size:.72rem;font-weight:800;letter-spacing:.14em}
+    .hero h2{margin:0 0 14px;font-size:clamp(1.55rem,6vw,2.4rem);line-height:1.5;font-weight:600;letter-spacing:.03em}
+    .hero .lead{margin:0 auto;max-width:560px;color:rgba(255,255,255,.9);font-size:clamp(.98rem,3.6vw,1.12rem)}
+    .section{padding:46px 0}
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--soft);padding:28px 24px}
+    .bridge{text-align:center;margin-bottom:8px}
+    .bridge .step{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+    .bridge .chip{padding:8px 15px;border-radius:12px;border:1px solid var(--line);background:#f7fafc;font-size:.85rem;font-weight:700}
+    .bridge .chip.now{border-color:var(--gold);background:linear-gradient(135deg,#fdf7ea,#fbf3df);color:#8a6d2e}
+    .bridge .arw{color:var(--blue);font-weight:800}
+    h3.blk{font-size:clamp(1.3rem,5vw,1.8rem);text-align:center;margin:36px 0 8px;font-weight:600}
+    .sub{text-align:center;color:var(--muted);font-size:.92rem;margin:0 0 24px}
+    .curric{display:grid;gap:10px;margin:22px 0}
+    .curric li{list-style:none;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:13px 15px;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .curric .n{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ice);color:var(--blue);font:700 .82rem Georgia,serif}
+    .curric b{font-size:.96rem}.curric span{color:var(--muted);font-size:.85rem}
+    .offer{overflow:hidden;border-radius:24px;background:#fff;box-shadow:0 24px 60px rgba(0,0,0,.14);border:1px solid var(--line);margin-top:8px}
+    .offer__head{padding:26px 24px 20px;text-align:center;background:linear-gradient(145deg,#f5f9fb,#fbf8f1);border-bottom:1px solid var(--line)}
+    .offer__head h4{margin:0;font-size:clamp(1.25rem,5vw,1.7rem);font-weight:600;line-height:1.5}
+    .offer__body{padding:26px 24px 30px;text-align:center}
+    .price{margin:0 0 6px;color:var(--muted);font-size:.85rem}.price strong{display:block;color:var(--ink);font-size:2.4rem;line-height:1.3}
+    .cta{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;width:min(100%,440px);margin:16px auto 0;min-height:62px;padding:16px 28px;border:0;border-radius:999px;background:linear-gradient(135deg,#e4c98d,#c3a05c 52%,#a9843f);color:#fff;text-decoration:none;font-family:inherit;font-size:1.02rem;font-weight:700;letter-spacing:.1em;cursor:pointer;box-shadow:0 14px 30px rgba(168,132,63,.32),inset 0 1px 0 rgba(255,255,255,.34);transition:transform .25s,filter .25s}
+    .cta:hover{transform:translateY(-2px);filter:brightness(1.03)}
+    .decline{display:block;text-align:center;margin:20px auto 0;color:#8a949d;font-size:.85rem;text-decoration:underline;background:none;border:0;cursor:pointer;width:100%}
+    .decline:hover{color:var(--ink)}
+    .fine{text-align:center;color:#98a2ab;font-size:.72rem;margin-top:22px;line-height:1.85}
+    .fine a{color:#98a2ab}
+    /* 決済ポップアップ */
+    .pay-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(8,18,27,.76);backdrop-filter:blur(7px)}.pay-modal.open{display:flex}.pay-sheet{position:relative;width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.5);padding:24px 20px 21px}.pay-close{position:absolute;top:9px;right:13px;background:none;border:0;color:#8a96a0;font-size:27px;cursor:pointer}.pay-emailnote{font-size:12px;color:var(--muted);background:var(--ice);border:1px solid #dce8ee;border-radius:11px;padding:11px 12px;margin-bottom:14px;line-height:1.7}.pay-emailnote b{color:var(--ink)}#embedded-checkout{min-height:220px}.pay-msg{text-align:center;color:#89939c;font-size:13px;padding:56px 20px}.pay-msg.err{color:#c0392b}#payDone{display:none;text-align:center;padding:40px 20px}#payDone .mk{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}#payDone h3{font-size:20px;margin:0 0 12px}#payDone p{color:var(--muted);font-size:13.5px;line-height:1.95;margin:0 0 22px}
+  </style>
+</head>
+<body>
+
+  <div class="thanks">
+    <div class="wrap">
+      <div class="mk">✓</div>
+      <h1>ご購入ありがとうございます</h1>
+      <p>「はじめてのSNSマーケティング基礎講座」の視聴権を反映しました。</p>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="oto-badge">このページ限定のご案内</span>
+      <h2 class="serif">…実は、もう一つだけ。<br>“次の一歩”のご提案があります。</h2>
+      <p class="lead">基礎で「売れる流れ」の全体像をつかんだ今こそ、<br>それを“実践の体系”に落とし込む絶好のタイミングです。</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="wrap">
+        <div class="card">
+          <div class="bridge">
+            <div class="step">
+              <span class="chip">はじめての基礎<br>（全体像）</span>
+              <span class="arw">→</span>
+              <span class="chip now">起業1年目<br>（実践の体系）</span>
+            </div>
+          </div>
+          <h3 class="blk serif">起業1年目のマーケティング講座</h3>
+          <p class="sub">“売れる構造”を、0章から7章まで順番に。全30本の体系講座。</p>
+          <ul class="curric">
+            <li><span class="n">0</span><div><b>導入：なぜ“いい商品”だけでは売れないのか</b></div></li>
+            <li><span class="n">1</span><div><b>売れる商品・構造の3つの柱</b><br><span>発信力ではなく“構造”で売る</span></div></li>
+            <li><span class="n">2</span><div><b>集客・教育・販売の正体</b><br><span>DRMと“教育”の本当の意味</span></div></li>
+            <li><span class="n">3</span><div><b>ファネル設計と7つの心理関門</b></div></li>
+            <li><span class="n">4</span><div><b>ローンチの型と“売れない理由”</b></div></li>
+            <li><span class="n">5</span><div><b>逆ファネル思考・継続する導線設計</b></div></li>
+            <li><span class="n">6</span><div><b>コンテンツビジネスの提供形式</b></div></li>
+            <li><span class="n">7</span><div><b>見込み客を集め・育て・売れるファネル5選</b></div></li>
+          </ul>
+
+          <div class="offer">
+            <div class="offer__head"><h4 class="serif">起業1年目のマーケティング講座<br>アクセスパス</h4></div>
+            <div class="offer__body">
+              <p class="price">受講価格<strong>27,800円</strong>税込・買い切り</p>
+              <button class="cta" type="button" onclick="openCheckout()">この講座も受け取る →</button>
+              <button class="decline" type="button" onclick="skipUpsell()">いいえ、今回は見送ってアプリを開く</button>
+            </div>
+          </div>
+
+          <p class="fine">※このご案内は、購入直後のこのページでのみ表示されます。<br>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます。<br><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き">
+    <div class="pay-sheet">
+      <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+      <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
+      <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
+      <div id="payDone">
+        <div class="mk">✓</div>
+        <h3>ありがとうございます！</h3>
+        <p>「起業1年目のマーケティング講座」の視聴権を反映します。<br>さっそくアプリで学びを続けましょう。</p>
+        <a href="https://columns.l-mine.com/app/" class="cta" style="max-width:300px">アプリを開く</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+    var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+    var COURSE_PRICE_ID = "price_1TyLXLDffCAQquMFEVrjztCt";   // 起業1年目のマーケティング講座（¥27,800・単発）
+    var APP_URL = "https://columns.l-mine.com/app/";
+    var PREFILL_EMAIL = "";
+    try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+    function skipUpsell(){ window.location.href = APP_URL + (PREFILL_EMAIL ? ("?email=" + encodeURIComponent(PREFILL_EMAIL)) : ""); }
+    var _stripe = null, _checkout = null;
+    async function openCheckout(){
+      var modal = document.getElementById('payModal');
+      var cont  = document.getElementById('embedded-checkout');
+      var done  = document.getElementById('payDone');
+      done.style.display = 'none'; cont.style.display = 'block';
+      cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+      var enote = document.getElementById('payEmailNote');
+      if(enote){ if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; } else { enote.style.display = 'none'; } }
+      modal.classList.add('open');
+      try{
+        if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。</div>'; return; }
+        if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+        var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&mode=payment&price=' + encodeURIComponent(COURSE_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
+        if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+        if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+        cont.innerHTML = '';
+        _checkout = await _stripe.initEmbeddedCheckout({ clientSecret: r.client_secret, onComplete: function(){ cont.style.display = 'none'; done.style.display = 'block'; } });
+        _checkout.mount('#embedded-checkout');
+      }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+    }
+    function closeCheckout(){ document.getElementById('payModal').classList.remove('open'); if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; } }
+  </script>
+</body>
+</html>

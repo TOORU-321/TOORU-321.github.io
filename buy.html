@@ -72,6 +72,7 @@
   var AMOUNT= (q.get('amount')|| '').trim();
   var EMAIL = (q.get('email') || '').trim().toLowerCase();
   var BACK  = (q.get('back')  || 'https://columns.l-mine.com/app/').trim();
+  var NEXT  = (q.get('next')  || '').trim();   // 購入直後の遷移先（アップセルLP等）。相対名ならドメインを補う
 
   function fmtPrice(p){
     p = String(p||'').trim(); if(!p) return '';
@@ -120,7 +121,15 @@
       cont.innerHTML = '';
       _checkout = await _stripe.initEmbeddedCheckout({
         clientSecret: r.client_secret,
-        onComplete: function(){ cont.style.display = 'none'; document.getElementById('payDone').style.display = 'block'; }
+        onComplete: function(){
+          if(NEXT){
+            var u = /^https?:\/\//i.test(NEXT) ? NEXT : ("https://columns.l-mine.com/" + NEXT.replace(/^\//,''));
+            if(EMAIL){ u += (u.indexOf('?') < 0 ? '?' : '&') + 'email=' + encodeURIComponent(EMAIL); }
+            window.location.href = u;   // 購入直後アップセル等へ
+            return;
+          }
+          cont.style.display = 'none'; document.getElementById('payDone').style.display = 'block';
+        }
       });
       _checkout.mount('#embedded-checkout');
     }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
