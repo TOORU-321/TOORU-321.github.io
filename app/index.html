@@ -3219,12 +3219,31 @@ async function pushNews(n, test){
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
 // アンケート回答（ログイン必須：メールと名前を記録して主催者が連絡できるように）
-function replyNews(id, choice, pollEl){
+async function replyNews(id, choice, pollEl){
   if(!(SESSION && SESSION.email)){ showToast("回答するにはログインが必要です。"); openLogin(); return; }
-  localStorage.setItem("lmine_reply_" + id, choice);
-  pollEl.querySelectorAll(".np-opt").forEach(b => b.classList.toggle("chosen", b.textContent === choice));
-  const done = pollEl.querySelector(".np-done"); if(done) done.textContent = `✓「${choice}」で回答しました`;
-  try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"news_reply", id:String(id), email:SESSION.email, name:SESSION.name||"", choice }) }); }catch(e){}
+  const done = pollEl.querySelector(".np-done");
+  const opts = pollEl.querySelectorAll(".np-opt");
+  opts.forEach(b => { b.classList.toggle("chosen", b.textContent === choice); b.disabled = true; });
+  if(done) done.textContent = "送信中…";
+  const body = new URLSearchParams({ action:"news_reply", id:String(id), email:SESSION.email, name:SESSION.name||"", choice });
+  // ★成功応答を確認してから確定。失敗時は自動で1回リトライ
+  let ok = false;
+  for(let attempt = 0; attempt < 2 && !ok; attempt++){
+    try{ const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json()); ok = !!(res && res.ok); }
+    catch(e){ ok = false; }
+    if(!ok && attempt === 0) await new Promise(r => setTimeout(r, 900));
+  }
+  opts.forEach(b => { b.disabled = false; });
+  if(ok){
+    localStorage.setItem("lmine_reply_" + id, choice);
+    if(done) done.textContent = `✓「${choice}」で回答しました`;
+  }else{
+    // 未確定に戻す（本人が「回答した」と誤解しないように）
+    opts.forEach(b => b.classList.remove("chosen"));
+    localStorage.removeItem("lmine_reply_" + id);
+    if(done) done.textContent = "⚠️ 送信できませんでした。もう一度タップしてください。";
+    showToast("送信に失敗しました。もう一度お試しください。");
+  }
 }
 async function saveNews(){
   const msg = document.getElementById("nfMsg");
