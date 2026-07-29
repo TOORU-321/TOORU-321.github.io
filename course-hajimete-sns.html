@@ -25,17 +25,22 @@
     .wrap { width: min(calc(100% - 36px), var(--max)); margin: 0 auto; }
     .serif { font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Noto Serif JP", serif; }
     .hero {
+      position: relative; min-height: 78vh;
       display: grid; place-items: center; color: #fff;
-      background: radial-gradient(circle at top, rgba(184, 153, 88, 0.15), transparent 34%), var(--black);
-      text-align: center; padding: 56px 0 60px;
+      /* タイトル背景：イラスト画像＋暗めグラデーションで文字を読みやすく */
+      background:
+        linear-gradient(180deg, rgba(12,12,12,.80) 0%, rgba(12,12,12,.55) 42%, rgba(12,12,12,.88) 100%),
+        url("https://drive.google.com/thumbnail?id=1JEZE23IX5xv8g2L3BUUzHf0RHaVDyzYp&sz=w1600") center / cover no-repeat,
+        var(--black);
+      text-align: center; padding: 72px 0 64px;
     }
     .hero__inner { width: min(calc(100% - 40px), 660px); margin: 0 auto; }
     .backlink { display:inline-block; margin: 0 0 22px; color:#cbc7bf; font-size:0.82rem; text-decoration:none; }
     .backlink:hover { color:#fff; }
     .eyebrow { margin: 0 0 20px; color: #d6c6a2; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
-    .hero h1 { margin: 0; font-size: clamp(2rem, 7.6vw, 3.4rem); line-height: 1.4; font-weight: 500; letter-spacing: 0.06em; }
-    .hero__lead { margin: 22px auto 26px; max-width: 560px; font-size: clamp(1rem, 3.8vw, 1.22rem); line-height: 1.9; }
-    .eyecatch { margin: 0 auto 26px; max-width: 560px; overflow: hidden; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+    .hero h1 { margin: 0; font-size: clamp(2rem, 7.6vw, 3.4rem); line-height: 1.4; font-weight: 500; letter-spacing: 0.06em; text-shadow: 0 2px 20px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.5); }
+    .hero__lead { margin: 22px auto 28px; max-width: 560px; font-size: clamp(1rem, 3.8vw, 1.22rem); line-height: 1.9; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
+    .hero .eyebrow, .hero__sub { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
     .price { margin: 4px 0 18px; font-size: 0.95rem; color: #eee6d3; }
     .price strong { font-size: 2rem; letter-spacing: 0.03em; }
     .cta {
@@ -127,9 +132,6 @@
       <p class="eyebrow">“はじめて”シリーズ 第一弾</p>
       <h1 class="serif">はじめての<br>SNSマーケティング基礎講座</h1>
       <p class="hero__lead">フォロワーを増やす前に、<br>SNSで“売れる流れ”を知る38分。</p>
-      <div class="eyecatch">
-        <img src="https://drive.google.com/thumbnail?id=1JEZE23IX5xv8g2L3BUUzHf0RHaVDyzYp&sz=w1600" alt="はじめてのSNSマーケティング基礎講座" onerror="this.parentNode.style.display='none'">
-      </div>
       <p class="price"><strong>3,980円</strong>（税込・買い切り）</p>
       <a class="cta" href="#purchase">今すぐ講座を見る</a>
       <p class="note">購入後、アプリですぐに視聴できます。</p>
