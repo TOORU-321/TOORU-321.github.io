@@ -1870,6 +1870,30 @@ a{text-decoration:none}
   </div>
 </div>
 
+<!-- ===== 参加者・人数を見る（admin） ===== -->
+<style>
+  .ni-pollview{background:rgba(227,195,129,.10)!important;color:#f0d69c!important;border:1px solid rgba(227,195,129,.4)!important;font-weight:700!important}
+  .pv-body{margin-top:4px}
+  .pv-group{margin:14px 0 2px}
+  .pv-ghead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(227,195,129,.25);padding-bottom:6px;margin-bottom:8px}
+  .pv-gname{font-size:13.5px;font-weight:700;color:#f0d69c}
+  .pv-gnum{font-size:12px;color:#b8b3a3}
+  .pv-gnum b{font-size:17px;color:#e6c47f;margin-right:2px}
+  .pv-list{list-style:none;margin:0;padding:0}
+  .pv-list li{padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.07);display:flex;flex-direction:column;gap:1px}
+  .pv-nm{color:#f0ece0;font-size:12.5px;font-weight:600}
+  .pv-em{color:#8a8575;font-size:11px}
+  .pv-empty{color:#8a8575;font-size:12.5px;padding:20px 0;text-align:center}
+</style>
+<div class="ps-modal" id="pollViewModal" hidden role="dialog" aria-modal="true" aria-label="参加者一覧">
+  <div class="ps-sheet">
+    <button class="ps-x" id="pvClose" aria-label="閉じる">×</button>
+    <div class="ps-title">👥 参加者・人数</div>
+    <div class="ps-meta" id="pvMeta"></div>
+    <div class="pv-body" id="pvBody"></div>
+  </div>
+</div>
+
 <!-- ===== 解約プチアンケート ===== -->
 <style>
   .sc-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -2636,6 +2660,9 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   const md = document.getElementById("pollSendModal"); if(md) md.addEventListener("click", e => { if(e.target === md) closePollSend(); });
   const ts = document.getElementById("psTest"); if(ts) ts.addEventListener("click", () => doPollSend(true));
   const sd = document.getElementById("psSend"); if(sd) sd.addEventListener("click", () => doPollSend(false));
+  // 参加者一覧モーダルの閉じる
+  const pvc = document.getElementById("pvClose"); if(pvc) pvc.addEventListener("click", closePollView);
+  const pvm = document.getElementById("pollViewModal"); if(pvm) pvm.addEventListener("click", e => { if(e.target === pvm) closePollView(); });
 })();
 // 解約プチアンケートのイベント
 (function(){
@@ -2989,9 +3016,13 @@ function newsItemEl(n){
     const be = document.createElement("button"); be.textContent = "編集"; be.onclick = ()=>editNews(n);
     const bd = document.createElement("button"); bd.textContent = "削除"; bd.onclick = ()=>delNews(n);
     bar.appendChild(bmt); bar.appendChild(bml); bar.appendChild(bpt); bar.appendChild(bp); bar.appendChild(be); bar.appendChild(bd); el.appendChild(bar);
-    // アンケートがある時だけ：回答者だけに送るボタン
+    // アンケートがある時だけ：参加者一覧＋回答者だけに送るボタン
     if(n.options && n.options.length){
       const pbar = document.createElement("div"); pbar.className = "ni-admin ni-pollbar";
+      const bv = document.createElement("button"); bv.className = "ni-pollview";
+      bv.textContent = "👥 参加者・人数を見る";
+      bv.onclick = () => openPollView(n);
+      pbar.appendChild(bv);
       n.options.forEach(opt => {
         const b = document.createElement("button"); b.className = "ni-pollsend";
         b.textContent = "📧「" + opt + "」の回答者に送信";
@@ -3098,6 +3129,41 @@ async function doBroadcast(test){
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
+// 管理者：アンケート参加者・人数の一覧を表示（選択肢ごとにグループ化）
+async function openPollView(n){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  if(!(SESSION && SESSION.email)){ showToast("ログインが必要です。"); return; }
+  const meta = document.getElementById("pvMeta");
+  const body = document.getElementById("pvBody");
+  meta.innerHTML = `お知らせ：<b>${escapeHtml(n.title)}</b>`;
+  body.innerHTML = `<div class="pv-empty">読み込み中…</div>`;
+  document.getElementById("pollViewModal").hidden = false;
+  try{
+    const res = await fetch(GAS_URL + "?action=poll_respondents&email=" + encodeURIComponent(SESSION.email) + "&id=" + encodeURIComponent(n.id) + "&_=" + Date.now()).then(r=>r.json());
+    if(!res || !res.ok){ body.innerHTML = `<div class="pv-empty">取得できませんでした。</div>`; return; }
+    const list = res.respondents || [];
+    if(!list.length){ body.innerHTML = `<div class="pv-empty">まだ参加者はいません。</div>`; return; }
+    const groups = {}, order = [];
+    (n.options || []).forEach(o => { groups[o] = []; order.push(o); });
+    list.forEach(p => {
+      const ch = p.choice || "(未選択)";
+      if(!groups[ch]){ groups[ch] = []; order.push(ch); }
+      groups[ch].push(p);
+    });
+    meta.innerHTML = `お知らせ：<b>${escapeHtml(n.title)}</b><br>合計 <b>${list.length}</b> 名が参加`;
+    let html = "";
+    order.forEach(ch => {
+      const g = groups[ch]; if(!g || !g.length) return;
+      html += `<div class="pv-group"><div class="pv-ghead"><span class="pv-gname">${escapeHtml(ch)}</span><span class="pv-gnum"><b>${g.length}</b>名</span></div><ul class="pv-list">`;
+      g.forEach(p => {
+        html += `<li><span class="pv-nm">${escapeHtml(p.name || "（名前未設定）")}</span><span class="pv-em">${escapeHtml(p.email)}</span></li>`;
+      });
+      html += `</ul></div>`;
+    });
+    body.innerHTML = html || `<div class="pv-empty">まだ参加者はいません。</div>`;
+  }catch(e){ body.innerHTML = `<div class="pv-empty">通信エラーが発生しました。</div>`; }
+}
+function closePollView(){ const m = document.getElementById("pollViewModal"); if(m) m.hidden = true; }
 // 管理者：アンケート回答者だけにメール＋通知を送る
 let _psCtx = null;   // { id, choice, title }
 async function openPollSend(n, choice){
