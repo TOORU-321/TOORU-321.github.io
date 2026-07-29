@@ -8,287 +8,161 @@
   <title>はじめてのSNSマーケティング基礎講座</title>
   <script src="https://js.stripe.com/v3/"></script>
   <style>
-    :root {
-      --bg: #f6f3ed; --paper: #fffdf8; --text: #25231f; --muted: #716b61;
-      --line: #ded8cd; --black: #121212; --gold: #b89958; --gold-dark: #8f7135;
-      --shadow: 0 16px 40px rgba(31, 26, 18, 0.08); --radius: 18px; --max: 720px;
+    :root{
+      --bg:#f6f8fb;--paper:#fff;--ink:#18212b;--muted:#66717f;--line:#e5eaf0;
+      --navy:#132335;--blue:#426f91;--blue2:#6d9db9;--ice:#eef6fa;--cream:#fbf8f1;
+      --gold:#b89555;--gold2:#d6b978;--radius:22px;--max:780px;
+      --shadow:0 18px 55px rgba(29,52,72,.11);--soft:0 10px 30px rgba(29,52,72,.07)
     }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0; color: var(--text); background: var(--bg);
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
-      line-height: 1.9; letter-spacing: 0.035em; -webkit-font-smoothing: antialiased;
-    }
-    img { display: block; width: 100%; height: auto; }
-    a { color: inherit; }
-    .wrap { width: min(calc(100% - 36px), var(--max)); margin: 0 auto; }
-    .serif { font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Noto Serif JP", serif; }
-    .hero {
-      position: relative; min-height: 78vh;
-      display: grid; place-items: center; color: #fff;
-      /* タイトル背景：イラスト画像＋暗めグラデーションで文字を読みやすく */
-      background:
-        linear-gradient(180deg, rgba(12,12,12,.80) 0%, rgba(12,12,12,.55) 42%, rgba(12,12,12,.88) 100%),
-        url("https://drive.google.com/thumbnail?id=1JEZE23IX5xv8g2L3BUUzHf0RHaVDyzYp&sz=w1600") center / cover no-repeat,
-        var(--black);
-      text-align: center; padding: 72px 0 64px;
-    }
-    .hero__inner { width: min(calc(100% - 40px), 660px); margin: 0 auto; }
-    .backlink { display:inline-block; margin: 0 0 22px; color:#cbc7bf; font-size:0.82rem; text-decoration:none; }
-    .backlink:hover { color:#fff; }
-    .eyebrow { margin: 0 0 20px; color: #d6c6a2; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
-    .hero h1 { margin: 0; font-size: clamp(2rem, 7.6vw, 3.4rem); line-height: 1.4; font-weight: 500; letter-spacing: 0.06em; text-shadow: 0 2px 20px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.5); }
-    .hero__lead { margin: 22px auto 28px; max-width: 560px; font-size: clamp(1rem, 3.8vw, 1.22rem); line-height: 1.9; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
-    .hero .eyebrow, .hero__sub { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
-    .price { margin: 4px 0 18px; font-size: 0.95rem; color: #eee6d3; }
-    .price strong { font-size: 2rem; letter-spacing: 0.03em; }
-    .cta {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: min(100%, 420px); min-height: 58px; padding: 14px 28px;
-      border: 1px solid rgba(255,255,255,0.2); border-radius: 999px;
-      background: linear-gradient(135deg, #c8a866, #a78648); color: #fff;
-      text-decoration: none; font-weight: 800; letter-spacing: 0.08em; font-family: inherit; font-size: 1rem; cursor: pointer;
-      box-shadow: 0 12px 30px rgba(184, 153, 88, 0.22);
-      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
-    }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(184, 153, 88, 0.3); filter: brightness(1.04); }
-    .cta--dark { color: #fff; background: var(--black); box-shadow: none; }
-    .note { margin: 12px 0 0; color: #aaa49b; font-size: 0.74rem; }
-    .section { padding: 62px 0; }
-    .section--paper { background: var(--paper); }
-    .section--black { color: #fff; background: var(--black); }
-    .section__label { margin: 0 0 14px; color: var(--gold-dark); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
-    .section--black .section__label { color: #d0b77f; }
-    .section h2 { margin: 0 0 22px; font-size: clamp(1.55rem, 5.6vw, 2.25rem); line-height: 1.55; font-weight: 500; letter-spacing: 0.05em; }
-    .section p { margin: 0 0 1.2em; }
-    .center { text-align: center; }
-    .two-strategies { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 30px 0; }
-    .strategy-card { padding: 24px 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,0.66); }
-    .strategy-card__num { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-bottom: 14px; border-radius: 50%; color: #fff; background: var(--gold); font-size: 0.78rem; font-weight: 800; }
-    .strategy-card h3 { margin: 0 0 10px; font-size: 1.2rem; }
-    .strategy-card p { margin: 0; color: var(--muted); font-size: 0.92rem; }
-    .content-list { display: grid; gap: 14px; margin-top: 30px; }
-    .content-item { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; padding: 18px 0; border-bottom: 1px solid var(--line); }
-    .content-item:first-child { border-top: 1px solid var(--line); }
-    .content-item__num { padding-top: 3px; color: var(--gold-dark); font-family: Georgia, serif; font-size: 1.15rem; }
-    .content-item h3 { margin: 0 0 6px; font-size: 1.04rem; }
-    .content-item p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.8; }
-    .product-card { overflow: hidden; border-radius: 22px; background: #fff; color: var(--text); box-shadow: 0 24px 60px rgba(0,0,0,.2); }
-    .product-card__head { padding: 30px 26px 22px; text-align: center; background: #f8f5ee; border-bottom: 1px solid var(--line); }
-    .product-card__head h3 { margin: 8px 0 0; font-size: clamp(1.3rem, 5vw, 1.8rem); line-height: 1.55; font-weight: 500; }
-    .product-card__body { padding: 28px 24px 32px; }
-    .specs { margin: 0 0 24px; border-top: 1px solid var(--line); }
-    .specs__row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 0.9rem; }
-    .specs__row dt { margin: 0; color: var(--muted); font-weight: 700; }
-    .specs__row dd { margin: 0; }
-    .product-price { margin: 0 0 18px; text-align: center; font-size: 0.86rem; color: var(--muted); }
-    .product-price strong { display: block; color: var(--text); font-size: 2.2rem; line-height: 1.35; }
-    .profile { display: grid; gap: 20px; align-items: center; }
-    .profile__photo { overflow: hidden; max-width: 200px; margin: 0 auto; border-radius: 16px; background: #e7e2d8; box-shadow: var(--shadow); }
-    .profile__photo img { aspect-ratio: 4 / 5; object-fit: cover; }
-    .profile h3 { margin: 0 0 8px; font-size: 1.5rem; }
-    .profile p { margin-bottom: 0.8em; color: var(--muted); font-size: 0.9rem; }
-    .faq { display: grid; gap: 12px; margin-top: 26px; }
-    details { border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.66); overflow: hidden; }
-    summary { cursor: pointer; list-style: none; padding: 16px 18px; font-weight: 800; font-size: 0.95rem; }
-    summary::-webkit-details-marker { display: none; }
-    details p { padding: 0 18px 18px; margin: 0; color: var(--muted); font-size: 0.9rem; }
-    .footer { padding: 34px 0 42px; color: #aaa49b; background: #0b0b0b; text-align: center; font-size: 0.75rem; }
-    .footer a { margin: 0 7px; color: #d5d0c6; text-decoration: none; }
-    .sticky-cta { position: fixed; z-index: 30; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(calc(100% - 24px), 520px); padding: 8px; border-radius: 999px; background: rgba(18,18,18,.88); backdrop-filter: blur(10px); box-shadow: 0 12px 34px rgba(0,0,0,.24); }
-    .sticky-cta a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, #c8a866, #a78648); text-decoration: none; font-weight: 800; font-size: 0.88rem; letter-spacing: 0.05em; }
-    @media (min-width: 700px) {
-      .two-strategies { grid-template-columns: 1fr 1fr; }
-      .profile { grid-template-columns: 200px 1fr; }
-      .profile__photo { margin: 0; }
-      .product-card__body { padding: 34px 40px 40px; }
-    }
-    @media (max-width: 500px) { .section { padding: 52px 0; } .hero h1 { font-size: 2.05rem; } .sticky-cta { bottom: 9px; } }
-    /* ===== 決済ポップアップ ===== */
-    .pay-modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(10,10,10,.72); backdrop-filter: blur(5px); }
-    .pay-modal.open { display: flex; }
-    .pay-sheet { position: relative; width: 100%; max-width: 460px; max-height: 92vh; overflow: auto; background: #fffdf8; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,.5); padding: 22px 20px 20px; }
-    .pay-close { position: absolute; top: 8px; right: 12px; background: none; border: none; color: #999; font-size: 26px; line-height: 1; cursor: pointer; }
-    .pay-emailnote { font-size: 12px; color: #716b61; background: #f2eee6; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; line-height: 1.7; }
-    .pay-emailnote b { color: #25231f; }
-    #embedded-checkout { min-height: 220px; }
-    .pay-msg { text-align: center; color: #999; font-size: 13px; padding: 56px 20px; }
-    .pay-msg.err { color: #c0392b; }
-    #payDone { display: none; text-align: center; padding: 40px 20px; }
-    #payDone .mk { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold-dark); display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 20px; }
-    #payDone h3 { font-size: 20px; margin: 0 0 12px; }
-    #payDone p { color: var(--muted); font-size: 13.5px; line-height: 1.95; margin: 0 0 22px; }
-    #payDone .donenote { max-width: 380px; margin: 20px auto 0; color: #948e83; font-size: 11px; line-height: 1.9; }
-    #payDone .donenote b { color: var(--text); }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",sans-serif;line-height:1.9;letter-spacing:.025em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    img{display:block;width:100%;height:auto} a{color:inherit}
+    .wrap{width:min(calc(100% - 36px),var(--max));margin:auto}
+    .serif{font-family:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP",serif}
+
+    .hero{position:relative;min-height:86vh;display:grid;place-items:center;color:#fff;text-align:center;padding:70px 0 76px;isolation:isolate;overflow:hidden;background:linear-gradient(180deg,rgba(10,22,36,.66),rgba(14,34,54,.30) 46%,rgba(9,20,33,.74)),url("https://drive.google.com/thumbnail?id=1JEZE23IX5xv8g2L3BUUzHf0RHaVDyzYp&sz=w1800") center/cover no-repeat,var(--navy)}
+    .hero:before{content:"";position:absolute;inset:-20%;z-index:-1;background:radial-gradient(circle at 24% 30%,rgba(103,169,204,.28),transparent 26%),radial-gradient(circle at 78% 65%,rgba(214,185,120,.18),transparent 24%);animation:ambient 12s ease-in-out infinite alternate}
+    .hero:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:76px;background:var(--paper);clip-path:polygon(0 72%,100% 0,100% 100%,0 100%)}
+    .hero__inner{width:min(calc(100% - 36px),690px);margin:auto;position:relative;z-index:2}
+    .backlink{display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;color:rgba(255,255,255,.74);font-size:.8rem;text-decoration:none;transition:.25s}.backlink:hover{color:#fff;transform:translateX(-3px)}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;margin:0 0 18px;padding:7px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);color:#f2dfb2;font-size:.72rem;font-weight:800;letter-spacing:.16em}
+    .hero h1{margin:0;font-size:clamp(2.15rem,8vw,4.1rem);line-height:1.35;font-weight:600;letter-spacing:.045em;text-shadow:0 4px 22px rgba(0,0,0,.7),0 2px 6px rgba(0,0,0,.55)}
+    .hero__lead{margin:24px auto 20px;max-width:570px;font-size:clamp(1rem,3.8vw,1.28rem);line-height:1.9;color:rgba(255,255,255,.96);text-shadow:0 2px 14px rgba(0,0,0,.7)}
+    .hero__meta{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin:22px 0}.hero__meta span{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:.77rem;color:#fff;backdrop-filter:blur(6px)}
+    .price{margin:12px 0 19px;color:#f8f4ea;text-shadow:0 2px 12px rgba(0,0,0,.6)}.price strong{font-size:2.15rem;letter-spacing:.02em}.price small{font-size:.76rem;color:rgba(255,255,255,.82)}
+    .cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;width:min(100%,430px);min-height:60px;padding:15px 28px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#fff;text-decoration:none;font:800 1rem inherit;letter-spacing:.06em;cursor:pointer;box-shadow:0 15px 34px rgba(184,149,85,.32);transition:transform .25s,box-shadow .25s,filter .25s}
+    .cta:after{content:"";position:absolute;top:-50%;left:-35%;width:22%;height:200%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(20deg);animation:shine 4.8s ease-in-out infinite}
+    .cta:hover{transform:translateY(-3px);filter:brightness(1.04);box-shadow:0 20px 42px rgba(184,149,85,.38)}
+    .cta--dark{background:linear-gradient(135deg,#1e3448,#102233);box-shadow:0 12px 28px rgba(13,34,52,.2)}
+    .note{margin:12px 0 0;color:rgba(255,255,255,.78);font-size:.73rem;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+
+    .section{position:relative;padding:82px 0}.section--paper{background:var(--paper)}.section--ice{background:linear-gradient(180deg,#f1f7fa,#f8fbfc)}.section--black{color:#fff;background:linear-gradient(145deg,#101d2a,#1a3042)}
+    .section__label{margin:0 0 13px;color:var(--blue);font-size:.7rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}.section--black .section__label{color:#d8c18d}
+    .section h2{margin:0 0 24px;font-size:clamp(1.65rem,5.8vw,2.55rem);line-height:1.55;font-weight:600;letter-spacing:.04em}.section p{margin:0 0 1.15em}.center{text-align:center}.lead{font-size:1.05rem}
+    .marker{background:linear-gradient(transparent 62%,rgba(109,157,185,.25) 62%);font-weight:800}
+
+    .problem-box{position:relative;padding:28px 25px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--soft)}
+    .problem-box:before{content:"“";position:absolute;right:20px;top:-12px;color:#e4edf2;font:700 5rem Georgia,serif;line-height:1}
+    .two-strategies{display:grid;grid-template-columns:1fr;gap:16px;margin:30px 0}
+    .strategy-card{position:relative;padding:27px 23px;border:1px solid #dfe8ee;border-radius:20px;background:linear-gradient(145deg,#fff,#f4f9fb);box-shadow:var(--soft);transition:.3s}
+    .strategy-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+    .strategy-card__num{display:grid;place-items:center;width:40px;height:40px;margin-bottom:15px;border-radius:13px;color:#fff;background:linear-gradient(135deg,var(--blue2),var(--blue));font-size:.76rem;font-weight:900;box-shadow:0 8px 18px rgba(66,111,145,.22)}
+    .strategy-card h3{margin:0 0 8px;font-size:1.18rem}.strategy-card p{margin:0;color:var(--muted);font-size:.91rem}
+
+    .flow-map{margin:34px 0 0;padding:28px 18px;border-radius:24px;background:linear-gradient(145deg,#14283b,#203d54);box-shadow:var(--shadow);color:#fff}
+    .flow-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px}.flow-node{text-align:center;padding:16px 8px;border:1px solid rgba(255,255,255,.15);border-radius:16px;background:rgba(255,255,255,.07)}.flow-node b{display:block;font-size:.9rem}.flow-node small{color:rgba(255,255,255,.65);font-size:.68rem}.flow-arrow{color:#d8c18d;font-size:1.25rem;animation:pulse 1.8s ease-in-out infinite}
+
+    .content-list{display:grid;gap:14px;margin-top:28px}.content-item{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start;padding:21px 20px;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 8px 24px rgba(29,52,72,.045);transition:.3s}.content-item:hover{transform:translateX(5px);border-color:#cbdde7}.content-item__num{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--ice);color:var(--blue);font:700 1rem Georgia,serif}.content-item h3{margin:0 0 5px;font-size:1.03rem}.content-item p{margin:0;color:var(--muted);font-size:.89rem;line-height:1.8}
+
+    .value-band{margin-top:31px;padding:28px;border-radius:22px;background:linear-gradient(135deg,#edf6fa,#fff);border:1px solid #dceaf1;text-align:center}.value-band strong{display:block;margin-bottom:8px;font-family:"Yu Mincho","YuMincho",serif;font-size:1.3rem;color:#23435a}
+
+    .product-card{overflow:hidden;border-radius:26px;background:#fff;color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1)}
+    .product-card__head{position:relative;padding:34px 26px 28px;text-align:center;background:linear-gradient(145deg,#f5f9fb,#fbf8f1);border-bottom:1px solid var(--line)}
+    .product-card__head:after{content:"38 min";position:absolute;right:18px;top:18px;padding:5px 10px;border-radius:999px;background:#fff;color:var(--blue);font-size:.66rem;font-weight:900;letter-spacing:.08em;box-shadow:var(--soft)}
+    .product-card__head h3{margin:8px 0 0;font-size:clamp(1.35rem,5vw,1.95rem);line-height:1.55;font-weight:600}.product-card__body{padding:29px 24px 34px}.specs{margin:0 0 24px;border-top:1px solid var(--line)}.specs__row{display:grid;grid-template-columns:92px 1fr;gap:15px;padding:15px 0;border-bottom:1px solid var(--line);font-size:.89rem}.specs__row dt{margin:0;color:var(--muted);font-weight:800}.specs__row dd{margin:0}.product-price{margin:0 0 19px;text-align:center;color:var(--muted);font-size:.83rem}.product-price strong{display:block;color:var(--ink);font-size:2.35rem;line-height:1.35}
+
+    .profile{display:grid;gap:24px;align-items:center;padding:26px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--soft)}.profile__photo{overflow:hidden;max-width:180px;margin:auto;border-radius:20px;background:#e7edf0;box-shadow:var(--soft)}.profile__photo img{aspect-ratio:4/5;object-fit:cover}.profile h3{margin:0 0 8px;font-size:1.55rem}.profile p{margin-bottom:.8em;color:var(--muted);font-size:.89rem}
+    .faq{display:grid;gap:12px;margin-top:25px}details{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 6px 18px rgba(29,52,72,.035)}summary{position:relative;cursor:pointer;list-style:none;padding:18px 46px 18px 19px;font-weight:800;font-size:.94rem}summary:after{content:"＋";position:absolute;right:18px;top:15px;color:var(--blue);font-size:1.2rem;transition:.25s}details[open] summary:after{transform:rotate(45deg)}summary::-webkit-details-marker{display:none}details p{padding:0 19px 19px;margin:0;color:var(--muted);font-size:.89rem}
+
+    .footer{padding:36px 0 105px;color:#9ba6b0;background:#0d1924;text-align:center;font-size:.72rem}.footer a{margin:0 7px;color:#d6dce1;text-decoration:none}
+    .sticky-cta{position:fixed;z-index:30;left:50%;bottom:12px;transform:translateX(-50%);width:min(calc(100% - 22px),530px);padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(12,28,41,.88);backdrop-filter:blur(12px);box-shadow:0 14px 40px rgba(0,0,0,.26)}.sticky-cta a{display:flex;align-items:center;justify-content:center;min-height:49px;border-radius:999px;color:#fff;background:linear-gradient(135deg,var(--gold2),var(--gold));text-decoration:none;font-weight:900;font-size:.88rem;letter-spacing:.04em}
+
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .75s ease,transform .75s ease}.reveal.is-visible{opacity:1;transform:none}.delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}
+    @keyframes ambient{to{transform:translate3d(2%,1%,0) scale(1.04)}}@keyframes shine{0%,72%{left:-35%}100%{left:120%}}@keyframes pulse{50%{transform:translateX(4px);opacity:.55}}
+    @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+    @media (min-width:700px){.two-strategies{grid-template-columns:1fr 1fr}.profile{grid-template-columns:180px 1fr}.profile__photo{margin:0}.product-card__body{padding:36px 42px 42px}}
+    @media (max-width:560px){.section{padding:64px 0}.hero{min-height:82vh;padding-top:52px}.hero:after{height:48px}.hero h1{font-size:2.1rem}.flow-row{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg)}.content-item{grid-template-columns:43px 1fr;padding:18px 15px}.product-card__head:after{position:static;display:inline-block;margin-top:13px}.specs__row{grid-template-columns:74px 1fr}.sticky-cta{bottom:8px}}
+
+    /* ===== 決済ポップアップ（システム構造・IDは変更なし） ===== */
+    .pay-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(8,18,27,.76);backdrop-filter:blur(7px)}.pay-modal.open{display:flex}.pay-sheet{position:relative;width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.5);padding:24px 20px 21px}.pay-close{position:absolute;top:9px;right:13px;background:none;border:none;color:#8a96a0;font-size:27px;line-height:1;cursor:pointer}.pay-emailnote{font-size:12px;color:var(--muted);background:var(--ice);border:1px solid #dce8ee;border-radius:11px;padding:11px 12px;margin-bottom:14px;line-height:1.7}.pay-emailnote b{color:var(--ink)}#embedded-checkout{min-height:220px}.pay-msg{text-align:center;color:#89939c;font-size:13px;padding:56px 20px}.pay-msg.err{color:#c0392b}#payDone{display:none;text-align:center;padding:40px 20px}#payDone .mk{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}#payDone h3{font-size:20px;margin:0 0 12px}#payDone p{color:var(--muted);font-size:13.5px;line-height:1.95;margin:0 0 22px}#payDone .donenote{max-width:380px;margin:20px auto 0;color:#8e98a1;font-size:11px;line-height:1.9}#payDone .donenote b{color:var(--ink)}
   </style>
 </head>
-
 <body>
-
   <header class="hero">
-    <div class="hero__inner">
-      <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a>
+    <div class="hero__inner reveal">
+      <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a><br>
       <p class="eyebrow">“はじめて”シリーズ 第一弾</p>
       <h1 class="serif">はじめての<br>SNSマーケティング基礎講座</h1>
-      <p class="hero__lead">フォロワーを増やす前に、<br>SNSで“売れる流れ”を知る38分。</p>
-      <p class="price"><strong>3,980円</strong>（税込・買い切り）</p>
+      <p class="hero__lead">フォロワーを増やす前に、<br><strong>SNSで“売れる流れ”を知る38分。</strong></p>
+      <div class="hero__meta"><span>初心者向け</span><span>全1本・約38分</span><span>買い切り</span></div>
+      <p class="price"><strong>3,980円</strong><small>（税込）</small></p>
       <a class="cta" href="#purchase">今すぐ講座を見る</a>
       <p class="note">購入後、アプリですぐに視聴できます。</p>
     </div>
   </header>
 
   <main>
-
-    <!-- 課題 → 2つの戦略（1セクションに集約） -->
     <section class="section section--paper">
       <div class="wrap">
-        <p class="section__label">Problem</p>
-        <h2 class="serif">投稿しているのに、<br>なぜか売上につながらない。</h2>
-        <p>毎日発信しても売れないとき、多くの人は「もっと投稿を」「フォロワーを増やさなきゃ」と考えます。でも、足りないのは<strong>投稿数ではなく“売れる流れ”</strong>かもしれません。</p>
-        <p>SNSで売れる流れは、<br>「知ってもらう」と「選んでもらう」の2つでできています。</p>
-        <div class="two-strategies">
-          <article class="strategy-card">
-            <span class="strategy-card__num">01</span>
-            <h3>リーチ戦略</h3>
-            <p>まだ自分を知らない人に存在を届け、認知を広げる戦略。</p>
-          </article>
-          <article class="strategy-card">
-            <span class="strategy-card__num">02</span>
-            <h3>レスポンス戦略</h3>
-            <p>見てくれた人との信頼を深め、行動・購入につなげる戦略。</p>
-          </article>
+        <div class="reveal">
+          <p class="section__label">Problem</p>
+          <h2 class="serif">投稿しているのに、<br>なぜか売上につながらない。</h2>
+          <div class="problem-box"><p>毎日発信しても売れないとき、多くの人は「もっと投稿を」「フォロワーを増やさなきゃ」と考えます。</p><p style="margin-bottom:0">でも、足りないのは<span class="marker">投稿数ではなく“売れる流れ”</span>かもしれません。</p></div>
         </div>
-        <p>この2つを混同すると、「フォロワーは増えても売れない」「関係はあるのに新規が来ない」が起こります。</p>
+        <div class="reveal delay-1" style="margin-top:34px">
+          <p>SNSで売れる流れは、<strong>「知ってもらう」</strong>と<strong>「選んでもらう」</strong>の2つでできています。</p>
+          <div class="two-strategies">
+            <article class="strategy-card"><span class="strategy-card__num">01</span><h3>リーチ戦略</h3><p>まだ自分を知らない人に存在を届け、認知を広げる戦略。</p></article>
+            <article class="strategy-card"><span class="strategy-card__num">02</span><h3>レスポンス戦略</h3><p>見てくれた人との信頼を深め、行動・購入につなげる戦略。</p></article>
+          </div>
+          <p>この2つを混同すると、「フォロワーは増えても売れない」「関係はあるのに新規が来ない」が起こります。</p>
+        </div>
+        <div class="flow-map reveal delay-2" aria-label="SNSで売れる流れ">
+          <div class="flow-row"><div class="flow-node"><b>知ってもらう</b><small>REACH</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>信頼を育てる</b><small>RESPONSE</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>選んでもらう</b><small>ACTION</small></div></div>
+        </div>
       </div>
     </section>
 
-    <!-- 38分で分かること -->
-    <section class="section">
+    <section class="section section--ice">
       <div class="wrap">
-        <p class="section__label">What You Learn</p>
-        <h2 class="serif">38分で分かること</h2>
+        <div class="reveal"><p class="section__label">What You Learn</p><h2 class="serif">38分で分かること</h2></div>
         <div class="content-list">
-          <article class="content-item">
-            <div class="content-item__num">01</div>
-            <div><h3>リーチ戦略の基本</h3><p>誰に、どんな印象で届けるのかを理解します。</p></div>
-          </article>
-          <article class="content-item">
-            <div class="content-item__num">02</div>
-            <div><h3>レスポンス戦略の基本</h3><p>共感・信頼・行動へ進む流れを学びます。</p></div>
-          </article>
-          <article class="content-item">
-            <div class="content-item__num">03</div>
-            <div><h3>自分に合う戦略の見つけ方</h3><p>得意を伸ばし、苦手を仕組みで補う考え方。</p></div>
-          </article>
-          <article class="content-item">
-            <div class="content-item__num">04</div>
-            <div><h3>SNSで売れる全体の流れ</h3><p>投稿・リール・ストーリーズ・LINEを“線”で捉える。</p></div>
-          </article>
+          <article class="content-item reveal"><div class="content-item__num">01</div><div><h3>リーチ戦略の基本</h3><p>誰に、どんな印象で届けるのかを理解します。</p></div></article>
+          <article class="content-item reveal delay-1"><div class="content-item__num">02</div><div><h3>レスポンス戦略の基本</h3><p>共感・信頼・行動へ進む流れを学びます。</p></div></article>
+          <article class="content-item reveal delay-2"><div class="content-item__num">03</div><div><h3>自分に合う戦略の見つけ方</h3><p>得意を伸ばし、苦手を仕組みで補う考え方。</p></div></article>
+          <article class="content-item reveal delay-3"><div class="content-item__num">04</div><div><h3>SNSで売れる全体の流れ</h3><p>投稿・リール・ストーリーズ・LINEを“線”で捉える。</p></div></article>
         </div>
-        <div class="center" style="margin-top:30px;">
-          <a class="cta cta--dark" href="#purchase">この講座を見る</a>
-        </div>
+        <div class="value-band reveal"><strong>「何を頑張ればいいのか」が見えてくる。</strong>フォロワー数だけに振り回されず、SNS全体を設計として見られるようになるための入門講座です。</div>
+        <div class="center reveal" style="margin-top:30px"><a class="cta cta--dark" href="#purchase">この講座を見る</a></div>
       </div>
     </section>
 
-    <!-- オファー -->
     <section class="section section--black" id="purchase">
       <div class="wrap">
-        <p class="section__label center">Course Details</p>
-        <div class="product-card">
-          <div class="product-card__head">
-            <p class="eyebrow" style="color:#9a8350; margin-bottom:10px;">“はじめて”シリーズ 第一弾</p>
-            <h3 class="serif">はじめての<br>SNSマーケティング基礎講座</h3>
-          </div>
+        <p class="section__label center reveal">Course Details</p>
+        <div class="product-card reveal">
+          <div class="product-card__head"><p class="eyebrow" style="color:#856d3c;background:#fff;border-color:#e8dfcc;margin-bottom:10px">“はじめて”シリーズ 第一弾</p><h3 class="serif">はじめての<br>SNSマーケティング基礎講座</h3></div>
           <div class="product-card__body">
-            <dl class="specs">
-              <div class="specs__row"><dt>内容</dt><dd>SNSマーケの基本構造／リーチ戦略とレスポンス戦略／2つのバランス設計</dd></div>
-              <div class="specs__row"><dt>動画</dt><dd>約38分・全1本</dd></div>
-              <div class="specs__row"><dt>視聴</dt><dd>購入後、アプリですぐに視聴</dd></div>
-            </dl>
+            <dl class="specs"><div class="specs__row"><dt>内容</dt><dd>SNSマーケの基本構造／リーチ戦略とレスポンス戦略／2つのバランス設計</dd></div><div class="specs__row"><dt>動画</dt><dd>約38分・全1本</dd></div><div class="specs__row"><dt>視聴</dt><dd>購入後、アプリですぐに視聴</dd></div></dl>
             <p class="product-price">受講価格<strong>3,980円</strong>税込・買い切り</p>
             <a class="cta" href="#" onclick="openCheckout();return false;">3,980円で講座を見る</a>
-            <p class="note center" style="color:#8b857a;">決済完了後、アプリで自動的に視聴できるようになります。</p>
+            <p class="note center" style="color:#7d8790;text-shadow:none">決済完了後、アプリで自動的に視聴できるようになります。</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 講師（短め） -->
     <section class="section section--paper">
       <div class="wrap">
-        <p class="section__label">Instructor</p>
-        <div class="profile">
-          <div class="profile__photo">
-            <img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'">
-          </div>
-          <div>
-            <h3 class="serif">とーる</h3>
-            <p>行動経済学検定1級／日本営業科学協会認定「行動経済アナリスト」。</p>
-            <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。「売れる手法」だけでなく、無理なく売れ続ける仕組みづくりを伝えている。</p>
-          </div>
-        </div>
+        <div class="reveal"><p class="section__label">Instructor</p><div class="profile"><div class="profile__photo"><img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'"></div><div><h3 class="serif">とーる</h3><p>行動経済学検定1級／日本営業科学協会認定「行動経済アナリスト」。</p><p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。「売れる手法」だけでなく、無理なく売れ続ける仕組みづくりを伝えている。</p></div></div></div>
       </div>
     </section>
 
-    <!-- FAQ（3つ）＋最終CTA -->
     <section class="section">
       <div class="wrap">
-        <p class="section__label">FAQ</p>
-        <div class="faq">
-          <details>
-            <summary>初心者でも受講できますか？</summary>
-            <p>はい。専門用語をできるだけ避けて、初めての方にも分かるよう解説しています。</p>
-          </details>
-          <details>
-            <summary>どのSNS向けですか？</summary>
-            <p>Instagram中心ですが、Threads・YouTube・Xなどにも共通する基礎構造を扱います。</p>
-          </details>
-          <details>
-            <summary>購入後どう視聴しますか？</summary>
-            <p>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます（反映まで少しお時間がかかる場合があります）。</p>
-          </details>
-        </div>
-        <div class="center" style="margin-top:32px;">
-          <a class="cta cta--dark" href="#" onclick="openCheckout();return false;">今すぐ講座を見る</a>
-        </div>
-        <p class="center" style="color:#948e83; font-size:0.74rem; margin-top:14px;">※本講座は基礎講座であり、個別の成果を保証するものではありません。</p>
+        <div class="reveal"><p class="section__label">FAQ</p><h2 class="serif">よくあるご質問</h2></div>
+        <div class="faq reveal"><details><summary>初心者でも受講できますか？</summary><p>はい。専門用語をできるだけ避けて、初めての方にも分かるよう解説しています。</p></details><details><summary>どのSNS向けですか？</summary><p>Instagram中心ですが、Threads・YouTube・Xなどにも共通する基礎構造を扱います。</p></details><details><summary>購入後どう視聴しますか？</summary><p>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます（反映まで少しお時間がかかる場合があります）。</p></details></div>
+        <div class="center reveal" style="margin-top:32px"><a class="cta cta--dark" href="#" onclick="openCheckout();return false;">今すぐ講座を見る</a></div>
+        <p class="center" style="color:#8a949d;font-size:.72rem;margin-top:14px">※本講座は基礎講座であり、個別の成果を保証するものではありません。</p>
       </div>
     </section>
-
   </main>
 
-  <footer class="footer">
-    <div class="wrap">
-      <p>
-        <a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a>
-        <a href="https://columns.l-mine.com/legal/terms.html">利用規約</a>
-        <a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a>
-      </p>
-      <p>© Llabo. All Rights Reserved.</p>
-    </div>
-  </footer>
+  <footer class="footer"><div class="wrap"><p><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a><a href="https://columns.l-mine.com/legal/terms.html">利用規約</a><a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a></p><p>© Llabo. All Rights Reserved.</p></div></footer>
+  <div class="sticky-cta"><a href="#purchase">3,980円で講座を見る</a></div>
 
-  <div class="sticky-cta">
-    <a href="#purchase">3,980円で講座を見る</a>
-  </div>
-
-  <!-- ===== 決済ポップアップ ===== -->
-  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き">
-    <div class="pay-sheet">
-      <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
-      <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
-      <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
-      <div id="payDone">
-        <div class="mk">✓</div>
-        <h3>ご購入ありがとうございます</h3>
-        <p>「はじめてのSNSマーケティング基礎講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p>
-        <a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px; font-size:15px;">アプリを開く</a>
-        <p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p>
-      </div>
-    </div>
-  </div>
+  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き"><div class="pay-sheet"><button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button><div id="payEmailNote" class="pay-emailnote" style="display:none"></div><div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div><div id="payDone"><div class="mk">✓</div><h3>ご購入ありがとうございます</h3><p>「はじめてのSNSマーケティング基礎講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p><a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px;font-size:15px">アプリを開く</a><p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p></div></div></div>
 
   <script>
     var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
@@ -330,5 +204,14 @@
     }
   </script>
 
+  <script>
+    (function(){
+      var targets=document.querySelectorAll('.reveal');
+      if(!('IntersectionObserver' in window)){targets.forEach(function(el){el.classList.add('is-visible')});return;}
+      var io=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}})},{threshold:.12,rootMargin:'0px 0px -35px'});
+      targets.forEach(function(el){io.observe(el)});
+    })();
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('payModal').classList.contains('open'))closeCheckout();});
+  </script>
 </body>
 </html>
