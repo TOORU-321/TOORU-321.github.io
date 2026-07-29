@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ご購入手続き｜エルラボ</title>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#14120e;color:#e9e4d8;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px}
+  .wrap{width:100%;max-width:520px}
+  .brand{text-align:center;color:#c2a26a;letter-spacing:.14em;font-size:12px;margin:6px 0 22px}
+  .card{background:#1c1a15;border:1px solid rgba(227,195,129,.16);border-radius:16px;padding:22px 20px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  .c-name{font-size:17px;font-weight:700;line-height:1.6;color:#f5f1e8;margin:0 0 14px}
+  .c-price{display:flex;align-items:baseline;gap:8px;margin:0 0 4px}
+  .c-price .amt{font-size:30px;font-weight:800;color:#e3c381;letter-spacing:.02em}
+  .c-price .tax{font-size:12px;color:#9a958a}
+  .c-mode{display:inline-block;font-size:11px;color:#cbb884;border:1px solid rgba(227,195,129,.3);border-radius:999px;padding:3px 10px;margin-top:6px}
+  .emailnote{margin:14px 0 0;font-size:12px;color:#a49f93;background:rgba(227,195,129,.06);border:1px solid rgba(227,195,129,.14);border-radius:10px;padding:10px 12px;line-height:1.7}
+  .emailnote b{color:#e3c381;font-weight:600}
+  .cta{display:block;width:100%;margin:18px 0 0;padding:16px;border:0;border-radius:12px;background:linear-gradient(135deg,#d2b16d,#a87d3f);color:#1a1206;font-size:15.5px;font-weight:800;letter-spacing:.03em;cursor:pointer;box-shadow:0 8px 20px rgba(168,125,63,.28)}
+  .cta:active{transform:translateY(1px)}
+  #embedded-checkout{margin-top:18px;min-height:60px}
+  .pay-msg{text-align:center;color:#aca79b;font-size:13px;padding:40px 20px}
+  .pay-msg.err{color:#e0a9a9}
+  .back{display:inline-block;margin:20px auto 0;color:#8f8a7e;font-size:12.5px;text-decoration:none;text-align:center;width:100%}
+  .back:hover{color:#c2a26a}
+  #payDone{display:none;text-align:center;padding:40px 20px}
+  #payDone .mk{width:56px;height:56px;border-radius:50%;border:1.5px solid #c2a26a;color:#c2a26a;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}
+  #payDone h3{font-size:20px;color:#f5f1e8;margin:0 0 12px}
+  #payDone p{color:#aca79b;font-size:13.5px;line-height:1.95;margin:0 0 22px}
+  #payDone .donenote{max-width:400px;margin:18px auto 0;color:#7d786d;font-size:11px;line-height:1.9}
+  #payDone .donenote b{color:#aca79b;font-weight:600}
+  #errBox{display:none;text-align:center;padding:40px 20px;color:#e0a9a9;font-size:14px;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">エルラボ</div>
+
+  <div class="card" id="buyCard">
+    <div id="buyHead">
+      <h1 class="c-name" id="cName">講座アクセスパス</h1>
+      <div class="c-price"><span class="amt" id="cAmt">—</span><span class="tax">（税込）</span></div>
+      <span class="c-mode" id="cMode" style="display:none"></span>
+      <div class="emailnote" id="emailNote" style="display:none"></div>
+      <button class="cta" id="buyBtn" onclick="openCheckout()">購入手続きへ進む →</button>
+    </div>
+    <div id="embedded-checkout"></div>
+    <div id="payDone">
+      <div class="mk">✓</div>
+      <h3>ご購入ありがとうございます</h3>
+      <p>ご登録のメールに視聴権を反映します。<br>さっそくアプリで学びをはじめましょう。</p>
+      <a class="cta" id="doneApp" href="https://columns.l-mine.com/app/" style="text-decoration:none;text-align:center">アプリを開く</a>
+      <p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p>
+    </div>
+    <div id="errBox"></div>
+  </div>
+
+  <a class="back" id="backLink" href="https://columns.l-mine.com/app/">← アプリに戻る</a>
+</div>
+
+<script>
+  var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+  var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+
+  var q = new URLSearchParams(location.search);
+  var PRICE = (q.get('price') || '').trim();
+  var MODE  = (q.get('mode')  || 'payment').trim();          // payment | subscription
+  var CNAME = (q.get('name')  || '').trim();
+  var AMOUNT= (q.get('amount')|| '').trim();
+  var EMAIL = (q.get('email') || '').trim().toLowerCase();
+  var BACK  = (q.get('back')  || 'https://columns.l-mine.com/app/').trim();
+
+  function fmtPrice(p){
+    p = String(p||'').trim(); if(!p) return '';
+    if(/[¥円$]/.test(p)) return p;
+    var n = p.replace(/[,\s]/g,'');
+    return /^\d+$/.test(n) ? ('¥' + Number(n).toLocaleString()) : p;
+  }
+
+  // 画面初期化
+  (function initView(){
+    if(CNAME) document.getElementById('cName').textContent = CNAME;
+    document.getElementById('cAmt').textContent = AMOUNT ? fmtPrice(AMOUNT) : '';
+    if(MODE === 'subscription'){
+      var m = document.getElementById('cMode'); m.textContent = '月額サブスク'; m.style.display = 'inline-block';
+      var t = document.querySelector('.c-price .tax'); if(t) t.textContent = '／月（税込）';
+    }
+    var en = document.getElementById('emailNote');
+    if(EMAIL){ en.innerHTML = 'ご登録メール：<b>' + EMAIL + '</b><br>このメールに視聴権が反映されます'; en.style.display = 'block'; }
+    var back = document.getElementById('backLink'); if(back) back.setAttribute('href', BACK);
+    var da = document.getElementById('doneApp'); if(da) da.setAttribute('href', BACK);
+    if(!PRICE){ showErr('決済情報が指定されていません。アプリからやり直してください。'); }
+  })();
+
+  function showErr(msg){
+    document.getElementById('buyHead').style.display = 'none';
+    var e = document.getElementById('errBox'); e.textContent = msg; e.style.display = 'block';
+  }
+
+  var _stripe = null, _checkout = null;
+  async function openCheckout(){
+    if(!PRICE) return;
+    var head = document.getElementById('buyHead');
+    var cont = document.getElementById('embedded-checkout');
+    head.style.display = 'none';
+    cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+    try{
+      if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+      if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+      var url = CHECKOUT_GAS + '?action=create_checkout&mode=' + encodeURIComponent(MODE)
+              + '&price=' + encodeURIComponent(PRICE)
+              + (EMAIL ? ('&email=' + encodeURIComponent(EMAIL)) : '')
+              + '&_=' + Date.now();
+      var r = await fetch(url).then(function(x){ return x.json(); });
+      if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+      cont.innerHTML = '';
+      _checkout = await _stripe.initEmbeddedCheckout({
+        clientSecret: r.client_secret,
+        onComplete: function(){ cont.style.display = 'none'; document.getElementById('payDone').style.display = 'block'; }
+      });
+      _checkout.mount('#embedded-checkout');
+    }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+  }
+</script>
+</body>
+</html>
