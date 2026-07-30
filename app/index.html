@@ -1660,6 +1660,11 @@ a{text-decoration:none}
   .col-t{color:#f0ece0;font-size:14px;font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .col-lockbadge{align-self:flex-start;margin-top:5px;font-size:10px;color:#e6c47f;background:rgba(227,195,129,.12);border:1px solid rgba(227,195,129,.3);border-radius:999px;padding:2px 8px}
   .col-empty{text-align:center;color:#8a8575;font-size:13px;padding:40px 20px;line-height:1.9}
+  .col-load{padding:40px 22px;text-align:center}
+  .col-load .clb{width:100%;max-width:260px;height:4px;margin:0 auto;border-radius:999px;background:rgba(227,195,129,.14);overflow:hidden;position:relative}
+  .col-load .clb::before{content:"";position:absolute;top:0;left:-40%;height:100%;width:40%;border-radius:999px;background:linear-gradient(90deg,transparent,#e6c47f,transparent);animation:clbMove 1.05s ease-in-out infinite}
+  @keyframes clbMove{0%{left:-42%}100%{left:100%}}
+  .col-load .clt{color:#8a8575;font-size:12px;margin-top:13px;letter-spacing:.03em}
   .col-article{flex:1;overflow:auto;padding:22px 20px 60px}
   .ca-date{color:#9a958a;font-size:12px;margin-bottom:8px}
   .ca-title{font-family:var(--mincho,serif);color:#f5efe0;font-size:22px;font-weight:700;line-height:1.55;margin:0 0 18px;letter-spacing:.02em}
@@ -1692,7 +1697,7 @@ a{text-decoration:none}
       <div class="col-h" id="colHeadTitle">メンバー限定コラム</div>
       <button class="col-x" id="colClose" type="button" aria-label="閉じる">×</button>
     </div>
-    <div class="col-list" id="colList"><div class="col-empty">読み込み中…</div></div>
+    <div class="col-list" id="colList"><div class="col-load"><div class="clb"></div><div class="clt">読み込み中…</div></div></div>
     <div class="col-article" id="colArticle" hidden></div>
   </div>
 </div>
@@ -2786,6 +2791,7 @@ function isAdmin(){ return hasTag("admin"); }
 
 // ===== コラム（公開／メンバー限定） =====
 const PUBLIC_COLUMN_URL = "https://columns.l-mine.com/columns/";
+const COL_LOADING = '<div class="col-load"><div class="clb"></div><div class="clt">読み込み中…</div></div>';
 function openColumnChooser(){ const m=document.getElementById("columnChooser"); if(m) m.hidden=false; }
 function closeColumnChooser(){ const m=document.getElementById("columnChooser"); if(m) m.hidden=true; }
 function closeMemberColumns(){ const m=document.getElementById("columnsModal"); if(m) m.hidden=true; }
@@ -2810,7 +2816,7 @@ async function openMemberColumns(){
   document.getElementById("columnsModal").hidden = false;
   showColumnList();
   const list = document.getElementById("colList");
-  list.innerHTML = `<div class="col-empty">読み込み中…</div>`;
+  list.innerHTML = COL_LOADING;
   try{
     const em = (SESSION && SESSION.email) || "";
     const res = await fetch(GAS_URL + "?action=columns&email=" + encodeURIComponent(em) + "&_=" + Date.now()).then(r=>r.json());
@@ -2835,7 +2841,7 @@ async function openColumnArticle(id){
   document.getElementById("columnsModal").hidden = false;
   document.getElementById("colList").hidden = true;
   const art = document.getElementById("colArticle");
-  art.hidden = false; art.innerHTML = `<div class="col-empty">読み込み中…</div>`;
+  art.hidden = false; art.innerHTML = COL_LOADING;
   document.getElementById("colBack").hidden = false;
   document.getElementById("colHeadTitle").textContent = "メンバー限定コラム";
   try{
@@ -2855,9 +2861,9 @@ async function openColumnArticle(id){
 // コラム本文の整形（ルール準拠）：空行=段落／行頭#=見出し／画像URL行=画像／---=区切り／**太字**／[文字](URL)／URL自動リンク
 function renderColumnBody(text){
   const inline = s => escapeHtml(s)
-    .replace(/\[([^\]]+)\]\((?:https?:)?[^)]+\)/g, '$1')                                   // [文字](URL) → 文字（余計な自動リンクを除去）
-    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')                                               // **太字**
-    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>'); // 生URL → リンク
+    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')                                                          // **太字**
+    .replace(/\[([^\]]+)\]\(((?:https?:)?[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>') // [文字](URL) → リンク
+    .replace(/(?<!["'=>])(https?:\/\/[^\s<)"']+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');  // 生URL → リンク（既存<a>内は除外）
   const isImg = u => /^https?:\/\/\S+$/i.test(u) && (/\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test(u) || /drive\.google\.com\/(thumbnail|uc)\?/i.test(u));
   const blocks = String(text).replace(/\r\n/g,"\n").split(/\n{2,}/);   // 空行で段落を分ける
   let html = "";
