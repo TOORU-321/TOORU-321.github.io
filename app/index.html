@@ -1681,7 +1681,7 @@ a{text-decoration:none}
   <div class="cc-sheet">
     <div class="cc-title">コラム</div>
     <button class="cc-opt" id="ccPublic" type="button"><span class="cc-ico">📖</span><span><b>公開コラム</b><small>誰でも読めるコラム（外部サイトで開く）</small></span></button>
-    <button class="cc-opt" id="ccMember" type="button"><span class="cc-ico">🔒</span><span><b>メンバー限定コラム</b><small>サブスク・VIP限定／有料級のノウハウ</small></span></button>
+    <button class="cc-opt" id="ccMember" type="button"><span class="cc-ico">🔒</span><span><b>メンバー限定の秘密のコラム</b><small>コラムにはない“裏コラム”。表に出る前の先読み話も</small></span></button>
     <button class="cc-cancel" id="ccCancel" type="button">閉じる</button>
   </div>
 </div>
@@ -2843,7 +2843,7 @@ async function openColumnArticle(id){
     const res = await fetch(GAS_URL + "?action=column&id=" + encodeURIComponent(id) + "&email=" + encodeURIComponent(em) + "&_=" + Date.now()).then(r=>r.json());
     if(!res || !res.ok){ art.innerHTML = `<div class="col-empty">読み込めませんでした。</div>`; return; }
     if(res.locked){
-      art.innerHTML = `<div class="ca-lock"><div class="lk-ico2">🔒</div><h4>「${escapeHtml(res.title||"メンバー限定コラム")}」</h4><p>このコラムは<b>エルラボ＋（サブスク）会員・VIP</b>限定です。<br>ご加入いただくと、有料級のノウハウコラムが読めます。</p><button class="lk-btn" id="caJoin" type="button">✨ エルラボ＋に加入して読む →</button></div>`;
+      art.innerHTML = `<div class="ca-lock"><div class="lk-ico2">🔒</div><h4>メンバー限定の秘密のコラム</h4><p>これは、通常のコラムには載せていない“裏コラム”です。<br>限定公開のため、まだ多くの方に知られていない話や、SNSなどで表に出る前の先読み話をお届けしています。<br><br>エルラボ＋メンバーになると読めます。</p><button class="lk-btn" id="caJoin" type="button">エルラボ＋メンバーになって読む →</button></div>`;
       const j = document.getElementById("caJoin"); if(j) j.onclick = ()=>{ closeMemberColumns(); if(SESSION && SESSION.email) openSubJoin(); else openLogin(); };
       return;
     }
