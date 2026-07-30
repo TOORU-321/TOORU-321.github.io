@@ -1664,8 +1664,9 @@ a{text-decoration:none}
   .ca-date{color:#9a958a;font-size:12px;margin-bottom:8px}
   .ca-title{font-family:var(--mincho,serif);color:#f5efe0;font-size:22px;font-weight:700;line-height:1.55;margin:0 0 18px;letter-spacing:.02em}
   .ca-hero{width:100%;border-radius:12px;margin:0 0 20px}
-  .ca-body{font-size:15px;line-height:2.05;color:#e4e0d5}
-  .ca-body p{margin:0 0 1.25em}
+  .ca-body{font-size:15px;line-height:1.95;color:#e4e0d5}
+  .ca-body p{margin:0 0 .85em}
+  .ca-hr{border:0;border-top:1px solid rgba(227,195,129,.2);margin:1.7em 0}
   .ca-body h3{font-family:var(--mincho,serif);font-size:18.5px;color:#f0d69c;font-weight:700;margin:1.7em 0 .6em;padding-left:11px;border-left:3px solid var(--gold,#b89555)}
   .ca-body img{width:100%;border-radius:10px;margin:1.1em 0}
   .ca-body a{color:#e6c47f;word-break:break-all}
@@ -2851,16 +2852,22 @@ async function openColumnArticle(id){
     art.scrollTop = 0;
   }catch(e){ art.innerHTML = `<div class="col-empty">通信エラーが発生しました。</div>`; }
 }
-// コラム本文の簡易整形：空行=段落／行頭#=見出し／画像URL行=画像／URL自動リンク
+// コラム本文の整形：1行=1段落／行頭#=見出し／画像URL行=画像／---=区切り／**太字**／[文字](URL)／URL自動リンク
 function renderColumnBody(text){
-  const linkify = s => escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-  const blocks = String(text).replace(/\r\n/g,"\n").split(/\n{2,}/);
+  const inline = s => escapeHtml(s)
+    .replace(/\[([^\]]+)\]\((?:https?:)?[^)]+\)/g, '$1')                                   // [文字](URL) → 文字（余計な自動リンクを除去）
+    .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')                                               // **太字**
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>'); // 生URL → リンク
+  const isImg = u => /^https?:\/\/\S+$/i.test(u) && (/\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test(u) || /drive\.google\.com\/(thumbnail|uc)\?/i.test(u));
+  const lines = String(text).replace(/\r\n/g,"\n").split(/\n/);
   let html = "";
-  blocks.forEach(b=>{
-    b = b.replace(/\s+$/,""); if(!b.trim()) return;
+  lines.forEach(raw=>{
+    const b = raw.trim();
+    if(!b) return;
+    if(/^-{3,}$/.test(b)){ html += `<hr class="ca-hr">`; return; }
     if(/^#\s+/.test(b)){ html += `<h3>${escapeHtml(b.replace(/^#\s+/,"").trim())}</h3>`; return; }
-    if(/^https?:\/\/\S+\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test(b.trim())){ html += `<img src="${escapeHtml(b.trim())}" onerror="this.style.display='none'">`; return; }
-    html += `<p>${linkify(b).replace(/\n/g,"<br>")}</p>`;
+    if(isImg(b)){ html += `<img src="${escapeHtml(b)}" onerror="this.style.display='none'">`; return; }
+    html += `<p>${inline(b)}</p>`;
   });
   return html;
 }
