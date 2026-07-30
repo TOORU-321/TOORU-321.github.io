@@ -251,7 +251,7 @@ def render_article(c, cols):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{html.escape(c["title"])}｜L-MINE COLUMN</title>
+<title>{html.escape(c["title"])}｜とーる 猫好きの行動経済アナリスト</title>
 <link rel="icon" href="assets/fabikon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -348,7 +348,7 @@ def render_index(page_cols, page, pages):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>コラム｜L-MINE COLUMN</title>
+<title>コラム｜とーる 猫好きの行動経済アナリスト</title>
 <link rel="icon" href="assets/fabikon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
