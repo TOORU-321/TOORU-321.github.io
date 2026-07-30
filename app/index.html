@@ -1616,16 +1616,85 @@ a{text-decoration:none}
     <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="15" rx="2"/><polygon points="10 8.5 15.5 11.5 10 14.5"/></svg></div>
     <span class="nav-label">動画一覧</span>
   </button>
-  <a class="nav-item" href="https://columns.l-mine.com/columns/" target="_blank" rel="noopener">
+  <button class="nav-item" id="nav-column" type="button">
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <span class="nav-label">コラム</span>
-  </a>
+  </button>
   <button class="nav-item soon" data-soon>
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
     <span class="nav-label">書籍<span class="soon-tag">準備中</span></span>
   </button>
 </nav>
 </div><!-- /#library -->
+
+<!-- ===== コラム：選択＋メンバー限定コラム ===== -->
+<style>
+  .cc-modal{position:fixed;inset:0;z-index:420;display:flex;align-items:flex-end;justify-content:center}
+  .cc-modal[hidden]{display:none}
+  .cc-backdrop{position:absolute;inset:0;background:rgba(8,9,12,.66);backdrop-filter:blur(4px)}
+  .cc-sheet{position:relative;width:100%;max-width:520px;margin:0 10px 10px;background:#15130d;border:1px solid rgba(227,195,129,.28);border-radius:18px;padding:18px 16px 14px;box-shadow:0 -10px 50px rgba(0,0,0,.5);animation:ccUp .22s ease both}
+  @keyframes ccUp{from{transform:translateY(16px);opacity:.6}to{transform:none;opacity:1}}
+  .cc-title{font-family:var(--mincho,serif);text-align:center;color:#f0d69c;font-size:15px;font-weight:700;margin-bottom:12px;letter-spacing:.04em}
+  .cc-opt{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(227,195,129,.22);border-radius:12px;padding:14px 15px;margin-bottom:10px;cursor:pointer;color:#e8e4d8}
+  .cc-opt:hover{border-color:rgba(227,195,129,.5);background:rgba(227,195,129,.06)}
+  .cc-opt .cc-ico{font-size:22px;flex:none}
+  .cc-opt b{display:block;font-size:14.5px;color:#f0ece0}
+  .cc-opt small{display:block;color:#9a958a;font-size:11.5px;margin-top:2px}
+  .cc-cancel{width:100%;background:none;border:0;color:#8a8575;font-size:13px;padding:8px;margin-top:2px;cursor:pointer}
+
+  .col-modal{position:fixed;inset:0;z-index:415;display:flex;align-items:stretch;justify-content:center;background:rgba(8,9,12,.6)}
+  .col-modal[hidden]{display:none}
+  .col-sheet{position:relative;width:100%;max-width:720px;background:#14120e;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(0,0,0,.5)}
+  .col-head{display:flex;align-items:center;gap:8px;padding:14px 14px;border-bottom:1px solid rgba(227,195,129,.16);position:sticky;top:0;background:#14120e;z-index:2}
+  .col-back{background:none;border:0;color:#e6c47f;font-size:13.5px;cursor:pointer;flex:none}
+  .col-back[hidden]{display:none}
+  .col-h{flex:1;text-align:center;font-family:var(--mincho,serif);color:#f0d69c;font-size:15.5px;font-weight:700;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .col-x{background:none;border:0;color:#8a8575;font-size:24px;line-height:1;cursor:pointer;flex:none}
+  .col-list{flex:1;overflow:auto;padding:10px 14px 40px}
+  .col-item{display:flex;gap:13px;align-items:stretch;padding:12px;border:1px solid rgba(227,195,129,.14);border-radius:14px;background:rgba(255,255,255,.02);margin-bottom:12px;cursor:pointer;transition:.2s}
+  .col-item:hover{border-color:rgba(227,195,129,.4);transform:translateY(-2px)}
+  .col-thumb{flex:none;width:96px;height:64px;border-radius:9px;object-fit:cover;background:#221f16 center/cover no-repeat}
+  .col-thumb.noimg{display:flex;align-items:center;justify-content:center;color:#6a655a;font-size:20px}
+  .col-meta{min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .col-date{color:#9a958a;font-size:11px;margin-bottom:3px}
+  .col-t{color:#f0ece0;font-size:14px;font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .col-lockbadge{align-self:flex-start;margin-top:5px;font-size:10px;color:#e6c47f;background:rgba(227,195,129,.12);border:1px solid rgba(227,195,129,.3);border-radius:999px;padding:2px 8px}
+  .col-empty{text-align:center;color:#8a8575;font-size:13px;padding:40px 20px;line-height:1.9}
+  .col-article{flex:1;overflow:auto;padding:22px 20px 60px}
+  .ca-date{color:#9a958a;font-size:12px;margin-bottom:8px}
+  .ca-title{font-family:var(--mincho,serif);color:#f5efe0;font-size:22px;font-weight:700;line-height:1.55;margin:0 0 18px;letter-spacing:.02em}
+  .ca-hero{width:100%;border-radius:12px;margin:0 0 20px}
+  .ca-body{font-size:15px;line-height:2.05;color:#e4e0d5}
+  .ca-body p{margin:0 0 1.25em}
+  .ca-body h3{font-family:var(--mincho,serif);font-size:18.5px;color:#f0d69c;font-weight:700;margin:1.7em 0 .6em;padding-left:11px;border-left:3px solid var(--gold,#b89555)}
+  .ca-body img{width:100%;border-radius:10px;margin:1.1em 0}
+  .ca-body a{color:#e6c47f;word-break:break-all}
+  .ca-lock{text-align:center;padding:44px 22px}
+  .ca-lock .lk-ico2{font-size:40px;margin-bottom:14px}
+  .ca-lock h4{color:#f0d69c;font-size:17px;margin:0 0 10px}
+  .ca-lock p{color:#b8b3a3;font-size:13px;line-height:1.9;margin:0 0 20px}
+  .ca-lock .lk-btn{display:inline-block;background:linear-gradient(180deg,#e6c47f,#caa75f);color:#1c1a14;font-weight:700;border:0;border-radius:999px;padding:13px 30px;font-size:14px;cursor:pointer;text-decoration:none}
+</style>
+<div class="cc-modal" id="columnChooser" hidden>
+  <div class="cc-backdrop" id="ccBackdrop"></div>
+  <div class="cc-sheet">
+    <div class="cc-title">コラム</div>
+    <button class="cc-opt" id="ccPublic" type="button"><span class="cc-ico">📖</span><span><b>公開コラム</b><small>誰でも読めるコラム（外部サイトで開く）</small></span></button>
+    <button class="cc-opt" id="ccMember" type="button"><span class="cc-ico">🔒</span><span><b>メンバー限定コラム</b><small>サブスク・VIP限定／有料級のノウハウ</small></span></button>
+    <button class="cc-cancel" id="ccCancel" type="button">閉じる</button>
+  </div>
+</div>
+<div class="col-modal" id="columnsModal" hidden>
+  <div class="col-sheet">
+    <div class="col-head">
+      <button class="col-back" id="colBack" type="button" hidden>‹ 一覧</button>
+      <div class="col-h" id="colHeadTitle">メンバー限定コラム</div>
+      <button class="col-x" id="colClose" type="button" aria-label="閉じる">×</button>
+    </div>
+    <div class="col-list" id="colList"><div class="col-empty">読み込み中…</div></div>
+    <div class="col-article" id="colArticle" hidden></div>
+  </div>
+</div>
 
 <div class="loginmodal" id="loginModal" hidden>
   <div class="lm-card">
@@ -2713,6 +2782,88 @@ document.querySelectorAll(".bottom-nav .nav-item").forEach(a => {
 // タグ判定は大文字小文字を区別しない（VIP / vip どちらでもOK）
 function hasTag(name){ const n = String(name).toLowerCase(); return !!(SESSION && (SESSION.tags || []).some(t => String(t).toLowerCase() === n)); }
 function isAdmin(){ return hasTag("admin"); }
+
+// ===== コラム（公開／メンバー限定） =====
+const PUBLIC_COLUMN_URL = "https://columns.l-mine.com/columns/";
+function openColumnChooser(){ const m=document.getElementById("columnChooser"); if(m) m.hidden=false; }
+function closeColumnChooser(){ const m=document.getElementById("columnChooser"); if(m) m.hidden=true; }
+function closeMemberColumns(){ const m=document.getElementById("columnsModal"); if(m) m.hidden=true; }
+function showColumnList(){
+  document.getElementById("colArticle").hidden = true;
+  document.getElementById("colList").hidden = false;
+  document.getElementById("colBack").hidden = true;
+  document.getElementById("colHeadTitle").textContent = "メンバー限定コラム";
+}
+(function(){
+  const nav = document.getElementById("nav-column"); if(nav) nav.addEventListener("click", openColumnChooser);
+  const bk = document.getElementById("ccBackdrop"); if(bk) bk.addEventListener("click", closeColumnChooser);
+  const cc = document.getElementById("ccCancel");   if(cc) cc.addEventListener("click", closeColumnChooser);
+  const pub= document.getElementById("ccPublic");   if(pub) pub.addEventListener("click", ()=>{ closeColumnChooser(); window.open(PUBLIC_COLUMN_URL, "_blank", "noopener"); });
+  const mem= document.getElementById("ccMember");   if(mem) mem.addEventListener("click", ()=>{ closeColumnChooser(); openMemberColumns(); });
+  const cl = document.getElementById("colClose");   if(cl) cl.addEventListener("click", closeMemberColumns);
+  const cb = document.getElementById("colBack");    if(cb) cb.addEventListener("click", showColumnList);
+  // ディープリンク：?column=ID で特定の限定コラムを直接開く（公開コラム→アプリ誘導用）
+  try{ const cid = new URLSearchParams(location.search).get("column"); if(cid){ setTimeout(()=>openColumnArticle(cid), 1200); } }catch(e){}
+})();
+async function openMemberColumns(){
+  document.getElementById("columnsModal").hidden = false;
+  showColumnList();
+  const list = document.getElementById("colList");
+  list.innerHTML = `<div class="col-empty">読み込み中…</div>`;
+  try{
+    const em = (SESSION && SESSION.email) || "";
+    const res = await fetch(GAS_URL + "?action=columns&email=" + encodeURIComponent(em) + "&_=" + Date.now()).then(r=>r.json());
+    if(!res || !res.ok){ list.innerHTML = `<div class="col-empty">読み込めませんでした。</div>`; return; }
+    renderColumnList(res.items || [], !!res.member);
+  }catch(e){ list.innerHTML = `<div class="col-empty">通信エラーが発生しました。</div>`; }
+}
+function renderColumnList(items, isMember){
+  const list = document.getElementById("colList");
+  if(!items.length){ list.innerHTML = `<div class="col-empty">まだコラムがありません。</div>`; return; }
+  list.innerHTML = "";
+  items.forEach(c=>{
+    const el = document.createElement("div"); el.className = "col-item";
+    const thumb = c.thumb ? `<div class="col-thumb" style="background-image:url('${escapeHtml(c.thumb)}')"></div>` : `<div class="col-thumb noimg">📖</div>`;
+    const lock = isMember ? "" : `<span class="col-lockbadge">🔒 会員限定</span>`;
+    el.innerHTML = thumb + `<div class="col-meta"><div class="col-date">${escapeHtml(c.date||"")}</div><div class="col-t">${escapeHtml(c.title||"")}</div>${lock}</div>`;
+    el.onclick = ()=> openColumnArticle(c.id);
+    list.appendChild(el);
+  });
+}
+async function openColumnArticle(id){
+  document.getElementById("columnsModal").hidden = false;
+  document.getElementById("colList").hidden = true;
+  const art = document.getElementById("colArticle");
+  art.hidden = false; art.innerHTML = `<div class="col-empty">読み込み中…</div>`;
+  document.getElementById("colBack").hidden = false;
+  document.getElementById("colHeadTitle").textContent = "メンバー限定コラム";
+  try{
+    const em = (SESSION && SESSION.email) || "";
+    const res = await fetch(GAS_URL + "?action=column&id=" + encodeURIComponent(id) + "&email=" + encodeURIComponent(em) + "&_=" + Date.now()).then(r=>r.json());
+    if(!res || !res.ok){ art.innerHTML = `<div class="col-empty">読み込めませんでした。</div>`; return; }
+    if(res.locked){
+      art.innerHTML = `<div class="ca-lock"><div class="lk-ico2">🔒</div><h4>「${escapeHtml(res.title||"メンバー限定コラム")}」</h4><p>このコラムは<b>エルラボ＋（サブスク）会員・VIP</b>限定です。<br>ご加入いただくと、有料級のノウハウコラムが読めます。</p><button class="lk-btn" id="caJoin" type="button">✨ エルラボ＋に加入して読む →</button></div>`;
+      const j = document.getElementById("caJoin"); if(j) j.onclick = ()=>{ closeMemberColumns(); if(SESSION && SESSION.email) openSubJoin(); else openLogin(); };
+      return;
+    }
+    const hero = res.thumb ? `<img class="ca-hero" src="${escapeHtml(res.thumb)}" onerror="this.style.display='none'">` : "";
+    art.innerHTML = `<div class="ca-date">${escapeHtml(res.date||"")}</div><h1 class="ca-title">${escapeHtml(res.title||"")}</h1>${hero}<div class="ca-body">${renderColumnBody(res.body||"")}</div>`;
+    art.scrollTop = 0;
+  }catch(e){ art.innerHTML = `<div class="col-empty">通信エラーが発生しました。</div>`; }
+}
+// コラム本文の簡易整形：空行=段落／行頭#=見出し／画像URL行=画像／URL自動リンク
+function renderColumnBody(text){
+  const linkify = s => escapeHtml(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  const blocks = String(text).replace(/\r\n/g,"\n").split(/\n{2,}/);
+  let html = "";
+  blocks.forEach(b=>{
+    b = b.replace(/\s+$/,""); if(!b.trim()) return;
+    if(/^#\s+/.test(b)){ html += `<h3>${escapeHtml(b.replace(/^#\s+/,"").trim())}</h3>`; return; }
+    if(/^https?:\/\/\S+\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test(b.trim())){ html += `<img src="${escapeHtml(b.trim())}" onerror="this.style.display='none'">`; return; }
+    html += `<p>${linkify(b).replace(/\n/g,"<br>")}</p>`;
+  });
+  return html;
+}
 function isVip(){ return hasTag("vip"); }
 // エルラボ＋加入LPへ。ログインメールを引き継ぎ、決済メール＝ログインメールで揃える（視聴権が確実に反映）。
 function openSubJoin(){
