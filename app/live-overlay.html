@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ライブ オーバーレイ</title>
+<style>
+  /* 背景は透明（OBSのブラウザソースで動画に重ねる） */
+  html,body{margin:0;height:100%;background:transparent;overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
+  /* チャットは左下に、下から積み上がって数秒でフェード */
+  #chat{position:fixed;left:24px;bottom:24px;width:min(42vw,560px);display:flex;flex-direction:column;justify-content:flex-end;gap:8px;max-height:70vh;overflow:hidden}
+  .m{align-self:flex-start;max-width:100%;background:rgba(12,14,20,.62);backdrop-filter:blur(2px);border-radius:12px;padding:9px 14px;
+    color:#fff;font-size:22px;line-height:1.45;text-shadow:0 1px 3px rgba(0,0,0,.6);word-break:break-word;
+    animation:mIn .3s ease, mOut .6s ease 11.4s forwards}
+  .m .nm{color:#f0cf88;font-weight:800;margin-right:8px}
+  .m.q{border-left:4px solid #f0cf88;background:rgba(30,26,14,.72)}
+  .m.q .qt{display:inline-block;font-size:14px;font-weight:800;color:#241a06;background:#f0cf88;border-radius:5px;padding:1px 8px;margin-right:8px;vertical-align:middle}
+  @keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes mOut{to{opacity:0;transform:translateX(-12px)}}
+  /* リアクションは右下から浮かぶ */
+  #fx{position:fixed;right:40px;bottom:20px;width:180px;height:70vh;pointer-events:none}
+  .fl{position:absolute;bottom:0;font-size:46px;animation:rise 3.4s ease-out forwards;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+  @keyframes rise{0%{opacity:0;transform:translateY(20px) scale(.6)}12%{opacity:1}100%{opacity:0;transform:translateY(-52vh) scale(1.2)}}
+</style>
+</head>
+<body>
+<div id="chat"></div>
+<div id="fx"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBpBpGmxfWhyHq3rzwH2Oa_6IWDIZbOAj8",
+  authDomain: "elabo-plus.firebaseapp.com",
+  projectId: "elabo-plus",
+  storageBucket: "elabo-plus.firebasestorage.app",
+  messagingSenderId: "452649305918",
+  appId: "1:452649305918:web:4bef5bae57aee4d86c4e6f",
+  databaseURL: "https://elabo-plus-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const EVENT_ID = (new URLSearchParams(location.search).get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) || "seminar";
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// 匿名ログインで読み取り権限を得る（Firebaseで匿名サインインの有効化が必要）
+firebase.auth().signInAnonymously().then(start).catch(function(e){
+  document.getElementById("chat").innerHTML =
+    '<div class="m" style="animation:mIn .3s ease">オーバーレイの準備に失敗しました。<br>Firebaseで「匿名」サインインを有効にしてください。</div>';
+});
+
+function start(){
+  const base = db.ref("live/" + EVENT_ID);
+  const startAt = Date.now();
+  const chat = document.getElementById("chat");
+
+  base.child("messages").limitToLast(8).on("child_added", function(s){
+    const m = s.val() || {}; if(!m.t) return;
+    if(m.ts && m.ts < startAt - 3000) return;   // 表示開始前の古い分は出さない
+    const el = document.createElement("div");
+    el.className = "m" + (m.ty === "q" ? " q" : "");
+    el.innerHTML = (m.ty === "q" ? '<span class="qt">質問</span>' : '') + '<span class="nm">' + esc(m.n) + '</span>' + esc(m.t);
+    chat.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 12200);   // フェード後に除去
+    while(chat.children.length > 8) chat.removeChild(chat.firstChild);
+  });
+
+  const fx = document.getElementById("fx");
+  base.child("reactions").limitToLast(1).on("child_added", function(s){
+    const r = s.val() || {}; if(!r.e) return;
+    if(r.ts && r.ts < startAt - 3000) return;
+    const d = document.createElement("div");
+    d.className = "fl"; d.textContent = r.e;
+    d.style.left = (Math.random() * 120) + "px";
+    fx.appendChild(d); setTimeout(function(){ d.remove(); }, 3500);
+  });
+}
+</script>
+</body>
+</html>
