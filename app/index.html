@@ -173,6 +173,9 @@
 .news-item{padding:15px 2px;border-bottom:1px solid var(--line)}
 .news-item.nhl,.news-compact.nhl{animation:nhlFlash 2.4s ease;border-radius:8px}
 @keyframes nhlFlash{0%,100%{background:transparent}12%,48%{background:rgba(227,195,129,.18)}}
+.np-cd{font-size:11.5px;color:#c2a26a;margin-top:8px;font-weight:700;letter-spacing:.02em}
+.np-cd.np-closedmsg{color:#c58b8b}
+.np-closed .np-q{opacity:.72}
 .ni-date{font-family:var(--serif-en);font-size:12px;color:var(--gold);letter-spacing:.06em}
 .ni-title{font-family:var(--mincho);font-weight:700;font-size:15.5px;color:var(--ink);margin:4px 0 6px}
 .ni-body{font-size:13px;color:var(--ink-2);line-height:1.9;word-break:break-word}
@@ -1767,6 +1770,10 @@ a{text-decoration:none}
       <label class="nf-check"><input type="checkbox" id="nf-imgpos"> 画像を本文の<b>下</b>に表示（オフ＝本文の上）</label>
       <label>アンケート選択肢（任意・カンマ区切り　例：参加します,不参加）</label>
       <input type="text" id="nf-options" placeholder="参加します,不参加">
+      <label>参加ボタンの有効期限（任意・アンケートがある時）</label>
+      <input type="datetime-local" id="nf-deadline">
+      <label>締切後の文言（任意・空欄＝「受付は終了しました」）</label>
+      <input type="text" id="nf-closedmsg" placeholder="受付は終了しました">
       <label>公開範囲</label>
       <select id="nf-audience">
         <option value="全員">全員に公開</option>
@@ -3144,7 +3151,30 @@ async function loadNews(){
       if(!compactHeaderAdded){ const h = document.createElement("div"); h.className = "news-more-h"; h.textContent = "以前のお知らせ"; list.appendChild(h); compactHeaderAdded = true; }
       list.appendChild(el);
     });
+    startPollCountdowns();
   }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
+}
+function fmtCountdown(ms){
+  var s=Math.floor(ms/1000), d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), sec=s%60;
+  if(d>0) return d+"日"+h+"時間"+m+"分";
+  if(h>0) return h+"時間"+m+"分"+sec+"秒";
+  return m+"分"+sec+"秒";
+}
+function startPollCountdowns(){
+  if(startPollCountdowns._iv) return;
+  startPollCountdowns._iv = setInterval(function(){
+    document.querySelectorAll(".np-cd[data-dl]").forEach(function(el){
+      var dl=Number(el.dataset.dl), left=dl-Date.now();
+      if(left <= 0){
+        var poll=el.closest(".ni-poll");
+        if(poll){ poll.classList.add("np-closed"); var opts=poll.querySelector(".np-opts"); if(opts) opts.remove(); }
+        el.textContent = "🔒 " + (el.dataset.msg || "受付は終了しました");
+        el.classList.add("np-closedmsg"); el.removeAttribute("data-dl");
+      } else {
+        el.textContent = "⏳ 締切まで " + fmtCountdown(left);
+      }
+    });
+  }, 1000);
 }
 // 画像URLを整える：GoogleドライブURL（共有リンク）→ 直接表示できる画像URLに変換
 function toImgUrl(u){
@@ -3193,9 +3223,18 @@ function newsItemEl(n){
       el.appendChild(poll);
     } else {
       const mine = localStorage.getItem("lmine_reply_" + n.id) || "";
-      const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
-      poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div><div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
-      poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
+      const dl = n.joinDeadline ? Date.parse(String(n.joinDeadline)) : 0;
+      const closed = dl && Date.now() > dl;
+      const closedMsg = escapeHtml(n.joinClosedMsg || "受付は終了しました");
+      if(closed){
+        poll.classList.add("np-closed");
+        poll.innerHTML = `<div class="np-q">${n.options.map(o=>escapeHtml(o)).join(" ／ ")}</div><div class="np-cd np-closedmsg">🔒 ${closedMsg}</div>`;
+      } else {
+        const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
+        const cd = dl ? `<div class="np-cd" data-dl="${dl}" data-msg="${closedMsg}"></div>` : "";
+        poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div>${cd}<div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
+        poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
+      }
       el.appendChild(poll);
     }
   }
@@ -3249,8 +3288,8 @@ function newsCompactEl(n){
   el.addEventListener("click", () => { const full = newsItemEl(n); if(full) el.replaceWith(full); });
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; document.getElementById("nf-deadline").value=""; document.getElementById("nf-closedmsg").value=""; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); document.getElementById("nf-deadline").value=(n.joinDeadline?String(n.joinDeadline).slice(0,16):""); document.getElementById("nf-closedmsg").value=(n.joinClosedMsg||""); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
 function likeNews(id, btn){
   const key = "lmine_liked_" + id;
   if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
@@ -3448,7 +3487,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value, deadline:document.getElementById("nf-deadline").value, closedmsg:document.getElementById("nf-closedmsg").value });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
