@@ -263,6 +263,7 @@
     <button class="save" id="aSave">設定を保存</button>
     <button class="save" id="aCopyUrl" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🔗 参加URLをコピー</button>
     <button class="save" id="aCopyOverlay" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🖥 OBS用チャットオーバーレイURLをコピー</button>
+    <button class="save" id="aNotify" style="margin-top:10px;background:linear-gradient(135deg,#e5484d,#c81e24);color:#fff">🔔 参加できる人に「開始」通知を送る</button>
     <div class="realcnt" id="aRealCnt"></div>
 
     <div class="divider"></div>
@@ -589,6 +590,18 @@ function setupAdmin(){
       navigator.clipboard.writeText(url).then(()=>{ $("aCopyUrl").textContent="コピーしました ✓"; setTimeout(()=>$("aCopyUrl").textContent="🔗 参加URLをコピー",1500); }).catch(()=>{ prompt("このURLをコピーしてください", url); });
     } else { prompt("このURLをコピーしてください", url); }
   };
+  $("aNotify").onclick = async ()=>{
+    if(!confirm("この会場に入れる人（参加条件を満たす人）へ、ライブ開始のプッシュ通知を送りますか？")) return;
+    $("aNotify").disabled=true; $("aNotify").textContent="送信中…";
+    const body = new URLSearchParams({ action:"live_push", email:(ME.email||"").toLowerCase(), e:EVENT_ID,
+      title:(META.title||"ライブ")+" が始まりました🔴", body:"タップして参加しましょう！",
+      mode:(META.accessMode||"public"), rsvpNews:(META.rsvpNews||""), accessTag:(META.accessTag||"") });
+    try{
+      const r = await fetch(GAS_URL,{method:"POST",body}).then(x=>x.json());
+      alert(r&&r.ok ? ("通知を送りました 🔔\n対象 "+r.targets+"人 ／ 端末 "+r.pushed+"件に配信") : "送信に失敗しました（"+((r&&r.error)||"")+"）");
+    }catch(e){ alert("通信エラー"); }
+    $("aNotify").disabled=false; $("aNotify").textContent="🔔 参加できる人に「開始」通知を送る";
+  };
   $("aCopyOverlay").onclick = ()=>{
     var url = location.origin + "/app/live-overlay.html?e=" + encodeURIComponent(EVENT_ID);
     if(navigator.clipboard && navigator.clipboard.writeText){
@@ -669,7 +682,7 @@ async function regArchive(uid, nm){
   if(title==null) return;
   try{
     const r=await fetch(GAS_URL,{method:"POST",body:new URLSearchParams({ action:"archive_add", email:(ME.email||"").toLowerCase(), uid:uid, title:title })}).then(x=>x.json());
-    alert(r&&r.ok ? "動画シートに登録しました（会員アーカイブ）✓\n※アプリに反映まで数分かかることがあります" : "登録に失敗しました（"+((r&&r.error)||"")+"）");
+    alert(r&&r.ok ? "動画シートに登録しました（まず【非公開】）✓\n中身を確認後、シートで種別を「サブスク」等に変えると公開されます" : "登録に失敗しました（"+((r&&r.error)||"")+"）");
   }catch(e){ alert("通信エラー"); }
 }
 async function delArchive(uid){
