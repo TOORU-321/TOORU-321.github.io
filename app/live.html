@@ -34,6 +34,8 @@
   .gate .alt{margin-top:16px;text-align:center;font-size:12px;color:var(--ink-soft)}
   .gate .alt a{color:var(--gold);text-decoration:none}
   .gate .status{margin-top:10px;text-align:center;font-size:12px;color:var(--ink-soft)}
+  .gate .backlink{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--ink-soft);font-size:12.5px;cursor:pointer;padding:6px}
+  .gate .backlink:hover{color:var(--gold)}
 
   /* ===== ルーム ===== */
   .room{position:fixed;inset:0;display:flex;flex-direction:column}
@@ -144,6 +146,7 @@
       <label>チャットで表示する名前（ニックネーム）</label>
       <input type="text" id="gNick" maxlength="20" placeholder="例：とーる / ねこ好きA">
       <button class="primary" id="gEnterBtn">この名前で入場する →</button>
+      <button type="button" id="gBack" class="backlink">← 戻る</button>
       <div class="msg" id="gMsg2"></div>
       <div class="status" id="gAccess"></div>
     </div>
@@ -156,6 +159,7 @@
 <div class="room hidden" id="room">
   <div class="leftcol">
     <div class="topbar">
+      <button class="iconbtn" id="leaveBtn" title="退室する">🚪</button>
       <span class="live-badge off" id="liveBadge"><span class="dot"></span>LIVE</span>
       <span class="ttl" id="roomTitle">ライブ</span>
       <span class="viewers">👥 <b id="viewCount">0</b></span>
@@ -289,6 +293,7 @@ $("gEnterBtn").onclick = ()=>{
   MYNAME=nk; localStorage.setItem("live_nick",nk);
   enterRoom();
 };
+$("gBack").onclick = ()=>{ if(history.length>1){ history.back(); } else { location.href="index.html"; } };
 
 function enterRoom(){
   $("gate").classList.add("hidden");
@@ -300,6 +305,8 @@ function enterRoom(){
   myPres.set({ n: MYNAME, ts: firebase.database.ServerValue.TIMESTAMP });
   myPres.onDisconnect().remove();
   window.addEventListener("pagehide", ()=>{ try{ myPres.remove(); }catch(e){} });
+  // 退室ボタン（誤タップ防止に確認あり）
+  $("leaveBtn").onclick = ()=>{ if(confirm("この会場から退室しますか？")){ try{ myPres.remove(); }catch(e){} location.href="index.html"; } };
 
   // BAN監視（自分が退場させられたら）
   base.child("banned").child(ME.uid).on("value", s=>{
