@@ -217,6 +217,7 @@
         <input type="number" id="aPadCap" min="0" value="15"></div>
     </div>
     <button class="save" id="aSave">設定を保存</button>
+    <button class="save" id="aCopyUrl" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🔗 参加URLをコピー</button>
     <div class="realcnt" id="aRealCnt"></div>
 
     <div class="divider"></div>
@@ -462,6 +463,12 @@ function setupAdmin(){
   $("adminFab").onclick = ()=>{ $("adminSheet").classList.remove("hidden"); fillAdminForm(); };
   $("adminClose").onclick = ()=>$("adminSheet").classList.add("hidden");
   $("adminSheet").addEventListener("click",e=>{ if(e.target===$("adminSheet")) $("adminSheet").classList.add("hidden"); });
+  $("aCopyUrl").onclick = ()=>{
+    var url = location.origin + location.pathname + "?e=" + encodeURIComponent(EVENT_ID);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(()=>{ $("aCopyUrl").textContent="コピーしました ✓"; setTimeout(()=>$("aCopyUrl").textContent="🔗 参加URLをコピー",1500); }).catch(()=>{ prompt("このURLをコピーしてください", url); });
+    } else { prompt("このURLをコピーしてください", url); }
+  };
   $("aSave").onclick = ()=>{
     const meta = {
       title: ($("aTitle").value||"").trim(),
