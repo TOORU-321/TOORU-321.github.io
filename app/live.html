@@ -247,8 +247,10 @@
       <div><label>状態</label>
         <select id="aStatus"><option value="soon">開始前</option><option value="live">配信中</option><option value="ended">終了</option></select></div>
       <div><label>参加できる人</label>
-        <select id="aAccess"><option value="public">ログイン者全員</option><option value="member">メンバー限定</option><option value="rsvp">参加表明者（承認制）</option></select></div>
+        <select id="aAccess"><option value="public">ログイン者全員</option><option value="member">メンバー限定（サブスク・VIP）</option><option value="tag">特定タグ保有者</option><option value="rsvp">参加表明者（承認制）</option></select></div>
     </div>
+    <label>必要タグ（「特定タグ保有者」の時だけ・例：VIP ／ marke）</label>
+    <input type="text" id="aAccessTag" placeholder="必要タグ">
     <label>参加表明のお知らせID（承認制の時だけ・例：13）</label>
     <input type="text" id="aRsvpNews" placeholder="参加ボタンのあるお知らせの id">
     <div class="row">
@@ -361,6 +363,7 @@ $("gEnterBtn").onclick = async ()=>{
   if(!acc.ok){
     $("gMsg2").textContent = acc.reason==="member"
       ? "この会場はエルラボ＋メンバー限定です。メンバーの方はログインをご確認ください。"
+      : acc.reason==="tag" ? "この会場は対象の方のみ入場できます。"
       : acc.reason==="rsvp" ? "参加表明した方のみ入場できます。お知らせで「参加」を押してから、お入りください。"
       : "現在この会場には入場できません。";
     return;
@@ -380,6 +383,13 @@ async function checkAccess(){
       const tags=(r&&r.tags)||[];
       const ok = r && r.ok && (r.active || r.subActive || tags.indexOf("サブスク")>=0 || tags.indexOf("VIP")>=0);
       return {ok:!!ok, reason:"member"};
+    }
+    if(mode==="tag"){
+      const need=(m.accessTag||"").trim();
+      if(!need) return {ok:true};   // タグ未設定なら締め出さない
+      const r = await fetch(GAS_URL+"?action=verify&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&_="+Date.now()).then(x=>x.json());
+      const tags=(r&&r.tags)||[];
+      return {ok: !!(r&&r.ok && tags.indexOf(need)>=0), reason:"tag"};
     }
     if(mode==="rsvp"){
       if(!m.rsvpNews) return {ok:true};   // 紐づけ未設定なら締め出さない（設定漏れ対策）
@@ -584,6 +594,7 @@ function setupAdmin(){
       videoUid: ($("aVideo").value||"").trim() || DEFAULT_VIDEO,
       status: $("aStatus").value,
       accessMode: $("aAccess").value,
+      accessTag: ($("aAccessTag").value||"").trim(),
       rsvpNews: ($("aRsvpNews").value||"").trim(),
       padK: Number($("aPadK").value||0),
       padCap: Number($("aPadCap").value||0),
@@ -609,6 +620,7 @@ function fillAdminForm(){
   $("aVideo").value = META.videoUid||DEFAULT_VIDEO;
   $("aStatus").value = META.status||"soon";
   $("aAccess").value = META.accessMode||"public";
+  $("aAccessTag").value = META.accessTag||"";
   $("aRsvpNews").value = META.rsvpNews||"";
   $("aPadK").value = META.padK!=null?META.padK:0;
   $("aPadCap").value = META.padCap!=null?META.padCap:15;
