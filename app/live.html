@@ -61,6 +61,12 @@
     background:linear-gradient(transparent,rgba(0,0,0,.55));display:flex;flex-direction:column;justify-content:flex-end;gap:3px;overflow:hidden}
   .ov-chat .m{font-size:12.5px;text-shadow:0 1px 3px rgba(0,0,0,.8);line-height:1.45}
   .ov-chat .m b{color:var(--gold)}
+  /* 開始前の待機カバー */
+  .soon-cover{position:absolute;inset:0;z-index:4;background:linear-gradient(180deg,#12151d,#0a0c11);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}
+  .soon-cover .sc-badge{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.1em;color:#e7c98e;border:1px solid #4a422c;border-radius:999px;padding:4px 12px;margin-bottom:14px}
+  .soon-cover .sc-ttl{font-size:17px;font-weight:800;margin-bottom:8px;line-height:1.4}
+  .soon-cover .sc-time{font-size:14px;color:var(--gold);margin-bottom:14px;min-height:16px}
+  .soon-cover .sc-note{font-size:12px;color:var(--ink-soft);line-height:1.75;max-width:290px;margin:0 auto}
 
   .reactbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex:0 0 auto}
   .reactbar .rb{width:42px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-size:19px}
@@ -170,6 +176,12 @@
         <iframe id="player" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen></iframe>
         <div class="fx" id="fx"></div>
         <div class="ov-chat hidden" id="ovChat"></div>
+        <div class="soon-cover hidden" id="soonCover"><div>
+          <div class="sc-badge">開始前</div>
+          <div class="sc-ttl" id="scTtl">オンライン勉強会</div>
+          <div class="sc-time" id="scTime"></div>
+          <div class="sc-note">このままお待ちください。<br>始まると自動で映像が流れます📺</div>
+        </div></div>
       </div>
     </div>
     <div class="reactbar">
@@ -202,6 +214,8 @@
 
     <label>タイトル</label>
     <input type="text" id="aTitle" placeholder="第1回 オンライン勉強会">
+    <label>開始予定日時（任意・待機画面に表示）</label>
+    <input type="datetime-local" id="aStart">
     <label>動画UID（Cloudflareライブ入力のUID）</label>
     <input type="text" id="aVideo" placeholder="c70c64a945cf1f9d2ea1833e31afd689">
     <div class="row">
@@ -259,6 +273,7 @@ const base = db.ref("live/" + EVENT_ID);
 let ME=null, MYNAME="", IS_ADMIN=false, META={}, PRESENCE={}, BANNED_ME=false;
 const $ = id => document.getElementById(id);
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function fmtStart(s){ if(!s) return ""; try{ const d=new Date(s); if(isNaN(d.getTime())) return ""; const w=["日","月","火","水","木","金","土"][d.getDay()]; const p=n=>String(n).padStart(2,"0"); return "📅 "+(d.getMonth()+1)+"月"+d.getDate()+"日("+w+") "+p(d.getHours())+":"+p(d.getMinutes())+" 開始予定"; }catch(e){ return ""; } }
 
 /* ===== ログイン ===== */
 auth.onAuthStateChanged(u=>{
@@ -360,10 +375,11 @@ function listenMeta(){
     $("roomTitle").textContent = META.title || "ライブ";
     document.title = (META.title || "ライブ") + "｜エルラボ＋";
     const st = META.status || "soon";
-    const badge=$("liveBadge");
-    if(st==="live"){ badge.classList.remove("off"); badge.innerHTML='<span class="dot"></span>LIVE'; $("statusHint").textContent=""; }
-    else if(st==="ended"){ badge.classList.add("off"); badge.textContent="終了"; $("statusHint").textContent="この配信は終了しました（アーカイブは後日）"; }
-    else { badge.classList.add("off"); badge.textContent="開始前"; $("statusHint").textContent="まもなく開始します"; }
+    const badge=$("liveBadge"), sc=$("soonCover"), ft=fmtStart(META.startAt);
+    if(st==="live"){ badge.classList.remove("off"); badge.innerHTML='<span class="dot"></span>LIVE'; $("statusHint").textContent=""; sc.classList.add("hidden"); }
+    else if(st==="ended"){ badge.classList.add("off"); badge.textContent="終了"; $("statusHint").textContent="この配信は終了しました（アーカイブは後日）"; sc.classList.add("hidden"); }
+    else { badge.classList.add("off"); badge.textContent="開始前"; $("statusHint").textContent = ft || "まもなく開始します";
+      $("scTtl").textContent = META.title || "オンライン勉強会"; $("scTime").textContent = ft; sc.classList.remove("hidden"); }
     renderViewCount();
     if(IS_ADMIN) fillAdminForm();
   });
@@ -472,6 +488,7 @@ function setupAdmin(){
   $("aSave").onclick = ()=>{
     const meta = {
       title: ($("aTitle").value||"").trim(),
+      startAt: ($("aStart").value||""),
       videoUid: ($("aVideo").value||"").trim() || DEFAULT_VIDEO,
       status: $("aStatus").value,
       accessMode: $("aAccess").value,
@@ -493,6 +510,7 @@ function setupAdmin(){
 function fillAdminForm(){
   if(!IS_ADMIN) return;
   $("aTitle").value = META.title||"";
+  $("aStart").value = META.startAt||"";
   $("aVideo").value = META.videoUid||DEFAULT_VIDEO;
   $("aStatus").value = META.status||"soon";
   $("aAccess").value = META.accessMode||"public";
