@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ライブ｜エルラボ＋</title>
+<link rel="icon" href="/lab-mark-256.png" sizes="any">
+<style>
+  :root{
+    --bg:#0d0f14; --panel:#14171f; --panel2:#1b1f29; --line:#2a2f3b;
+    --ink:#eef0f4; --ink-soft:#a4a9b6; --gold:#e3c381; --gold-2:#c9a961;
+    --live:#e5484d; --me:#3a2f12;
+    --font:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+  button{font-family:inherit;cursor:pointer}
+  .hidden{display:none!important}
+
+  /* ===== ゲート（ログイン/ニックネーム） ===== */
+  .gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(120% 90% at 50% 0%,#161a24 0%,#0d0f14 70%);z-index:50}
+  .gate-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 24px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+  .gate .brand{text-align:center;color:var(--gold);letter-spacing:.16em;font-size:12px;margin-bottom:6px}
+  .gate h1{text-align:center;font-size:19px;font-weight:800;margin-bottom:6px}
+  .gate .sub{text-align:center;color:var(--ink-soft);font-size:12.5px;margin-bottom:22px;line-height:1.8}
+  .gate label{display:block;font-size:11.5px;color:var(--ink-soft);margin:14px 0 6px}
+  .gate input{width:100%;padding:12px 13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);font-size:15px}
+  .gate input:focus{outline:none;border-color:var(--gold-2)}
+  .gate .primary{width:100%;margin-top:20px;padding:14px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#241a06;font-weight:800;font-size:15px}
+  .gate .primary:active{transform:translateY(1px)}
+  .gate .msg{margin-top:12px;font-size:12.5px;color:#e6a6a6;text-align:center;min-height:16px}
+  .gate .alt{margin-top:16px;text-align:center;font-size:12px;color:var(--ink-soft)}
+  .gate .alt a{color:var(--gold);text-decoration:none}
+  .gate .status{margin-top:10px;text-align:center;font-size:12px;color:var(--ink-soft)}
+
+  /* ===== ルーム ===== */
+  .room{position:fixed;inset:0;display:flex;flex-direction:column}
+  .topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line);flex:0 0 auto}
+  .live-badge{display:inline-flex;align-items:center;gap:6px;background:var(--live);color:#fff;font-size:11px;font-weight:800;letter-spacing:.05em;padding:4px 9px;border-radius:6px}
+  .live-badge .dot{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1.1s infinite}
+  .live-badge.off{background:#3a3f4b}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .ttl{font-size:13.5px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .viewers{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-soft);white-space:nowrap}
+  .viewers b{color:var(--ink);font-weight:700}
+  .iconbtn{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--ink-soft);font-size:15px;display:flex;align-items:center;justify-content:center}
+  .iconbtn.on{color:var(--gold);border-color:var(--gold-2)}
+
+  .stage{position:relative;flex:0 0 auto;background:#000}
+  .video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+  .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  /* 動画上のリアクション演出＆オーバーレイチャット */
+  .fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3}
+  .float{position:absolute;bottom:8%;font-size:26px;animation:rise 2.6s ease-out forwards}
+  @keyframes rise{0%{opacity:0;transform:translateY(10px) scale(.7)}12%{opacity:1}100%{opacity:0;transform:translateY(-150px) scale(1.15)}}
+  .ov-chat{position:absolute;left:0;right:0;bottom:0;max-height:52%;padding:22px 12px 10px;z-index:2;pointer-events:none;
+    background:linear-gradient(transparent,rgba(0,0,0,.55));display:flex;flex-direction:column;justify-content:flex-end;gap:3px;overflow:hidden}
+  .ov-chat .m{font-size:12.5px;text-shadow:0 1px 3px rgba(0,0,0,.8);line-height:1.45}
+  .ov-chat .m b{color:var(--gold)}
+
+  .reactbar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex:0 0 auto}
+  .reactbar .rb{width:42px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);font-size:19px}
+  .reactbar .rb:active{transform:scale(.9)}
+  .reactbar .spacer{flex:1}
+  .reactbar .hint{font-size:11px;color:var(--ink-soft)}
+
+  /* チャット領域 */
+  .chat{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+  .chat-list{flex:1 1 auto;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px}
+  .m{font-size:13.5px;line-height:1.55;word-break:break-word}
+  .m .nm{color:var(--gold);font-weight:700;margin-right:6px}
+  .m.q{background:var(--panel2);border-left:3px solid var(--gold-2);padding:8px 11px;border-radius:0 9px 9px 0}
+  .m.q .qtag{display:inline-block;font-size:10px;font-weight:800;color:#241a06;background:var(--gold);border-radius:4px;padding:1px 6px;margin-right:7px;letter-spacing:.03em}
+  .m .del{margin-left:8px;font-size:11px;color:#e07979;background:none;border:none}
+  .m .kick{margin-left:4px;font-size:11px;color:#e0a679;background:none;border:none}
+  .sys{color:var(--ink-soft);font-size:12px;text-align:center;padding:4px 0}
+
+  .composer{flex:0 0 auto;display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line)}
+  .composer .qtog{width:40px;height:42px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--ink-soft);font-size:12px;font-weight:700;flex:0 0 auto}
+  .composer .qtog.on{color:#241a06;background:var(--gold);border-color:var(--gold)}
+  .composer textarea{flex:1;resize:none;height:42px;max-height:110px;padding:11px 13px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;color:var(--ink);font-size:15px;line-height:1.4}
+  .composer textarea:focus{outline:none;border-color:var(--gold-2)}
+  .composer .send{flex:0 0 auto;height:42px;padding:0 16px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#241a06;font-weight:800;font-size:14px}
+  .composer.q-mode textarea{border-color:var(--gold-2);background:#20232c}
+
+  .banned-cover{position:fixed;inset:0;background:rgba(10,11,15,.94);z-index:60;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px}
+  .banned-cover div{max-width:320px}
+  .banned-cover h2{font-size:18px;margin-bottom:10px}
+  .banned-cover p{color:var(--ink-soft);font-size:13px;line-height:1.9}
+
+  /* admin パネル */
+  .admin-fab{position:fixed;right:14px;bottom:76px;z-index:40;width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-2);background:var(--panel);color:var(--gold);font-size:18px;box-shadow:0 8px 22px rgba(0,0,0,.4)}
+  .admin-sheet{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}
+  .admin-sheet .inner{width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom))}
+  .admin-sheet h3{font-size:15px;margin-bottom:4px}
+  .admin-sheet .cap{font-size:11.5px;color:var(--ink-soft);margin-bottom:14px}
+  .admin-sheet label{display:block;font-size:11.5px;color:var(--ink-soft);margin:12px 0 5px}
+  .admin-sheet input,.admin-sheet select{width:100%;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:14px}
+  .admin-sheet .row{display:flex;gap:10px}
+  .admin-sheet .row>*{flex:1}
+  .admin-sheet .save{width:100%;margin-top:16px;padding:13px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#241a06;font-weight:800}
+  .admin-sheet .plist{margin-top:8px;border:1px solid var(--line);border-radius:10px;max-height:180px;overflow-y:auto}
+  .admin-sheet .plist .pi{display:flex;align-items:center;gap:8px;padding:8px 11px;border-bottom:1px solid var(--line);font-size:13px}
+  .admin-sheet .plist .pi:last-child{border-bottom:none}
+  .admin-sheet .plist .pi .knm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .admin-sheet .plist .pi button{font-size:11px;color:#e07979;background:none;border:1px solid #4a2b2b;border-radius:6px;padding:3px 9px}
+  .admin-sheet .close{position:absolute;top:14px;right:16px;font-size:22px;color:var(--ink-soft);background:none;border:none}
+  .admin-sheet .realcnt{font-size:12px;color:var(--ink-soft);margin-top:4px}
+  .admin-sheet .realcnt b{color:var(--gold)}
+  .divider{height:1px;background:var(--line);margin:18px 0}
+
+  @media(min-width:860px){
+    .room{flex-direction:row}
+    .leftcol{flex:1;display:flex;flex-direction:column;min-width:0}
+    .stage{flex:1;display:flex;align-items:center;justify-content:center}
+    .video-wrap{max-height:100%;max-width:100%}
+    .chat{flex:0 0 360px;border-left:1px solid var(--line)}
+    .topbar{order:-1}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== ゲート ===== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="brand">エルラボ＋ LIVE</div>
+    <h1 id="gateTitle">ライブ会場</h1>
+    <p class="sub" id="gateSub">参加にはログインが必要です。</p>
+
+    <div id="loginBox">
+      <label>メールアドレス</label>
+      <input type="email" id="gEmail" autocomplete="email" placeholder="you@example.com">
+      <label>パスワード</label>
+      <input type="password" id="gPass" autocomplete="current-password" placeholder="パスワード">
+      <button class="primary" id="gLoginBtn">ログインして参加</button>
+      <div class="msg" id="gMsg"></div>
+      <div class="alt">アカウントがない方は <a href="index.html">アプリTOP</a> から登録できます</div>
+    </div>
+
+    <div id="nickBox" class="hidden">
+      <label>チャットで表示する名前（ニックネーム）</label>
+      <input type="text" id="gNick" maxlength="20" placeholder="例：とーる / ねこ好きA">
+      <button class="primary" id="gEnterBtn">この名前で入場する →</button>
+      <div class="msg" id="gMsg2"></div>
+      <div class="status" id="gAccess"></div>
+    </div>
+
+    <div class="status" id="gLoading">読み込み中…</div>
+  </div>
+</div>
+
+<!-- ===== ルーム ===== -->
+<div class="room hidden" id="room">
+  <div class="leftcol">
+    <div class="topbar">
+      <span class="live-badge off" id="liveBadge"><span class="dot"></span>LIVE</span>
+      <span class="ttl" id="roomTitle">ライブ</span>
+      <span class="viewers">👥 <b id="viewCount">0</b></span>
+      <button class="iconbtn" id="ovToggle" title="チャットを画面に表示">💬</button>
+    </div>
+    <div class="stage">
+      <div class="video-wrap">
+        <iframe id="player" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen></iframe>
+        <div class="fx" id="fx"></div>
+        <div class="ov-chat hidden" id="ovChat"></div>
+      </div>
+    </div>
+    <div class="reactbar">
+      <button class="rb" data-emoji="❤️">❤️</button>
+      <button class="rb" data-emoji="👍">👍</button>
+      <button class="rb" data-emoji="👏">👏</button>
+      <button class="rb" data-emoji="🎉">🎉</button>
+      <span class="spacer"></span>
+      <span class="hint" id="statusHint"></span>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-list" id="chatList"></div>
+    <div class="composer" id="composer">
+      <button class="qtog" id="qtog" title="質問として送る">質問</button>
+      <textarea id="msgInput" rows="1" placeholder="コメントを入力…" maxlength="300"></textarea>
+      <button class="send" id="sendBtn">送信</button>
+    </div>
+  </div>
+</div>
+
+<!-- admin -->
+<button class="admin-fab hidden" id="adminFab" title="管理">⚙️</button>
+<div class="admin-sheet hidden" id="adminSheet">
+  <div class="inner" style="position:relative">
+    <button class="close" id="adminClose">×</button>
+    <h3>ライブ管理（管理者）</h3>
+    <div class="cap">この会場の設定・参加者・モデレーション</div>
+
+    <label>タイトル</label>
+    <input type="text" id="aTitle" placeholder="第1回 オンライン勉強会">
+    <label>動画UID（Cloudflareライブ入力のUID）</label>
+    <input type="text" id="aVideo" placeholder="c70c64a945cf1f9d2ea1833e31afd689">
+    <div class="row">
+      <div><label>状態</label>
+        <select id="aStatus"><option value="soon">開始前</option><option value="live">配信中</option><option value="ended">終了</option></select></div>
+      <div><label>参加できる人</label>
+        <select id="aAccess"><option value="public">ログイン者全員</option><option value="member">メンバー限定(準備中)</option><option value="rsvp">参加表明者(準備中)</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>人数の底上げ係数（0＝盛らない / 1.8＝推奨）</label>
+        <input type="number" id="aPadK" step="0.1" min="0" value="0"></div>
+      <div><label>底上げ上限（人）</label>
+        <input type="number" id="aPadCap" min="0" value="15"></div>
+    </div>
+    <button class="save" id="aSave">設定を保存</button>
+    <div class="realcnt" id="aRealCnt"></div>
+
+    <div class="divider"></div>
+    <h3>参加者一覧 <span id="aPCount" style="color:var(--ink-soft);font-weight:400"></span></h3>
+    <div class="cap">実際に視聴中の人（管理者のみ表示）</div>
+    <div class="plist" id="aPList"></div>
+  </div>
+</div>
+
+<div class="banned-cover hidden" id="bannedCover">
+  <div><h2>退場となりました</h2><p>管理者の操作により、この会場から退場となりました。<br>ご不明な点はお問い合わせください。</p></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+/* ===== 設定 ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyBpBpGmxfWhyHq3rzwH2Oa_6IWDIZbOAj8",
+  authDomain: "elabo-plus.firebaseapp.com",
+  projectId: "elabo-plus",
+  storageBucket: "elabo-plus.firebasestorage.app",
+  messagingSenderId: "452649305918",
+  appId: "1:452649305918:web:4bef5bae57aee4d86c4e6f",
+  databaseURL: "https://elabo-plus-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const CF_SUB = "640z7yea5jqzy33p";                 // Cloudflare配信サブドメイン
+const DEFAULT_VIDEO = "c70c64a945cf1f9d2ea1833e31afd689"; // テスト用ライブ入力UID（管理画面で変更可）
+const ADMIN_EMAILS = ["l.mineservice321@gmail.com"];      // ★管理者メール（アプリのログインメールと一致させる。違えば要追加）
+const EVENT_ID = (new URLSearchParams(location.search).get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) || "seminar";
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.database();
+const base = db.ref("live/" + EVENT_ID);
+
+let ME=null, MYNAME="", IS_ADMIN=false, META={}, PRESENCE={}, BANNED_ME=false;
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ===== ログイン ===== */
+auth.onAuthStateChanged(u=>{
+  ME = u;
+  if(u){
+    IS_ADMIN = ADMIN_EMAILS.includes((u.email||"").toLowerCase());
+    $("loginBox").classList.add("hidden");
+    $("gLoading").classList.add("hidden");
+    $("nickBox").classList.remove("hidden");
+    // 前回のニックネームを復元
+    const saved = localStorage.getItem("live_nick");
+    if(saved) $("gNick").value = saved;
+    $("gAccess").textContent = IS_ADMIN ? "（管理者としてログイン中）" : "";
+  }else{
+    IS_ADMIN=false;
+    $("gLoading").classList.add("hidden");
+    $("nickBox").classList.add("hidden");
+    $("loginBox").classList.remove("hidden");
+  }
+});
+$("gLoginBtn").onclick = async ()=>{
+  const em=($("gEmail").value||"").trim().toLowerCase(), pw=$("gPass").value||"";
+  if(!em||!pw){ $("gMsg").textContent="メールとパスワードを入力してください。"; return; }
+  $("gMsg").textContent="ログイン中…";
+  try{ await auth.signInWithEmailAndPassword(em,pw); $("gMsg").textContent=""; }
+  catch(e){ $("gMsg").textContent = (e.code==="auth/invalid-credential"||e.code==="auth/wrong-password") ? "メールかパスワードが違います。" : "ログインに失敗しました。"; }
+};
+$("gPass").addEventListener("keydown",e=>{ if(e.key==="Enter") $("gLoginBtn").click(); });
+
+/* ===== 入場 ===== */
+$("gEnterBtn").onclick = ()=>{
+  const nk=($("gNick").value||"").trim().slice(0,20);
+  if(!nk){ $("gMsg2").textContent="ニックネームを入力してください。"; return; }
+  MYNAME=nk; localStorage.setItem("live_nick",nk);
+  enterRoom();
+};
+
+function enterRoom(){
+  $("gate").classList.add("hidden");
+  $("room").classList.remove("hidden");
+  if(IS_ADMIN) $("adminFab").classList.remove("hidden");
+
+  // プレゼンス（入退室）
+  const myPres = base.child("presence").child(ME.uid);
+  myPres.set({ n: MYNAME, ts: firebase.database.ServerValue.TIMESTAMP });
+  myPres.onDisconnect().remove();
+  window.addEventListener("pagehide", ()=>{ try{ myPres.remove(); }catch(e){} });
+
+  // BAN監視（自分が退場させられたら）
+  base.child("banned").child(ME.uid).on("value", s=>{
+    if(s.val()){ BANNED_ME=true; try{ myPres.remove(); }catch(e){}
+      $("bannedCover").classList.remove("hidden"); }
+  });
+
+  listenMeta();
+  listenPresence();
+  listenMessages();
+  listenReactions();
+  if(IS_ADMIN) setupAdmin();
+}
+
+/* ===== メタ（タイトル・動画・状態） ===== */
+function listenMeta(){
+  base.child("meta").on("value", s=>{
+    META = s.val() || {};
+    const vid = META.videoUid || DEFAULT_VIDEO;
+    const src = "https://customer-"+CF_SUB+".cloudflarestream.com/"+vid+"/iframe?preload=true&letterboxColor=black";
+    if($("player").getAttribute("src")!==src) $("player").setAttribute("src", src);
+    $("roomTitle").textContent = META.title || "ライブ";
+    document.title = (META.title || "ライブ") + "｜エルラボ＋";
+    const st = META.status || "soon";
+    const badge=$("liveBadge");
+    if(st==="live"){ badge.classList.remove("off"); badge.innerHTML='<span class="dot"></span>LIVE'; $("statusHint").textContent=""; }
+    else if(st==="ended"){ badge.classList.add("off"); badge.textContent="終了"; $("statusHint").textContent="この配信は終了しました（アーカイブは後日）"; }
+    else { badge.classList.add("off"); badge.textContent="開始前"; $("statusHint").textContent="まもなく開始します"; }
+    renderViewCount();
+    if(IS_ADMIN) fillAdminForm();
+  });
+}
+
+/* ===== 視聴者数（実数＋控えめ底上げ） ===== */
+function pad(real){
+  const k = Number(META.padK||0), cap = (META.padCap==null?15:Number(META.padCap));
+  if(!k || real<=0) return real;
+  let add = Math.round(k*Math.sqrt(real));
+  if(cap>=0) add = Math.min(add, cap);
+  return real + add;
+}
+function renderViewCount(){
+  const real = Object.keys(PRESENCE).length;
+  $("viewCount").textContent = pad(real);
+  if(IS_ADMIN){ const el=$("aRealCnt"); if(el) el.innerHTML = "実際の視聴者：<b>"+real+"</b> 人　→ 表示：<b>"+pad(real)+"</b> 人"; }
+}
+function listenPresence(){
+  base.child("presence").on("value", s=>{
+    PRESENCE = s.val() || {};
+    renderViewCount();
+    if(IS_ADMIN) renderPList();
+  });
+}
+
+/* ===== チャット/質問 ===== */
+let Q_MODE=false;
+$("qtog").onclick = ()=>{ Q_MODE=!Q_MODE; $("qtog").classList.toggle("on",Q_MODE); $("composer").classList.toggle("q-mode",Q_MODE);
+  $("msgInput").placeholder = Q_MODE ? "質問を入力（先生が拾います）…" : "コメントを入力…"; };
+function sendMsg(){
+  if(BANNED_ME) return;
+  const t=($("msgInput").value||"").trim(); if(!t) return;
+  base.child("messages").push({ u:ME.uid, n:MYNAME, t:t.slice(0,300), ty:(Q_MODE?"q":"chat"), ts:firebase.database.ServerValue.TIMESTAMP })
+    .catch(()=>{ addSys("送信できませんでした（退場中の可能性）"); });
+  $("msgInput").value=""; autosize();
+  if(Q_MODE){ Q_MODE=false; $("qtog").classList.remove("on"); $("composer").classList.remove("q-mode"); $("msgInput").placeholder="コメントを入力…"; }
+}
+$("sendBtn").onclick = sendMsg;
+$("msgInput").addEventListener("keydown",e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
+$("msgInput").addEventListener("input",autosize);
+function autosize(){ const t=$("msgInput"); t.style.height="42px"; t.style.height=Math.min(t.scrollHeight,110)+"px"; }
+
+function listenMessages(){
+  const list=$("chatList");
+  base.child("messages").limitToLast(200).on("child_added", s=>{
+    const m=s.val()||{}; if(!m.t) return;
+    const el=document.createElement("div");
+    el.className="m"+(m.ty==="q"?" q":""); el.dataset.key=s.key;
+    const admBtns = IS_ADMIN ? '<button class="del" data-del="'+s.key+'">削除</button><button class="kick" data-kick="'+esc(m.u)+'" data-kn="'+esc(m.n)+'">退場</button>' : "";
+    el.innerHTML = (m.ty==="q"?'<span class="qtag">質問</span>':'') + '<span class="nm">'+esc(m.n)+'</span>'+esc(m.t)+admBtns;
+    const near = list.scrollTop+list.clientHeight > list.scrollHeight-60;
+    list.appendChild(el);
+    if(near) list.scrollTop=list.scrollHeight;
+    // オーバーレイにも流す
+    if(!$("ovChat").classList.contains("hidden")) pushOverlay(m);
+  });
+  base.child("messages").on("child_removed", s=>{
+    const el=list.querySelector('[data-key="'+s.key+'"]'); if(el) el.remove();
+  });
+}
+function addSys(t){ const list=$("chatList"); const el=document.createElement("div"); el.className="sys"; el.textContent=t; list.appendChild(el); list.scrollTop=list.scrollHeight; }
+
+/* ===== リアクション ===== */
+document.querySelectorAll(".rb").forEach(b=>{
+  b.onclick=()=>{ if(BANNED_ME) return;
+    base.child("reactions").push({ e:b.dataset.emoji, ts:firebase.database.ServerValue.TIMESTAMP }).catch(()=>{}); };
+});
+function listenReactions(){
+  const startAt = Date.now();
+  base.child("reactions").limitToLast(1).on("child_added", s=>{
+    const r=s.val()||{}; if(!r.e) return;
+    if(r.ts && r.ts < startAt-4000) return;   // 入場前の古い分は出さない
+    floatEmoji(r.e);
+  });
+}
+function floatEmoji(em){
+  const fx=$("fx"); const d=document.createElement("div");
+  d.className="float"; d.textContent=em;
+  d.style.left = (8+Math.random()*80)+"%";
+  fx.appendChild(d); setTimeout(()=>d.remove(),2700);
+}
+
+/* ===== オーバーレイチャット切替 ===== */
+$("ovToggle").onclick = ()=>{
+  const on = $("ovChat").classList.toggle("hidden")===false;
+  $("ovToggle").classList.toggle("on", on);
+};
+function pushOverlay(m){
+  const ov=$("ovChat"); const el=document.createElement("div"); el.className="m";
+  el.innerHTML='<b>'+esc(m.n)+'</b> '+esc(m.t); ov.appendChild(el);
+  while(ov.children.length>6) ov.removeChild(ov.firstChild);
+}
+
+/* ===== admin ===== */
+function setupAdmin(){
+  $("adminFab").onclick = ()=>{ $("adminSheet").classList.remove("hidden"); fillAdminForm(); };
+  $("adminClose").onclick = ()=>$("adminSheet").classList.add("hidden");
+  $("adminSheet").addEventListener("click",e=>{ if(e.target===$("adminSheet")) $("adminSheet").classList.add("hidden"); });
+  $("aSave").onclick = ()=>{
+    const meta = {
+      title: ($("aTitle").value||"").trim(),
+      videoUid: ($("aVideo").value||"").trim() || DEFAULT_VIDEO,
+      status: $("aStatus").value,
+      accessMode: $("aAccess").value,
+      padK: Number($("aPadK").value||0),
+      padCap: Number($("aPadCap").value||0),
+      updatedBy: (ME.email||"")
+    };
+    base.child("meta").set(meta).then(()=>{ $("aSave").textContent="保存しました ✓"; setTimeout(()=>$("aSave").textContent="設定を保存",1400); })
+      .catch(()=>{ $("aSave").textContent="保存失敗（権限）"; });
+  };
+  // モデレーション（イベント委譲）
+  $("chatList").addEventListener("click",e=>{
+    const d=e.target.closest("[data-del]"); if(d){ base.child("messages").child(d.dataset.del).remove(); return; }
+    const k=e.target.closest("[data-kick]"); if(k){ if(confirm(k.dataset.kn+" を強制退場させますか？")) base.child("banned").child(k.dataset.kick).set(true); }
+  });
+}
+function fillAdminForm(){
+  if(!IS_ADMIN) return;
+  $("aTitle").value = META.title||"";
+  $("aVideo").value = META.videoUid||DEFAULT_VIDEO;
+  $("aStatus").value = META.status||"soon";
+  $("aAccess").value = META.accessMode||"public";
+  $("aPadK").value = META.padK!=null?META.padK:0;
+  $("aPadCap").value = META.padCap!=null?META.padCap:15;
+  renderViewCount();
+}
+function renderPList(){
+  const box=$("aPList"); if(!box) return;
+  const entries=Object.entries(PRESENCE);
+  $("aPCount").textContent = "("+entries.length+"人)";
+  box.innerHTML = entries.length ? entries.map(([uid,p])=>
+    '<div class="pi"><span class="knm">'+esc(p.n||"(名無し)")+'</span>'+
+    (uid===ME.uid?'<span style="font-size:11px;color:var(--ink-soft)">あなた</span>':'<button data-pk="'+esc(uid)+'" data-pn="'+esc(p.n||"")+'">退場</button>')+'</div>'
+  ).join("") : '<div class="pi"><span class="knm" style="color:var(--ink-soft)">まだ誰もいません</span></div>';
+  box.querySelectorAll("[data-pk]").forEach(b=> b.onclick=()=>{ if(confirm((b.dataset.pn||"この人")+" を強制退場させますか？")) base.child("banned").child(b.dataset.pk).set(true); });
+}
+</script>
+</body>
+</html>
