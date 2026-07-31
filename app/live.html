@@ -247,6 +247,7 @@ const firebaseConfig = {
 const CF_SUB = "640z7yea5jqzy33p";                 // Cloudflare配信サブドメイン
 const DEFAULT_VIDEO = "c70c64a945cf1f9d2ea1833e31afd689"; // テスト用ライブ入力UID（管理画面で変更可）
 const ADMIN_EMAILS = ["l.mineservice321@gmail.com"];      // ★管理者メール（アプリのログインメールと一致させる。違えば要追加）
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec"; // 門番（会員照合）
 const EVENT_ID = (new URLSearchParams(location.search).get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) || "seminar";
 
 firebase.initializeApp(firebaseConfig);
@@ -287,12 +288,39 @@ $("gLoginBtn").onclick = async ()=>{
 $("gPass").addEventListener("keydown",e=>{ if(e.key==="Enter") $("gLoginBtn").click(); });
 
 /* ===== 入場 ===== */
-$("gEnterBtn").onclick = ()=>{
+$("gEnterBtn").onclick = async ()=>{
   const nk=($("gNick").value||"").trim().slice(0,20);
   if(!nk){ $("gMsg2").textContent="ニックネームを入力してください。"; return; }
+  $("gEnterBtn").disabled=true; $("gMsg2").textContent="確認中…";
+  const acc = await checkAccess();
+  $("gEnterBtn").disabled=false;
+  if(!acc.ok){
+    $("gMsg2").textContent = acc.reason==="member"
+      ? "この会場はエルラボ＋メンバー限定です。メンバーの方はログインをご確認ください。"
+      : acc.reason==="rsvp" ? "この会場は事前に参加表明した方のみ入場できます。"
+      : "現在この会場には入場できません。";
+    return;
+  }
+  $("gMsg2").textContent="";
   MYNAME=nk; localStorage.setItem("live_nick",nk);
   enterRoom();
 };
+/* 入場アクセス判定：公開=全員／メンバー=会員照合／承認制=表明者のみ(次段でGAS連携) */
+async function checkAccess(){
+  try{
+    const snap = await base.child("meta").once("value");
+    const mode = ((snap.val()||{}).accessMode) || "public";
+    if(IS_ADMIN || mode==="public") return {ok:true};
+    if(mode==="member"){
+      const r = await fetch(GAS_URL+"?action=verify&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&_="+Date.now()).then(x=>x.json());
+      const tags=(r&&r.tags)||[];
+      const ok = r && r.ok && (r.active || r.subActive || tags.indexOf("サブスク")>=0 || tags.indexOf("VIP")>=0);
+      return {ok:!!ok, reason:"member"};
+    }
+    if(mode==="rsvp") return {ok:false, reason:"rsvp"};   // 承認制は次のステップ（お知らせRSVP照合）で実装
+    return {ok:true};
+  }catch(e){ return {ok:true}; }   // 確認失敗時は配信を止めないため通す
+}
 $("gBack").onclick = ()=>{ if(history.length>1){ history.back(); } else { location.href="index.html"; } };
 
 function enterRoom(){
@@ -444,8 +472,10 @@ function setupAdmin(){
       padCap: Number($("aPadCap").value||0),
       updatedBy: (ME.email||"")
     };
-    base.child("meta").set(meta).then(()=>{ $("aSave").textContent="保存しました ✓"; setTimeout(()=>$("aSave").textContent="設定を保存",1400); })
-      .catch(()=>{ $("aSave").textContent="保存失敗（権限）"; });
+    base.child("meta").set(meta).then(()=>{
+      db.ref("current").set({ e:EVENT_ID, title:meta.title, status:meta.status });   // 現在ライブ中の会場ポインタ（アプリのバー用）
+      $("aSave").textContent="保存しました ✓"; setTimeout(()=>$("aSave").textContent="設定を保存",1400);
+    }).catch(()=>{ $("aSave").textContent="保存失敗（権限）"; });
   };
   // モデレーション（イベント委譲）
   $("chatList").addEventListener("click",e=>{
