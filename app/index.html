@@ -1578,7 +1578,7 @@ a{text-decoration:none}
       <div class="lockscreen">
         <div class="lk-ico">🔒</div>
         <div class="lk-t" id="lkTitle">この講座の視聴には登録が必要です</div>
-        <div class="lk-d" id="lkDesc">こちらは会員限定の講座です。ご登録いただくと視聴できます。</div>
+        <div class="lk-d" id="lkDesc">こちらはメンバー限定の講座です。ご登録いただくと視聴できます。</div>
         <a class="lk-btn" id="lkbtn" href="https://l-mine.com/onlinecourse" target="_blank" rel="noopener">今すぐ登録する →</a>
         <button class="lk-pwlink" id="lkPwToggle" type="button" hidden>招待パスワードをお持ちの方はこちら →</button>
         <div class="lk-pw" id="lkPw" hidden>
@@ -1777,7 +1777,7 @@ a{text-decoration:none}
       <label>公開範囲</label>
       <select id="nf-audience">
         <option value="全員">全員に公開</option>
-        <option value="会員限定">会員限定（有料メンバーのみ／他はモザイク表示）</option>
+        <option value="会員限定">メンバー限定（有料メンバーのみ／他はモザイク表示）</option>
       </select>
       <label class="nf-check"><input type="checkbox" id="nf-pub" checked> アプリに表示する（オフ＝メール専用・一覧に出しません）</label>
       <label class="nf-check"><input type="checkbox" id="nf-pop"> 📢 他ページにポップアップ案内する（アプリ／コラム／LP）</label>
@@ -2047,7 +2047,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2868,7 +2868,7 @@ function renderColumnList(items, isMember){
   items.forEach(c=>{
     const el = document.createElement("div"); el.className = "col-item";
     const thumb = c.thumb ? `<div class="col-thumb" style="background-image:url('${escapeHtml(c.thumb)}')"></div>` : `<div class="col-thumb noimg">📖</div>`;
-    const lock = isMember ? "" : `<span class="col-lockbadge">🔒 会員限定</span>`;
+    const lock = isMember ? "" : `<span class="col-lockbadge">🔒 メンバー限定</span>`;
     el.innerHTML = thumb + `<div class="col-meta"><div class="col-date">${escapeHtml(c.date||"")}</div><div class="col-t">${escapeHtml(c.title||"")}</div>${lock}</div>`;
     el.onclick = ()=> openColumnArticle(c.id);
     list.appendChild(el);
@@ -3194,7 +3194,7 @@ function newsItemEl(n){
   const locked = memberOnly && !admin && currentRank() < RANK.plus;     // 無料登録・ゲストはモザイク
   const el = document.createElement("div"); el.className = "news-item" + (locked ? " locked" : "") + (mailOnly ? " mailonly" : ""); el.dataset.nid = String(n.id);
   let badges = "";
-  if(memberOnly) badges += `<span class="ni-badge member">🔒会員限定</span>`;
+  if(memberOnly) badges += `<span class="ni-badge member">🔒メンバー限定</span>`;
   if(mailOnly) badges += `<span class="ni-badge mail">✉️メール専用</span>`;
   let imgRaw = String(n.image||""); let imgBelow = false;
   if(/^below\|/i.test(imgRaw)){ imgBelow = true; imgRaw = imgRaw.replace(/^below\|/i, ""); }   // 「下」指定
@@ -3203,7 +3203,7 @@ function newsItemEl(n){
   el.innerHTML = `<div class="ni-date">${escapeHtml(fmtNewsDate(n.date))}${badges}</div><div class="ni-title">${escapeHtml(n.title)}</div>` + (imgBelow ? bodyHtml + img : img + bodyHtml);
   if(locked){
     const cta = document.createElement("div"); cta.className = "ni-lockcta";
-    cta.innerHTML = `<span>🔒 このお知らせは<b>会員限定</b>です</span>`;
+    cta.innerHTML = `<span>🔒 このお知らせは<b>メンバー限定</b>です</span>`;
     const btn = document.createElement("button"); btn.type = "button"; btn.className = "nl-join";
     btn.textContent = (SESSION && SESSION.email) ? "会員プランを見る" : "ログイン / 登録";
     btn.onclick = () => { if(SESSION && SESSION.email){ showToast("会員プランのご案内は準備中です。"); } else { closeNews(); openLogin(); } };
@@ -3282,7 +3282,7 @@ function newsCompactEl(n){
   const el = document.createElement("div");
   el.className = "news-compact" + (locked ? " locked" : ""); el.dataset.nid = String(n.id);
   let badge = "";
-  if(memberOnly) badge = `<span class="nc-badge member">会員のみ</span>`;
+  if(memberOnly) badge = `<span class="nc-badge member">メンバーのみ</span>`;
   else if(mailOnly) badge = `<span class="nc-badge mail">メール専用</span>`;
   el.innerHTML = `<span class="nc-date">${escapeHtml(fmtNewsDate(n.date))}</span><span class="nc-title">${escapeHtml(n.title)}</span>${badge}<span class="nc-arrow">›</span>`;
   el.addEventListener("click", () => { const full = newsItemEl(n); if(full) el.replaceWith(full); });

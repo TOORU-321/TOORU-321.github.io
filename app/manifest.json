@@ -1,7 +1,7 @@
 {
   "name": "エルラボ＋",
   "short_name": "エルラボ＋",
-  "description": "L-MINE 会員向けオンライン講座アプリ",
+  "description": "L-MINE メンバー向けオンライン講座アプリ",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
