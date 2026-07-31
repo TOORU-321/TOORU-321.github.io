@@ -1771,6 +1771,11 @@ a{text-decoration:none}
         <option value="会員限定">会員限定（有料メンバーのみ／他はモザイク表示）</option>
       </select>
       <label class="nf-check"><input type="checkbox" id="nf-pub" checked> アプリに表示する（オフ＝メール専用・一覧に出しません）</label>
+      <label class="nf-check"><input type="checkbox" id="nf-pop"> 📢 他ページにポップアップ案内する（アプリ／コラム／LP）</label>
+      <label>ポップのボタン文言（任意・例：参加する ／ 読む）</label>
+      <input type="text" id="nf-popcta" placeholder="詳しく見る →">
+      <label>ポップのボタンのリンク先（任意・空欄ならアプリのお知らせへ）</label>
+      <input type="text" id="nf-popurl" placeholder="https://…">
       <div class="nf-btns">
         <button class="nf-save" id="nfSave">保存</button>
         <button class="nf-cancel" id="nfCancel">キャンセル</button>
@@ -3230,8 +3235,8 @@ function newsCompactEl(n){
   el.addEventListener("click", () => { const full = newsItemEl(n); if(full) el.replaceWith(full); });
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
 function likeNews(id, btn){
   const key = "lmine_liked_" + id;
   if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
@@ -3429,7 +3434,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE" });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
@@ -4146,5 +4151,6 @@ function renderVnav(ci, vi){
   document.addEventListener("visibilitychange",function(){ if(!document.hidden) check(); });
 })();
 </script>
+<script src="/news-popup.js" defer></script>
 </body>
 </html>
