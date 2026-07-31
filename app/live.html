@@ -247,8 +247,10 @@
       <div><label>状態</label>
         <select id="aStatus"><option value="soon">開始前</option><option value="live">配信中</option><option value="ended">終了</option></select></div>
       <div><label>参加できる人</label>
-        <select id="aAccess"><option value="public">ログイン者全員</option><option value="member">メンバー限定(準備中)</option><option value="rsvp">参加表明者(準備中)</option></select></div>
+        <select id="aAccess"><option value="public">ログイン者全員</option><option value="member">メンバー限定</option><option value="rsvp">参加表明者（承認制）</option></select></div>
     </div>
+    <label>参加表明のお知らせID（承認制の時だけ・例：13）</label>
+    <input type="text" id="aRsvpNews" placeholder="参加ボタンのあるお知らせの id">
     <div class="row">
       <div><label>人数の底上げ係数（0＝盛らない / 1.8＝推奨）</label>
         <input type="number" id="aPadK" step="0.1" min="0" value="0"></div>
@@ -359,7 +361,7 @@ $("gEnterBtn").onclick = async ()=>{
   if(!acc.ok){
     $("gMsg2").textContent = acc.reason==="member"
       ? "この会場はエルラボ＋メンバー限定です。メンバーの方はログインをご確認ください。"
-      : acc.reason==="rsvp" ? "この会場は事前に参加表明した方のみ入場できます。"
+      : acc.reason==="rsvp" ? "参加表明した方のみ入場できます。お知らせで「参加」を押してから、お入りください。"
       : "現在この会場には入場できません。";
     return;
   }
@@ -370,8 +372,8 @@ $("gEnterBtn").onclick = async ()=>{
 /* 入場アクセス判定：公開=全員／メンバー=会員照合／承認制=表明者のみ(次段でGAS連携) */
 async function checkAccess(){
   try{
-    const snap = await base.child("meta").once("value");
-    const mode = ((snap.val()||{}).accessMode) || "public";
+    const m = (await base.child("meta").once("value")).val() || {};
+    const mode = m.accessMode || "public";
     if(IS_ADMIN || mode==="public") return {ok:true};
     if(mode==="member"){
       const r = await fetch(GAS_URL+"?action=verify&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&_="+Date.now()).then(x=>x.json());
@@ -379,7 +381,11 @@ async function checkAccess(){
       const ok = r && r.ok && (r.active || r.subActive || tags.indexOf("サブスク")>=0 || tags.indexOf("VIP")>=0);
       return {ok:!!ok, reason:"member"};
     }
-    if(mode==="rsvp") return {ok:false, reason:"rsvp"};   // 承認制は次のステップ（お知らせRSVP照合）で実装
+    if(mode==="rsvp"){
+      if(!m.rsvpNews) return {ok:true};   // 紐づけ未設定なら締め出さない（設定漏れ対策）
+      const rr = await fetch(GAS_URL+"?action=rsvp_check&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&news="+encodeURIComponent(m.rsvpNews)+"&_="+Date.now()).then(x=>x.json());
+      return {ok: !!(rr&&rr.joined), reason:"rsvp"};
+    }
     return {ok:true};
   }catch(e){ return {ok:true}; }   // 確認失敗時は配信を止めないため通す
 }
@@ -578,6 +584,7 @@ function setupAdmin(){
       videoUid: ($("aVideo").value||"").trim() || DEFAULT_VIDEO,
       status: $("aStatus").value,
       accessMode: $("aAccess").value,
+      rsvpNews: ($("aRsvpNews").value||"").trim(),
       padK: Number($("aPadK").value||0),
       padCap: Number($("aPadCap").value||0),
       updatedBy: (ME.email||"")
@@ -602,6 +609,7 @@ function fillAdminForm(){
   $("aVideo").value = META.videoUid||DEFAULT_VIDEO;
   $("aStatus").value = META.status||"soon";
   $("aAccess").value = META.accessMode||"public";
+  $("aRsvpNews").value = META.rsvpNews||"";
   $("aPadK").value = META.padK!=null?META.padK:0;
   $("aPadCap").value = META.padCap!=null?META.padCap:15;
   renderViewCount();
