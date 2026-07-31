@@ -1556,7 +1556,7 @@ a{text-decoration:none}
   <div class="drawer-backdrop" id="drawerBackdrop"></div>
   <aside class="vlist">
     <div class="listhead"><span>Courses</span><span class="lh-count" id="lhCount"></span></div>
-    <div id="vcourses"><div class="vstate" id="vstate">コースを読み込み中…</div></div>
+    <div id="vcourses"><div class="col-load"><div class="clb"></div><div class="clt">コースを読み込み中…</div></div></div>
   </aside>
   <main class="vplayer">
     <!-- ゲスト/無料会員向け：無料で見れる注目動画のピックアップ -->
@@ -3108,7 +3108,7 @@ function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
 async function loadNews(){
   const list = document.getElementById("newsList");
-  list.innerHTML = `<div class="vstate">読み込み中…</div>`;
+  list.innerHTML = COL_LOADING;   // アニメ付きプログレスバー（コラムと共通）
   try{
     const data  = await fetch(GAS_URL + "?action=news&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now()).then(r=>r.json());
     const items = (data && data.items) || [];
@@ -3312,7 +3312,7 @@ async function openPollView(n){
   const meta = document.getElementById("pvMeta");
   const body = document.getElementById("pvBody");
   meta.innerHTML = `お知らせ：<b>${escapeHtml(n.title)}</b>`;
-  body.innerHTML = `<div class="pv-empty">読み込み中…</div>`;
+  body.innerHTML = COL_LOADING;
   document.getElementById("pollViewModal").hidden = false;
   try{
     const res = await fetch(GAS_URL + "?action=poll_respondents&email=" + encodeURIComponent(SESSION.email) + "&id=" + encodeURIComponent(n.id) + "&_=" + Date.now()).then(r=>r.json());
