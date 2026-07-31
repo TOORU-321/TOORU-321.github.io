@@ -102,8 +102,9 @@
     .prof__body p{font-size:13.5px;color:var(--text-muted);line-height:2;margin-bottom:12px}
     .prof__body p:last-child{margin-bottom:0}
     @media(min-width:760px){
-      .prof{grid-template-columns:250px 1fr;gap:38px;padding:40px 42px}
-      .prof__photo{max-width:250px}
+      .prof{grid-template-columns:250px 1fr;gap:38px;padding:40px 42px;align-items:stretch}
+      .prof__photo{max-width:250px;height:100%}
+      .prof__photo img{height:100%;object-fit:cover;object-position:center}
     }
 
     /* ===== ご利用について（注意書き） ===== */
@@ -215,7 +216,7 @@
     <section class="sec">
       <div class="sec-h">
         <span class="k">Instructor</span>
-        <h2>運営・講師のご紹介</h2>
+        <h2>あなたのインストラクター</h2>
       </div>
       <div class="prof">
         <div class="prof__photo"><img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'"></div>
@@ -227,6 +228,7 @@
             <p>第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。</p>
             <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。心理学を活用した独自のファネル（導き）設計を得意とする。</p>
             <p>数字やバズを追うだけの発信に疑問を持ち、「売れる手法」だけでなく、無理なく“売れ続ける”仕組みづくりを伝えている。</p>
+            <p>現在も行動経済アナリストとして活動中。協会では講座や検定の構築にも携わり、行動経済学を“人を操る”ために使うのではなく、消費者に寄りそう形で役立てる——その考え方を伝える発信活動に力を注いでいる。</p>
           </div>
         </div>
       </div>
