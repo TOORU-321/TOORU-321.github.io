@@ -93,6 +93,19 @@
     .card h3{font-family:var(--serif);font-size:17.5px;font-weight:700;color:var(--gold-light);margin-bottom:11px;letter-spacing:.02em}
     .card p{font-size:13.5px;color:var(--text-muted);line-height:1.95}
 
+    /* ===== 講師プロフィール（PC=写真左/文章右・スマホ=写真上/下） ===== */
+    .prof{display:grid;grid-template-columns:1fr;gap:24px;align-items:center;background:linear-gradient(160deg,var(--bg-card),var(--bg-card2));border:1px solid var(--border);border-radius:18px;padding:30px 26px}
+    .prof__photo{margin:0 auto;width:100%;max-width:260px}
+    .prof__photo img{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--border-mid);box-shadow:0 16px 40px rgba(0,0,0,.42)}
+    .prof__name{font-family:var(--serif);font-size:25px;font-weight:800;color:var(--white);letter-spacing:.03em}
+    .prof__job{font-family:var(--serif);font-size:13.5px;color:var(--gold-light);margin:6px 0 16px;letter-spacing:.04em}
+    .prof__body p{font-size:13.5px;color:var(--text-muted);line-height:2;margin-bottom:12px}
+    .prof__body p:last-child{margin-bottom:0}
+    @media(min-width:760px){
+      .prof{grid-template-columns:250px 1fr;gap:38px;padding:40px 42px}
+      .prof__photo{max-width:250px}
+    }
+
     /* ===== ご利用について（注意書き） ===== */
     .notes{margin:8px 0 0;display:grid;gap:14px}
     .note{background:var(--bg-card);border:1px solid var(--border);border-left:2px solid var(--gold-dim);border-radius:12px;padding:20px 22px}
@@ -194,6 +207,27 @@
           <div class="ic">📱</div>
           <h3>スキマ時間に、スマホで</h3>
           <p>いつでも、どこでも、続きから。あなたのペースで学べる視聴アプリです。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 講師プロフィール -->
+    <section class="sec">
+      <div class="sec-h">
+        <span class="k">Instructor</span>
+        <h2>運営・講師のご紹介</h2>
+      </div>
+      <div class="prof">
+        <div class="prof__photo"><img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'"></div>
+        <div class="prof__text">
+          <div class="prof__name">とーる</div>
+          <div class="prof__job">行動経済アナリスト / デジタルクリエイター</div>
+          <div class="prof__body">
+            <p>1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て、現在はオンライン講座の制作やLINE構築を専門に、コンテンツビジネスの構築支援を行う。</p>
+            <p>第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。</p>
+            <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。心理学を活用した独自のファネル（導き）設計を得意とする。</p>
+            <p>数字やバズを追うだけの発信に疑問を持ち、「売れる手法」だけでなく、無理なく“売れ続ける”仕組みづくりを伝えている。</p>
+          </div>
         </div>
       </div>
     </section>
