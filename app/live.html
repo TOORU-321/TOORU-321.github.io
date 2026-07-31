@@ -36,6 +36,15 @@
   .gate .status{margin-top:10px;text-align:center;font-size:12px;color:var(--ink-soft)}
   .gate .backlink{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--ink-soft);font-size:12.5px;cursor:pointer;padding:6px}
   .gate .backlink:hover{color:var(--gold)}
+  .roomlist{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:46vh;overflow-y:auto}
+  .roomlist .ri{border:1px solid var(--line);border-radius:11px;padding:12px 13px;background:var(--panel2)}
+  .roomlist .ri .rt{font-size:14px;font-weight:700;margin-bottom:3px}
+  .roomlist .ri .rm{font-size:11.5px;color:var(--ink-soft);margin-bottom:9px}
+  .roomlist .ri .ra{display:flex;gap:8px}
+  .roomlist .ri .ra button{padding:8px;border-radius:8px;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+  .roomlist .ri .ra .open{flex:1;background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#241a06;border:0}
+  .roomlist .ri .ra .del{color:#e07979;width:62px}
+  .roomlist .empty{color:var(--ink-soft);font-size:12.5px;text-align:center;padding:16px;line-height:1.7}
 
   /* ===== ルーム ===== */
   .room{position:fixed;inset:0;display:flex;flex-direction:column}
@@ -157,6 +166,12 @@
       <div class="status" id="gAccess"></div>
     </div>
 
+    <div id="manageBox" class="hidden">
+      <div id="roomList" class="roomlist"></div>
+      <button class="primary" id="mNew">＋ 新しい会場を作る</button>
+      <div class="status">開催予定の会場をここで管理できます（管理者）</div>
+    </div>
+
     <div class="status" id="gLoading">読み込み中…</div>
   </div>
 </div>
@@ -263,7 +278,9 @@ const CF_SUB = "640z7yea5jqzy33p";                 // Cloudflare配信サブド�
 const DEFAULT_VIDEO = "c70c64a945cf1f9d2ea1833e31afd689"; // テスト用ライブ入力UID（管理画面で変更可）
 const ADMIN_EMAILS = ["l.mineservice321@gmail.com"];      // ★管理者メール（アプリのログインメールと一致させる。違えば要追加）
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec"; // 門番（会員照合）
-const EVENT_ID = (new URLSearchParams(location.search).get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) || "seminar";
+const _P = new URLSearchParams(location.search);
+const MANAGE = _P.get("manage")==="1";   // 会場一覧の管理モード（admin専用）
+const EVENT_ID = (_P.get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) || "seminar";
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -282,6 +299,11 @@ auth.onAuthStateChanged(u=>{
     IS_ADMIN = ADMIN_EMAILS.includes((u.email||"").toLowerCase());
     $("loginBox").classList.add("hidden");
     $("gLoading").classList.add("hidden");
+    if(MANAGE){
+      if(IS_ADMIN){ showManager(); }
+      else { $("nickBox").classList.add("hidden"); $("manageBox").classList.add("hidden"); $("gateTitle").textContent="管理者専用"; $("gateSub").textContent="このページは管理者専用です。"; }
+      return;
+    }
     $("nickBox").classList.remove("hidden");
     // 前回のニックネームを復元
     const saved = localStorage.getItem("live_nick");
@@ -291,6 +313,7 @@ auth.onAuthStateChanged(u=>{
     IS_ADMIN=false;
     $("gLoading").classList.add("hidden");
     $("nickBox").classList.add("hidden");
+    $("manageBox").classList.add("hidden");
     $("loginBox").classList.remove("hidden");
   }
 });
@@ -338,6 +361,45 @@ async function checkAccess(){
   }catch(e){ return {ok:true}; }   // 確認失敗時は配信を止めないため通す
 }
 $("gBack").onclick = ()=>{ if(history.length>1){ history.back(); } else { location.href="index.html"; } };
+
+/* ===== 会場管理（admin：一覧／新規／削除） ===== */
+function randId(){ var a=new Uint8Array(12); (window.crypto).getRandomValues(a); var s=""; for(var i=0;i<a.length;i++){ s+=("0"+a[i].toString(16)).slice(-2);} return "s"+s; }
+function showManager(){
+  $("nickBox").classList.add("hidden");
+  $("manageBox").classList.remove("hidden");
+  $("gateTitle").textContent="ライブ会場の管理";
+  $("gateSub").textContent="開催予定の会場を作成・管理できます。";
+  $("mNew").onclick = createRoom;
+  loadRooms();
+}
+async function loadRooms(){
+  const box=$("roomList"); box.innerHTML='<div class="empty">読み込み中…</div>';
+  try{
+    const snap = await db.ref("rooms").once("value");
+    const rooms = snap.val()||{};
+    const arr = Object.keys(rooms).map(id=>Object.assign({id:id}, rooms[id]||{})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    if(!arr.length){ box.innerHTML='<div class="empty">まだ会場がありません。<br>「＋ 新しい会場を作る」から作成してください。</div>'; return; }
+    box.innerHTML = arr.map(r=>{
+      const stLabel = r.status==="live"?"🔴 配信中":(r.status==="ended"?"終了":"開始前");
+      const t = fmtStart(r.startAt).replace("📅 ","");
+      return '<div class="ri"><div class="rt">'+esc(r.title||"(無題の会場)")+'</div><div class="rm">'+stLabel+(t?"　"+t:"")+'</div>'+
+             '<div class="ra"><button class="open" data-open="'+esc(r.id)+'">開く</button><button class="del" data-del="'+esc(r.id)+'">削除</button></div></div>';
+    }).join("");
+    box.querySelectorAll("[data-open]").forEach(b=> b.onclick=()=> location.href="live.html?e="+encodeURIComponent(b.dataset.open));
+    box.querySelectorAll("[data-del]").forEach(b=> b.onclick=()=>{ if(confirm("この会場を削除しますか？（チャット履歴も消えます）")) delRoom(b.dataset.del); });
+  }catch(e){ box.innerHTML='<div class="empty">読み込みに失敗しました。</div>'; }
+}
+function createRoom(){
+  const id = randId();
+  db.ref("rooms/"+id).set({ title:"新しい会場", status:"soon", startAt:"", createdAt: firebase.database.ServerValue.TIMESTAMP })
+    .then(()=> location.href="live.html?e="+encodeURIComponent(id))
+    .catch(()=> alert("作成に失敗しました（権限をご確認ください）"));
+}
+async function delRoom(id){
+  try{ await db.ref("rooms/"+id).remove(); }catch(e){}
+  try{ await db.ref("live/"+id).remove(); }catch(e){}
+  loadRooms();
+}
 
 function enterRoom(){
   $("gate").classList.add("hidden");
@@ -497,7 +559,9 @@ function setupAdmin(){
       updatedBy: (ME.email||"")
     };
     base.child("meta").set(meta).then(()=>{
-      db.ref("current").set({ e:EVENT_ID, title:meta.title, status:meta.status });   // 現在ライブ中の会場ポインタ（アプリのバー用）
+      db.ref("rooms/"+EVENT_ID).update({ title:meta.title, startAt:meta.startAt, status:meta.status });   // 会場一覧を最新化
+      if(meta.status==="live"){ db.ref("current").set({ e:EVENT_ID, title:meta.title, status:"live" }); } // 配信中の会場を指す
+      else { db.ref("current").once("value").then(s=>{ const c=s.val(); if(c && c.e===EVENT_ID) db.ref("current").set(null); }); } // 自分が現行なら解除
       $("aSave").textContent="保存しました ✓"; setTimeout(()=>$("aSave").textContent="設定を保存",1400);
     }).catch(()=>{ $("aSave").textContent="保存失敗（権限）"; });
   };
