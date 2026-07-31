@@ -1774,6 +1774,7 @@ a{text-decoration:none}
       <input type="datetime-local" id="nf-deadline">
       <label>締切後の文言（任意・空欄＝「受付は終了しました」）</label>
       <input type="text" id="nf-closedmsg" placeholder="受付は終了しました">
+      <label class="nf-check"><input type="checkbox" id="nf-bar"> ⏳ 上部バーで案内する（参加期限つきのお知らせを画面上部で案内。参加・反応で自動的に消えます）</label>
       <label>公開範囲</label>
       <select id="nf-audience">
         <option value="全員">全員に公開</option>
@@ -2047,7 +2048,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.2";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.3";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -3289,8 +3290,8 @@ function newsCompactEl(n){
   el.addEventListener("click", () => { const full = newsItemEl(n); if(full) el.replaceWith(full); });
   return el;
 }
-function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; document.getElementById("nf-deadline").value=""; document.getElementById("nf-closedmsg").value=""; showNewsForm(); }
-function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); document.getElementById("nf-deadline").value=(n.joinDeadline?String(n.joinDeadline).slice(0,16):""); document.getElementById("nf-closedmsg").value=(n.joinClosedMsg||""); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
+function newNews(){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; document.getElementById("nf-deadline").value=""; document.getElementById("nf-closedmsg").value=""; document.getElementById("nf-bar").checked=false; showNewsForm(); }
+function editNews(n){ document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); document.getElementById("nf-deadline").value=(n.joinDeadline?String(n.joinDeadline).slice(0,16):""); document.getElementById("nf-closedmsg").value=(n.joinClosedMsg||""); document.getElementById("nf-bar").checked=(n.barNotice===true||String(n.barNotice).toUpperCase()==="TRUE"); showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"}); }
 function likeNews(id, btn){
   const key = "lmine_liked_" + id;
   if(localStorage.getItem(key) === "1") return;   // 端末ごとに1回だけ
@@ -3490,7 +3491,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value, deadline:document.getElementById("nf-deadline").value, closedmsg:document.getElementById("nf-closedmsg").value });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value, deadline:document.getElementById("nf-deadline").value, closedmsg:document.getElementById("nf-closedmsg").value, bar:document.getElementById("nf-bar").checked ? "TRUE" : "FALSE" });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
@@ -4242,7 +4243,8 @@ function renderVnav(ci, vi){
   function done(id){ try{ return localStorage.getItem("lmine_reply_"+id)!=null || localStorage.getItem("lmine_liked_"+id)==="1"; }catch(e){ return false; } }
   function xed(id){ try{ return sessionStorage.getItem("dlbar_x_"+id)==="1"; }catch(e){ return false; } }
   function blocked(){ var s=[".intro",".auth-loading"]; for(var i=0;i<s.length;i++){ var e=document.querySelector(s[i]); if(e && e.getBoundingClientRect().height>2) return true; } return false; }
-  function pick(){ var items=window.__LM_NEWS||[], now=Date.now(), best=null, bd=Infinity; items.forEach(function(n){ if(!n||n.pub===false||!n.joinDeadline) return; var dl=Date.parse(String(n.joinDeadline)); if(!dl||dl<=now) return; if(done(n.id)||xed(n.id)) return; if(dl<bd){bd=dl;best=n;} }); return best; }
+  function on(v){ return v===true || String(v).toUpperCase()==="TRUE"; }
+  function pick(){ var items=window.__LM_NEWS||[], now=Date.now(), best=null, bd=Infinity; items.forEach(function(n){ if(!n||n.pub===false||!n.joinDeadline||!on(n.barNotice)) return; var dl=Date.parse(String(n.joinDeadline)); if(!dl||dl<=now) return; if(done(n.id)||xed(n.id)) return; if(dl<bd){bd=dl;best=n;} }); return best; }
   function place(){ var lb=document.querySelector(".live-bar"); bar.style.top=(lb && getComputedStyle(lb).display!=="none")?(lb.offsetHeight+"px"):"0px"; }
   function evalBar(){ if(blocked()){ bar.style.display="none"; return; } var n=pick(); if(!n){ bar.style.display="none"; curId=null; return; } curId=n.id; document.getElementById("dlTx").innerHTML="期限つきのお知らせ"+(n.title?('<small>'+esc(n.title)+'</small>'):""); place(); bar.style.display="flex"; tick(); }
   function tick(){ if(curId==null||bar.style.display==="none") return; var n=(window.__LM_NEWS||[]).find(function(x){return x&&x.id===curId;}); if(!n){ evalBar(); return; } var left=Date.parse(String(n.joinDeadline))-Date.now(); if(left<=0||done(curId)){ evalBar(); return; } document.getElementById("dlCd").textContent="締切まで "+fmt(left); place(); }
