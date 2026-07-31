@@ -1686,7 +1686,7 @@ a{text-decoration:none}
   <div class="cc-sheet">
     <div class="cc-title">コラム</div>
     <button class="cc-opt" id="ccPublic" type="button"><span class="cc-ico">📖</span><span><b>公開コラム</b><small>誰でも読めるコラム（外部サイトで開く）</small></span></button>
-    <button class="cc-opt" id="ccMember" type="button"><span class="cc-ico">🔒</span><span><b>メンバー限定の秘密のコラム</b><small>コラムにはない“裏コラム”。表に出る前の先読み話も</small></span></button>
+    <button class="cc-opt" id="ccMember" type="button"><span class="cc-ico">🔒</span><span><b>シークレットコラム</b><small>メンバー限定のコラムです。</small></span></button>
     <button class="cc-cancel" id="ccCancel" type="button">閉じる</button>
   </div>
 </div>
@@ -1694,7 +1694,7 @@ a{text-decoration:none}
   <div class="col-sheet">
     <div class="col-head">
       <button class="col-back" id="colBack" type="button" hidden>‹ 一覧</button>
-      <div class="col-h" id="colHeadTitle">メンバー限定コラム</div>
+      <div class="col-h" id="colHeadTitle">シークレットコラム</div>
       <button class="col-x" id="colClose" type="button" aria-label="閉じる">×</button>
     </div>
     <div class="col-list" id="colList"><div class="col-load"><div class="clb"></div><div class="clt">読み込み中…</div></div></div>
@@ -2218,7 +2218,7 @@ function resetPassword(){
   if(!fbAuth){ showToast("認証を初期化できませんでした。"); return; }
   if(!confirm(email + " にパスワード再設定メールを送信します。よろしいですか？")) return;
   fbAuth.sendPasswordResetEmail(email)
-    .then(()=> showToast("再設定メールを送信しました。メールをご確認ください。"))
+    .then(()=> showToast("再設定メールを送信しました。最新の1通のリンクを、お早めにお開きください（時間が経つと無効になります）。"))
     .catch(()=> showToast("送信に失敗しました。時間をおいて再度お試しください。"));
 }
 function resetPasswordPrompt(){
@@ -2227,7 +2227,7 @@ function resetPasswordPrompt(){
   if(!email || email.indexOf("@") < 0){ return; }
   if(!fbAuth){ showToast("認証を初期化できませんでした。"); return; }
   fbAuth.sendPasswordResetEmail(email)
-    .then(()=> { document.getElementById("lmMsg").textContent = "再設定メールを送信しました。メールをご確認ください。"; })
+    .then(()=> { document.getElementById("lmMsg").textContent = "再設定メールを送信しました。最新の1通のリンクを、お早めにお開きください（時間が経つと無効になります）。"; })
     .catch((e)=> { document.getElementById("lmMsg").textContent = (e && e.code === "auth/user-not-found") ? "そのメールのアカウントが見つかりません。初めての方は「新規無料登録」へ。" : "送信に失敗しました。時間をおいて再度お試しください。"; });
 }
 function showAuthLoading(txt){ const el=document.getElementById("authLoading"); if(!el) return; const t=document.getElementById("authLoadingTx"); if(t) t.textContent = txt||"読み込み中…"; el.hidden = false; }
@@ -2806,7 +2806,7 @@ function showColumnList(){
   document.getElementById("colArticle").hidden = true;
   document.getElementById("colList").hidden = false;
   document.getElementById("colBack").hidden = true;
-  document.getElementById("colHeadTitle").textContent = "メンバー限定コラム";
+  document.getElementById("colHeadTitle").textContent = "シークレットコラム";
 }
 (function(){
   const nav = document.getElementById("nav-column"); if(nav) nav.addEventListener("click", openColumnChooser);
@@ -2850,13 +2850,13 @@ async function openColumnArticle(id){
   const art = document.getElementById("colArticle");
   art.hidden = false; art.innerHTML = COL_LOADING;
   document.getElementById("colBack").hidden = false;
-  document.getElementById("colHeadTitle").textContent = "メンバー限定コラム";
+  document.getElementById("colHeadTitle").textContent = "シークレットコラム";
   try{
     const em = (SESSION && SESSION.email) || "";
     const res = await fetch(GAS_URL + "?action=column&id=" + encodeURIComponent(id) + "&email=" + encodeURIComponent(em) + "&_=" + Date.now()).then(r=>r.json());
     if(!res || !res.ok){ art.innerHTML = `<div class="col-empty">読み込めませんでした。</div>`; return; }
     if(res.locked){
-      art.innerHTML = `<div class="ca-lock"><div class="lk-ico2">🔒</div><h4>メンバー限定の秘密のコラム</h4><p>これは、通常のコラムには載せていない“裏コラム”です。<br>限定公開のため、まだ多くの方に知られていない話や、SNSなどで表に出る前の先読み話をお届けしています。<br><br>エルラボ＋メンバーになると読めます。</p><button class="lk-btn" id="caJoin" type="button">エルラボ＋メンバーになって読む →</button></div>`;
+      art.innerHTML = `<div class="ca-lock"><div class="lk-ico2">🔒</div><h4>シークレットコラム</h4><p>メンバー限定のコラムです。<br>エルラボ＋メンバーになると読めます。</p><button class="lk-btn" id="caJoin" type="button">エルラボ＋メンバーになって読む →</button></div>`;
       const j = document.getElementById("caJoin"); if(j) j.onclick = ()=>{ closeMemberColumns(); if(SESSION && SESSION.email) openSubJoin(); else openLogin(); };
       return;
     }
