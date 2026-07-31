@@ -14,12 +14,13 @@
   - 行に ↓ を含むまとまり … フロー図（↓ は中央・金）
   - **強調** → <strong> / _強調_ → <em>（金）
 """
-import os, re, glob, html
+import os, re, glob, html, datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
 OUT  = os.path.join(ROOT, "columns")          # 公開フォルダ（他アプリと混ざらないよう独立）
 ASSETS = os.path.join(OUT, "assets")
+BASE_URL = "https://columns.l-mine.com/"      # 本番の公開ドメイン（sitemap 用）
 
 NAV = [
     ("ホーム", "https://l-mine.com/home", False),
@@ -252,7 +253,7 @@ def render_article(c, cols):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{html.escape(c["title"])}｜とーる 猫好きの行動経済アナリスト</title>
-<link rel="icon" href="assets/fabikon.png?v=2">
+<link rel="icon" href="/lab-mark-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
@@ -349,7 +350,7 @@ def render_index(page_cols, page, pages):
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>コラム｜とーる 猫好きの行動経済アナリスト</title>
-<link rel="icon" href="assets/fabikon.png?v=2">
+<link rel="icon" href="/lab-mark-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
@@ -395,6 +396,36 @@ def render_index(page_cols, page, pages):
 </body>
 </html>'''
 
+# ---------- サイトマップ（自動生成） ----------
+# ルート直下の主要ページ（集客導線）。実在するものだけ sitemap に含める
+FIXED_PAGES = [
+    "behavioral-economics-lp.html",   # 行動経済学への想い（LP）
+    "elabo-plus-lp.html",             # エルラボ＋案内LP
+    "book-intro-dark.html",           # KINDLE小説
+    "kiso_quiz.html",                 # 行動経済学クイズ
+]
+
+def build_sitemap(cols, pages):
+    """columns/ の実在コラム・一覧・TOP・主要ページから sitemap.xml を再生成する。
+    ビルドの度に呼ぶことで、コラム追加時の登録漏れ（TOP欠落・最新記事欠落）を防ぐ。"""
+    today = datetime.date.today().isoformat()
+    urls = [(BASE_URL, today)]                                   # サイトのTOP（ルート）
+    for p in FIXED_PAGES:                                        # 主要ページ（実在チェック）
+        if os.path.exists(os.path.join(ROOT, p)):
+            urls.append((BASE_URL + p, today))
+    for i in range(1, pages + 1):                               # コラム一覧（index + ページ送り）
+        urls.append((BASE_URL + "columns/" + page_file(i), today))
+    for c in sorted(cols, key=lambda z: z["number"]):          # 各コラム記事（lastmod=投稿日）
+        urls.append((BASE_URL + f'columns/column{c["number"]}.html', c["date"]))
+    body = "\n".join(
+        f'  <url>\n    <loc>{html.escape(u)}</loc>\n    <lastmod>{d}</lastmod>\n  </url>'
+        for u, d in urls)
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           f'{body}\n</urlset>\n')
+    open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write(xml)
+    return len(urls)
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     cols = []
@@ -416,7 +447,9 @@ def main():
         os.remove(f)
     for idx, chunk in enumerate(chunks):
         open(os.path.join(OUT, page_file(idx+1)), "w", encoding="utf-8").write(render_index(chunk, idx+1, pages))
+    n_urls = build_sitemap(cols, pages)
     print(f"生成完了: {len(cols)}記事 + 一覧{pages}ページ -> {OUT}")
+    print(f"sitemap.xml 更新: {n_urls} URL（TOP + 主要ページ + 一覧 + 全コラム）")
     for c in sorted(cols, key=lambda z:-z["number"]):
         print(f"  No.{c['number']:>3}  column{c['number']}.html  {c['title']}")
 
