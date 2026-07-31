@@ -2048,7 +2048,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.3";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.4";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -4250,7 +4250,7 @@ function renderVnav(ci, vi){
   function tick(){ if(curId==null||bar.style.display==="none") return; var n=(window.__LM_NEWS||[]).find(function(x){return x&&x.id===curId;}); if(!n){ evalBar(); return; } var left=Date.parse(String(n.joinDeadline))-Date.now(); if(left<=0||done(curId)){ evalBar(); return; } document.getElementById("dlCd").textContent="締切まで "+fmt(left); place(); }
   bar.addEventListener("click",function(e){ if(e.target && e.target.id==="dlX"){ try{ sessionStorage.setItem("dlbar_x_"+curId,"1"); }catch(_e){} bar.style.display="none"; curId=null; e.stopPropagation(); return; } if(curId!=null && typeof openNewsAndScroll==="function") openNewsAndScroll(curId); });
   window.__evalDLBar=evalBar;
-  setInterval(tick,1000);
+  setInterval(function(){ if(curId==null) evalBar(); else tick(); },1000);   // 非表示中は毎秒再判定（intro等が消えたら自動で出す）
   document.addEventListener("visibilitychange",function(){ if(!document.hidden) evalBar(); });
   evalBar();
 })();
