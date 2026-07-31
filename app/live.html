@@ -15,7 +15,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;-webkit-text-size-adjust:100%;text-size-adjust:100%}
   button{font-family:inherit;cursor:pointer}
   .hidden{display:none!important}
 
@@ -286,6 +286,13 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.database();
 const base = db.ref("live/" + EVENT_ID);
+
+/* iOS：画面回転でズームが残る現象を自動リセット（一瞬だけ固定→戻す） */
+window.addEventListener("orientationchange", function(){
+  var vp=document.querySelector('meta[name=viewport]'); if(!vp) return;
+  vp.setAttribute("content","width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover");
+  setTimeout(function(){ vp.setAttribute("content","width=device-width, initial-scale=1, viewport-fit=cover"); }, 350);
+});
 
 let ME=null, MYNAME="", IS_ADMIN=false, META={}, PRESENCE={}, BANNED_ME=false;
 const $ = id => document.getElementById(id);
