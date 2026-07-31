@@ -262,6 +262,7 @@
     </div>
     <button class="save" id="aSave">設定を保存</button>
     <button class="save" id="aCopyUrl" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🔗 参加URLをコピー</button>
+    <button class="save" id="aCopyOverlay" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🖥 OBS用チャットオーバーレイURLをコピー</button>
     <div class="realcnt" id="aRealCnt"></div>
 
     <div class="divider"></div>
@@ -586,6 +587,12 @@ function setupAdmin(){
     var url = location.origin + location.pathname + "?e=" + encodeURIComponent(EVENT_ID);
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(url).then(()=>{ $("aCopyUrl").textContent="コピーしました ✓"; setTimeout(()=>$("aCopyUrl").textContent="🔗 参加URLをコピー",1500); }).catch(()=>{ prompt("このURLをコピーしてください", url); });
+    } else { prompt("このURLをコピーしてください", url); }
+  };
+  $("aCopyOverlay").onclick = ()=>{
+    var url = location.origin + "/app/live-overlay.html?e=" + encodeURIComponent(EVENT_ID);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(()=>{ $("aCopyOverlay").textContent="コピーしました ✓"; setTimeout(()=>$("aCopyOverlay").textContent="🖥 OBS用チャットオーバーレイURLをコピー",1500); }).catch(()=>{ prompt("このURLをコピーしてください", url); });
     } else { prompt("このURLをコピーしてください", url); }
   };
   $("aSave").onclick = ()=>{
