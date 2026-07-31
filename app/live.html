@@ -127,6 +127,16 @@
   .admin-sheet .realcnt{font-size:12px;color:var(--ink-soft);margin-top:4px}
   .admin-sheet .realcnt b{color:var(--gold)}
   .divider{height:1px;background:var(--line);margin:18px 0}
+  .admin-sheet .arclist{margin-top:8px;border:1px solid var(--line);border-radius:10px;max-height:210px;overflow-y:auto}
+  .admin-sheet .arc{display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--line)}
+  .admin-sheet .arc:last-child{border-bottom:none}
+  .admin-sheet .arc-i{flex:1;min-width:0}
+  .admin-sheet .arc-t{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .admin-sheet .arc-m{font-size:11px;color:var(--ink-soft)}
+  .admin-sheet .arc-a{display:flex;gap:6px;flex:0 0 auto}
+  .admin-sheet .arc-a button{font-size:11px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--panel);color:var(--ink);cursor:pointer}
+  .admin-sheet .arc-a .arc-del{color:#e07979}
+  .admin-sheet .arc-empty{padding:12px;text-align:center;color:var(--ink-soft);font-size:12px}
 
   @media (min-width:860px), (orientation:landscape){
     .room{flex-direction:row}
@@ -253,6 +263,12 @@
     <h3>参加者一覧 <span id="aPCount" style="color:var(--ink-soft);font-weight:400"></span></h3>
     <div class="cap">実際に視聴中の人（管理者のみ表示）</div>
     <div class="plist" id="aPList"></div>
+
+    <div class="divider"></div>
+    <h3>アーカイブ（ライブ録画）</h3>
+    <div class="cap">終了したライブの録画。📥視聴用に登録／🗑不要なら削除（テスト・誤爆用）</div>
+    <div class="arclist" id="aArcList"></div>
+    <button class="save" id="aArcReload" style="background:none;border:1px solid var(--line);color:var(--gold);margin-top:8px">🔄 録画を再読み込み</button>
   </div>
 </div>
 
@@ -545,7 +561,8 @@ function pushOverlay(m){
 
 /* ===== admin ===== */
 function setupAdmin(){
-  $("adminFab").onclick = ()=>{ $("adminSheet").classList.remove("hidden"); fillAdminForm(); };
+  $("adminFab").onclick = ()=>{ $("adminSheet").classList.remove("hidden"); fillAdminForm(); loadArchives(); };
+  $("aArcReload").onclick = loadArchives;
   $("adminClose").onclick = ()=>$("adminSheet").classList.add("hidden");
   $("adminSheet").addEventListener("click",e=>{ if(e.target===$("adminSheet")) $("adminSheet").classList.add("hidden"); });
   $("aCopyUrl").onclick = ()=>{
@@ -598,6 +615,39 @@ function renderPList(){
     (uid===ME.uid?'<span style="font-size:11px;color:var(--ink-soft)">あなた</span>':'<button data-pk="'+esc(uid)+'" data-pn="'+esc(p.n||"")+'">退場</button>')+'</div>'
   ).join("") : '<div class="pi"><span class="knm" style="color:var(--ink-soft)">まだ誰もいません</span></div>';
   box.querySelectorAll("[data-pk]").forEach(b=> b.onclick=()=>{ if(confirm((b.dataset.pn||"この人")+" を強制退場させますか？")) base.child("banned").child(b.dataset.pk).set(true); });
+}
+
+/* アーカイブ（ライブ録画）管理：一覧・視聴登録・削除 */
+async function loadArchives(){
+  const box=$("aArcList"); if(!box) return; box.innerHTML='<div class="arc-empty">読み込み中…</div>';
+  try{
+    const r=await fetch(GAS_URL+"?action=cf_recordings&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&_="+Date.now()).then(x=>x.json());
+    if(!r.ok){ box.innerHTML='<div class="arc-empty">'+(r.error==="cf_unset"?"Cloudflare未設定（APIトークン要）":(r.error==="not_admin"?"権限がありません":"取得できませんでした"))+'</div>'; return; }
+    const arr=r.recordings||[];
+    if(!arr.length){ box.innerHTML='<div class="arc-empty">録画はまだありません。</div>'; return; }
+    box.innerHTML=arr.map(function(v){
+      const mm=Math.floor((v.dur||0)/60), sc=(v.dur||0)%60, d=String(v.created||"").slice(0,10);
+      return '<div class="arc"><div class="arc-i"><div class="arc-t">'+esc(v.name||"(無題の録画)")+'</div><div class="arc-m">'+mm+'分'+sc+'秒　'+esc(d)+(v.ready?'':' ・処理中')+'</div></div>'+
+        '<div class="arc-a"><button class="arc-add" data-add="'+esc(v.uid)+'" data-nm="'+esc(v.name||"")+'">📥登録</button><button class="arc-del" data-del="'+esc(v.uid)+'">🗑</button></div></div>';
+    }).join("");
+    box.querySelectorAll("[data-add]").forEach(b=> b.onclick=()=>regArchive(b.dataset.add, b.dataset.nm));
+    box.querySelectorAll("[data-del]").forEach(b=> b.onclick=()=>delArchive(b.dataset.del));
+  }catch(e){ box.innerHTML='<div class="arc-empty">通信エラー</div>'; }
+}
+async function regArchive(uid, nm){
+  const title=prompt("アーカイブのタイトル（会員に表示されます）", nm||"オンライン勉強会 アーカイブ");
+  if(title==null) return;
+  try{
+    const r=await fetch(GAS_URL,{method:"POST",body:new URLSearchParams({ action:"archive_add", email:(ME.email||"").toLowerCase(), uid:uid, title:title })}).then(x=>x.json());
+    alert(r&&r.ok ? "動画シートに登録しました（会員アーカイブ）✓\n※アプリに反映まで数分かかることがあります" : "登録に失敗しました（"+((r&&r.error)||"")+"）");
+  }catch(e){ alert("通信エラー"); }
+}
+async function delArchive(uid){
+  if(!confirm("この録画をCloudflareから削除しますか？（元に戻せません）")) return;
+  try{
+    const r=await fetch(GAS_URL,{method:"POST",body:new URLSearchParams({ action:"cf_del", email:(ME.email||"").toLowerCase(), uid:uid })}).then(x=>x.json());
+    if(r&&r.ok){ loadArchives(); } else { alert("削除に失敗しました（"+((r&&r.error)||"")+"）"); }
+  }catch(e){ alert("通信エラー"); }
 }
 </script>
 </body>
