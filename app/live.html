@@ -253,6 +253,7 @@
     <input type="text" id="aAccessTag" placeholder="必要タグ">
     <label>参加表明のお知らせID（承認制の時だけ・例：13）</label>
     <input type="text" id="aRsvpNews" placeholder="参加ボタンのあるお知らせの id">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--ink);cursor:pointer"><input type="checkbox" id="aHidden" style="width:auto;flex:0 0 auto"> 🤫 ひっそり公開（テスト用・🔴LIVEバーを出さない／URLを知る人だけ入れる）</label>
     <div class="row">
       <div><label>人数の底上げ係数（0＝盛らない / 1.8＝推奨）</label>
         <input type="number" id="aPadK" step="0.1" min="0" value="0"></div>
@@ -596,13 +597,14 @@ function setupAdmin(){
       accessMode: $("aAccess").value,
       accessTag: ($("aAccessTag").value||"").trim(),
       rsvpNews: ($("aRsvpNews").value||"").trim(),
+      hidden: $("aHidden").checked,
       padK: Number($("aPadK").value||0),
       padCap: Number($("aPadCap").value||0),
       updatedBy: (ME.email||"")
     };
     base.child("meta").set(meta).then(()=>{
       db.ref("rooms/"+EVENT_ID).update({ title:meta.title, startAt:meta.startAt, status:meta.status });   // 会場一覧を最新化
-      if(meta.status==="live"){ db.ref("current").set({ e:EVENT_ID, title:meta.title, status:"live" }); } // 配信中の会場を指す
+      if(meta.status==="live" && !meta.hidden){ db.ref("current").set({ e:EVENT_ID, title:meta.title, status:"live" }); } // 配信中(かつ公開)の会場だけバーに出す
       else { db.ref("current").once("value").then(s=>{ const c=s.val(); if(c && c.e===EVENT_ID) db.ref("current").set(null); }); } // 自分が現行なら解除
       $("aSave").textContent="保存しました ✓"; setTimeout(()=>$("aSave").textContent="設定を保存",1400);
     }).catch(()=>{ $("aSave").textContent="保存失敗（権限）"; });
@@ -622,6 +624,7 @@ function fillAdminForm(){
   $("aAccess").value = META.accessMode||"public";
   $("aAccessTag").value = META.accessTag||"";
   $("aRsvpNews").value = META.rsvpNews||"";
+  $("aHidden").checked = !!META.hidden;
   $("aPadK").value = META.padK!=null?META.padK:0;
   $("aPadCap").value = META.padCap!=null?META.padCap:15;
   renderViewCount();
