@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L-MINE｜とーる 行動経済アナリスト｜講座ビジネス × 行動経済学</title>
+<meta name="description" content="行動経済学 × SNSで「売れる仕組み」をつくる。第1回行動経済学検定1級・Amazon6部門1位・行動経済アナリストのとーるが、講座ビジネスの原理原則を発信するL-MINEの公式サイトです。">
+<meta property="og:title" content="L-MINE｜とーる 行動経済アナリスト">
+<meta property="og:description" content="講座ビジネス × 行動経済学で、売れる仕組みをつくる。コラム・動画講座・オンラインスクール。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://columns.l-mine.com/">
+<meta property="og:image" content="https://columns.l-mine.com/assets/hp-hero.jpg">
+<link rel="icon" href="/favicon.svg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/column.css">
+<style>
+  /* ===== トップページ専用 ===== */
+  .hero-top{position:relative;overflow:hidden;max-width:1520px;margin:0 auto;height:clamp(480px,43.8vw,666px);display:flex;align-items:center}
+  .hero-top .hb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 42%;z-index:0;image-rendering:auto}
+  .hero-top::after{content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(105deg,rgba(14,17,26,.82) 0%,rgba(14,17,26,.66) 38%,rgba(14,17,26,.28) 68%,rgba(14,17,26,.12) 100%)}
+  .hero-inner{position:relative;z-index:2;max-width:1120px;width:100%;margin:0 auto;padding:56px 28px}
+  .hero-inner .ey{font-family:var(--serif-en);font-size:15px;letter-spacing:.32em;text-transform:uppercase;color:#e7c98e;margin-bottom:20px}
+  .hero-inner h1{font-family:var(--mincho);font-weight:800;color:#fff;font-size:clamp(28px,4.6vw,46px);line-height:1.5;letter-spacing:.03em;max-width:19em;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+  .hero-inner h1 .g{color:#e7c98e}
+  .hero-inner .lead{color:#eef0f4;font-size:clamp(14px,1.7vw,16.5px);line-height:2.05;margin-top:24px;max-width:30em;text-shadow:0 1px 14px rgba(0,0,0,.4)}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:.04em;padding:14px 30px;border-radius:999px;transition:.18s}
+  .btn-gold{color:#241a08;background:linear-gradient(135deg,var(--gold-2),var(--gold));box-shadow:0 10px 26px rgba(168,132,63,.32)}
+  .btn-gold:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.55)}
+  .btn-ghost:hover{border-color:#e7c98e;color:#e7c98e}
+
+  /* ===== ヘッダーメニュー（ハンバーガー） ===== */
+  .navtog{display:none}
+  .hamb{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;padding:8px;cursor:pointer}
+  .hamb span{display:block;width:100%;height:2px;background:var(--ink-2);border-radius:2px;transition:.22s}
+  .nav{flex-wrap:wrap;justify-content:flex-end;row-gap:6px}
+  @media(max-width:900px){
+    .mast-inner{flex-wrap:wrap}
+    .hamb{display:flex}
+    .navtog:checked + .hamb span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .navtog:checked + .hamb span:nth-child(2){opacity:0}
+    .navtog:checked + .hamb span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    .nav{display:none;order:3;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;margin-top:10px}
+    .navtog:checked ~ .nav{display:flex}
+    .nav a{padding:13px 4px;border-bottom:1px solid var(--line);border-radius:0;font-size:14.5px}
+    .nav a:last-child{border-bottom:none}
+  }
+
+  /* セクション共通 */
+  .sec-wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  .sec-head{text-align:center;margin:76px 0 40px}
+  .sec-head .ey{font-family:var(--serif-en);font-size:14px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
+  .sec-head h2{font-family:var(--mincho);font-weight:800;font-size:clamp(22px,3.2vw,30px);letter-spacing:.04em;margin-top:8px;color:var(--ink)}
+  .sec-head .hr{width:46px;height:2px;background:var(--gold-2);margin:20px auto 0}
+
+  /* プロフィール（E-E-A-T） */
+  .profile{background:#faf8f3;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);margin-top:20px}
+  .prof-grid{max-width:1000px;margin:0 auto;padding:60px 28px;display:grid;grid-template-columns:230px 1fr;gap:44px;align-items:center}
+  @media(max-width:720px){.prof-grid{grid-template-columns:1fr;gap:26px;text-align:center;padding:48px 28px}}
+  .prof-photo{width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 12px 34px rgba(60,45,20,.18);background:#ece4d3}
+  @media(max-width:720px){.prof-photo{width:170px;margin:0 auto}}
+  .prof-photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .prof-body .lab{font-family:var(--serif-en);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .prof-body h3{font-family:var(--mincho);font-weight:800;font-size:26px;letter-spacing:.04em;margin-bottom:4px}
+  .prof-body h3 span{font-size:14px;color:var(--ink-soft);font-weight:500;margin-left:10px;letter-spacing:.02em}
+  .prof-body .role{font-size:12.5px;color:var(--ink-soft);letter-spacing:.03em;margin-bottom:16px}
+  .prof-body p{font-size:14px;color:var(--ink-2);line-height:2.0;margin-bottom:18px}
+  .creds{display:flex;flex-wrap:wrap;gap:8px}
+  @media(max-width:720px){.creds{justify-content:center}}
+  .creds span{font-size:11.5px;letter-spacing:.02em;color:var(--ink-2);background:#fff;border:1px solid var(--line-2);border-radius:999px;padding:7px 15px}
+  .creds span b{color:var(--gold);font-weight:700}
+
+  /* タイル（導線） */
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:860px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.tiles{grid-template-columns:1fr}}
+  .tile{display:block;border:1px solid var(--line-2);background:var(--card);padding:28px 24px;transition:.18s;position:relative}
+  .tile:hover{border-color:var(--gold);box-shadow:0 12px 30px rgba(60,45,20,.08);transform:translateY(-2px)}
+  .tile .tn{font-family:var(--serif-en);font-size:13px;letter-spacing:.1em;color:var(--gold)}
+  .tile h3{font-family:var(--mincho);font-weight:700;font-size:18px;margin:8px 0 8px;line-height:1.5}
+  .tile p{font-size:12.5px;color:var(--ink-soft);line-height:1.9}
+  .tile .go{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;color:var(--ink-2);letter-spacing:.03em}
+  .tile:hover .go{color:var(--gold)}
+
+  /* コラム誘導バンド */
+  .band{margin-top:80px;background:#0f111a;position:relative;overflow:hidden}
+  .band .bin{max-width:1000px;margin:0 auto;padding:64px 28px;text-align:center;position:relative;z-index:2}
+  .band .ey{font-family:var(--serif-en);font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:#e7c98e}
+  .band h2{font-family:var(--mincho);font-weight:800;color:#fff;font-size:clamp(21px,3vw,28px);letter-spacing:.04em;margin:10px 0 14px;line-height:1.55}
+  .band p{color:#c8ccd6;font-size:13.5px;line-height:2.0;max-width:34em;margin:0 auto 30px}
+  .band .btn-gold{box-shadow:0 10px 26px rgba(0,0,0,.35)}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+
+<header class="masthead">
+  <div class="mast-inner">
+    <a class="brand" href="/"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
+    <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
+    <nav class="nav">
+      <a href="/" class="active">ホーム</a>
+      <a href="behavioral-economics-lp.html">行動経済学への想い</a>
+      <a href="columns/index.html">コラム</a>
+      <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
+      <a href="elabo-plus-lp.html">動画・オンラインコース視聴</a>
+      <a href="book-intro-dark.html">KINDLE小説</a>
+      <a href="https://l-mine.com/contact-us">お問い合わせ</a>
+      <a href="https://l-mine.com/signin">ログイン</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== ヒーロー ===== -->
+<section class="hero-top">
+  <img class="hb" src="assets/hp-hero.jpg" alt="青空とコンクリートの階段に座るとーる">
+  <div class="hero-inner">
+    <div class="ey">L-MINE On-Line School</div>
+    <h1>講座ビジネス <span class="g">×</span> 行動経済学で、<br>「売れる仕組み」を設計する。</h1>
+    <p class="lead">あなたの知識や経験を、独りよがりではなく“選ばれるコンテンツ”へ。<br>流行りの裏技ではなく、時代が変わっても効き続ける原理原則からお伝えします。</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="columns/index.html">コラムを読む →</a>
+      <a class="btn btn-ghost" href="elabo-plus-lp.html">動画・オンラインコースを視聴</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== プロフィール（E-E-A-T） ===== -->
+<section class="profile">
+  <div class="prof-grid">
+    <div class="prof-photo"><img src="assets/toru.jpg" alt="とーる"></div>
+    <div class="prof-body">
+      <div class="lab">Who writes here</div>
+      <h3>とーる<span>／ 行動経済アナリスト</span></h3>
+      <div class="role">L-MINE ON-LINE SCHOOL 主宰・デジタルクリエイター</div>
+      <p>1985年生まれ、名古屋市在住。第1回 行動経済学検定1級 合格者で、日本営業科学協会 認定の行動経済アナリスト。<br>「知識を活かして仕事にしたい」起業初心者の方を、SNS発信から商品設計・販売まで一貫してサポートしています。</p>
+      <div class="creds">
+        <span>行動経済学検定 <b>1級</b>（第1回合格）</span>
+        <span>Amazon <b>6部門1位</b></span>
+        <span>Udemy <b>特別賞</b></span>
+        <span>行動経済アナリスト</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 導線タイル ===== -->
+<div class="sec-wrap">
+  <div class="sec-head">
+    <div class="ey">Contents</div>
+    <h2>できること</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="tiles">
+    <a class="tile" href="columns/index.html">
+      <div class="tn">01</div>
+      <h3>コラム</h3>
+      <p>行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴る100本超のコラム。</p>
+      <span class="go">一覧を見る →</span>
+    </a>
+    <a class="tile" href="elabo-plus-lp.html">
+      <div class="tn">02</div>
+      <h3>動画・オンラインコース視聴</h3>
+      <p>購入した動画講座やアーカイブを視聴できる、メンバー向けの視聴アプリ「エルラボ＋」。</p>
+      <span class="go">視聴ページへ →</span>
+    </a>
+    <a class="tile" href="https://l-mine.com/onlinecourse">
+      <div class="tn">03</div>
+      <h3>オンラインコース一覧</h3>
+      <p>SNS集客・ファネル設計・商品づくり。目的に合わせて選べるオンライン講座のラインナップ。</p>
+      <span class="go">コースを探す →</span>
+    </a>
+    <a class="tile" href="behavioral-economics-lp.html">
+      <div class="tn">04</div>
+      <h3>行動経済学への想い</h3>
+      <p>なぜ“行動経済学 × ビジネス”なのか。L-MINEが大切にしている考え方をまとめました。</p>
+      <span class="go">読んでみる →</span>
+    </a>
+    <a class="tile" href="book-intro-dark.html">
+      <div class="tn">05</div>
+      <h3>KINDLE小説</h3>
+      <p>ビジネスの学びを物語で。とーるが執筆したKindle作品のご紹介ページです。</p>
+      <span class="go">作品を見る →</span>
+    </a>
+    <a class="tile" href="https://l-mine.com/contact-us">
+      <div class="tn">06</div>
+      <h3>お問い合わせ</h3>
+      <p>講座・取材・お仕事のご相談はこちらから。お気軽にご連絡ください。</p>
+      <span class="go">連絡する →</span>
+    </a>
+  </div>
+</div>
+
+<!-- ===== コラム誘導バンド ===== -->
+<section class="band">
+  <div class="bin">
+    <div class="ey">Latest Column</div>
+    <h2>「売れる」の裏側には、いつも理由があります。</h2>
+    <p>テクニックの寄せ集めではなく、行動経済学に基づいた“原理原則”から。<br>今日の発信・商品づくりに効く考え方を、コラムで少しずつお届けしています。</p>
+    <a class="btn btn-gold" href="columns/index.html">最新コラムを読む →</a>
+  </div>
+</section>
+
+<footer><div class="foot-inner"><div class="foot-links"><a href="https://l-mine.com/term">利用規約</a><a href="https://l-mine.com/about">特定商取引法に基づく表示</a><a href="https://l-mine.com/privacy">プライバシーポリシー</a><a href="https://l-mine.com/mensekizikou">免責事項</a></div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
+</body>
+</html>
