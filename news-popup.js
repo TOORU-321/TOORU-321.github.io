@@ -66,7 +66,7 @@
   function show(item){
     injectCss();
     var img = toImg(item.image);
-    var url = (item.popUrl && String(item.popUrl).trim()) || CONFIG.appUrl;
+    var url = (item.popUrl && String(item.popUrl).trim()) || (CONFIG.appUrl + "?news=" + encodeURIComponent(item.id));
     var cta = (item.popCta && String(item.popCta).trim()) || CONFIG.defaultCta;
     var lead = summary(item.body);
 

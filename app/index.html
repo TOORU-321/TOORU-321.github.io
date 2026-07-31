@@ -171,6 +171,8 @@
 .news-new{font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--gold-2),var(--gold));border:none;border-radius:999px;padding:7px 15px;cursor:pointer}
 .news-list{display:flex;flex-direction:column}
 .news-item{padding:15px 2px;border-bottom:1px solid var(--line)}
+.news-item.nhl,.news-compact.nhl{animation:nhlFlash 2.4s ease;border-radius:8px}
+@keyframes nhlFlash{0%,100%{background:transparent}12%,48%{background:rgba(227,195,129,.18)}}
 .ni-date{font-family:var(--serif-en);font-size:12px;color:var(--gold);letter-spacing:.06em}
 .ni-title{font-family:var(--mincho);font-weight:700;font-size:15.5px;color:var(--ink);margin:4px 0 6px}
 .ni-body{font-size:13px;color:var(--ink-2);line-height:1.9;word-break:break-word}
@@ -2828,6 +2830,18 @@ function showColumnList(){
   // ディープリンク：?column=ID で特定の限定コラムを直接開く（公開コラム→アプリ誘導用）
   try{ const cid = new URLSearchParams(location.search).get("column"); if(cid){ const _u=new URL(location.href); _u.searchParams.delete("column"); history.replaceState(null,"",_u.pathname+_u.search+_u.hash); setTimeout(()=>openColumnArticle(cid), 1200); } }catch(e){}   // ?column=は1回開いたらURLから除去（更新で再発火しない）
 })();
+
+/* ディープリンク：?news=ID で該当お知らせへジャンプ＆ハイライト（ポップアップCTA等から） */
+function openNewsAndScroll(id){
+  openNews();
+  var tries=0, key=String(id).replace(/[^\w-]/g,"");
+  var iv=setInterval(function(){
+    var el=document.querySelector('#newsList [data-nid="'+key+'"]');
+    if(el){ clearInterval(iv); try{ el.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){ el.scrollIntoView(); } el.classList.add("nhl"); setTimeout(function(){ el.classList.remove("nhl"); },2600); }
+    else if(++tries>24){ clearInterval(iv); }
+  },250);
+}
+try{ var _nid=new URLSearchParams(location.search).get("news"); if(_nid){ var _un=new URL(location.href); _un.searchParams.delete("news"); history.replaceState(null,"",_un.pathname+_un.search+_un.hash); setTimeout(function(){ openNewsAndScroll(_nid); },1000); } }catch(e){}
 async function openMemberColumns(){
   document.getElementById("columnsModal").hidden = false;
   showColumnList();
@@ -3148,7 +3162,7 @@ function newsItemEl(n){
   const mailOnly = (n.pub === false);
   if(mailOnly && !admin) return null;                                   // メール専用は管理者だけ（GASでも除外済み）
   const locked = memberOnly && !admin && currentRank() < RANK.plus;     // 無料登録・ゲストはモザイク
-  const el = document.createElement("div"); el.className = "news-item" + (locked ? " locked" : "") + (mailOnly ? " mailonly" : "");
+  const el = document.createElement("div"); el.className = "news-item" + (locked ? " locked" : "") + (mailOnly ? " mailonly" : ""); el.dataset.nid = String(n.id);
   let badges = "";
   if(memberOnly) badges += `<span class="ni-badge member">🔒会員限定</span>`;
   if(mailOnly) badges += `<span class="ni-badge mail">✉️メール専用</span>`;
@@ -3227,7 +3241,7 @@ function newsCompactEl(n){
   if(mailOnly && !admin) return null;
   const locked = memberOnly && !admin && currentRank() < RANK.plus;
   const el = document.createElement("div");
-  el.className = "news-compact" + (locked ? " locked" : "");
+  el.className = "news-compact" + (locked ? " locked" : ""); el.dataset.nid = String(n.id);
   let badge = "";
   if(memberOnly) badge = `<span class="nc-badge member">会員のみ</span>`;
   else if(mailOnly) badge = `<span class="nc-badge mail">メール専用</span>`;
