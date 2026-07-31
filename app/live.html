@@ -473,7 +473,7 @@ function listenMeta(){
   base.child("meta").on("value", s=>{
     META = s.val() || {};
     const vid = META.videoUid || DEFAULT_VIDEO;
-    const src = "https://customer-"+CF_SUB+".cloudflarestream.com/"+vid+"/iframe?preload=true&letterboxColor=black";
+    const src = "https://customer-"+CF_SUB+".cloudflarestream.com/"+vid+"/iframe?preload=true&autoplay=true&letterboxColor=black";
     if($("player").getAttribute("src")!==src) $("player").setAttribute("src", src);
     $("roomTitle").textContent = META.title || "ライブ";
     document.title = (META.title || "ライブ") + "｜エルラボ＋";
