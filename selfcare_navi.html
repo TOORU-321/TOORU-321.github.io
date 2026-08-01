@@ -314,6 +314,13 @@ body.admin-mode #adminBar{display:block!important}
   #adminBar .adm-state{width:100%;padding:2px 0 4px}
   body.admin-mode{padding-top:64px!important}
 }
+/* Type confirmation card (Screen 1) */
+.type-confirm-card{background:linear-gradient(135deg,var(--rose-wash),#fff);border:1px solid var(--accent-soft);border-radius:22px;padding:26px 22px 22px;text-align:center;box-shadow:0 12px 30px rgba(169,104,116,.1)}
+.tc-label{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+.tc-name{display:block;font-family:var(--font-serif);font-size:22px;color:var(--ink);font-weight:500;margin-bottom:6px;letter-spacing:.04em;line-height:1.4}
+.tc-sub{display:block;font-family:var(--font-sans);font-size:12px;color:var(--ink-2);margin-bottom:18px;letter-spacing:.05em}
+.tc-change{appearance:none;border:0;background:transparent;color:var(--ink-3);font-family:var(--font-sans);font-size:11.5px;letter-spacing:.06em;cursor:pointer;padding:6px 10px;text-decoration:underline;text-underline-offset:3px;transition:color .18s}
+.tc-change:hover{color:var(--accent)}
 /* Admin Dashboard overlay */
 .dash-overlay{position:fixed;inset:0;z-index:100000;background:rgba(30,25,20,.82);backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;padding:60px 12px 20px;overflow-y:auto}
 .dash-panel{width:min(100%,720px);background:var(--paper);border-radius:20px;box-shadow:0 40px 100px rgba(0,0,0,.4);overflow:hidden;font-family:var(--font-sans);color:var(--ink)}
@@ -782,6 +789,15 @@ p{color:var(--ink-2);line-height:1.9}
         </div>
         <div class="pullquote-attr">— ダイエットコーチ <em>ともこ</em></div>
       </aside>
+      <div class="section" id="typeConfirmSection" style="display:none">
+        <div class="eyebrow"><span class="num">002</span><span class="line"></span><span class="label">YOUR TYPE</span></div>
+        <div class="type-confirm-card">
+          <span class="tc-label">診断結果から</span>
+          <span class="tc-name" id="tcName">—</span>
+          <span class="tc-sub" id="tcSub">—</span>
+          <button class="tc-change" id="tcChange" type="button">タイプを変更する →</button>
+        </div>
+      </div>
       <div class="section" id="typeSection">
         <div class="eyebrow"><span class="num">002</span><span class="line"></span><span class="label">CHOOSE YOUR TYPE</span></div>
         <div class="section-head"><h2 class="h2-serif">あなたの体質タイプ</h2><span class="meta">6 TYPES</span></div>
@@ -1019,6 +1035,16 @@ function captureLineUid(){
     }
   }catch(e){}
 }
+function captureTypeFromUrl(){
+  try{
+    const params=new URLSearchParams(location.search);
+    const t=(params.get('type')||'').toLowerCase();
+    if(t && TYPES[t]){
+      persistType(t);
+      state.type=t;
+    }
+  }catch(e){}
+}
 function fireBeacon(day){
   const map={1:BEACON_DAY1,2:BEACON_DAY2,3:BEACON_DAY3};
   let url=map[day]||'';
@@ -1096,7 +1122,7 @@ function dateKeyOffset(baseKey,offsetDays){const base=new Date(baseKey+'T00:00:0
 function getOverride(){const params=new URLSearchParams(location.search);if(params.get('admin')!=='1')return null;const d=parseInt(params.get('day'),10);if(d>=1&&d<=5)return d;return null;}
 function computeDay(){const override=getOverride();const stored=getStored();const first=new Date(stored.firstVisitKey+'T00:00:00');const today=new Date(todayKey()+'T00:00:00');const dayNumber=Math.max(1,Math.floor((today-first)/86400000)+1);const effective=override||dayNumber;return{actual:dayNumber,effective:effective,display:Math.min(effective,TOTAL_DAYS),showOffer:effective>=TOTAL_DAYS,isOverride:!!override};}
 function pad2(n){return String(n).padStart(2,'0');}
-function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;const dayNum=day.display;$('#welcomeIllust').src='assets/tomoko/chibi_day'+dayNum+'.png';$('#welcomeIllustCaption').textContent='YOUR GUIDE · DAY '+pad2(dayNum);if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';const addr=state.name?state.name+'さん':typeName;$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+addr+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+addr+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまの'+(state.name?state.name+'さん':'あなた')+'に合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='003';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent=state.name?state.name+'さんに合うケアを、':'今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML=state.name?'<strong>'+state.name+'さん</strong>、よろしくお願いします。<br>これからの3日間、丁寧にお供させてくださいね。':'ようこそ。ダイエットコーチのともこです。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今の'+(state.name?state.name+'さん':'あなた')+'に合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#typeSection').style.display='';$('#welcomeRecap').style.display='none';$('#toScreen2').disabled=!state.type;}}
+function renderWelcome(){const stored=getStored();const day=state.day;const isReturning=!!stored.type&&day.display>1;const dayNum=day.display;$('#welcomeIllust').src='assets/tomoko/chibi_day'+dayNum+'.png';$('#welcomeIllustCaption').textContent='YOUR GUIDE · DAY '+pad2(dayNum);if(isReturning){state.type=stored.type;const typeName=TYPES[stored.type].label;const isFinal=day.display===TOTAL_DAYS;$('#welcomeNum').textContent='00'+day.display;$('#welcomeBadge').textContent=isFinal?'FINAL DAY · DAY 03':'WELCOME BACK · DAY 02';$('#welcomeTitleText').innerHTML=isFinal?'3日間の、':'また会えて、';$('#welcomeTitleAccent').innerHTML=isFinal?'総まとめへ。':'嬉しい今日。';$('#welcomeSub').textContent=isFinal?'3 MIN ／ FINAL DAY':'3 MIN ／ DAY 02';const addr=state.name?state.name+'さん':typeName;$('#welcomeMsg1').innerHTML=isFinal?'おかえりなさい、<strong>'+addr+'</strong>。<br>いよいよ3日目、ひとまずの最終日ですね。':'おかえりなさい、<strong>'+addr+'</strong>。<br>昨日もお疲れさまでした。';$('#welcomeMsg2').innerHTML=isFinal?'これまでの2日で見えた傾向と、今日の感覚を組み合わせて、最後の一歩を選びましょう。':'今日もまた、いまの'+(state.name?state.name+'さん':'あなた')+'に合うケアの方向性を一緒に見ていきますね。';$('#typeSection').style.display='none';$('#typeConfirmSection').style.display='none';$('#welcomeRecap').style.display='';renderRecap();$('#toScreen2').disabled=false;}else{$('#welcomeNum').textContent='003';$('#welcomeBadge').textContent='A TOKEN FROM TOMOKO';$('#welcomeTitleText').textContent=state.name?state.name+'さんに合うケアを、':'今日の自分に合うケアを、';$('#welcomeTitleAccent').textContent='迷わず選べる地図。';$('#welcomeSub').textContent='3 MIN ／ 3 DAYS LIMITED';$('#welcomeMsg1').innerHTML=state.name?'<strong>'+state.name+'さん</strong>、よろしくお願いします。<br>これからの3日間、丁寧にお供させてくださいね。':'ようこそ。ダイエットコーチのともこです。';$('#welcomeMsg2').innerHTML='このアプリは、あなたの体質と「今日の体調」をかけ合わせて、<strong>今の'+(state.name?state.name+'さん':'あなた')+'に合いやすいケアの方向性</strong>をやさしく選びます。<br>我慢するダイエットでも、誰かの真似でもなく。<em>「私を好きになるダイエット」</em> の最初の一歩として。';$('#welcomeRecap').style.display='none';if(state.type&&TYPES[state.type]){const tp=TYPES[state.type];$('#tcName').textContent=tp.label;$('#tcSub').textContent=tp.tcm+' ／ '+tp.persona;$('#typeConfirmSection').style.display='';$('#typeSection').style.display='none';$('#toScreen2').disabled=false;}else{$('#typeSection').style.display='';$('#typeConfirmSection').style.display='none';$('#toScreen2').disabled=!state.type;}}}
 function renderRecap(){const stored=getStored();const day=state.day;$('#recapStat').textContent=(day.display-1)+' OF 3 COMPLETED';const tl=$('#timeline');tl.innerHTML='';for(let i=1;i<=3;i++){const node=document.createElement('span');node.className='timeline-node';const dot=document.createElement('span');dot.className='timeline-dot'+(i<day.display?' is-done':i===day.display?' is-current':'');dot.textContent=i<day.display?'✓':pad2(i);if(i<day.display)dot.textContent='✓';const lbl=document.createElement('span');lbl.className='timeline-label';lbl.textContent='DAY '+pad2(i);node.appendChild(dot);node.appendChild(lbl);tl.appendChild(node);if(i<3){const ln=document.createElement('span');ln.className='timeline-line'+(i<day.display?' is-done':'');tl.appendChild(ln);}}const rows=$('#recapRows');rows.innerHTML='';const firstKey=stored.firstVisitKey;for(let i=1;i<=3;i++){const row=document.createElement('div');let choice='',cls='';if(i<day.display){const targetKey=dateKeyOffset(firstKey,i-1);const dd=stored.history&&stored.history[targetKey];if(dd&&dd.rec1){const rev=dd.review?'・'+dd.review:'';choice=(CATEGORIES[dd.rec1]?CATEGORIES[dd.rec1].label:dd.rec1)+rev;}else{choice='— 未完了';}}else if(i===day.display){choice=i===3?'今日が最終日':'今日のあなたを聞かせて';cls='is-current';}else{choice=i===3?'最終日 · 3日間の振り返り':'まだ未来';cls='is-future';}row.className='recap-row '+cls;row.innerHTML='<span class="day">DAY '+pad2(i)+'</span><span class="choice">'+choice+'</span>';rows.appendChild(row);}}
 function showOfferPopup(){const ov=$('#offerOverlay');ov.classList.add('is-show');ov.setAttribute('aria-hidden','false');}
 function hideOfferPopup(){const ov=$('#offerOverlay');ov.classList.remove('is-show');ov.setAttribute('aria-hidden','true');}
@@ -1122,7 +1148,7 @@ function openCalendarFromPopup(){
   },300);
 }
 function maybeAutoPopup(){if(!state.day||!state.day.showOffer)return;let shown=false;try{shown=sessionStorage.getItem(POPUP_SESSION_KEY)==='1';}catch(e){}if(shown)return;setTimeout(function(){showOfferPopup();try{sessionStorage.setItem(POPUP_SESSION_KEY,'1');}catch(e){}},1100);}
-function renderTypes(){const grid=$('#typeGrid');grid.innerHTML='';Object.values(TYPES).forEach(function(t){const btn=document.createElement('button');btn.type='button';btn.className='type-card';btn.setAttribute('role','radio');btn.setAttribute('aria-checked','false');btn.dataset.id=t.id;btn.innerHTML='<span class="badge" aria-hidden="true">'+t.icon+'</span><span class="body"><span class="name">'+t.label+' <span class="sub">'+t.tcm+'</span></span><span class="desc">'+t.persona+'</span></span><svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4 L 11 8 L 5 12"/></svg>';btn.addEventListener('click',function(){selectType(t.id);});grid.appendChild(btn);});}
+function renderTypes(){const grid=$('#typeGrid');grid.innerHTML='';Object.values(TYPES).forEach(function(t){const btn=document.createElement('button');btn.type='button';btn.className='type-card'+(state.type===t.id?' is-selected':'');btn.setAttribute('role','radio');btn.setAttribute('aria-checked',state.type===t.id?'true':'false');btn.dataset.id=t.id;btn.innerHTML='<span class="badge" aria-hidden="true">'+t.icon+'</span><span class="body"><span class="name">'+t.label+' <span class="sub">'+t.tcm+'</span></span><span class="desc">'+t.persona+'</span></span><svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4 L 11 8 L 5 12"/></svg>';btn.addEventListener('click',function(){selectType(t.id);});grid.appendChild(btn);});}
 function selectType(id){state.type=id;persistType(id);$$('.type-card').forEach(function(c){const on=c.dataset.id===id;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});$('#toScreen2').disabled=false;}
 function renderChips(){const wrap=$('#stateChips');wrap.innerHTML='';STATE_TAGS.forEach(function(t){const b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed','false');b.dataset.id=t.id;b.textContent=t.label;b.addEventListener('click',function(){toggleChip(t.id,b);});wrap.appendChild(b);});}
 function toggleChip(id,el){const idx=state.tags.indexOf(id);if(idx>=0){state.tags.splice(idx,1);el.classList.remove('is-on');el.setAttribute('aria-pressed','false');}else{if(state.tags.length>=5){showToast('5つまでに絞ると見やすいです');return;}state.tags.push(id);el.classList.add('is-on');el.setAttribute('aria-pressed','true');}$('#chipCount').textContent=state.tags.length;}
@@ -1284,6 +1310,12 @@ function wirePopup(){
 }
 
 function wireNav(){
+  const tcc=$('#tcChange');
+  if(tcc)tcc.addEventListener('click',function(){
+    $('#typeConfirmSection').style.display='none';
+    $('#typeSection').style.display='';
+    // タイプ選択の是正はできるが、state.typeは保持したまま（グリッドで再選択可能）
+  });
   const b2=$('#toScreen2');
   if(b2)b2.addEventListener('click',function(){if(!state.type){showToast('タイプを選んでください');return;}goScreen(2);});
   const b3=$('#toScreen3');
@@ -1485,6 +1517,7 @@ function renderDashboardData(rows){
 function init(){
   if(handleResetParam())return;
   captureLineUid();
+  captureTypeFromUrl();
   state.day=computeDay();
   const stored=getStored();
   if(stored.name)state.name=stored.name;
