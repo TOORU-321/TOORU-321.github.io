@@ -2048,7 +2048,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.6";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.7";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2573,12 +2573,12 @@ function setLockScreen(v, course){
       return;
     }
     if(course.buyUrl){                        // (B) 決済リンクがある → 直接決済
-      b.textContent = price ? ("購入する（" + price + "）→") : "購入する →";
+      b.textContent = "購入する →";
       b.onclick = (ev)=>{ ev.preventDefault(); openCourseBuy(course.buyUrl); };
       return;
     }
     if(course.priceId){                       // (C) 価格IDがある → 汎用決済ページ buy.html
-      b.textContent = price ? ("購入する（" + price + "）→") : "購入する →";
+      b.textContent = "購入する →";
       b.onclick = (ev)=>{ ev.preventDefault(); openCourseCheckout(course); };
       return;
     }
@@ -2591,7 +2591,7 @@ function setLockScreen(v, course){
   const lp    = (course && course.lpUrl) || (tag ? COURSE_LP[tag] : null);
   const buy   = course && course.buyUrl;
   t.textContent = (prod ? "「" + prod + "」" : "この講座") + "は購入者限定です";
-  d.textContent = price ? ("受講料：" + price + "　ご購入で視聴できます。") : "この講座のご購入で視聴できます。";
+  d.textContent = "この講座のご購入で視聴できます。";
   if(lp){
     b.hidden = false; b.setAttribute("href", "#");
     if(loggedIn){ b.textContent = "コース詳細を見る →"; b.onclick=(ev)=>{ev.preventDefault();openCourseLP(lp);}; }
@@ -2600,7 +2600,7 @@ function setLockScreen(v, course){
   }
   if(buy){
     b.hidden = false; b.setAttribute("href", "#");
-    if(loggedIn){ b.textContent = price ? ("購入する（"+price+"）→") : "購入する →"; b.onclick=(ev)=>{ev.preventDefault();openCourseBuy(buy);}; }
+    if(loggedIn){ b.textContent = "購入する →"; b.onclick=(ev)=>{ev.preventDefault();openCourseBuy(buy);}; }
     else { b.textContent = "ログインして購入する →"; b.onclick=(ev)=>{ev.preventDefault();openLogin();}; }
     return;
   }
