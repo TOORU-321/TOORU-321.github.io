@@ -39,6 +39,8 @@
   .hamb{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;padding:8px;cursor:pointer}
   .hamb span{display:block;width:100%;height:2px;background:var(--ink-2);border-radius:2px;transition:.22s}
   .nav{flex-wrap:wrap;justify-content:flex-end;row-gap:6px}
+  .nav .soon{color:#b0aa9e;cursor:default;white-space:nowrap;align-self:center}
+  .nav .soon::after{content:"準備中";margin-left:5px;font-size:9px;letter-spacing:.05em;color:#fff;background:#b7a06a;border-radius:3px;padding:1px 5px;vertical-align:middle;font-weight:700}
   @media(max-width:900px){
     .mast-inner{flex-wrap:wrap}
     .hamb{display:flex}
@@ -108,11 +110,11 @@
       <a href="/" class="active">ホーム</a>
       <a href="behavioral-economics-lp.html">行動経済学への想い</a>
       <a href="columns/index.html">コラム</a>
-      <a href="https://l-mine.com/onlinecourse">オンラインコース一覧</a>
+      <span class="soon">オンラインコース一覧</span>
       <a href="elabo-plus-lp.html">動画・オンラインコース視聴</a>
       <a href="book-intro-dark.html">KINDLE小説</a>
-      <a href="https://l-mine.com/contact-us">お問い合わせ</a>
-      <a href="https://l-mine.com/signin">ログイン</a>
+      <span class="soon">お問い合わせ</span>
+      <a href="https://columns.l-mine.com/app/">ログイン</a>
     </nav>
   </div>
 </header>
