@@ -301,6 +301,23 @@
     .final h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(31px, 5vw, 57px); font-weight: 600; line-height: 1.5; }
     .final p { max-width: 720px; margin: 28px auto 0; }
     .final .button { width: min(520px, 100%); margin: 38px auto 0; border-color: var(--ink); background: var(--ink); color: var(--paper-strong); }
+
+    /* ===== 講座サムネ・決済カード・返金保証 ===== */
+    .offer-thumb { margin: 0 0 32px; }
+    .offer-thumb img { display: block; width: 100%; height: auto; border: 1px solid rgba(196,160,100,.35); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+    .pay-cards { max-width: 360px; margin: 22px auto 0; }
+    .pay-cards img { display: block; width: 100%; height: auto; padding: 11px 16px; background: #fffdf8; border: 1px solid rgba(196,160,100,.3); border-radius: 6px; }
+    .pay-cards figcaption { margin-top: 9px; color: #8f8a82; font-size: 11px; letter-spacing: .05em; text-align: center; }
+    .guarantee { display: flex; gap: 18px; align-items: flex-start; max-width: 620px; margin: 44px auto 0; padding: 26px 30px; border: 1px solid rgba(11,11,12,.22); background: rgba(255,253,248,.94); border-radius: 5px; text-align: left; box-shadow: 0 18px 44px rgba(20,15,8,.18); }
+    .guarantee .g-ico { flex: 0 0 auto; font-size: 34px; line-height: 1.1; }
+    .guarantee h3 { margin: 0 0 8px; font-family: "Yu Mincho", serif; font-size: 20px; font-weight: 600; color: var(--ink); }
+    .guarantee p { margin: 0; color: #5f5a53; font-size: 13px; line-height: 1.85; }
+    .guarantee .g-note { margin-top: 9px; font-size: 11px; color: #8a857d; }
+    @media (max-width: 760px) {
+      .guarantee { flex-direction: column; gap: 12px; padding: 22px 20px; margin-top: 34px; }
+      .offer-thumb { margin-bottom: 24px; }
+    }
+
     /* ===== ヘッダー（サイト共通・ライト） ===== */
     .top-rule{height:3px;background:linear-gradient(90deg,#a8843f,#c2a35e 60%,transparent);position:relative;z-index:6}
     .masthead{background:#fff;border-bottom:1px solid #cfc8b8;position:relative;z-index:5}
@@ -675,12 +692,19 @@
     <section class="section offer" id="offer">
       <div class="shell">
         <div class="offer-box">
+          <figure class="offer-thumb">
+            <img src="https://drive.google.com/thumbnail?id=1p0clJznYUU0NKZLcPAkvO62Rl-B54Qwk&sz=w1200" alt="起業1年目のためのマーケティング全体講座" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1p0clJznYUU0NKZLcPAkvO62Rl-B54Qwk';">
+          </figure>
           <p class="eyebrow">ACCESS PASS</p>
           <h2>何か月も迷う前に、<br>一度、全体の地図を持つ。</h2>
           <div class="offer-meta"><span>全7章</span><span>29本</span><span>約2時間30分</span></div>
           <div class="offer-price"><span>販売価格</span><strong>27,800<small>円（税込）</small></strong></div>
           <a class="button" href="#" onclick="openCheckout();return false;">アクセスパスを購入する <span class="arrow">→</span></a>
           <p class="offer-note">※クレジットカード決済（Stripe）。ご購入後、専用の講座視聴ページからご覧いただけます。</p>
+          <figure class="pay-cards">
+            <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="ご利用いただける主要クレジットカード（Visa / Mastercard / JCB / American Express など）" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ';">
+            <figcaption>各種クレジットカードでお支払いいただけます</figcaption>
+          </figure>
         </div>
         <dl class="specs">
           <dt>商品名</dt><dd>起業1年目のためのマーケティング全体講座 アクセスパス</dd>
@@ -712,6 +736,14 @@
         <h2>努力を増やす前に、<br>その努力をつなぐ。</h2>
         <p>売れないたびに自分を否定するのではなく、「この流れの、どこを直そうか」と考えられるようになる。その土台を、約2時間30分で一緒に作っていきましょう。</p>
         <a class="button" href="#offer">アクセスパスを購入する <span class="arrow">→</span></a>
+        <div class="guarantee">
+          <div class="g-ico">🛡️</div>
+          <div>
+            <h3>7日間の全額返金保証</h3>
+            <p>ご購入後7日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p>
+            <p class="g-note">※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額、銀行振込の場合は振込手数料を差し引いた額となります。</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>

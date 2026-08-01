@@ -277,11 +277,15 @@
 
     .mobile-sticky { display: none; }
     .countdown-bar {
-      position: sticky; z-index: 80; top: 0; display: flex; min-height: 54px;
-      align-items: center; justify-content: center; gap: 12px; padding: 8px 20px;
-      background: #b58c4d; color: #0b0b0c; font-size: 12px; font-weight: 700;
+      position: fixed; z-index: 120; top: 0; left: 0; right: 0; display: flex; min-height: 62px;
+      align-items: center; justify-content: center; gap: 14px; padding: 10px 20px;
+      background: linear-gradient(90deg, #9c7a37, #cba962 50%, #9c7a37); color: #0b0b0c;
+      font-size: 13px; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,.42);
+      transform: translateY(-108%); transition: transform .5s cubic-bezier(.2,.75,.25,1);
     }
-    .countdown-bar strong { font: 600 25px/1 Georgia, serif; letter-spacing: .06em; }
+    .countdown-bar.show { transform: translateY(0); }
+    .countdown-bar strong { display: inline-block; font: 700 33px/1 Georgia, serif; letter-spacing: .06em; animation: cdpulse 1.4s ease-in-out infinite; }
+    @keyframes cdpulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.07); } }
     .thanks-badge { margin: 0 0 18px; padding: 6px 17px; border: 1px solid var(--gold); color: var(--gold-light); font-size: 11px; letter-spacing: .1em; }
     .upsell-bridge { background: #e9e1d5; }
     .bridge-grid { display: grid; grid-template-columns: 1fr 58px 1fr; align-items: stretch; margin-top: 50px; }
@@ -298,7 +302,43 @@
     .old-price { margin: 0; color: #88837b; font-size: 12px; text-decoration: line-through; }
     .saving { margin: 8px 0 0; color: var(--gold-light); font-size: 12px; }
     .button.is-disabled, .mobile-sticky a.is-disabled { pointer-events: none; background: #4a4946; color: #918e88; border-color: #4a4946; box-shadow: none; }
+
+    /* ===== 冒頭の“手を止める”シーケンス ===== */
+    .intro-seq { position: relative; background: var(--ink); color: var(--paper-strong); overflow: hidden; }
+    .intro-seq::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 32%, rgba(196,160,100,.16), transparent 62%); pointer-events: none; }
+    .intro-panel { position: relative; display: flex; min-height: 88svh; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; }
+    .intro-panel .reveal { opacity: 0; transform: translateY(40px) scale(.84); transition: opacity 1s ease, transform 1.15s cubic-bezier(.2,.7,.2,1); will-change: transform, opacity; }
+    .intro-panel .reveal.in { opacity: 1; transform: none; }
+    .intro-eyebrow { margin: 0 0 24px; color: var(--gold-light); font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .28em; }
+    .intro-big { margin: 0; font-family: "Yu Mincho","Hiragino Mincho ProN",serif; font-size: clamp(42px, 9.2vw, 100px); font-weight: 600; line-height: 1.3; letter-spacing: -.02em; }
+    .intro-but { margin: 0; font-family: "Yu Mincho",serif; font-size: clamp(36px, 8vw, 84px); font-weight: 500; color: var(--dark-muted); letter-spacing: .14em; }
+    .intro-small { margin: 0 0 16px; font-family: "Yu Mincho",serif; font-size: clamp(24px, 5vw, 42px); font-weight: 600; color: var(--gold-light); }
+    .intro-huge { margin: 0; font-family: "Yu Mincho","Hiragino Mincho ProN",serif; font-size: clamp(46px, 10vw, 112px); font-weight: 700; line-height: 1.26; letter-spacing: -.02em; }
+    .intro-huge span { color: var(--gold-light); }
+    .intro-cue { margin: 44px 0 0; color: #8f8a82; font-size: 12px; letter-spacing: .2em; animation: introcue 1.8s ease-in-out infinite; }
+    @keyframes introcue { 0%,100%{ transform: translateY(0); opacity: .55; } 50%{ transform: translateY(8px); opacity: 1; } }
+
+    /* ===== 二重価格を強調（通常価格を大きく） ===== */
+    .old-price { margin: 0; color: #a49e94; font-size: 15px; text-decoration: none; line-height: 1.3; }
+    .old-price .op-num { font: 500 clamp(30px, 6.5vw, 48px) Georgia, serif; color: #d6cfc4; text-decoration: line-through; text-decoration-color: #c0512f; text-decoration-thickness: 2px; letter-spacing: .02em; }
+    .old-price .op-yen { font-size: 15px; margin-left: 2px; }
+
+    /* ===== 講座サムネ・決済カード・返金保証 ===== */
+    .offer-thumb { margin: 0 0 32px; }
+    .offer-thumb img { display: block; width: 100%; height: auto; border: 1px solid rgba(196,160,100,.35); box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+    .pay-cards { max-width: 360px; margin: 22px auto 0; }
+    .pay-cards img { display: block; width: 100%; height: auto; padding: 11px 16px; background: #fffdf8; border: 1px solid rgba(196,160,100,.3); border-radius: 6px; }
+    .pay-cards figcaption { margin-top: 9px; color: #8f8a82; font-size: 11px; letter-spacing: .05em; text-align: center; }
+    .guarantee { display: flex; gap: 18px; align-items: flex-start; max-width: 620px; margin: 44px auto 0; padding: 26px 30px; border: 1px solid rgba(11,11,12,.22); background: rgba(255,253,248,.94); border-radius: 5px; text-align: left; box-shadow: 0 18px 44px rgba(20,15,8,.18); }
+    .guarantee .g-ico { flex: 0 0 auto; font-size: 34px; line-height: 1.1; }
+    .guarantee h3 { margin: 0 0 8px; font-family: "Yu Mincho", serif; font-size: 20px; font-weight: 600; color: var(--ink); }
+    .guarantee p { margin: 0; color: #5f5a53; font-size: 13px; line-height: 1.85; }
+    .guarantee .g-note { margin-top: 9px; font-size: 11px; color: #8a857d; }
+
     @media (max-width: 760px) {
+      .intro-panel { min-height: 82svh; padding: 48px 20px; }
+      .guarantee { flex-direction: column; gap: 12px; padding: 22px 20px; margin-top: 34px; }
+      .offer-thumb { margin-bottom: 24px; }
       .shell, .narrow { width: min(100% - 32px, 1100px); }
       .section { padding: 90px 0; }
       .section-title { font-size: 31px; }
@@ -342,8 +382,8 @@
       .specs dt { padding-bottom: 4px; border-bottom: 0; }
       .specs dd { padding-top: 2px; }
       .final { padding: 90px 0 105px; }
-      .countdown-bar { gap: 6px; font-size: 10px; }
-      .countdown-bar strong { font-size: 20px; }
+      .countdown-bar { gap: 8px; font-size: 11px; min-height: 56px; }
+      .countdown-bar strong { font-size: 25px; }
       .bridge-grid { grid-template-columns: 1fr; }
       .bridge-plus { height: 50px; }
       .lp-visual img { min-height: 250px; }
@@ -366,9 +406,24 @@
 <body>
   <div class="countdown-bar" aria-live="polite"><span>このページ限定のご案内は、あと</span><strong id="countdown">15:00</strong><span>で終了します</span></div>
   <main>
+    <div class="intro-seq" id="introSeq">
+      <div class="intro-panel">
+        <p class="intro-eyebrow reveal">FOR YOU ONLY</p>
+        <p class="intro-big reveal">ご購入、<br>ありがとうございます！</p>
+      </div>
+      <div class="intro-panel">
+        <p class="intro-but reveal">ですが……</p>
+      </div>
+      <div class="intro-panel">
+        <p class="intro-small reveal">ちょっと待って！</p>
+        <p class="intro-huge reveal">あなただけの、<br><span>素敵なお知らせ</span>です。</p>
+        <p class="intro-cue reveal">▼ そのまま読み進めてください</p>
+      </div>
+    </div>
+
+    <div id="timerTrigger" aria-hidden="true"></div>
     <section class="hero" id="top">
       <div class="shell hero-inner">
-        <p class="thanks-badge">ご購入ありがとうございます</p>
         <p class="eyebrow">MARKETING FUNDAMENTALS FOR YEAR ONE</p>
         <div class="hero-rule"></div>
         <h1>「2つの戦略」を知った今、<br><span>売れる全体図</span>まで<br>つなげませんか？</h1>
@@ -384,7 +439,7 @@
           <div><strong>2.5</strong><span>時間</span></div>
         </div>
         <div class="hero-offer">
-          <p class="old-price">通常販売価格 27,800円</p>
+          <p class="old-price">通常販売価格 <span class="op-num">27,800</span><span class="op-yen">円</span></p>
           <div class="price"><span>購入者限定</span><strong>14,800<small>円（税込）</small></strong></div>
           <a class="button purchase-button" href="#offer">14,800円でアクセスパスを追加する <span class="arrow">→</span></a>
           <p class="hero-note">このページを表示している15分間のみの特別価格です</p>
@@ -574,15 +629,22 @@
     <section class="section offer" id="offer">
       <div class="shell">
         <div class="offer-box">
+          <figure class="offer-thumb">
+            <img src="https://drive.google.com/thumbnail?id=1p0clJznYUU0NKZLcPAkvO62Rl-B54Qwk&sz=w1200" alt="起業1年目のためのマーケティング全体講座" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1p0clJznYUU0NKZLcPAkvO62Rl-B54Qwk';">
+          </figure>
           <p class="eyebrow">THIS PAGE ONLY</p>
           <h2>最初の一歩を、<br>売れる全体図へつなげる。</h2>
           <div class="offer-meta"><span>全7章</span><span>29本</span><span>約2時間30分</span></div>
           <p class="special-price">別講座購入者・15分限定</p>
-          <p class="old-price">通常販売価格 27,800円</p>
+          <p class="old-price">通常販売価格 <span class="op-num">27,800</span><span class="op-yen">円</span></p>
           <div class="offer-price"><span>今回限りの特別価格</span><strong>14,800<small>円（税込）</small></strong></div>
           <p class="saving">通常販売価格より13,000円OFF</p>
           <a class="button purchase-button" href="#">14,800円でアクセスパスを追加する <span class="arrow">→</span></a>
           <p class="offer-note">※クレジットカード決済（Stripe）。この15分限定の特別価格でご案内します。</p>
+          <figure class="pay-cards">
+            <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="ご利用いただける主要クレジットカード（Visa / Mastercard / JCB / American Express など）" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ';">
+            <figcaption>各種クレジットカードでお支払いいただけます</figcaption>
+          </figure>
         </div>
         <dl class="specs">
           <dt>商品名</dt><dd>起業1年目のためのマーケティング全体講座 アクセスパス</dd>
@@ -617,6 +679,14 @@
         <h2>今の「分かった」を、<br>次の迷いに変えない。</h2>
         <p>知識を増やすのではなく、知識同士をつなぐ。売れないたびに自分を否定するのではなく、「どこを直そうか」と考えられる土台を作りましょう。</p>
         <a class="button purchase-button" href="#offer">14,800円でアクセスパスを追加する <span class="arrow">→</span></a>
+        <div class="guarantee">
+          <div class="g-ico">🛡️</div>
+          <div>
+            <h3>7日間の全額返金保証</h3>
+            <p>ご購入後7日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p>
+            <p class="g-note">※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額となります。</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -643,6 +713,30 @@
         }
       }
       update(); var timer = setInterval(update, 250);
+    })();
+  </script>
+
+  <script>
+    (function(){
+      // 冒頭シーケンスをスクロールに合わせて出現＆拡大
+      var reveals = document.querySelectorAll('.intro-seq .reveal');
+      if('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+        }, { threshold: 0.35 });
+        Array.prototype.forEach.call(reveals, function(el){ io.observe(el); });
+      } else {
+        Array.prototype.forEach.call(reveals, function(el){ el.classList.add('in'); });
+      }
+      // タイマーを「固定ヘッダー」として、ヒーロー到達時に登場させる
+      var bar = document.querySelector('.countdown-bar');
+      var trigger = document.getElementById('timerTrigger');
+      if(bar && trigger){
+        var onScroll = function(){ bar.classList.toggle('show', trigger.getBoundingClientRect().top <= 4); };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        onScroll();
+      }
     })();
   </script>
 
