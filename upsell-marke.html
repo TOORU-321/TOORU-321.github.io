@@ -335,6 +335,16 @@
     .guarantee p { margin: 0; color: #5f5a53; font-size: 13px; line-height: 1.85; }
     .guarantee .g-note { margin-top: 9px; font-size: 11px; color: #8a857d; }
 
+    /* ===== スクロール誘導 ＆ 退出口（いいえ、不要です） ===== */
+    .intro-scrollcue { margin-top: 46px; }
+    .intro-scrollcue .arrows { display: block; color: var(--gold-light); font-size: clamp(28px, 5.5vw, 44px); letter-spacing: .3em; line-height: 1; animation: introcue 1.4s ease-in-out infinite; }
+    .intro-scrollcue .lbl { display: block; margin-top: 15px; color: #b9b4ab; font-size: 13px; letter-spacing: .1em; }
+    .decline-row { margin: 20px 0 0; text-align: center; }
+    .decline-link { display: inline-block; color: #a7a29a; font-size: 13px; text-decoration: underline; text-underline-offset: 3px; letter-spacing: .02em; transition: color .2s; }
+    .decline-link:hover { color: var(--gold-light); }
+    .final .decline-link { color: #423827; }
+    .final .decline-link:hover { color: #17120c; }
+
     @media (max-width: 760px) {
       .intro-panel { min-height: 82svh; padding: 48px 20px; }
       .guarantee { flex-direction: column; gap: 12px; padding: 22px 20px; margin-top: 34px; }
@@ -410,6 +420,10 @@
       <div class="intro-panel">
         <p class="intro-eyebrow reveal">FOR YOU ONLY</p>
         <p class="intro-big reveal">ご購入、<br>ありがとうございます！</p>
+        <div class="intro-scrollcue reveal">
+          <span class="arrows">↓↓↓</span>
+          <span class="lbl">最後に、あなたへの大切なお知らせがあります</span>
+        </div>
       </div>
       <div class="intro-panel">
         <p class="intro-but reveal">ですが……</p>
@@ -443,6 +457,7 @@
           <div class="price"><span>購入者限定</span><strong>14,800<small>円（税込）</small></strong></div>
           <a class="button purchase-button" href="#offer">14,800円でアクセスパスを追加する <span class="arrow">→</span></a>
           <p class="hero-note">このページを表示している15分間のみの特別価格です</p>
+          <div class="decline-row"><a class="decline-link" href="https://columns.l-mine.com/app/">いいえ、今回は必要ありません（アプリに戻る）</a></div>
         </div>
       </div>
     </section>
@@ -645,6 +660,7 @@
             <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="ご利用いただける主要クレジットカード（Visa / Mastercard / JCB / American Express など）" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ';">
             <figcaption>各種クレジットカードでお支払いいただけます</figcaption>
           </figure>
+          <div class="decline-row"><a class="decline-link" href="https://columns.l-mine.com/app/">いいえ、今回は必要ありません（アプリで学習を続ける）</a></div>
         </div>
         <dl class="specs">
           <dt>商品名</dt><dd>起業1年目のためのマーケティング全体講座 アクセスパス</dd>
@@ -687,6 +703,7 @@
             <p class="g-note">※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額となります。</p>
           </div>
         </div>
+        <div class="decline-row"><a class="decline-link" href="https://columns.l-mine.com/app/">いいえ、今回は必要ありません（アプリに戻る）</a></div>
       </div>
     </section>
   </main>
