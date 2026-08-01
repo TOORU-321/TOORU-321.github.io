@@ -301,6 +301,18 @@
     .final h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(31px, 5vw, 57px); font-weight: 600; line-height: 1.5; }
     .final p { max-width: 720px; margin: 28px auto 0; }
     .final .button { width: min(520px, 100%); margin: 38px auto 0; border-color: var(--ink); background: var(--ink); color: var(--paper-strong); }
+    .instructor { background: var(--paper-strong); }
+    .inst-grid { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 50px; align-items: start; }
+    .inst-photo img { width: 100%; height: auto; display: block; border: 1px solid var(--line-light); background: #eee; box-shadow: 0 22px 55px rgba(20,15,8,.13); }
+    .inst-copy h3 { margin: 0; font-family: "Yu Mincho", serif; font-size: 30px; font-weight: 500; }
+    .inst-job { margin: 6px 0 22px; color: #a17e49; font-family: Georgia, serif; font-size: 14px; }
+    .inst-copy p { margin: 0 0 14px; color: #5f5a53; font-size: 14px; line-height: 1.95; }
+    .inst-copy p:last-child { margin-bottom: 0; }
+    @media (min-width: 760px) {
+      .inst-grid { grid-template-columns: 300px 1fr; gap: 50px; align-items: stretch; }
+      .inst-photo { height: 100%; }
+      .inst-photo img { height: 100%; object-fit: cover; }
+    }
     .lp-topnav { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 15px clamp(16px, 4vw, 40px); }
     .lp-topnav a { color: rgba(245,241,233,.82); font-family: Arial, "Hiragino Sans", sans-serif; font-size: 12px; letter-spacing: .04em; text-decoration: none; transition: color .2s; }
     .lp-topnav a:hover { color: var(--gold-light); }
@@ -600,6 +612,27 @@
               <li>何も考えず、そのまま真似できる必勝法を探している</li>
               <li>講座を見るだけで自動的に売上が上がると思っている</li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section instructor">
+      <div class="shell">
+        <p class="section-label">YOUR INSTRUCTOR</p>
+        <h2 class="section-title">あなたのインストラクター</h2>
+        <div class="inst-grid">
+          <div class="inst-photo">
+            <img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B';">
+          </div>
+          <div class="inst-copy">
+            <h3>とーる</h3>
+            <p class="inst-job">行動経済アナリスト / デジタルクリエイター</p>
+            <p>1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て、現在はオンライン講座の制作やLINE構築を専門に、コンテンツビジネスの構築支援を行う。</p>
+            <p>第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。</p>
+            <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。心理学を活用した独自のファネル（導き）設計を得意とする。</p>
+            <p>数字やバズを追うだけの発信に疑問を持ち、「売れる手法」だけでなく、無理なく“売れ続ける”仕組みづくりを伝えている。</p>
+            <p>現在も行動経済アナリストとして活動中。協会では講座や検定の構築にも携わり、行動経済学を“人を操る”ために使うのではなく、消費者に寄りそう形で役立てる——その考え方を伝える発信活動に力を注いでいる。</p>
           </div>
         </div>
       </div>
