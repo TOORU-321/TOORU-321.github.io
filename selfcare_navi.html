@@ -309,6 +309,10 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 #adminBar #admClose{margin-left:auto;padding:3px 8px;font-size:14px;line-height:1}
 body.admin-mode{padding-top:38px!important}
 body.admin-mode #adminBar{display:block!important}
+#admToggle{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:46px;height:46px;border-radius:50%;background:rgba(25,20,18,.92);color:#fff;border:0;font-size:20px;line-height:1;cursor:pointer;z-index:99998;box-shadow:0 8px 22px rgba(0,0,0,.28);display:none;align-items:center;justify-content:center;padding:0;transition:background .18s,transform .18s;font-family:var(--font-sans)}
+#admToggle:hover{background:var(--accent-deep);transform:scale(1.06)}
+#admToggle:active{transform:scale(.94)}
+#admToggle.is-show{display:flex}
 @media (max-width:520px){
   #adminBar{font-size:10.5px}
   #adminBar .adm-state{width:100%;padding:2px 0 4px}
@@ -607,6 +611,9 @@ p{color:var(--ink-2);line-height:1.9}
     <button type="button" class="adm-btn" id="admClose">×</button>
   </div>
 </div>
+
+<!-- Admin re-show floating button (visible only when ?admin=1 AND bar hidden) -->
+<button id="admToggle" type="button" aria-label="管理者バーを表示" style="display:none">⚙</button>
 
 <!-- Admin Dashboard overlay (only usable when ?admin=1) -->
 <div id="adminDashboard" class="dash-overlay" style="display:none" aria-hidden="true">
@@ -1389,11 +1396,18 @@ function setupAdminBar(){
     try{sessionStorage.removeItem(POPUP_SESSION_KEY);}catch(e){}
     showOfferPopup();
   });
-  // Close button — 一時的に非表示（次のリロードで再表示）
+  // Close button — 一時的に非表示、代わりに右下の⚙トグルボタンを出す
   const cb=$('#admClose');
+  const toggle=$('#admToggle');
   if(cb)cb.addEventListener('click',function(){
     document.body.classList.remove('admin-mode');
     bar.style.display='none';
+    if(toggle)toggle.classList.add('is-show');
+  });
+  if(toggle)toggle.addEventListener('click',function(){
+    document.body.classList.add('admin-mode');
+    bar.style.display='';
+    toggle.classList.remove('is-show');
   });
 }
 let dashAutoTimer=null;
