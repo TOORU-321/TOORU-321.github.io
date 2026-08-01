@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="起業1年目のためのマーケティング全体講座。商品設計・SNS・LINE・教育・販売・ファネルを、ひとつの売れる構造として学ぶ全7章29本の講座です。">
+  <title>起業1年目のためのマーケティング全体講座</title>
+  <style>
+    :root {
+      --ink: #0b0b0c;
+      --ink-soft: #151516;
+      --paper: #f5f1e9;
+      --paper-strong: #fffdf8;
+      --gold: #c4a064;
+      --gold-light: #e7cd96;
+      --muted: #817c74;
+      --dark-muted: #aaa59d;
+      --line-dark: rgba(255,255,255,.13);
+      --line-light: rgba(11,11,12,.14);
+      --shadow: 0 20px 60px rgba(12,10,7,.15);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      line-height: 1.9;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .shell { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
+    .narrow { width: min(880px, calc(100% - 48px)); }
+    .eyebrow {
+      margin: 0;
+      color: var(--gold-light);
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+    .section-label {
+      margin: 0;
+      color: #8e887e;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .2em;
+    }
+    .section-title {
+      margin: 22px 0 0;
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+      font-size: clamp(32px, 5vw, 60px);
+      font-weight: 500;
+      letter-spacing: -.04em;
+      line-height: 1.4;
+    }
+    .gold { color: var(--gold-light); }
+    .button {
+      display: flex;
+      min-height: 68px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 0 26px 0 32px;
+      border: 1px solid var(--gold);
+      background: linear-gradient(135deg, #d8bb7e, #b58c4d);
+      box-shadow: 0 16px 42px rgba(0,0,0,.28);
+      color: #0d0b08;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-decoration: none;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+    .button:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 22px 55px rgba(0,0,0,.34); }
+    .button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+    .button .arrow { font-family: Arial, sans-serif; font-size: 21px; }
+
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(11,11,12,.60), rgba(11,11,12,.78) 66%, rgba(11,11,12,.95)),
+        url('https://drive.google.com/thumbnail?id=1l4TtzbGvFx5P9p0P9QZrbxY1RmEHls1T&sz=w2000') center 22% / cover no-repeat,
+        var(--ink);
+      color: var(--paper-strong);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      top: -310px;
+      right: -330px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,160,100,.25), transparent 67%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 66%, rgba(0,0,0,.35));
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100svh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 70px 0 55px;
+      text-align: center;
+    }
+    .hero-rule { width: 44px; height: 1px; margin: 24px 0 30px; background: var(--gold); }
+    .hero h1 {
+      margin: 0;
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+      font-size: clamp(44px, 7.5vw, 94px);
+      font-weight: 500;
+      letter-spacing: -.055em;
+      line-height: 1.18;
+    }
+    .hero h1 span { color: var(--gold-light); }
+    .hero-lead { margin: 26px 0 0; color: #b9b4ab; font-size: 16px; line-height: 2; }
+    .hero-statement {
+      margin: 18px 0 0;
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 600;
+      letter-spacing: .03em;
+      line-height: 1.7;
+    }
+    .course-name {
+      width: min(720px, 100%);
+      margin-top: 34px;
+      padding: 25px 18px 23px;
+      border-top: 1px solid var(--line-dark);
+      border-bottom: 1px solid var(--line-dark);
+    }
+    .course-name p { margin: 0 0 6px; color: #8f8a82; font-size: 12px; letter-spacing: .08em; }
+    .course-name h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(22px, 3.5vw, 34px); font-weight: 500; }
+    .hero-meta { display: flex; width: min(510px, 100%); margin-top: 27px; }
+    .hero-meta div { flex: 1; border-right: 1px solid var(--line-dark); }
+    .hero-meta div:last-child { border-right: 0; }
+    .hero-meta strong { display: block; color: var(--gold-light); font-family: Georgia, serif; font-size: 27px; font-weight: 500; line-height: 1.25; }
+    .hero-meta span { color: #8f8a82; font-size: 11px; letter-spacing: .08em; }
+    .hero-offer { width: min(510px, 100%); margin-top: 28px; }
+    .price { display: flex; align-items: baseline; justify-content: center; gap: 17px; margin-bottom: 15px; }
+    .price > span { color: #aaa59d; font-size: 12px; }
+    .price strong { font-family: Georgia, serif; font-size: 32px; font-weight: 500; }
+    .price small { margin-left: 5px; font-family: sans-serif; font-size: 11px; font-weight: 400; }
+    .hero-note { margin: 11px 0 0; color: #79756e; font-size: 10px; }
+
+    .image-band { padding: 0 0 92px; background: var(--ink); }
+    .lp-visual { margin: 0; }
+    .lp-visual img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid rgba(196,160,100,.34);
+      background: #111;
+      box-shadow: 0 30px 80px rgba(0,0,0,.32);
+      object-fit: cover;
+    }
+    .hero-visual img { aspect-ratio: 16 / 9; }
+    .lp-visual figcaption {
+      margin-top: 13px;
+      color: #817c74;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-align: center;
+    }
+    .content-visual { margin: 48px 0 0; }
+    .content-visual img {
+      aspect-ratio: 3 / 2;
+      border-color: rgba(11,11,12,.13);
+      box-shadow: 0 22px 55px rgba(20,15,8,.13);
+    }
+
+    .section { padding: 135px 0; }
+    .pain { background: var(--paper); }
+    .lead-copy { max-width: 700px; margin-top: 40px; color: #5f5a53; }
+    .lead-copy p { margin: 0 0 8px; }
+    .lead-copy strong { color: var(--ink); }
+    .pain-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 52px; border: 1px solid var(--line-light); background: var(--line-light); }
+    .pain-grid article { min-height: 145px; padding: 28px 30px; background: var(--paper); }
+    .pain-grid span { color: #a2814f; font-family: Georgia, serif; font-size: 12px; }
+    .pain-grid p { margin: 15px 0 0; font-family: "Yu Mincho", serif; font-size: 17px; font-weight: 600; line-height: 1.8; }
+    .quote { margin: 84px 0; padding-left: 45px; border-left: 2px solid var(--gold); }
+    .quote p { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(27px, 4vw, 42px); font-weight: 500; line-height: 1.65; }
+    .quote span { display: block; margin-top: 17px; color: #777168; font-size: 13px; }
+    .reassure { padding: 58px; border: 1px solid rgba(196,160,100,.42); background: var(--paper-strong); text-align: center; }
+    .reassure p { margin: 0; color: #777168; font-size: 14px; }
+    .reassure h3 { margin: 22px 0; font-family: "Yu Mincho", serif; font-size: clamp(23px, 3.5vw, 35px); font-weight: 600; line-height: 1.7; }
+
+    .structure { background: var(--ink-soft); color: var(--paper-strong); }
+    .heading-row { display: grid; grid-template-columns: 1.25fr .75fr; gap: 85px; align-items: end; }
+    .heading-row .side-copy { margin: 0 0 8px; color: var(--dark-muted); font-size: 14px; }
+    .structure-grid { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 70px; border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); }
+    .structure-grid article { min-height: 260px; padding: 34px 28px 38px; border-right: 1px solid var(--line-dark); }
+    .structure-grid article:last-child { border-right: 0; }
+    .structure-grid span { color: var(--gold); font-family: Georgia, serif; font-size: 12px; }
+    .structure-grid h3 { margin: 34px 0 12px; font-family: "Yu Mincho", serif; font-size: 29px; font-weight: 500; }
+    .structure-grid p { margin: 0; color: var(--dark-muted); font-size: 13px; }
+    .structure-close { margin: 65px 0 0; text-align: center; font-family: "Yu Mincho", serif; font-size: clamp(21px, 3vw, 31px); }
+
+    .dots { background: #ece5d9; }
+    .dots-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 75px; align-items: start; }
+    .dots-visual { position: sticky; top: 40px; padding: 44px; background: var(--ink); color: var(--paper-strong); box-shadow: var(--shadow); }
+    .dots-visual .lp-visual { margin: 0 0 25px; }
+    .dots-visual .lp-visual img { aspect-ratio: 16 / 9; border-color: rgba(196,160,100,.28); box-shadow: none; }
+    .dots-visual .lp-visual figcaption { color: #77726b; }
+    .dot-list { display: grid; gap: 10px; }
+    .dot-list span { display: block; padding: 12px 15px; border: 1px solid var(--line-dark); color: #aaa59d; font-size: 13px; }
+    .dot-list .gold-line { border-color: var(--gold); color: var(--gold-light); }
+    .dots-copy h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(30px, 4.3vw, 48px); font-weight: 500; line-height: 1.5; }
+    .dots-copy p { margin: 25px 0 0; color: #625c54; }
+    .dots-copy strong { color: var(--ink); }
+
+    .map { background: var(--paper-strong); }
+    .map-intro { max-width: 740px; margin: 36px auto 0; text-align: center; color: #625c54; }
+    .diagnosis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 58px; background: var(--line-light); border: 1px solid var(--line-light); }
+    .diagnosis div { min-height: 142px; padding: 25px 18px; background: var(--paper-strong); text-align: center; }
+    .diagnosis b { display: block; color: #a17e49; font-family: Georgia, serif; font-size: 12px; }
+    .diagnosis strong { display: block; margin-top: 15px; font-family: "Yu Mincho", serif; font-size: 18px; }
+    .diagnosis span { display: block; margin-top: 7px; color: #7e786f; font-size: 11px; line-height: 1.6; }
+
+    .story { background: var(--ink); color: var(--paper-strong); }
+    .story-layout { display: grid; grid-template-columns: .7fr 1.3fr; gap: 90px; align-items: start; }
+    .story-number { color: var(--gold-light); font-family: Georgia, serif; font-size: clamp(70px, 11vw, 130px); line-height: .9; }
+    .story-number span { display: block; margin-top: 18px; color: #77726b; font-family: sans-serif; font-size: 11px; letter-spacing: .18em; }
+    .story-copy h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(31px, 4.4vw, 50px); font-weight: 500; line-height: 1.5; }
+    .story-copy p { color: #aaa59d; }
+    .results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 38px 0; background: var(--line-dark); border: 1px solid var(--line-dark); }
+    .results div { padding: 22px 15px; background: var(--ink); text-align: center; }
+    .results strong { display: block; color: var(--gold-light); font-family: Georgia, serif; font-size: 27px; font-weight: 500; }
+    .results span { color: #8a857d; font-size: 11px; }
+
+    .benefits { background: var(--paper); }
+    .benefit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 58px; }
+    .benefit-grid article { padding: 34px; border: 1px solid var(--line-light); background: var(--paper-strong); }
+    .benefit-grid article:last-child { grid-column: 1 / -1; }
+    .benefit-grid span { color: #a17e49; font-family: Georgia, serif; font-size: 12px; }
+    .benefit-grid h3 { margin: 13px 0 10px; font-family: "Yu Mincho", serif; font-size: 22px; }
+    .benefit-grid p { margin: 0; color: #6b655d; font-size: 14px; }
+
+    .curriculum { background: #eee7dc; }
+    .curriculum-head { max-width: 780px; }
+    .curriculum-head > p:last-child { color: #625c54; }
+    .chapters { display: grid; gap: 12px; margin-top: 55px; }
+    .chapter { display: grid; grid-template-columns: 88px 1fr; gap: 28px; padding: 30px 34px; border: 1px solid var(--line-light); background: var(--paper-strong); }
+    .chapter-no { color: #a17e49; font-family: Georgia, serif; font-size: 34px; line-height: 1.2; }
+    .chapter h3 { margin: 0 0 8px; font-family: "Yu Mincho", serif; font-size: 22px; }
+    .chapter p { margin: 0; color: #686159; font-size: 13px; }
+    .chapter ul { margin: 13px 0 0; padding-left: 1.2em; color: #686159; font-size: 12px; }
+
+    .fit { background: var(--paper-strong); }
+    .fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 55px; }
+    .fit-card { padding: 38px; border: 1px solid var(--line-light); }
+    .fit-card.dark { background: var(--ink-soft); color: var(--paper-strong); }
+    .fit-card h3 { margin: 0 0 24px; font-family: "Yu Mincho", serif; font-size: 24px; }
+    .check-list { display: grid; gap: 15px; padding: 0; margin: 0; list-style: none; }
+    .check-list li { position: relative; padding-left: 28px; color: #5f5951; font-size: 14px; }
+    .check-list li::before { content: "✓"; position: absolute; left: 0; color: #a17e49; font-weight: 700; }
+    .dark .check-list li { color: #aaa59d; }
+    .dark .check-list li::before { content: "—"; color: #7f7a72; }
+
+    .offer { background: var(--ink); color: var(--paper-strong); }
+    .offer-box { max-width: 820px; margin: 0 auto; padding: 68px; border: 1px solid rgba(196,160,100,.48); text-align: center; background: linear-gradient(145deg, #111112, #09090a); box-shadow: 0 30px 90px rgba(0,0,0,.35); }
+    .offer-box h2 { margin: 12px 0 0; font-family: "Yu Mincho", serif; font-size: clamp(30px, 4.7vw, 51px); font-weight: 500; line-height: 1.5; }
+    .offer-meta { display: flex; justify-content: center; gap: 24px; margin: 28px 0; color: #aaa59d; font-size: 13px; }
+    .offer-price { margin: 22px 0; }
+    .offer-price span { display: block; color: #99948c; font-size: 12px; }
+    .offer-price strong { color: var(--gold-light); font-family: Georgia, serif; font-size: clamp(45px, 7vw, 72px); font-weight: 500; }
+    .offer-price small { margin-left: 7px; font-family: sans-serif; font-size: 12px; font-weight: 400; }
+    .offer-box .button { width: min(520px, 100%); margin: 0 auto; }
+    .offer-note { margin: 14px 0 0; color: #77726b; font-size: 10px; }
+    .specs { display: grid; grid-template-columns: 150px 1fr; gap: 0; max-width: 820px; margin: 34px auto 0; border: 1px solid var(--line-dark); }
+    .specs dt, .specs dd { margin: 0; padding: 17px 20px; border-bottom: 1px solid var(--line-dark); font-size: 13px; }
+    .specs dt { color: #8f8a82; background: rgba(255,255,255,.025); }
+    .specs dd { color: #c5c0b7; }
+    .specs dt:last-of-type, .specs dd:last-of-type { border-bottom: 0; }
+
+    .faq { background: var(--paper); }
+    .faq-list { display: grid; gap: 12px; margin-top: 50px; }
+    details { border: 1px solid var(--line-light); background: var(--paper-strong); }
+    summary { position: relative; padding: 23px 55px 23px 26px; cursor: pointer; font-weight: 700; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; position: absolute; right: 25px; top: 50%; transform: translateY(-50%); color: #9b7844; font-family: Arial, sans-serif; font-size: 22px; font-weight: 400; }
+    details[open] summary::after { content: "−"; }
+    details p { margin: 0; padding: 0 26px 24px; color: #686159; font-size: 14px; }
+
+    .final { padding: 130px 0; background: #b59157; text-align: center; }
+    .final h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(31px, 5vw, 57px); font-weight: 600; line-height: 1.5; }
+    .final p { max-width: 720px; margin: 28px auto 0; }
+    .final .button { width: min(520px, 100%); margin: 38px auto 0; border-color: var(--ink); background: var(--ink); color: var(--paper-strong); }
+    .footer { padding: 28px 20px; background: var(--ink); color: #6f6b64; text-align: center; font-size: 10px; }
+
+    .mobile-sticky { display: none; }
+    @media (max-width: 760px) {
+      .shell, .narrow { width: min(100% - 32px, 1100px); }
+      .section { padding: 90px 0; }
+      .section-title { font-size: 31px; }
+      .hero { background-position: center 16%; }
+      .image-band { padding-bottom: 55px; }
+      .lp-visual figcaption { margin-top: 9px; line-height: 1.6; }
+      .hero-inner { min-height: auto; padding: 58px 0 45px; }
+      .eyebrow { font-size: 9px; letter-spacing: .14em; }
+      .hero-rule { margin: 19px 0 23px; }
+      .hero h1 { font-size: clamp(39px, 13vw, 57px); line-height: 1.25; }
+      .hero-lead { margin-top: 21px; font-size: 13px; }
+      .hero-statement { margin-top: 14px; font-size: 18px; }
+      .course-name { margin-top: 27px; padding: 21px 6px 19px; }
+      .course-name p { font-size: 10px; }
+      .course-name h2 { font-size: 21px; }
+      .hero-meta { margin-top: 21px; }
+      .hero-meta strong { font-size: 22px; }
+      .price { gap: 11px; }
+      .price strong { font-size: 29px; }
+      .button { min-height: 62px; padding: 0 18px 0 22px; font-size: 14px; }
+      .pain-grid, .benefit-grid, .fit-grid { grid-template-columns: 1fr; }
+      .pain-grid article { min-height: auto; padding: 23px; }
+      .quote { margin: 58px 0; padding-left: 23px; }
+      .quote p { font-size: 25px; }
+      .reassure { padding: 36px 21px; }
+      .heading-row, .dots-layout, .story-layout { grid-template-columns: 1fr; gap: 30px; }
+      .structure-grid { grid-template-columns: 1fr; margin-top: 48px; }
+      .structure-grid article { min-height: auto; padding: 27px 5px 29px; border-right: 0; border-bottom: 1px solid var(--line-dark); }
+      .structure-grid article:last-child { border-bottom: 0; }
+      .structure-grid h3 { margin-top: 17px; }
+      .dots-visual { position: static; padding: 27px; }
+      .diagnosis { grid-template-columns: 1fr; }
+      .diagnosis div { min-height: auto; display: grid; grid-template-columns: 35px 100px 1fr; align-items: center; gap: 10px; text-align: left; }
+      .diagnosis strong, .diagnosis span { margin-top: 0; }
+      .results { grid-template-columns: 1fr; }
+      .benefit-grid article:last-child { grid-column: auto; }
+      .chapter { grid-template-columns: 54px 1fr; gap: 12px; padding: 24px 20px; }
+      .chapter-no { font-size: 27px; }
+      .chapter h3 { font-size: 18px; }
+      .offer-box { padding: 48px 20px; }
+      .offer-meta { flex-wrap: wrap; gap: 4px 15px; }
+      .specs { grid-template-columns: 1fr; }
+      .specs dt { padding-bottom: 4px; border-bottom: 0; }
+      .specs dd { padding-top: 2px; }
+      .final { padding: 90px 0 105px; }
+      .mobile-sticky {
+        position: fixed;
+        z-index: 50;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+        padding: 9px 12px calc(9px + env(safe-area-inset-bottom));
+        background: rgba(11,11,12,.94);
+        backdrop-filter: blur(10px);
+      }
+      .mobile-sticky a { display: block; padding: 13px; background: linear-gradient(135deg, #d8bb7e, #b58c4d); color: #0b0b0c; text-align: center; text-decoration: none; font-size: 13px; font-weight: 700; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" id="top">
+      <div class="shell hero-inner">
+        <p class="eyebrow">MARKETING FUNDAMENTALS FOR YEAR ONE</p>
+        <div class="hero-rule"></div>
+        <h1>SNSを頑張っているのに<br><span>売れない。</span></h1>
+        <p class="hero-lead">その原因は、投稿数でも、フォロワー数でも、<br>あなたのセンスでもありません。</p>
+        <p class="hero-statement">「売れるまでの流れ」が、<br>まだ一本につながっていないだけです。</p>
+        <div class="course-name">
+          <p>商品設計・SNS・LINE・教育・販売・ファネル</p>
+          <h2>起業1年目のためのマーケティング全体講座</h2>
+        </div>
+        <div class="hero-meta" aria-label="講座概要">
+          <div><strong>7</strong><span>章構成</span></div>
+          <div><strong>29</strong><span>動画講義</span></div>
+          <div><strong>2.5</strong><span>時間</span></div>
+        </div>
+        <div class="hero-offer">
+          <div class="price"><span>アクセスパス</span><strong>27,800<small>円（税込）</small></strong></div>
+          <a class="button" href="#offer">アクセスパスを購入する <span class="arrow">→</span></a>
+          <p class="hero-note">購入後、専用の講座視聴ページからご覧いただけます</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="image-band" aria-label="マーケティングの全体地図">
+      <div class="shell">
+        <figure class="lp-visual hero-visual">
+          <img
+            src="https://drive.google.com/thumbnail?id=1o9l2OYg_WuaSzsbdglmzn1zTg0ywY2J-&sz=w2000"
+            alt="散らばったマーケティング施策が一本の明るい道へつながっていくイメージ"
+            width="1672"
+            height="941"
+            fetchpriority="high"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1o9l2OYg_WuaSzsbdglmzn1zTg0ywY2J-';">
+          <figcaption>バラバラの知識を、ひとつの“売れる構造”へ。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section pain">
+      <div class="shell narrow">
+        <p class="section-label">01 — THE REAL PROBLEM</p>
+        <h2 class="section-title">毎日発信しているのに、<br>なぜか売上につながらない。</h2>
+        <div class="lead-copy">
+          <p>投稿を作るために、何時間も使った。ストーリーズも更新した。</p>
+          <p>「今日はちゃんと案内しよう」と勇気を出して商品も紹介した。</p>
+          <p><strong>でも、反応はほとんどない。</strong></p>
+        </div>
+        <figure class="lp-visual content-visual">
+          <img
+            src="https://drive.google.com/thumbnail?id=1GLwSKjOJLvC8cv6YXiuJDd4OO15V1y2f&sz=w1600"
+            alt="夜の自宅でスマートフォンの反応を確認し、静かに落ち込む女性起業家"
+            width="1536"
+            height="1024"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1GLwSKjOJLvC8cv6YXiuJDd4OO15V1y2f';">
+          <figcaption>頑張っているのに結果が見えないと、商品ではなく自分まで否定された気持ちになる。</figcaption>
+        </figure>
+        <div class="pain-grid">
+          <article><span>01</span><p>何時間もかけて投稿したのに、ほとんど反応がない</p></article>
+          <article><span>02</span><p>LINE登録者はいるのに、商品購入へつながらない</p></article>
+          <article><span>03</span><p>また案内したら、売り込みだと思われそうで怖い</p></article>
+          <article><span>04</span><p>ファネルやDRMを学んでも、自分に当てはめられない</p></article>
+        </div>
+        <div class="quote">
+          <p>「私の商品って、そもそも<br>必要とされていないのかな」</p>
+          <span>商品ではなく、自分まで否定されたような気持ちになる。</span>
+        </div>
+        <div class="reassure">
+          <p>でも、最初にお伝えしておきたいことがあります。</p>
+          <h3>売れないからといって、<br>あなたの商品に価値がないわけではありません。</h3>
+          <p>いい商品を作ることと、その商品が自然に選ばれることは、別の話なんです。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section structure">
+      <div class="shell">
+        <div class="heading-row">
+          <div>
+            <p class="section-label gold">02 — STRUCTURE</p>
+            <h2 class="section-title">必要なのは、<br>伝える努力ではなく、<br><span class="gold">伝わる道筋。</span></h2>
+          </div>
+          <p class="side-copy">商品が売れるかどうかは、中身の良さだけでは決まりません。必要な人が、その価値を理解し、迷わず進める流れが必要です。</p>
+        </div>
+        <div class="structure-grid">
+          <article><span>01</span><h3>誰に</h3><p>届ける相手と、その人が今いる段階を見極める。</p></article>
+          <article><span>02</span><h3>何を</h3><p>商品の説明ではなく、その先にある変化を伝える。</p></article>
+          <article><span>03</span><h3>どうやって</h3><p>興味から購入までの順番と、伝える場所を設計する。</p></article>
+        </div>
+        <p class="structure-close">この3つを一本の線として整えること。<br>それが、マーケティングです。</p>
+      </div>
+    </section>
+
+    <section class="section dots">
+      <div class="shell dots-layout">
+        <div class="dots-visual" aria-label="バラバラの施策を線につなぐイメージ">
+          <p class="eyebrow">FROM DOTS TO A FLOW</p>
+          <figure class="lp-visual">
+            <img
+              src="https://drive.google.com/thumbnail?id=1B_J2HIH_2RZ5yCBBY49qf8gWZlygPq7J&sz=w2000"
+              alt="散らばった投稿や施策が整理され、一つの販売導線へ収束する構造イメージ"
+              width="1672"
+              height="941"
+              loading="lazy"
+              decoding="async"
+              referrerpolicy="no-referrer"
+              onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1B_J2HIH_2RZ5yCBBY49qf8gWZlygPq7J';">
+            <figcaption>点だった施策を、購入までの流れに変える。</figcaption>
+          </figure>
+          <div class="dot-list">
+            <span>SNS投稿</span><span>LINE公式</span><span>無料プレゼント</span><span>個別相談</span><span>ウェビナー</span><span class="gold-line">ひとつの売れる流れへ</span>
+          </div>
+        </div>
+        <div class="dots-copy">
+          <p class="section-label">03 — CONNECT THE DOTS</p>
+          <h2>一生懸命な人ほど、<br>「点」で頑張っている。</h2>
+          <p>SNS、LINE、無料特典、個別相談、ウェビナー。言葉や方法は知っている。でも「結局、自分は何から始めればいいの？」となってしまう。</p>
+          <p>これは、知識が足りないというより、<strong>知識同士がつながっていない状態</strong>です。</p>
+          <p>高性能なコンパスも、立派な靴も持っている。でも目的地までの地図がない。これでは、頑張るほど迷います。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section map">
+      <div class="shell">
+        <p class="section-label" style="text-align:center">04 — THE WHOLE MAP</p>
+        <h2 class="section-title" style="text-align:center">最新テクニックより先に、<br>全体地図を持つ。</h2>
+        <p class="map-intro">売れなかったとき、投稿や価格を感覚で変えるのではなく、「どこで人が止まっているのか」を見られるようになる。そのための講座です。</p>
+        <div class="diagnosis">
+          <div><b>01</b><strong>認知</strong><span>そもそも存在を知られているか</span></div>
+          <div><b>02</b><strong>興味</strong><span>自分ごととして立ち止まるか</span></div>
+          <div><b>03</b><strong>教育</strong><span>必要性に納得できているか</span></div>
+          <div><b>04</b><strong>比較</strong><span>選ばれる理由が伝わっているか</span></div>
+          <div><b>05</b><strong>購入</strong><span>最後の不安を取り除けているか</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section story">
+      <div class="shell story-layout">
+        <div class="story-number">3<span>FOLLOWERS AT START</span></div>
+        <div class="story-copy">
+          <p class="section-label gold">05 — WHY I MADE THIS</p>
+          <h2>僕も、SNSが得意だったわけではありません。</h2>
+          <p>SNSの細かな機能やエンゲージメントの見方に詳しいタイプではありません。今でも、お客さんに「これ、どこから見るんですか？」と聞くことがあります。</p>
+          <div class="results">
+            <div><strong>3人</strong><span>フォロワーから初収益</span></div>
+            <div><strong>13日</strong><span>運用開始から30万円</span></div>
+            <div><strong>3か月</strong><span>売上7桁を達成</span></div>
+          </div>
+          <p>先に考えていたのは、「どのツールを使うか」ではなく、<strong style="color:#fff">人がどんな順番で商品を必要だと思うのか</strong>という構造でした。</p>
+          <p>売るのが得意ではなくても、個別営業が苦手でも、構造を作れば必要な人に商品を届けることはできます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section benefits">
+      <div class="shell">
+        <p class="section-label">06 — WHAT CHANGES</p>
+        <h2 class="section-title">講座を見終えたあと、<br>感覚ではなく構造で考えられる。</h2>
+        <div class="benefit-grid">
+          <article><span>01</span><h3>売れない原因を、構造で見つけられる</h3><p>反応がないたびに投稿を作り直すのではなく、どの段階で人が止まっているのかを考えられます。</p></article>
+          <article><span>02</span><h3>SNSとLINEの役割を分けられる</h3><p>興味を持ってもらう場所と、必要性を深く伝える場所を切り分けられます。</p></article>
+          <article><span>03</span><h3>商品を「相手の変化」から作れる</h3><p>自分の知識を詰め込むのではなく、お客さんをどんな未来へ連れていくのかから考えられます。</p></article>
+          <article><span>04</span><h3>自分に合った売り方を選べる</h3><p>流行っているからではなく、目的や商品に合わせて必要なファネルを選べます。</p></article>
+          <article><span>05</span><h3>売り込む前に、自然に選ばれる流れを作れる</h3><p>販売の場で無理に説得せず、その前の集客と教育で「これは自分に必要かもしれない」という納得を育てます。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section curriculum">
+      <div class="shell">
+        <div class="curriculum-head">
+          <p class="section-label">07 — CURRICULUM</p>
+          <h2 class="section-title">全7章・29本。<br>約2時間30分でつなぐ。</h2>
+          <p>難しい用語を暗記する講座ではありません。日常の例やSNSで起きていることに置き換えながら、マーケティングの全体像を順番に学びます。</p>
+        </div>
+        <div class="chapters">
+          <article class="chapter"><div class="chapter-no">01</div><div><h3>なぜ、いい商品だけでは売れないのか</h3><p>商品や発信を作る前に必要な、マーケティングの土台を整えます。</p><ul><li>マーケットインとプロダクトアウト</li><li>発信力ではなく構造で売る</li><li>「誰に・何を・どうやって」の3つの柱</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">02</div><div><h3>マスマーケティングとDRMの違い</h3><p>SNSですべてを伝えようとして疲れてしまう理由と、興味を持った人だけに深く届ける設計を学びます。</p><ul><li>「集客→教育→販売」3ステップ</li><li>SNSで教育はできるのか</li><li>駅前演説と会場誘導で分かる教育</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">03</div><div><h3>ファネルと顧客心理の全体像</h3><p>お客さんがどこで止まり、なぜ購入まで進まないのかを心理の流れから見られるようにします。</p><ul><li>ファネルは“漏れる前提”の仕組み</li><li>買いたくなる心理の7つの関門</li><li>集客・教育・販売の全体像</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">04</div><div><h3>ローンチの本質と、ゼロから始める方法</h3><p>型だけを真似せず、ローンチを連続した顧客体験として理解します。</p><ul><li>教育のないローンチが売れない理由</li><li>“中途半端ローンチ”の正体</li><li>見込み客ゼロからのシードローンチ</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">05</div><div><h3>SNS発信を売れる導線へ変える</h3><p>投稿を単発の情報発信で終わらせず、商品・教育・販売へつながる役割として配置します。</p><ul><li>コンセプトを育てる教育設計</li><li>商品を“お客さんの変化”から作る</li><li>ファンにつながる逆ファネル思考</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">06</div><div><h3>コンテンツビジネスと商品ラインの設計</h3><p>自分の知識や体験を、相手に届きやすく無理なく提供できる形へ整えます。</p><ul><li>自分の体験を価値に変える</li><li>動画・PDF・Zoomなど提供形式の選び方</li><li>入口から本命までの順番設計</li></ul></div></article>
+          <article class="chapter"><div class="chapter-no">07</div><div><h3>見込み客を集め、育て、販売につなげる</h3><p>eBook、ウェビナー、ステップ配信、無料体験など、自分の商品に合う導線を考えます。</p><ul><li>リードジェネレーションとナーチャリング</li><li>TOFU・MOFU・BOFU</li><li>目的別ファネル5選と無料体験設計</li></ul></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fit">
+      <div class="shell">
+        <p class="section-label">08 — WHO IT IS FOR</p>
+        <h2 class="section-title">この講座が合う方、<br>少し合わない方。</h2>
+        <div class="fit-grid">
+          <div class="fit-card">
+            <h3>こんな方のための講座です</h3>
+            <ul class="check-list">
+              <li>起業したものの、マーケティングの全体像が分からない</li>
+              <li>SNSを頑張っているのに商品が売れない</li>
+              <li>フォロワーやLINE登録者はいるのに売上にならない</li>
+              <li>発信・集客・教育・販売を一本の流れで理解したい</li>
+              <li>個別営業や強いクロージングに頼りたくない</li>
+              <li>流行に振り回されず、自分に合う方法を選びたい</li>
+            </ul>
+          </div>
+          <div class="fit-card dark">
+            <h3>次のような方には合いません</h3>
+            <ul class="check-list">
+              <li>最新アルゴリズムの攻略法だけを知りたい</li>
+              <li>投稿テンプレートだけが欲しい</li>
+              <li>何も考えず、そのまま真似できる必勝法を探している</li>
+              <li>講座を見るだけで自動的に売上が上がると思っている</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section offer" id="offer">
+      <div class="shell">
+        <div class="offer-box">
+          <p class="eyebrow">ACCESS PASS</p>
+          <h2>何か月も迷う前に、<br>一度、全体の地図を持つ。</h2>
+          <div class="offer-meta"><span>全7章</span><span>29本</span><span>約2時間30分</span></div>
+          <div class="offer-price"><span>販売価格</span><strong>27,800<small>円（税込）</small></strong></div>
+          <a class="button" href="#" onclick="openCheckout();return false;">アクセスパスを購入する <span class="arrow">→</span></a>
+          <p class="offer-note">※クレジットカード決済（Stripe）。ご購入後、専用の講座視聴ページからご覧いただけます。</p>
+        </div>
+        <dl class="specs">
+          <dt>商品名</dt><dd>起業1年目のためのマーケティング全体講座 アクセスパス</dd>
+          <dt>講座内容</dt><dd>全7章・29本／合計約2時間30分</dd>
+          <dt>提供方法</dt><dd>購入後、専用の講座視聴ページから視聴</dd>
+          <dt>商品形態</dt><dd>動画ファイルの譲渡ではなく、購入者ご本人が講座を視聴できるアクセス権</dd>
+          <dt>サポート</dt><dd>個別相談・添削・チャットサポート・追加特典は含まれません</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section faq">
+      <div class="shell narrow">
+        <p class="section-label">09 — FAQ</p>
+        <h2 class="section-title">よくあるご質問</h2>
+        <div class="faq-list">
+          <details><summary>マーケティング初心者でも理解できますか？</summary><p>はい。起業1年目の方や、専門用語に苦手意識がある方を想定しています。スーパーの試食や駅前演説、家の設計図など、日常的な例に置き換えて解説します。</p></details>
+          <details><summary>SNSのフォロワーが少なくても役立ちますか？</summary><p>はい。フォロワー数や発信力だけに頼らず販売したい方にこそ知っていただきたい内容です。少ない人数でも必要な人に届く流れを学びます。</p></details>
+          <details><summary>商品がまだなくても受講できますか？</summary><p>はい。商品がない方には、マーケットインとプロダクトアウト、相手の変化から商品を作る考え方が役立ちます。すでに商品がある方は、商品のズレや導線の見直しに活用できます。</p></details>
+          <details><summary>講座を見るだけで売上が上がりますか？</summary><p>見るだけで自動的に売上が発生するものではありません。何を改善すべきか分からない状態から、構造を見て小さく実践・改善できる状態を目指します。</p></details>
+          <details><summary>個別相談や質問対応はありますか？</summary><p>本商品は講座視聴ページへのアクセスパスのため、個別相談・添削・チャットでの質問対応は含まれません。</p></details>
+          <details><summary>動画をダウンロードできますか？</summary><p>いいえ。動画ファイルの譲渡商品ではありません。購入者ご本人が専用ページ上で視聴するためのアクセス権をご提供します。動画や資料の複製・転載・第三者との共有はできません。</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="shell narrow">
+        <h2>努力を増やす前に、<br>その努力をつなぐ。</h2>
+        <p>売れないたびに自分を否定するのではなく、「この流れの、どこを直そうか」と考えられるようになる。その土台を、約2時間30分で一緒に作っていきましょう。</p>
+        <a class="button" href="#offer">アクセスパスを購入する <span class="arrow">→</span></a>
+      </div>
+    </section>
+  </main>
+  <div class="mobile-sticky"><a href="#offer">講座内容・価格を確認する</a></div>
+  <footer class="footer">
+    <p style="margin:0 0 8px">
+      <a href="https://columns.l-mine.com/legal/tokusho.html" style="color:#9a958d;text-decoration:underline;margin:0 9px">特定商取引法に基づく表記</a>
+      <a href="https://columns.l-mine.com/legal/terms.html" style="color:#9a958d;text-decoration:underline;margin:0 9px">利用規約</a>
+      <a href="https://columns.l-mine.com/legal/privacy.html" style="color:#9a958d;text-decoration:underline;margin:0 9px">プライバシーポリシー</a>
+    </p>
+    © 起業1年目のためのマーケティング全体講座
+  </footer>
+
+  <!-- 決済モーダル -->
+  <style>
+    .pay-modal{position:fixed;inset:0;z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;background:rgba(6,6,7,.74);overflow:auto}
+    .pay-modal.open{display:flex}
+    .pay-sheet{position:relative;width:min(560px,100%);background:#fffdf8;border-radius:4px;padding:28px 22px 32px;box-shadow:0 30px 90px rgba(0,0,0,.5)}
+    .pay-close{position:absolute;top:8px;right:10px;width:38px;height:38px;border:0;background:none;font-size:26px;line-height:1;color:#8a857d;cursor:pointer}
+    .pay-emailnote{margin:2px 0 16px;padding:12px 14px;background:#f5f1e9;border:1px solid rgba(196,160,100,.4);border-radius:3px;font-size:13px;color:#5f5a53}
+    .pay-msg{padding:40px 10px;text-align:center;color:#817c74;font-size:14px}
+    .pay-msg.err{color:#b5504a}
+    #payDone{text-align:center;padding:22px 6px}
+    #payDone .mk{width:56px;height:56px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#d8bb7e,#b58c4d);color:#0d0b08;font-size:30px;line-height:56px}
+    #payDone h3{margin:0 0 10px;font-family:"Yu Mincho",serif;font-size:22px;font-weight:600}
+    #payDone p{margin:0 0 18px;color:#686159;font-size:14px;line-height:1.9}
+    #payDone .donenote{font-size:11px;color:#9a958d}
+    #payDone .button{display:inline-flex;width:auto;min-height:56px;padding:0 34px}
+  </style>
+  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き">
+    <div class="pay-sheet">
+      <button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button>
+      <div id="payEmailNote" class="pay-emailnote" style="display:none"></div>
+      <div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div>
+      <div id="payDone" style="display:none">
+        <div class="mk">✓</div>
+        <h3>ご購入ありがとうございます</h3>
+        <p>「起業1年目のためのマーケティング全体講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p>
+        <a href="https://columns.l-mine.com/app/" class="button">アプリを開く <span class="arrow">→</span></a>
+        <p class="donenote">※視聴権の反映まで少しお時間がかかる場合があります。解放されない場合は、アプリで一度ログアウト→再ログインをお試しください。</p>
+      </div>
+    </div>
+  </div>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    var STRIPE_PK="pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+    var CHECKOUT_GAS="https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+    var COURSE_PRICE_ID="price_1TyLXLDffCAQquMFEVrjztCt";
+    var PREFILL_EMAIL=""; try{ PREFILL_EMAIL=(new URLSearchParams(location.search).get('email')||'').trim().toLowerCase(); }catch(e){}
+    var _stripe=null,_checkout=null;
+    async function openCheckout(){
+      var modal=document.getElementById('payModal'),cont=document.getElementById('embedded-checkout'),done=document.getElementById('payDone');
+      done.style.display='none'; cont.style.display='block'; cont.innerHTML='<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+      var enote=document.getElementById('payEmailNote');
+      if(enote){ if(PREFILL_EMAIL){ enote.innerHTML='ご登録メール：<b>'+PREFILL_EMAIL+'</b><br>このメールに視聴権が反映されます'; enote.style.display='block'; } else { enote.style.display='none'; } }
+      modal.classList.add('open');
+      try{
+        if(typeof Stripe==='undefined'){ cont.innerHTML='<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+        if(!_stripe){ _stripe=Stripe(STRIPE_PK); }
+        var r=await fetch(CHECKOUT_GAS+'?action=create_checkout&mode=payment&price='+encodeURIComponent(COURSE_PRICE_ID)+(PREFILL_EMAIL?('&email='+encodeURIComponent(PREFILL_EMAIL)):'')+'&_='+Date.now()).then(function(x){return x.json();});
+        if(!r||!r.ok||!r.client_secret){ cont.innerHTML='<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+        if(_checkout){ try{_checkout.destroy();}catch(e){} _checkout=null; }
+        cont.innerHTML='';
+        _checkout=await _stripe.initEmbeddedCheckout({ clientSecret:r.client_secret, onComplete:function(){ cont.style.display='none'; done.style.display='block'; } });
+        _checkout.mount('#embedded-checkout');
+      }catch(e){ cont.innerHTML='<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+    }
+    function closeCheckout(){ document.getElementById('payModal').classList.remove('open'); if(_checkout){ try{_checkout.destroy();}catch(e){} _checkout=null; } }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&document.getElementById('payModal').classList.contains('open')) closeCheckout(); });
+  </script>
+</body>
+</html>
