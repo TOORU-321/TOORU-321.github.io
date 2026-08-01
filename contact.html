@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="L-MINE（エルラボ）へのお問い合わせページ。講座・アプリ「エルラボ＋」・決済などについて、こちらからお気軽にご連絡ください。">
+<meta name="robots" content="noindex">
+<title>お問い合わせ｜L-MINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#14120e;--paper:#f6f2ea;--paper2:#fffdf8;--gold:#b7973f;--gold-d:#8f7430;--line:#e2dbca;--muted:#7a7468;--serif:"Shippori Mincho B1",serif;--sans:"Noto Sans JP",sans-serif}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.85;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+
+  /* ===== ヘッダー（サイト共通） ===== */
+  .top-rule{height:3px;background:linear-gradient(90deg,#a8843f,#c2a35e 60%,transparent)}
+  .masthead{background:#fff;border-bottom:1px solid #cfc8b8}
+  .mast-inner{max-width:1180px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;flex:0 0 auto}
+  .brand img.logo{height:46px;width:auto;display:block}
+  .mnav{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px 15px;font-size:13px;color:#3d3d3d}
+  .mnav a{padding-bottom:2px;border-bottom:1px solid transparent;transition:.15s;white-space:nowrap;text-decoration:none;color:#3d3d3d}
+  .mnav a:hover{color:#a8843f;border-color:#a8843f}
+  .mnav a.active{color:#a8843f;border-color:#a8843f}
+  .mnav .soon{color:#b0aa9e;cursor:default;white-space:nowrap}
+  .mnav .soon::after{content:"準備中";margin-left:5px;font-size:9px;letter-spacing:.05em;color:#fff;background:#b7a06a;border-radius:3px;padding:1px 5px;vertical-align:middle;font-weight:700}
+  .navtog{display:none}.hamb{display:none}
+  @media(max-width:900px){
+    .mast-inner{flex-wrap:wrap;gap:0;padding:14px 18px}
+    .brand img.logo{height:40px}
+    .hamb{display:flex;flex-direction:column;justify-content:center;gap:5px;width:30px;height:30px;cursor:pointer}
+    .hamb span{display:block;width:24px;height:2px;background:#1a1a1a;transition:transform .25s,opacity .2s}
+    .mnav{display:none;width:100%;flex-direction:column;align-items:center;gap:16px;margin:0;padding:18px 0 4px;font-size:15px}
+    .navtog:checked ~ .mnav{display:flex}
+    .navtog:checked ~ .hamb span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .navtog:checked ~ .hamb span:nth-child(2){opacity:0}
+    .navtog:checked ~ .hamb span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  }
+
+  /* ===== 本体 ===== */
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px}
+  .head{text-align:center;padding:56px 0 30px}
+  .head .k{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold-d);text-transform:uppercase}
+  .head h1{font-family:var(--serif);font-size:clamp(28px,6vw,40px);font-weight:700;margin:14px 0 0}
+  .head p{color:var(--muted);font-size:14px;margin:16px auto 0;max-width:540px}
+
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:30px 26px 34px;box-shadow:0 18px 50px rgba(20,15,8,.07);margin-bottom:26px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}
+  .field label .req{color:#c0562f;font-size:11px;margin-left:6px}
+  .field input,.field select,.field textarea{width:100%;padding:12px 13px;background:#fff;border:1px solid var(--line);border-radius:9px;color:var(--ink);font-size:15px;font-family:inherit}
+  .field textarea{min-height:150px;resize:vertical;line-height:1.7}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
+  .submit{width:100%;margin-top:8px;padding:15px;border:0;border-radius:11px;background:linear-gradient(135deg,#c9a961,#a9863b);color:#fff;font-weight:700;font-size:15px;letter-spacing:.04em;cursor:pointer;transition:filter .2s,transform .15s}
+  .submit:hover{filter:brightness(1.05);transform:translateY(-1px)}
+  .submit:disabled{opacity:.6;cursor:default;transform:none}
+  .fmsg{margin-top:14px;font-size:13.5px;text-align:center;min-height:20px}
+  .fmsg.err{color:#c0562f}
+  .fdone{text-align:center;padding:16px 6px}
+  .fdone .mk{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(135deg,#c9a961,#a9863b);color:#fff;font-size:28px;line-height:52px}
+  .fdone h3{font-family:var(--serif);font-size:21px;margin-bottom:8px}
+  .fdone p{color:var(--muted);font-size:14px}
+
+  .alt{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:24px 24px}
+  .alt h2{font-family:var(--serif);font-size:16px;margin-bottom:12px}
+  .alt dl{display:grid;grid-template-columns:120px 1fr;gap:10px 14px;font-size:13.5px}
+  .alt dt{color:var(--muted);font-weight:700}
+  .alt dd a{color:var(--gold-d);text-decoration:underline}
+  @media(max-width:520px){.alt dl{grid-template-columns:1fr;gap:3px 0}.alt dd{margin-bottom:8px}}
+
+  footer{border-top:1px solid var(--line);margin-top:36px}
+  .ft{max-width:720px;margin:0 auto;padding:26px 22px;text-align:center;color:var(--muted);font-size:11.5px}
+  .ft a{color:var(--muted);text-decoration:underline;margin:0 8px;white-space:nowrap}
+</style>
+</head>
+<body>
+  <div class="top-rule"></div>
+  <header class="masthead">
+    <div class="mast-inner">
+      <a class="brand" href="https://columns.l-mine.com/"><img class="logo" src="assets/logo.png" alt="L-MINE"></a>
+      <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
+      <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
+      <nav class="mnav">
+        <a href="https://columns.l-mine.com/">ホーム</a>
+        <a href="behavioral-economics-lp.html">行動経済学への想い</a>
+        <a href="columns/index.html">コラム</a>
+        <span class="soon">オンラインコース一覧</span>
+        <a href="elabo-plus-lp.html">動画・オンラインコース視聴</a>
+        <a href="book-intro-dark.html">KINDLE小説</a>
+        <a href="contact.html" class="active">お問い合わせ</a>
+        <a href="https://columns.l-mine.com/app/">ログイン</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <div class="head">
+        <div class="k">Contact</div>
+        <h1>お問い合わせ</h1>
+        <p>講座・アプリ「エルラボ＋」・決済など、どんなことでもお気軽にどうぞ。<br>内容を確認のうえ、通常2〜3営業日以内にご返信いたします。</p>
+      </div>
+
+      <div class="card">
+        <form id="cform">
+          <div class="field">
+            <label for="c-name">お名前<span class="req">必須</span></label>
+            <input type="text" id="c-name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="c-email">メールアドレス<span class="req">必須</span></label>
+            <input type="email" id="c-email" name="email" autocomplete="email" placeholder="返信先のメールアドレス" required>
+          </div>
+          <div class="field">
+            <label for="c-subject">お問い合わせ種別</label>
+            <select id="c-subject" name="subject">
+              <option>講座について</option>
+              <option>アプリ「エルラボ＋」について</option>
+              <option>決済・返金について</option>
+              <option>その他</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="c-message">お問い合わせ内容<span class="req">必須</span></label>
+            <textarea id="c-message" name="message" required placeholder="お問い合わせ内容をご記入ください。"></textarea>
+          </div>
+          <!-- スパム対策（人には見えない） -->
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true">
+          <button class="submit" type="submit" id="csubmit">送信する</button>
+          <div class="fmsg" id="cmsg"></div>
+        </form>
+        <div class="fdone" id="cdone" style="display:none">
+          <div class="mk">✓</div>
+          <h3>送信しました</h3>
+          <p>お問い合わせありがとうございます。<br>内容を確認のうえ、ご記入のメール宛にご返信いたします。</p>
+        </div>
+      </div>
+
+      <div class="alt">
+        <h2>そのほかの連絡方法・運営情報</h2>
+        <dl>
+          <dt>メール</dt><dd><a href="mailto:info@l-mine.com">info@l-mine.com</a></dd>
+          <dt>運営</dt><dd>L-MINE（エルマイン）</dd>
+          <dt>返信の目安</dt><dd>通常2〜3営業日以内</dd>
+          <dt>関連</dt><dd><a href="legal/tokusho.html">特定商取引法に基づく表記</a></dd>
+        </dl>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="ft">
+      <a href="legal/tokusho.html">特定商取引法に基づく表記</a>
+      <a href="legal/terms.html">利用規約</a>
+      <a href="legal/privacy.html">プライバシーポリシー</a>
+      <div style="margin-top:10px">© L-MINE</div>
+    </div>
+  </footer>
+
+  <script>
+    var GAS_URL = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+    var form = document.getElementById('cform');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(document.querySelector('[name=website]').value){ return; } // ハニーポット
+      var name = document.getElementById('c-name').value.trim();
+      var email = document.getElementById('c-email').value.trim();
+      var subject = document.getElementById('c-subject').value;
+      var message = document.getElementById('c-message').value.trim();
+      var msg = document.getElementById('cmsg');
+      var btn = document.getElementById('csubmit');
+      if(!name || !email || !message){ msg.className='fmsg err'; msg.textContent='必須項目をご入力ください。'; return; }
+      btn.disabled = true; msg.className='fmsg'; msg.textContent='送信中…';
+      var body = new URLSearchParams({ action:'contact', name:name, email:email, subject:subject, message:message });
+      fetch(GAS_URL, { method:'POST', body:body })
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+          if(res && res.ok){
+            form.style.display='none';
+            document.getElementById('cdone').style.display='block';
+          } else {
+            btn.disabled=false; msg.className='fmsg err';
+            msg.textContent='送信に失敗しました。お手数ですが info@l-mine.com までご連絡ください。';
+          }
+        })
+        .catch(function(){
+          btn.disabled=false; msg.className='fmsg err';
+          msg.textContent='通信エラーが発生しました。お手数ですが info@l-mine.com までご連絡ください。';
+        });
+    });
+  </script>
+</body>
+</html>
