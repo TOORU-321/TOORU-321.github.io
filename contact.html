@@ -42,11 +42,12 @@
   }
 
   /* ===== 本体 ===== */
-  .wrap{max-width:720px;margin:0 auto;padding:0 22px}
-  .head{text-align:center;padding:56px 0 30px}
-  .head .k{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:var(--gold-d);text-transform:uppercase}
-  .head h1{font-family:var(--serif);font-size:clamp(28px,6vw,40px);font-weight:700;margin:14px 0 0}
-  .head p{color:var(--muted);font-size:14px;margin:16px auto 0;max-width:540px}
+  .wrap{max-width:720px;margin:-52px auto 0;padding:0 22px;position:relative;z-index:2}
+  .head{position:relative;text-align:center;padding:86px 22px 94px;color:#fff;background:linear-gradient(180deg,rgba(20,18,13,.44),rgba(20,18,13,.72)),url("https://drive.google.com/thumbnail?id=1mR84jAdSoXlgR7_3L0COK2M-Kqq-SmJP&sz=w1800") center/cover no-repeat #201d16}
+  .head-inner{max-width:640px;margin:0 auto}
+  .head .k{font-family:var(--serif);font-size:11px;letter-spacing:.3em;color:#f0d99a;text-transform:uppercase}
+  .head h1{font-family:var(--serif);font-size:clamp(28px,6vw,42px);font-weight:700;margin:14px 0 0;text-shadow:0 3px 20px rgba(0,0,0,.5)}
+  .head p{color:rgba(255,255,255,.92);font-size:14px;margin:16px auto 0;max-width:540px;text-shadow:0 1px 10px rgba(0,0,0,.45)}
 
   .card{background:var(--paper2);border:1px solid var(--line);border-radius:16px;padding:30px 26px 34px;box-shadow:0 18px 50px rgba(20,15,8,.07);margin-bottom:26px}
   .field{margin-bottom:18px}
@@ -98,13 +99,14 @@
   </header>
 
   <main>
-    <div class="wrap">
-      <div class="head">
+    <section class="head">
+      <div class="head-inner">
         <div class="k">Contact</div>
         <h1>お問い合わせ</h1>
         <p>講座・アプリ「エルラボ＋」・決済など、どんなことでもお気軽にどうぞ。<br>内容を確認のうえ、通常2〜3営業日以内にご返信いたします。</p>
       </div>
-
+    </section>
+    <div class="wrap">
       <div class="card">
         <form id="cform">
           <div class="field">
