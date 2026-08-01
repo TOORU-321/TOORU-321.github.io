@@ -2048,7 +2048,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.5";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.6";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2189,6 +2189,7 @@ function renderAcctMenu(){
   const _ns = notifyState();
   const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
   html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
+  html += `<button class="acct-item" data-act="site"><span class="ai-ico">🏠</span>L-MINEサイトへ戻る</button>`;
   if(!isStandalone()) html += `<button class="acct-item acct-join" data-act="addhome"><span class="ai-ico">📲</span>ホーム画面に追加</button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="broadcast"><span class="ai-ico">📧</span>メール案内を送る<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="livehost"><span class="ai-ico">🎥</span>ライブ会場を開く<span class="acct-badge">admin</span></button>`;
@@ -2737,6 +2738,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "logout") logout();
   else if(act === "login") openLogin();
   else if(act === "register") openRegister();
+  else if(act === "site") location.href = "https://columns.l-mine.com/";
   else if(act === "exit"){ if(confirm("トップ画面に戻りますか？")){ localStorage.removeItem(GUEST_KEY); exitToEntry(); } }
 });
 // 管理者：ライブ会場の管理（一覧→開く/新規/削除）を開く
