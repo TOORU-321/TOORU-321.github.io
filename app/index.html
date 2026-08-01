@@ -2048,7 +2048,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.4";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.5";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -3156,7 +3156,7 @@ async function loadNews(){
     window.__LM_NEWS = items; if(window.__evalDLBar) window.__evalDLBar();   // 期限バー用にキャッシュ＆再判定
   }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
 }
-function fmtCountdown(ms){
+function fmtDur(ms){
   var s=Math.floor(ms/1000), d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), sec=s%60;
   if(d>0) return d+"日"+h+"時間"+m+"分";
   if(h>0) return h+"時間"+m+"分"+sec+"秒";
@@ -3173,7 +3173,7 @@ function startPollCountdowns(){
         el.textContent = "🔒 " + (el.dataset.msg || "受付は終了しました");
         el.classList.add("np-closedmsg"); el.removeAttribute("data-dl");
       } else {
-        el.textContent = "⏳ 締切まで " + fmtCountdown(left);
+        el.textContent = "⏳ 締切まで " + fmtDur(left);
       }
     });
   }, 1000);
