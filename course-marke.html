@@ -301,6 +301,12 @@
     .final h2 { margin: 0; font-family: "Yu Mincho", serif; font-size: clamp(31px, 5vw, 57px); font-weight: 600; line-height: 1.5; }
     .final p { max-width: 720px; margin: 28px auto 0; }
     .final .button { width: min(520px, 100%); margin: 38px auto 0; border-color: var(--ink); background: var(--ink); color: var(--paper-strong); }
+    .lp-topnav { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 15px clamp(16px, 4vw, 40px); }
+    .lp-topnav a { color: rgba(245,241,233,.82); font-family: Arial, "Hiragino Sans", sans-serif; font-size: 12px; letter-spacing: .04em; text-decoration: none; transition: color .2s; }
+    .lp-topnav a:hover { color: var(--gold-light); }
+    .lp-backrow { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 46px 20px; background: var(--ink); }
+    .lp-backrow a { display: inline-flex; align-items: center; gap: 7px; padding: 13px 28px; border: 1px solid rgba(196,160,100,.5); color: var(--paper-strong); text-decoration: none; font-size: 13px; letter-spacing: .03em; transition: background .2s, color .2s, border-color .2s; }
+    .lp-backrow a:hover { background: rgba(196,160,100,.14); color: var(--gold-light); border-color: var(--gold); }
     .footer { padding: 28px 20px; background: var(--ink); color: #6f6b64; text-align: center; font-size: 10px; }
 
     .mobile-sticky { display: none; }
@@ -309,6 +315,10 @@
       .section { padding: 90px 0; }
       .section-title { font-size: 31px; }
       .hero { background-position: center 16%; }
+      .lp-topnav { padding: 11px 15px; }
+      .lp-topnav a { font-size: 11px; }
+      .lp-backrow { padding: 36px 18px; }
+      .lp-backrow a { padding: 12px 20px; font-size: 12px; }
       .image-band { padding-bottom: 55px; }
       .lp-visual figcaption { margin-top: 9px; line-height: 1.6; }
       .hero-inner { min-height: auto; padding: 58px 0 45px; }
@@ -369,6 +379,10 @@
 <body>
   <main>
     <section class="hero" id="top">
+      <nav class="lp-topnav" aria-label="ページ移動">
+        <a href="https://columns.l-mine.com/">← トップに戻る</a>
+        <a href="https://columns.l-mine.com/app/">アプリに戻る →</a>
+      </nav>
       <div class="shell hero-inner">
         <p class="eyebrow">MARKETING FUNDAMENTALS FOR YEAR ONE</p>
         <div class="hero-rule"></div>
@@ -635,6 +649,10 @@
     </section>
   </main>
   <div class="mobile-sticky"><a href="#offer">講座内容・価格を確認する</a></div>
+  <div class="lp-backrow">
+    <a href="https://columns.l-mine.com/">🏠 トップに戻る</a>
+    <a href="https://columns.l-mine.com/app/">▶ アプリに戻る</a>
+  </div>
   <footer class="footer">
     <p style="margin:0 0 8px">
       <a href="https://columns.l-mine.com/legal/tokusho.html" style="color:#9a958d;text-decoration:underline;margin:0 9px">特定商取引法に基づく表記</a>
