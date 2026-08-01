@@ -311,6 +311,8 @@
     .mnav a{padding-bottom:2px;border-bottom:1px solid transparent;transition:.15s;white-space:nowrap;text-decoration:none;color:#3d3d3d}
     .mnav a:hover{color:#a8843f;border-color:#a8843f}
     .mnav a.active{color:#a8843f;border-color:#a8843f}
+    .mnav .soon{color:#b0aa9e;cursor:default;white-space:nowrap}
+    .mnav .soon::after{content:"準備中";margin-left:5px;font-size:9px;letter-spacing:.05em;color:#fff;background:#b7a06a;border-radius:3px;padding:1px 5px;vertical-align:middle;font-weight:700}
     .navtog{display:none}
     .hamb{display:none}
     @media(max-width:900px){
@@ -410,18 +412,18 @@
   <div class="top-rule"></div>
   <header class="masthead">
     <div class="mast-inner">
-      <a class="brand" href="https://l-mine.com/home"><img class="logo" src="columns/assets/logo.png" alt="L-MINE"></a>
+      <a class="brand" href="https://columns.l-mine.com/"><img class="logo" src="columns/assets/logo.png" alt="L-MINE"></a>
       <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
       <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
       <nav class="mnav">
-        <a href="https://l-mine.com/home">ホーム</a>
+        <a href="https://columns.l-mine.com/">ホーム</a>
         <a href="behavioral-economics-lp.html">行動経済学への想い</a>
         <a href="columns/index.html">コラム</a>
-        <a href="https://l-mine.com/onlinecourse" class="active">オンラインコース一覧</a>
+        <span class="soon">オンラインコース一覧</span>
         <a href="elabo-plus-lp.html">動画・オンラインコース視聴</a>
         <a href="book-intro-dark.html">KINDLE小説</a>
-        <a href="https://l-mine.com/contact-us">お問い合わせ</a>
-        <a href="https://l-mine.com/l-mine-2.0.2026">エルラボ2.0</a>
+        <span class="soon">お問い合わせ</span>
+        <span class="soon">エルラボ2.0</span>
         <a href="https://columns.l-mine.com/app/">ログイン</a>
       </nav>
     </div>
