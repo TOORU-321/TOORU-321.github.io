@@ -33,6 +33,12 @@
   .btn-gold:hover{filter:brightness(1.06);transform:translateY(-1px)}
   .btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.55)}
   .btn-ghost:hover{border-color:#e7c98e;color:#e7c98e}
+  /* スマホ：ヒーローは固定高さをやめ、中身の高さに合わせる（ボタンと自己紹介の重なり防止） */
+  @media(max-width:720px){
+    .hero-top{height:auto;min-height:420px}
+    .hero-inner{padding:52px 22px 58px}
+    .hero-cta{margin-top:28px;gap:11px}
+  }
 
   /* ===== ヘッダーメニュー（ハンバーガー） ===== */
   .navtog{display:none}
