@@ -677,6 +677,7 @@ a{text-decoration:none}
   box-shadow:0 5px 18px rgba(0,0,0,.24);
 }
 .appbar-brand .brand-plus{color:var(--gold-2)}
+.appbar-ver{margin-left:9px;font-family:var(--gothic);font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.04em;vertical-align:middle;opacity:.9}
 .appbar-right{gap:10px}
 .member-ctl{
   min-height:38px;
@@ -1070,6 +1071,8 @@ a{text-decoration:none}
 .np-guestmsg b{color:#f0d69c}
 .np-guestbtn{font-family:var(--gothic);font-size:13px;font-weight:700;color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border:none;border-radius:999px;padding:11px 22px;cursor:pointer;letter-spacing:.03em;box-shadow:0 8px 20px rgba(202,167,95,.22)}
 .np-guestbtn:active{transform:translateY(1px)}
+.np-cancelreply{margin-left:10px;font-family:var(--gothic);font-size:11px;color:#cf9a9a;background:none;border:1px solid rgba(207,154,154,.42);border-radius:999px;padding:3px 12px;cursor:pointer;transition:.15s}
+.np-cancelreply:hover{background:rgba(207,154,154,.14);color:#e6b5b5}
 .ni-admin button{
   border-color:rgba(227,195,129,.15);
   color:#878b8c;
@@ -1526,7 +1529,7 @@ a{text-decoration:none}
 
 <div id="library" hidden>
 <header class="appbar">
-  <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span></div>
+  <div class="appbar-brand">エルラボ<span class="brand-plus">＋</span><span class="appbar-ver" id="appbarVer"></span></div>
   <div class="appbar-right">
     <button class="acct-trigger" id="menuBtn" aria-haspopup="true" aria-expanded="false">
       <span class="acct-name" id="acctName">メニュー</span>
@@ -2078,7 +2081,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.9";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.5.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2231,7 +2234,7 @@ function renderAcctMenu(){
   html += `<div class="acct-ver" style="text-align:center;font-size:11px;color:#7a7a7a;padding:12px 0 2px;letter-spacing:.05em;opacity:.75">エルラボ＋　v${APP_VERSION}</div>`;
   body.innerHTML = html;
 }
-function updateMemberUI(){ renderAcctMenu(); try{ if(typeof renderFreePick==="function") renderFreePick(); }catch(e){} }
+function updateMemberUI(){ renderAcctMenu(); try{ var _av=document.getElementById("appbarVer"); if(_av) _av.textContent="v"+APP_VERSION; }catch(e){} try{ if(typeof renderFreePick==="function") renderFreePick(); }catch(e){} }
 function openMenu(){ document.getElementById("acctMenu").hidden = false; document.getElementById("acctBackdrop").hidden = false; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","true"); }
 function closeMenu(){ document.getElementById("acctMenu").hidden = true; document.getElementById("acctBackdrop").hidden = true; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","false"); }
 function toggleMenu(){ document.getElementById("acctMenu").hidden ? openMenu() : closeMenu(); }
@@ -3361,8 +3364,10 @@ function newsItemEl(n){
       } else {
         const opts = n.options.map(opt => `<button class="np-opt${mine===opt?" chosen":""}" type="button">${escapeHtml(opt)}</button>`).join("");
         const cd = dl ? `<div class="np-cd" data-dl="${dl}" data-msg="${closedMsg}"></div>` : "";
-        poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div>${cd}<div class="np-done">${mine?"✓「"+escapeHtml(mine)+"」で回答済み":""}</div>`;
+        const doneHtml = mine ? `✓「${escapeHtml(mine)}」で回答済み <button class="np-cancelreply" type="button">キャンセル</button>` : "";
+        poll.innerHTML = `<div class="np-q">回答してください</div><div class="np-opts">${opts}</div>${cd}<div class="np-done">${doneHtml}</div>`;
         poll.querySelectorAll(".np-opt").forEach(b => b.onclick = () => replyNews(n.id, b.textContent, poll));
+        const _cx = poll.querySelector(".np-cancelreply"); if(_cx) _cx.onclick = () => cancelReply(n.id, poll);
       }
       el.appendChild(poll);
     }
@@ -3396,6 +3401,10 @@ function newsItemEl(n){
         b.onclick = () => openPollSend(n, opt);
         pbar.appendChild(b);
       });
+      const br = document.createElement("button"); br.className = "ni-pollsend ni-pollremind";
+      br.textContent = "📣 未回答の人にリマインド送信";
+      br.onclick = () => openPollRemind(n);
+      pbar.appendChild(br);
       el.appendChild(pbar);
     }
   }
@@ -3536,7 +3545,7 @@ function closePollView(){ const m = document.getElementById("pollViewModal"); if
 let _psCtx = null;   // { id, choice, title }
 async function openPollSend(n, choice){
   if(!isAdmin()){ showToast("管理者専用です。"); return; }
-  _psCtx = { id: n.id, choice: choice, title: n.title };
+  _psCtx = { id: n.id, choice: choice, title: n.title, mode: "send" };
   document.getElementById("psSubject").value = "";
   document.getElementById("psBody").value = "";
   const meta = document.getElementById("psMeta");
@@ -3549,22 +3558,48 @@ async function openPollSend(n, choice){
     if(c) c.innerHTML = (res && res.ok) ? `＝ <b>${res.count}人</b>` : "（取得できませんでした）";
   }catch(e){}
 }
+// 管理者：まだ回答していない人にリマインド（お知らせの想定読者 − 回答者）
+async function openPollRemind(n){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  const memberOnly = /会員限定|会員|有料|member|サブスク/i.test(String(n.audience||""));
+  const seg = memberOnly ? "sub" : "all";
+  _psCtx = { id: n.id, title: n.title, mode: "remind", seg: seg };
+  document.getElementById("psSubject").value = "";
+  document.getElementById("psBody").value = "";
+  document.getElementById("psMeta").innerHTML = `お知らせ：<b>${escapeHtml(n.title)}</b><br>対象：<b>まだ回答していない${memberOnly ? "メンバー" : "登録者"}</b>　<span id="psCount">（人数を確認中…）</span>`;
+  document.getElementById("pollSendModal").hidden = false;
+  try{
+    const [aud, resp] = await Promise.all([
+      fetch(GAS_URL + "?action=audience_count&email=" + encodeURIComponent(SESSION.email) + "&seg=" + seg + "&_=" + Date.now()).then(r=>r.json()),
+      fetch(GAS_URL + "?action=poll_respondents&email=" + encodeURIComponent(SESSION.email) + "&id=" + encodeURIComponent(n.id) + "&choice=&_=" + Date.now()).then(r=>r.json())
+    ]);
+    const c = document.getElementById("psCount");
+    if(c){ if(aud && aud.ok && resp && resp.ok){ const est = Math.max(0, (aud.count||0) - (resp.count||0)); c.innerHTML = `＝ 約 <b>${est}人</b>`; } else c.innerHTML = "（取得できませんでした）"; }
+  }catch(e){}
+}
 function closePollSend(){ document.getElementById("pollSendModal").hidden = true; _psCtx = null; }
 async function doPollSend(test){
   if(!_psCtx) return;
   const subject = (document.getElementById("psSubject").value||"").trim();
   const body    = (document.getElementById("psBody").value||"").trim();
   if(!body){ showToast("本文を入力してください。"); return; }
-  if(!test && !confirm(`「${_psCtx.choice}」の回答者に、メールとアプリ通知を送信します。よろしいですか？`)) return;
+  const remind = _psCtx.mode === "remind";
+  const confirmMsg = remind
+    ? "まだ回答していない人に、メールとアプリ通知でリマインドします。よろしいですか？"
+    : `「${_psCtx.choice}」の回答者に、メールとアプリ通知を送信します。よろしいですか？`;
+  if(!test && !confirm(confirmMsg)) return;
   showToast(test ? "自分にテスト送信中…" : "送信中…");
   try{
-    const body2 = new URLSearchParams({ action:"poll_send", email:SESSION.email, id:String(_psCtx.id), choice:_psCtx.choice, subject:subject, body:body });
+    const params = { email:SESSION.email, id:String(_psCtx.id), subject:subject, body:body };
+    if(remind){ params.action = "poll_remind"; params.seg = _psCtx.seg || "all"; }
+    else { params.action = "poll_send"; params.choice = _psCtx.choice; }
+    const body2 = new URLSearchParams(params);
     if(test) body2.set("test", "1");
     const res = await fetch(GAS_URL, { method:"POST", body:body2 }).then(r=>r.json());
     if(res && res.ok){
       showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`);
       if(!test) closePollSend();
-    } else if(res && res.error === "no_respondents"){ showToast("対象の回答者がいません。");
+    } else if(res && (res.error === "no_respondents" || res.error === "no_targets")){ showToast("対象の人がいません。");
     } else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
@@ -3612,6 +3647,32 @@ async function replyNews(id, choice, pollEl){
     localStorage.removeItem("lmine_reply_" + id);
     if(done) done.textContent = "⚠️ 送信できませんでした。もう一度タップしてください。";
     showToast("送信に失敗しました。もう一度お試しください。");
+  }
+}
+// 参加（回答）をキャンセル：回答タブの自分の行を削除し、選択状態も解除
+async function cancelReply(id, pollEl){
+  if(!(SESSION && SESSION.email)){ openLogin(); return; }
+  if(!confirm("この回答（参加）を取り消しますか？")) return;
+  const done = pollEl.querySelector(".np-done");
+  const cx = pollEl.querySelector(".np-cancelreply"); if(cx) cx.disabled = true;
+  if(done) done.textContent = "取消中…";
+  const body = new URLSearchParams({ action:"news_unreply", id:String(id), email:SESSION.email });
+  let ok = false;
+  for(let attempt = 0; attempt < 2 && !ok; attempt++){
+    try{ const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json()); ok = !!(res && res.ok); }
+    catch(e){ ok = false; }
+    if(!ok && attempt === 0) await new Promise(r => setTimeout(r, 900));
+  }
+  if(ok){
+    localStorage.removeItem("lmine_reply_" + id);
+    pollEl.querySelectorAll(".np-opt").forEach(b => b.classList.remove("chosen"));
+    if(done) done.innerHTML = "回答を取り消しました。もう一度選べます。";
+    showToast("回答を取り消しました。");
+    if(window.__evalDLBar) window.__evalDLBar();
+  }else{
+    if(cx) cx.disabled = false;
+    if(done) done.innerHTML = "⚠️ 取り消せませんでした。もう一度お試しください。";
+    showToast("取り消しに失敗しました。");
   }
 }
 async function saveNews(){
