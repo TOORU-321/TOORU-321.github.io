@@ -2078,7 +2078,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.8";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.9";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2244,6 +2244,12 @@ function coursePurchasedTag(c){
   for(var i=0;i<vids.length;i++){ if(vids[i] && vids[i].requiredTag) return vids[i].requiredTag; }
   return null;
 }
+// 「エルラボ＋ オンライン勉強会（＝オンライン講義アーカイブ）」コースを名前で探す
+function findOnlineLectureCourse(){
+  var list=COURSES||[];
+  for(var i=0;i<list.length;i++){ var nm=String(list[i].name||""); if(nm.indexOf("オンライン講義")>=0 || nm.indexOf("オンライン勉強会")>=0 || nm.indexOf("勉強会")>=0) return {c:list[i], ci:i}; }
+  return null;
+}
 // サービス項目の解放条件はここで一元管理（unlockTag＋任意の期限until）。キャンペーン時はここを書き換えるだけ。
 function myPageServices(){
   return [
@@ -2269,6 +2275,7 @@ function openMyPage(){
     document.body.appendChild(ov);
     ov.addEventListener("click", function(e){
       if(e.target.closest("[data-mp-close]")){ closeMyPage(); return; }
+      if(e.target.closest("[data-mp-secretcol]")){ closeMyPage(); if(typeof openMemberColumns==="function") openMemberColumns(); return; }
       var cc=e.target.closest("[data-mp-course]");
       if(cc){ var ci=parseInt(cc.getAttribute("data-mp-course"),10); closeMyPage();
         if(typeof onCourseClick==="function") onCourseClick(ci);
@@ -2276,19 +2283,20 @@ function openMyPage(){
     });
   }
   var owned=[]; (COURSES||[]).forEach(function(c,ci){ var tg=coursePurchasedTag(c); if(tg && hasTag(tg)) owned.push({c:c,ci:ci}); });
-  var courseHtml;
-  if(owned.length){
-    courseHtml = owned.map(function(o){
-      var n=(o.c.videos||[]).length;
-      return '<button class="mp-course" data-mp-course="'+o.ci+'"><span class="mp-th">▶</span>'
-        +'<span class="mp-cinfo"><b>'+mpEsc(o.c.name||"講座")+'</b><em>全'+n+'本</em></span>'
-        +'<span class="mp-go">視聴 →</span></button>';
-    }).join("");
-  } else if(SESSION.subActive){
-    courseHtml = '<p class="mp-empty">エルラボ＋メンバーとして、すべての講座を視聴いただけます。</p>';
-  } else {
-    courseHtml = '<p class="mp-empty">まだ受講中の講座はありません。<br>気になる講座から始めてみましょう。</p>';
+  var isSubMember = !!(SESSION.subActive || hasTag("vip"));   // VIP または シークレットメンバー（エルラボ＋）
+  function mpCourseBtn(ci,title,sub,ico,cta){ return '<button class="mp-course" data-mp-course="'+ci+'"><span class="mp-th">'+(ico||"▶")+'</span><span class="mp-cinfo"><b>'+mpEsc(title)+'</b><em>'+mpEsc(sub||"")+'</em></span><span class="mp-go">'+(cta||"視聴 →")+'</span></button>'; }
+  var rows = "";
+  if(isSubMember){   // ① エルラボ＋ オンライン勉強会（オンライン講義アーカイブ）
+    var ol = findOnlineLectureCourse();
+    if(ol) rows += mpCourseBtn(ol.ci, ol.c.name||"エルラボ＋ オンライン勉強会", "メンバー限定のオンライン講義アーカイブ", "▶", "視聴 →");
   }
+  owned.forEach(function(o){   // ② 個々で購入したアクセスパス
+    rows += mpCourseBtn(o.ci, o.c.name||"講座", "全"+((o.c.videos||[]).length)+"本", "▶", "視聴 →");
+  });
+  if(isSubMember){   // ③ シークレットコラム入口
+    rows += '<button class="mp-course" data-mp-secretcol="1"><span class="mp-th">🔒</span><span class="mp-cinfo"><b>シークレットコラム</b><em>メンバー限定の最新コラム</em></span><span class="mp-go">読む →</span></button>';
+  }
+  var courseHtml = rows || '<p class="mp-empty">まだ受講中の講座はありません。<br>気になる講座から始めてみましょう。</p>';
   var svcHtml = myPageServices().map(function(s){
     if(svcUnlocked(s)){
       return '<a class="mp-svc" href="'+mpEsc(s.url)+'" target="_blank" rel="noopener"><span class="mp-svic">📅</span>'
@@ -2305,7 +2313,7 @@ function openMyPage(){
     +'<p class="mp-hello">こんにちは、<b>'+mpEsc(SESSION.name||"")+'</b>さん</p>'
     +'<h2 class="mp-h1">マイページ</h2>'
     +'<span class="mp-rank"><i></i>'+mpEsc(accountStatusLabel()||"メンバー")+'</span>'
-    +'<div class="mp-sec"><div class="mp-sech"><em>01</em><span>受講中の講座</span><i></i></div>'+courseHtml+'</div>'
+    +'<div class="mp-sec"><div class="mp-sech"><em>01</em><span>受講中のコンテンツ</span><i></i></div>'+courseHtml+'</div>'
     +'<div class="mp-sec"><div class="mp-sech"><em>02</em><span>特典・サービス</span><i></i></div>'+svcHtml+'</div>'
     +'<p class="mp-foot">ロック項目は、特別なご案内のときに自動で解放されます。</p>'
     +'</div>';
