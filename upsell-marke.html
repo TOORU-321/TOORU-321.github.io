@@ -794,6 +794,19 @@
     var COURSE_PRICE_ID="price_1TzIp0DffCAQquMFdEDgLojy";   // 起業1年目マーケ講座 アップセル ¥14,800（15分限定）
     var PREFILL_EMAIL=""; try{ PREFILL_EMAIL=(new URLSearchParams(location.search).get('email')||'').trim().toLowerCase(); }catch(e){}
     var _stripe=null,_checkout=null;
+    // 対象講座（起業1年目マーケ講座＝タグ "marke"）を既にお持ちの方にはアップセルを出さない → アプリへ戻す
+    (function(){
+      if(!PREFILL_EMAIL) return;   // メール不明（直接訪問など）は通常表示
+      try{
+        fetch(CHECKOUT_GAS + "?action=verify&email=" + encodeURIComponent(PREFILL_EMAIL) + "&_=" + Date.now())
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if(d && d.ok && d.tags && d.tags.map(function(t){ return String(t).toLowerCase(); }).indexOf("marke") >= 0){
+              location.replace("https://columns.l-mine.com/app/");   // 購入済み＝重複販売しない
+            }
+          }).catch(function(){});
+      }catch(e){}
+    })();
     async function openCheckout(){
       var modal=document.getElementById('payModal'),cont=document.getElementById('embedded-checkout'),done=document.getElementById('payDone');
       done.style.display='none'; cont.style.display='block'; cont.innerHTML='<div class="pay-msg">決済フォームを読み込んでいます…</div>';
