@@ -1933,6 +1933,36 @@ a{text-decoration:none}
   .ni-pollsend{background:linear-gradient(135deg,#e0a95a,#caa75f)!important;color:#1c1a14!important;font-weight:700!important;border:none!important}
   .ps-modal{position:fixed;inset:0;z-index:410;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(8,9,12,.72);backdrop-filter:blur(5px)}
   .ps-modal[hidden]{display:none}
+  /* ===== マイページ ===== */
+  .mp-modal{position:fixed;inset:0;z-index:420;display:flex;flex-direction:column;background:#14110b;overflow:auto;-webkit-overflow-scrolling:touch}
+  .mp-modal[hidden]{display:none}
+  .mp-top{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#14110b;border-bottom:1px solid rgba(227,195,129,.16);z-index:1}
+  .mp-top b{font:500 17px/1 "Yu Mincho",serif;color:#e3c381;letter-spacing:.08em}
+  .mp-x{width:36px;height:36px;border:0;background:none;color:#cfc9bb;font-size:24px;line-height:1;cursor:pointer}
+  .mp-wrap{width:min(560px,100%);margin:0 auto;padding:22px 18px 44px;color:#ece7db;font-family:"Hiragino Sans","Yu Gothic",Meiryo,sans-serif}
+  .mp-hello{font-size:13px;color:#9c968a;margin:0}
+  .mp-hello b{color:#ece7db}
+  .mp-h1{font:500 28px/1.2 "Yu Mincho",serif;margin:3px 0 8px}
+  .mp-rank{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid #c4a064;border-radius:999px;font-size:11px;color:#e3c381}
+  .mp-rank i{width:6px;height:6px;border-radius:50%;background:#e3c381;display:inline-block}
+  .mp-sec{margin-top:26px}
+  .mp-sech{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+  .mp-sech span{font-size:14px;font-weight:700;color:#ece7db}
+  .mp-sech em{font:400 12px Georgia,serif;color:#c4a064;font-style:normal}
+  .mp-sech i{flex:1;height:1px;background:rgba(227,195,129,.16)}
+  .mp-course,.mp-svc{display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:13px;border:1px solid rgba(227,195,129,.16);border-radius:14px;background:#1e1910;margin-bottom:11px;color:inherit;text-decoration:none;cursor:pointer;font-family:inherit}
+  .mp-th{flex:0 0 52px;height:52px;border-radius:9px;background:#0d0b07;border:1px solid rgba(227,195,129,.22);display:flex;align-items:center;justify-content:center;color:#e3c381;font-size:16px}
+  .mp-svic{flex:0 0 40px;height:40px;border-radius:10px;background:#241e13;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .mp-cinfo{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+  .mp-cinfo b{font-size:13.5px;font-weight:700;color:#ece7db;line-height:1.4}
+  .mp-cinfo em{font-size:11px;color:#9c968a;font-style:normal;margin-top:3px}
+  .mp-go{flex:0 0 auto;padding:8px 13px;border-radius:999px;background:linear-gradient(135deg,#e3c381,#c4a064);color:#1a150c;font-size:12px;font-weight:700;white-space:nowrap}
+  .mp-svc.locked{opacity:.7;border-style:dashed;cursor:default;background:rgba(255,255,255,.015)}
+  .mp-svc.locked .mp-svic{background:#221d15}
+  .mp-svc.locked .mp-cinfo b{color:#b4ad9f}
+  .mp-tag{flex:0 0 auto;font-size:10px;color:#6f6a5e;border:1px solid rgba(160,152,135,.3);border-radius:999px;padding:4px 10px}
+  .mp-empty{color:#9c968a;font-size:13px;line-height:1.9;padding:14px 2px}
+  .mp-foot{margin-top:22px;text-align:center;font-size:10px;color:#726d62;line-height:1.7}
   .ps-sheet{position:relative;width:100%;max-width:440px;max-height:92vh;overflow:auto;background:#15130d;border:1px solid rgba(227,195,129,.34);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);padding:24px 22px 20px}
   .ps-x{position:absolute;top:8px;right:12px;background:none;border:none;color:#8a8575;font-size:24px;line-height:1;cursor:pointer}
   .ps-x:hover{color:#f0d69c}
@@ -2048,7 +2078,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.4.7";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.4.8";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2174,6 +2204,7 @@ function renderAcctMenu(){
   if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
   let html = "";
   if(member){
+    html += `<button class="acct-item" data-act="mypage"><span class="ai-ico">👤</span>マイページ</button>`;
     if(isVip()) html += `<button class="acct-item acct-vip" data-act="taskapp"><span class="ai-ico">🗂️</span>タスク管理アプリ<span class="acct-badge">VIP</span></button>`;
     if(!SESSION.subActive && !isVip()) html += `<button class="acct-item acct-join" data-act="subjoin"><span class="ai-ico">✨</span>エルラボ＋に加入</button>`;
     html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
@@ -2204,6 +2235,91 @@ function updateMemberUI(){ renderAcctMenu(); try{ if(typeof renderFreePick==="fu
 function openMenu(){ document.getElementById("acctMenu").hidden = false; document.getElementById("acctBackdrop").hidden = false; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","true"); }
 function closeMenu(){ document.getElementById("acctMenu").hidden = true; document.getElementById("acctBackdrop").hidden = true; const t=document.getElementById("menuBtn"); if(t) t.setAttribute("aria-expanded","false"); }
 function toggleMenu(){ document.getElementById("acctMenu").hidden ? openMenu() : closeMenu(); }
+
+/* ===== マイページ ===== */
+function mpEsc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+// この講座の「販売タグ」（＝個別購入で付くタグ）。無ければnull（サブスク専用/無料は購入扱いにしない）
+function coursePurchasedTag(c){
+  var vids=(c&&c.videos)||[];
+  for(var i=0;i<vids.length;i++){ if(vids[i] && vids[i].requiredTag) return vids[i].requiredTag; }
+  return null;
+}
+// サービス項目の解放条件はここで一元管理（unlockTag＋任意の期限until）。キャンペーン時はここを書き換えるだけ。
+function myPageServices(){
+  return [
+    { name:"個別相談",             unlockTag:null,  until:null, url:null,
+      activeDesc:"", lockedHint:"特別なご案内のときに解放されます" },
+    { name:"マンツーマンミーティング", unlockTag:"vip", until:null,
+      url:"https://dn15jkbd.autosns.app/addfriend/s/aK6Cn5eBu8/@144htozo",
+      activeDesc:"LINEで日程を選んで予約できます", lockedHint:"特別なご案内のときに解放されます" }
+  ];
+}
+function svcUnlocked(s){
+  if(!s.unlockTag || !s.url) return false;
+  if(!hasTag(s.unlockTag)) return false;
+  if(s.until){ var t=Date.parse(s.until); if(!t || Date.now()>t) return false; }
+  return true;
+}
+function closeMyPage(){ var ov=document.getElementById("myPageModal"); if(ov) ov.hidden=true; }
+function openMyPage(){
+  if(!(SESSION && SESSION.email)){ closeMenu(); openLogin(); return; }
+  var ov=document.getElementById("myPageModal");
+  if(!ov){
+    ov=document.createElement("div"); ov.id="myPageModal"; ov.className="mp-modal"; ov.hidden=true;
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function(e){
+      if(e.target.closest("[data-mp-close]")){ closeMyPage(); return; }
+      var cc=e.target.closest("[data-mp-course]");
+      if(cc){ var ci=parseInt(cc.getAttribute("data-mp-course"),10); closeMyPage();
+        if(typeof onCourseClick==="function") onCourseClick(ci);
+        else if(typeof select==="function") select(ci, firstShowIndex(COURSES[ci])); }
+    });
+  }
+  var owned=[]; (COURSES||[]).forEach(function(c,ci){ var tg=coursePurchasedTag(c); if(tg && hasTag(tg)) owned.push({c:c,ci:ci}); });
+  var courseHtml;
+  if(owned.length){
+    courseHtml = owned.map(function(o){
+      var n=(o.c.videos||[]).length;
+      return '<button class="mp-course" data-mp-course="'+o.ci+'"><span class="mp-th">▶</span>'
+        +'<span class="mp-cinfo"><b>'+mpEsc(o.c.name||"講座")+'</b><em>全'+n+'本</em></span>'
+        +'<span class="mp-go">視聴 →</span></button>';
+    }).join("");
+  } else if(SESSION.subActive){
+    courseHtml = '<p class="mp-empty">エルラボ＋メンバーとして、すべての講座を視聴いただけます。</p>';
+  } else {
+    courseHtml = '<p class="mp-empty">まだ受講中の講座はありません。<br>気になる講座から始めてみましょう。</p>';
+  }
+  var svcHtml = myPageServices().map(function(s){
+    if(svcUnlocked(s)){
+      return '<a class="mp-svc" href="'+mpEsc(s.url)+'" target="_blank" rel="noopener"><span class="mp-svic">📅</span>'
+        +'<span class="mp-cinfo"><b>'+mpEsc(s.name)+'</b><em>'+mpEsc(s.activeDesc||"")+'</em></span>'
+        +'<span class="mp-go">日程を選ぶ →</span></a>';
+    }
+    return '<div class="mp-svc locked"><span class="mp-svic">🔒</span>'
+      +'<span class="mp-cinfo"><b>'+mpEsc(s.name)+'</b><em>'+mpEsc(s.lockedHint||"準備中")+'</em></span>'
+      +'<span class="mp-tag">準備中</span></div>';
+  }).join("");
+  ov.innerHTML =
+     '<div class="mp-top"><b>マイページ</b><button class="mp-x" data-mp-close aria-label="閉じる">×</button></div>'
+    +'<div class="mp-wrap">'
+    +'<p class="mp-hello">こんにちは、<b>'+mpEsc(SESSION.name||"")+'</b>さん</p>'
+    +'<h2 class="mp-h1">マイページ</h2>'
+    +'<span class="mp-rank"><i></i>'+mpEsc(accountStatusLabel()||"メンバー")+'</span>'
+    +'<div class="mp-sec"><div class="mp-sech"><em>01</em><span>受講中の講座</span><i></i></div>'+courseHtml+'</div>'
+    +'<div class="mp-sec"><div class="mp-sech"><em>02</em><span>特典・サービス</span><i></i></div>'+svcHtml+'</div>'
+    +'<p class="mp-foot">ロック項目は、特別なご案内のときに自動で解放されます。</p>'
+    +'</div>';
+  ov.hidden=false; ov.scrollTop=0;
+}
+// サイト側リンク（app/?p=mypage）から開けるように：ログイン確定後にマイページを開く
+window.addEventListener("load", function(){
+  try{ if(new URLSearchParams(location.search).get("p")==="mypage"){
+    var n=0, iv=setInterval(function(){ n++;
+      if(SESSION && SESSION.email){ clearInterval(iv); openMyPage(); }
+      else if(n>40){ clearInterval(iv); }
+    }, 250);
+  } }catch(e){}
+});
 // ===== スマホ：コース一覧ドロワー =====
 function isMobile(){ try{ return window.matchMedia("(max-width:900px)").matches; }catch(e){ return false; } }
 function openDrawer(){ const l=document.getElementById("library"); if(l) l.classList.add("drawer-open"); const b=document.getElementById("drawerToggle"); if(b) b.setAttribute("aria-expanded","true"); }
@@ -2726,7 +2842,8 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   closeMenu();
   if(!it) return;   // data-legal はドキュメントの委譲で処理
   const act = it.getAttribute("data-act");
-  if(act === "taskapp") openTaskApp();
+  if(act === "mypage") openMyPage();
+  else if(act === "taskapp") openTaskApp();
   else if(act === "addhome") openAddHome(true);
   else if(act === "broadcast") openBroadcast();
   else if(act === "livehost") openLiveHost();
