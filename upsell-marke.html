@@ -344,6 +344,13 @@
     .decline-link:hover { color: var(--gold-light); }
     .final .decline-link { color: #423827; }
     .final .decline-link:hover { color: #17120c; }
+    /* 冒頭：一度きりの正直な告知 */
+    .intro-once { margin: 34px auto 0; max-width: 640px; padding: 16px 22px; border: 1px solid rgba(196,160,100,.4); border-radius: 5px; background: rgba(196,160,100,.06); color: #d8d2c8; font-size: clamp(13px, 2.4vw, 16px); line-height: 1.95; }
+    .intro-once b { color: var(--gold-light); }
+    .intro-once .really { color: var(--gold-light); font-weight: 700; }
+    /* 決済まわり：端末をまたいで視聴できる補足 */
+    .access-note { max-width: 560px; margin: 18px auto 0; padding: 13px 18px; border: 1px solid rgba(196,160,100,.28); border-radius: 4px; color: #b9b4ab; font-size: 12.5px; line-height: 1.85; text-align: left; }
+    .access-note b { color: var(--gold-light); }
 
     @media (max-width: 760px) {
       .intro-panel { min-height: 82svh; padding: 48px 20px; }
@@ -431,6 +438,7 @@
       <div class="intro-panel">
         <p class="intro-small reveal">ちょっと待って！</p>
         <p class="intro-huge reveal">あなただけの、<br><span>素敵なお知らせ</span>です。</p>
+        <p class="intro-once reveal">この画面が表示されるのは、今この<b>一度きり</b>です。<br>ページを離れると、この特別なご案内は<b>もう二度と表示されません</b>。<span class="really">（本当に。）</span></p>
         <p class="intro-cue reveal">▼ そのまま読み進めてください</p>
       </div>
     </div>
@@ -656,6 +664,7 @@
           <p class="saving">通常販売価格より13,000円OFF</p>
           <a class="button purchase-button" href="#">14,800円でアクセスパスを追加する <span class="arrow">→</span></a>
           <p class="offer-note">※クレジットカード決済（Stripe）。この15分限定の特別価格でご案内します。</p>
+          <p class="access-note">🔒 ご購入はあなたのアカウントにひもづきます。ログインしていれば、<b>スマホでもPCでも、端末が変わっても</b>いつでもアプリから講座を視聴できます。</p>
           <figure class="pay-cards">
             <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="ご利用いただける主要クレジットカード（Visa / Mastercard / JCB / American Express など）" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ';">
             <figcaption>各種クレジットカードでお支払いいただけます</figcaption>
