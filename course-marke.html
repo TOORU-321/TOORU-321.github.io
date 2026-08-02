@@ -313,14 +313,19 @@
     .guarantee h3 { margin: 0 0 8px; font-family: "Yu Mincho", serif; font-size: 20px; font-weight: 600; color: var(--ink); }
     .guarantee p { margin: 0; color: #5f5a53; font-size: 13px; line-height: 1.85; }
     .guarantee .g-note { margin-top: 9px; font-size: 11px; color: #8a857d; }
-    .starter-note { max-width: 620px; margin: 22px auto 0; padding: 16px 20px; border: 1px solid rgba(196,160,100,.32); border-radius: 4px; background: rgba(196,160,100,.05); color: #b9b4ab; font-size: 13px; line-height: 1.9; text-align: left; }
+    .starter-note { display: flex; gap: 16px; align-items: center; max-width: 620px; margin: 22px auto 0; padding: 16px 20px; border: 1px solid rgba(196,160,100,.32); border-radius: 4px; background: rgba(196,160,100,.05); color: #b9b4ab; font-size: 13px; line-height: 1.9; text-align: left; }
+    .starter-note .sn-thumb { flex: 0 0 auto; display: block; width: 108px; line-height: 0; text-decoration: none; transition: transform .2s ease; }
+    .starter-note .sn-thumb:hover { transform: translateY(-2px); }
+    .starter-note .sn-thumb img { width: 100%; height: auto; display: block; border: 1px solid rgba(196,160,100,.35); border-radius: 3px; box-shadow: 0 10px 26px rgba(0,0,0,.35); }
+    .starter-note p { margin: 0; }
     .starter-note b { color: var(--gold-light); }
-    .starter-note a { color: var(--gold-light); text-decoration: underline; text-underline-offset: 2px; }
-    .starter-note a:hover { color: #fff; }
+    .starter-note p a { color: var(--gold-light); text-decoration: underline; text-underline-offset: 2px; }
+    .starter-note p a:hover { color: #fff; }
     @media (max-width: 760px) {
       .guarantee { flex-direction: column; gap: 12px; padding: 22px 20px; margin-top: 34px; }
       .offer-thumb { margin-bottom: 24px; }
-      .starter-note { font-size: 12.5px; padding: 14px 16px; }
+      .starter-note { font-size: 12.5px; padding: 14px 16px; gap: 13px; }
+      .starter-note .sn-thumb { width: 84px; }
     }
 
     /* ===== ヘッダー（サイト共通・ライト） ===== */
@@ -706,7 +711,12 @@
           <div class="offer-price"><span>販売価格</span><strong>27,800<small>円（税込）</small></strong></div>
           <a class="button" href="#" onclick="openCheckout();return false;">アクセスパスを購入する <span class="arrow">→</span></a>
           <p class="offer-note">※クレジットカード決済（Stripe）。ご購入後、専用の講座視聴ページからご覧いただけます。</p>
-          <div class="starter-note">💡 <b>まだ基礎から始めていない方へ：</b>もし「はじめてのSNSマーケティング基礎講座」をまだご覧になっていなければ、まずは<a href="https://columns.l-mine.com/course-hajimete-sns.html">そちらの基礎講座</a>から始めるのがおすすめです。順番に学ぶことで、この全体講座の内容もぐっと理解しやすくなります。</div>
+          <div class="starter-note">
+            <a class="sn-thumb" href="https://columns.l-mine.com/course-hajimete-sns.html" aria-label="はじめてのSNSマーケティング基礎講座へ">
+              <img src="https://drive.google.com/thumbnail?id=1kA5D6DPugFubheE8R4DTX9duxRAGyosG&sz=w400" alt="はじめてのSNSマーケティング基礎講座" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1kA5D6DPugFubheE8R4DTX9duxRAGyosG';">
+            </a>
+            <p>💡 <b>まだ基礎から始めていない方へ：</b>もし「はじめてのSNSマーケティング基礎講座」をまだご覧になっていなければ、まずは<a href="https://columns.l-mine.com/course-hajimete-sns.html">そちらの基礎講座</a>から始めるのがおすすめです。順番に学ぶことで、この全体講座の内容もぐっと理解しやすくなります。</p>
+          </div>
           <figure class="pay-cards">
             <img src="https://drive.google.com/thumbnail?id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ&sz=w800" alt="ご利用いただける主要クレジットカード（Visa / Mastercard / JCB / American Express など）" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1ueY9cqf5lDB6IletyGF-mrTlhDGH1xJZ';">
             <figcaption>各種クレジットカードでお支払いいただけます</figcaption>
