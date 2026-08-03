@@ -820,8 +820,9 @@
         var ppBtn = document.getElementById('vslPP');
         var muteBtn = document.getElementById('vslMute');
         var volSl = document.getElementById('vslVol');
+        var playing = false;
         function showCtrl(){ if(ctrl) ctrl.hidden = false; }
-        function syncPP(){ if(ppBtn) ppBtn.textContent = player.paused ? '▶' : '⏸'; }
+        function syncPP(){ if(ppBtn) ppBtn.textContent = playing ? '⏸' : '▶'; }
         function syncMute(){ if(muteBtn) muteBtn.textContent = player.muted ? '🔇' : '🔊'; }
         if(playBtn){
           playBtn.addEventListener('click', function(){
@@ -830,11 +831,11 @@
           });
         }
         // 自作コントロール（シークバー無し＝飛ばし見不可のまま、停止・音声ON/OFF・音量だけ操作可）
-        if(ppBtn) ppBtn.addEventListener('click', function(){ try{ if(player.paused) player.play(); else player.pause(); }catch(e){} });
+        if(ppBtn) ppBtn.addEventListener('click', function(){ try{ if(playing) player.pause(); else player.play(); }catch(e){} });
         if(muteBtn) muteBtn.addEventListener('click', function(){ try{ player.muted = !player.muted; }catch(e){} syncMute(); });
         if(volSl) volSl.addEventListener('input', function(){ try{ var v = Number(volSl.value); player.volume = v; player.muted = (v === 0); }catch(e){} syncMute(); });
-        player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; showCtrl(); syncPP(); });
-        player.addEventListener('pause', function(){ syncPP(); });
+        player.addEventListener('play', function(){ playing = true; if(playBtn) playBtn.hidden = true; showCtrl(); syncPP(); });
+        player.addEventListener('pause', function(){ playing = false; syncPP(); });
         player.addEventListener('volumechange', function(){ syncMute(); });
         player.addEventListener('timeupdate', function(){ if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){} });
         player.addEventListener('ended', function(){ if(!revealed) revealGate(false); });   // 5分未満の動画でも最後で解放
