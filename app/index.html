@@ -2191,13 +2191,13 @@ const GUEST_KEY   = "lmine_guest";
     if(!(u && u.indexOf("[[") < 0 && u.length >= 4)) return;
     var key = "lineuid_sent_" + u;
     if(sessionStorage.getItem(key)) return;   // 同一セッションでの二重送信を防止（GAS側も冪等）
+    try{ sessionStorage.setItem(key, "1"); }catch(_e){}   // ★発火前にガード＝ログイン画面遷移の再ロード等で二重送信しない
     var url = GAS_URL + "?action=line_link&uid=" + encodeURIComponent(u) + "&src=app_redirect";
     var send = function(tries){
       fetch(url, { method:"get" })
         .then(function(r){ return r.json(); })
         .then(function(res){
-          if(res && res.ok){ try{ sessionStorage.setItem(key, "1"); }catch(_e){} }
-          else if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); }   // 一時失敗はリトライ
+          if(!(res && res.ok) && tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); }   // 一時失敗はリトライ
         })
         .catch(function(){ if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); } });   // 503等もリトライ
     };
