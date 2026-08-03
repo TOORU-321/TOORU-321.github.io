@@ -2197,7 +2197,12 @@ const GUEST_KEY   = "lmine_guest";
       fetch(url, { method:"get" })
         .then(function(r){ return r.json(); })
         .then(function(res){
-          if(!(res && res.ok) && tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); }   // 一時失敗はリトライ
+          if(res && res.ok){
+            try{
+              if(typeof SESSION !== "undefined" && SESSION && SESSION.email) return;   // メール会員はそのまま優先（連携はStage2）
+              if(typeof applyLineAndEnter === "function"){ applyLineAndEnter(u, (res.member && res.member.name) || "", (res.member && res.member.tags) || []); }   // LINE簡易ログイン＝無料登録扱いで入場
+            }catch(_e){}
+          } else if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); }   // 一時失敗はリトライ
         })
         .catch(function(){ if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); } });   // 503等もリトライ
     };
@@ -2214,8 +2219,8 @@ function loadSession(){
 function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.stringify(s)); updateMemberUI(); }
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
 function accountStatusLabel(){
-  if(!SESSION || !SESSION.email) return "";
-  if(SESSION.active) return hasTag("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
+  if(!SESSION || (!SESSION.email && !SESSION.lineuid)) return "";
+  if(SESSION.email && SESSION.active) return hasTag("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
   return "無料登録";
 }
 function renderAcctMenu(){
@@ -2224,9 +2229,9 @@ function renderAcctMenu(){
   const status = document.getElementById("acctStatus");
   const body = document.getElementById("acctBody");
   if(!body) return;
-  const member = !!(SESSION && SESSION.email);
+  const member = !!(SESSION && (SESSION.email || SESSION.lineuid));
   if(name) name.textContent = member ? (SESSION.name || "アカウント") : "メニュー";
-  if(email) email.textContent = member ? SESSION.email : "ゲストとして閲覧中";
+  if(email) email.textContent = (SESSION && SESSION.email) ? SESSION.email : (member ? "LINE連携でログイン中" : "ゲストとして閲覧中");
   if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
   let html = "";
   if(member){
@@ -2453,17 +2458,17 @@ function exitToEntry(){
   render();
 }
 function initEntry(){
-  const isMember = !!(SESSION && SESSION.email);
+  const isMember = !!(SESSION && (SESSION.email || SESSION.lineuid));
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
-  // ★ずっとログイン状態でも、アプリを開くたびに最終ログインを更新
-  if(isMember){ try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email:SESSION.email }) }); }catch(_e){} }
+  // ★ずっとログイン状態でも、アプリを開くたびに最終ログインを更新（メール会員のみ）
+  if(isMember && SESSION.email){ try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email:SESSION.email }) }); }catch(_e){} }
   if(isMember || isGuest){ enterLibrary(false); openNews(); }   // 自動再開時も初期画面は「お知らせ」（動画演出なし）
 }
 // 今のユーザーのランク（0:ゲスト 1:無料登録 2:サブスク）。※supportはコース別にタグ照合
 function currentRank(){
-  if(!SESSION || !SESSION.email) return RANK.guest; // 未ログイン＝ゲスト
-  if(SESSION.active)             return RANK.plus;  // サブスク有効
-  return RANK.free;                                 // アカウント有り（無料登録）
+  if(!SESSION || (!SESSION.email && !SESSION.lineuid)) return RANK.guest; // 未ログイン＝ゲスト
+  if(SESSION.email && SESSION.active) return RANK.plus;  // サブスク有効（メール会員）
+  return RANK.free;                                 // アカウント有り（無料登録・LINE簡易ログイン含む）
 }
 // 動画1本ごとのアクセス判定（種別・必要タグは動画ごと）
 function videoAccessible(v){
@@ -2763,6 +2768,14 @@ function setLockScreen(v, course){
   }
 }
 // Firebaseで本人確認済みのメールを、顧客シート照合でランク確定してから入室
+// LINE簡易ログイン（Stage1）：uidベースで「無料登録扱い」として入場。メール/パスワード不要。購入は連携後（Stage2）。
+function applyLineAndEnter(uid, name, tags){
+  try{ localStorage.removeItem(GUEST_KEY); }catch(_e){}
+  saveSession({ lineuid: uid, name: (name || "LINEユーザー"), tags: (tags || []), active:false, subActive:false, registered:true, via:"line" });
+  try{ enterLibrary(true); }catch(_e){}
+  try{ render(); }catch(_e){}
+  try{ openNews(); }catch(_e){}
+}
 async function applyTierAndEnter(email, closeFn){
   let tier = { active:false, subActive:false, tags:[], name: email.split("@")[0] };
   try {
