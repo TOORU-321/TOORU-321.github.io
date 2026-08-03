@@ -48,20 +48,17 @@ ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
 ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
 
+# おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
+RECOMMENDED = [103, 89, 73, 71, 65]
+
 # 記事末尾のオプトイン枠。n>=ELABO_OPTIN_FROM でエルラボ＋主体、それ未満はメルマガ主体（n>=TEMPLATE_FROM でエルラボ＋の控えめ1行を追記）
 def optin_footer(n):
-    if n >= ELABO_OPTIN_FROM:
-        return f'''    <aside class="optin">
+    # 全コラム統一：記事末尾は「エルラボ＋」案内に統一（旧『3-2-1ラボ』メルマガ＝停止中のため撤去）。
+    # メルマガ（消えないマーケティング 7日間無料レター）の登録は、各コラムの optin-popup.js が担当。
+    return f'''    <aside class="optin">
       <div class="optin-k">動画で学ぶ｜エルラボ＋</div>
       <p>行動経済学 × SNSビジネスを、体系立てた動画講座で。定期オンライン講義（アーカイブ視聴可）も開催中。まずは、無料の講座から。</p>
       <a class="optin-btn" href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋を見てみる →</a>
-    </aside>'''
-    app_line = (f'\n      <p class="optin-sub">動画でじっくり学びたい方は、会員制の動画視聴アプリ「<a href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋</a>」もご用意しています。</p>'
-                if n >= TEMPLATE_FROM else '')
-    return f'''    <aside class="optin">
-      <div class="optin-k">とーるの無料メルマガ『3-2-1ラボ』</div>
-      <p>行動経済学 × SNSビジネスの“本質”を、ここだけの実践編としてお届け。各メルマガ・無料講座のご案内もこちらから。</p>
-      <a class="optin-btn" href="{LP_URL}" target="_blank" rel="noopener">メルマガ・講座を見てみる →</a>{app_line}
     </aside>'''
 
 # スクロール追従ポップアップ。n>=ELABO_OPTIN_FROM でエルラボ＋を主ボタン、それ未満はメルマガ主体
@@ -224,6 +221,41 @@ def label(c):
         return f'Act#{c.get("series_no", "")}'
     return f'コラム＃{c["number"]}'
 
+# おすすめコラム（記事下部・とーる選定）。RECOMMENDED の順、存在しない番号／自分自身は自動スキップ。
+def recommended_html(n, cols):
+    by_num = {c["number"]: c for c in cols}
+    picks = [by_num[r] for r in RECOMMENDED if r in by_num and r != n]
+    if not picks:
+        return ''
+    cards = "\n".join(
+        f'''        <a class="rec-card" href="column{c["number"]}.html">
+          {thumb_html(c, "rec-thumb")}
+          <div class="rec-b"><span class="rec-m">{label(c)}</span><h3 class="rec-t">{html.escape(c["title"])}</h3></div>
+        </a>'''
+        for c in picks)
+    return f'''<style>
+.reccols{{max-width:1180px;margin:0 auto;padding:54px 24px 6px;border-top:1px solid #e7e2d8}}
+.reccols .rec-hd{{text-align:center;margin-bottom:26px}}
+.reccols .rec-k{{display:block;font:600 12px/1 "Cormorant Garamond",serif;letter-spacing:.3em;text-transform:uppercase;color:#a98b4e}}
+.reccols .rec-h2{{margin:7px 0 0;font:600 24px/1.3 "Shippori Mincho B1",serif;color:#1c1a16}}
+.reccols .rec-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}}
+.reccols .rec-card{{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #eae5db;transition:transform .2s ease,box-shadow .2s ease}}
+.reccols .rec-card:hover{{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.08)}}
+.reccols .rec-thumb{{aspect-ratio:16/10;overflow:hidden;background:#f2efe8}}
+.reccols .rec-thumb img{{width:100%;height:100%;object-fit:cover;display:block}}
+.reccols .rec-thumb .fb{{display:flex;align-items:center;justify-content:center;height:100%;font:500 12px "Cormorant Garamond",serif;letter-spacing:.2em;color:#b3aa98}}
+.reccols .rec-b{{padding:13px 14px 15px}}
+.reccols .rec-m{{font:600 11px/1 "Cormorant Garamond",serif;letter-spacing:.1em;color:#a98b4e}}
+.reccols .rec-t{{margin:6px 0 0;font:600 15px/1.5 "Shippori Mincho B1",serif;color:#211f1a;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
+@media(max-width:600px){{.reccols{{padding:40px 16px 2px}}.reccols .rec-grid{{grid-template-columns:1fr 1fr;gap:12px}}.reccols .rec-t{{font-size:13px}}}}
+</style>
+    <section class="reccols" aria-label="おすすめコラム">
+      <div class="rec-hd"><span class="rec-k">Recommended</span><h2 class="rec-h2">おすすめコラム</h2></div>
+      <div class="rec-grid">
+{cards}
+      </div>
+    </section>'''
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -303,10 +335,11 @@ def render_article(c, cols):
   </aside>
 </div>
 
+{recommended_html(n, cols)}
+
 <footer><div class="foot-inner"><div class="foot-links">{foot_html()}</div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
 
-{popup_html(n)}
-<script src="assets/popup.js"></script>
+<script src="/optin-popup.js" defer></script>
 </body>
 </html>'''
 
