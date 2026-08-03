@@ -429,6 +429,11 @@
     .vsl-play-ico { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, #e6c98d, #c4a064); color: #1a150c; font-size: 34px; display: flex; align-items: center; justify-content: center; padding-left: 5px; box-shadow: 0 14px 44px rgba(0,0,0,.5); transition: transform .2s ease; }
     .vsl-play:hover .vsl-play-ico { transform: scale(1.06); }
     .vsl-play-txt { font-size: 15px; font-weight: 700; letter-spacing: .04em; text-shadow: 0 2px 12px rgba(0,0,0,.7); }
+    .vsl-ctrl { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: linear-gradient(to top, rgba(0,0,0,.74), rgba(0,0,0,0)); }
+    .vsl-ctrl[hidden] { display: none; }
+    .vsl-cbtn { flex: 0 0 auto; width: 40px; height: 40px; border: 0; background: rgba(255,255,255,.14); border-radius: 999px; color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .vsl-cbtn:hover { background: rgba(255,255,255,.26); }
+    .vsl-vol { width: 104px; max-width: 40%; accent-color: #e3c381; cursor: pointer; }
     .vsl-gatemsg { margin: 22px auto 0; max-width: 640px; text-align: center; color: #b9b4ab; font-size: 13px; line-height: 1.95; letter-spacing: .02em; }
     .vsl-gatemsg b { color: var(--gold-light); }
     .gate { display: none; }
@@ -458,6 +463,11 @@
             <span class="vsl-play-ico">▶</span>
             <span class="vsl-play-txt">タップして再生（音声が出ます）</span>
           </button>
+          <div class="vsl-ctrl" id="vslCtrl" hidden>
+            <button class="vsl-cbtn" id="vslPP" type="button" aria-label="再生・一時停止">⏸</button>
+            <button class="vsl-cbtn" id="vslMute" type="button" aria-label="音声オン・オフ">🔊</button>
+            <input class="vsl-vol" id="vslVol" type="range" min="0" max="1" step="0.05" value="1" aria-label="音量">
+          </div>
         </div>
         <p class="vsl-gatemsg" id="vslGateMsg">※ この続き（ご案内・お手続き）は、<b>動画を進めていただくと</b>この下に表示されます。</p>
       </div>
@@ -806,13 +816,26 @@
       var iframe = document.getElementById('vslVideo');
       if(iframe && typeof Stream !== 'undefined'){
         var player = Stream(iframe);
+        var ctrl = document.getElementById('vslCtrl');
+        var ppBtn = document.getElementById('vslPP');
+        var muteBtn = document.getElementById('vslMute');
+        var volSl = document.getElementById('vslVol');
+        function showCtrl(){ if(ctrl) ctrl.hidden = false; }
+        function syncPP(){ if(ppBtn) ppBtn.textContent = player.paused ? '▶' : '⏸'; }
+        function syncMute(){ if(muteBtn) muteBtn.textContent = player.muted ? '🔇' : '🔊'; }
         if(playBtn){
           playBtn.addEventListener('click', function(){
-            try{ player.muted = false; player.play(); }catch(e){}   // ユーザー操作なので音声つき再生OK
-            playBtn.hidden = true;
+            try{ player.muted = false; player.volume = (volSl ? Number(volSl.value) : 1); player.play(); }catch(e){}   // ユーザー操作＝音声ON(既定)で再生
+            playBtn.hidden = true; showCtrl();
           });
         }
-        player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; });
+        // 自作コントロール（シークバー無し＝飛ばし見不可のまま、停止・音声ON/OFF・音量だけ操作可）
+        if(ppBtn) ppBtn.addEventListener('click', function(){ try{ if(player.paused) player.play(); else player.pause(); }catch(e){} });
+        if(muteBtn) muteBtn.addEventListener('click', function(){ try{ player.muted = !player.muted; }catch(e){} syncMute(); });
+        if(volSl) volSl.addEventListener('input', function(){ try{ var v = Number(volSl.value); player.volume = v; player.muted = (v === 0); }catch(e){} syncMute(); });
+        player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; showCtrl(); syncPP(); });
+        player.addEventListener('pause', function(){ syncPP(); });
+        player.addEventListener('volumechange', function(){ syncMute(); });
         player.addEventListener('timeupdate', function(){ if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){} });
         player.addEventListener('ended', function(){ if(!revealed) revealGate(false); });   // 5分未満の動画でも最後で解放
       } else {
