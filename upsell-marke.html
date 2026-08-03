@@ -418,32 +418,52 @@
       }
       .mobile-sticky a { display: block; padding: 13px; background: linear-gradient(135deg, #d8bb7e, #b58c4d); color: #0b0b0c; text-align: center; text-decoration: none; font-size: 13px; font-weight: 700; }
     }
+
+    /* ===== VSL動画（クリック再生・シークバー無し）＋ 5分ゲート ===== */
+    .vsl { background: var(--ink); padding: 40px 0 30px; }
+    .vsl-shell { width: min(900px, calc(100% - 40px)); margin: 0 auto; }
+    .vsl-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border: 1px solid rgba(196,160,100,.32); box-shadow: 0 26px 64px rgba(0,0,0,.55); overflow: hidden; }
+    .vsl-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+    .vsl-play { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; width: 100%; height: 100%; padding: 0; border: 0; background: rgba(8,7,5,.42); color: #fff; cursor: pointer; font-family: inherit; }
+    .vsl-play[hidden] { display: none; }
+    .vsl-play-ico { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, #e6c98d, #c4a064); color: #1a150c; font-size: 34px; display: flex; align-items: center; justify-content: center; padding-left: 5px; box-shadow: 0 14px 44px rgba(0,0,0,.5); transition: transform .2s ease; }
+    .vsl-play:hover .vsl-play-ico { transform: scale(1.06); }
+    .vsl-play-txt { font-size: 15px; font-weight: 700; letter-spacing: .04em; text-shadow: 0 2px 12px rgba(0,0,0,.7); }
+    .vsl-gatemsg { margin: 22px auto 0; max-width: 640px; text-align: center; color: #b9b4ab; font-size: 13px; line-height: 1.95; letter-spacing: .02em; }
+    .vsl-gatemsg b { color: var(--gold-light); }
+    .gate { display: none; }
+    .gate.open { display: block; }
+    .gate.gate-reveal { animation: gateIn .85s ease both; }
+    @keyframes gateIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 760px) {
+      .vsl { padding: 24px 0 22px; }
+      .vsl-shell { width: calc(100% - 28px); }
+      .vsl-play-ico { width: 68px; height: 68px; font-size: 27px; }
+      .vsl-play-txt { font-size: 13px; }
+    }
+
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } }
   </style>
 </head>
 <body>
   <div class="countdown-bar" aria-live="polite"><span>このページ限定のご案内は、あと</span><strong id="countdown">15:00</strong><span>で終了します</span></div>
   <main>
-    <div class="intro-seq" id="introSeq">
-      <div class="intro-panel">
-        <p class="intro-eyebrow reveal">FOR YOU ONLY</p>
-        <p class="intro-big reveal">ご購入、<br>ありがとうございます！</p>
-        <div class="intro-scrollcue reveal">
-          <span class="arrows">↓↓↓</span>
-          <span class="lbl">最後に、あなたへの大切なお知らせがあります</span>
+    <section class="vsl" id="vslSection">
+      <div class="vsl-shell">
+        <div class="vsl-frame" id="vslFrame">
+          <iframe id="vslVideo"
+            src="https://customer-640z7yea5jqzy33p.cloudflarestream.com/4fbe5d2051836646fc14dbb610fb0443/iframe?controls=false&preload=auto&poster=https%3A%2F%2Fcustomer-640z7yea5jqzy33p.cloudflarestream.com%2F4fbe5d2051836646fc14dbb610fb0443%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D1s%26height%3D720"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen loading="eager"></iframe>
+          <button class="vsl-play" id="vslPlay" type="button" aria-label="動画を再生する">
+            <span class="vsl-play-ico">▶</span>
+            <span class="vsl-play-txt">タップして再生（音声が出ます）</span>
+          </button>
         </div>
+        <p class="vsl-gatemsg" id="vslGateMsg">※ この続き（ご案内・お手続き）は、<b>動画を進めていただくと</b>この下に表示されます。</p>
       </div>
-      <div class="intro-panel">
-        <p class="intro-but reveal">ですが……</p>
-      </div>
-      <div class="intro-panel">
-        <p class="intro-small reveal">ちょっと待って！</p>
-        <p class="intro-huge reveal">あなただけの、<br><span>素敵なお知らせ</span>です。</p>
-        <p class="intro-once reveal">この画面が表示されるのは、今この<b>一度きり</b>です。<br>ページを離れると、この特別なご案内は<b>もう二度と表示されません</b>。<span class="really">（本当に。）</span></p>
-        <p class="intro-cue reveal">▼ そのまま読み進めてください</p>
-      </div>
-    </div>
+    </section>
 
+    <div id="gate" class="gate" aria-hidden="true">
     <div id="timerTrigger" aria-hidden="true"></div>
     <section class="hero" id="top">
       <div class="shell hero-inner">
@@ -716,53 +736,88 @@
         <div class="decline-row"><a class="decline-link" href="https://columns.l-mine.com/app/">いいえ、今回は必要ありません（アプリに戻る）</a></div>
       </div>
     </section>
+    </div><!-- /#gate -->
   </main>
-  <div class="mobile-sticky"><a id="mobilePurchase" href="#offer">残り15:00｜14,800円で追加する</a></div>
+  <div class="mobile-sticky" id="mobileSticky"><a id="mobilePurchase" href="#offer">残り15:00｜14,800円で追加する</a></div>
   <footer class="footer">© 起業1年目のためのマーケティング全体講座</footer>
   <script>
     (function () {
       var key = 'marketing-course-upsell-deadline-v1';
-      var deadline = Number(localStorage.getItem(key));
-      if (!deadline) { deadline = Date.now() + 15 * 60 * 1000; localStorage.setItem(key, String(deadline)); }
       var display = document.getElementById('countdown');
       var mobile = document.getElementById('mobilePurchase');
       var buttons = document.querySelectorAll('.purchase-button');
+      var timer = null;
       function update() {
+        var deadline = Number(localStorage.getItem(key)) || 0;
         var remain = Math.max(0, deadline - Date.now());
         var seconds = Math.ceil(remain / 1000);
         var text = String(Math.floor(seconds / 60)).padStart(2,'0') + ':' + String(seconds % 60).padStart(2,'0');
-        display.textContent = text;
-        mobile.textContent = remain ? '残り' + text + '｜14,800円で追加する' : '限定案内は終了しました';
+        if (display) display.textContent = text;
+        if (mobile) mobile.textContent = remain ? '残り' + text + '｜14,800円で追加する' : '限定案内は終了しました';
         if (!remain) {
           buttons.forEach(function (button) { button.classList.add('is-disabled'); button.removeAttribute('href'); button.textContent = '限定案内は終了しました'; });
-          mobile.classList.add('is-disabled'); mobile.removeAttribute('href');
-          clearInterval(timer);
+          if (mobile) { mobile.classList.add('is-disabled'); mobile.removeAttribute('href'); }
+          if (timer) { clearInterval(timer); timer = null; }
         }
       }
-      update(); var timer = setInterval(update, 250);
+      // ★ゲート解放時に呼ぶ：初回だけ15分の締切をセットしてカウント開始（＝動画5分視聴後から15分）
+      window.__startCountdown = function () {
+        if (!Number(localStorage.getItem(key))) { localStorage.setItem(key, String(Date.now() + 15 * 60 * 1000)); }
+        if (timer) return;
+        update(); timer = setInterval(update, 250);
+      };
     })();
   </script>
 
+  <!-- VSL動画（Cloudflare Stream）＋ 5分視聴ゲート -->
+  <script src="https://embed.cloudflarestream.com/embed/sdk.latest.js"></script>
   <script>
     (function(){
-      // 冒頭シーケンスをスクロールに合わせて出現＆拡大
-      var reveals = document.querySelectorAll('.intro-seq .reveal');
-      if('IntersectionObserver' in window){
-        var io = new IntersectionObserver(function(entries){
-          entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-        }, { threshold: 0.35 });
-        Array.prototype.forEach.call(reveals, function(el){ io.observe(el); });
-      } else {
-        Array.prototype.forEach.call(reveals, function(el){ el.classList.add('in'); });
-      }
-      // タイマーを「固定ヘッダー」として、ヒーロー到達時に登場させる
+      var REVEAL_AT = 300;                       // 5分（秒）で以降を解放
+      var REVEALED_KEY = 'vsl_revealed_marke_v1';
+      var gate = document.getElementById('gate');
+      var playBtn = document.getElementById('vslPlay');
+      var gateMsg = document.getElementById('vslGateMsg');
+      var mobileSticky = document.getElementById('mobileSticky');
       var bar = document.querySelector('.countdown-bar');
       var trigger = document.getElementById('timerTrigger');
-      if(bar && trigger){
-        var onScroll = function(){ bar.classList.toggle('show', trigger.getBoundingClientRect().top <= 4); };
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
+      var revealed = false;
+      // 固定タイマーバーは「解放後・ヒーロー到達時」だけ表示
+      var onScroll = function(){ if(bar && trigger) bar.classList.toggle('show', !!window.__gateOpen && trigger.getBoundingClientRect().top <= 4); };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      if(mobileSticky) mobileSticky.style.display = 'none';   // 下部固定CTAも解放まで隠す
+
+      function revealGate(silent){
+        if(revealed) return; revealed = true;
+        window.__gateOpen = true;
+        if(gate){ gate.classList.add('open'); if(!silent) gate.classList.add('gate-reveal'); gate.setAttribute('aria-hidden','false'); }
+        if(mobileSticky) mobileSticky.style.display = '';
+        if(window.__startCountdown) window.__startCountdown();   // 解放した時点から15分カウント開始
+        try{ localStorage.setItem(REVEALED_KEY, '1'); }catch(e){}
+        if(gateMsg) gateMsg.innerHTML = '▼ <b>ご案内が表示されました。</b>下へスクロールしてご確認ください。';
         onScroll();
+        if(!silent){ setTimeout(function(){ try{ gate.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){} }, 500); }
+      }
+
+      // 一度でも解放済みの端末は、動画ゲートをスキップして最初から表示
+      try{ if(localStorage.getItem(REVEALED_KEY) === '1'){ revealGate(true); } }catch(e){}
+
+      var iframe = document.getElementById('vslVideo');
+      if(iframe && typeof Stream !== 'undefined'){
+        var player = Stream(iframe);
+        if(playBtn){
+          playBtn.addEventListener('click', function(){
+            try{ player.muted = false; player.play(); }catch(e){}   // ユーザー操作なので音声つき再生OK
+            playBtn.hidden = true;
+          });
+        }
+        player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; });
+        player.addEventListener('timeupdate', function(){ if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){} });
+        player.addEventListener('ended', function(){ if(!revealed) revealGate(false); });   // 5分未満の動画でも最後で解放
+      } else {
+        // SDK読込不可などの保険：60秒後に自動解放して離脱を防ぐ
+        if(!revealed) setTimeout(function(){ revealGate(false); }, 60000);
       }
     })();
   </script>
