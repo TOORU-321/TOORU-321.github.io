@@ -78,6 +78,14 @@
     .button:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 22px 55px rgba(0,0,0,.34); }
     .button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
     .button .arrow { font-family: Arial, sans-serif; font-size: 21px; }
+    /* ④ 購入ボタンをもう少し大きく＋アニメーションで注目 */
+    .purchase-button { min-height: 80px; font-size: 19px; letter-spacing: .05em; animation: purchasePulse 1.9s ease-in-out infinite; }
+    .purchase-button .arrow { font-size: 24px; }
+    .purchase-button:hover, .purchase-button:focus-visible { animation-play-state: paused; }
+    @keyframes purchasePulse {
+      0%, 100% { transform: translateY(0); box-shadow: 0 16px 42px rgba(0,0,0,.28), 0 0 0 0 rgba(230,201,141,.55); }
+      50% { transform: translateY(-3px); box-shadow: 0 22px 55px rgba(0,0,0,.34), 0 0 0 12px rgba(230,201,141,0); }
+    }
 
     .hero {
       position: relative;
@@ -155,8 +163,8 @@
     .hero-offer { width: min(510px, 100%); margin-top: 28px; }
     .price { display: flex; align-items: baseline; justify-content: center; gap: 17px; margin-bottom: 15px; }
     .price > span { color: #aaa59d; font-size: 12px; }
-    .price strong { font-family: Georgia, serif; font-size: 32px; font-weight: 500; }
-    .price small { margin-left: 5px; font-family: sans-serif; font-size: 11px; font-weight: 400; }
+    .price strong { font-family: Georgia, serif; font-size: clamp(42px, 8vw, 58px); font-weight: 600; }
+    .price small { margin-left: 5px; font-family: sans-serif; font-size: 13px; font-weight: 400; }
     .hero-note { margin: 11px 0 0; color: #79756e; font-size: 10px; }
 
     .section { padding: 135px 0; }
@@ -250,7 +258,7 @@
     .offer-meta { display: flex; justify-content: center; gap: 24px; margin: 28px 0; color: #aaa59d; font-size: 13px; }
     .offer-price { margin: 22px 0; }
     .offer-price span { display: block; color: #99948c; font-size: 12px; }
-    .offer-price strong { color: var(--gold-light); font-family: Georgia, serif; font-size: clamp(45px, 7vw, 72px); font-weight: 500; }
+    .offer-price strong { color: var(--gold-light); font-family: Georgia, serif; font-size: clamp(54px, 8.5vw, 86px); font-weight: 600; }
     .offer-price small { margin-left: 7px; font-family: sans-serif; font-size: 12px; font-weight: 400; }
     .offer-box .button { width: min(520px, 100%); margin: 0 auto; }
     .offer-note { margin: 14px 0 0; color: #77726b; font-size: 10px; }
@@ -320,7 +328,7 @@
 
     /* ===== 二重価格を強調（通常価格を大きく） ===== */
     .old-price { margin: 0; color: #a49e94; font-size: 15px; text-decoration: none; line-height: 1.3; }
-    .old-price .op-num { font: 500 clamp(30px, 6.5vw, 48px) Georgia, serif; color: #d6cfc4; text-decoration: line-through; text-decoration-color: #c0512f; text-decoration-thickness: 2px; letter-spacing: .02em; }
+    .old-price .op-num { font: 600 clamp(38px, 7.5vw, 60px) Georgia, serif; color: #d6cfc4; text-decoration: line-through; text-decoration-color: #c0512f; text-decoration-thickness: 3px; letter-spacing: .02em; }
     .old-price .op-yen { font-size: 15px; margin-left: 2px; }
 
     /* ===== 講座サムネ・決済カード・返金保証 ===== */
@@ -373,8 +381,8 @@
       .hero-meta { margin-top: 21px; }
       .hero-meta strong { font-size: 22px; }
       .price { gap: 11px; }
-      .price strong { font-size: 29px; }
       .button { min-height: 62px; padding: 0 18px 0 22px; font-size: 14px; }
+      .purchase-button { min-height: 70px; font-size: 16px; }
       .pain-grid, .benefit-grid, .fit-grid { grid-template-columns: 1fr; }
       .pain-grid article { min-height: auto; padding: 23px; }
       .quote { margin: 58px 0; padding-left: 23px; }
@@ -434,8 +442,21 @@
     .vsl-cbtn { flex: 0 0 auto; width: 40px; height: 40px; border: 0; background: rgba(255,255,255,.14); border-radius: 999px; color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
     .vsl-cbtn:hover { background: rgba(255,255,255,.26); }
     .vsl-vol { width: 104px; max-width: 40%; accent-color: #e3c381; cursor: pointer; }
+    /* 視聴完了カバー：一度見終えたら再生・巻き戻し不可にする */
+    .vsl-done { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px; background: rgba(8,7,5,.97); color: #f0e9dc; text-align: center; cursor: default; }
+    .vsl-done[hidden] { display: none; }
+    .vsl-done-ico { width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(135deg, #e6c98d, #c4a064); color: #1a150c; font-size: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 36px rgba(0,0,0,.5); }
+    .vsl-done-txt { font-size: 15px; font-weight: 700; letter-spacing: .04em; }
+    .vsl-done-sub { margin: 0; color: #b9b4ab; font-size: 12px; font-weight: 400; }
     .vsl-gatemsg { margin: 22px auto 0; max-width: 640px; text-align: center; color: #b9b4ab; font-size: 13px; line-height: 1.95; letter-spacing: .02em; }
     .vsl-gatemsg b { color: var(--gold-light); }
+    /* ① 動画の上の告知（もう二度と表示されません） */
+    .vsl-notice { width: min(900px, calc(100% - 40px)); margin: 0 auto 16px; padding: 13px 20px; text-align: center; border: 1px solid rgba(214,80,47,.55); background: rgba(214,80,47,.1); color: #f0d9c8; font-size: clamp(14px, 2.6vw, 17px); font-weight: 700; letter-spacing: .02em; line-height: 1.5; }
+    .vsl-notice b { color: #ffcf9e; }
+    .vsl-notice small { display: block; margin-top: 5px; color: #c9c3ba; font-size: 11px; font-weight: 400; letter-spacing: .04em; }
+    /* ② 5分プログレスバー（文字なし・currentTime/300で伸びる） */
+    .vsl-prog { position: relative; width: 100%; height: 7px; margin: 15px auto 0; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+    .vsl-prog i { position: absolute; left: 0; top: 0; height: 100%; width: 0; background: linear-gradient(90deg, #b58c4d, #e6c98d); box-shadow: 0 0 10px rgba(230,201,141,.55); border-radius: 999px; transition: width .35s linear; }
     .gate { display: none; }
     .gate.open { display: block; }
     .gate.gate-reveal { animation: gateIn .85s ease both; }
@@ -447,13 +468,14 @@
       .vsl-play-txt { font-size: 13px; }
     }
 
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } .purchase-button { animation: none; } }
   </style>
 </head>
 <body>
   <div class="countdown-bar" aria-live="polite"><span>このページ限定のご案内は、あと</span><strong id="countdown">15:00</strong><span>で終了します</span></div>
   <main>
     <section class="vsl" id="vslSection">
+      <p class="vsl-notice">⚠️ このページは、<b>もう二度と表示されません（本当です）</b><small>いま表示されているご案内を、どうぞお見逃しなく。</small></p>
       <div class="vsl-shell">
         <div class="vsl-frame" id="vslFrame">
           <iframe id="vslVideo"
@@ -468,7 +490,13 @@
             <button class="vsl-cbtn" id="vslMute" type="button" aria-label="音声オン・オフ">🔊</button>
             <input class="vsl-vol" id="vslVol" type="range" min="0" max="1" step="0.05" value="1" aria-label="音量">
           </div>
+          <div class="vsl-done" id="vslDone" hidden>
+            <span class="vsl-done-ico">✔</span>
+            <span class="vsl-done-txt">ご視聴ありがとうございました</span>
+            <p class="vsl-done-sub">この動画の再生は完了しました</p>
+          </div>
         </div>
+        <div class="vsl-prog" aria-hidden="true"><i id="vslProg"></i></div>
         <p class="vsl-gatemsg" id="vslGateMsg">※ この続き（ご案内・お手続き）は、<b>動画を進めていただくと</b>この下に表示されます。</p>
       </div>
     </section>
@@ -749,7 +777,7 @@
     </div><!-- /#gate -->
   </main>
   <div class="mobile-sticky" id="mobileSticky"><a id="mobilePurchase" href="#offer">残り15:00｜14,800円で追加する</a></div>
-  <footer class="footer">© 起業1年目のためのマーケティング全体講座</footer>
+  <footer class="footer">© 2026 L-MINE</footer>
   <script>
     (function () {
       var key = 'marketing-course-upsell-deadline-v1';
@@ -788,7 +816,17 @@
       var gate = document.getElementById('gate');
       var playBtn = document.getElementById('vslPlay');
       var gateMsg = document.getElementById('vslGateMsg');
+      var prog = document.getElementById('vslProg');
+      var ctrlEl = document.getElementById('vslCtrl');
+      var doneCover = document.getElementById('vslDone');
       var mobileSticky = document.getElementById('mobileSticky');
+      // 視聴完了：動画を停止＋操作UIを隠し、完了カバーで再生・巻き戻しを不可にする
+      function lockVideo(){
+        try{ if(window.__vslPlayer) window.__vslPlayer.pause(); }catch(e){}
+        if(playBtn) playBtn.hidden = true;
+        if(ctrlEl) ctrlEl.hidden = true;
+        if(doneCover) doneCover.hidden = false;
+      }
       var bar = document.querySelector('.countdown-bar');
       var trigger = document.getElementById('timerTrigger');
       var revealed = false;
@@ -801,6 +839,8 @@
       function revealGate(silent){
         if(revealed) return; revealed = true;
         window.__gateOpen = true;
+        if(prog) prog.style.width = '100%';   // ② 解放時はバーを最後まで
+        lockVideo();                          // 視聴完了＝以降は再生・巻き戻し不可
         if(gate){ gate.classList.add('open'); if(!silent) gate.classList.add('gate-reveal'); gate.setAttribute('aria-hidden','false'); }
         if(mobileSticky) mobileSticky.style.display = '';
         if(window.__startCountdown) window.__startCountdown();   // 解放した時点から15分カウント開始
@@ -816,6 +856,7 @@
       var iframe = document.getElementById('vslVideo');
       if(iframe && typeof Stream !== 'undefined'){
         var player = Stream(iframe);
+        window.__vslPlayer = player;   // lockVideo() から停止できるように公開
         var ctrl = document.getElementById('vslCtrl');
         var ppBtn = document.getElementById('vslPP');
         var muteBtn = document.getElementById('vslMute');
@@ -838,7 +879,10 @@
         player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; showCtrl(); setPlaying(true); });
         player.addEventListener('pause', function(){ setPlaying(false); });
         player.addEventListener('volumechange', function(){ syncMute(); });
-        player.addEventListener('timeupdate', function(){ if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){} });
+        player.addEventListener('timeupdate', function(){
+          try{ if(prog && !revealed){ prog.style.width = Math.min(100, (player.currentTime / REVEAL_AT) * 100) + '%'; } }catch(e){}   // ② currentTime/300 でバーを伸ばす
+          if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){}
+        });
         player.addEventListener('ended', function(){ if(!revealed) revealGate(false); });   // 5分未満の動画でも最後で解放
       } else {
         // SDK読込不可などの保険：60秒後に自動解放して離脱を防ぐ
