@@ -2233,7 +2233,7 @@ function renderAcctMenu(){
   const member = !!(SESSION && (SESSION.email || SESSION.lineuid));
   if(name) name.textContent = member ? (SESSION.name || "アカウント") : "メニュー";
   if(email) email.textContent = (SESSION && SESSION.email) ? SESSION.email : (member ? "LINE連携でログイン中" : "ゲストとして閲覧中");
-  if(status){ status.textContent = accountStatusLabel(); status.hidden = !member; }
+  if(status){ var _lbl = accountStatusLabel(); if(SESSION && SESSION.lineuid) _lbl += "　🟢LINE連携"; status.textContent = _lbl; status.hidden = !member; }
   let html = "";
   if(member){
     html += `<button class="acct-item" data-act="mypage"><span class="ai-ico">👤</span>マイページ</button>`;
