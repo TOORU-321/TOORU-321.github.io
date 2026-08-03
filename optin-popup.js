@@ -18,7 +18,8 @@
     showAfterSec: 20,               // 表示までの秒数
     showAtScrollPct: 50,            // または、この割合までスクロールしたら表示
     resnoozeDays: 7,               // 閉じた／登録した後、再表示しない日数
-    storageKey: "kmarke_optin_v1"   // localStorageキー（内容を変えたら v2 に）
+    storageKey: "kmarke_optin_v1",  // localStorageキー（内容を変えたら v2 に）
+    thumbUrl: "/assets/kmarke-letter.jpg"  // ポップアップ上部のサムネ画像（横長16:9推奨）。未設置なら自動で非表示・差し替え自由
   };
 
   // ---- 再表示の抑制 -------------------------------------------------
@@ -36,15 +37,18 @@
   // ---- スタイル（他ページと衝突しないよう全て kmo- 接頭辞＋scoped）--
   var css = ''
     + '.kmo-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;'
-    + 'padding:20px;background:rgba(10,10,12,.72);backdrop-filter:blur(3px);opacity:0;transition:opacity .35s ease;}'
+    + 'padding:20px;background:rgba(10,10,12,.72);backdrop-filter:blur(3px);opacity:0;transition:opacity .5s ease;}'
     + '.kmo-overlay.kmo-show{opacity:1;}'
     + '.kmo-card{position:relative;width:100%;max-width:440px;background:#141416;color:#f4f4f5;'
-    + 'border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:36px 30px 30px;'
-    + 'box-shadow:0 24px 60px rgba(0,0,0,.55);transform:translateY(14px) scale(.98);transition:transform .35s ease;'
+    + 'border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:30px 30px 30px;'
+    + 'box-shadow:0 24px 60px rgba(0,0,0,.55);opacity:0;transform:translateY(34px) scale(.92);'
+    + 'transition:transform .6s cubic-bezier(.16,.86,.4,1),opacity .5s ease;'
     + 'font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;}'
-    + '.kmo-overlay.kmo-show .kmo-card{transform:translateY(0) scale(1);}'
-    + '.kmo-close{position:absolute;top:12px;right:14px;width:32px;height:32px;border:0;background:transparent;'
-    + 'color:#8a8a90;font-size:22px;line-height:1;cursor:pointer;border-radius:8px;transition:.2s;}'
+    + '.kmo-overlay.kmo-show .kmo-card{opacity:1;transform:translateY(0) scale(1);}'
+    + '.kmo-thumb{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin:0 0 20px;background:#1d1d20;}'
+    + '@media(prefers-reduced-motion:reduce){.kmo-overlay,.kmo-card{transition-duration:.01s;}}'
+    + '.kmo-close{position:absolute;top:12px;right:14px;width:32px;height:32px;border:0;background:rgba(18,18,20,.5);'
+    + 'color:#e6e6e9;font-size:22px;line-height:1;cursor:pointer;border-radius:8px;transition:.2s;z-index:2;}'
     + '.kmo-close:hover{background:rgba(255,255,255,.06);color:#fff;}'
     + '.kmo-over{font-size:12px;letter-spacing:.18em;color:#c9a86a;font-weight:700;margin:0 0 10px;}'
     + '.kmo-title{font-size:26px;line-height:1.3;font-weight:800;margin:0 0 4px;letter-spacing:.01em;}'
@@ -71,6 +75,7 @@
   var html = ''
     + '<div class="kmo-card" role="dialog" aria-modal="true" aria-label="無料メール講座のご案内">'
     +   '<button class="kmo-close" aria-label="閉じる">&times;</button>'
+    +   (CONFIG.thumbUrl ? '<img class="kmo-thumb" src="' + CONFIG.thumbUrl + '" alt="消えないマーケティング｜7日間無料レター" onerror="this.style.display=\'none\'">' : '')
     +   '<p class="kmo-over">無料メール講座</p>'
     +   '<h2 class="kmo-title">消えないマーケティング</h2>'
     +   '<p class="kmo-sub">7日間無料レター</p>'
@@ -103,7 +108,8 @@
     if (shown) return;
     shown = true;
     document.body.appendChild(overlay);
-    requestAnimationFrame(function () { overlay.classList.add("kmo-show"); });
+    void overlay.offsetWidth;   // 強制リフロー：初期状態(透明・下)を確定させてからアニメを発火
+    requestAnimationFrame(function () { requestAnimationFrame(function () { overlay.classList.add("kmo-show"); }); });   // ふわっと登場
     unbindTriggers();
   }
   function close() {
