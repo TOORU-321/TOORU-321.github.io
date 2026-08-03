@@ -822,20 +822,21 @@
         var volSl = document.getElementById('vslVol');
         var playing = false;
         function showCtrl(){ if(ctrl) ctrl.hidden = false; }
-        function syncPP(){ if(ppBtn) ppBtn.textContent = playing ? '⏸' : '▶'; }
+        function setPlaying(v){ playing = v; if(ppBtn) ppBtn.textContent = v ? '⏸' : '▶'; }   // アイコンを即時反映
         function syncMute(){ if(muteBtn) muteBtn.textContent = player.muted ? '🔇' : '🔊'; }
         if(playBtn){
           playBtn.addEventListener('click', function(){
             try{ player.muted = false; player.volume = (volSl ? Number(volSl.value) : 1); player.play(); }catch(e){}   // ユーザー操作＝音声ON(既定)で再生
-            playBtn.hidden = true; showCtrl();
+            playBtn.hidden = true; showCtrl(); setPlaying(true);
           });
         }
         // 自作コントロール（シークバー無し＝飛ばし見不可のまま、停止・音声ON/OFF・音量だけ操作可）
-        if(ppBtn) ppBtn.addEventListener('click', function(){ try{ if(playing) player.pause(); else player.play(); }catch(e){} });
+        // クリックで即座にアイコンを切り替え（Stream SDKのイベント遅延に依存しない）
+        if(ppBtn) ppBtn.addEventListener('click', function(){ try{ if(playing){ player.pause(); setPlaying(false); } else { player.play(); setPlaying(true); } }catch(e){} });
         if(muteBtn) muteBtn.addEventListener('click', function(){ try{ player.muted = !player.muted; }catch(e){} syncMute(); });
         if(volSl) volSl.addEventListener('input', function(){ try{ var v = Number(volSl.value); player.volume = v; player.muted = (v === 0); }catch(e){} syncMute(); });
-        player.addEventListener('play', function(){ playing = true; if(playBtn) playBtn.hidden = true; showCtrl(); syncPP(); });
-        player.addEventListener('pause', function(){ playing = false; syncPP(); });
+        player.addEventListener('play', function(){ if(playBtn) playBtn.hidden = true; showCtrl(); setPlaying(true); });
+        player.addEventListener('pause', function(){ setPlaying(false); });
         player.addEventListener('volumechange', function(){ syncMute(); });
         player.addEventListener('timeupdate', function(){ if(revealed) return; try{ if(player.currentTime >= REVEAL_AT) revealGate(false); }catch(e){} });
         player.addEventListener('ended', function(){ if(!revealed) revealGate(false); });   // 5分未満の動画でも最後で解放
