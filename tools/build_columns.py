@@ -361,7 +361,7 @@ def render_article(c, cols):
         for r in recents)
     # ヒーロー（画像が無ければ枠ごと省略）
     if hero_exists(n):
-        hero_block = f'<figure class="hero"><div class="frame"><img src="assets/column{n}-hero.jpg" alt=""></div></figure>'
+        hero_block = f'<figure class="hero"><div class="frame"><img src="assets/column{n}-hero.jpg" alt="{html.escape(c["title"])}"></div></figure>'
     else:
         hero_block = ''
     tags = "".join(f'<a href="#">{t}</a>' for t in c["tags"])
