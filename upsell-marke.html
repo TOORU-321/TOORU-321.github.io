@@ -786,6 +786,47 @@
   </main>
   <div class="mobile-sticky" id="mobileSticky"><a id="mobilePurchase" href="#offer">残り15:00｜14,800円で追加する</a></div>
   <footer class="footer">© 2026 L-MINE</footer>
+
+  <!-- 期限切れ画面（タイマー0で表示。?test=1 のURLではバイパスして常に閲覧可） -->
+  <div id="expiredScreen" class="expired-screen" hidden>
+    <div class="expired-inner">
+      <div class="expired-mark">⏳</div>
+      <h2>視聴期限が切れました</h2>
+      <p>この特別価格（15分限定）でのご案内は終了しました。<br>ご覧いただき、ありがとうございました。</p>
+      <a class="expired-back" href="https://columns.l-mine.com/app/">アプリに戻る</a>
+    </div>
+  </div>
+  <style>
+    .expired-screen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:#0b0e12;color:#eef2f6}
+    .expired-inner{max-width:460px}
+    .expired-mark{font-size:52px;margin-bottom:10px;opacity:.9}
+    .expired-screen h2{font:700 clamp(22px,5vw,31px)/1.45 "Yu Mincho","Hiragino Mincho ProN",serif;margin:0 0 14px;color:#f0d9c8}
+    .expired-screen p{color:#aeb7bf;font-size:15px;line-height:1.95;margin:0 0 28px}
+    .expired-back{display:inline-block;padding:12px 32px;border:1px solid #5a6470;border-radius:99px;color:#cfd6dd;font-size:14px;transition:.2s}
+    .expired-back:hover{border-color:#8b96a2;color:#fff}
+  </style>
+  <script>
+    /* 期限切れ制御。?test=1 のURLはバイパス（タイマー0でも表示＝テスト用） */
+    window.__UPSELL_TEST = false;
+    try{ window.__UPSELL_TEST = new URLSearchParams(location.search).has('test'); }catch(e){}
+    window.__DEADLINE_KEY = 'marketing-course-upsell-deadline-v1';
+    window.__isExpired = function(){
+      if(window.__UPSELL_TEST) return false;
+      var dl = Number(localStorage.getItem(window.__DEADLINE_KEY)) || 0;
+      return dl > 0 && (dl - Date.now() <= 0);
+    };
+    window.__showExpired = function(){
+      if(window.__UPSELL_TEST) return;
+      var es = document.getElementById('expiredScreen'); if(es) es.hidden = false;
+      try{ if(window.__vslPlayer) window.__vslPlayer.pause(); }catch(e){}
+      var bar = document.querySelector('.countdown-bar'); if(bar) bar.style.display = 'none';
+      var ms = document.getElementById('mobileSticky'); if(ms) ms.style.display = 'none';
+      document.body.style.overflow = 'hidden';
+    };
+    /* ロード時に既に期限切れなら即表示（動画ゲートも出さない） */
+    document.addEventListener('DOMContentLoaded', function(){ if(window.__isExpired()) window.__showExpired(); });
+  </script>
+
   <script>
     (function () {
       var key = 'marketing-course-upsell-deadline-v1';
@@ -801,8 +842,13 @@
         if (display) display.textContent = text;
         if (mobile) mobile.textContent = remain ? '残り' + text + '｜14,800円で追加する' : '限定案内は終了しました';
         if (!remain) {
-          buttons.forEach(function (button) { button.classList.add('is-disabled'); button.removeAttribute('href'); button.textContent = '限定案内は終了しました'; });
-          if (mobile) { mobile.classList.add('is-disabled'); mobile.removeAttribute('href'); }
+          if (window.__UPSELL_TEST) {
+            // テストURL(?test=1)：タイマー0でも購入可能・表示のまま（無効化も期限切れ画面も出さない）
+          } else {
+            buttons.forEach(function (button) { button.classList.add('is-disabled'); button.removeAttribute('href'); button.textContent = '限定案内は終了しました'; });
+            if (mobile) { mobile.classList.add('is-disabled'); mobile.removeAttribute('href'); }
+            if (window.__showExpired) window.__showExpired();   // LP全体を隠して「視聴期限が切れました」を表示
+          }
           if (timer) { clearInterval(timer); timer = null; }
         }
       }
@@ -858,8 +904,12 @@
         if(!silent){ setTimeout(function(){ try{ gate.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){} }, 500); }
       }
 
-      // 一度でも解放済みの端末は、動画ゲートをスキップして最初から表示
-      try{ if(localStorage.getItem(REVEALED_KEY) === '1'){ revealGate(true); } }catch(e){}
+      // 期限切れなら期限切れ画面／テストURLは動画ゲートもスキップして即表示／通常は解放済み端末だけスキップ表示
+      try{
+        if(window.__isExpired && window.__isExpired()){ if(window.__showExpired) window.__showExpired(); }
+        else if(window.__UPSELL_TEST){ revealGate(true); }
+        else if(localStorage.getItem(REVEALED_KEY) === '1'){ revealGate(true); }
+      }catch(e){ try{ if(localStorage.getItem(REVEALED_KEY) === '1'){ revealGate(true); } }catch(_e){} }
 
       var iframe = document.getElementById('vslVideo');
       if(iframe && typeof Stream !== 'undefined'){
