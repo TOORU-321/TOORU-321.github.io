@@ -14,7 +14,7 @@
   - 行に ↓ を含むまとまり … フロー図（↓ は中央・金）
   - **強調** → <strong> / _強調_ → <em>（金）
 """
-import os, re, glob, html, datetime
+import os, re, glob, html, datetime, json
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
@@ -22,16 +22,17 @@ OUT  = os.path.join(ROOT, "columns")          # 公開フォルダ（他アプ�
 ASSETS = os.path.join(OUT, "assets")
 BASE_URL = "https://columns.l-mine.com/"      # 本番の公開ドメイン（sitemap 用）
 
+# 独自運用への移行済みヘッダー（コネワン l-mine.com 依存を撤去）。
+# href=None のメニューは「準備中」表示（span.soon＝リンク無効・独自版が未整備の項目）。
 NAV = [
-    ("ホーム", "https://l-mine.com/home", False),
+    ("ホーム", "https://columns.l-mine.com/", False),
     ("行動経済学への想い", "https://columns.l-mine.com/behavioral-economics-lp.html", False),
     ("コラム", "index.html", True),
-    ("オンラインコース一覧", "https://l-mine.com/onlinecourse", False),
+    ("オンラインコース一覧", None, False),  # 準備中（独自のコース一覧ページ未整備）
     ("動画・オンラインコース視聴", "https://columns.l-mine.com/elabo-plus-lp.html", False),
     ("KINDLE小説", "https://columns.l-mine.com/book-intro-dark.html", False),
-    ("お問い合わせ", "https://l-mine.com/contact-us", False),
-    ("エルラボ2.0", "https://l-mine.com/l-mine-2.0.2026", False),
-    ("ログイン", "https://l-mine.com/signin", False),
+    ("お問い合わせ", "https://columns.l-mine.com/contact.html", False),
+    ("ログイン", "https://columns.l-mine.com/app/", False),  # エルラボ＋（Firebase認証）
 ]
 FOOT_LINKS = [
     ("利用規約", "https://l-mine.com/term"),
@@ -47,6 +48,12 @@ APP_URL = "https://columns.l-mine.com/app/"           # 会員制の動画視聴
 ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の案内LP（コラム内の誘導はこちら経由）
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
 ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
+
+# ---- SEO / アクセス解析 ----
+GA4_ID = "G-TLV00VTDZL"                            # Google Analytics 4 測定ID（全ページ共通）
+SITE_NAME = "L-MINE"                               # og:site_name / publisher 名
+AUTHOR_NAME = "とーる"                             # 記事著者（JSON-LD author）
+DEFAULT_OG_IMAGE = BASE_URL + "columns/assets/columns-top.jpg"  # ヒーロー画像が無い記事のOGP代替
 
 # おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
 RECOMMENDED = [103, 89, 73, 71, 65]
@@ -93,6 +100,9 @@ def popup_html(n):
 def nav_html():
     out = []
     for label, href, active in NAV:
+        if href is None:  # 準備中（独自版なし）＝リンクにせず span.soon
+            out.append(f'      <span class="soon">{label}</span>')
+            continue
         cls = ' class="active"' if active else ''
         out.append(f'      <a href="{href}"{cls}>{label}</a>')
     return "\n".join(out)
@@ -100,6 +110,84 @@ def nav_html():
 def foot_html():
     links = "".join(f'<a href="{h}">{l}</a>' for l, h in FOOT_LINKS)
     return links
+
+# ---- SEO / GA4 ヘルパー ----
+def ga4_head():
+    """Google Analytics 4（gtag.js）。全ページ共通で head 上部に置く。"""
+    return f'''<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA4_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA4_ID}');
+</script>'''
+
+def _attr(s):
+    return html.escape(str(s), quote=True)
+
+def article_seo(c):
+    """記事ページの description / canonical / OGP / Twitter / 構造化データ。"""
+    n = c["number"]
+    url = BASE_URL + f"columns/column{n}.html"
+    title = c["title"]
+    desc = (c.get("excerpt") or "").strip() or title
+    img = (BASE_URL + f"columns/assets/column{n}-hero.jpg") if hero_exists(n) else DEFAULT_OG_IMAGE
+    article_ld = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+        "headline": title,
+        "description": desc,
+        "image": img,
+        "datePublished": c["date"],
+        "dateModified": c["date"],
+        "author": {"@type": "Person", "name": AUTHOR_NAME, "url": BASE_URL},
+        "publisher": {"@type": "Organization", "name": SITE_NAME,
+                      "logo": {"@type": "ImageObject", "url": BASE_URL + "assets/logo.png"}},
+        "articleSection": c.get("category", ""),
+        "keywords": ", ".join(c.get("tags", [])),
+    }
+    crumb_ld = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "ホーム", "item": BASE_URL},
+            {"@type": "ListItem", "position": 2, "name": "コラム", "item": BASE_URL + "columns/"},
+            {"@type": "ListItem", "position": 3, "name": title, "item": url},
+        ],
+    }
+    return f'''<meta name="description" content="{_attr(desc)}">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="{_attr(title)}">
+<meta property="og:description" content="{_attr(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{img}">
+<meta property="og:site_name" content="{_attr(SITE_NAME)}">
+<meta property="article:published_time" content="{c["date"]}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{_attr(title)}">
+<meta name="twitter:description" content="{_attr(desc)}">
+<meta name="twitter:image" content="{img}">
+<script type="application/ld+json">{json.dumps(article_ld, ensure_ascii=False)}</script>
+<script type="application/ld+json">{json.dumps(crumb_ld, ensure_ascii=False)}</script>'''
+
+def index_seo(page):
+    """コラム一覧ページの description / canonical / OGP。"""
+    url = BASE_URL + "columns/" + page_file(page)
+    title = "コラム｜とーる 猫好きの行動経済アナリスト"
+    base_desc = "行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴るコラム一覧。とーる（行動経済アナリスト）が発信しています。"
+    desc = base_desc if page == 1 else f"（{page}ページ目）{base_desc}"
+    return f'''<meta name="description" content="{_attr(desc)}">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{_attr(title)}">
+<meta property="og:description" content="{_attr(desc)}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{DEFAULT_OG_IMAGE}">
+<meta property="og:site_name" content="{_attr(SITE_NAME)}">
+<meta name="twitter:card" content="summary_large_image">'''
 
 def contrib_html():
     return f'''    <div class="contrib">
@@ -284,7 +372,9 @@ def render_article(c, cols):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{ga4_head()}
 <title>{html.escape(c["title"])}｜とーる 猫好きの行動経済アナリスト</title>
+{article_seo(c)}
 <link rel="icon" href="/lab-mark-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -295,7 +385,7 @@ def render_article(c, cols):
 <div class="top-rule"></div>
 <header class="masthead">
   <div class="mast-inner">
-    <a class="brand" href="https://l-mine.com/home"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <a class="brand" href="https://columns.l-mine.com/"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
     <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
     <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
     <nav class="nav">
@@ -382,7 +472,9 @@ def render_index(page_cols, page, pages):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{ga4_head()}
 <title>コラム｜とーる 猫好きの行動経済アナリスト</title>
+{index_seo(page)}
 <link rel="icon" href="/lab-mark-256.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -393,7 +485,7 @@ def render_index(page_cols, page, pages):
 <div class="top-rule"></div>
 <header class="masthead">
   <div class="mast-inner">
-    <a class="brand" href="https://l-mine.com/home"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
+    <a class="brand" href="https://columns.l-mine.com/"><img class="logo" src="assets/logo.png" alt="L-MINE 2.0｜L-MINE ON-LINE SCHOOL"></a>
     <input type="checkbox" id="navtog" class="navtog" aria-hidden="true">
     <label for="navtog" class="hamb" aria-label="メニュー"><span></span><span></span><span></span></label>
     <nav class="nav">
