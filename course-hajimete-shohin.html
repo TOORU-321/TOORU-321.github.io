@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TLV00VTDZL');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>はじめての商品設計デザイン講座｜L-MINE</title>
+<meta name="description" content="自分の想いと、相手が感じる価値を結びつける。感情と構造の両面から“選ばれる商品”を考える、全6本・約30分の商品設計入門講座。">
+<meta name="robots" content="noindex">
+<script>document.documentElement.classList.add('js')</script>
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+:root{
+  --navy:#0b1824;--navy2:#142a3a;--ink:#18212b;--muted:#66717d;
+  --gold:#cf9e35;--gold2:#f2d98a;--cream:#fbf8f0;--ice:#f3f6f8;
+  --line:#dce3e8;--white:#fff;
+  --hero-image:url("https://drive.google.com/thumbnail?id=1uG87abeT3d4U24rLZLGuVhZrtd-c3j0v&sz=w2400");
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ice);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.container{width:min(1080px,calc(100% - 40px));margin:auto}
+.narrow{width:min(760px,calc(100% - 40px));margin:auto}
+.hero{position:relative;min-height:820px;overflow:hidden;color:#fff;padding:32px 0 88px;background:radial-gradient(70% 58% at 50% 38%,rgba(48,75,91,.18),rgba(4,11,18,.86)),linear-gradient(180deg,rgba(8,19,29,.42),rgba(6,15,24,.92)),var(--hero-image) center/cover no-repeat}
+.hero:after{content:"";position:absolute;left:-2%;right:-2%;bottom:-54px;height:108px;background:#fff;transform:rotate(-2.1deg)}
+.hero:before{content:"";position:absolute;inset:0;opacity:.12;background-image:linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(circle at center,#000,transparent 74%)}
+.hero-in{position:relative;z-index:2;text-align:center}
+.back{display:inline-flex;gap:8px;color:#ffffffb8;font-size:13px;margin-bottom:24px}
+.pill{display:table;margin:0 auto 20px;padding:8px 24px;border:1px solid #e5c677a6;border-radius:999px;background:#091724c7;color:#f4de9a;font-weight:700;letter-spacing:.08em;font-size:13px}
+.kicker{margin:0 0 8px;color:#ffffffbd;font-size:13px;letter-spacing:.17em}
+.hero h1{margin:0;font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-size:clamp(45px,6vw,76px);line-height:1.24;letter-spacing:.045em;text-shadow:0 3px 22px #000c}
+.hero h1 span{display:block;font-size:.49em;letter-spacing:.16em}
+.hero-copy{font-size:17px;line-height:1.9;margin:20px 0 14px;color:#ffffffe5}
+.value-line{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:9px;margin:17px auto 20px;font-family:"Yu Mincho",serif}
+.value-line span{border:1px solid #ffffff38;background:#0b1d2cb8;padding:5px 15px;font-size:13px}
+.value-line b{color:var(--gold2)}
+.chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.chips span{font-size:12px;padding:6px 15px;border-radius:99px;background:#ffffff24;border:1px solid #ffffff1f}
+.price{margin:19px 0 14px}.price strong{font:35px Georgia,serif}.price small{margin-left:6px;color:#ffffffb8}
+.cta{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;justify-content:center;align-items:center;gap:12px;width:min(430px,100%);min-height:63px;padding:15px 25px;border-radius:99px;color:#17222c;font-weight:800;letter-spacing:.06em;background:linear-gradient(135deg,#f2d98e,#c99a38);box-shadow:0 14px 35px #c6942f4d;transition:transform .22s ease,box-shadow .22s ease;cursor:pointer}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 42px #c6942f5c}
+.cta:before,.sticky:before{content:"";position:absolute;z-index:0;pointer-events:none;top:-50%;left:-45%;width:24%;height:200%;background:linear-gradient(90deg,transparent,#ffffff9c,transparent);transform:rotate(18deg)}
+.cta span,.sticky span{position:relative;z-index:1}
+.micro{font-size:11px;color:#ffffff94;margin:9px 0 0}
+.puzzle-deco{position:absolute;z-index:1;border:1px solid #f1d78955;background:#e5c56e12;transform:rotate(9deg)}
+.puzzle-deco.one{width:70px;height:70px;left:8%;top:28%}.puzzle-deco.two{width:46px;height:46px;right:11%;top:22%;transform:rotate(-13deg)}
+.section{padding:88px 0}.paper{background:#fff}.ice{background:var(--ice)}.cream{background:var(--cream)}.navy{background:linear-gradient(145deg,#091622,#162c3d);color:#fff}
+.heading{text-align:center;margin-bottom:46px}.heading p{color:#a77b25;font:12px Georgia,serif;letter-spacing:.25em;text-transform:uppercase;margin:0 0 10px}.heading h2{font-family:"Yu Mincho",serif;font-size:clamp(29px,4vw,43px);line-height:1.5;letter-spacing:.04em;margin:0}.heading i{display:block;width:38px;height:2px;background:var(--gold);margin:18px auto 0}.heading.light p{color:var(--gold2)}
+.lead{font-size:16px;color:#3f4a55}.lead p{margin:0 0 22px}.highlight{padding:25px 28px;background:#f5f7f9;border-left:3px solid var(--gold)}.highlight strong{color:#946817}
+.worries{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:34px 0}.worry{position:relative;background:#fff;border:1px solid var(--line);padding:18px 20px 18px 47px;color:#53606b;font-size:14px;box-shadow:0 8px 25px #14283a0b}.worry:before{content:"?";position:absolute;left:17px;top:16px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#e7d19d;color:#704e0e;font:bold 12px Georgia,serif}
+.closing{text-align:center;margin:36px 0 0;font:20px "Yu Mincho",serif}.closing strong{color:#a77b25}
+.myth{display:grid;grid-template-columns:.88fr 1.12fr;gap:52px;align-items:center}.stack{position:relative;min-height:390px}.stack-card{position:absolute;width:76%;left:12%;padding:22px 24px;background:#fff;border:1px solid #dfd4bd;box-shadow:0 15px 35px #12233414;font-weight:700;color:#59636c}.stack-card:nth-child(1){top:12px;transform:rotate(-5deg)}.stack-card:nth-child(2){top:98px;transform:rotate(4deg)}.stack-card:nth-child(3){top:184px;transform:rotate(-2deg)}.stack-card:nth-child(4){top:270px;transform:rotate(3deg);background:#f6e9c8;color:#704f12}.stack-card small{display:block;color:#aa7b24;font:10px Georgia,serif;letter-spacing:.15em;margin-bottom:3px}
+.myth-copy h2{font:clamp(29px,4vw,43px)/1.5 "Yu Mincho",serif;margin:0 0 20px}.myth-copy p{color:#55616c;margin:0 0 18px}.quote{padding:22px 25px;border-left:3px solid var(--gold);background:#fff;font:19px/1.8 "Yu Mincho",serif;color:#3a4249}
+.piece-wrap{display:grid;grid-template-columns:1.06fr .94fr;gap:54px;align-items:center}.piece-copy h2{font:clamp(30px,4vw,45px)/1.5 "Yu Mincho",serif;margin:0 0 20px}.piece-copy p{color:#ffffffbd;margin:0 0 18px}.piece-copy strong{color:var(--gold2)}
+.puzzle{position:relative;display:grid;grid-template-columns:repeat(3,88px);grid-template-rows:repeat(3,88px);gap:8px;justify-content:center}.puzzle span{display:grid;place-items:center;background:#f3f6f8;color:#9aa2a9;font:10px Georgia,serif;box-shadow:inset 0 0 0 1px #ffffff66}.puzzle .missing{background:transparent;border:1px dashed #f1d78980;color:#f1d789}.puzzle .last{position:absolute;right:-4px;bottom:-35px;background:linear-gradient(145deg,#f5dea0,#c7962f);color:#162431;width:88px;height:88px;box-shadow:0 14px 30px #0005;transform:rotate(-8deg);font-weight:800}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.three article{background:#fff;border:1px solid var(--line);padding:32px 25px;text-align:center;box-shadow:0 12px 30px #10273a0d;transition:.3s}.three article:hover{transform:translateY(-5px);border-color:#cf9e3580}.three span,.num{color:var(--gold);font:12px Georgia,serif;letter-spacing:.18em}.three h3{font:24px "Yu Mincho",serif;margin:6px 0 8px}.three p{font-size:13px;color:var(--muted);margin:0}.cross{display:flex;align-items:center;justify-content:center;gap:12px;margin:32px 0 0;font:20px "Yu Mincho",serif}.cross b{color:var(--gold)}
+.learn{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.learn article{background:#fff;border:1px solid var(--line);padding:34px 34px 30px;box-shadow:0 12px 32px #10273a0e;transition:.3s}.learn article:hover{transform:translateY(-5px);border-color:#cf9e357d}.learn h3{font:22px "Yu Mincho",serif;margin:7px 0 10px}.learn p{color:var(--muted);font-size:14px;margin:0}.message{max-width:820px;margin:38px auto 32px;padding:32px 40px;background:#e9eef3;text-align:center}.message small{color:#a57c31;font:10px Georgia,serif;letter-spacing:.22em}.message p{margin:5px 0}.message strong{font:22px "Yu Mincho",serif}.center{text-align:center}.dark{background:var(--navy);color:#fff;box-shadow:0 13px 28px #0d1d2b38}
+.modules{width:min(870px,100%);margin:auto}.module{display:grid;grid-template-columns:72px 1fr;gap:22px;padding:26px 0;border-top:1px solid #ffffff1f;transition:.3s}.module:last-child{border-bottom:1px solid #ffffff1f}.module:hover{transform:translateX(7px)}.module>span{color:var(--gold2);font:18px Georgia,serif}.module h3{font:21px "Yu Mincho",serif;margin:0 0 5px}.module p{color:#ffffffab;font-size:13px;margin:0}
+.short{display:grid;grid-template-columns:.9fr 1.1fr;gap:52px;align-items:center}.time{position:relative;display:grid;place-items:center;width:290px;height:290px;margin:auto;border:1px solid #d8c28c;border-radius:50%;background:#fff;box-shadow:0 22px 45px #10273a13}.time:before{content:"";position:absolute;width:240px;height:240px;border:1px dashed #d8c28c;border-radius:50%}.time strong{position:relative;font:70px/1 Georgia,serif;color:var(--navy)}.time strong small{font-size:20px}.time span{position:absolute;bottom:68px;color:#a77b25;font-size:12px;letter-spacing:.1em}.short-copy h2{font:clamp(29px,4vw,42px)/1.5 "Yu Mincho",serif;margin:0 0 18px}.short-copy p{color:#56616c;margin:0 0 17px}.time-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:23px}.time-chips b{padding:7px 14px;border:1px solid #d9c99f;background:#fff;font-size:12px;color:#74551c}
+.series-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.series-card{position:relative;padding:28px 24px;background:#fff;border:1px solid var(--line);text-align:center}.series-card.current{border-color:#cf9e35;box-shadow:0 15px 35px #a6771d1a}.series-card.current:before{content:"NOW";position:absolute;top:-11px;left:50%;transform:translateX(-50%);padding:3px 12px;background:var(--gold);color:#fff;font:10px Georgia,serif;letter-spacing:.13em}.series-card small{color:#a77b25}.series-card h3{font:20px "Yu Mincho",serif;margin:6px 0}.series-card p{font-size:12px;color:var(--muted);margin:0}
+.course{display:grid;grid-template-columns:1.05fr .95fr;max-width:900px;margin:auto;background:#fff;box-shadow:0 22px 55px #0d1f2e21;transition:.3s}.visual{min-height:540px;padding:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;background:radial-gradient(circle at 50% 30%,#29445c,#0b1927 63%);position:relative;overflow:hidden}.visual:before,.visual:after{content:"";position:absolute;width:340px;height:340px;border:1px solid #f0d38926;transform:rotate(45deg)}.visual:after{width:470px;height:470px}.visual>*{position:relative}.visual .vseries{font-size:11px;letter-spacing:.12em;color:var(--gold2);border:1px solid #f1d78980;padding:6px 14px;border-radius:99px}.vpuzzle{display:grid;grid-template-columns:repeat(3,24px);gap:4px;margin:32px 0 24px}.vpuzzle i{width:24px;height:24px;background:#fff3;border:1px solid #ffffff42}.vpuzzle i:last-child{background:var(--gold2);box-shadow:0 0 20px #f2d98a88}.visual p{margin:0;font:20px "Yu Mincho",serif;letter-spacing:.13em}.visual>strong{font:33px/1.45 "Yu Mincho",serif;letter-spacing:.05em}.visual>small{margin-top:18px;color:#ffffffa6}.info{padding:42px 38px;scroll-margin-top:80px}.info>.series{font-size:11px;color:#a77b25;letter-spacing:.12em}.info h3{font:29px/1.5 "Yu Mincho",serif;margin:5px 0 20px}.course-thumbnail{display:block;width:100%;height:auto;margin:0 0 24px;border:1px solid #d8c89f;box-shadow:0 12px 28px #1126381a}.info dl{margin:0}.info dl div{display:grid;grid-template-columns:60px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.info dl div:last-child{border-bottom:1px solid var(--line)}dt{color:#a67d2f;font-size:12px;font-weight:800}dd{margin:0;color:var(--muted);font-size:12px}.pricebox{text-align:center;padding:20px 0 17px}.pricebox span,.pricebox small{display:block;font-size:11px;color:var(--muted)}.pricebox strong{display:block;font:34px Georgia,serif;color:var(--navy)}.darkmicro{color:#8a949d;text-align:center}
+.guarantee{text-align:center}.shield{display:grid;place-items:center;width:70px;height:70px;margin:0 auto 18px;border:1px solid var(--gold);border-radius:50%;color:#a57a25;font-size:28px;transition:.55s}.guarantee h2{font:30px "Yu Mincho",serif;margin:0 0 15px}.guarantee p{color:#4e5963}.guarantee small{display:block;color:#9199a0;font-size:10px;margin-top:22px}
+.instructor{display:grid;grid-template-columns:320px 1fr;gap:50px;max-width:900px;margin:auto;align-items:center}.instructor img{width:100%;aspect-ratio:1;object-fit:cover}.instructor h3{font:32px "Yu Mincho",serif;margin:0}.role{color:#a47b2d;font-size:12px;letter-spacing:.08em;margin:0 0 20px}.instructor p:not(.role){color:#56616b;font-size:13px;margin:0 0 13px}
+.faq{border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line)}summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;padding:22px 4px;font-weight:700}summary::-webkit-details-marker{display:none}summary span{color:var(--gold);font-size:20px;transition:.2s}details[open] summary span{transform:rotate(45deg)}details p{margin:-4px 0 22px;padding-right:32px;color:var(--muted);font-size:14px}.faqcta{margin-top:38px}.disclaimer{text-align:center;color:#929aa1;font-size:10px;margin-top:35px}
+.final{padding:82px 0;text-align:center;background:linear-gradient(145deg,#0a1724,#162c3e);color:#fff}.final h2{font:clamp(30px,4vw,44px)/1.55 "Yu Mincho",serif;margin:0 0 20px}.final p{color:#ffffffb8;margin:0 0 30px}
+footer{background:#07131f;color:#ffffff94;padding:43px 0 92px;text-align:center;font-size:11px}footer nav{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}footer p{margin:14px 0 0}
+.sticky{position:fixed;z-index:20;bottom:14px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;width:min(520px,calc(100% - 28px));padding:14px 25px;border-radius:99px;background:linear-gradient(135deg,#f1d58a,#c99a3d);color:#1c2934;font-size:14px;font-weight:800;border:5px solid #122636e0;box-shadow:0 12px 25px #0004;overflow:hidden;isolation:isolate;cursor:pointer}.sticky strong{font:20px Georgia,serif;margin-right:3px}
+.js .reveal{opacity:0;transform:translate3d(0,28px,0);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1);transition-delay:var(--delay,0ms);will-change:opacity,transform}.js .reveal.reveal-left{transform:translate3d(-30px,0,0)}.js .reveal.reveal-right{transform:translate3d(30px,0,0)}.js .reveal.is-visible{opacity:1;transform:translate3d(0,0,0)}.heading.reveal i{transform:scaleX(0);transition:transform .65s .35s ease;transform-origin:center}.heading.reveal.is-visible i{transform:scaleX(1)}
+@media(max-width:760px){
+  .container,.narrow{width:min(100% - 30px,560px)}.hero{min-height:775px;padding-top:22px;background-position:54% center}.back{margin-bottom:21px}.pill{font-size:11px;padding:7px 17px}.kicker{font-size:11px;letter-spacing:.08em}.hero h1{font-size:clamp(38px,11.5vw,56px);letter-spacing:.015em}.hero h1 span{font-size:.46em}.hero-copy{font-size:14px}.value-line{gap:5px}.value-line span{font-size:11px;padding:4px 8px}.section{padding:67px 0}.heading{margin-bottom:34px}.heading h2{font-size:29px}.lead{font-size:14px}.highlight{padding:20px}.worries{grid-template-columns:1fr;gap:9px}.myth,.piece-wrap,.short{grid-template-columns:1fr;gap:35px}.stack{min-height:350px}.stack-card{width:86%;left:7%}.puzzle{grid-template-columns:repeat(3,70px);grid-template-rows:repeat(3,70px)}.puzzle .last{width:70px;height:70px;right:3px}.three,.series-flow{grid-template-columns:1fr;gap:11px}.three article{padding:25px 22px}.learn{grid-template-columns:1fr;gap:12px}.learn article{padding:26px 24px}.message{padding:25px 20px}.message strong{font-size:18px}.module{grid-template-columns:45px 1fr;gap:10px;padding:20px 0}.module h3{font-size:18px}.time{width:240px;height:240px}.time:before{width:197px;height:197px}.time strong{font-size:58px}.time span{bottom:54px}.course{grid-template-columns:1fr}.visual{min-height:390px;padding:28px 18px}.visual>strong{font-size:27px}.info{padding:32px 23px}.instructor{grid-template-columns:1fr;gap:28px}.instructor img{max-width:280px;margin:auto}.instructor h3,.role{text-align:center}.guarantee h2{font-size:25px}summary{font-size:14px}footer{padding-bottom:105px}.sticky{bottom:9px;padding:11px 18px;font-size:12px}.sticky strong{font-size:17px}.puzzle-deco{display:none}
+}
+@media(prefers-reduced-motion:no-preference){
+  .hero-in{animation:heroEnter .9s cubic-bezier(.22,1,.36,1) both}.value-line span{animation:formulaEnter .55s cubic-bezier(.22,1,.36,1) both}.value-line span:nth-of-type(2){animation-delay:.12s}.value-line span:nth-of-type(3){animation-delay:.24s}.cta:before,.sticky:before{animation:ctaShine 4.8s 1.4s ease-in-out infinite}.visual:before{animation:slowRing 16s linear infinite}.visual:after{animation:slowRing 22s linear infinite reverse}.puzzle .last{animation:pieceFloat 3.5s ease-in-out infinite}
+  @keyframes heroEnter{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes formulaEnter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}@keyframes ctaShine{0%,68%{left:-45%}88%,100%{left:125%}}@keyframes slowRing{to{transform:rotate(360deg)}}@keyframes pieceFloat{50%{transform:translateY(-10px) rotate(-4deg)}}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.js .reveal{opacity:1;transform:none;transition:none}.heading.reveal i{transform:scaleX(1);transition:none}}
+</style>
+<style>
+/* Stripe 埋め込みチェックアウト（姉妹講座と同方式） */
+.pay-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(8,18,27,.76);backdrop-filter:blur(7px)}.pay-modal.open{display:flex}.pay-sheet{position:relative;width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.5);padding:24px 20px 21px}.pay-close{position:absolute;top:9px;right:13px;background:none;border:none;color:#8a96a0;font-size:27px;line-height:1;cursor:pointer}.pay-emailnote{font-size:12px;color:var(--muted);background:var(--ice);border:1px solid #dce8ee;border-radius:11px;padding:11px 12px;margin-bottom:14px;line-height:1.7}.pay-emailnote b{color:var(--ink)}#embedded-checkout{min-height:220px}.pay-msg{text-align:center;color:#89939c;font-size:13px;padding:56px 20px}.pay-msg.err{color:#c0392b}#payDone{display:none;text-align:center;padding:40px 20px}#payDone .mk{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}#payDone h3{font:20px "Yu Mincho",serif;margin:0 0 12px}#payDone p{color:var(--muted);font-size:13.5px;line-height:1.95;margin:0 0 22px}#payDone .cta{width:auto;min-height:0;padding:15px 40px;font-size:15px}#payDone .donenote{max-width:380px;margin:20px auto 0;color:#8e98a1;font-size:11px;line-height:1.9}#payDone .donenote b{color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <span class="puzzle-deco one"></span><span class="puzzle-deco two"></span>
+  <div class="container hero-in">
+    <a class="back" href="https://columns.l-mine.com/app/">← アプリに戻る</a>
+    <p class="pill">“はじめて”シリーズ 第三弾</p>
+    <p class="kicker">作りたいものを、“選ばれる商品”へ。</p>
+    <h1><span>はじめての</span>商品設計デザイン講座</h1>
+    <p class="hero-copy">“売れる”だけではなく、<br><strong>“あなたから選ばれる”をデザインする。</strong></p>
+    <div class="value-line"><span>想い</span><b>×</b><span>市場</span><b>×</b><span>価値</span></div>
+    <div class="chips"><span>初心者向け</span><span>全6本・約30分</span><span>買い切り</span></div>
+    <p class="price"><strong>3,980円</strong><small>（税込）</small></p>
+    <a class="cta" data-purchase href="#purchase"><span>今すぐ講座を見る →</span></a>
+    <p class="micro">購入後、アプリですぐに視聴できます。</p>
+  </div>
+</header>
+
+<section class="section paper"><div class="narrow">
+  <div class="heading"><p>Problem</p><h2>一生懸命作ったのに、<br>なぜか魅力が伝わらない。</h2><i></i></div>
+  <div class="lead">
+    <p>自分の経験や得意なことを詰め込み、時間をかけて商品を作った。それなのに、いざ案内すると反応がない。</p>
+    <p>そんなとき、多くの人は「まだ内容が足りないのかも」と考えます。</p>
+  </div>
+  <div class="worries">
+    <div class="worry">自分の得意を商品にしたけれど、反応がない</div>
+    <div class="worry">高く売るために、内容や特典を増やしている</div>
+    <div class="worry">1対1・動画・PDF、どの形がいいか分からない</div>
+    <div class="worry">似た商品が多く、自分との違いを説明できない</div>
+  </div>
+  <p class="highlight">もしかすると、足りないのは内容ではなく、<strong>「誰にとって、どんな価値があるのか」という設計</strong>かもしれません。</p>
+  <p class="closing">商品設計は、ただ中身を決める作業ではありません。<br><strong>想いを、相手に伝わる形へ変えること。</strong></p>
+</div></section>
+
+<section class="section cream"><div class="container myth">
+  <div class="stack" aria-hidden="true">
+    <div class="stack-card"><small>MORE CONTENT</small>動画をもっと増やす</div>
+    <div class="stack-card"><small>MORE SUPPORT</small>サポート期間を長くする</div>
+    <div class="stack-card"><small>MORE BONUS</small>特典をたくさんつける</div>
+    <div class="stack-card"><small>RESULT</small>受講者も、自分も、消化できない</div>
+  </div>
+  <div class="myth-copy">
+    <h2>商品設計は、<br>「足し算」ではありません。</h2>
+    <p>高額商品にするために、動画もサポートも特典も増やす。たしかに豪華には見えます。</p>
+    <p>けれど、受講する側が消化できず、提供する側も商品に振り回されてしまったら、それは本当に価値が高いと言えるでしょうか。</p>
+    <div class="quote">本当に必要なのは、999個の特典ではない。<br>相手が前へ進むために足りない、たった1つのピースです。</div>
+  </div>
+</div></section>
+
+<section class="section navy"><div class="container piece-wrap">
+  <div class="piece-copy">
+    <p class="num">THE LAST PIECE</p>
+    <h2>999ピースが無料でも、<br>最後の1ピースには価値がある。</h2>
+    <p>1,000ピースのパズルを1,000円で買えば、計算上は1ピース1円です。</p>
+    <p>けれど、999ピースまで完成している人にとって、最後の1ピースはただの1円ではありません。</p>
+    <p><strong>価値は、提供する側が決めるものではなく、受け取る側の状況によって変わります。</strong></p>
+    <p>だからこそ、商品を豪華にする前に「この人が前へ進むために、本当に足りないものは何か」を考える必要があります。</p>
+  </div>
+  <div class="puzzle" aria-label="最後の1ピースを表したパズル">
+    <span>01</span><span>02</span><span>03</span><span>04</span><span class="missing">?</span><span>06</span><span>07</span><span>08</span><span>09</span><span class="last">LAST<br>PIECE</span>
+  </div>
+</div></section>
+
+<section class="section paper"><div class="container">
+  <div class="heading"><p>Product Design</p><h2>“自分らしさ”か、“売れやすさ”か。<br>どちらかを捨てなくていい。</h2><i></i></div>
+  <div class="three">
+    <article><span>01 / HEART</span><h3>想い</h3><p>自分が届けたいこと。商品をつくる理由と、その人に伝えたい世界観。</p></article>
+    <article><span>02 / MARKET</span><h3>市場</h3><p>相手がいま求めていること。悩みや状況を、相手の目線から捉える。</p></article>
+    <article><span>03 / VALUE</span><h3>価値</h3><p>商品を通じて相手に起きる変化。BeforeからAfterへつなぐ意味。</p></article>
+  </div>
+  <div class="cross"><span>売れる構造</span><b>×</b><span>あなたの想い</span></div>
+  <p class="closing">想いを残しながら、相手に求められる形へ。<br>それが、<strong>“選ばれる商品設計”</strong>です。</p>
+</div></section>
+
+<section class="section ice"><div class="container">
+  <div class="heading"><p>What You Learn</p><h2>この講座で分かること</h2><i></i></div>
+  <div class="learn">
+    <article><span class="num">01</span><h3>商品として届ける「変化」</h3><p>商品の中身ではなく、受講前から受講後に起きるBefore→Afterを考えます。</p></article>
+    <article><span class="num">02</span><h3>作りたいものと求められるもの</h3><p>プロダクトアウトとマーケットインを理解し、自分の想いと市場をつなぎます。</p></article>
+    <article><span class="num">03</span><h3>相手が感じる本当の価値</h3><p>特典やボリュームではなく、相手に必要な「最後の1ピース」を見つける視点を学びます。</p></article>
+    <article><span class="num">04</span><h3>自分に合った届け方</h3><p>1対1・グループ・動画・音声・PDFなど、目的に合う商品形式を考えます。</p></article>
+  </div>
+  <div class="message"><small>AFTER THIS COURSE</small><p><strong>商品を作る前に、考えるべきことが見えてくる。</strong></p><p>「誰に、どんな価値を、どの形で届けるか」を整理し、自分の商品を組み立てる土台をつくる入門講座です。</p></div>
+  <div class="center"><a class="cta dark" data-purchase href="#purchase"><span>この講座を見る →</span></a></div>
+</div></section>
+
+<section class="section navy"><div class="container">
+  <div class="heading light"><p>Course Curriculum</p><h2>全6本で、<br>“選ばれる商品”の土台をつくる。</h2><i></i></div>
+  <div class="modules">
+    <article class="module"><span>01</span><div><h3>商品ではなく「変化」を届ける</h3><p>お客様が求めるBefore→Afterを見つけ、内容ではなく変化として価値を伝える考え方を学びます。</p></div></article>
+    <article class="module"><span>02</span><div><h3>作りたいものと求められるものをつなぐ</h3><p>想いだけ、市場だけに偏らず、両方が重なる商品を考えます。</p></div></article>
+    <article class="module"><span>03</span><div><h3>価値を“足す”のではなく、研ぎ澄ます</h3><p>特典を増やす前に、相手にとって必要な「最後の1ピース」を見つけます。</p></div></article>
+    <article class="module"><span>04</span><div><h3>「あなたから買いたい」と言われる理由をつくる</h3><p>強み・経験・物語・立ち位置から、選ばれるポジションを整理します。</p></div></article>
+    <article class="module"><span>05</span><div><h3>想いが伝わる商品形式を選ぶ</h3><p>1対1・グループ・動画・音声・PDFなど、それぞれの特徴と向いている届け方を学びます。</p></div></article>
+    <article class="module"><span>06</span><div><h3>共感から信頼へつながる流れを考える</h3><p>興味→共感→信頼→行動という、自然に選ばれるための基本的な流れを学びます。</p></div></article>
+  </div>
+</div></section>
+
+<section class="section cream"><div class="container short">
+  <div class="time"><strong>30<small>min</small></strong><span>全6本・合計約30分</span></div>
+  <div class="short-copy">
+    <p class="num">EASY TO WATCH</p>
+    <h2>忙しくても、<br>最後まで学びやすい。</h2>
+    <p>動画は全6本、合計約30分。1本あたり約5分だから、家事や仕事の合間にも少しずつ進められます。</p>
+    <p>長時間の講義をただ聞き続けるのではなく、商品設計に必要な考え方を、ひとつずつシンプルに整理。</p>
+    <p>「時間ができたら学ぼう」ではなく、今日から無理なく始められる講座です。</p>
+    <div class="time-chips"><b>全6本</b><b>合計約30分</b><b>1本約5分</b><b>スマホ視聴OK</b></div>
+  </div>
+</div></section>
+
+<section class="section paper"><div class="container">
+  <div class="heading"><p>Series</p><h2>“はじめて”シリーズで、<br>ビジネスの土台を順番に。</h2><i></i></div>
+  <div class="series-flow">
+    <article class="series-card"><small>第一弾</small><h3>マーケティングの全体像</h3><p>まず、何をどう考えるのか。ビジネスの地図を知る。</p></article>
+    <article class="series-card"><small>第二弾</small><h3>売上の構造</h3><p>単価・人数・回数から、積み上がる売上を理解する。</p></article>
+    <article class="series-card current"><small>第三弾</small><h3>商品設計</h3><p>想いと市場をつなぎ、相手に伝わる価値の形を考える。</p></article>
+  </div>
+  <p class="closing">第三弾からの受講でも、<strong>問題なく学べます。</strong></p>
+</div></section>
+
+<section class="section ice"><div class="container">
+  <div class="heading"><p>Course Details</p><h2>講座の詳細</h2><i></i></div>
+  <div class="course">
+    <div class="visual"><span class="vseries">“はじめて”シリーズ 第三弾</span><div class="vpuzzle"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>はじめての</p><strong>商品設計デザイン講座</strong><small>感情と構造、両方で“選ばれる商品”をつくる</small></div>
+    <div class="info" id="purchase"><p class="series">“はじめて”シリーズ 第三弾</p><h3>はじめての<br>商品設計デザイン講座</h3>
+      <img class="course-thumbnail" src="https://drive.google.com/thumbnail?id=1AOIxTLvxf5w0wO_TrlsXJB-zoWhsiUBu&amp;sz=w1600" alt="はじめての商品設計デザイン講座 サムネイル" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&amp;id=1AOIxTLvxf5w0wO_TrlsXJB-zoWhsiUBu';">
+      <dl><div><dt>内容</dt><dd>価値設計／市場と想い／選ばれる理由／商品形式／信頼導線</dd></div><div><dt>動画</dt><dd>全6本・合計約30分</dd></div><div><dt>形式</dt><dd>オンデマンド動画講座</dd></div><div><dt>視聴</dt><dd>購入後、アプリですぐに視聴</dd></div></dl>
+      <div class="pricebox"><span>受講価格</span><strong>3,980円</strong><small>税込・買い切り</small></div>
+      <a class="cta" data-purchase href="#purchase"><span>3,980円で講座を見る →</span></a><p class="micro darkmicro">決済完了後、アプリで自動的に視聴できるようになります。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="section paper guarantee"><div class="narrow"><div class="shield">✓</div><h2>3日間の全額返金保証</h2><p>ご購入後3日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p><small>※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額、銀行振込の場合は振込手数料を差し引いた額となります。</small></div></section>
+
+<section class="section ice"><div class="container">
+  <div class="heading"><p>Instructor</p><h2>あなたのインストラクター</h2><i></i></div>
+  <div class="instructor"><img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" loading="lazy"><div><h3>とーる</h3><p class="role">行動経済アナリスト / デジタルクリエイター</p><p>1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て、現在はオンライン講座の制作やLINE構築を専門に、コンテンツビジネスの構築支援を行う。</p><p>第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。</p><p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。「売れる手法」だけでなく、無理なく“売れ続ける”仕組みづくりを伝えている。</p></div></div>
+</div></section>
+
+<section class="section paper"><div class="narrow">
+  <div class="heading"><p>FAQ</p><h2>よくあるご質問</h2><i></i></div>
+  <div class="faq">
+    <details><summary>商品がまだ決まっていなくても受講できますか？<span>＋</span></summary><p>はい。これから商品を作る方が、最初に何を考えるべきかを整理するための入門講座です。</p></details>
+    <details><summary>すでに商品がある人にも役立ちますか？<span>＋</span></summary><p>はい。「魅力が伝わらない」「特典を増やし続けている」「選ばれる理由を説明できない」と感じている方の商品整理にも役立ちます。</p></details>
+    <details><summary>この講座だけで商品が完成しますか？<span>＋</span></summary><p>本講座は、商品設計に必要な考え方を整理し、自分の商品を組み立てる土台を作る講座です。受講するだけで商品が自動的に完成するものではありません。</p></details>
+    <details><summary>第一弾・第二弾を受けていなくても大丈夫ですか？<span>＋</span></summary><p>はい。第三弾からでも内容を理解できる構成です。シリーズを通して学ぶと、マーケティング・売上・商品設計のつながりをより整理しやすくなります。</p></details>
+    <details><summary>スマートフォンでも視聴できますか？<span>＋</span></summary><p>はい。購入後はアプリ内から、スマートフォンでいつでも視聴できます。</p></details>
+    <details><summary>どのくらいの時間で見られますか？<span>＋</span></summary><p>全6本、合計約30分です。1本あたり約5分のため、スキマ時間にも少しずつ進められます。</p></details>
+  </div>
+  <div class="center faqcta"><a class="cta dark" data-purchase href="#purchase"><span>今すぐ講座を見る →</span></a></div>
+  <p class="disclaimer">※本講座は基礎講座であり、個別の成果を保証するものではありません。</p>
+</div></section>
+
+<section class="final"><div class="narrow">
+  <p class="num">ONE LAST PIECE</p><h2>価値を増やす前に、<br>本当に必要なものを見つけよう。</h2>
+  <p>あれもこれもと増やさなくても、商品は選ばれるようになります。<br>必要なのは、あなたが届けたい想いと、相手が求めている変化をつなぐこと。<br>あなたの商品に足りない「最後の1ピース」を、一緒に見つけていきましょう。</p>
+  <a class="cta" data-purchase href="#purchase"><span>はじめての商品設計を学ぶ →</span></a>
+</div></section>
+
+<footer><div class="container"><nav><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a><a href="https://columns.l-mine.com/legal/terms.html">利用規約</a><a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a></nav><p>© L-MINE. All Rights Reserved.</p></div></footer>
+<a class="sticky" data-purchase href="#purchase"><span><strong>3,980円</strong>で講座を見る →</span></a>
+
+<!-- 購入モーダル（Stripe 埋め込みチェックアウト） -->
+<div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き"><div class="pay-sheet"><button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button><div id="payEmailNote" class="pay-emailnote" style="display:none"></div><div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div><div id="payDone"><div class="mk">✓</div><h3>ご購入ありがとうございます</h3><p>「はじめての商品設計デザイン講座」の視聴権を、<br>ご登録のメールに反映します。<br>さっそくアプリで学びをはじめましょう。</p><a href="https://columns.l-mine.com/app/" class="cta"><span>アプリを開く</span></a><p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p></div></div></div>
+
+<script>
+  var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+  var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+  var COURSE_PRICE_ID = "price_1TsIQLDffCAQquMFR9bn3PNN";   // はじめての商品設計デザイン講座（定価3,980円・単発／タグHS）
+  var PREFILL_EMAIL = "";
+  try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+  var _stripe = null, _checkout = null;
+  async function openCheckout(){
+    var modal = document.getElementById('payModal');
+    var cont  = document.getElementById('embedded-checkout');
+    var done  = document.getElementById('payDone');
+    done.style.display = 'none';
+    cont.style.display = 'block';
+    cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+    var enote = document.getElementById('payEmailNote');
+    if(enote){
+      if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; }
+      else { enote.style.display = 'none'; }
+    }
+    modal.classList.add('open');
+    try{
+      if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+      if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+      var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&mode=payment&price=' + encodeURIComponent(COURSE_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
+      if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+      cont.innerHTML = '';
+      _checkout = await _stripe.initEmbeddedCheckout({
+        clientSecret: r.client_secret,
+        onComplete: function(){
+          cont.style.display = 'none';
+          done.style.display = 'block';
+        }
+      });
+      _checkout.mount('#embedded-checkout');
+    }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+  }
+  function closeCheckout(){
+    document.getElementById('payModal').classList.remove('open');
+    if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+  }
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && document.getElementById('payModal').classList.contains('open')) closeCheckout(); });
+</script>
+
+<script>
+(() => {
+  /* 全CTA（data-purchase）→ Stripe埋め込みチェックアウトを開く */
+  document.querySelectorAll('[data-purchase]').forEach(link => {
+    link.setAttribute('href', '#');
+    link.addEventListener('click', e => { e.preventDefault(); openCheckout(); });
+  });
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const groups = [
+    ['.heading',0],['.lead',0],['.worry',70],['.highlight',0],['.myth > *',100],
+    ['.piece-wrap > *',110],['.three article',90],['.learn article',80],['.message',0],
+    ['.module',70],['.short > *',100],['.series-card',90],['.course',0],
+    ['.guarantee .shield',0],['.guarantee h2',70],['.guarantee p',110],
+    ['.instructor img',0],['.instructor > div',100],['.faq',0],['.final > div',0]
+  ];
+  groups.forEach(([selector,step]) => document.querySelectorAll(selector).forEach((el,index) => {
+    el.classList.add('reveal');
+    if(selector === '.instructor img') el.classList.add('reveal-left');
+    if(selector === '.instructor > div') el.classList.add('reveal-right');
+    if(step) el.style.setProperty('--delay', `${Math.min(index * step,360)}ms`);
+  }));
+  const targets = document.querySelectorAll('.reveal');
+  if(reduced || !('IntersectionObserver' in window)){targets.forEach(el => el.classList.add('is-visible'));return}
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+    if(!entry.isIntersecting)return;entry.target.classList.add('is-visible');observer.unobserve(entry.target)
+  }),{threshold:.1,rootMargin:'0px 0px -4% 0px'});
+  targets.forEach(el => observer.observe(el));
+})();
+</script>
+</body>
+</html>
