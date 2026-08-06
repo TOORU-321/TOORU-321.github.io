@@ -518,6 +518,7 @@ def render_index(page_cols, page, pages):
 </div>
 
 <footer><div class="foot-inner"><div class="foot-links">{foot_html()}</div><div class="foot-cc">© 2026 L-MINE</div></div></footer>
+<script src="/optin-popup.js" defer></script>
 </body>
 </html>'''
 
