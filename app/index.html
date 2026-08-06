@@ -1267,15 +1267,16 @@ a{text-decoration:none}
 .tier-paid{color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-color:transparent;font-weight:700}
 .tier-partial{color:#8bd3a6;background:rgba(139,211,166,.10);border-color:rgba(139,211,166,.34)}
 @media(max-width:600px){ .c-tier{font-size:9px;padding:2px 6px} .c-badges{gap:4px} }
-/* 商品ラベル文言（新商品／キャンペーン等）：コース名の下に色付きの一言で目立たせる */
-.c-promo{display:flex;align-items:center;gap:6px;padding:0 16px 10px 16px;margin-top:-5px;font-family:var(--gothic);font-weight:800;font-size:12px;letter-spacing:.02em;line-height:1.4}
-.c-promo .cp-ico{font-size:12px;flex:none}
-.c-promo.lb-new   .cp-tx{color:#3ad07a}
-.c-promo.lb-camp  .cp-tx{color:#ff6b78}
-.c-promo.lb-hot   .cp-tx{color:#f4bd4a}
-.c-promo.lb-other .cp-tx{color:#aab2bd}
-@media(max-width:600px){ .c-promo{font-size:11.5px;padding-bottom:9px} }
-@media(prefers-reduced-motion:no-preference){ .c-promo.lb-camp .cp-tx{animation:cpBlink 1.9s ease-in-out infinite} @keyframes cpBlink{0%,100%{opacity:1}50%{opacity:.5}} }
+/* 商品ラベル文言（新商品／キャンペーン等）：コース名の下に“お？”となる強調ハイライト */
+.c-promo{display:flex;padding:1px 16px 11px 16px;margin-top:-4px}
+.c-promo .cp-in{display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:9px;font-family:var(--gothic);font-weight:900;font-size:13.5px;letter-spacing:.03em;line-height:1.5}
+.c-promo .cp-ico{font-size:14px;flex:none}
+.c-promo.lb-new   .cp-in{color:#67e69a;background:rgba(52,194,110,.14);box-shadow:inset 0 0 0 1px rgba(52,194,110,.32)}
+.c-promo.lb-camp  .cp-in{color:#ff8a92;background:rgba(255,95,109,.15);box-shadow:inset 0 0 0 1px rgba(255,95,109,.38)}
+.c-promo.lb-hot   .cp-in{color:#f8cb64;background:rgba(240,180,41,.14);box-shadow:inset 0 0 0 1px rgba(240,180,41,.34)}
+.c-promo.lb-other .cp-in{color:#c6cdd6;background:rgba(150,160,175,.13);box-shadow:inset 0 0 0 1px rgba(150,160,175,.28)}
+@media(max-width:600px){ .c-promo .cp-in{font-size:12.5px;padding:4px 11px} }
+@media(prefers-reduced-motion:no-preference){ .c-promo.lb-camp .cp-in{animation:cpGlow 1.9s ease-in-out infinite} @keyframes cpGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(255,95,109,.38),0 0 0 rgba(255,95,109,0)}50%{box-shadow:inset 0 0 0 1px rgba(255,95,109,.55),0 0 13px rgba(255,95,109,.4)}} }
 /* 期間限定コース：左メニューで別枠強調＋小さなタイマー */
 .course.limited{margin:10px 8px;border:1.5px solid rgba(227,169,90,.5);border-radius:12px;background:linear-gradient(180deg,rgba(227,169,90,.10),rgba(227,169,90,.03));box-shadow:0 4px 16px rgba(180,120,40,.12);overflow:hidden}
 .course.limited .course-head{padding:13px 10px 8px 14px}
@@ -4134,7 +4135,7 @@ function render(){
     if(promo){
       const pr = document.createElement("div");
       pr.className = "c-promo " + promo.cls;
-      pr.innerHTML = `<span class="cp-ico">${promo.ico}</span><span class="cp-tx">${promo.text}</span>`;
+      pr.innerHTML = `<span class="cp-in"><span class="cp-ico">${promo.ico}</span><span class="cp-tx">${promo.text}</span></span>`;
       el.appendChild(pr);
     }
     if(isLimited){
