@@ -1267,6 +1267,14 @@ a{text-decoration:none}
 .tier-paid{color:#1c1a14;background:linear-gradient(135deg,#e8c880,#caa75f);border-color:transparent;font-weight:700}
 .tier-partial{color:#8bd3a6;background:rgba(139,211,166,.10);border-color:rgba(139,211,166,.34)}
 @media(max-width:600px){ .c-tier{font-size:9px;padding:2px 6px} .c-badges{gap:4px} }
+/* 商品ラベルバッジ（新商品／キャンペーン等）：一覧で目立たせる */
+.c-label{font-family:var(--gothic);font-size:9.5px;font-weight:800;letter-spacing:.03em;color:#fff;border-radius:999px;padding:2px 9px;white-space:nowrap;flex:none;line-height:1.6;box-shadow:0 2px 7px rgba(0,0,0,.16)}
+.c-label.lb-new{background:linear-gradient(135deg,#34c26e,#12995a)}
+.c-label.lb-camp{background:linear-gradient(135deg,#ff5f6d,#e11d2e)}
+.c-label.lb-hot{background:linear-gradient(135deg,#f0b429,#e8901a)}
+.c-label.lb-other{background:linear-gradient(135deg,#5b6472,#3a4250)}
+@media(max-width:600px){ .c-label{font-size:9px;padding:2px 7px} }
+@media(prefers-reduced-motion:no-preference){ .c-label.lb-camp{animation:lblPulse 2.4s ease-in-out infinite} @keyframes lblPulse{0%,100%{box-shadow:0 2px 7px rgba(225,29,46,.28)}50%{box-shadow:0 2px 15px rgba(225,29,46,.62)}} }
 /* 期間限定コース：左メニューで別枠強調＋小さなタイマー */
 .course.limited{margin:10px 8px;border:1.5px solid rgba(227,169,90,.5);border-radius:12px;background:linear-gradient(180deg,rgba(227,169,90,.10),rgba(227,169,90,.03));box-shadow:0 4px 16px rgba(180,120,40,.12);overflow:hidden}
 .course.limited .course-head{padding:13px 10px 8px 14px}
@@ -2498,31 +2506,37 @@ function courseWatchable(ci){
   const c = COURSES[ci]; if(!c) return false;
   return (c.videos || []).some((vv, idx) => canWatchVideo(vv, ci, idx));
 }
-// 視聴開始：日付をパース。その日の0:00から公開（未記入＝すぐ公開）
-// ※日付の書き方は「視聴期限」と同じ（2026-07-10 / 7月10日 / gvizのDate(...) など）
-function parseStart(s){
-  const ts = parseDeadline(s);          // 同じ解析を使う（返り値はその日の23:59:59）
-  if(ts == null) return null;
-  const d = new Date(ts);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0).getTime();   // 0:00に戻す
-}
-// 視聴期限：日付をパース（テキスト「2026-07-10」/gvizの Date(2026,6,10) 両対応）。その日いっぱい視聴可
-function parseDeadline(s){
+// 日付＋時刻を部品に分解（時刻は任意）。視聴開始／視聴期限で共通利用
+// 対応：2026-07-10 / 2026/7/10 15:00 / 7月10日 21時 / 7/10 15:30 / gvizの Date(2026,6,10[,15,0,0])
+function parseDateParts(s){
   s = String(s || "").trim();
   if(!s) return null;
-  // 全角数字→半角（例：７月１０日 → 7月10日）
-  s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
-  let y, mo, da, m;
-  if((m = s.match(/Date\((\d+),(\d+),(\d+)/))){ y=+m[1]; mo=+m[2]; da=+m[3]; }               // gviz日付セル（月0始まり）
-  else if((m = s.match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/))){ y=+m[1]; mo=+m[2]-1; da=+m[3]; }  // 年あり
-  else if((m = s.match(/(\d{1,2})[\/月](\d{1,2})/))){                                          // 年なし「7月10日」「7/10」→直近の日付として解釈
-    mo = +m[1]-1; da = +m[2];
+  s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));   // 全角数字→半角
+  let y, mo, da, hh = null, mm = null, m;
+  if((m = s.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+)(?:,(\d+))?)?\)/))){          // gviz日付セル（月0始まり・時刻は任意）
+    y=+m[1]; mo=+m[2]; da=+m[3]; if(m[4]!=null){ hh=+m[4]; mm=+m[5]; }
+  } else if((m = s.match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/))){                // 年あり
+    y=+m[1]; mo=+m[2]-1; da=+m[3];
+  } else if((m = s.match(/(\d{1,2})[\/月](\d{1,2})/))){                                 // 年なし「7月10日」「7/10」→直近の日付
+    mo=+m[1]-1; da=+m[2];
     const now = new Date(); y = now.getFullYear();
-    const cand = new Date(y, mo, da, 23, 59, 59).getTime();
-    if(cand < now.getTime() - 86400000*3) y += 1;   // 3日以上前の日付なら翌年扱い
+    if(new Date(y, mo, da, 23,59,59).getTime() < now.getTime() - 86400000*3) y += 1;   // 3日以上前なら翌年扱い
+  } else return null;
+  if(hh == null){                                                                      // 時刻「15:00」「15：30」「21時」「21時30分」
+    const t = s.match(/(\d{1,2})\s*[:：時]\s*(\d{1,2})?/);
+    if(t){ hh = +t[1]; mm = (t[2]!=null && t[2]!=="") ? +t[2] : 0; }
   }
-  else return null;
-  return new Date(y, mo, da, 23, 59, 59).getTime();
+  return { y, mo, da, hh, mm, hasTime: hh != null };
+}
+// 視聴開始：時刻指定があればその時刻／無ければその日の0:00から公開（未記入＝すぐ公開）
+function parseStart(s){
+  const p = parseDateParts(s); if(!p) return null;
+  return new Date(p.y, p.mo, p.da, p.hasTime ? p.hh : 0, p.hasTime ? p.mm : 0, 0).getTime();
+}
+// 視聴期限：時刻指定があればその時刻／無ければその日いっぱい（23:59:59）まで視聴可
+function parseDeadline(s){
+  const p = parseDateParts(s); if(!p) return null;
+  return new Date(p.y, p.mo, p.da, p.hasTime ? p.hh : 23, p.hasTime ? p.mm : 59, p.hasTime ? 0 : 59).getTime();
 }
 function isExpired(v){
   const d = (v && v.deadline) ? parseDeadline(v.deadline) : null;
@@ -2559,6 +2573,19 @@ function deadlineLabel(ts){
 }
 function fmtDateShort(ts){ const d = new Date(ts); return (d.getMonth()+1) + "/" + d.getDate(); }
 function fmtDateFull(ts){ const d = new Date(ts); return d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate(); }
+// 時刻付き表示（0:00ちょうどなら日付のみ＝従来通り）
+function fmtDateTime(ts){ const d = new Date(ts); const hm = (d.getHours()||d.getMinutes()) ? " " + d.getHours() + ":" + String(d.getMinutes()).padStart(2,"0") : ""; return fmtDateFull(ts) + hm; }
+// 商品ラベル（新商品／キャンペーン等）→ 目立つバッジHTML。「通常/ノーマル」等は非表示
+function productLabelBadge(course){
+  const raw = String((course && course.label) || "").trim();
+  if(!raw || /^(通常|ノーマル|normal|none|なし|-)$/i.test(raw)) return "";
+  let cls = "lb-other";
+  if(/新商品|新作|新着|新登場|NEW/i.test(raw))                 cls = "lb-new";
+  else if(/キャンペーン|セール|sale|割引|特価|CAMP|OFF/i.test(raw)) cls = "lb-camp";
+  else if(/人気|おすすめ|注目|限定|急上昇|HOT/i.test(raw))      cls = "lb-hot";
+  const tx = raw.replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+  return `<span class="c-label ${cls}">${tx}</span>`;
+}
 // 期限の状態クラス（soon=残り1日以下 / expired=終了）
 function deadlineState(ts){ const n = daysLeft(ts); return (n < 0) ? "expired" : (n <= 1 ? "soon" : ""); }
 // ④ カウントダウン（残り d日 hh:mm:ss）。1秒ごとに更新
@@ -3964,7 +3991,8 @@ function coursesFromGviz(json){
 function coursesFromTable(cols, rows, master){
   const find = (names, fb) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return fb; };
   const iName=find(["コース名"],0), iChap=find(["章タイトル","章","チャプター","section"],1), iTitle=find(["タイトル","動画タイトル","中身"],2), iUrl=find(["動画URL","URL","動画"],3), iKind=find(["種別","公開","公開状態"],4), iTag=find(["必要タグ","タグ"],5), iSupp=find(["補足","補足説明","説明"],-1), iAttach=find(["添付要素","添付","資料","ワーク"],-1), iPw=find(["パスワードで解除","パスワード","パス"],-1), iDeadline=find(["視聴期限","期限","視聴期間"],-1), iStart=find(["視聴開始","公開開始","開始","公開日"],-1), iOrder=find(["並び順","順番","順","order"],-1),
-    iPrice=find(["価格","値段","料金","受講料","price"],-1), iBuy=find(["決済URL","決済リンク","購入URL","決済","checkout"],-1), iLp=find(["LPURL","LP URL","LP","販売ページ","詳細ページ","詳細URL"],-1);
+    iPrice=find(["価格","値段","料金","受講料","price"],-1), iBuy=find(["決済URL","決済リンク","購入URL","決済","checkout"],-1), iLp=find(["LPURL","LP URL","LP","販売ページ","詳細ページ","詳細URL"],-1),
+    iLabel=find(["商品ラベル","ラベル","バッジ","マーク","目印","表示ラベル","label"],-1);
   const cell = (r,i)=> (i >= 0 && r[i] != null) ? String(r[i]).trim() : "";
   const map = new Map(); let ri = 0;
   rows.forEach(r => {
@@ -3979,13 +4007,14 @@ function coursesFromTable(cols, rows, master){
     const on = parseFloat(cell(r,iOrder)); const ord = (iOrder >= 0 && !isNaN(on)) ? on : ri;
     const rk = kindToRank(kind);
     const tagOnly = /タグ限定|限定公開|限定共有|限定視聴/.test(kind);   // 種別=タグ限定 → 必要タグ保有者のみ視聴（購入ではなく限定公開）
-    if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[], price:"", buyUrl:"", lpUrl:"" }); }
+    if(!map.has(cname)){ map.set(cname, { name:cname, rank:rk, _order:Infinity, videos:[], price:"", buyUrl:"", lpUrl:"", label:"" }); }
     const c = map.get(cname);
     // コース単位の販売情報（各コースのどこか1行に入っていれば拾う）
-    const price = cell(r,iPrice), buyUrl = cell(r,iBuy), lpUrl = cell(r,iLp);
+    const price = cell(r,iPrice), buyUrl = cell(r,iBuy), lpUrl = cell(r,iLp), plabel = cell(r,iLabel);
     if(price  && !c.price)  c.price  = price;
     if(buyUrl && !c.buyUrl) c.buyUrl = buyUrl;
     if(lpUrl  && !c.lpUrl)  c.lpUrl  = lpUrl;
+    if(plabel && !c.label)  c.label  = plabel;
     c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), tagOnly:tagOnly, _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
@@ -4096,7 +4125,8 @@ function render(){
     const partiallyFree = (minR <= RANK.free) && (maxR >= RANK.plus);   // 無料〜有料が混在＝一部無料
     const ti = partiallyFree ? `<span class="c-tier tier-partial">一部無料</span>` : tierBadge(minR);
     const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
-    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
+    const lb = productLabelBadge(course);
+    head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${lb}${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
     if(isLimited){
@@ -4298,11 +4328,11 @@ function select(ci, vi){
     showThumb(v);                           // ★サムネ（再生前の初期画面）を背景に表示
     vframe.classList.add("locked"); viframe.src = "about:blank";
     hidePwOption();
-    document.getElementById("lkTitle").innerHTML = `🎬 ${fmtDateFull(st)} 公開予定`;
-    document.getElementById("lkDesc").innerHTML  = `この動画は <b>${fmtDateFull(st)}</b> から視聴できます。<br>公開までもうしばらくお待ちください。<span class="lk-cd" data-start="${st}">${startCountdownLabel(st)}</span>`;
+    document.getElementById("lkTitle").innerHTML = `🎬 ${fmtDateTime(st)} 公開予定`;
+    document.getElementById("lkDesc").innerHTML  = `この動画は <b>${fmtDateTime(st)}</b> から視聴できます。<br>公開までもうしばらくお待ちください。<span class="lk-cd" data-start="${st}">${startCountdownLabel(st)}</span>`;
     document.getElementById("lkbtn").hidden = true;
     vkick.textContent  = course.name;
-    vtitle.textContent = "🎬 " + fmtDateFull(st) + " 公開予定";
+    vtitle.textContent = "🎬 " + fmtDateTime(st) + " 公開予定";
     renderVlimit(v);
     vfiled.innerHTML   = "";
     // 公開前は中身を出さない（タイトルだけ見せて期待感を持たせる）
