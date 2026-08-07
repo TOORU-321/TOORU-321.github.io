@@ -620,7 +620,8 @@ function setupAdmin(){
     const el=$("aYtStat"), cb=$("aYtGame"); if(!el||!cb) return;
     el.textContent="状態：確認中…"; cb.disabled=true;
     try{
-      const r=await fetch(GAS_URL+"?action=live_output&cmd=status&email="+encodeURIComponent((ME.email||"").toLowerCase())+"&uid="+encodeURIComponent(ytUid())+"&_="+Date.now()).then(x=>x.json());
+      const body=new URLSearchParams({ action:"live_output", cmd:"status", email:(ME.email||"").toLowerCase(), uid:ytUid() });
+      const r=await fetch(GAS_URL,{method:"POST",body}).then(x=>x.json());
       if(r&&r.ok){ cb.checked=!!r.enabled; el.innerHTML="状態："+(r.enabled?"🔴 <b style='color:var(--gold)'>ゲームChへ同時配信ON</b>":"OFF（アプリのみ）"); }
       else { cb.checked=false; el.textContent="状態：取得できません（"+((r&&r.error)||"GAS未設定?")+"）"; }
     }catch(e){ cb.checked=false; el.textContent="状態：通信エラー"; }
