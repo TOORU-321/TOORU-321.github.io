@@ -1521,6 +1521,16 @@ a{text-decoration:none}
   </div>
 </section>
 
+<!-- メンテナンス中画面（管理者以外はここで止める） -->
+<section class="entry" id="maintScreen" hidden>
+  <img class="entry-bg" src="assets/videosamune.jpg" alt="">
+  <div class="entry-inner">
+    <div class="entry-mark">L-MINE</div>
+    <div class="entry-brand">エルラボ<span class="brand-plus">＋</span></div>
+    <p class="entry-lead" style="margin-top:26px;font-size:16px;line-height:2">🛠️ ただいまメンテナンス中です<br><br>大変申し訳ございませんが、<br>しばらく経ってから再度お試しください。</p>
+  </div>
+</section>
+
 <!-- ③ ログイン後のオープニング動画演出（扉演出の代わり） -->
 <div class="intro" id="introOverlay" hidden>
   <video id="introVideo" class="intro-video" playsinline preload="auto" muted>
@@ -2222,6 +2232,18 @@ const GUEST_KEY   = "lmine_guest";
   }catch(_e){}
 })();
 let SESSION   = null;
+let MAINTENANCE_ON = false;   // 管理者以外の入室をブロックする（起動時に一度だけ取得）
+async function checkMaintenance(){
+  try{
+    const res = await fetch(GAS_URL + "?action=get_maintenance&_=" + Date.now()).then(r => r.json());
+    MAINTENANCE_ON = !!(res && res.ok && res.on);
+  }catch(e){ MAINTENANCE_ON = false; }
+}
+function showMaintenanceScreen(){
+  document.getElementById("entry").hidden = true;
+  document.getElementById("library").hidden = true;
+  document.getElementById("maintScreen").hidden = false;
+}
 let curCourse = null, curVideo = null;
 
 function loadSession(){
@@ -2267,6 +2289,7 @@ function renderAcctMenu(){
   if(!isStandalone()) html += `<button class="acct-item acct-join" data-act="addhome"><span class="ai-ico">📲</span>ホーム画面に追加</button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="broadcast"><span class="ai-ico">📧</span>メール案内を送る<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="livehost"><span class="ai-ico">🎥</span>ライブ会場を開く<span class="acct-badge">admin</span></button>`;
+  if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="maintenance"><span class="ai-ico">🛠️</span>メンテナンス${MAINTENANCE_ON ? `<span class="acct-tog on">オン</span>` : `<span class="acct-tog off">オフ</span>`}<span class="acct-badge">admin</span></button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -2417,6 +2440,7 @@ function resetPasswordPrompt(){
 function showAuthLoading(txt){ const el=document.getElementById("authLoading"); if(!el) return; const t=document.getElementById("authLoadingTx"); if(t) t.textContent = txt||"読み込み中…"; el.hidden = false; }
 function hideAuthLoading(){ const el=document.getElementById("authLoading"); if(el) el.hidden = true; }
 function enterLibrary(withIntro){
+  if(MAINTENANCE_ON && !isAdmin()){ showMaintenanceScreen(); return; }
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
   if(withIntro) playIntro();
@@ -2469,9 +2493,11 @@ function exitToEntry(){
   document.getElementById("entry").hidden   = false;
   render();
 }
-function initEntry(){
+async function initEntry(){
+  await checkMaintenance();
   const isMember = !!(SESSION && (SESSION.email || SESSION.lineuid));
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
+  if(MAINTENANCE_ON && !isAdmin()){ showMaintenanceScreen(); return; }
   // ★ずっとログイン状態でも、アプリを開くたびに最終ログインを更新（メール会員のみ）
   if(isMember && SESSION.email){ try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email:SESSION.email }) }); }catch(_e){} }
   if(isMember || isGuest){ enterLibrary(false); openNews(); }   // 自動再開時も初期画面は「お知らせ」（動画演出なし）
@@ -2926,6 +2952,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "addhome") openAddHome(true);
   else if(act === "broadcast") openBroadcast();
   else if(act === "livehost") openLiveHost();
+  else if(act === "maintenance") toggleMaintenance();
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
@@ -2939,6 +2966,18 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
 });
 // 管理者：ライブ会場の管理（一覧→開く/新規/削除）を開く
 function openLiveHost(){ location.href = "live.html?manage=1"; }
+// 管理者：メンテナンスモードのオン/オフを切り替える（オンの間、管理者以外は「ただいまメンテナンス中です」画面のみ表示）
+async function toggleMaintenance(){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  const next = !MAINTENANCE_ON;
+  if(!confirm(next ? "メンテナンスモードをオンにします。管理者以外は利用できなくなります。よろしいですか？" : "メンテナンスモードをオフに戻します。よろしいですか？")) return;
+  try{
+    const b = new URLSearchParams({ action:"set_maintenance", email:SESSION.email, on: next ? "1" : "0" });
+    const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r => r.json());
+    if(res && res.ok){ MAINTENANCE_ON = !!res.on; showToast(MAINTENANCE_ON ? "メンテナンスモードをオンにしました。" : "メンテナンスモードをオフにしました。"); updateMemberUI(); }
+    else { showToast("切り替えできませんでした。"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
 // メール案内（セグメント配信）モーダルのイベント
 (function(){
   const md = document.getElementById("broadcastModal");
