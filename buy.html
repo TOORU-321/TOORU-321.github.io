@@ -59,9 +59,21 @@
     <div id="payDone">
       <div class="mk">✓</div>
       <h3>ご購入ありがとうございます</h3>
-      <p>ご登録のメールに視聴権を反映します。<br>さっそくアプリで学びをはじめましょう。</p>
-      <a class="cta" id="doneApp" href="https://columns.l-mine.com/app/" style="text-decoration:none;text-align:center">アプリを開く</a>
-      <p class="donenote">※視聴権の反映まで、少しお時間がかかる場合があります。<br>もし解放されない場合は、アプリで一度<b>ログアウト → 再ログイン</b>をお試しください。</p>
+      <p>下の「アプリを更新する」を押すと、<br>ご登録のメールに視聴権が反映されます。</p>
+      <button type="button" class="cta" id="syncBtn" onclick="syncPurchase()">アプリを更新する →</button>
+      <p class="donenote">※反映まで、少しお時間がかかる場合があります。うまくいかない時は、もう一度お試しください。</p>
+      <div id="syncOk" style="display:none">
+        <p class="donenote"><b>反映できました。</b>さっそくアプリで学びをはじめましょう。</p>
+        <a class="cta" id="doneApp" href="https://columns.l-mine.com/app/" style="text-decoration:none;text-align:center">アプリを開く</a>
+      </div>
+      <div id="syncNg" style="display:none">
+        <p class="donenote">まだ反映できていないようです。少し時間をおいて、もう一度「アプリを更新する」をお試しください。<br>それでも視聴できない場合は、下記からお問い合わせください。</p>
+        <input type="email" id="inqEmail" placeholder="ご登録のメールアドレス" style="width:100%;max-width:320px;padding:11px 14px;border:1px solid rgba(227,195,129,.3);border-radius:10px;font-size:13px;margin:4px 0 12px;box-sizing:border-box;background:#1c1a15;color:#e9e4d8"><br>
+        <button type="button" class="cta" id="contactBtn" onclick="sendInquiry()">お問い合わせ</button>
+        <div id="inquiryOk" style="display:none">
+          <p class="donenote"><b>お問い合わせを送信しました。</b><br>とーるより折り返しご連絡します。</p>
+        </div>
+      </div>
     </div>
     <div id="errBox"></div>
   </div>
@@ -109,7 +121,7 @@
     var e = document.getElementById('errBox'); e.textContent = msg; e.style.display = 'block';
   }
 
-  var _stripe = null, _checkout = null;
+  var _stripe = null, _checkout = null, _lastSessionId = '';
   async function openCheckout(){
     if(!PRICE) return;
     var head = document.getElementById('buyHead');
@@ -125,6 +137,7 @@
               + '&_=' + Date.now();
       var r = await fetch(url).then(function(x){ return x.json(); });
       if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+      _lastSessionId = r.session_id || '';
       if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
       cont.innerHTML = '';
       _checkout = await _stripe.initEmbeddedCheckout({
@@ -136,11 +149,54 @@
             window.location.href = u;   // 購入直後アップセル等へ
             return;
           }
-          cont.style.display = 'none'; document.getElementById('payDone').style.display = 'block';
+          cont.style.display = 'none';
+          document.getElementById('payDone').style.display = 'block';
+          document.getElementById('syncOk').style.display = 'none';
+          document.getElementById('syncNg').style.display = 'none';
+          document.getElementById('inquiryOk').style.display = 'none';
+          document.getElementById('contactBtn').style.display = 'inline-block';
+          var ie = document.getElementById('inqEmail'); if(ie) ie.value = EMAIL || '';
         }
       });
       _checkout.mount('#embedded-checkout');
     }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+  }
+  async function syncPurchase(){
+    var btn = document.getElementById('syncBtn');
+    var okBox = document.getElementById('syncOk');
+    var ngBox = document.getElementById('syncNg');
+    okBox.style.display = 'none';
+    ngBox.style.display = 'none';
+    if(!_lastSessionId){ ngBox.style.display = 'block'; return; }
+    btn.disabled = true;
+    var orig = btn.textContent;
+    btn.textContent = '確認しています…';
+    try{
+      var r = await fetch(CHECKOUT_GAS + '?action=sync_purchase&session_id=' + encodeURIComponent(_lastSessionId) + '&_=' + Date.now()).then(function(x){ return x.json(); });
+      if(r && r.ok){ okBox.style.display = 'block'; }
+      else { ngBox.style.display = 'block'; }
+    }catch(e){ ngBox.style.display = 'block'; }
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+  async function sendInquiry(){
+    var btn = document.getElementById('contactBtn');
+    var okBox = document.getElementById('inquiryOk');
+    var email = (document.getElementById('inqEmail').value || EMAIL || '').trim();
+    if(!email){ document.getElementById('inqEmail').focus(); return; }
+    btn.disabled = true;
+    btn.textContent = '送信しています…';
+    try{
+      var body = new URLSearchParams();
+      body.set('action', 'contact');
+      body.set('name', email);
+      body.set('email', email);
+      body.set('subject', (CNAME || 'ご購入商品') + '：アプリ更新後も視聴できない');
+      body.set('message', '決済後に「アプリを更新する」を押しても視聴できない、とのお問い合わせです。\nセッションID: ' + (_lastSessionId || '不明'));
+      await fetch(CHECKOUT_GAS, { method: 'POST', body: body });
+      okBox.style.display = 'block';
+      btn.style.display = 'none';
+    }catch(e){ btn.textContent = '送信できませんでした。時間をおいて再度お試しください'; btn.disabled = false; }
   }
 </script>
 </body>
