@@ -105,12 +105,12 @@
 </style>
 <style>
 /* メルマガ限定オファー要素（SNS講座レター版と同じ設計） */
-body{padding-top:64px}
-.cd-bar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:14px;height:64px;padding:0 16px;background:linear-gradient(90deg,#0a1724,#162c3e 55%,#0a1724);border-top:3px solid #d2a84fe0;border-bottom:3px solid #d2a84fe0;box-shadow:0 6px 22px rgba(0,0,0,.34);white-space:nowrap;overflow:hidden}
-.cd-bar-label{font-size:16px;font-weight:800;color:var(--gold2)}
+body{padding-top:96px}
+.cd-bar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:18px;height:96px;padding:8px 16px;background:linear-gradient(90deg,#1a0505,#3a0f0f 55%,#1a0505);border-top:3px solid #ff6a4d;border-bottom:3px solid #ff6a4d;box-shadow:0 6px 26px rgba(0,0,0,.45);white-space:nowrap;overflow:hidden;animation:barPulse 1.8s ease-in-out infinite}
+.cd-bar-label{font-size:18px;font-weight:900;color:#ffb199}
 .cd-bar-label b{color:#fff}
-.cd-bar-time{font-size:22px;font-weight:900;color:#fff;font-variant-numeric:tabular-nums;background:rgba(0,0,0,.3);border:1px solid #d2a84f80;border-radius:9px;padding:4px 14px}
-@media(max-width:760px){body{padding-top:54px}.cd-bar{height:54px;gap:8px}.cd-bar-label{font-size:12px}.cd-bar-time{font-size:16px;padding:3px 10px}}
+@keyframes barPulse{0%,100%{box-shadow:0 6px 26px rgba(0,0,0,.45)}50%{box-shadow:0 6px 34px rgba(255,90,60,.45)}}
+@media(max-width:760px){body{padding-top:74px}.cd-bar{height:74px;gap:10px;padding:6px 12px}.cd-bar-label{font-size:13px}}
 .offer-badge{display:inline-block;margin:0 0 20px;padding:11px 26px;border:2px solid #f1d789b8;border-radius:999px;background:linear-gradient(180deg,#d2a84f42,#d2a84f0f);color:#f7e6bd;font-size:14px;font-weight:800;letter-spacing:.08em;text-shadow:0 2px 10px rgba(0,0,0,.5);box-shadow:0 6px 22px rgba(0,0,0,.3);animation:obGlow 2.8s ease-in-out infinite}
 .offer-badge b{color:#fff;font-weight:900}
 @keyframes obGlow{0%,100%{box-shadow:0 6px 22px rgba(0,0,0,.3)}50%{box-shadow:0 6px 28px #d2a84f70,0 0 0 3px #d2a84f26}}
@@ -120,34 +120,40 @@ body{padding-top:64px}
 .price-letter .now{font-size:15px;color:var(--gold2);font-weight:700}
 .price-letter .now strong{font:38px Georgia,serif;letter-spacing:0;margin:0 4px}
 .price-letter .now small{font-size:11px;color:#ffffffb8;font-weight:400}
-.deadline-hero{display:inline-flex;flex-direction:column;align-items:center;gap:9px;margin:6px 0 18px;padding:14px 22px;border:1px solid #f1d789a0;border-radius:18px;background:#00000042}
-.dh-label{font-size:13px;font-weight:700;color:var(--gold2)}
+.deadline-hero{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(100%,540px);margin:14px auto 22px;padding:22px 26px;border:2px solid #ff6a4d;border-radius:22px;background:linear-gradient(145deg,#3d1210,#1a0605);box-shadow:0 0 0 4px rgba(255,90,60,.14),0 18px 44px rgba(0,0,0,.5);animation:urgencyPulse 1.8s ease-in-out infinite}
+.dh-label{font-size:17px;font-weight:900;color:#ffb199;letter-spacing:.02em}
 .was-strike{display:block;font-size:12px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
-.card-cd-label{margin:10px 0 8px;text-align:center;color:#b23b2e;font-size:12px;font-weight:800}
-.card-cd-flip{display:flex;justify-content:center;margin:0 0 16px}
+.card-cd-wrap{margin:14px 0 18px;padding:16px 14px 18px;border:2px solid #ff6a4d;border-radius:18px;background:linear-gradient(145deg,#fff5f3,#ffece7);animation:urgencyPulseLight 1.8s ease-in-out infinite}
+.card-cd-label{margin:0 0 10px;text-align:center;color:#c53a26;font-size:13px;font-weight:900}
+.card-cd-flip{display:flex;justify-content:center}
 .cd-inline{text-align:center;color:#b23b2e;font-weight:800;font-size:14px;margin-top:20px}
 .cd-inline b{color:#a9843f;font-variant-numeric:tabular-nums}
 
-/* フリップ時計（パタパタめくれる方式） */
-.flipclock{display:inline-flex;align-items:flex-end;gap:7px;vertical-align:middle}
-.fc-unit{display:flex;flex-direction:column;align-items:center;gap:4px}
-.fc-unit .flip-card{position:relative;width:30px;height:32px;perspective:220px}
+/* フリップ時計（パタパタめくれる方式・緊急性を出す赤系トーン） */
+.flipclock{display:inline-flex;align-items:flex-end;gap:12px;vertical-align:middle}
+.fc-unit{display:flex;flex-direction:column;align-items:center;gap:7px}
+.fc-unit .flip-card{position:relative;width:62px;height:74px;perspective:300px}
 .fc-unit .flip-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.2,1)}
 .fc-unit .flip-card.flip .flip-card-inner{transform:rotateX(-180deg)}
-.fc-unit .flip-front,.fc-unit .flip-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#1c3247,#0e1c29);color:#fff;font:800 15px/1 Georgia,serif;border-radius:5px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 -1px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.09)}
-.fc-unit .flip-back{transform:rotateX(180deg);background:linear-gradient(180deg,#24435e,#122232)}
-.fc-unit .flip-card:before{content:"";position:absolute;left:2px;right:2px;top:50%;height:1px;background:rgba(0,0,0,.4);z-index:2;pointer-events:none}
-.fc-label{font-size:9px;color:var(--gold2);letter-spacing:.06em}
-.flipclock[data-fc-size="sm"] .flip-card{width:22px;height:24px}
-.flipclock[data-fc-size="sm"] .flip-front,.flipclock[data-fc-size="sm"] .flip-back{font-size:12px;border-radius:4px}
-.flipclock[data-fc-size="sm"] .fc-label{font-size:7px}
-.flipclock[data-fc-size="sm"] .fc-unit{gap:2px}
+.fc-unit .flip-front,.fc-unit .flip-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#3d1210,#1a0605);color:#fff;font:800 34px/1 Georgia,serif;border-radius:9px;border:1px solid #ff6a4d80;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:inset 0 -2px 0 rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.14),0 6px 16px rgba(0,0,0,.4)}
+.fc-unit .flip-back{transform:rotateX(180deg);background:linear-gradient(180deg,#5c1c17,#2a0908)}
+.fc-unit .flip-card:before{content:"";position:absolute;left:2px;right:2px;top:50%;height:2px;background:rgba(0,0,0,.55);z-index:2;pointer-events:none}
+.fc-label{font-size:12px;color:#ffb199;letter-spacing:.06em;font-weight:800}
+.flipclock[data-fc-size="sm"]{gap:9px}
+.flipclock[data-fc-size="sm"] .flip-card{width:42px;height:50px}
+.flipclock[data-fc-size="sm"] .flip-front,.flipclock[data-fc-size="sm"] .flip-back{font-size:24px;border-radius:6px}
+.flipclock[data-fc-size="sm"] .fc-label{font-size:10px}
+.flipclock[data-fc-size="sm"] .fc-unit{gap:4px}
 @media(max-width:760px){
-  .flipclock .flip-card{width:24px;height:26px}
-  .flipclock .flip-front,.flipclock .flip-back{font-size:12px}
-  .flipclock[data-fc-size="sm"] .flip-card{width:18px;height:20px}
-  .flipclock[data-fc-size="sm"] .flip-front,.flipclock[data-fc-size="sm"] .flip-back{font-size:10px}
+  .flipclock .flip-card{width:44px;height:54px}
+  .flipclock .flip-front,.flipclock .flip-back{font-size:25px}
+  .fc-label{font-size:10px}
+  .flipclock[data-fc-size="sm"] .flip-card{width:32px;height:39px}
+  .flipclock[data-fc-size="sm"] .flip-front,.flipclock[data-fc-size="sm"] .flip-back{font-size:18px}
+  .flipclock[data-fc-size="sm"] .fc-label{font-size:9px}
 }
+@keyframes urgencyPulse{0%,100%{box-shadow:0 0 0 4px rgba(255,90,60,.14),0 16px 40px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 9px rgba(255,90,60,.3),0 20px 50px rgba(255,60,40,.4)}}
+@keyframes urgencyPulseLight{0%,100%{box-shadow:0 0 0 3px rgba(255,90,60,.13)}50%{box-shadow:0 0 0 7px rgba(255,90,60,.26)}}
 .letter-note{margin:34px auto 0;max-width:700px;padding:30px 28px;border:1.6px solid var(--gold);border-radius:14px;background:linear-gradient(145deg,#fffdf6,#f6fafd);box-shadow:0 16px 40px rgba(184,149,85,.12);color:var(--ink);text-align:left}
 .letter-note .ln-tag{display:inline-block;margin-bottom:12px;padding:5px 13px;border-radius:999px;background:var(--navy);color:var(--gold2);font-size:11px;font-weight:800;letter-spacing:.1em}
 .letter-note p{margin:0 0 .8em;font-size:14px;color:#3f4a55}
@@ -172,7 +178,7 @@ body{padding-top:64px}
 
 <section class="section navy"><div class="container"><div class="heading light"><p>Course Curriculum</p><h2>全6モジュールで、<br>売上の設計図をつくる。</h2><i></i></div><div class="modules"><article class="module"><span>01</span><div><h3>売上を“感覚”で追う時代は終わり</h3><p>気合や高単価頼みから抜け出し、売上を構造で見る考え方を身につけます。</p></div></article><article class="module"><span>02</span><div><h3>売上の方程式を理解する</h3><p>単価・人数・回数という3つのレバーから、自分の伸ばし方を見つけます。</p></div></article><article class="module"><span>03</span><div><h3>単価より先に“価値”を設計する</h3><p>高単価のメリットと落とし穴を知り、納得される商品設計を考えます。</p></div></article><article class="module"><span>04</span><div><h3>人数と商品構造を考える</h3><p>個別・グループ・コンテンツ型を組み合わせ、関われる顧客層を広げます。</p></div></article><article class="module"><span>05</span><div><h3>積み上がる仕組みをつくる</h3><p>バリューラダーで、単発で終わらない商品と信頼の流れを設計します。</p></div></article><article class="module"><span>06</span><div><h3>自分の売上デザインを描く</h3><p>方程式とラダーを使い、自分のビジネスの売上デザイン図を完成させます。</p></div></article></div></div></section>
 
-<section class="section ice"><div class="container"><div class="heading"><p>Course Details</p><h2>講座の詳細</h2><i></i></div><div class="course"><div class="visual"><img class="vthumb" src="https://drive.google.com/thumbnail?id=1GChGrkSXNUBWsB4RQSHWhIqJtRvhgtUP&sz=w1200" alt="はじめての売上デザイン講座 アクセスパス" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1GChGrkSXNUBWsB4RQSHWhIqJtRvhgtUP';"></div><div class="info" id="purchase"><p class="series">“はじめて”シリーズ 第二弾</p><h3>はじめての<br>売上デザイン講座<span class="pass">アクセスパス</span></h3><dl><div><dt>内容</dt><dd>売上方程式／価値と商品構造／バリューラダー／売上デザイン実践ワーク</dd></div><div><dt>動画</dt><dd>全6モジュール（動画1本 約30分）<br>忙しくても集中して学びやすい長さです。</dd></div><div><dt>視聴</dt><dd>購入後、アプリ内で視聴（アクセスパス）。<br>スマホ・PCなど、アプリが使える環境ならどこでも視聴できます。</dd></div></dl><div class="pricebox"><span>受講価格</span><span class="was-strike">通常 3,980円</span><strong>1,980円</strong><small>税込・買い切り・レター読者特別</small></div><p class="card-cd-label">⏳ 残り時間（過ぎると通常価格3,980円に戻ります）</p><div class="card-cd-flip"><div class="flipclock"><div class="fc-unit" data-fc-unit="d"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">0</div><div class="flip-back">0</div></div></div><span class="fc-label">日</span></div><div class="fc-unit" data-fc-unit="h"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">時間</span></div><div class="fc-unit" data-fc-unit="m"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">分</span></div><div class="fc-unit" data-fc-unit="s"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">秒</span></div></div></div><a class="cta" href="#" onclick="openCheckout();return false;">1,980円で講座を見る →</a><p class="micro darkmicro">決済完了後、アプリで自動的に視聴できるようになります。</p></div></div></div></section>
+<section class="section ice"><div class="container"><div class="heading"><p>Course Details</p><h2>講座の詳細</h2><i></i></div><div class="course"><div class="visual"><img class="vthumb" src="https://drive.google.com/thumbnail?id=1GChGrkSXNUBWsB4RQSHWhIqJtRvhgtUP&sz=w1200" alt="はじめての売上デザイン講座 アクセスパス" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1GChGrkSXNUBWsB4RQSHWhIqJtRvhgtUP';"></div><div class="info" id="purchase"><p class="series">“はじめて”シリーズ 第二弾</p><h3>はじめての<br>売上デザイン講座<span class="pass">アクセスパス</span></h3><dl><div><dt>内容</dt><dd>売上方程式／価値と商品構造／バリューラダー／売上デザイン実践ワーク</dd></div><div><dt>動画</dt><dd>全6モジュール（動画1本 約30分）<br>忙しくても集中して学びやすい長さです。</dd></div><div><dt>視聴</dt><dd>購入後、アプリ内で視聴（アクセスパス）。<br>スマホ・PCなど、アプリが使える環境ならどこでも視聴できます。</dd></div></dl><div class="pricebox"><span>受講価格</span><span class="was-strike">通常 3,980円</span><strong>1,980円</strong><small>税込・買い切り・レター読者特別</small></div><div class="card-cd-wrap"><p class="card-cd-label">⏳ 残り時間（過ぎると通常価格3,980円に戻ります）</p><div class="card-cd-flip"><div class="flipclock"><div class="fc-unit" data-fc-unit="d"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">0</div><div class="flip-back">0</div></div></div><span class="fc-label">日</span></div><div class="fc-unit" data-fc-unit="h"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">時間</span></div><div class="fc-unit" data-fc-unit="m"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">分</span></div><div class="fc-unit" data-fc-unit="s"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">秒</span></div></div></div></div><a class="cta" href="#" onclick="openCheckout();return false;">1,980円で講座を見る →</a><p class="micro darkmicro">決済完了後、アプリで自動的に視聴できるようになります。</p></div></div></div></section>
 
 <section class="section paper guarantee"><div class="narrow"><div class="shield">✓</div><h2>3日間の全額返金保証</h2><p>ご購入後3日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p><small>※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額、銀行振込の場合は振込手数料を差し引いた額となります。</small></div></section>
 
