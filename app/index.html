@@ -1528,6 +1528,7 @@ a{text-decoration:none}
     <div class="entry-mark">L-MINE</div>
     <div class="entry-brand">エルラボ<span class="brand-plus">＋</span></div>
     <p class="entry-lead" style="margin-top:26px;font-size:16px;line-height:2">🛠️ ただいまメンテナンス中です<br><br>大変申し訳ございませんが、<br>しばらく経ってから再度お試しください。</p>
+    <button type="button" class="entry-signup" onclick="openLogin()" style="margin-top:18px">管理者の方はこちら（ログイン）</button>
   </div>
 </section>
 
@@ -2439,7 +2440,8 @@ function resetPasswordPrompt(){
 }
 function showAuthLoading(txt){ const el=document.getElementById("authLoading"); if(!el) return; const t=document.getElementById("authLoadingTx"); if(t) t.textContent = txt||"読み込み中…"; el.hidden = false; }
 function hideAuthLoading(){ const el=document.getElementById("authLoading"); if(el) el.hidden = true; }
-function enterLibrary(withIntro){
+async function enterLibrary(withIntro){
+  await checkMaintenance();   // ★毎回サーバーの最新状態を見る（オン/オフ切替直後や別タブでの変更にすぐ追従するため）
   if(MAINTENANCE_ON && !isAdmin()){ showMaintenanceScreen(); return; }
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
