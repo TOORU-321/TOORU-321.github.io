@@ -31,8 +31,10 @@
       --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
       --font-display: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
       --font-english: "Cormorant Garamond", Georgia, serif;
-      /* ★ヒーロー背景画像。差し替えたい時はこの1行のIDだけ変更すればOK */
-      --hero-image: url("https://drive.google.com/uc?export=view&id=1jeTwHStghEsD79kQ3zRQ5u4inqMX85bR");
+      /* ★ヒーロー背景画像（EBOOKTOP.jpg）。差し替えたい時はこの1行のIDだけ変更すればOK
+         ※必ず thumbnail?id=◯◯&sz=w1600 の形式で書くこと。uc?export=view 形式は
+           Googleの仕様変更で外部サイトからは読み込めない（表紙画像と同じ形式に統一） */
+      --hero-image: url("https://drive.google.com/thumbnail?id=1jeTwHStghEsD79kQ3zRQ5u4inqMX85bR&sz=w1600");
     }
 
     *, *::before, *::after { box-sizing: border-box; }
