@@ -31,6 +31,8 @@
       --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
       --font-display: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
       --font-english: "Cormorant Garamond", Georgia, serif;
+      /* ★ヒーロー背景画像。差し替えたい時はこの1行のIDだけ変更すればOK */
+      --hero-image: url("https://drive.google.com/uc?export=view&id=1jeTwHStghEsD79kQ3zRQ5u4inqMX85bR");
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -84,6 +86,14 @@
     .hero {
       min-height: calc(100vh - 70px); padding: clamp(90px, 12vh, 150px) 24px 88px;
       display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;
+      /* 背景画像＋読みやすさ用の暗幕（下ほど濃くして、下の書籍一覧へ自然につなげる） */
+      background-image:
+        linear-gradient(180deg, rgba(12, 10, 9, .30) 0%, rgba(12, 10, 9, .10) 40%, rgba(12, 10, 9, .88) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, .35) 0%, rgba(0, 0, 0, .08) 48%, rgba(0, 0, 0, .12) 100%),
+        var(--hero-image);
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
     .hero::after {
       content: ""; position: absolute; left: 50%; bottom: 30px; width: 1px; height: 36px;
@@ -108,12 +118,13 @@
     .hero-copy {
       margin: 34px 0 52px; color: #b6afa4; font-family: var(--font-display);
       font-size: clamp(14px, 1.6vw, 17px); font-weight: 400; line-height: 2.15; letter-spacing: .08em;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, .55);
     }
 
     .shelf-switcher { width: min(850px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .shelf-button {
       appearance: none; min-height: 118px; padding: 24px 26px; color: var(--paper);
-      border: 1px solid var(--line); background: rgba(255, 255, 255, .018);
+      border: 1px solid var(--line); background: rgba(14, 12, 10, .46); backdrop-filter: blur(7px);
       display: flex; justify-content: space-between; align-items: center; text-align: left;
       cursor: pointer; position: relative; overflow: hidden;
       transition: transform 320ms ease, border-color 320ms ease, background 320ms ease, box-shadow 320ms ease;
@@ -123,7 +134,7 @@
     .shelf-button[data-shelf="sai"]::before { background: linear-gradient(120deg, var(--sai-soft), transparent 62%); }
     .shelf-button:hover, .shelf-button.is-active {
       transform: translateY(-4px); border-color: rgba(210, 189, 154, .4);
-      background: rgba(255, 255, 255, .032); box-shadow: 0 18px 48px rgba(0, 0, 0, .28);
+      background: rgba(22, 19, 15, .60); box-shadow: 0 18px 48px rgba(0, 0, 0, .38);
     }
     .shelf-button:hover::before, .shelf-button.is-active::before { opacity: 1; }
     .shelf-button-text, .shelf-arrow { position: relative; z-index: 1; }
@@ -140,7 +151,7 @@
     }
     .shelf-arrow::after { transform: translate(-50%, -50%) rotate(90deg); }
     .shelf-button.is-active .shelf-arrow::after { transform: translate(-50%, -50%) rotate(0); }
-    .switch-hint { margin: 17px 0 0; color: #777064; font-family: var(--font-body); font-size: 10px; font-weight: 400; letter-spacing: .13em; }
+    .switch-hint { margin: 17px 0 0; color: #a49b8d; font-family: var(--font-body); font-size: 10px; font-weight: 400; letter-spacing: .13em; text-shadow: 0 1px 8px rgba(0, 0, 0, .6); }
 
     .catalog {
       display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden;
@@ -253,7 +264,13 @@
 
     @media (max-width: 760px) {
       .topbar { height: 58px; padding: 0 19px; font-size: 9px; }
-      .hero { min-height: auto; padding: 82px 17px 84px; }
+      .hero {
+        min-height: 760px; padding: 82px 17px 84px;
+        background-position: 68% center;
+        background-image:
+          linear-gradient(180deg, rgba(12, 10, 9, .22) 0%, rgba(12, 10, 9, .10) 45%, rgba(12, 10, 9, .90) 100%),
+          var(--hero-image);
+      }
       .hero h1 { line-height: 1.6; letter-spacing: .07em; }
       .hero-copy { margin: 29px 0 43px; font-size: 13px; line-height: 2.1; }
       .shelf-switcher { gap: 9px; }
