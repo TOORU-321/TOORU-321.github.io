@@ -2045,6 +2045,27 @@ a{text-decoration:none}
   </div>
 </div>
 
+<!-- ===== ポップアップ通知確認（admin） ===== -->
+<style>
+  .pc-list{margin-top:4px}
+  .pc-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+  .pc-info{flex:1;min-width:0}
+  .pc-date{font-size:11px;color:#8a8575}
+  .pc-title{font-size:13px;color:#f0ece0;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pc-tog{flex:none;font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:999px;padding:6px 13px;border:none;cursor:pointer}
+  .pc-tog.on{color:#12281f;background:linear-gradient(135deg,#8fe0c0,#5cc4a2)}
+  .pc-tog:active{transform:translateY(1px)}
+  .pc-empty{color:#8a8575;font-size:12.5px;padding:20px 0;text-align:center}
+</style>
+<div class="ps-modal" id="popupCheckModal" hidden role="dialog" aria-modal="true" aria-label="ポップアップ通知確認">
+  <div class="ps-sheet">
+    <button class="ps-x" id="pcClose" aria-label="閉じる">×</button>
+    <div class="ps-title">🔔 ポップアップ通知確認</div>
+    <div class="ps-meta">開いた時にポップ表示されるお知らせの一覧です。オフし忘れをここで確認・解除できます。</div>
+    <div class="pc-list" id="popupCheckList"></div>
+  </div>
+</div>
+
 <!-- ===== 解約プチアンケート ===== -->
 <style>
   .sc-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -2291,6 +2312,7 @@ function renderAcctMenu(){
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="broadcast"><span class="ai-ico">📧</span>メール案内を送る<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="livehost"><span class="ai-ico">🎥</span>ライブ会場を開く<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="maintenance"><span class="ai-ico">🛠️</span>メンテナンス${MAINTENANCE_ON ? `<span class="acct-tog on">オン</span>` : `<span class="acct-tog off">オフ</span>`}<span class="acct-badge">admin</span></button>`;
+  if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="popupcheck"><span class="ai-ico">🔔</span>ポップアップ通知確認<span class="acct-badge">admin</span></button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -2955,6 +2977,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "broadcast") openBroadcast();
   else if(act === "livehost") openLiveHost();
   else if(act === "maintenance") toggleMaintenance();
+  else if(act === "popupcheck") openPopupCheck();
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
@@ -3007,6 +3030,9 @@ async function toggleMaintenance(){
   // 参加者一覧モーダルの閉じる
   const pvc = document.getElementById("pvClose"); if(pvc) pvc.addEventListener("click", closePollView);
   const pvm = document.getElementById("pollViewModal"); if(pvm) pvm.addEventListener("click", e => { if(e.target === pvm) closePollView(); });
+  // ポップアップ通知確認モーダルの閉じる
+  const pcc = document.getElementById("pcClose"); if(pcc) pcc.addEventListener("click", closePopupCheck);
+  const pcm = document.getElementById("popupCheckModal"); if(pcm) pcm.addEventListener("click", e => { if(e.target === pcm) closePopupCheck(); });
 })();
 // 解約プチアンケートのイベント
 (function(){
@@ -3651,6 +3677,41 @@ async function openPollView(n){
   }catch(e){ body.innerHTML = `<div class="pv-empty">通信エラーが発生しました。</div>`; }
 }
 function closePollView(){ const m = document.getElementById("pollViewModal"); if(m) m.hidden = true; }
+// 管理者：ポップ表示ON中のお知らせ一覧を確認し、その場でOFFにできる（オフし忘れ対策）
+function isPopOn(n){ return n.pop===true || String(n.pop).toUpperCase()==="TRUE"; }
+function openPopupCheck(){
+  if(!isAdmin()){ showToast("管理者専用です。"); return; }
+  document.getElementById("popupCheckModal").hidden = false;
+  loadPopupCheck();
+}
+function closePopupCheck(){ const m = document.getElementById("popupCheckModal"); if(m) m.hidden = true; }
+async function loadPopupCheck(){
+  const list = document.getElementById("popupCheckList");
+  list.innerHTML = COL_LOADING;
+  try{
+    const data = await fetch(GAS_URL + "?action=news&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now()).then(r=>r.json());
+    const items = ((data && data.items) || []).filter(n => n.pub !== false && isPopOn(n));
+    if(!items.length){ list.innerHTML = `<div class="pc-empty">現在ポップアップ表示ONのお知らせはありません。</div>`; return; }
+    list.innerHTML = "";
+    items.forEach(n => {
+      const row = document.createElement("div"); row.className = "pc-row";
+      row.innerHTML = `<div class="pc-info"><div class="pc-date">${escapeHtml(fmtNewsDate(n.date))}</div><div class="pc-title">${escapeHtml(n.title)}</div></div>`;
+      const btn = document.createElement("button"); btn.className = "pc-tog on"; btn.textContent = "オン（タップでOFF）";
+      btn.onclick = () => togglePopOff(n, btn);
+      row.appendChild(btn);
+      list.appendChild(row);
+    });
+  }catch(e){ list.innerHTML = `<div class="pc-empty">読み込みに失敗しました。</div>`; }
+}
+// 既存の編集フォーム(news_edit)を裏で使ってpopだけOFFにする＝他項目は不変
+async function togglePopOff(n, btn){
+  if(!confirm(`「${n.title}」のポップアップ表示をOFFにします。よろしいですか？`)) return;
+  btn.disabled = true; btn.textContent = "処理中…";
+  editNews(n);
+  document.getElementById("nf-pop").checked = false;
+  await saveNews();
+  loadPopupCheck();
+}
 // 管理者：アンケート回答者だけにメール＋通知を送る
 let _psCtx = null;   // { id, choice, title }
 async function openPollSend(n, choice){
