@@ -120,58 +120,6 @@
     }
     .snav-shelf:active { transform: translateY(1px); }
 
-    /* ===== 開幕演出：暗闇 → 光に包まれる → ぼわーっと空間が現れる ===== */
-    /* JSが動かなくてもCSSだけで必ず消えるようにしてある（ページが埋まらない保険） */
-    #intro {
-      position: fixed; inset: 0; z-index: 60; pointer-events: none;
-      background: #0c0a09; overflow: hidden;
-      animation: introVeil 1900ms cubic-bezier(.4, 0, .2, 1) forwards;
-    }
-    #intro::before {
-      content: ""; position: absolute; left: 50%; top: 50%;
-      width: 62vmax; height: 62vmax; border-radius: 50%;
-      background: radial-gradient(circle,
-        rgba(255, 247, 230, .96) 0%,
-        rgba(226, 192, 130, .62) 30%,
-        rgba(184, 150, 95, .20) 56%,
-        transparent 72%);
-      filter: blur(22px);
-      transform: translate(-50%, -50%) scale(.10);
-      animation: introBloom 1900ms cubic-bezier(.32, 0, .2, 1) forwards;
-    }
-    /* 光の中に浮かぶ細い輪（空間の入口っぽさ） */
-    #intro::after {
-      content: ""; position: absolute; left: 50%; top: 50%;
-      width: 34vmin; height: 34vmin; border-radius: 50%;
-      border: 1px solid rgba(255, 240, 214, .5);
-      transform: translate(-50%, -50%) scale(.3); opacity: 0;
-      animation: introRing 1900ms cubic-bezier(.22, 1, .36, 1) forwards;
-    }
-    @keyframes introBloom {
-      0%   { transform: translate(-50%, -50%) scale(.10); opacity: 0; }
-      16%  { opacity: .92; }
-      52%  { transform: translate(-50%, -50%) scale(1.45); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(3.3); opacity: 0; }
-    }
-    @keyframes introRing {
-      0%   { transform: translate(-50%, -50%) scale(.30); opacity: 0; }
-      22%  { opacity: .75; }
-      100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
-    }
-    @keyframes introVeil {
-      0%   { opacity: 1; }
-      54%  { opacity: 1; }
-      100% { opacity: 0; visibility: hidden; }
-    }
-    /* 光が引いたあと、本体がふわっと立ち上がる（transform/filterは使わない＝
-       position:fixed の子要素の基準がズレるのを避けるため opacity のみ） */
-    .site-shell { animation: shellIn 1000ms ease 950ms backwards; }
-    @keyframes shellIn { from { opacity: 0; } to { opacity: 1; } }
-    /* 演出を途中でスキップした時は、待機中のアニメを全部打ち切って即表示する
-       （これが無いと、光を消した直後に本体が真っ暗のまま残る） */
-    .intro-skipped .site-shell { animation: none !important; opacity: 1 !important; }
-    .intro-skipped .hero-rise { animation: none !important; opacity: 1 !important; transform: none !important; }
-
     .hero {
       min-height: calc(100vh - 70px); padding: clamp(90px, 12vh, 150px) 24px 88px;
       display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;
@@ -341,9 +289,8 @@
     footer small { font-family: var(--font-english); font-size: 10px; font-weight: 500; letter-spacing: .2em; }
 
     .hero-rise { opacity: 0; transform: translateY(18px); animation: heroRise 900ms cubic-bezier(.22, 1, .36, 1) forwards; }
-    /* 開幕演出の光が引くのに合わせて、文字が光の中から現れるタイミングに調整 */
-    .delay-1 { animation-delay: 1150ms; } .delay-2 { animation-delay: 1290ms; }
-    .delay-3 { animation-delay: 1440ms; } .delay-4 { animation-delay: 1590ms; }
+    .delay-1 { animation-delay: 120ms; } .delay-2 { animation-delay: 260ms; }
+    .delay-3 { animation-delay: 410ms; } .delay-4 { animation-delay: 560ms; }
     .reveal { opacity: 0; transform: translateY(25px); transition: opacity 850ms ease, transform 850ms cubic-bezier(.22, 1, .36, 1); }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
     @keyframes heroRise { to { opacity: 1; transform: translateY(0); } }
@@ -361,7 +308,10 @@
       .catalog { scroll-margin-top: 74px; }
       .hero {
         min-height: 760px; padding: 82px 17px 84px;
-        background-position: 68% center;
+        /* ★スマホでの人物の見え方はこの数字だけで決まる。
+           大きくするほど画像の右側（人物側）が見える。小さくすると左の街並み側へ寄る。
+           68%=右目あたりで切れる／82%=顔から左肩あたりまで入る */
+        background-position: 82% center;
         background-image:
           linear-gradient(180deg, rgba(12, 10, 9, .22) 0%, rgba(12, 10, 9, .10) 45%, rgba(12, 10, 9, .90) 100%),
           var(--hero-image);
@@ -398,15 +348,10 @@
         animation-iteration-count: 1 !important; transition-duration: .01ms !important;
       }
       .hero-rise, .reveal { opacity: 1; transform: none; }
-      /* 動きを減らす設定の人には開幕演出を出さない */
-      #intro { display: none !important; }
-      .site-shell { animation: none !important; opacity: 1 !important; }
     }
   </style>
 </head>
 <body>
-  <div id="intro" aria-hidden="true"></div>
-
   <nav class="sticky-nav" id="stickyNav" aria-label="書棚ナビゲーション" aria-hidden="true">
     <a class="snav-home" href="app/"><span aria-hidden="true">←</span><span>アプリ</span></a>
     <div class="snav-shelves">
@@ -596,26 +541,6 @@
         if (!ticking) { ticking = true; window.requestAnimationFrame(syncNav); }
       }, { passive: true });
       syncNav();
-
-      // 開幕演出：終わったら要素ごと片付ける（CSS側でも必ず消えるので保険は二重）
-      var intro = document.getElementById("intro");
-      if (intro) {
-        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        var dropIntro = function () { if (intro && intro.parentNode) intro.parentNode.removeChild(intro); intro = null; };
-        // 待ちたくない人向け：触った時点で打ち切る。待機中のアニメも全部前倒しする
-        var skipIntro = function () {
-          if (!intro) return;
-          document.body.classList.add("intro-skipped");
-          dropIntro();
-        };
-        if (reduce) dropIntro();
-        else {
-          window.setTimeout(dropIntro, 2000);   // 最後まで観た場合は静かに片付けるだけ
-          ["pointerdown", "keydown", "wheel", "touchstart"].forEach(function (ev) {
-            window.addEventListener(ev, skipIntro, { once: true, passive: true });
-          });
-        }
-      }
 
       if ("IntersectionObserver" in window) {
         var observer = new IntersectionObserver(function (entries) {
