@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TLV00VTDZL');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ビジネスや人の心を読み解く『とーる』と、記憶や感情を物語にする『〆sai』の著書一覧。">
+  <title>とーる・〆sai 著書一覧</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;600;700&amp;family=Shippori+Mincho:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0a09;
+      --paper: #ede7da;
+      --muted: #9f988c;
+      --line: rgba(222, 210, 189, .16);
+      --gold: #b8965f;
+      --gold-light: #d1b98e;
+      --toru: #aeb9bc;
+      --toru-soft: rgba(150, 171, 178, .16);
+      --sai: #c69a75;
+      --sai-soft: rgba(186, 126, 88, .16);
+      --font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      --font-display: "Shippori Mincho", "Yu Mincho", "Hiragino Mincho ProN", serif;
+      --font-english: "Cormorant Garamond", Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--paper);
+      font-family: var(--font-body);
+      font-weight: 400;
+      letter-spacing: .035em;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .site-shell {
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(168, 123, 69, .08), transparent 32rem),
+        linear-gradient(180deg, #0c0a09 0%, #100d0b 54%, #0a0908 100%);
+      transition: background 800ms ease;
+    }
+    .site-shell.theme-toru {
+      background:
+        radial-gradient(circle at 50% 12%, rgba(109, 143, 152, .10), transparent 34rem),
+        linear-gradient(180deg, #0c0b0a 0%, #0c1011 55%, #090a0a 100%);
+    }
+    .site-shell.theme-sai {
+      background:
+        radial-gradient(circle at 50% 12%, rgba(180, 102, 60, .11), transparent 34rem),
+        linear-gradient(180deg, #0d0a08 0%, #120d0a 55%, #0a0807 100%);
+    }
+    .grain {
+      position: fixed; inset: 0; z-index: 20; pointer-events: none; opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    }
+
+    .topbar {
+      height: 70px; padding: 0 clamp(22px, 5vw, 74px);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--line); color: var(--muted);
+      font-family: var(--font-english);
+      font-size: 12px; font-weight: 500; letter-spacing: .2em; position: relative; z-index: 5;
+    }
+    .home-link { display: inline-flex; align-items: center; gap: 11px; transition: color 220ms ease, transform 220ms ease; }
+    .home-link:hover { color: var(--paper); transform: translateX(-3px); }
+
+    .hero {
+      min-height: calc(100vh - 70px); padding: clamp(90px, 12vh, 150px) 24px 88px;
+      display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;
+    }
+    .hero::after {
+      content: ""; position: absolute; left: 50%; bottom: 30px; width: 1px; height: 36px;
+      background: linear-gradient(var(--gold), transparent); animation: breathe 2.4s ease-in-out infinite;
+    }
+    .hero-ornament {
+      position: absolute; top: 19%; width: min(22vw, 290px); height: min(22vw, 290px);
+      border: 1px solid rgba(199, 171, 125, .08); transform: rotate(45deg);
+    }
+    .ornament-left { left: -11vw; }
+    .ornament-right { right: -11vw; }
+    .eyebrow {
+      margin: 0 0 31px; color: var(--gold-light); font-family: var(--font-english);
+      font-size: 13px; font-weight: 500; letter-spacing: .34em;
+    }
+    .hero h1 {
+      margin: 0; font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(34px, 5.3vw, 68px); line-height: 1.55; letter-spacing: .11em;
+      text-shadow: 0 10px 34px rgba(0, 0, 0, .4);
+    }
+    .hero h1 span { display: block; }
+    .hero-copy {
+      margin: 34px 0 52px; color: #b6afa4; font-family: var(--font-display);
+      font-size: clamp(14px, 1.6vw, 17px); font-weight: 400; line-height: 2.15; letter-spacing: .08em;
+    }
+
+    .shelf-switcher { width: min(850px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .shelf-button {
+      appearance: none; min-height: 118px; padding: 24px 26px; color: var(--paper);
+      border: 1px solid var(--line); background: rgba(255, 255, 255, .018);
+      display: flex; justify-content: space-between; align-items: center; text-align: left;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform 320ms ease, border-color 320ms ease, background 320ms ease, box-shadow 320ms ease;
+    }
+    .shelf-button::before { content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity 320ms ease; }
+    .shelf-button[data-shelf="toru"]::before { background: linear-gradient(120deg, var(--toru-soft), transparent 62%); }
+    .shelf-button[data-shelf="sai"]::before { background: linear-gradient(120deg, var(--sai-soft), transparent 62%); }
+    .shelf-button:hover, .shelf-button.is-active {
+      transform: translateY(-4px); border-color: rgba(210, 189, 154, .4);
+      background: rgba(255, 255, 255, .032); box-shadow: 0 18px 48px rgba(0, 0, 0, .28);
+    }
+    .shelf-button:hover::before, .shelf-button.is-active::before { opacity: 1; }
+    .shelf-button-text, .shelf-arrow { position: relative; z-index: 1; }
+    .shelf-button-text { display: flex; flex-direction: column; }
+    .shelf-button small, .shelf-button em {
+      color: var(--muted); font-family: var(--font-english); font-style: normal;
+      font-size: 11px; font-weight: 500; letter-spacing: .2em;
+    }
+    .shelf-button strong { margin: 9px 0 8px; font-family: var(--font-display); font-weight: 500; font-size: clamp(19px, 2.3vw, 25px); letter-spacing: .1em; }
+    .shelf-arrow { width: 34px; height: 34px; flex: 0 0 auto; border: 1px solid rgba(231, 223, 208, .2); border-radius: 50%; }
+    .shelf-arrow::before, .shelf-arrow::after {
+      content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 1px;
+      background: var(--paper); transform: translate(-50%, -50%); transition: transform 280ms ease;
+    }
+    .shelf-arrow::after { transform: translate(-50%, -50%) rotate(90deg); }
+    .shelf-button.is-active .shelf-arrow::after { transform: translate(-50%, -50%) rotate(0); }
+    .switch-hint { margin: 17px 0 0; color: #777064; font-family: var(--font-body); font-size: 10px; font-weight: 400; letter-spacing: .13em; }
+
+    .catalog {
+      display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden;
+      transition: grid-template-rows 750ms cubic-bezier(.22, 1, .36, 1), opacity 420ms ease, visibility 0s linear 750ms;
+      scroll-margin-top: 30px;
+    }
+    .catalog.is-open { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
+    .catalog-inner { overflow: hidden; }
+    .catalog-wrap { width: min(1180px, calc(100% - 44px)); margin: 0 auto; padding: 105px 0 130px; }
+    .catalog-heading {
+      display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8px 40px;
+      padding-bottom: 30px; border-bottom: 1px solid var(--line); margin-bottom: 58px;
+    }
+    .catalog-heading p, .catalog-heading span {
+      margin: 0; color: var(--muted); font-family: var(--font-english); font-size: 11px; font-weight: 500; letter-spacing: .25em;
+    }
+    .catalog-heading h2 { grid-row: 2; margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 5vw, 52px); letter-spacing: .11em; }
+    .catalog-heading span { grid-row: 2; align-self: center; }
+    .book-grid { display: grid; gap: 90px; }
+    .book-card {
+      display: grid; grid-template-columns: minmax(260px, 42%) minmax(0, 1fr);
+      align-items: center; min-height: 470px; padding-bottom: 90px; border-bottom: 1px solid var(--line);
+    }
+    .book-card:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(260px, 42%); }
+    .book-card:nth-child(even) .book-visual { grid-column: 2; }
+    .book-card:nth-child(even) .book-info { grid-column: 1; grid-row: 1; padding-left: 6%; padding-right: 11%; }
+    .book-visual {
+      min-height: 430px; display: flex; align-items: center; justify-content: center;
+      position: relative; perspective: 1100px;
+    }
+    .book-number {
+      position: absolute; left: 0; top: 8px; color: rgba(222, 214, 200, .15);
+      font-family: var(--font-english); font-weight: 400; font-size: clamp(50px, 7vw, 90px);
+    }
+    .recommend-badge {
+      position: absolute; top: 3px; right: 5%; z-index: 3; padding: 8px 12px;
+      background: var(--gold); color: #15100b; font-family: var(--font-english);
+      font-size: 10px; font-weight: 600; letter-spacing: .16em;
+    }
+    .cover-stage {
+      width: min(245px, 64%); position: relative; transform-style: preserve-3d;
+      transition: transform 550ms cubic-bezier(.22, 1, .36, 1);
+    }
+    .cover-stage::before {
+      content: ""; position: absolute; inset: 4% -6% -5% 7%; background: rgba(0, 0, 0, .45);
+      filter: blur(18px); transform: translateZ(-1px);
+    }
+    .cover-stage::after {
+      content: ""; position: absolute; top: 2%; bottom: 2%; left: 0; width: 7px;
+      background: linear-gradient(90deg, rgba(0, 0, 0, .42), rgba(255, 255, 255, .12), transparent);
+    }
+    .cover-stage img {
+      display: block; width: 100%; aspect-ratio: .704; object-fit: cover; position: relative;
+      background: #1c1814; box-shadow: 0 26px 45px rgba(0, 0, 0, .42);
+    }
+    .book-card:hover .cover-stage { transform: rotateY(-7deg) rotateX(2deg) translateY(-8px); }
+    .book-card:nth-child(even):hover .cover-stage { transform: rotateY(7deg) rotateX(2deg) translateY(-8px); }
+    .book-info { padding: 20px 7% 20px 12%; }
+    .book-author { margin: 0 0 18px; color: var(--gold-light); font-family: var(--font-body); font-size: 10px; font-weight: 500; letter-spacing: .2em; }
+    #toru-catalog .book-author { color: var(--toru); }
+    #sai-catalog .book-author { color: var(--sai); }
+    .book-info h3 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(23px, 3vw, 36px); line-height: 1.55; letter-spacing: .06em; }
+    .book-subtitle { margin: 10px 0 0; color: #b7aea1; font-family: var(--font-display); font-size: 13px; font-weight: 400; line-height: 1.8; letter-spacing: .05em; }
+    .book-rule { width: 38px; height: 1px; margin: 27px 0; background: var(--gold); }
+    .book-description { margin: 0; color: #aaa297; font-family: var(--font-body); font-size: 14px; font-weight: 400; line-height: 2.05; letter-spacing: .035em; }
+    .book-result {
+      display: inline-flex; margin: 22px 0 0; padding: 7px 10px;
+      border: 1px solid rgba(198, 163, 107, .28); color: #c4ac85;
+      font-family: var(--font-body); font-size: 10px; font-weight: 500; line-height: 1.5; letter-spacing: .07em;
+    }
+    .kindle-button {
+      width: min(100%, 310px); margin-top: 30px; padding: 16px 18px;
+      border: 1px solid rgba(229, 220, 204, .22); display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--font-body); font-size: 11px; font-weight: 500; letter-spacing: .1em;
+      position: relative; overflow: hidden; transition: color 260ms ease, border-color 260ms ease;
+    }
+    .kindle-button::before {
+      content: ""; position: absolute; inset: 0; background: var(--paper); transform: translateX(-102%);
+      transition: transform 360ms cubic-bezier(.22, 1, .36, 1);
+    }
+    .kindle-button:hover { color: #17120d; border-color: var(--paper); }
+    .kindle-button:hover::before { transform: translateX(0); }
+    .kindle-button span { position: relative; z-index: 1; }
+    .author-link-wrap {
+      margin-top: 88px; padding: 44px 20px; border: 1px solid var(--line);
+      text-align: center; background: rgba(255, 255, 255, .015);
+    }
+    .author-link-wrap p { margin: 0 0 18px; color: var(--muted); font-size: 13px; letter-spacing: .05em; }
+    .author-link-wrap a { display: inline-flex; gap: 12px; border-bottom: 1px solid rgba(222, 210, 189, .35); padding-bottom: 5px; font-size: 14px; letter-spacing: .08em; }
+
+    footer {
+      min-height: 310px; padding: 85px 24px 48px; border-top: 1px solid var(--line);
+      display: flex; flex-direction: column; align-items: center; text-align: center; color: var(--muted);
+    }
+    .footer-mark { color: var(--paper); font-family: var(--font-display); font-size: 24px; font-weight: 500; letter-spacing: .16em; }
+    .footer-mark i { color: var(--gold); font-weight: 400; margin: 0 10px; }
+    footer p { margin: 18px 0 54px; font-size: 12px; letter-spacing: .1em; }
+    footer small { font-family: var(--font-english); font-size: 10px; font-weight: 500; letter-spacing: .2em; }
+
+    .hero-rise { opacity: 0; transform: translateY(18px); animation: heroRise 900ms cubic-bezier(.22, 1, .36, 1) forwards; }
+    .delay-1 { animation-delay: 120ms; } .delay-2 { animation-delay: 260ms; }
+    .delay-3 { animation-delay: 410ms; } .delay-4 { animation-delay: 560ms; }
+    .reveal { opacity: 0; transform: translateY(25px); transition: opacity 850ms ease, transform 850ms cubic-bezier(.22, 1, .36, 1); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    @keyframes heroRise { to { opacity: 1; transform: translateY(0); } }
+    @keyframes breathe {
+      0%, 100% { opacity: .25; transform: scaleY(.65); transform-origin: top; }
+      50% { opacity: .9; transform: scaleY(1); transform-origin: top; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { height: 58px; padding: 0 19px; font-size: 9px; }
+      .hero { min-height: auto; padding: 82px 17px 84px; }
+      .hero h1 { line-height: 1.6; letter-spacing: .07em; }
+      .hero-copy { margin: 29px 0 43px; font-size: 13px; line-height: 2.1; }
+      .shelf-switcher { gap: 9px; }
+      .shelf-button { min-height: 105px; padding: 17px 13px; }
+      .shelf-button small { font-size: 7px; letter-spacing: .12em; }
+      .shelf-button strong { font-size: 17px; letter-spacing: .05em; }
+      .shelf-button em { font-size: 7px; }
+      .shelf-arrow { width: 26px; height: 26px; }
+      .catalog-wrap { width: min(100% - 30px, 600px); padding: 78px 0 92px; }
+      .catalog-heading { margin-bottom: 50px; }
+      .catalog-heading h2 { letter-spacing: .06em; }
+      .catalog-heading span { display: none; }
+      .book-grid { gap: 62px; }
+      .book-card, .book-card:nth-child(even) { grid-template-columns: 1fr; min-height: 0; padding-bottom: 62px; }
+      .book-card:nth-child(even) .book-visual, .book-card:nth-child(even) .book-info { grid-column: 1; grid-row: auto; }
+      .book-visual { min-height: 390px; }
+      .book-number { left: 4px; top: 9px; }
+      .recommend-badge { right: 3px; }
+      .cover-stage { width: min(220px, 66vw); }
+      .book-info, .book-card:nth-child(even) .book-info { padding: 26px 4px 0; }
+      .book-info h3 { font-size: 24px; }
+      .book-description { font-size: 13px; }
+      .kindle-button { width: 100%; }
+      .author-link-wrap { margin-top: 60px; padding: 35px 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important; animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+      }
+      .hero-rise, .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="site-shell" id="site-shell">
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a href="app/" class="home-link" aria-label="アプリへ戻る"><span aria-hidden="true">←</span> アプリへ戻る</a>
+      <span>BOOK ARCHIVE</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-ornament ornament-left" aria-hidden="true"></div>
+      <div class="hero-ornament ornament-right" aria-hidden="true"></div>
+      <p class="eyebrow hero-rise delay-1">BOOKS BY TORU &amp; 〆SAI</p>
+      <h1 id="page-title" class="hero-rise delay-2">
+        <span>知るための本と、</span>
+        <span>感じるための物語。</span>
+      </h1>
+      <p class="hero-copy hero-rise delay-3">
+        ビジネスや人の心を読み解く「とーる」と、<br>
+        記憶や感情を物語にする「〆sai」。<br>
+        ふたつの名前で綴った本を、ここに集めました。
+      </p>
+
+      <div class="shelf-switcher hero-rise delay-4" aria-label="書籍カテゴリを選択">
+        <button type="button" class="shelf-button" data-shelf="toru" aria-expanded="false" aria-controls="toru-catalog">
+          <span class="shelf-button-text"><small>BUSINESS &amp; THINKING</small><strong>とーる書籍</strong><em>7 BOOKS</em></span>
+          <span class="shelf-arrow" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="shelf-button" data-shelf="sai" aria-expanded="false" aria-controls="sai-catalog">
+          <span class="shelf-button-text"><small>NOVELS &amp; STORIES</small><strong>〆sai書籍</strong><em>4 BOOKS</em></span>
+          <span class="shelf-arrow" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="switch-hint hero-rise delay-4">書棚を選ぶと、作品一覧が開きます。</p>
+    </section>
+
+    <section class="catalog" id="toru-catalog" aria-hidden="true">
+      <div class="catalog-inner"><div class="catalog-wrap">
+        <div class="catalog-heading reveal"><p>BUSINESS &amp; THINKING</p><h2>とーる書籍</h2><span>7冊の書籍</span></div>
+        <div class="book-grid">
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">01</span><span class="recommend-badge">RECOMMENDED</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=18CG7_WebnHBKNzQMqGikL3jfc71RQC1C&amp;sz=w1200" alt="今日からはじめる！SNSビジネス経済学 表紙" loading="eager"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>今日からはじめる！SNSビジネス経済学</h3><p class="book-subtitle">理論と心理で読み解くビジネスの基礎</p><div class="book-rule"></div><p class="book-description">「フォロワーを増やせば売れる」「バズれば勝ち」。そんなSNSマーケティングの常識を、理論と心理の両面から根底から組み直す約48,000文字の一冊。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 6部門1位</p><a class="kindle-button" href="https://amzn.asia/d/01xC8gNI" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">02</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1yzHPlUT5Spc8MgF5RvNndsqjCC1dBSl4&amp;sz=w1200" alt="AI時代に、あえて非効率を選べ 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>AI時代に、あえて非効率を選べ</h3><p class="book-subtitle">H2Hという最強のSNS戦略</p><div class="book-rule"></div><p class="book-description">アルゴリズムや数字を追うほど、なぜ人との距離は遠ざかるのか。AI時代だからこそ価値を増す、人間対人間のつながりを軸にしたSNS戦略。</p><a class="kindle-button" href="https://amzn.asia/d/02LQMUru" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">03</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1NZTs2UbfRPHmQ6b03J8wXwTwj7eqzcNM&amp;sz=w1200" alt="今日からはじめる 心を動かすSNSマーケティング 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>今日からはじめる 心を動かすSNSマーケティング</h3><p class="book-subtitle">“好き”と“信頼”を集めるブランディング術</p><div class="book-rule"></div><p class="book-description">投稿頻度やテクニックではなく、人がなぜ選ぶのかを行動経済学からひも解く一冊。あなたらしい形で信頼と感情を育てる方法を伝えます。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 4部門1位</p><a class="kindle-button" href="https://amzn.asia/d/0dojXrgW" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">04</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1wxQFIT0IGxpT4JuuqfbTl2ztMUi-ZZJF&amp;sz=w1200" alt="アンフェア・アドバンテージ 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>アンフェア・アドバンテージ</h3><p class="book-subtitle">弱みを最強の武器にする「自分だけの勝ち方」</p><div class="book-rule"></div><p class="book-description">特別な実績もスキルもない——そう思っている人へ。弱みを消すのではなく、戦う場所と武器を選び直し、自分だけの優位性に変える考え方。</p><a class="kindle-button" href="https://amzn.asia/d/0dLjO9OA" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">05</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1pCEXLLOwvkXhaLv5o8oeui391A-kKs9h&amp;sz=w1200" alt="あなたが電子書籍を出版するべき10の理由 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>あなたが電子書籍を出版するべき10の理由</h3><p class="book-subtitle">電子書籍を出版したい人がまず最初に読む本</p><div class="book-rule"></div><p class="book-description">出版方法や売り方を学ぶ、その前に。知識や経験を本にする意味と、電子書籍がビジネスや人生にもたらす可能性を10の視点から解説。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 6部門1位</p><a class="kindle-button" href="https://amzn.asia/d/0h8e23ZJ" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">06</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=128QMqJmjuFPv5z44H6R2_JRUSvpGLdLK&amp;sz=w1200" alt="自力集客からの卒業 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>自力集客からの卒業</h3><p class="book-subtitle">「集客」を顧客にしてもらう最強のUGCマーケティング</p><div class="book-rule"></div><p class="book-description">自分ひとりで集客し続ける限界を超えるために。顧客の声や投稿を活用し、認知と信頼を広げていくUGCマーケティングの実践書。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 6部門1位</p><a class="kindle-button" href="https://amzn.asia/d/02BoM4Lz" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">07</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1iP_cuQ74BMhBe9AYtLL_QRKgx93KWn77&amp;sz=w1200" alt="SNSを活用した飲食店サポートを目指すなら今すぐ読むべき本 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 とーる</p><h3>SNSを活用した飲食店サポートを目指すなら今すぐ読むべき本</h3><p class="book-subtitle">SNS普及がもたらした飲食店業界における次のフェーズ</p><div class="book-rule"></div><p class="book-description">店舗オーナーや店長の多くが見落としている本当の課題とは。飲食店を支援する側が知っておきたい、SNS時代の新しい需要と視点を整理します。</p><a class="kindle-button" href="https://amzn.asia/d/0g1YHTqC" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+        </div>
+        <div class="author-link-wrap reveal"><p>そのほかの著書・最新刊は、Amazon著者ページへ。</p><a href="https://www.amazon.co.jp/stores/%E3%81%A8%E3%83%BC%E3%82%8B/author/B0D3HWCXJJ" target="_blank" rel="noopener">とーるの著者ページを見る <span>↗</span></a></div>
+      </div></div>
+    </section>
+
+    <section class="catalog" id="sai-catalog" aria-hidden="true">
+      <div class="catalog-inner"><div class="catalog-wrap">
+        <div class="catalog-heading reveal"><p>NOVELS &amp; STORIES</p><h2>〆sai書籍</h2><span>4冊の書籍</span></div>
+        <div class="book-grid">
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">01</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1rsXfnE-gsozpjwwBPxT46WXb3lcOlW3_&amp;sz=w1200" alt="ギザ十、昭和三十三年生まれ。第1巻 表紙" loading="eager"></div></div>
+            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>ギザ十、昭和三十三年生まれ。</h3><p class="book-subtitle">第1巻｜10円玉は知っている</p><div class="book-rule"></div><p class="book-description">一枚のギザ十が、十七年で七人の手を渡っていく。ふつうの十円玉だけが見つめ続けた、名もなき人生と記憶の連作短編集。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 2部門1位</p><a class="kindle-button" href="https://amzn.asia/d/0dVKZXs8" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">02</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1iEcxH2_SAUrNix_Sq8tc12G8QROwemYV&amp;sz=w1200" alt="ギザ十、昭和三十三年生まれ。第2巻 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>ギザ十、昭和三十三年生まれ。</h3><p class="book-subtitle">第2巻｜ピンク・レディー編</p><div class="book-rule"></div><p class="book-description">昭和五十一年、秋。雪の夜のお弁当屋さんをあとにしたギザ十は、ふたたび人の手から手へ。時代の歌とともに、新しい人生をめぐります。</p><a class="kindle-button" href="https://amzn.asia/d/09LFTssU" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">03</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1TazcctOQojh-uz1PVCzadSjnI3p80pIp&amp;sz=w1200" alt="8月32日の夏祭り 上巻 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>8月32日の夏祭り</h3><p class="book-subtitle">上巻｜終わらない夏の中で、僕たちは終わりを選んだ。</p><div class="book-rule"></div><p class="book-description">夏休み最後の花火の翌朝、町から五人以外のすべてが消えた。カレンダーが示していたのは、存在しないはずの「8月32日」だった。</p><a class="kindle-button" href="https://amzn.asia/d/061glxhV" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+          <article class="book-card reveal">
+            <div class="book-visual"><span class="book-number">04</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1Df6yD5ZZXXFG3_hbUgVGNxtkX6r_W7he&amp;sz=w1200" alt="8月32日の夏祭り 下巻 表紙" loading="lazy"></div></div>
+            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>8月32日の夏祭り</h3><p class="book-subtitle">下巻｜終わらない夏の中で、僕たちは終わりを選んだ。</p><div class="book-rule"></div><p class="book-description">学校も宿題も大人もいない、最初は楽しかった終わらない夏休み。けれど五人は、自由に見えた世界から帰るため、それぞれの本音と向き合っていく。</p><a class="kindle-button" href="https://amzn.asia/d/04MO85GC" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+          </article>
+        </div>
+        <div class="author-link-wrap reveal"><p>そのほかの作品・最新刊は、Amazon著者ページへ。</p><a href="https://www.amazon.co.jp/stores/%E3%80%86sai/author/B0H18WS46T" target="_blank" rel="noopener">〆saiの著者ページを見る <span>↗</span></a></div>
+      </div></div>
+    </section>
+
+    <footer>
+      <div class="footer-mark">とーる <i>/</i> 〆sai</div>
+      <p>知識も、物語も。誰かの次の一歩になるために。</p>
+      <small>© 2026 L-MINE / 〆sai. All rights reserved.</small>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var shell = document.getElementById("site-shell");
+      var buttons = Array.prototype.slice.call(document.querySelectorAll(".shelf-button"));
+      var catalogs = Array.prototype.slice.call(document.querySelectorAll(".catalog"));
+
+      function closeAll() {
+        buttons.forEach(function (button) {
+          button.classList.remove("is-active");
+          button.setAttribute("aria-expanded", "false");
+        });
+        catalogs.forEach(function (catalog) {
+          catalog.classList.remove("is-open");
+          catalog.setAttribute("aria-hidden", "true");
+        });
+        shell.classList.remove("theme-toru", "theme-sai");
+      }
+
+      buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          var shelf = button.getAttribute("data-shelf");
+          var target = document.getElementById(shelf + "-catalog");
+          var wasOpen = button.classList.contains("is-active");
+          closeAll();
+
+          if (!wasOpen && target) {
+            button.classList.add("is-active");
+            button.setAttribute("aria-expanded", "true");
+            target.classList.add("is-open");
+            target.setAttribute("aria-hidden", "false");
+            shell.classList.add("theme-" + shelf);
+            window.setTimeout(function () {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 220);
+          }
+        });
+      });
+
+      if ("IntersectionObserver" in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) entry.target.classList.add("is-visible");
+          });
+        }, { threshold: .12 });
+        document.querySelectorAll(".reveal").forEach(function (item) { observer.observe(item); });
+      } else {
+        document.querySelectorAll(".reveal").forEach(function (item) { item.classList.add("is-visible"); });
+      }
+    })();
+  </script>
+</body>
+</html>
