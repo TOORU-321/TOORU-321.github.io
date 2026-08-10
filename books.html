@@ -85,6 +85,93 @@
     .home-link { display: inline-flex; align-items: center; gap: 11px; transition: color 220ms ease, transform 220ms ease; }
     .home-link:hover { color: var(--paper); transform: translateX(-3px); }
 
+    /* スクロール開始で降りてくる固定ヘッダー（書棚の切替をいつでもタップできるように） */
+    .sticky-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 30;
+      height: 56px; padding: 0 clamp(13px, 4vw, 40px);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: rgba(10, 9, 8, .84); backdrop-filter: blur(12px) saturate(1.2);
+      border-bottom: 1px solid var(--line);
+      transform: translateY(-102%); opacity: 0; visibility: hidden;
+      transition: transform 380ms cubic-bezier(.22, 1, .36, 1), opacity 300ms ease, visibility 0s linear 380ms;
+    }
+    .sticky-nav.is-shown { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+    .snav-home {
+      display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto;
+      min-height: 42px; padding: 0 12px 0 4px; color: #cdc6b9;
+      font-family: var(--font-body); font-size: 12px; font-weight: 500; letter-spacing: .08em;
+      transition: color 200ms ease;
+    }
+    .snav-home:hover { color: var(--paper); }
+    .snav-shelves { display: flex; gap: 8px; flex: 0 1 auto; }
+    .snav-shelf {
+      appearance: none; cursor: pointer; flex: 0 1 auto;
+      min-height: 42px; padding: 0 clamp(15px, 3.6vw, 24px);
+      border: 1px solid rgba(231, 223, 208, .22); border-radius: 999px;
+      background: rgba(255, 255, 255, .03); color: #cdc6b9;
+      font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: .08em;
+      white-space: nowrap;
+      transition: color 220ms ease, border-color 220ms ease, background 220ms ease;
+    }
+    .snav-shelf:hover { color: var(--paper); border-color: rgba(210, 189, 154, .45); }
+    .snav-shelf.is-active {
+      color: #17120d; border-color: transparent; font-weight: 600;
+      background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    }
+    .snav-shelf:active { transform: translateY(1px); }
+
+    /* ===== 開幕演出：暗闇 → 光に包まれる → ぼわーっと空間が現れる ===== */
+    /* JSが動かなくてもCSSだけで必ず消えるようにしてある（ページが埋まらない保険） */
+    #intro {
+      position: fixed; inset: 0; z-index: 60; pointer-events: none;
+      background: #0c0a09; overflow: hidden;
+      animation: introVeil 1900ms cubic-bezier(.4, 0, .2, 1) forwards;
+    }
+    #intro::before {
+      content: ""; position: absolute; left: 50%; top: 50%;
+      width: 62vmax; height: 62vmax; border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255, 247, 230, .96) 0%,
+        rgba(226, 192, 130, .62) 30%,
+        rgba(184, 150, 95, .20) 56%,
+        transparent 72%);
+      filter: blur(22px);
+      transform: translate(-50%, -50%) scale(.10);
+      animation: introBloom 1900ms cubic-bezier(.32, 0, .2, 1) forwards;
+    }
+    /* 光の中に浮かぶ細い輪（空間の入口っぽさ） */
+    #intro::after {
+      content: ""; position: absolute; left: 50%; top: 50%;
+      width: 34vmin; height: 34vmin; border-radius: 50%;
+      border: 1px solid rgba(255, 240, 214, .5);
+      transform: translate(-50%, -50%) scale(.3); opacity: 0;
+      animation: introRing 1900ms cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+    @keyframes introBloom {
+      0%   { transform: translate(-50%, -50%) scale(.10); opacity: 0; }
+      16%  { opacity: .92; }
+      52%  { transform: translate(-50%, -50%) scale(1.45); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(3.3); opacity: 0; }
+    }
+    @keyframes introRing {
+      0%   { transform: translate(-50%, -50%) scale(.30); opacity: 0; }
+      22%  { opacity: .75; }
+      100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+    }
+    @keyframes introVeil {
+      0%   { opacity: 1; }
+      54%  { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+    /* 光が引いたあと、本体がふわっと立ち上がる（transform/filterは使わない＝
+       position:fixed の子要素の基準がズレるのを避けるため opacity のみ） */
+    .site-shell { animation: shellIn 1000ms ease 950ms backwards; }
+    @keyframes shellIn { from { opacity: 0; } to { opacity: 1; } }
+    /* 演出を途中でスキップした時は、待機中のアニメを全部打ち切って即表示する
+       （これが無いと、光を消した直後に本体が真っ暗のまま残る） */
+    .intro-skipped .site-shell { animation: none !important; opacity: 1 !important; }
+    .intro-skipped .hero-rise { animation: none !important; opacity: 1 !important; transform: none !important; }
+
     .hero {
       min-height: calc(100vh - 70px); padding: clamp(90px, 12vh, 150px) 24px 88px;
       display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;
@@ -158,7 +245,7 @@
     .catalog {
       display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden;
       transition: grid-template-rows 750ms cubic-bezier(.22, 1, .36, 1), opacity 420ms ease, visibility 0s linear 750ms;
-      scroll-margin-top: 30px;
+      scroll-margin-top: 86px;   /* 固定ヘッダー(56px)の下に見出しが隠れないように */
     }
     .catalog.is-open { grid-template-rows: 1fr; opacity: 1; visibility: visible; transition-delay: 0s; }
     .catalog-inner { overflow: hidden; }
@@ -254,8 +341,9 @@
     footer small { font-family: var(--font-english); font-size: 10px; font-weight: 500; letter-spacing: .2em; }
 
     .hero-rise { opacity: 0; transform: translateY(18px); animation: heroRise 900ms cubic-bezier(.22, 1, .36, 1) forwards; }
-    .delay-1 { animation-delay: 120ms; } .delay-2 { animation-delay: 260ms; }
-    .delay-3 { animation-delay: 410ms; } .delay-4 { animation-delay: 560ms; }
+    /* 開幕演出の光が引くのに合わせて、文字が光の中から現れるタイミングに調整 */
+    .delay-1 { animation-delay: 1150ms; } .delay-2 { animation-delay: 1290ms; }
+    .delay-3 { animation-delay: 1440ms; } .delay-4 { animation-delay: 1590ms; }
     .reveal { opacity: 0; transform: translateY(25px); transition: opacity 850ms ease, transform 850ms cubic-bezier(.22, 1, .36, 1); }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
     @keyframes heroRise { to { opacity: 1; transform: translateY(0); } }
@@ -266,6 +354,11 @@
 
     @media (max-width: 760px) {
       .topbar { height: 58px; padding: 0 19px; font-size: 9px; }
+      .sticky-nav { height: 52px; padding: 0 11px; gap: 8px; }
+      .snav-home { font-size: 11px; gap: 6px; padding: 0 7px 0 3px; }
+      .snav-shelves { gap: 7px; }
+      .snav-shelf { font-size: 12px; min-height: 38px; padding: 0 15px; }
+      .catalog { scroll-margin-top: 74px; }
       .hero {
         min-height: 760px; padding: 82px 17px 84px;
         background-position: 68% center;
@@ -305,10 +398,23 @@
         animation-iteration-count: 1 !important; transition-duration: .01ms !important;
       }
       .hero-rise, .reveal { opacity: 1; transform: none; }
+      /* 動きを減らす設定の人には開幕演出を出さない */
+      #intro { display: none !important; }
+      .site-shell { animation: none !important; opacity: 1 !important; }
     }
   </style>
 </head>
 <body>
+  <div id="intro" aria-hidden="true"></div>
+
+  <nav class="sticky-nav" id="stickyNav" aria-label="書棚ナビゲーション" aria-hidden="true">
+    <a class="snav-home" href="app/"><span aria-hidden="true">←</span><span>アプリ</span></a>
+    <div class="snav-shelves">
+      <button type="button" class="snav-shelf" data-shelf="toru" data-nav="1" aria-expanded="false" aria-controls="toru-catalog">とーる</button>
+      <button type="button" class="snav-shelf" data-shelf="sai" data-nav="1" aria-expanded="false" aria-controls="sai-catalog">〆sai</button>
+    </div>
+  </nav>
+
   <main class="site-shell" id="site-shell">
     <div class="grain" aria-hidden="true"></div>
 
@@ -418,13 +524,14 @@
       "use strict";
 
       var shell = document.getElementById("site-shell");
-      var buttons = Array.prototype.slice.call(document.querySelectorAll(".shelf-button"));
+      // ヒーロー内の大きいボタンと、固定ヘッダーの小さいボタンの両方を対象にする
+      var toggles = Array.prototype.slice.call(document.querySelectorAll("[data-shelf]"));
       var catalogs = Array.prototype.slice.call(document.querySelectorAll(".catalog"));
 
       function closeAll() {
-        buttons.forEach(function (button) {
-          button.classList.remove("is-active");
-          button.setAttribute("aria-expanded", "false");
+        toggles.forEach(function (toggle) {
+          toggle.classList.remove("is-active");
+          toggle.setAttribute("aria-expanded", "false");
         });
         catalogs.forEach(function (catalog) {
           catalog.classList.remove("is-open");
@@ -433,25 +540,82 @@
         shell.classList.remove("theme-toru", "theme-sai");
       }
 
-      buttons.forEach(function (button) {
-        button.addEventListener("click", function () {
-          var shelf = button.getAttribute("data-shelf");
-          var target = document.getElementById(shelf + "-catalog");
-          var wasOpen = button.classList.contains("is-active");
-          closeAll();
+      function scrollToCatalog(target) {
+        window.setTimeout(function () {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 220);
+      }
 
-          if (!wasOpen && target) {
-            button.classList.add("is-active");
-            button.setAttribute("aria-expanded", "true");
-            target.classList.add("is-open");
-            target.setAttribute("aria-hidden", "false");
-            shell.classList.add("theme-" + shelf);
-            window.setTimeout(function () {
-              target.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 220);
+      function openShelf(shelf) {
+        var target = document.getElementById(shelf + "-catalog");
+        if (!target) return;
+        closeAll();
+        // 同じ書棚のボタンはヒーロー側・ヘッダー側の両方を点灯させる
+        toggles.forEach(function (toggle) {
+          if (toggle.getAttribute("data-shelf") === shelf) {
+            toggle.classList.add("is-active");
+            toggle.setAttribute("aria-expanded", "true");
           }
         });
+        target.classList.add("is-open");
+        target.setAttribute("aria-hidden", "false");
+        shell.classList.add("theme-" + shelf);
+        scrollToCatalog(target);
+      }
+
+      toggles.forEach(function (toggle) {
+        toggle.addEventListener("click", function () {
+          var shelf = toggle.getAttribute("data-shelf");
+          if (toggle.classList.contains("is-active")) {
+            // 開いている書棚をもう一度押した時：
+            // ヒーローの大きいボタン＝閉じる／ヘッダーのボタン＝その書棚へ戻るだけ（閉じない）
+            if (toggle.hasAttribute("data-nav")) {
+              var current = document.getElementById(shelf + "-catalog");
+              if (current) current.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+              closeAll();
+            }
+            return;
+          }
+          openShelf(shelf);
+        });
       });
+
+      // スクロールを始めたら固定ヘッダーを降ろす
+      var stickyNav = document.getElementById("stickyNav");
+      var SHOW_AT = 110;
+      var ticking = false;
+      function syncNav() {
+        ticking = false;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var show = y > SHOW_AT;
+        stickyNav.classList.toggle("is-shown", show);
+        stickyNav.setAttribute("aria-hidden", show ? "false" : "true");
+      }
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; window.requestAnimationFrame(syncNav); }
+      }, { passive: true });
+      syncNav();
+
+      // 開幕演出：終わったら要素ごと片付ける（CSS側でも必ず消えるので保険は二重）
+      var intro = document.getElementById("intro");
+      if (intro) {
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var dropIntro = function () { if (intro && intro.parentNode) intro.parentNode.removeChild(intro); intro = null; };
+        // 待ちたくない人向け：触った時点で打ち切る。待機中のアニメも全部前倒しする
+        var skipIntro = function () {
+          if (!intro) return;
+          document.body.classList.add("intro-skipped");
+          dropIntro();
+        };
+        if (reduce) dropIntro();
+        else {
+          window.setTimeout(dropIntro, 2000);   // 最後まで観た場合は静かに片付けるだけ
+          ["pointerdown", "keydown", "wheel", "touchstart"].forEach(function (ev) {
+            window.addEventListener(ev, skipIntro, { once: true, passive: true });
+          });
+        }
+      }
 
       if ("IntersectionObserver" in window) {
         var observer = new IntersectionObserver(function (entries) {
