@@ -272,6 +272,12 @@
     .kindle-button:hover { color: #17120d; border-color: var(--paper); }
     .kindle-button:hover::before { transform: translateX(0); }
     .kindle-button span { position: relative; z-index: 1; }
+    .book-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .book-actions .kindle-button { margin-top: 0; }
+    .intro-button { background: transparent; color: #c4ac85; }
+    .intro-button::before { background: transparent; }
+    .intro-button:hover { color: var(--paper); border-color: rgba(229, 220, 204, .5); }
+    .intro-button:hover::before { transform: none; }
     .author-link-wrap {
       margin-top: 88px; padding: 44px 20px; border: 1px solid var(--line);
       text-align: center; background: rgba(255, 255, 255, .015);
@@ -440,7 +446,7 @@
         <div class="book-grid">
           <article class="book-card reveal">
             <div class="book-visual"><span class="book-number">01</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1rsXfnE-gsozpjwwBPxT46WXb3lcOlW3_&amp;sz=w1200" alt="ギザ十、昭和三十三年生まれ。第1巻 表紙" loading="eager"></div></div>
-            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>ギザ十、昭和三十三年生まれ。</h3><p class="book-subtitle">第1巻｜10円玉は知っている</p><div class="book-rule"></div><p class="book-description">一枚のギザ十が、十七年で七人の手を渡っていく。ふつうの十円玉だけが見つめ続けた、名もなき人生と記憶の連作短編集。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 2部門1位</p><a class="kindle-button" href="https://amzn.asia/d/0dVKZXs8" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a></div>
+            <div class="book-info"><p class="book-author">著者 〆sai</p><h3>ギザ十、昭和三十三年生まれ。</h3><p class="book-subtitle">第1巻｜10円玉は知っている</p><div class="book-rule"></div><p class="book-description">一枚のギザ十が、十七年で七人の手を渡っていく。ふつうの十円玉だけが見つめ続けた、名もなき人生と記憶の連作短編集。</p><p class="book-result">Amazon Kindle 売れ筋ランキング 2部門1位</p><div class="book-actions"><a class="kindle-button" href="https://amzn.asia/d/0dVKZXs8" target="_blank" rel="noopener"><span>Amazon Kindleで見る</span><span aria-hidden="true">↗</span></a><a class="kindle-button intro-button" href="book-intro-dark.html"><span>内容紹介</span><span aria-hidden="true">→</span></a></div></div>
           </article>
           <article class="book-card reveal">
             <div class="book-visual"><span class="book-number">02</span><div class="cover-stage"><img src="https://drive.google.com/thumbnail?id=1iEcxH2_SAUrNix_Sq8tc12G8QROwemYV&amp;sz=w1200" alt="ギザ十、昭和三十三年生まれ。第2巻 表紙" loading="lazy"></div></div>
