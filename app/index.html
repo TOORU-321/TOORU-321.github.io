@@ -2225,6 +2225,21 @@ const GAS_URL     = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7M
 const SESSION_KEY = "lmine_member";
 const GUEST_KEY   = "lmine_guest";
 
+// GAS通信の共通ヘルパー：応答が無くても指定時間で諦め(タイムアウト)、失敗したら1回だけ自動再試行する。
+// GASが混雑/低速な時に「ずっと読み込み中のまま」「1回失敗しただけで即エラー表示」になるのを防ぐ。
+function fetchJsonRetry(url, opts, timeoutMs, tries){
+  timeoutMs = timeoutMs || 8000; tries = tries || 2;
+  function attempt(n){
+    const ctrl  = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    return fetch(url, Object.assign({}, opts, { signal: ctrl.signal }))
+      .then(r => r.json())
+      .finally(() => clearTimeout(timer))
+      .catch(err => { if(n > 1) return attempt(n - 1); throw err; });
+  }
+  return attempt(tries);
+}
+
 /* LINE連携キャプチャ：ProLineの「自作ページに転送(/cp/…)」で付く ?lineuid= (or ?uid=) を読み、
    GASの「LINE」タブへ記録する背景処理。ログインUIには一切影響しない・未ログインでも動く。 */
 (function(){
@@ -2255,11 +2270,14 @@ const GUEST_KEY   = "lmine_guest";
 })();
 let SESSION   = null;
 let MAINTENANCE_ON = false;   // 管理者以外の入室をブロックする（起動時に一度だけ取得）
+let _maintCheckedAt = 0;      // 直近チェック時刻（起動直後の連続呼び出しでの二重通信・応答待ちの固まりを防止）
 async function checkMaintenance(){
+  if(Date.now() - _maintCheckedAt < 4000) return;   // 数秒以内に確認済みなら再通信しない(initEntry→enterLibraryの連続呼び出し対策)
   try{
-    const res = await fetch(GAS_URL + "?action=get_maintenance&_=" + Date.now()).then(r => r.json());
+    const res = await fetchJsonRetry(GAS_URL + "?action=get_maintenance&_=" + Date.now(), {}, 5000, 1);
     MAINTENANCE_ON = !!(res && res.ok && res.on);
-  }catch(e){ MAINTENANCE_ON = false; }
+  }catch(e){ MAINTENANCE_ON = false; }   // 通信不調時は「メンテ中ではない」扱いにして、ログイン画面に固まらせない
+  _maintCheckedAt = Date.now();
 }
 function showMaintenanceScreen(){
   document.getElementById("entry").hidden = true;
@@ -3384,13 +3402,23 @@ function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTi
 function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); loadCommunity(); }
 // コミュニティ人数（登録者数・メンバー数＝VIP）を取得して表示
 let _commLoaded = false;
+// お知らせ上部「◯名が登録中／◯名がメンバー」の人数表示：項目ごとにON/OFF切替できる（trueで表示・falseで非表示）
+// ※今はいったん両方OFF＝人数バーごと非表示。片方だけ再表示したい時はここをtrueに変更するだけでOK。
+const COMM_BAR_SHOW = { registered: false, members: false };
 async function loadCommunity(){
   const bar = document.getElementById("commBar"); if(!bar) return;
+  const regEl = document.getElementById("commReg"), memEl = document.getElementById("commMem");
+  const regItem = regEl && regEl.closest(".comm-item"), memItem = memEl && memEl.closest(".comm-item");
+  const sep = bar.querySelector(".comm-sep");
+  if(!COMM_BAR_SHOW.registered && !COMM_BAR_SHOW.members){ bar.hidden = true; return; }   // 両方OFFなら通信せず非表示のまま
   try{
     const res = await fetch(GAS_URL + "?action=community&_=" + Date.now()).then(r=>r.json());
     if(res && res.ok){
-      document.getElementById("commReg").textContent = res.registered;
-      document.getElementById("commMem").textContent = res.members;
+      if(regEl) regEl.textContent = res.registered;
+      if(memEl) memEl.textContent = res.members;
+      if(regItem) regItem.style.display = COMM_BAR_SHOW.registered ? "" : "none";
+      if(memItem) memItem.style.display = COMM_BAR_SHOW.members   ? "" : "none";
+      if(sep)     sep.style.display     = (COMM_BAR_SHOW.registered && COMM_BAR_SHOW.members) ? "" : "none";
       bar.hidden = false;
       _commLoaded = true;
     } else if(!_commLoaded){ bar.hidden = true; }
@@ -3407,7 +3435,7 @@ async function loadNews(){
   const list = document.getElementById("newsList");
   list.innerHTML = COL_LOADING;   // アニメ付きプログレスバー（コラムと共通）
   try{
-    const data  = await fetch(GAS_URL + "?action=news&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now()).then(r=>r.json());
+    const data  = await fetchJsonRetry(GAS_URL + "?action=news&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now(), {}, 9000, 2);
     const items = (data && data.items) || [];
     if(!items.length){ list.innerHTML = `<div class="vstate">お知らせはまだありません。</div>`; return; }
     list.innerHTML = "";
@@ -4322,7 +4350,7 @@ function showWatchOffer(rank){
     go.onclick      = function(){ closeWatchOffer(); openRegister(); };
   } else {   // 無料登録者
     ico.textContent = "✨";
-    t.textContent   = "エルラボ＋メンバーに<br>なりませんか？";
+    t.innerHTML     = "エルラボ＋メンバーに<br>なりませんか？";
     s.innerHTML     = "月イチのオンライン講義＋増え続けるアーカイブが見放題。<br>行動経済学 × マーケティングを、体系立てて。";
     l.innerHTML     = "<li>🎬 <b>オンライン講義アーカイブが見放題</b></li><li>📅 月イチの収録・公開ライブに参加</li><li>💡 メンバー限定のお知らせ・先行案内</li>";
     go.textContent  = "エルラボ＋を見てみる →";
