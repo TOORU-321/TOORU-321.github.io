@@ -2480,14 +2480,15 @@ function resetPasswordPrompt(){
 }
 function showAuthLoading(txt){ const el=document.getElementById("authLoading"); if(!el) return; const t=document.getElementById("authLoadingTx"); if(t) t.textContent = txt||"読み込み中…"; el.hidden = false; }
 function hideAuthLoading(){ const el=document.getElementById("authLoading"); if(el) el.hidden = true; }
-async function enterLibrary(withIntro){
-  await checkMaintenance();   // ★毎回サーバーの最新状態を見る（オン/オフ切替直後や別タブでの変更にすぐ追従するため）
-  if(MAINTENANCE_ON && !isAdmin()){ showMaintenanceScreen(); return; }
+function enterLibrary(withIntro){
+  // ★表示は即座に切り替える（GAS応答を待たない）。メンテナンス確認は裏で行い、
+  //   本当にオンだった場合だけ後から画面を差し替える＝低速回線でもログイン画面に固まらせない。
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
   if(withIntro) playIntro();
   // スマホ：まだ動画を選んでいなければ、コース一覧のドロワーを開いて見せる
   if(isMobile() && curCourse == null) setTimeout(openDrawer, withIntro ? 300 : 60);
+  checkMaintenance().then(function(){ if(MAINTENANCE_ON && !isAdmin()) showMaintenanceScreen(); });
 }
 // ③ ログイン/ゲスト参加の直後に1回だけ流すオープニング動画（スキップ可・音あり/ミュート切替）
 function playIntro(){
@@ -2535,14 +2536,18 @@ function exitToEntry(){
   document.getElementById("entry").hidden   = false;
   render();
 }
-async function initEntry(){
-  await checkMaintenance();
+function initEntry(){
   const isMember = !!(SESSION && (SESSION.email || SESSION.lineuid));
   const isGuest  = localStorage.getItem(GUEST_KEY) === "1";
-  if(MAINTENANCE_ON && !isAdmin()){ showMaintenanceScreen(); return; }
   // ★ずっとログイン状態でも、アプリを開くたびに最終ログインを更新（メール会員のみ）
   if(isMember && SESSION.email){ try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email:SESSION.email }) }); }catch(_e){} }
-  if(isMember || isGuest){ enterLibrary(false); openNews(); }   // 自動再開時も初期画面は「お知らせ」（動画演出なし）
+  if(isMember || isGuest){
+    enterLibrary(false);   // 自動再開時も初期画面は「お知らせ」（動画演出なし）。メンテ確認はenterLibrary内で裏通信。
+    openNews();
+  } else {
+    // 未ログインの入口画面はHTML初期状態のまま既に表示済み。メンテ確認だけ裏で行い、オンの時だけ差し替える。
+    checkMaintenance().then(function(){ if(MAINTENANCE_ON && !isAdmin()) showMaintenanceScreen(); });
+  }
 }
 // 今のユーザーのランク（0:ゲスト 1:無料登録 2:サブスク）。※supportはコース別にタグ照合
 function currentRank(){
