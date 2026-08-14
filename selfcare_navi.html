@@ -1375,11 +1375,11 @@ function setupAdminBar(){
       location.href=location.pathname+'?admin=1&day='+d;
     });
   });
-  // Reset
+  // Reset（ワンタップ・URLパラメータ保持・確認なし。テスト向け）
   const rb=$('#admReset');
   if(rb)rb.addEventListener('click',function(){
-    if(!confirm('保存データをすべて削除して初回起動状態に戻します。よろしいですか？'))return;
-    location.href=location.pathname+'?admin=1&reset=1';
+    try{localStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(POPUP_SESSION_KEY);}catch(e){}
+    location.reload();
   });
   // Skip Intro: 名前が無ければテスト用に「テスト」で埋めてScreen1へ
   const si=$('#admSkipIntro');
