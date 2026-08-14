@@ -444,6 +444,76 @@ body{
 main{padding:24px 16px 60px}
 .screen{animation:softPageIn .42s ease both}
 @keyframes softPageIn{from{opacity:0;transform:translateY(5px) scale(.995)}to{opacity:1;transform:none}}
+
+/* ========== キャラ 円形クロップ（v1.4以降 最終形）========== */
+.welcome-illust .frame,
+.welcome-illust .frame img{aspect-ratio:auto !important}
+.welcome-illust .frame{
+  width:220px !important;height:220px !important;
+  max-width:62vw !important;max-height:62vw !important;
+  border-radius:50% !important;overflow:hidden !important;
+  background:radial-gradient(circle at 50% 55%,var(--rose-wash,#fff4f6),var(--paper-warm,#fcfaf4) 75%) !important;
+  border:1px solid var(--accent-soft,#efd5da) !important;
+  box-shadow:0 14px 34px rgba(169,104,116,.14),0 0 0 6px rgba(255,255,255,.6) !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  animation:heroBreathe 4.5s ease-in-out infinite;
+}
+.welcome-illust .frame::before{display:none !important}
+.welcome-illust .frame img{
+  width:120% !important;height:120% !important;
+  object-fit:cover !important;
+  object-position:center 22% !important;
+  transform:translateY(3%) !important;
+}
+
+/* ========== アニメーション ========== */
+@keyframes heroBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.02)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes riseInSoft{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pulseOnce{0%{transform:scale(1)}30%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes chipBounce{0%,100%{transform:scale(1)}40%{transform:scale(1.09)}70%{transform:scale(.97)}}
+@keyframes sparkleFly{0%{opacity:0;transform:translateY(4px) scale(.6)}30%{opacity:1;transform:translateY(-4px) scale(1)}100%{opacity:0;transform:translateY(-24px) scale(1.2)}}
+@keyframes shimmerLine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* 画面遷移時のスタガード出現 */
+.screen.is-active .eyebrow{animation:riseInSoft .5s ease-out both}
+.screen.is-active .hero-title{animation:riseIn .6s ease-out .08s both}
+.screen.is-active .hero-meta{animation:riseInSoft .5s ease-out .18s both}
+.screen.is-active .pullquote{animation:riseIn .6s ease-out .24s both}
+.screen.is-active .welcome-illust{animation:zoomIn .6s ease-out .1s both}
+.screen.is-active .section-head,.screen.is-active .type-grid,.screen.is-active .chips,.screen.is-active .summary-card,.screen.is-active .rec-list,.screen.is-active .action-list,.screen.is-active .review-options,.screen.is-active .preview-card,.screen.is-active .tomoko-card{animation:riseInSoft .55s ease-out .28s both}
+.screen.is-active .cta,.screen.is-active .cta-stack,.screen.is-active .calendar-embed-wrap{animation:riseIn .55s ease-out .38s both}
+
+/* オンボーディングスライドの中身 */
+.onboard-slide.is-active .onboard-slide-num,
+.onboard-track > div.onboard-slide .onboard-slide-num{animation:riseInSoft .45s ease-out both}
+.onboard-track > div.onboard-slide .onboard-slide-title{animation:riseIn .55s ease-out .1s both}
+.onboard-track > div.onboard-slide .onboard-slide-body,
+.onboard-track > div.onboard-slide .onboard-slide-manual{animation:riseInSoft .5s ease-out .2s both}
+
+/* タイプカード選択時のパルス */
+.type-card.is-selected{animation:pulseOnce .45s ease-out}
+
+/* チップタップ時のバウンス */
+.chip.is-on{animation:chipBounce .35s ease-out}
+
+/* アクション完了時（軽い持ち上げ） */
+.action-card.is-done{animation:pulseOnce .35s ease-out}
+
+/* プライマリボタンにシマー（微妙・控えめ） */
+.btn-primary:not([disabled]){
+  background-image:linear-gradient(135deg,var(--rose,#c98791),var(--rose-dark,#a96874));
+  background-size:200% 100%;
+  transition:background-position .5s ease,transform .2s ease,box-shadow .2s ease;
+}
+.btn-primary:not([disabled]):hover{background-position:100% 0}
+
+/* prefers-reduced-motion 対応（既存の !important を上書き用に強化） */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important}
+  .welcome-illust .frame{animation:none !important}
+}
 .eyebrow{font-family:var(--font-sans);color:var(--accent-deep);letter-spacing:.18em;margin-bottom:14px}
 .eyebrow .line{background:linear-gradient(90deg,var(--accent-soft),transparent)}
 .hero-title,.h2-serif{font-family:var(--font-serif)}
