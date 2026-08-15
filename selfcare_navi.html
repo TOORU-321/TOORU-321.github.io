@@ -270,6 +270,30 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 .back-nav-wrap{margin-top:-4px !important;margin-bottom:6px !important}
 .btn-back-mini{appearance:none;border:0;background:transparent;color:var(--ink-3);font-size:12.5px;padding:6px 10px;cursor:pointer;font-family:var(--font-sans);letter-spacing:.04em;text-decoration:underline;text-underline-offset:3px;transition:color .18s;font-weight:500}
 .btn-back-mini:hover{color:var(--accent)}
+/* 記録ボタン＋ヒント */
+.record-wrap{text-align:center;margin-top:18px}
+.record-hint{font-size:11.5px;color:var(--ink-3);margin-top:12px;letter-spacing:.04em;line-height:1.7;font-family:var(--font-sans)}
+#recordBtn[disabled]{opacity:.45;cursor:not-allowed}
+#recordBtn:not([disabled]){animation:pulseOnce .5s ease-out}
+/* Day完了メッセージ */
+.day-complete-wrap{text-align:center;padding:40px 24px 30px;background:linear-gradient(180deg,var(--rose-wash,#fff4f6) 0%,#ffffff 100%);border:1px solid var(--accent-soft);border-radius:24px;box-shadow:0 14px 34px rgba(169,104,116,.12);margin:22px 0 8px;animation:zoomIn .55s ease-out both}
+.day-complete-emoji{font-size:52px;line-height:1;margin-bottom:18px;display:inline-block;animation:heroBreathe 3.5s ease-in-out infinite}
+.day-complete-title{font-family:var(--font-serif);font-size:22px;color:var(--ink);font-weight:500;margin:0 0 14px;letter-spacing:.04em;line-height:1.55}
+.day-complete-msg{font-family:var(--font-sans);font-size:13.5px;color:var(--ink-2);line-height:2;margin:0 0 26px;letter-spacing:.04em}
+.day-complete-actions{display:flex;flex-direction:column;gap:12px;align-items:center}
+.day-complete-actions .btn{max-width:280px;margin:0 auto}
+/* 記録完了状態：Screen 4の一部を隠す */
+#screen4.is-recorded .back-nav-wrap,
+#screen4.is-recorded .review-options,
+#screen4.is-recorded .record-wrap,
+#screen4.is-recorded .preview-card{display:none !important}
+/* Day 3以外は追加要素も隠す（Day3は迷子卒業カード＋カレンダーを残す） */
+#screen4.is-recorded.is-day1 .next-card,
+#screen4.is-recorded.is-day1 .divider,
+#screen4.is-recorded.is-day1 #dayFoot,
+#screen4.is-recorded.is-day2 .next-card,
+#screen4.is-recorded.is-day2 .divider,
+#screen4.is-recorded.is-day2 #dayFoot{display:none !important}
 /* Onboarding carousel */
 .onboard-hero{padding:4px 0 8px;text-align:left}
 .onboard-hero .hero-meta{margin-top:4px}
@@ -981,6 +1005,19 @@ p{color:var(--ink-2);line-height:1.9}
       <p id="dayCloseLede">完璧でなくて大丈夫。少し触れたかどうか、感覚でお選びください。</p>
       <div class="section back-nav-wrap"><button class="btn-back-mini" id="backToState" type="button">← 今日の状態を見直す</button></div>
       <div class="section"><div class="review-options" id="reviewOptions" role="group" aria-label="今日の取り組み"></div></div>
+      <div class="section record-wrap">
+        <button class="btn btn-primary" id="recordBtn" type="button" disabled>今日の記録を残す<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button>
+        <p class="record-hint" id="recordHint">まずは上から今日の気持ちを1つ選んでください</p>
+      </div>
+      <div id="dayCompleteWrap" class="day-complete-wrap" style="display:none">
+        <div class="day-complete-emoji" id="dayCompleteEmoji">🌿</div>
+        <h2 class="day-complete-title" id="dayCompleteTitle">お疲れさまでした</h2>
+        <p class="day-complete-msg" id="dayCompleteMsg">今日の記録、ちゃんと残せました。</p>
+        <div class="day-complete-actions">
+          <button class="btn btn-primary" id="dayCompleteCta" type="button">また明日</button>
+          <button class="btn-back-mini" id="dayCompleteUndo" type="button">記録を修正する</button>
+        </div>
+      </div>
       <hr class="divider">
       <div class="preview-card"><span class="stamp">If you continue</span><h3>数日続けると、見えてくること</h3><p id="previewText">—</p></div>
       <div class="next-card" id="nextCard" style="display:none">
@@ -1369,11 +1406,25 @@ function renderScreen4(){
     b.addEventListener('click',function(){
       state.review=v;
       $$('.review-option').forEach(function(x){x.classList.toggle('is-on',x===b);});
-      saveToday();
-      showToast('今日の記録を残しました');
+      // 記録ボタンを有効化＋ヒント文言変更（保存はまだしない）
+      const rb=$('#recordBtn');
+      if(rb){rb.disabled=false;}
+      const rh=$('#recordHint');
+      if(rh){rh.textContent='下の「今日の記録を残す」で保存できます。';}
     });
     wrap.appendChild(b);
   });
+  // 既に選択済み（復帰時など）なら記録ボタンを有効化
+  if(state.review){
+    const rb=$('#recordBtn');if(rb)rb.disabled=false;
+    const rh=$('#recordHint');if(rh)rh.textContent='下の「今日の記録を残す」で保存できます。';
+  }else{
+    const rb=$('#recordBtn');if(rb)rb.disabled=true;
+    const rh=$('#recordHint');if(rh)rh.textContent='まずは上から今日の気持ちを1つ選んでください';
+  }
+  // 完了カードは初期非表示に戻す
+  const dcw=$('#dayCompleteWrap');if(dcw)dcw.style.display='none';
+  $('#screen4').classList.remove('is-recorded','is-day1','is-day2','is-day3');
   $('#previewText').textContent=PREVIEW_TEXT[state.type]||'';
   $('#tomokoClose').textContent=TYPES[state.type].tomokoClose;
   if(state.day.showOffer){
@@ -1448,6 +1499,58 @@ function wireNav(){
   // Screen 4 → Screen 2 戻るボタン（今日の状態を見直す）
   const bk=$('#backToState');
   if(bk)bk.addEventListener('click',function(){goScreen(2);});
+  // 記録するボタン
+  const rec=$('#recordBtn');
+  if(rec)rec.addEventListener('click',function(){
+    if(!state.review)return;
+    saveToday();
+    showDayComplete();
+  });
+  // 完了カード内の「記録を修正する」
+  const undo=$('#dayCompleteUndo');
+  if(undo)undo.addEventListener('click',function(){
+    $('#dayCompleteWrap').style.display='none';
+    $('#screen4').classList.remove('is-recorded','is-day1','is-day2','is-day3');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+function showDayComplete(){
+  const day=state.day.display;
+  const isFinal=day===TOTAL_DAYS;
+  const wrap=$('#dayCompleteWrap');
+  const emoji=$('#dayCompleteEmoji');
+  const title=$('#dayCompleteTitle');
+  const msg=$('#dayCompleteMsg');
+  const cta=$('#dayCompleteCta');
+  if(!wrap||!cta)return;
+  if(day===1){
+    emoji.textContent='🌿';
+    title.textContent='今日の記録、ありがとう';
+    msg.innerHTML='また明日、ここでお待ちしています。<br>今日感じたことを、明日のあなたに渡してあげてください。';
+    cta.textContent='また明日';
+    cta.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+  }else if(day===2){
+    emoji.textContent='🌸';
+    title.textContent='今日もお疲れさま';
+    msg.innerHTML='明日はいよいよ最終日。<br>今日感じた体の声を、明日まで覚えておいてくださいね。';
+    cta.textContent='また明日';
+    cta.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+  }else{
+    emoji.textContent='🌷';
+    title.textContent='3日間、本当にお疲れさま';
+    msg.innerHTML='3日で見えた「合いやすい方向性」は、<br>体質地図のほんの入り口。<br>その続きを、ぜひ一緒にお話しませんか？';
+    cta.textContent='予約カレンダーを見る';
+    cta.onclick=function(){
+      const t=document.getElementById('calendarEmbed');
+      if(t)setTimeout(function(){t.scrollIntoView({behavior:'smooth',block:'start'});},260);
+    };
+  }
+  const s4=document.getElementById('screen4');
+  s4.classList.add('is-recorded','is-day'+day);
+  wrap.style.display='';
+  setTimeout(function(){
+    wrap.scrollIntoView({behavior:'smooth',block:'center'});
+  },150);
 }
 
 function isAdmin(){
@@ -1680,7 +1783,11 @@ function init(){
     // Screen 3/4 に復帰する場合は結果を先に描画
     if(target>=3&&state.type&&state.tags.length){
       renderResult();
-      if(target>=4)renderScreen4();
+      if(target>=4){
+        renderScreen4();
+        // 既に記録済みなら完了カード表示状態で復帰
+        if(state.review)setTimeout(showDayComplete,80);
+      }
     }
     goScreen(target);
   }
