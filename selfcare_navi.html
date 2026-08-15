@@ -158,12 +158,12 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 .name-input-wrap input:focus{outline:none}
 .name-suffix{font-family:var(--font-serif);font-size:19px;color:var(--accent);letter-spacing:.04em;margin-left:10px;font-weight:500;flex-shrink:0}
 .name-note{font-size:11.5px;color:var(--ink-3);margin-top:14px;letter-spacing:.04em;line-height:1.7;font-family:var(--font-serif)}
-.tomoko-avatar{width:60px;height:60px;flex-shrink:0;border-radius:50%;overflow:hidden;border:1px solid var(--accent-soft);background:radial-gradient(circle at 50% 60%,var(--paper-warm),var(--ivory) 80%)}
-.tomoko-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block}
+.tomoko-avatar{width:68px;height:68px;flex-shrink:0;border-radius:50%;overflow:hidden;border:1px solid var(--accent-soft);background:radial-gradient(circle at 50% 60%,var(--paper-warm),var(--ivory) 80%)}
+.tomoko-avatar img{width:100%;height:100%;object-fit:cover;object-position:center 25%;display:block}
 .welcome-illust{margin:30px 0 4px;display:flex;flex-direction:column;align-items:center;gap:10px}
-.welcome-illust .frame{width:200px;aspect-ratio:4/5;display:flex;align-items:flex-end;justify-content:center;position:relative}
-.welcome-illust .frame::before{content:'';position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:130px;height:8px;background:radial-gradient(ellipse at center,rgba(40,30,20,.08),transparent 70%);filter:blur(2px)}
-.welcome-illust .frame img{width:100%;height:100%;object-fit:contain;display:block;position:relative}
+.welcome-illust .frame{width:260px;height:325px;max-width:70vw;display:flex;align-items:flex-end;justify-content:center;position:relative}
+.welcome-illust .frame::before{content:'';position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:150px;height:10px;background:radial-gradient(ellipse at center,rgba(40,30,20,.08),transparent 70%);filter:blur(2px)}
+.welcome-illust .frame img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;position:relative}
 .welcome-illust .caption{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;font-weight:600}
 .tomoko-card .who{flex:1;min-width:0}
 .tomoko-card .who .role{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink-3);font-weight:600;text-transform:uppercase;display:block}
@@ -444,6 +444,76 @@ body{
 main{padding:24px 16px 60px}
 .screen{animation:softPageIn .42s ease both}
 @keyframes softPageIn{from{opacity:0;transform:translateY(5px) scale(.995)}to{opacity:1;transform:none}}
+
+/* ========== キャラ 円形クロップ（v1.4以降 最終形）========== */
+.welcome-illust .frame,
+.welcome-illust .frame img{aspect-ratio:auto !important}
+.welcome-illust .frame{
+  width:220px !important;height:220px !important;
+  max-width:62vw !important;max-height:62vw !important;
+  border-radius:50% !important;overflow:hidden !important;
+  background:radial-gradient(circle at 50% 55%,var(--rose-wash,#fff4f6),var(--paper-warm,#fcfaf4) 75%) !important;
+  border:1px solid var(--accent-soft,#efd5da) !important;
+  box-shadow:0 14px 34px rgba(169,104,116,.14),0 0 0 6px rgba(255,255,255,.6) !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  animation:heroBreathe 4.5s ease-in-out infinite;
+}
+.welcome-illust .frame::before{display:none !important}
+.welcome-illust .frame img{
+  width:120% !important;height:120% !important;
+  object-fit:cover !important;
+  object-position:center 22% !important;
+  transform:translateY(3%) !important;
+}
+
+/* ========== アニメーション ========== */
+@keyframes heroBreathe{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.02)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes riseInSoft{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes pulseOnce{0%{transform:scale(1)}30%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes chipBounce{0%,100%{transform:scale(1)}40%{transform:scale(1.09)}70%{transform:scale(.97)}}
+@keyframes sparkleFly{0%{opacity:0;transform:translateY(4px) scale(.6)}30%{opacity:1;transform:translateY(-4px) scale(1)}100%{opacity:0;transform:translateY(-24px) scale(1.2)}}
+@keyframes shimmerLine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* 画面遷移時のスタガード出現 */
+.screen.is-active .eyebrow{animation:riseInSoft .5s ease-out both}
+.screen.is-active .hero-title{animation:riseIn .6s ease-out .08s both}
+.screen.is-active .hero-meta{animation:riseInSoft .5s ease-out .18s both}
+.screen.is-active .pullquote{animation:riseIn .6s ease-out .24s both}
+.screen.is-active .welcome-illust{animation:zoomIn .6s ease-out .1s both}
+.screen.is-active .section-head,.screen.is-active .type-grid,.screen.is-active .chips,.screen.is-active .summary-card,.screen.is-active .rec-list,.screen.is-active .action-list,.screen.is-active .review-options,.screen.is-active .preview-card,.screen.is-active .tomoko-card{animation:riseInSoft .55s ease-out .28s both}
+.screen.is-active .cta,.screen.is-active .cta-stack,.screen.is-active .calendar-embed-wrap{animation:riseIn .55s ease-out .38s both}
+
+/* オンボーディングスライドの中身 */
+.onboard-slide.is-active .onboard-slide-num,
+.onboard-track > div.onboard-slide .onboard-slide-num{animation:riseInSoft .45s ease-out both}
+.onboard-track > div.onboard-slide .onboard-slide-title{animation:riseIn .55s ease-out .1s both}
+.onboard-track > div.onboard-slide .onboard-slide-body,
+.onboard-track > div.onboard-slide .onboard-slide-manual{animation:riseInSoft .5s ease-out .2s both}
+
+/* タイプカード選択時のパルス */
+.type-card.is-selected{animation:pulseOnce .45s ease-out}
+
+/* チップタップ時のバウンス */
+.chip.is-on{animation:chipBounce .35s ease-out}
+
+/* アクション完了時（軽い持ち上げ） */
+.action-card.is-done{animation:pulseOnce .35s ease-out}
+
+/* プライマリボタンにシマー（微妙・控えめ） */
+.btn-primary:not([disabled]){
+  background-image:linear-gradient(135deg,var(--rose,#c98791),var(--rose-dark,#a96874));
+  background-size:200% 100%;
+  transition:background-position .5s ease,transform .2s ease,box-shadow .2s ease;
+}
+.btn-primary:not([disabled]):hover{background-position:100% 0}
+
+/* prefers-reduced-motion 対応（既存の !important を上書き用に強化） */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important}
+  .welcome-illust .frame{animation:none !important}
+}
 .eyebrow{font-family:var(--font-sans);color:var(--accent-deep);letter-spacing:.18em;margin-bottom:14px}
 .eyebrow .line{background:linear-gradient(90deg,var(--accent-soft),transparent)}
 .hero-title,.h2-serif{font-family:var(--font-serif)}
@@ -463,7 +533,26 @@ p{color:var(--ink-2);line-height:1.9}
 .pullquote{padding:27px 24px 23px}
 .pullquote::before,.tomoko-card::before,.day-foot::before{background:linear-gradient(90deg,var(--accent),var(--gold));height:3px}
 .pullquote-mark{color:var(--accent);opacity:.75}
-.tomoko-avatar{border:2px solid #fff;box-shadow:0 0 0 2px var(--accent-soft);background:var(--rose-wash)}
+.tomoko-avatar{
+  width:72px;
+  height:72px;
+  aspect-ratio:1;
+  border:2px solid #fff;
+  box-shadow:0 0 0 2px var(--accent-soft),0 8px 22px rgba(130,91,99,.12);
+  background:linear-gradient(145deg,#fff,var(--rose-wash));
+  padding:5px;
+}
+.tomoko-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  border-radius:50%;
+  transform:none;
+}
+.tomoko-card .head{gap:16px;margin-bottom:16px;padding-bottom:16px}
+.tomoko-card .who .role{color:var(--accent-deep)}
+.tomoko-card .who .name{font-size:15px}
 .summary-card{border-left:0;padding:20px;border:1px solid var(--accent-soft);border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--rose-wash),rgba(255,253,252,.96));box-shadow:0 10px 30px rgba(130,91,99,.06)}
 
 .type-grid{border-top:0;gap:10px;margin-top:12px}
@@ -474,7 +563,7 @@ p{color:var(--ink-2);line-height:1.9}
   padding:16px;
   box-shadow:0 9px 26px rgba(130,91,99,.045);
 }
-.type-card:hover{padding:16px;background:#fff;transform:translateY(-1px);border-color:var(--accent-soft)}
+.type-card:hover{padding:16px;background:#fff;transform:translateY(-2px);border-color:var(--accent-soft);box-shadow:0 14px 32px rgba(130,91,99,.08)}
 .type-card.is-selected{padding:16px;background:linear-gradient(135deg,var(--rose-wash),#fff);border-color:var(--accent);box-shadow:0 12px 30px rgba(169,104,116,.12)}
 .type-card .badge{border-radius:14px;border-color:var(--accent-soft);background:var(--rose-wash);color:var(--accent-deep);font-family:var(--font-serif)}
 .type-card .name{font-family:var(--font-serif)}
@@ -506,6 +595,15 @@ p{color:var(--ink-2);line-height:1.9}
 .offer-popup{border-radius:var(--radius-lg);border-color:var(--hairline);box-shadow:var(--shadow-float)}
 .toast{border-radius:999px;text-transform:none;font-family:var(--font-sans);letter-spacing:.06em}
 .app-foot{border-top:0;margin-top:8px;color:var(--ink-3);font-family:var(--font-sans)}
+
+/* v1.4 visual balance: softer hierarchy and square, undistorted character icons */
+.section-head{padding-bottom:12px;border-bottom-color:var(--hairline-2)}
+.section-head .num{color:var(--accent-deep)}
+.preview-card,.next-card,.day-foot{box-shadow:0 10px 28px rgba(130,91,99,.055)}
+.welcome-illust .frame{width:min(240px,66vw);height:auto;aspect-ratio:4/5}
+.welcome-illust .frame img{aspect-ratio:4/5;object-fit:contain;object-position:center bottom}
+.welcome-illust .caption{padding:5px 11px;border-radius:999px;background:rgba(255,253,252,.88);border:1px solid var(--hairline-2)}
+.btn:focus-visible,.chip:focus-visible,.type-card:focus-visible,.action-card:focus-visible,.onboard-nav:focus-visible{outline:3px solid rgba(169,104,116,.28);outline-offset:3px}
 
 /* 起動案内：縦長説明ではなく、1画面ずつ進むページ型 */
 #screen0.is-active{display:flex;flex-direction:column;min-height:calc(100svh - 116px)}
@@ -574,6 +672,9 @@ p{color:var(--ink-2);line-height:1.9}
   .onboard-slide-title{font-size:clamp(22px,6.4vw,27px);margin-bottom:14px}
   .onboard-slide-body{font-size:13.5px;line-height:1.82}
   .onboard-point,.onboard-note{font-size:12px;padding:12px 13px}
+  .tomoko-avatar{width:64px;height:64px;padding:4px}
+  .tomoko-card{padding:21px 18px 20px}
+  .tomoko-card .head{gap:14px}
 }
 @media (max-height:700px){
   .onboard-slide{padding-top:20px;padding-bottom:17px}
@@ -1035,7 +1136,8 @@ function getStored(){let d=loadStored();let m=false;if(!d.firstVisitKey){d.first
 function captureLineUid(){
   try{
     const params=new URLSearchParams(location.search);
-    const luid=params.get('lineUid')||params.get('lineuid');
+    // ProLine標準の ?uid= も含めて捕捉（/cp/転送URL経由での受け取り対応）
+    const luid=params.get('lineUid')||params.get('lineuid')||params.get('uid');
     if(luid && luid!=='[[uid]]' && luid.length>0){
       const d=getStored();
       if(d.lineUid!==luid){d.lineUid=luid;saveStored(d);}
@@ -1375,11 +1477,11 @@ function setupAdminBar(){
       location.href=location.pathname+'?admin=1&day='+d;
     });
   });
-  // Reset
+  // Reset（ワンタップ・URLパラメータ保持・確認なし。テスト向け）
   const rb=$('#admReset');
   if(rb)rb.addEventListener('click',function(){
-    if(!confirm('保存データをすべて削除して初回起動状態に戻します。よろしいですか？'))return;
-    location.href=location.pathname+'?admin=1&reset=1';
+    try{localStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(POPUP_SESSION_KEY);}catch(e){}
+    location.reload();
   });
   // Skip Intro: 名前が無ければテスト用に「テスト」で埋めてScreen1へ
   const si=$('#admSkipIntro');
