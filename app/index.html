@@ -3910,7 +3910,13 @@ document.getElementById("nfCancel").addEventListener("click", hideNewsForm);
 document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.target.id==="newsModal") closeNews(); });
 
 document.getElementById("entryLogin").addEventListener("click", openLogin);
-document.getElementById("entryGuest").addEventListener("click", () => { localStorage.setItem(GUEST_KEY, "1"); enterLibrary(true); openNews(); });
+document.getElementById("entryGuest").addEventListener("click", () => {
+  localStorage.setItem(GUEST_KEY, "1");
+  try{   // 匿名のゲスト参加ログ（日時+リファラー/UAだけ・個人情報なし）。失敗しても入場は妨げない。
+    fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"guest_log", ref:document.referrer||"", ua:navigator.userAgent||"", url:location.href }) });
+  }catch(_e){}
+  enterLibrary(true); openNews();
+});
 
 // ===== PWA：Service Worker登録＋「ホーム画面に追加」案内 =====
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("firebase-messaging-sw.js").catch(function(){}); }
