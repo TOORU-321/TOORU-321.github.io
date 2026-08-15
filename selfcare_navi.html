@@ -282,6 +282,7 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
 .day-complete-msg{font-family:var(--font-sans);font-size:13.5px;color:var(--ink-2);line-height:2;margin:0 0 26px;letter-spacing:.04em}
 .day-complete-actions{display:flex;flex-direction:column;gap:12px;align-items:center}
 .day-complete-actions .btn{max-width:280px;margin:0 auto}
+.day-complete-msg .dc-hint{display:inline-block;font-size:11px;color:var(--ink-3);letter-spacing:.04em;padding:6px 12px;background:rgba(255,255,255,.6);border-radius:999px;margin-top:2px}
 /* 記録完了状態：Screen 4の一部を隠す */
 #screen4.is-recorded .back-nav-wrap,
 #screen4.is-recorded .review-options,
@@ -1516,7 +1517,6 @@ function wireNav(){
 }
 function showDayComplete(){
   const day=state.day.display;
-  const isFinal=day===TOTAL_DAYS;
   const wrap=$('#dayCompleteWrap');
   const emoji=$('#dayCompleteEmoji');
   const title=$('#dayCompleteTitle');
@@ -1526,20 +1526,19 @@ function showDayComplete(){
   if(day===1){
     emoji.textContent='🌿';
     title.textContent='今日の記録、ありがとう';
-    msg.innerHTML='また明日、ここでお待ちしています。<br>今日感じたことを、明日のあなたに渡してあげてください。';
-    cta.textContent='また明日';
-    cta.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+    msg.innerHTML='今日はここまでで大丈夫です。<br>また明日、ここでお待ちしています🌸<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
+    cta.style.display='none';
   }else if(day===2){
     emoji.textContent='🌸';
     title.textContent='今日もお疲れさま';
-    msg.innerHTML='明日はいよいよ最終日。<br>今日感じた体の声を、明日まで覚えておいてくださいね。';
-    cta.textContent='また明日';
-    cta.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+    msg.innerHTML='明日はいよいよ最終日。<br>今日感じた体の声を、明日まで覚えておいてくださいね🌷<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
+    cta.style.display='none';
   }else{
     emoji.textContent='🌷';
     title.textContent='3日間、本当にお疲れさま';
     msg.innerHTML='3日で見えた「合いやすい方向性」は、<br>体質地図のほんの入り口。<br>その続きを、ぜひ一緒にお話しませんか？';
     cta.textContent='予約カレンダーを見る';
+    cta.style.display='';
     cta.onclick=function(){
       const t=document.getElementById('calendarEmbed');
       if(t)setTimeout(function(){t.scrollIntoView({behavior:'smooth',block:'start'});},260);
