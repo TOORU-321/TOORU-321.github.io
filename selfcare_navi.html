@@ -1136,7 +1136,8 @@ function getStored(){let d=loadStored();let m=false;if(!d.firstVisitKey){d.first
 function captureLineUid(){
   try{
     const params=new URLSearchParams(location.search);
-    const luid=params.get('lineUid')||params.get('lineuid');
+    // ProLine標準の ?uid= も含めて捕捉（/cp/転送URL経由での受け取り対応）
+    const luid=params.get('lineUid')||params.get('lineuid')||params.get('uid');
     if(luid && luid!=='[[uid]]' && luid.length>0){
       const d=getStored();
       if(d.lineUid!==luid){d.lineUid=luid;saveStored(d);}
