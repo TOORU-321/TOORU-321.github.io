@@ -934,6 +934,8 @@ a{text-decoration:none}
 .bottom-nav .nav-icon svg{width:21px;height:21px;stroke-width:1.65}
 .bottom-nav .nav-label{font-size:9.5px;font-weight:500;letter-spacing:.035em}
 .bottom-nav .nav-label .soon-tag{background:#343a42;color:#777d82}
+.bottom-nav .nav-label .new-tag{font-size:8px;font-weight:800;color:#fff;background:#d6432f;border-radius:999px;padding:1px 5px;letter-spacing:.03em;margin-left:2px;animation:navNewPulse 1.6s ease-in-out infinite}
+@keyframes navNewPulse{0%,100%{opacity:1}50%{opacity:.5}}
 
 /* ---------- Modal / News / Forms ---------- */
 .loginmodal,.newsmodal{
@@ -1650,9 +1652,9 @@ a{text-decoration:none}
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
     <span class="nav-label">コラム</span>
   </button>
-  <button class="nav-item soon" data-soon>
+  <button class="nav-item" id="nav-books" type="button">
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-    <span class="nav-label">書籍<span class="soon-tag">準備中</span></span>
+    <span class="nav-label">書籍<span class="new-tag" id="navBooksNew" hidden>NEW‼</span></span>
   </button>
 </nav>
 </div><!-- /#library -->
@@ -3115,6 +3117,12 @@ function showColumnList(){
   document.getElementById("colBack").hidden = true;
   document.getElementById("colHeadTitle").textContent = "シークレットコラム";
 }
+(function(){
+  const nb = document.getElementById("nav-books");
+  if(nb) nb.addEventListener("click", function(){ location.href = "https://columns.l-mine.com/books.html"; });
+  const nbTag = document.getElementById("navBooksNew");
+  if(nbTag && new Date() < new Date("2026-09-01T00:00:00+09:00")) nbTag.hidden = false;   // 「NEW‼」表示は8月中まで（9/1で自動的に消える）
+})();
 (function(){
   const nav = document.getElementById("nav-column"); if(nav) nav.addEventListener("click", openColumnChooser);
   const bk = document.getElementById("ccBackdrop"); if(bk) bk.addEventListener("click", closeColumnChooser);
