@@ -19,7 +19,7 @@
     showAtScrollPct: 50,            // または、この割合までスクロールしたら表示
     resnoozeDays: 7,               // 閉じた／登録した後、再表示しない日数
     storageKey: "kmarke_optin_v1",  // localStorageキー（内容を変えたら v2 に）
-    thumbUrl: "/assets/kmarke-letter.jpg"  // ポップアップ上部のサムネ画像（横長16:9推奨）。未設置なら自動で非表示・差し替え自由
+    thumbUrl: "/assets/kmarke-letter-v2.jpg"  // ポップアップ上部のサムネ画像（横長16:9推奨）。未設置なら自動で非表示・差し替え自由
   };
 
   // ---- 再表示の抑制 -------------------------------------------------

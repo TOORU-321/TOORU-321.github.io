@@ -266,6 +266,35 @@ p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.95}
   .rec-card .care-name{font-size:19px}
   .offer-popup h2{font-size:19px}
 }
+/* Screen 4 back button */
+.back-nav-wrap{margin-top:-4px !important;margin-bottom:6px !important}
+.btn-back-mini{appearance:none;border:0;background:transparent;color:var(--ink-3);font-size:12.5px;padding:6px 10px;cursor:pointer;font-family:var(--font-sans);letter-spacing:.04em;text-decoration:underline;text-underline-offset:3px;transition:color .18s;font-weight:500}
+.btn-back-mini:hover{color:var(--accent)}
+/* 記録ボタン＋ヒント */
+.record-wrap{text-align:center;margin-top:18px}
+.record-hint{font-size:11.5px;color:var(--ink-3);margin-top:12px;letter-spacing:.04em;line-height:1.7;font-family:var(--font-sans)}
+#recordBtn[disabled]{opacity:.45;cursor:not-allowed}
+#recordBtn:not([disabled]){animation:pulseOnce .5s ease-out}
+/* Day完了メッセージ */
+.day-complete-wrap{text-align:center;padding:40px 24px 30px;background:linear-gradient(180deg,var(--rose-wash,#fff4f6) 0%,#ffffff 100%);border:1px solid var(--accent-soft);border-radius:24px;box-shadow:0 14px 34px rgba(169,104,116,.12);margin:22px 0 8px;animation:zoomIn .55s ease-out both}
+.day-complete-emoji{font-size:52px;line-height:1;margin-bottom:18px;display:inline-block;animation:heroBreathe 3.5s ease-in-out infinite}
+.day-complete-title{font-family:var(--font-serif);font-size:22px;color:var(--ink);font-weight:500;margin:0 0 14px;letter-spacing:.04em;line-height:1.55}
+.day-complete-msg{font-family:var(--font-sans);font-size:13.5px;color:var(--ink-2);line-height:2;margin:0 0 26px;letter-spacing:.04em}
+.day-complete-actions{display:flex;flex-direction:column;gap:12px;align-items:center}
+.day-complete-actions .btn{max-width:280px;margin:0 auto}
+.day-complete-msg .dc-hint{display:inline-block;font-size:11px;color:var(--ink-3);letter-spacing:.04em;padding:6px 12px;background:rgba(255,255,255,.6);border-radius:999px;margin-top:2px}
+/* 記録完了状態：Screen 4の一部を隠す */
+#screen4.is-recorded .back-nav-wrap,
+#screen4.is-recorded .review-options,
+#screen4.is-recorded .record-wrap,
+#screen4.is-recorded .preview-card{display:none !important}
+/* Day 3以外は追加要素も隠す（Day3は迷子卒業カード＋カレンダーを残す） */
+#screen4.is-recorded.is-day1 .next-card,
+#screen4.is-recorded.is-day1 .divider,
+#screen4.is-recorded.is-day1 #dayFoot,
+#screen4.is-recorded.is-day2 .next-card,
+#screen4.is-recorded.is-day2 .divider,
+#screen4.is-recorded.is-day2 #dayFoot{display:none !important}
 /* Onboarding carousel */
 .onboard-hero{padding:4px 0 8px;text-align:left}
 .onboard-hero .hero-meta{margin-top:4px}
@@ -975,7 +1004,21 @@ p{color:var(--ink-2);line-height:1.9}
       <div class="eyebrow"><span class="num">008</span><span class="line"></span><span class="label" id="reviewBadge">REFLECT</span></div>
       <h1 class="hero-title" id="s4-title">—</h1>
       <p id="dayCloseLede">完璧でなくて大丈夫。少し触れたかどうか、感覚でお選びください。</p>
+      <div class="section back-nav-wrap"><button class="btn-back-mini" id="backToState" type="button">← 今日の状態を見直す</button></div>
       <div class="section"><div class="review-options" id="reviewOptions" role="group" aria-label="今日の取り組み"></div></div>
+      <div class="section record-wrap">
+        <button class="btn btn-primary" id="recordBtn" type="button" disabled>今日の記録を残す<svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 8 L 13 8 M 9 4 L 13 8 L 9 12"/></svg></button>
+        <p class="record-hint" id="recordHint">まずは上から今日の気持ちを1つ選んでください</p>
+      </div>
+      <div id="dayCompleteWrap" class="day-complete-wrap" style="display:none">
+        <div class="day-complete-emoji" id="dayCompleteEmoji">🌿</div>
+        <h2 class="day-complete-title" id="dayCompleteTitle">お疲れさまでした</h2>
+        <p class="day-complete-msg" id="dayCompleteMsg">今日の記録、ちゃんと残せました。</p>
+        <div class="day-complete-actions">
+          <button class="btn btn-primary" id="dayCompleteCta" type="button">また明日</button>
+          <button class="btn-back-mini" id="dayCompleteUndo" type="button">記録を修正する</button>
+        </div>
+      </div>
       <hr class="divider">
       <div class="preview-card"><span class="stamp">If you continue</span><h3>数日続けると、見えてくること</h3><p id="previewText">—</p></div>
       <div class="next-card" id="nextCard" style="display:none">
@@ -1128,7 +1171,12 @@ function wireOnboardCarousel(){
 const $=sel=>document.querySelector(sel);
 const $$=sel=>Array.from(document.querySelectorAll(sel));
 function showToast(msg,ms){ms=ms||1600;const t=$('#toast');t.textContent=msg;t.classList.add('is-show');clearTimeout(showToast._t);showToast._t=setTimeout(function(){t.classList.remove('is-show');},ms);}
-function goScreen(n){$$('.screen').forEach(function(s){s.classList.remove('is-active');});document.getElementById('screen'+n).classList.add('is-active');window.scrollTo({top:0,behavior:'smooth'});}
+function goScreen(n){$$('.screen').forEach(function(s){s.classList.remove('is-active');});document.getElementById('screen'+n).classList.add('is-active');window.scrollTo({top:0,behavior:'smooth'});
+  // 現在画面を永続化（Screen 1〜4のみ、リロード時に復帰）
+  if(typeof n==='number' && n>=1 && n<=4){
+    try{const d=loadStored();d.currentScreen=n;d.currentScreenDay=todayKey();saveStored(d);}catch(e){}
+  }
+}
 function loadStored(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch(e){return{};}}
 function saveStored(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch(e){}}
 function genUid(){return 'u_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
@@ -1259,7 +1307,7 @@ function openCalendarFromPopup(){
 function maybeAutoPopup(){if(!state.day||!state.day.showOffer)return;let shown=false;try{shown=sessionStorage.getItem(POPUP_SESSION_KEY)==='1';}catch(e){}if(shown)return;setTimeout(function(){showOfferPopup();try{sessionStorage.setItem(POPUP_SESSION_KEY,'1');}catch(e){}},1100);}
 function renderTypes(){const grid=$('#typeGrid');grid.innerHTML='';Object.values(TYPES).forEach(function(t){const btn=document.createElement('button');btn.type='button';btn.className='type-card'+(state.type===t.id?' is-selected':'');btn.setAttribute('role','radio');btn.setAttribute('aria-checked',state.type===t.id?'true':'false');btn.dataset.id=t.id;btn.innerHTML='<span class="badge" aria-hidden="true">'+t.icon+'</span><span class="body"><span class="name">'+t.label+' <span class="sub">'+t.tcm+'</span></span><span class="desc">'+t.persona+'</span></span><svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4 L 11 8 L 5 12"/></svg>';btn.addEventListener('click',function(){selectType(t.id);});grid.appendChild(btn);});}
 function selectType(id){state.type=id;persistType(id);$$('.type-card').forEach(function(c){const on=c.dataset.id===id;c.classList.toggle('is-selected',on);c.setAttribute('aria-checked',on?'true':'false');});$('#toScreen2').disabled=false;}
-function renderChips(){const wrap=$('#stateChips');wrap.innerHTML='';STATE_TAGS.forEach(function(t){const b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('aria-pressed','false');b.dataset.id=t.id;b.textContent=t.label;b.addEventListener('click',function(){toggleChip(t.id,b);});wrap.appendChild(b);});}
+function renderChips(){const wrap=$('#stateChips');wrap.innerHTML='';STATE_TAGS.forEach(function(t){const isOn=state.tags.indexOf(t.id)>=0;const b=document.createElement('button');b.type='button';b.className='chip'+(isOn?' is-on':'');b.setAttribute('aria-pressed',isOn?'true':'false');b.dataset.id=t.id;b.textContent=t.label;b.addEventListener('click',function(){toggleChip(t.id,b);});wrap.appendChild(b);});$('#chipCount').textContent=state.tags.length;}
 function toggleChip(id,el){const idx=state.tags.indexOf(id);if(idx>=0){state.tags.splice(idx,1);el.classList.remove('is-on');el.setAttribute('aria-pressed','false');}else{if(state.tags.length>=5){showToast('5つまでに絞ると見やすいです');return;}state.tags.push(id);el.classList.add('is-on');el.setAttribute('aria-pressed','true');}$('#chipCount').textContent=state.tags.length;}
 function compute(){
   const type=TYPES[state.type];
@@ -1328,16 +1376,16 @@ function renderResult(){
     +'<p class="care-reason">'+r.avoidReason+'</p>';
   avo.appendChild(adiv);
   const actWrap=$('#actionList');actWrap.innerHTML='';
-  state.done=[false,false,false];
+  if(!state.done||state.done.length!==3)state.done=[false,false,false];
   cat1.actions.slice(0,2).forEach(function(text,i){
     const b=document.createElement('button');
-    b.type='button';b.className='action-card';b.dataset.idx=i;
+    b.type='button';b.className='action-card'+(state.done[i]?' is-done':'');b.dataset.idx=i;
     b.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+text+'</span><span class="tag">生活</span>';
     b.addEventListener('click',function(){toggleAction(i,b);});
     actWrap.appendChild(b);
   });
   const bf=document.createElement('button');
-  bf.type='button';bf.className='action-card';bf.dataset.idx=2;
+  bf.type='button';bf.className='action-card'+(state.done[2]?' is-done':'');bf.dataset.idx=2;
   bf.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+type.foodAction+'</span><span class="tag food">食材</span>';
   bf.addEventListener('click',function(){toggleAction(2,bf);});
   actWrap.appendChild(bf);
@@ -1355,15 +1403,29 @@ function renderScreen4(){
   const wrap=$('#reviewOptions');wrap.innerHTML='';
   ['やった','少しやった','できなかった'].forEach(function(v){
     const b=document.createElement('button');
-    b.type='button';b.className='review-option';b.textContent=v;b.dataset.value=v;
+    b.type='button';b.className='review-option'+(state.review===v?' is-on':'');b.textContent=v;b.dataset.value=v;
     b.addEventListener('click',function(){
       state.review=v;
       $$('.review-option').forEach(function(x){x.classList.toggle('is-on',x===b);});
-      saveToday();
-      showToast('今日の記録を残しました');
+      // 記録ボタンを有効化＋ヒント文言変更（保存はまだしない）
+      const rb=$('#recordBtn');
+      if(rb){rb.disabled=false;}
+      const rh=$('#recordHint');
+      if(rh){rh.textContent='下の「今日の記録を残す」で保存できます。';}
     });
     wrap.appendChild(b);
   });
+  // 既に選択済み（復帰時など）なら記録ボタンを有効化
+  if(state.review){
+    const rb=$('#recordBtn');if(rb)rb.disabled=false;
+    const rh=$('#recordHint');if(rh)rh.textContent='下の「今日の記録を残す」で保存できます。';
+  }else{
+    const rb=$('#recordBtn');if(rb)rb.disabled=true;
+    const rh=$('#recordHint');if(rh)rh.textContent='まずは上から今日の気持ちを1つ選んでください';
+  }
+  // 完了カードは初期非表示に戻す
+  const dcw=$('#dayCompleteWrap');if(dcw)dcw.style.display='none';
+  $('#screen4').classList.remove('is-recorded','is-day1','is-day2','is-day3');
   $('#previewText').textContent=PREVIEW_TEXT[state.type]||'';
   $('#tomokoClose').textContent=TYPES[state.type].tomokoClose;
   if(state.day.showOffer){
@@ -1435,6 +1497,59 @@ function wireNav(){
   if(skip)skip.addEventListener('click',function(){renderResult();goScreen(3);});
   const rb=$('#restartBtn');
   if(rb)rb.addEventListener('click',restartAll);
+  // Screen 4 → Screen 2 戻るボタン（今日の状態を見直す）
+  const bk=$('#backToState');
+  if(bk)bk.addEventListener('click',function(){goScreen(2);});
+  // 記録するボタン
+  const rec=$('#recordBtn');
+  if(rec)rec.addEventListener('click',function(){
+    if(!state.review)return;
+    saveToday();
+    showDayComplete();
+  });
+  // 完了カード内の「記録を修正する」
+  const undo=$('#dayCompleteUndo');
+  if(undo)undo.addEventListener('click',function(){
+    $('#dayCompleteWrap').style.display='none';
+    $('#screen4').classList.remove('is-recorded','is-day1','is-day2','is-day3');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+function showDayComplete(){
+  const day=state.day.display;
+  const wrap=$('#dayCompleteWrap');
+  const emoji=$('#dayCompleteEmoji');
+  const title=$('#dayCompleteTitle');
+  const msg=$('#dayCompleteMsg');
+  const cta=$('#dayCompleteCta');
+  if(!wrap||!cta)return;
+  if(day===1){
+    emoji.textContent='🌿';
+    title.textContent='今日の記録、ありがとう';
+    msg.innerHTML='今日はここまでで大丈夫です。<br>また明日、ここでお待ちしています🌸<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
+    cta.style.display='none';
+  }else if(day===2){
+    emoji.textContent='🌸';
+    title.textContent='今日もお疲れさま';
+    msg.innerHTML='明日はいよいよ最終日。<br>今日感じた体の声を、明日まで覚えておいてくださいね🌷<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
+    cta.style.display='none';
+  }else{
+    emoji.textContent='🌷';
+    title.textContent='3日間、本当にお疲れさま';
+    msg.innerHTML='3日で見えた「合いやすい方向性」は、<br>体質地図のほんの入り口。<br>その続きを、ぜひ一緒にお話しませんか？';
+    cta.textContent='予約カレンダーを見る';
+    cta.style.display='';
+    cta.onclick=function(){
+      const t=document.getElementById('calendarEmbed');
+      if(t)setTimeout(function(){t.scrollIntoView({behavior:'smooth',block:'start'});},260);
+    };
+  }
+  const s4=document.getElementById('screen4');
+  s4.classList.add('is-recorded','is-day'+day);
+  wrap.style.display='';
+  setTimeout(function(){
+    wrap.scrollIntoView({behavior:'smooth',block:'center'});
+  },150);
 }
 
 function isAdmin(){
@@ -1638,6 +1753,13 @@ function init(){
   const stored=getStored();
   if(stored.name)state.name=stored.name;
   if(stored.type)state.type=stored.type;
+  // 今日の履歴があれば state に復元（リロード後もチップ/振り返り/やった状態を維持）
+  const todayHist=stored.history&&stored.history[todayKey()];
+  if(todayHist){
+    if(Array.isArray(todayHist.tags)&&todayHist.tags.length)state.tags=todayHist.tags.slice();
+    if(Array.isArray(todayHist.done)&&todayHist.done.length===3)state.done=todayHist.done.slice();
+    if(todayHist.review)state.review=todayHist.review;
+  }
   updateDayPill();
   renderTypes();
   renderChips();
@@ -1649,7 +1771,24 @@ function init(){
   wireDashboard();
   if(stored.name){
     renderWelcome();
-    goScreen(1);
+    // 復帰先画面を判定：同日中で最後にいた画面 or 履歴から推定
+    let target=1;
+    if(stored.currentScreen&&stored.currentScreenDay===todayKey()){
+      target=stored.currentScreen;
+    }else if(todayHist){
+      if(todayHist.review)target=4;
+      else if(todayHist.tags&&todayHist.tags.length)target=3;
+    }
+    // Screen 3/4 に復帰する場合は結果を先に描画
+    if(target>=3&&state.type&&state.tags.length){
+      renderResult();
+      if(target>=4){
+        renderScreen4();
+        // 既に記録済みなら完了カード表示状態で復帰
+        if(state.review)setTimeout(showDayComplete,80);
+      }
+    }
+    goScreen(target);
   }
 }
 
