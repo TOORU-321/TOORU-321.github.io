@@ -1916,6 +1916,26 @@ a{text-decoration:none}
   </div>
 </div>
 
+<!-- ===== メール配信の再開のご案内（配信を停止している方だけに出る） ===== -->
+<div class="offer-modal" id="mailResumeModal" role="dialog" aria-modal="true" aria-label="メール配信のご案内">
+  <div class="offer-sheet">
+    <button class="offer-x" id="mrClose" aria-label="閉じる">×</button>
+    <div class="offer-ico">📩</div>
+    <div class="offer-title">メールの配信が停止されています</div>
+    <div class="offer-sub">
+      新しい講義やライブ配信のご案内が、いまお手元に届かない状態です。<br>
+      無料でのご利用は、メール配信の受信が条件となっています（<button type="button" class="lg-inline" data-legal="terms">利用規約</button> 第3条）。
+    </div>
+    <ul class="offer-list">
+      <li>🎥 新しい講義が公開されたときのお知らせ</li>
+      <li>📡 オンライン勉強会（ライブ配信）のご案内</li>
+      <li>✍️ メンバー限定のシークレットコラム</li>
+    </ul>
+    <button class="offer-go" id="mrResume">配信を再開する</button>
+    <button class="offer-later" id="mrLater">あとで</button>
+  </div>
+</div>
+
 <!-- ===== メール案内（セグメント配信・admin） ===== -->
 <div class="ps-modal" id="broadcastModal" hidden role="dialog" aria-modal="true" aria-label="メール案内を送る">
   <div class="ps-sheet">
@@ -2887,10 +2907,10 @@ async function applyTierAndEnter(email, closeFn){
   let tier = { active:false, subActive:false, tags:[], name: email.split("@")[0] };
   try {
     const res = await fetch(GAS_URL + "?action=verify&email=" + encodeURIComponent(email) + "&_=" + Date.now()).then(r=>r.json());
-    if(res && res.ok){ tier = { active: !!res.active, subActive: !!res.subActive, tags: res.tags || [], name: res.name || tier.name }; }
+    if(res && res.ok){ tier = { active: !!res.active, subActive: !!res.subActive, tags: res.tags || [], name: res.name || tier.name, mailBlocked: !!res.mailBlocked }; }
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
-  saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, subActive: tier.subActive, registered:true });
+  saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, subActive: tier.subActive, mailBlocked: !!tier.mailBlocked, registered:true });
   try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email }) }); }catch(_e){}   // 最終ログイン日時を記録（名簿に「最終ログイン」列がある時）
   if(closeFn) closeFn();
   hideAuthLoading();    // ローディングを消してオープニングへ
@@ -2900,6 +2920,7 @@ async function applyTierAndEnter(email, closeFn){
   maybeAutoEnablePush();   // デフォルトでオン：初回ログイン時に自動で通知許可を促す（iOS除く／明示オフの人は尊重）
   openNews();              // ログイン後の初期画面は「お知らせ」（オープニング動画の下で開き、動画が終わると現れる）
   _ahPending = true;       // お知らせを閉じたら「ホーム画面に追加」を案内（未追加＆スヌーズ中でなければ）
+  setTimeout(maybeShowMailResume, 2500);   // メール配信を止めている方に、再開のご案内（お知らせの表示と重ならないよう少し置く）
 }
 // 起動時・アプリ復帰時に会員情報を名簿と再照合し、権限が変わっていれば自動で反映（＝加入直後に再ログイン不要で解放）
 let _lastVerifyAt = 0;
@@ -2914,13 +2935,14 @@ async function refreshSession(force){
     let name = res.name || SESSION.name;
     try{ const ln = localStorage.getItem("lmine_name:" + SESSION.email); if(ln) name = ln; }catch(_e){}
     const before = JSON.stringify({ t:(SESSION.tags||[]), a:!!SESSION.active, s:!!SESSION.subActive });
-    saveSession(Object.assign({}, SESSION, { name, tags: res.tags||[], active: !!res.active, subActive: !!res.subActive }));
+    saveSession(Object.assign({}, SESSION, { name, tags: res.tags||[], active: !!res.active, subActive: !!res.subActive, mailBlocked: !!res.mailBlocked }));
     const after = JSON.stringify({ t:(SESSION.tags||[]), a:!!SESSION.active, s:!!SESSION.subActive });
     if(before !== after){   // 権限が変わったときだけ再描画（加入直後の自動解放など）
       render();
       if(curCourse != null) select(curCourse, curVideo);
       showToast("会員情報を最新にしました");
     }
+    maybeShowMailResume();   // 起動・復帰時にも、メール配信を止めている方には再開のご案内
   }catch(e){ /* 通信失敗時はキャッシュのまま続行 */ }
 }
 async function doLogin(){
@@ -4384,6 +4406,54 @@ function closeWatchOffer(){ const m=document.getElementById("offerModal"); if(m)
   if(x)  x.addEventListener("click", closeWatchOffer);
   if(lt) lt.addEventListener("click", closeWatchOffer);
   if(md) md.addEventListener("click", function(e){ if(e.target===md) closeWatchOffer(); });
+})();
+
+/* ===== メール配信の再開のご案内 =====
+ * 無料でのご利用はメール配信の受信が条件（利用規約 第3条）。
+ * 「止めたつもりがなかった」方を拾うための案内で、強制はしない（閉じられる）。 */
+const MR_SNOOZE_KEY = "lmine_mailresume_snooze";
+function maybeShowMailResume(){
+  if(!(SESSION && SESSION.email && SESSION.mailBlocked)) return;
+  try{
+    const until = Number(localStorage.getItem(MR_SNOOZE_KEY) || 0);
+    if(until && Date.now() < until) return;   // 「あとで」を押した直後は出さない
+  }catch(_e){}
+  const m = document.getElementById("mailResumeModal");
+  if(m && !m.classList.contains("show")) m.classList.add("show");
+}
+function closeMailResume(snoozeDays){
+  const m = document.getElementById("mailResumeModal");
+  if(m) m.classList.remove("show");
+  if(snoozeDays){
+    try{ localStorage.setItem(MR_SNOOZE_KEY, String(Date.now() + snoozeDays*86400000)); }catch(_e){}
+  }
+}
+async function resumeMail(){
+  const email = SESSION && SESSION.email;
+  if(!email){ showToast("ログイン後にご利用いただけます。"); return; }
+  const btn = document.getElementById("mrResume");
+  if(btn){ btn.disabled = true; btn.textContent = "送信中…"; }
+  try{
+    const res = await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"mail_resume", email:email }) }).then(r=>r.json());
+    if(res && res.ok){
+      saveSession(Object.assign({}, SESSION, { mailBlocked:false }));
+      closeMailResume(0);
+      showToast("メールの配信を再開しました。");
+    } else {
+      showToast("再開できませんでした。時間をおいてお試しください。");
+    }
+  }catch(_e){
+    showToast("通信に失敗しました。時間をおいてお試しください。");
+  }
+  if(btn){ btn.disabled = false; btn.textContent = "配信を再開する"; }
+}
+(function(){
+  const r=document.getElementById("mrResume"), l=document.getElementById("mrLater"),
+        x=document.getElementById("mrClose"), md=document.getElementById("mailResumeModal");
+  if(r) r.addEventListener("click", resumeMail);
+  if(l) l.addEventListener("click", function(){ closeMailResume(3); });
+  if(x) x.addEventListener("click", function(){ closeMailResume(3); });
+  if(md) md.addEventListener("click", function(e){ if(e.target===md) closeMailResume(3); });
 })();
 // コースを開いた時に最初に選ぶ動画のindex（逆順コースは「一番上＝最新」から探す）
 function firstShowIndex(course){
