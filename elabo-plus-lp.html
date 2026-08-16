@@ -138,12 +138,6 @@
     .news-title span{display:block;font-size:.68em;color:var(--gold-light);margin-top:3px;letter-spacing:.04em}
     .news-lead{font-size:13.5px;line-height:1.9;color:var(--text-muted);margin-bottom:18px}
     .news-lead b{color:var(--text);font-weight:700}
-    .news-form{display:flex;gap:10px;flex-wrap:wrap}
-    .news-input{flex:1;min-width:200px;padding:13px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#1d1d20;color:#fff;font-size:14px;outline:none;transition:.2s}
-    .news-input:focus{border-color:var(--gold)}
-    .news-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-    .news-msg{font-size:12.5px;min-height:16px;margin:10px 2px 0;color:var(--gold)}
-    .news-note{font-size:11px;color:var(--text-dim);margin-top:10px}
     @media(max-width:680px){.news-card{grid-template-columns:1fr}.news-thumb{min-height:0}}
 
     /* ===== フッター ===== */
@@ -291,21 +285,14 @@
       <div class="free-note">登録・ご利用開始は無料です</div>
     </section>
 
-    <!-- メールマガジン導線（アプリ登録の前に、まずメールだけでも） -->
+    <!-- メールマガジン紹介（アプリ無料登録に含まれる案内・別導線ではない） -->
     <section class="news-sec">
       <div class="news-card">
         <img class="news-thumb" src="https://drive.google.com/thumbnail?id=1KrkzQY3xENKJv3XvUNo4CHIl4IBhSiLE&sz=w1200" alt="消えないマーケティング｜7日間無料レター" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='https://drive.google.com/uc?export=view&id=1KrkzQY3xENKJv3XvUNo4CHIl4IBhSiLE';">
         <div class="news-body">
-          <p class="news-over">アプリ登録の前に、まずはメールだけでも</p>
+          <p class="news-over">無料登録すると、もれなく</p>
           <h3 class="news-title">消えないマーケティング<span>7日間無料レター</span></h3>
-          <p class="news-lead">流行が変わっても効き続ける、原理原則と行動経済学。7日間、1通ずつお届けします。<br><b>LINE登録は不要です。メールアドレスだけで受け取れます。</b></p>
-          <form class="news-form" id="newsLetterForm" novalidate>
-            <input type="text" name="website" class="news-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <input type="email" name="email" class="news-input" placeholder="メールアドレス" autocomplete="email" required>
-            <button type="submit" class="btn btn-primary">無料で受け取る →</button>
-          </form>
-          <p class="news-msg" id="newsLetterMsg"></p>
-          <p class="news-note">※ いつでも1クリックで配信解除できます。</p>
+          <p class="news-lead">流行が変わっても効き続ける、原理原則と行動経済学。上の無料登録をすると、この7日間メール講座も自動でお届けします。<br><b>LINE登録は不要。メールアドレスだけで受け取れます。</b></p>
         </div>
       </div>
     </section>
@@ -322,38 +309,5 @@
     </div>
   </footer>
 
-  <script>
-  (function(){
-    var form = document.getElementById('newsLetterForm');
-    if(!form) return;
-    var msg = document.getElementById('newsLetterMsg');
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      if(form.website.value) return;   // ハニーポット（bot対策）
-      var email = (form.email.value || '').trim().toLowerCase();
-      if(!email || email.indexOf('@') < 0){ msg.textContent = 'メールアドレスを入力してください。'; return; }
-      var btn = form.querySelector('button');
-      btn.disabled = true; msg.textContent = '登録中…';
-      fetch('https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec', {
-        method: 'POST',
-        body: new URLSearchParams({ action: 'letter_subscribe', email: email })
-      })
-        .then(function(r){ return r.json(); })
-        .then(function(res){
-          if(res && res.ok){
-            form.style.display = 'none';
-            msg.textContent = '✓ ご登録ありがとうございます！まもなく1通目が届きます。';
-          } else {
-            btn.disabled = false;
-            msg.textContent = '登録に失敗しました。時間をおいて再度お試しください。';
-          }
-        })
-        .catch(function(){
-          btn.disabled = false;
-          msg.textContent = '通信エラーが発生しました。時間をおいて再度お試しください。';
-        });
-    });
-  })();
-  </script>
 </body>
 </html>
