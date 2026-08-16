@@ -1917,16 +1917,20 @@ a{text-decoration:none}
 </div>
 
 <!-- ===== メール配信の再開のご案内（配信を停止している方だけに出る） ===== -->
+<style>
+  /* ゲート表示（無料会員でメール配信が停止されている場合）＝閉じられないようにする */
+  .offer-modal.mr-gate .offer-x, .offer-modal.mr-gate .offer-later{ display:none }
+</style>
 <div class="offer-modal" id="mailResumeModal" role="dialog" aria-modal="true" aria-label="メール配信のご案内">
   <div class="offer-sheet">
     <button class="offer-x" id="mrClose" aria-label="閉じる">×</button>
-    <div class="offer-ico">📩</div>
-    <div class="offer-title">メールの配信が停止されています</div>
-    <div class="offer-sub">
+    <div class="offer-ico" id="mrIco">📩</div>
+    <div class="offer-title" id="mrTitle">メールの配信が停止されています</div>
+    <div class="offer-sub" id="mrSub">
       新しい講義やライブ配信のご案内が、いまお手元に届かない状態です。<br>
-      無料でのご利用は、メール配信の受信が条件となっています（<button type="button" class="lg-inline" data-legal="terms">利用規約</button> 第3条）。
+      エルラボ＋は、メール配信と会員情報を連携させて動いています（<button type="button" class="lg-inline" data-legal="terms">利用規約</button> 第3条）。
     </div>
-    <ul class="offer-list">
+    <ul class="offer-list" id="mrList">
       <li>🎥 新しい講義が公開されたときのお知らせ</li>
       <li>📡 オンライン勉強会（ライブ配信）のご案内</li>
       <li>✍️ メンバー限定のシークレットコラム</li>
@@ -2911,6 +2915,12 @@ async function applyTierAndEnter(email, closeFn){
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
   saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, subActive: tier.subActive, mailBlocked: !!tier.mailBlocked, registered:true });
+  if(isMailGated(tier)){   // ★無料会員でメール配信が停止されている場合は、ここで止めて再開の導線を出す（有料の方は対象外）
+    if(closeFn) closeFn();
+    hideAuthLoading();
+    showMailGate();
+    return;
+  }
   try{ fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"touch_login", email }) }); }catch(_e){}   // 最終ログイン日時を記録（名簿に「最終ログイン」列がある時）
   if(closeFn) closeFn();
   hideAuthLoading();    // ローディングを消してオープニングへ
@@ -2942,7 +2952,8 @@ async function refreshSession(force){
       if(curCourse != null) select(curCourse, curVideo);
       showToast("会員情報を最新にしました");
     }
-    maybeShowMailResume();   // 起動・復帰時にも、メール配信を止めている方には再開のご案内
+    // 起動・復帰時のチェック。無料会員で配信停止ならログインを止め、それ以外は再開のご案内だけ出す
+    if(isMailGated(SESSION)) showMailGate(); else maybeShowMailResume();
   }catch(e){ /* 通信失敗時はキャッシュのまま続行 */ }
 }
 async function doLogin(){
@@ -4412,6 +4423,37 @@ function closeWatchOffer(){ const m=document.getElementById("offerModal"); if(m)
  * 無料でのご利用はメール配信の受信が条件（利用規約 第3条）。
  * 「止めたつもりがなかった」方を拾うための案内で、強制はしない（閉じられる）。 */
 const MR_SNOOZE_KEY = "lmine_mailresume_snooze";
+let MR_GATE = false;   // true＝ログインを止めている状態（閉じられない）
+
+/* 制限の対象かどうか。無料会員だけが対象で、有料の方は絶対に止めない。
+ * 対象＝メール配信が停止 かつ サブスクでない かつ タグを1つも持っていない（＝購入歴なし・VIPでもadminでもない） */
+function isMailGated(t){
+  return !!(t && t.mailBlocked) && !t.active && !t.subActive && !((t.tags || []).length);
+}
+
+/* ログインを止めて、再開の導線だけを見せる */
+function showMailGate(){
+  MR_GATE = true;
+  const m = document.getElementById("mailResumeModal");
+  if(!m) return;
+  const ico = document.getElementById("mrIco");
+  const ti  = document.getElementById("mrTitle");
+  const sub = document.getElementById("mrSub");
+  const li  = document.getElementById("mrList");
+  const go  = document.getElementById("mrResume");
+  if(ico) ico.textContent = "📩";
+  if(ti)  ti.textContent  = "メール配信が停止されています";
+  if(sub) sub.innerHTML   = 'エルラボ＋は、メール配信と会員情報を連携させて動いています。'
+                          + '<br>配信を停止されると会員情報が停止状態となり、ログインができません。'
+                          + '<br><br>下のボタンから配信を再開すると、そのままご利用いただけます。'
+                          + '<br><span style="opacity:.75;font-size:.92em">（'
+                          + '<button type="button" class="lg-inline" data-legal="terms">利用規約</button> 第3条）</span>';
+  if(li)  li.hidden = true;
+  if(go)  go.textContent = "配信を再開してログインする";
+  m.classList.add("mr-gate");
+  m.classList.add("show");
+}
+
 function maybeShowMailResume(){
   if(!(SESSION && SESSION.email && SESSION.mailBlocked)) return;
   try{
@@ -4438,6 +4480,14 @@ async function resumeMail(){
     if(res && res.ok){
       saveSession(Object.assign({}, SESSION, { mailBlocked:false }));
       closeMailResume(0);
+      if(MR_GATE){   // ログインを止めていた場合は、そのまま入っていただく
+        MR_GATE = false;
+        const m = document.getElementById("mailResumeModal");
+        if(m) m.classList.remove("mr-gate");
+        showToast("配信を再開しました。ようこそ！");
+        await applyTierAndEnter(email);
+        return;
+      }
       showToast("メールの配信を再開しました。");
     } else {
       showToast("再開できませんでした。時間をおいてお試しください。");
