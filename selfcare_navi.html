@@ -1116,7 +1116,7 @@ function wireOnboarding(){
     inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!btn.disabled){btn.click();}});
     btn.addEventListener('click',function(){
       const v=inp.value.trim();if(!v)return;
-      state.name=v;persistName(v);
+      state.name=v;persistName(v);applyPersonalization();
       goScreen(1);renderWelcome();
     });
   }
@@ -1293,6 +1293,13 @@ function sendRemote(){
   }catch(e){}
 }
 function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function nameOrYou(withSan){const s=state.name||(loadStored()&&loadStored().name);if(!s)return withSan?'あなた':'あなた';return withSan?s+'さん':s;}
+function applyPersonalization(){
+  const you=nameOrYou(true);
+  const s2=document.getElementById('s2-title');if(s2)s2.innerHTML='今日の'+you+'を、<br><em>聞かせてください。</em>';
+  const s3=document.getElementById('s3-title');if(s3)s3.innerHTML=you+'に<br><em>合いやすい方向性</em>';
+  const th=document.querySelector('#typeSection .h2-serif');if(th)th.textContent=you+'の体質タイプ';
+}
 function dateKeyOffset(baseKey,offsetDays){const base=new Date(baseKey+'T00:00:00');const target=new Date(base.getTime()+offsetDays*86400000);return target.getFullYear()+'-'+String(target.getMonth()+1).padStart(2,'0')+'-'+String(target.getDate()).padStart(2,'0');}
 function getOverride(){const params=new URLSearchParams(location.search);if(params.get('admin')!=='1')return null;const d=parseInt(params.get('day'),10);if(d>=1&&d<=5)return d;return null;}
 function computeDay(){const override=getOverride();const stored=getStored();const first=new Date(stored.firstVisitKey+'T00:00:00');const today=new Date(todayKey()+'T00:00:00');const dayNumber=Math.max(1,Math.floor((today-first)/86400000)+1);const effective=override||dayNumber;return{actual:dayNumber,effective:effective,display:Math.min(effective,TOTAL_DAYS),showOffer:effective>=TOTAL_DAYS,isOverride:!!override};}
@@ -1347,10 +1354,10 @@ function compute(){
   const tagLabels=state.tags.map(function(id){return(STATE_TAGS.find(function(t){return t.id===id;})||{}).label;}).filter(Boolean);
   let summaryText,summaryCk;
   if(tagLabels.length===0){
-    summaryText='今日は体調感覚を選んでいないので、あなたの体質タイプ「'+type.label+'」に <em>合いやすい方向性</em> を優先してご提案しています。';
+    summaryText='今日は体調感覚を選んでいないので、'+nameOrYou(true)+'の体質タイプ「'+type.label+'」に <em>合いやすい方向性</em> を優先してご提案しています。';
     summaryCk='';
   }else{
-    summaryText='今日のあなたは <em>'+tagLabels.slice(0,3).join('・')+'</em> が少し強めのようです。'+type.summarySpark+'。';
+    summaryText='今日の'+nameOrYou(true)+'は <em>'+tagLabels.slice(0,3).join('・')+'</em> が少し強めのようです。'+type.summarySpark+'。';
     summaryCk='· '+tagLabels.slice(0,3).join('・');
   }
   state.result={rec1:rec1,rec2:rec2,avoidCat:avoidCat,avoidReason:avoidReason,summaryText:summaryText,summaryCk:summaryCk};
@@ -1541,19 +1548,21 @@ function showDayComplete(){
   const msg=$('#dayCompleteMsg');
   const cta=$('#dayCompleteCta');
   if(!wrap||!cta)return;
+  const who=nameOrYou(true);
+  const prefix=state.name?who+'、':'';
   if(day===1){
     emoji.textContent='🌿';
-    title.textContent='今日の記録、ありがとう';
+    title.textContent=prefix+'今日の記録、ありがとう';
     msg.innerHTML='今日はここまでで大丈夫です。<br>また明日、ここでお待ちしています🌸<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
     cta.style.display='none';
   }else if(day===2){
     emoji.textContent='🌸';
-    title.textContent='今日もお疲れさま';
+    title.textContent=prefix+'今日もお疲れさま';
     msg.innerHTML='明日はいよいよ最終日。<br>今日感じた体の声を、明日まで覚えておいてくださいね🌷<br><br><span class="dc-hint">このまま画面を閉じてくださって大丈夫です</span>';
     cta.style.display='none';
   }else{
     emoji.textContent='🌷';
-    title.textContent='3日間、本当にお疲れさま';
+    title.textContent=prefix+'3日間、本当にお疲れさま';
     msg.innerHTML='3日で見えた「合いやすい方向性」は、<br>体質地図のほんの入り口。<br>その続きを、ぜひ一緒にお話しませんか？';
     cta.textContent='予約カレンダーを見る';
     cta.style.display='';
@@ -1800,6 +1809,7 @@ async function init(){
     if(todayHist.review)state.review=todayHist.review;
   }
   updateDayPill();
+  applyPersonalization();
   renderTypes();
   renderChips();
   wireOnboarding();
