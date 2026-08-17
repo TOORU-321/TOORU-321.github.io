@@ -1192,6 +1192,24 @@ function captureLineUid(){
     }
   }catch(e){}
 }
+function typeIdFromLabel(label){
+  if(!label)return null;
+  for(var id in TYPES){
+    if(TYPES[id] && TYPES[id].label === label) return id;
+  }
+  return null;
+}
+function fetchServerProfile(lineUid){
+  return new Promise(function(resolve){
+    if(!ENDPOINT||!lineUid)return resolve(null);
+    try{
+      fetch(ENDPOINT+'?action=lookup_user&uid='+encodeURIComponent(lineUid))
+        .then(function(r){return r.json();})
+        .then(function(d){resolve(d&&d.found?d:null);})
+        .catch(function(){resolve(null);});
+    }catch(e){resolve(null);}
+  });
+}
 function captureTypeFromUrl(){
   try{
     const params=new URLSearchParams(location.search);
@@ -1745,10 +1763,31 @@ function renderDashboardData(rows){
   const pad=function(n){return String(n).padStart(2,'0');};
   document.getElementById('dashUpdated').textContent='最終更新 '+pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
 }
-function init(){
+async function init(){
   if(handleResetParam())return;
   captureLineUid();
   captureTypeFromUrl();
+  // LINE UIDはあるがローカルに名前が無い場合 → サーバー（スプシ）から既存プロフィールを復元
+  // これで LINE WebView ⇔ Safari の切替で毎回オンボードに戻る問題を回避
+  let preloadStored=getStored();
+  if(preloadStored.lineUid && !preloadStored.name && ENDPOINT){
+    try{document.body.style.visibility='hidden';}catch(e){}
+    try{
+      const profile=await fetchServerProfile(preloadStored.lineUid);
+      if(profile && profile.name){
+        const s=getStored();
+        s.name=profile.name;
+        if(profile.typeLabel){
+          const tid=typeIdFromLabel(profile.typeLabel);
+          if(tid)s.type=tid;
+        }
+        // サーバー側の初回訪問日を優先（Day計算が正しく戻るため）
+        if(profile.firstVisit)s.firstVisitKey=profile.firstVisit;
+        saveStored(s);
+      }
+    }catch(e){}
+    try{document.body.style.visibility='visible';}catch(e){}
+  }
   state.day=computeDay();
   const stored=getStored();
   if(stored.name)state.name=stored.name;
