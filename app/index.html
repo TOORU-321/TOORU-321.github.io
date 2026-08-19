@@ -1770,8 +1770,12 @@ a{text-decoration:none}
     <button class="lm-x" id="newsClose" aria-label="閉じる">×</button>
     <div class="news-head">
       <div class="lm-h">お知らせ</div>
-      <button class="news-new" id="newsNew" hidden>＋ 新規投稿</button>
+      <div style="display:flex;gap:8px">
+        <button class="news-new" id="newsDraftsBtn" hidden style="background:none;border:1px solid var(--gold);color:var(--gold)">📝 下書き・予約</button>
+        <button class="news-new" id="newsNew" hidden>＋ 新規投稿</button>
+      </div>
     </div>
+    <div class="news-list" id="newsDraftsList" hidden></div>
     <div class="comm-bar" id="commBar" hidden>
       <div class="comm-item"><span class="comm-dot"></span><span class="comm-n" id="commReg">–</span><span class="comm-l">名 が登録中</span></div>
       <div class="comm-sep"></div>
@@ -1813,6 +1817,16 @@ a{text-decoration:none}
       <input type="text" id="nf-popcta" placeholder="詳しく見る →">
       <label>ポップのボタンのリンク先（任意・空欄ならアプリのお知らせへ）</label>
       <input type="text" id="nf-popurl" placeholder="https://…">
+      <label>公開タイミング</label>
+      <select id="nf-status">
+        <option value="">今すぐ公開</option>
+        <option value="下書き">下書き保存（非公開のまま）</option>
+        <option value="予約">日時を指定して予約公開</option>
+      </select>
+      <div id="nf-sched-wrap" hidden>
+        <label>公開日時（この日時になったら自動で公開されます）</label>
+        <input type="datetime-local" id="nf-scheduledat">
+      </div>
       <div class="nf-btns">
         <button class="nf-save" id="nfSave">保存</button>
         <button class="nf-cancel" id="nfCancel">キャンセル</button>
@@ -3445,7 +3459,7 @@ function openLegal(key){
 }
 function closeLegal(){ document.getElementById("legalModal").hidden = true; }
 function fmtNewsDate(s){ if(!s) return ""; const d=new Date(s); if(isNaN(d.getTime())) return String(s); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); hideNewsForm(); loadNews(); maybeShowPwaHint(); loadCommunity(); }
+function openNews(){ document.getElementById("newsModal").hidden = false; document.getElementById("newsNew").hidden = !isAdmin(); document.getElementById("newsDraftsBtn").hidden = !isAdmin(); document.getElementById("newsDraftsList").hidden = true; hideNewsForm(); loadNews(); maybeShowPwaHint(); loadCommunity(); }
 // コミュニティ人数（登録者数・メンバー数＝VIP）を取得して表示
 let _commLoaded = false;
 // お知らせ上部「◯名が登録中／◯名がメンバー」の人数表示：項目ごとにON/OFF切替できる（trueで表示・falseで非表示）
@@ -3638,7 +3652,7 @@ function newsCompactEl(n){
 }
 // ===== お知らせ新規投稿：入力中の破棄防止（未保存ガード＋自動下書き保存） =====
 // 「＋新規投稿」や他の項目の「編集」を押した時、入力中の内容が無警告で消えていた事故を防ぐ。
-const NF_FIELDS = ["nf-id","nf-date","nf-title","nf-body","nf-image","nf-imgpos","nf-options","nf-deadline","nf-closedmsg","nf-bar","nf-audience","nf-pub","nf-pop","nf-popcta","nf-popurl"];
+const NF_FIELDS = ["nf-id","nf-date","nf-title","nf-body","nf-image","nf-imgpos","nf-options","nf-deadline","nf-closedmsg","nf-bar","nf-audience","nf-pub","nf-pop","nf-popcta","nf-popurl","nf-status","nf-scheduledat"];
 const NF_DRAFT_KEY = "lmine_news_draft_v1";
 let nfDirty = false;
 function nfSnapshot(){ const o={}; NF_FIELDS.forEach(id=>{ const el=document.getElementById(id); if(!el) return; o[id]=(el.type==="checkbox")?el.checked:el.value; }); return o; }
@@ -3651,6 +3665,8 @@ let _nfSaveTimer = null;
   const form = document.getElementById("newsForm");
   if(!form) return;
   form.addEventListener("input", () => { nfDirty = true; clearTimeout(_nfSaveTimer); _nfSaveTimer = setTimeout(nfSaveDraft, 500); });
+  const statusSel = document.getElementById("nf-status");
+  if(statusSel) statusSel.addEventListener("change", () => { document.getElementById("nf-sched-wrap").hidden = (statusSel.value !== "予約"); });
 })();
 function newNews(){
   if(!nfConfirmDiscard()) return;
@@ -3665,13 +3681,17 @@ function newNews(){
       }
     }
   }catch(_e){}
-  if(!restored){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; document.getElementById("nf-deadline").value=""; document.getElementById("nf-closedmsg").value=""; document.getElementById("nf-bar").checked=false; }
+  if(!restored){ document.getElementById("nf-id").value=""; document.getElementById("nf-date").value=todayStr(); document.getElementById("nf-title").value=""; document.getElementById("nf-body").value=""; document.getElementById("nf-image").value=""; document.getElementById("nf-imgpos").checked=false; document.getElementById("nf-options").value=""; document.getElementById("nf-audience").value="全員"; document.getElementById("nf-pub").checked=true; document.getElementById("nf-pop").checked=false; document.getElementById("nf-popcta").value=""; document.getElementById("nf-popurl").value=""; document.getElementById("nf-deadline").value=""; document.getElementById("nf-closedmsg").value=""; document.getElementById("nf-bar").checked=false; document.getElementById("nf-status").value=""; document.getElementById("nf-scheduledat").value=""; }
+  document.getElementById("nf-sched-wrap").hidden = (document.getElementById("nf-status").value !== "予約");
   nfDirty = false;
   showNewsForm();
 }
 function editNews(n){
   if(!nfConfirmDiscard()) return;
   document.getElementById("nf-id").value=n.id; document.getElementById("nf-date").value=n.date; document.getElementById("nf-title").value=n.title; document.getElementById("nf-body").value=n.body; var _im=String(n.image||""); var _below=/^below\|/i.test(_im); document.getElementById("nf-image").value=_im.replace(/^below\|/i,""); document.getElementById("nf-imgpos").checked=_below; document.getElementById("nf-options").value=(n.options||[]).join(","); document.getElementById("nf-audience").value=(n.audience||"全員"); document.getElementById("nf-pub").checked=(n.pub!==false); document.getElementById("nf-pop").checked=(n.pop===true||String(n.pop).toUpperCase()==="TRUE"); document.getElementById("nf-popcta").value=(n.popCta||""); document.getElementById("nf-popurl").value=(n.popUrl||""); document.getElementById("nf-deadline").value=(n.joinDeadline?String(n.joinDeadline).slice(0,16):""); document.getElementById("nf-closedmsg").value=(n.joinClosedMsg||""); document.getElementById("nf-bar").checked=(n.barNotice===true||String(n.barNotice).toUpperCase()==="TRUE");
+  document.getElementById("nf-status").value=(n.status==="下書き"||n.status==="予約") ? n.status : "";
+  document.getElementById("nf-scheduledat").value=(n.scheduledAt?String(n.scheduledAt).slice(0,16):"");
+  document.getElementById("nf-sched-wrap").hidden = (n.status !== "予約");
   nfDirty = false;
   showNewsForm(); document.getElementById("newsForm").scrollIntoView({behavior:"smooth"});
 }
@@ -3961,7 +3981,7 @@ async function saveNews(){
   const msg = document.getElementById("nfMsg");
   if(!document.getElementById("nf-title").value.trim()){ msg.textContent="見出しを入力してください。"; return; }
   const id = document.getElementById("nf-id").value;
-  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value, deadline:document.getElementById("nf-deadline").value, closedmsg:document.getElementById("nf-closedmsg").value, bar:document.getElementById("nf-bar").checked ? "TRUE" : "FALSE" });
+  const body = new URLSearchParams({ action: id ? "news_edit" : "news_add", email:(SESSION && SESSION.email)||"", id, date:document.getElementById("nf-date").value, title:document.getElementById("nf-title").value, text:document.getElementById("nf-body").value, image:((document.getElementById("nf-imgpos").checked && document.getElementById("nf-image").value.trim()) ? "below|" : "") + document.getElementById("nf-image").value.trim(), options:document.getElementById("nf-options").value, audience:document.getElementById("nf-audience").value, pub:document.getElementById("nf-pub").checked ? "TRUE" : "FALSE", pop:document.getElementById("nf-pop").checked ? "TRUE" : "FALSE", popcta:document.getElementById("nf-popcta").value, popurl:document.getElementById("nf-popurl").value, deadline:document.getElementById("nf-deadline").value, closedmsg:document.getElementById("nf-closedmsg").value, bar:document.getElementById("nf-bar").checked ? "TRUE" : "FALSE", status:document.getElementById("nf-status").value, scheduledAt:document.getElementById("nf-scheduledat").value });
   msg.textContent = "保存中…";
   try{
     const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
@@ -3978,6 +3998,28 @@ document.getElementById("newsNew").addEventListener("click", newNews);
 document.getElementById("nfSave").addEventListener("click", saveNews);
 document.getElementById("nfCancel").addEventListener("click", () => { if(!nfConfirmDiscard()) return; nfClearDraft(); nfDirty=false; hideNewsForm(); });
 document.getElementById("newsModal").addEventListener("click", (e)=>{ if(e.target.id==="newsModal") closeNews(); });
+// 管理者：下書き・予約中のお知らせ一覧（クリックで開閉・項目クリックで編集フォームへ）
+async function toggleNewsDrafts(){
+  const box = document.getElementById("newsDraftsList");
+  if(!box.hidden){ box.hidden = true; return; }
+  box.hidden = false;
+  box.innerHTML = COL_LOADING;
+  try{
+    const data = await fetch(GAS_URL + "?action=news_drafts&email=" + encodeURIComponent((SESSION && SESSION.email) || "") + "&_=" + Date.now()).then(r=>r.json());
+    const items = (data && data.items) || [];
+    if(!items.length){ box.innerHTML = `<div class="vstate">下書き・予約中のお知らせはありません。</div>`; return; }
+    box.innerHTML = "";
+    items.forEach(n => {
+      const el = document.createElement("div");
+      el.className = "news-compact";
+      const tag = (n.status === "予約") ? `予約：${escapeHtml(String(n.scheduledAt||"").replace("T"," ").slice(0,16))}` : "下書き";
+      el.innerHTML = `<span class="nc-date">${escapeHtml(n.date)}</span><span class="nc-title">${escapeHtml(n.title || "(無題)")}</span><span class="nc-badge member">${tag}</span><span class="nc-arrow">›</span>`;
+      el.addEventListener("click", () => { box.hidden = true; editNews(n); });
+      box.appendChild(el);
+    });
+  }catch(e){ box.innerHTML = `<div class="vstate">読み込めませんでした。</div>`; }
+}
+document.getElementById("newsDraftsBtn").addEventListener("click", toggleNewsDrafts);
 
 document.getElementById("entryLogin").addEventListener("click", openLogin);
 document.getElementById("entryGuest").addEventListener("click", () => {
