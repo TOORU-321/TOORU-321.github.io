@@ -283,8 +283,22 @@ def convert_body(body, sign, readable_breaks=False):
                     inner.append(f'<p>{inline(l.strip())}</p>')
             out.append('<div class="flowbox">' + "".join(inner) + '</div>')
             continue
-        # 通常まとまり。新規コラムは最大3行で段落を分け、視覚的な余白を作る。
-        chunks = [lines[i:i+3] for i in range(0, len(lines), 3)] if readable_breaks else [lines]
+        # 通常まとまり。狭いスマホ幅（日本語約18字/行）で見た目が最大4行になるよう分割する。
+        # <br> の個数だけでは、長い1行が端末上で折り返して文字の壁になるため、文字数も見る。
+        if readable_breaks:
+            chunks, chunk, visual_lines = [], [], 0
+            for line in lines:
+                plain = re.sub(r'[*_]', '', line.strip())
+                line_visual = max(1, (len(plain) + 17) // 18)
+                if chunk and visual_lines + line_visual > 4:
+                    chunks.append(chunk)
+                    chunk, visual_lines = [], 0
+                chunk.append(line)
+                visual_lines += line_visual
+            if chunk:
+                chunks.append(chunk)
+        else:
+            chunks = [lines]
         for chunk in chunks:
             out.append("<p>" + "<br>".join(inline(l.strip()) for l in chunk) + "</p>")
     if sign:
