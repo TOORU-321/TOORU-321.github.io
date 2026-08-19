@@ -228,7 +228,10 @@ def inline(s):
     s = re.sub(r'\x00(\d+)\x00', lambda m: stash[int(m.group(1))], s)
     return s
 
-def convert_body(body, sign):
+def convert_body(body, sign, readable_breaks=False):
+    # 見出し・区切りは、原稿側に空行がなくても独立ブロックとして扱う。
+    # readable_breaks は長い改行列を最大3行の段落へ分け、文字の壁を防ぐ。
+    body = re.sub(r'(?m)^(\*\*\*|## .+|> .+)$', r'\n\1\n', body)
     blocks = re.split(r'\n[ \t]*\n', body.strip("\n"))
     out = []
     for blk in blocks:
@@ -239,6 +242,11 @@ def convert_body(body, sign):
         # セクション区切り
         if raw == "***":
             out.append('<p class="sec">&#10022;</p>')
+            continue
+        # 引用・結論ボックス（> で始まる行）
+        if all(l.lstrip().startswith("> ") for l in lines):
+            quote = "<br>".join(inline(l.lstrip()[2:].strip()) for l in lines)
+            out.append(f'<blockquote class="key-message">{quote}</blockquote>')
             continue
         # オプトイン案内マーカー → 集約LPへのリンク
         if raw == "[準備中]":
@@ -275,8 +283,10 @@ def convert_body(body, sign):
                     inner.append(f'<p>{inline(l.strip())}</p>')
             out.append('<div class="flowbox">' + "".join(inner) + '</div>')
             continue
-        # 通常まとまり（<br>で詰める）
-        out.append("<p>" + "<br>".join(inline(l.strip()) for l in lines) + "</p>")
+        # 通常まとまり。新規コラムは最大3行で段落を分け、視覚的な余白を作る。
+        chunks = [lines[i:i+3] for i in range(0, len(lines), 3)] if readable_breaks else [lines]
+        for chunk in chunks:
+            out.append("<p>" + "<br>".join(inline(l.strip()) for l in chunk) + "</p>")
     if sign:
         out.append(f'<p class="sign">{inline(sign)}</p>')
     return "\n      ".join(out)
@@ -365,7 +375,7 @@ def render_article(c, cols):
     else:
         hero_block = ''
     tags = "".join(f'<a href="#">{t}</a>' for t in c["tags"])
-    body = convert_body(c["body"], c.get("sign", ""))
+    body = convert_body(c["body"], c.get("sign", ""), c.get("readable_breaks", "").lower() == "true")
     title_html = c.get("title_html", html.escape(c["title"]))
     return f'''<!DOCTYPE html>
 <html lang="ja">

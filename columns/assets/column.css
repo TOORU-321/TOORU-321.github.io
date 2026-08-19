@@ -87,6 +87,8 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body .flowbox p{margin:.3em 0;line-height:1.5}
 .body .flow{text-align:center;color:var(--gold);margin:.1em 0;font-size:14px;line-height:1.2}
 .body .sec{text-align:center;color:var(--gold-2);letter-spacing:.5em;margin:2.6em 0 2.4em;font-size:12px}
+.body .key-message{margin:2.6em 0;padding:1.35em 1.5em;border-left:4px solid var(--gold);background:linear-gradient(135deg,#fbf8f1,#f4ecdc);font-family:var(--mincho);font-size:clamp(18px,2.5vw,22px);font-weight:700;line-height:1.8;color:var(--ink);letter-spacing:.015em}
+.body .key-message strong{color:var(--gold)}
 .body .step-h{margin:2.35em 0 .7em;display:flex;gap:11px;align-items:baseline}
 .body .step-h .lab{font-family:var(--serif-en);color:var(--gold);font-size:15px;letter-spacing:.08em;white-space:nowrap}
 .body .step-h b{font-family:var(--mincho);font-weight:700;color:var(--ink)}
