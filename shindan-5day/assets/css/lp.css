@@ -1,0 +1,522 @@
+@charset "utf-8";
+/* lp.css : 参加表明LP専用のレイアウト。
+ * 色・書体・ボタン・タグ・ルール一覧は app.css のトークンと部品をそのまま使う。
+ * アプリより横幅を広く取り、ヒーローと番号付きセクションで視線を作る。
+ */
+
+.lp-body { background-attachment: fixed; }
+
+/* --- 診断結果を経ていない人への案内 ------------------------------------- */
+.lp-gate {
+  min-height: 100vh; display: grid; place-items: center; padding: 24px;
+}
+.lp-gate__inner {
+  width: min(100%, 420px); text-align: center;
+  padding: 40px 26px; border: 1px solid rgba(238, 214, 163, .18); border-radius: 24px;
+  background: linear-gradient(145deg, rgba(19, 23, 33, .78), rgba(10, 13, 20, .58));
+  box-shadow: var(--shadow);
+}
+.lp-gate__eyebrow {
+  margin: 0; font-size: 14px; color: var(--gold-2); letter-spacing: .18em; text-indent: .18em;
+}
+.lp-gate__title {
+  margin: 14px 0 0; font-family: var(--mincho); font-size: 22px; font-weight: 700; color: #fff;
+}
+.lp-gate__text { margin: 14px 0 24px; font-size: 15px; color: var(--ink-2); text-align: left; }
+.lp-gate__btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+
+/* --- 全体 ---------------------------------------------------------------- */
+.lp { max-width: 620px; margin: 0 auto; padding: 0 20px 72px; }
+
+/* 本文は句点ごとに段落へ分け、行間と段落間を広く取る */
+.lp-prose { margin: 0; }
+.lp-prose__line {
+  margin: 0 0 18px; font-size: 16px; line-height: 2.15;
+  color: var(--ink-2); letter-spacing: .02em;
+}
+.lp-prose__line:last-child { margin-bottom: 0; }
+
+@media (min-width: 720px) {
+  .lp { padding: 0 24px 96px; }
+}
+
+/* --- ヒーロー ------------------------------------------------------------ */
+.lp-hero {
+  position: relative; overflow: hidden;
+  margin: 0 -20px 76px; padding: 68px 24px 60px;
+  text-align: center;
+  background:
+    radial-gradient(620px 300px at 50% 0%, rgba(227, 195, 129, .13), transparent 68%),
+    linear-gradient(180deg, rgba(19, 23, 33, .9), rgba(9, 12, 18, 0));
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 720px) {
+  .lp-hero { margin: 0 -24px 92px; padding: 92px 30px 76px; }
+}
+.lp-hero__inner { max-width: 520px; margin: 0 auto; }
+.lp-hero__eyebrow {
+  margin: 0; font-size: 14px; color: var(--ink-soft);
+  letter-spacing: .24em; text-indent: .24em;
+}
+.lp-hero__title {
+  margin: 16px 0 0; font-family: var(--mincho); font-weight: 800;
+  font-size: clamp(26px, 6.4vw, 40px); line-height: 1.45; letter-spacing: .1em; color: #fff;
+}
+.lp-hero__tagline {
+  margin: 14px 0 0; font-size: 15px; color: var(--gold-2); letter-spacing: .04em;
+}
+.lp-hero__lead { margin: 24px 0 0; text-align: left; }
+.lp-hero__lead .lead-line { margin: 0 0 8px; font-size: 15px; color: var(--ink-2); }
+.lp-hero__lead .lead-line:last-child { margin-bottom: 0; }
+.lp-hero__rule {
+  width: 64px; height: 1px; margin: 32px auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold-2), transparent);
+}
+
+/* --- あなたの結果（引き継ぎ表示） ---------------------------------------- */
+.lp-hero__score { margin: 26px 0 0; }
+.lp-score {
+  display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 18px 26px; border: 1px solid var(--line-2); border-radius: 16px;
+  background: rgba(227, 195, 129, .06);
+}
+.lp-score__caption { font-size: 14px; color: var(--ink-soft); letter-spacing: .14em; }
+.lp-score__value { font-family: var(--serif-en); line-height: 1; }
+.lp-score__num { font-size: 44px; color: #fff; }
+.lp-score__max { font-size: 16px; color: var(--ink-soft); }
+.lp-score__lowest { font-size: 14px; color: var(--ink-2); }
+
+/* --- セクション ---------------------------------------------------------- */
+.lp-section { margin: 0 0 88px; }
+.lp-section__num {
+  margin: 0; font-family: var(--serif-en); font-size: 16px;
+  color: var(--gold); letter-spacing: .28em;
+}
+.lp-section__title {
+  margin: 10px 0 0; font-family: var(--mincho); font-weight: 700;
+  font-size: clamp(20px, 4.8vw, 26px); line-height: 1.8; letter-spacing: .06em; color: #fff;
+}
+.lp-section__title::after {
+  content: ""; display: block; width: 40px; height: 1px; margin: 20px 0 0;
+  background: linear-gradient(90deg, var(--gold-2), transparent);
+}
+.lp-section__body { margin: 24px 0 0; font-size: 16px; line-height: 2.15; color: var(--ink-2); }
+.lp-section__note { margin: 20px 0 0; font-size: 15px; line-height: 2; color: var(--ink-soft); }
+
+/* --- 完成図（空欄のシート） ---------------------------------------------- */
+.lp-blueprint { margin: 20px 0 0; }
+.lp-sheet { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 12px; }
+.lp-sheet__item {
+  display: flex; gap: 14px; align-items: baseline;
+  padding: 18px 18px; border: 1px dashed var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.lp-sheet__day {
+  flex: 0 0 auto; font-family: var(--serif-en); font-size: 15px;
+  color: var(--gold-2); letter-spacing: .08em;
+}
+.lp-sheet__label { font-family: var(--mincho); font-size: 15px; font-weight: 700; color: var(--ink); }
+
+/* --- ヒーローのCTAと補足 -------------------------------------------------- */
+.lp-hero__subtitle {
+  margin: 14px 0 0; font-size: 15px; color: var(--gold-2); letter-spacing: .1em;
+}
+.lp-hero__body { margin: 34px 0 0; text-align: left; }
+.lp-hero__cta { display: grid; gap: 12px; margin: 36px 0 0; }
+.lp-hero__micro { margin: 18px 0 0; font-size: 14px; color: var(--ink-soft); letter-spacing: .04em; }
+.lp-anchor {
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+}
+
+/* --- 箇条書き ------------------------------------------------------------ */
+.lp-list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 16px; }
+.lp-list__item {
+  position: relative; padding-left: 24px; font-size: 16px; line-height: 1.95; color: var(--ink-2);
+}
+.lp-list__item::before {
+  content: ""; position: absolute; left: 4px; top: 15px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--gold-2);
+}
+.lp-list--notfor .lp-list__item::before {
+  border-radius: 0; height: 1px; width: 10px; left: 2px; background: var(--ink-soft);
+}
+
+.lp-subtitle {
+  margin: 48px 0 0; font-family: var(--mincho); font-size: 16px; font-weight: 700;
+  color: var(--ink-2); letter-spacing: .04em;
+}
+
+/* 診断結果と結びつける一文 */
+.lp-linked {
+  margin: 36px 0 0; padding: 22px 20px; font-size: 16px; line-height: 2.05; color: var(--ink);
+  border-left: 2px solid var(--gold-2); border-radius: 0 12px 12px 0;
+  background: rgba(227, 195, 129, .07);
+}
+
+/* --- 中間CTA -------------------------------------------------------------- */
+.lp-midcta {
+  margin: 0 0 88px; padding: 40px 22px; text-align: center;
+  border: 1px solid var(--line-2); border-radius: 18px;
+  background: rgba(227, 195, 129, .06);
+}
+.lp-midcta__title {
+  margin: 0; font-family: var(--mincho); font-size: 18px; font-weight: 700;
+  color: #fff; letter-spacing: .04em;
+}
+.lp-midcta__body { margin: 18px 0 28px; font-size: 16px; line-height: 2; color: var(--ink-2); }
+
+/* --- 参加前の4項目 -------------------------------------------------------- */
+.lp-before { list-style: none; margin: 28px 0 0; padding: 0; counter-reset: lpb; display: grid; gap: 28px; }
+.lp-before__item {
+  position: relative; padding-left: 38px; counter-increment: lpb;
+}
+.lp-before__item::before {
+  content: counter(lpb); position: absolute; left: 0; top: 2px;
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--line-2); color: var(--gold-2);
+  font-family: var(--serif-en); font-size: 15px;
+  display: grid; place-items: center;
+}
+.lp-before__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
+.lp-before__body { display: block; margin-top: 8px; font-size: 16px; line-height: 1.95; color: var(--ink-2); }
+
+/* --- よくある質問 --------------------------------------------------------- */
+.lp-faq { margin: 28px 0 0; display: grid; gap: 12px; }
+.lp-faq__item {
+  border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.lp-faq__q {
+  cursor: pointer; list-style: none; padding: 14px 16px;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.lp-faq__q::-webkit-details-marker { display: none; }
+.lp-faq__q::before { content: "＋"; color: var(--gold-2); font-weight: 400; }
+.lp-faq__item[open] .lp-faq__q::before { content: "－"; }
+.lp-faq__a { margin: 0; padding: 0 18px 20px; font-size: 16px; line-height: 2; color: var(--ink-2); }
+
+/* --- 設計者プロフィール ---------------------------------------------------- */
+.lp-author .lp-section__body { font-size: 15px; }
+
+/* --- 5日間の流れ --------------------------------------------------------- */
+.lp-days { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 0; }
+.lp-day {
+  position: relative; display: flex; gap: 16px; align-items: baseline;
+  padding: 22px 0 22px 22px; border-left: 1px solid var(--line);
+}
+.lp-day::before {
+  content: ""; position: absolute; left: -4px; top: 31px;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold-2);
+}
+.lp-day:last-child { border-left-color: transparent; }
+.lp-day__num {
+  flex: 0 0 auto; font-family: var(--serif-en); font-size: 16px;
+  color: var(--gold-2); letter-spacing: .08em;
+}
+.lp-day__label { font-family: var(--mincho); font-size: 16px; line-height: 1.8; font-weight: 700; color: var(--ink); }
+
+/* --- 参加表明 ------------------------------------------------------------ */
+.lp-join {
+  margin: 8px -20px 0; padding: 60px 22px 64px;
+  border-top: 1px solid var(--line);
+  background:
+    radial-gradient(560px 260px at 50% 100%, rgba(227, 195, 129, .12), transparent 70%),
+    linear-gradient(0deg, rgba(19, 23, 33, .9), rgba(9, 12, 18, 0));
+}
+@media (min-width: 720px) {
+  .lp-join { margin: 8px -24px 0; padding: 72px 30px 76px; }
+}
+.lp-join__inner { max-width: 460px; margin: 0 auto; }
+.lp-join__title {
+  margin: 0; font-family: var(--mincho); font-weight: 700;
+  font-size: clamp(20px, 5vw, 26px); letter-spacing: .06em; color: #fff; text-align: center;
+}
+.lp-join__note { margin: 16px 0 0; font-size: 15px; line-height: 1.9; color: var(--ink-soft); text-align: center; }
+.lp-join__label { margin: 0 0 10px; font-size: 15px; font-weight: 700; color: var(--ink); }
+.lp-join__reminder { margin: 40px 0 0; }
+.lp-join__cta { display: grid; gap: 12px; margin: 36px 0 0; }
+.lp-join__status { margin: 12px 0 0; font-size: 14px; color: var(--ok); text-align: center; min-height: 1.5em; }
+
+/* --- フッター ------------------------------------------------------------ */
+.lp-footer { margin: 40px 0 0; }
+.lp-footer__note { font-size: 14px; color: var(--ink-soft); text-align: center; margin: 14px 0 0; opacity: .75; }
+
+/* --- 狭幅（320px）対応 ---------------------------------------------------- */
+@media (max-width: 359px) {
+  .lp { padding: 0 14px 56px; }
+  .lp-section { margin-bottom: 72px; }
+  .lp-hero { margin: 0 -14px 60px; padding: 54px 16px 48px; }
+  .lp-join { margin: 8px -14px 0; padding: 48px 16px 52px; }
+  .lp-score { padding: 16px 18px; }
+  .lp-score__num { font-size: 38px; }
+}
+
+
+/* --- テキスト型VSL（1メッセージずつ送るカード）--------------------------- */
+.deck { margin: 28px 0 0; }
+
+/* 章見出し：カードが差し替わっても残り、章が変わるときだけ入れ替わる */
+.deck__chapter {
+  margin: 0 0 22px; display: flex; align-items: baseline; gap: 14px;
+  font-family: var(--mincho); font-size: clamp(19px, 5vw, 24px); font-weight: 800;
+  line-height: 1.7; letter-spacing: .04em; color: #fff;
+}
+.deck__chapter-num {
+  flex: 0 0 auto; font-family: var(--serif-en); font-size: 17px; font-weight: 600;
+  color: var(--gold); letter-spacing: .1em; transform: translateY(-2px);
+}
+.deck__chapter.is-appearing { animation: sc-chapter-in .5s ease both; }
+@keyframes sc-chapter-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.deck__stage {
+  position: relative; overflow: hidden;
+  min-height: 260px; display: grid; align-items: center;
+  padding: 32px 22px;
+  border: 1px solid var(--line-2); border-radius: 18px;
+  background:
+    radial-gradient(420px 200px at 50% 0%, rgba(227, 195, 129, .10), transparent 70%),
+    linear-gradient(145deg, rgba(29, 36, 48, .94), rgba(16, 20, 28, .94));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+@media (min-width: 720px) { .deck__stage { min-height: 280px; padding: 40px 30px; } }
+
+/* 高さを測るためだけの層。読み上げにも操作にも出さない */
+.deck__measure {
+  position: absolute; left: 0; top: 0;
+  visibility: hidden; pointer-events: none;
+}
+
+.deck__step { text-align: center; }
+.deck__eyebrow {
+  margin: 0 0 12px; font-family: var(--serif-en); font-size: 16px;
+  color: var(--gold-2); letter-spacing: .22em; text-indent: .22em;
+}
+.deck__title {
+  margin: 0 0 12px; font-family: var(--mincho); font-size: 18px; font-weight: 700;
+  color: #fff; letter-spacing: .05em;
+}
+/* 本文は左揃え（中央揃えだと行末がそろわず、長い文が読みにくいため）*/
+.deck__body {
+  margin: 0; text-align: left; font-family: var(--mincho); font-weight: 700;
+  font-size: clamp(17px, 4.3vw, 20px); line-height: 2;
+  letter-spacing: .05em; color: var(--ink);
+}
+.deck__list {
+  list-style: none; margin: 22px 0 0; padding: 0; text-align: left;
+  display: grid; gap: 12px;
+}
+.deck__list-item {
+  position: relative; padding-left: 20px;
+  font-size: 16px; line-height: 1.9; color: var(--ink-2);
+}
+.deck__list-item::before {
+  content: ''; position: absolute; left: 2px; top: .82em;
+  width: 8px; height: 1px; background: var(--gold);
+}
+.deck__note { margin: 18px 0 0; text-align: left; font-size: 15px; line-height: 1.9; color: var(--ink-soft); }
+.deck__step-cta { margin: 26px 0 0; }
+
+/* ページをめくる感じ：少し右から入って、フワッと出る */
+@keyframes sc-deck-in {
+  from { opacity: 0; transform: translate(14px, 6px); }
+  to   { opacity: 1; transform: none; }
+}
+/* カードそのものは静かに出し、中身を上から順に置いていく */
+.deck__step.is-appearing { animation: sc-deck-fade .3s ease both; }
+.deck__step.is-appearing > * { animation: sc-deck-in .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0ms); }
+.deck__step.is-appearing .deck__list > li { animation: sc-deck-in .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes sc-deck-fade { from { opacity: .4; } to { opacity: 1; } }
+
+.deck__controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin: 20px 0 0;
+}
+.deck__meta { display: flex; align-items: center; gap: 12px; flex: 1 1 120px; }
+.deck__dots { display: flex; gap: 7px; }
+.deck__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1px solid var(--line-2); background: transparent;
+}
+.deck__dot.is-done { background: var(--gold); border-color: var(--gold); }
+.deck__dot.is-current { background: var(--gold-2); border-color: var(--gold-2); transform: scale(1.35); }
+.deck__progress {
+  margin: 0; font-family: var(--serif-en); font-size: 15px;
+  color: var(--ink-soft); font-variant-numeric: tabular-nums;
+}
+.deck__bar {
+  flex: 1 1 auto; min-width: 90px; max-width: 220px; height: 2px;
+  border-radius: 2px; background: rgba(227, 195, 129, .16); overflow: hidden;
+}
+.deck__bar-fill {
+  display: block; height: 100%; width: 0; min-width: 10px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transition: width .45s cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) { .deck__bar-fill { transition: none; } }
+
+.deck__buttons { display: flex; gap: 10px; flex: 1 1 auto; justify-content: flex-end; }
+.deck__prev, .deck__next { width: auto; min-height: 48px; padding: 10px 22px; }
+.deck__prev { flex: 0 0 auto; }
+.deck__next { flex: 1 1 auto; max-width: 260px; }
+.deck__next--final { max-width: none; }
+.deck__prev[disabled] { opacity: .35; cursor: default; }
+
+.deck__toggle-wrap { margin: 16px 0 0; text-align: center; }
+.deck__toggle { min-height: 40px; }
+
+.deck__all-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.deck__all-item {
+  display: flex; gap: 14px; align-items: baseline;
+  padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.deck__all-eyebrow {
+  flex: 0 0 auto; font-family: var(--serif-en); font-size: 15px;
+  color: var(--gold-2); letter-spacing: .08em;
+}
+.deck__all-body { font-family: var(--mincho); font-size: 16px; line-height: 1.8; font-weight: 700; color: var(--ink); }
+
+/* 「まとめて読む」で開く従来どおりの縦並び。最後の余白だけ詰める */
+.lp-story__flat > .lp-section:last-child,
+.lp-story__flat > .lp-midcta:last-child { margin-bottom: 0; }
+
+@media (max-width: 359px) {
+  .deck__stage { padding: 26px 16px; min-height: 240px; }
+  .deck__controls { gap: 12px; }
+  .deck__buttons { width: 100%; }
+  .deck__next { max-width: none; }
+  .deck__chapter { gap: 10px; }
+}
+
+
+/* --- 読み切ると現れる部分（この5日間が合う方 以降）---------------------- */
+#lp-after.is-revealing { animation: sc-after-in .8s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes sc-after-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #lp-after.is-revealing { animation: none; }
+}
+.lp-section__title:focus { outline: none; }
+.lp-section__title:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 6px; }
+
+/* 設計者の実績（仮置き）。本文より少し落ち着いたトーンで置く */
+.lp-author__credential {
+  margin: 22px 0 0; padding: 18px 20px;
+  border-left: 2px solid var(--gold); border-radius: 0 12px 12px 0;
+  background: rgba(255, 255, 255, .025);
+  font-size: 15px; line-height: 2; color: var(--ink-2);
+}
+
+
+/* --- 「まとめて読む」で開く22カードの縦展開（§29-B）---------------------- */
+.lp-story__flat-cards { margin: 26px 0 0; display: grid; gap: 20px; }
+.lp-story__flat-card {
+  margin: 0; padding: 18px 20px;
+  border-left: 1px solid var(--line-2); border-radius: 0 12px 12px 0;
+  background: rgba(255, 255, 255, .02);
+  font-size: 16px; line-height: 2; color: var(--ink-2);
+}
+.lp-story__flat-eyebrow {
+  display: block; margin-bottom: 6px;
+  font-family: var(--serif-en); font-size: 15px; color: var(--gold-2); letter-spacing: .1em;
+}
+.lp-story__flat-body { display: block; }
+
+/* --- 設計者プロフィール ---------------------------------------------------- */
+.lp-author__name {
+  margin: 26px 0 0; font-family: var(--mincho); font-size: 17px; font-weight: 700; color: #fff;
+}
+.lp-author__role {
+  margin: 6px 0 0; font-size: 14px; color: var(--gold-2); letter-spacing: .06em;
+}
+.lp-author__qualification {
+  margin: 20px 0 0; font-size: 14px; line-height: 1.95; color: var(--ink-soft);
+}
+
+
+/* --- カードの中に置く図（いま → 目標）------------------------------------ */
+.deck__visual { margin: 26px 0 0; }
+.lp-visual { text-align: left; }
+.lp-visual .radar { margin: 0 auto; }
+.lp-visual .meter { margin-top: 8px; border-top: 0; padding-top: 4px; }
+.lp-visual .meter__note { margin-top: 14px; }
+.lp-visual__note {
+  margin: 18px 0 0; font-size: 14px; line-height: 2; color: var(--ink-soft); text-align: center;
+}
+.lp-visual__target {
+  margin: 24px 0 0; padding: 16px 18px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: rgba(227, 195, 129, .07);
+  font-family: var(--mincho); font-size: 15px; font-weight: 700; line-height: 2; color: var(--ink);
+}
+/* 図のまわりに少し余白を足す */
+.deck__visual + .deck__note { margin-top: 22px; }
+
+
+/* --- 参加直前の後押し（§34-D／§34-E）------------------------------------
+ * 現在地 → 向かう先 → 5日間の役割 → 負担・不安の軽減 → 次の行動 の順で読ませる。 */
+.lp-offer__inner {
+  margin: 0; padding: 34px 22px;
+  border: 1px solid var(--line-2); border-radius: 20px;
+  background:
+    radial-gradient(420px 200px at 50% 0%, rgba(227, 195, 129, .09), transparent 70%),
+    linear-gradient(145deg, rgba(29, 36, 48, .9), rgba(16, 20, 28, .9));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+@media (min-width: 720px) { .lp-offer__inner { padding: 44px 34px; } }
+
+.lp-offer__eyebrow {
+  margin: 0; font-size: 14px; color: var(--gold-2); letter-spacing: .2em; text-indent: .2em;
+}
+.lp-offer__heading { margin-top: 16px; }
+.lp-offer__lead {
+  margin: 26px 0 0; font-size: 16px; line-height: 2.3; color: var(--ink-2);
+}
+
+/* 各段の区切り */
+.lp-offer__step { margin: 44px 0 0; padding-top: 34px; border-top: 1px solid var(--line); }
+.lp-offer__label {
+  margin: 0 0 18px; font-size: 14px; color: var(--gold-2); letter-spacing: .14em;
+}
+.lp-offer__state-text {
+  margin: 0; font-family: var(--mincho); font-size: 16px; line-height: 2.2;
+  font-weight: 700; color: var(--ink);
+}
+.lp-offer__chart-label {
+  margin: 30px 0 12px; text-align: center;
+  font-size: 14px; color: var(--ink-soft); letter-spacing: .14em;
+}
+.lp-offer__inner .radar { margin: 0 auto; }
+.lp-offer__note {
+  margin: 20px 0 0; font-size: 14px; line-height: 2.05; color: var(--ink-soft);
+}
+.lp-offer__step--target .axis-meter { margin-top: 0; }
+.lp-offer__step--target .lp-offer__state-text { margin-top: 26px; }
+
+.lp-offer__bridge-heading {
+  margin: 0 0 22px; font-family: var(--mincho); font-size: 17px; font-weight: 700;
+  line-height: 2; color: #fff;
+}
+.lp-offer__step--bridge .lp-prose__line,
+.lp-offer__step--friction .lp-prose__line { font-size: 16px; line-height: 2.3; }
+
+.lp-offer__cta { margin: 40px 0 0; }
+.lp-offer__cta-note {
+  margin: 16px 0 0; font-size: 14px; line-height: 2; color: var(--ink-soft); text-align: center;
+}
+
+
+/* --- 参加費の説明（§36-3）。CTAより強くしない ---------------------------- */
+.lp-free__body { margin: 26px 0 0; }
+.lp-free__body .lp-prose__line { font-size: 16px; line-height: 2.3; }
+.lp-free__body .prose + .prose { margin-top: 28px; }
+
+/* --- 既読の人だけに出す再読ボタン（§36-2）-------------------------------- */
+.lp-restart { margin: 26px 0 0; text-align: center; }
+.lp-restart__btn { min-height: 40px; font-size: 14px; }

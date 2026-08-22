@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#0F1428"/>
+  <!-- ✦ 8条コンパス星 (金色) -->
+  <g fill="#C9A961">
+    <!-- 縦長光条 -->
+    <polygon points="32,8 36,30 32,34 28,30"/>
+    <polygon points="32,56 36,34 32,30 28,34"/>
+    <!-- 横長光条 -->
+    <polygon points="8,32 30,28 34,32 30,36"/>
+    <polygon points="56,32 34,28 30,32 34,36"/>
+    <!-- 斜め短光条 -->
+    <polygon points="15,15 28,28 32,32 28,32"/>
+    <polygon points="49,15 36,28 32,32 32,28"/>
+    <polygon points="15,49 28,36 32,32 28,32"/>
+    <polygon points="49,49 36,36 32,32 32,36"/>
+  </g>
+  <!-- 中心小円 -->
+  <circle cx="32" cy="32" r="4.5" fill="#E8E1CC"/>
+  <circle cx="32" cy="32" r="2" fill="#0F1428"/>
+</svg>

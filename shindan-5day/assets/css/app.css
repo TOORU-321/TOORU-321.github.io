@@ -1,0 +1,886 @@
+@charset "utf-8";
+/* app.css : 診断結果＋5日間チャレンジ Phase1プレビュー
+ * デザイン方針
+ *  - 既存「エルラボ＋」会員アプリ（app/index.html・elabo-plus-lp.html）のダーク×ゴールドを踏襲
+ *    背景＝濃紺グラデーション／文字＝オフホワイト／アクセント＝ゴールド
+ *    見出し＝Shippori Mincho B1／本文＝Noto Sans JP／数字＝Cormorant Garamond
+ *  - キラキラ演出・ゲーム風バッジは使わない。装飾は細い金線と余白で作る
+ *  - 選択／最低軸／完了は、色だけでなく記号と文字でも示す
+ */
+
+/* hidden属性を必ず効かせる。
+ * display を指定したクラス（.lp-gate など）はブラウザ既定の [hidden]{display:none} に
+ * 勝ってしまい、隠したはずの要素が出てしまうため、ここで打ち消す。 */
+[hidden] { display: none !important; }
+
+:root {
+  /* エルラボ＋と同じトークン名・同じ値をそのまま使う */
+  --lm-bg: #090c12;
+  --lm-bg-2: #0e121a;
+  --lm-surface: #121720;
+  --lm-surface-2: #171d27;
+  --lm-surface-3: #1d2430;
+  --gold: #b99455;
+  --gold-2: #e3c381;
+  --gold-soft: rgba(227, 195, 129, .08);
+  --ink: #f7f4ec;
+  --ink-2: #c9c5bb;
+  --ink-soft: #a8a49b;
+  --line: rgba(227, 195, 129, .14);
+  --line-2: rgba(227, 195, 129, .28);
+  --shadow: 0 24px 70px rgba(0, 0, 0, .34);
+  --ok: #8fc7ab;
+  --warn: #e0a97a;
+  --gothic: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mincho: "Shippori Mincho B1", "Yu Mincho", serif;
+  --serif-en: "Cormorant Garamond", Georgia, serif;
+  --radius: 18px;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--ink);
+  background-color: var(--lm-bg);
+  background-image:
+    radial-gradient(900px 520px at 88% -8%, rgba(185, 148, 85, .10), transparent 62%),
+    radial-gradient(760px 520px at -10% 30%, rgba(74, 91, 124, .12), transparent 64%),
+    linear-gradient(180deg, var(--lm-bg-2), var(--lm-bg));
+  background-attachment: fixed;
+  font-family: var(--gothic);
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+button, input { font: inherit; }
+::selection { background: rgba(227, 195, 129, .28); color: #fff; }
+
+.app-shell {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 14px 56px;
+}
+
+@media (min-width: 720px) {
+  .app-shell {
+    margin: 28px auto;
+    padding: 26px 24px 60px;
+    border: 1px solid rgba(238, 214, 163, .18);
+    border-radius: 30px;
+    background: linear-gradient(145deg, rgba(19, 23, 33, .78), rgba(10, 13, 20, .58));
+    box-shadow: 0 40px 100px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .05);
+  }
+}
+
+/* --- アクセシビリティ共通 ------------------------------------------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--lm-surface-2); color: var(--ink);
+  padding: 8px 12px; z-index: 10; border-radius: 0 0 8px 0;
+}
+.skip-link:focus { left: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--gold-2);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* --- ヘッダー --------------------------------------------------------- */
+.app-header { margin: 4px 0 18px; }
+
+.app-header__row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; min-height: 34px;
+}
+
+.app-header__day {
+  font-size: 14px; font-weight: 600; letter-spacing: .16em; text-indent: .16em;
+  color: var(--gold-2);
+  border: 1px solid var(--line-2);
+  border-radius: 999px; padding: 2px 14px;
+  background: rgba(227, 195, 129, .06);
+}
+
+/* 上段：診断名 → 企画名 → 画面見出し（§17-5のヘッダー構成） */
+.app-header__eyebrow {
+  margin: 12px 0 0; font-size: 14px; color: var(--ink-soft);
+  letter-spacing: .14em; text-indent: .14em;
+}
+.app-header__program {
+  margin: 2px 0 0; font-family: var(--mincho); font-size: 15px; font-weight: 700;
+  color: var(--gold-2); letter-spacing: .1em; text-indent: .1em;
+}
+
+.app-header__title {
+  font-family: var(--mincho);
+  font-size: 22px; line-height: 1.6; margin: 10px 0 0;
+  font-weight: 700; letter-spacing: .06em; color: #fff;
+}
+.app-header__title:focus { outline: none; }
+.app-header__title:focus-visible { outline: 2px solid var(--gold-2); }
+
+/* 見出し下の細い金線（エルラボの装飾ルール） */
+.app-header::after {
+  content: ""; display: block;
+  width: 48px; height: 1px; margin: 14px 0 0;
+  background: linear-gradient(90deg, var(--gold-2), transparent);
+}
+
+.app-header__subtitle { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); }
+
+.btn-back {
+  appearance: none; background: none; border: 0;
+  color: var(--ink-soft); font-size: 14px;
+  padding: 6px 8px 6px 2px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px; min-height: 34px;
+  transition: color .18s ease;
+}
+.btn-back:hover { color: var(--gold-2); }
+.btn-back--placeholder { visibility: hidden; }
+.btn-back__arrow { font-size: 15px; }
+
+/* --- カード ----------------------------------------------------------- */
+.card {
+  background: linear-gradient(145deg, rgba(29, 36, 48, .94), rgba(16, 20, 28, .94));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  margin: 0 0 12px;
+  /* エルラボ＋の .entry-inner と同じ「上端の細いハイライト＋深い影」 */
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+
+.card__title {
+  font-family: var(--mincho);
+  font-size: 17px; font-weight: 700; margin: 0 0 10px;
+  line-height: 1.65; letter-spacing: .04em; color: var(--ink);
+}
+
+.card__body { margin: 0; font-size: 15px; color: var(--ink-2); }
+.card__note { margin: 0 0 10px; font-size: 14px; color: var(--ink-soft); }
+.card--lead .lead-line { margin: 0 0 8px; font-size: 15px; color: var(--ink-2); }
+.card--lead .lead-line:last-child { margin-bottom: 0; }
+
+/* --- スコア ------------------------------------------------------------ */
+.score-summary { text-align: center; padding-top: 22px; }
+.score-summary__caption {
+  margin: 0; font-size: 14px; color: var(--gold-2);
+  letter-spacing: .18em; text-indent: .18em;
+}
+.score-summary__value { margin: 6px 0 8px; font-family: var(--serif-en); }
+.score-summary__num {
+  font-size: 58px; font-weight: 600; line-height: 1; color: #fff;
+  text-shadow: 0 0 28px rgba(227, 195, 129, .22);
+}
+.score-summary__max { font-size: 18px; color: var(--ink-soft); }
+.score-summary__band { margin: 0; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+.score-summary__range { font-size: 14px; color: var(--ink-soft); font-family: var(--serif-en); }
+.score-summary__meaning { margin: 12px 0 0; font-size: 14px; color: var(--ink-2); text-align: left; }
+
+.meter { margin-top: 18px; padding: 18px 0 2px; border-top: 1px solid var(--line); }
+.meter__track {
+  position: relative;
+  height: 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+.meter__fill {
+  display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transform-origin: left center;
+}
+/* 改善後の目安（点線の右端で到達点を示す） */
+.meter__target {
+  position: absolute; left: 0; top: 0; height: 100%;
+  border-radius: 999px;
+  background: rgba(227, 195, 129, .18);
+  border-right: 2px dashed var(--gold-2);
+}
+.meter__mark { position: absolute; top: -5px; transform: translateX(-50%); }
+.meter__mark-line { display: block; width: 1px; height: 20px; background: var(--ink-soft); margin: 0 auto; }
+.meter__mark-label {
+  display: block; margin-top: 3px; font-size: 14px; color: var(--ink-soft); white-space: nowrap;
+}
+.meter__note { margin: 0; font-size: 14px; color: var(--ink-soft); }
+
+/* --- 5軸 -------------------------------------------------------------- */
+.axis-list { list-style: none; margin: 0; padding: 0; }
+.axis { padding: 12px 0; border-top: 1px solid var(--line); }
+.axis:first-child { border-top: 0; padding-top: 2px; }
+
+.axis__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.axis__label { font-family: var(--mincho); font-size: 15px; font-weight: 700; letter-spacing: .04em; color: var(--ink); }
+.axis__formal { font-family: var(--gothic); font-size: 14px; font-weight: 400; color: var(--ink-soft); }
+.axis__score {
+  font-family: var(--serif-en); font-size: 15px; color: var(--gold-2);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+.axis__bar {
+  display: block; height: 6px; margin: 8px 0 6px;
+  background: rgba(255, 255, 255, .06); border-radius: 999px; overflow: hidden;
+}
+.axis__bar-fill {
+  display: block; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+}
+
+.axis__hint { display: block; font-size: 14px; color: var(--ink-soft); }
+.axis__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.axis__badges:empty { margin-top: 0; }
+.axis__reason { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); }
+.axis--lowest { position: relative; padding-left: 14px; }
+.axis--lowest::before {
+  content: ""; position: absolute; left: 0; top: 14px; bottom: 6px;
+  width: 2px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--gold-2), rgba(227, 195, 129, .15));
+}
+.axis:first-child.axis--lowest::before { top: 4px; }
+.axis--lowest .axis__label { color: var(--gold-2); }
+.axis--lowest .axis__bar-fill { box-shadow: 0 0 12px rgba(227, 195, 129, .55); }
+
+/* --- タグ ------------------------------------------------------------- */
+.tag {
+  display: inline-block; font-size: 14px; font-weight: 500; line-height: 1.7;
+  padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--line-2); color: var(--gold-2);
+  background: rgba(227, 195, 129, .07); white-space: nowrap;
+}
+.tag--focus { border-color: var(--gold-2); background: rgba(227, 195, 129, .14); }
+.tag--selected {
+  color: var(--ok); border-color: rgba(143, 199, 171, .45); background: rgba(143, 199, 171, .10);
+}
+
+/* --- 選択肢 ------------------------------------------------------------ */
+.choice-group { border: 0; margin: 0; padding: 0; min-width: 0; }
+/* 見出しはカードのタイトルや画面見出しが担うため、legend は読み上げ用にだけ残す
+   （画面に出すと同じ文言が二重に見える） */
+.choice-group__legend {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.choice-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.choice-list--inline { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+
+.axis-list--select { display: grid; gap: 8px; }
+.axis-list--select .axis { border-top: 0; padding: 0; }
+
+.choice__label {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px; border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .025); cursor: pointer;
+  transition: border-color .18s ease, background .18s ease;
+}
+.choice__label:hover { border-color: var(--line-2); background: rgba(255, 255, 255, .045); }
+
+.choice__check {
+  flex: 0 0 auto; width: 21px; height: 21px; margin-top: 2px;
+  border: 1px solid var(--line-2); border-radius: 50%;
+  display: inline-grid; place-items: center;
+  font-size: 14px; line-height: 1; color: transparent;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.choice__body { flex: 1 1 auto; min-width: 0; display: block; }
+.choice__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
+.choice__sub { display: block; font-size: 14px; color: var(--ink-soft); font-family: var(--serif-en); }
+
+.is-selected > .choice__label {
+  border-color: var(--gold-2);
+  background: rgba(227, 195, 129, .09);
+  box-shadow: inset 0 0 0 1px rgba(227, 195, 129, .18);
+}
+.is-selected .choice__check { border-color: var(--gold-2); background: var(--gold-2); color: #16110a; }
+.is-selected .choice__check::after { content: "✓"; }
+
+.choice__input:focus-visible + .choice__label {
+  outline: 2px solid var(--gold-2); outline-offset: 3px;
+}
+
+/* --- 一本線シート ------------------------------------------------------ */
+.blueprint__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.blueprint__count {
+  font-family: var(--serif-en); font-size: 18px; color: var(--gold-2);
+  font-variant-numeric: tabular-nums;
+}
+.blueprint__list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.blueprint__item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px; border: 1px dashed var(--line); border-radius: 10px;
+  background: rgba(255, 255, 255, .02);
+}
+.blueprint__item.is-done {
+  border-style: solid; border-color: var(--line-2);
+  background: rgba(227, 195, 129, .07);
+}
+.blueprint__mark {
+  flex: 0 0 auto; width: 21px; height: 21px; border-radius: 50%;
+  border: 1px solid var(--line); display: inline-grid; place-items: center;
+  font-size: 14px; line-height: 1; color: transparent; margin-top: 2px;
+}
+.blueprint__item.is-done .blueprint__mark { border-color: var(--gold-2); background: var(--gold-2); color: #16110a; }
+.blueprint__body { display: block; min-width: 0; }
+.blueprint__day { font-family: var(--serif-en); font-size: 14px; color: var(--ink-soft); margin-right: 8px; letter-spacing: .06em; }
+.blueprint__label { font-family: var(--mincho); font-size: 15px; font-weight: 700; color: var(--ink); }
+.blueprint__status { display: inline-block; margin-left: 8px; font-size: 14px; color: var(--ink-soft); }
+.blueprint__item.is-done .blueprint__status { color: var(--gold-2); }
+.blueprint__summary { display: block; font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+
+/* --- 完了画面 ---------------------------------------------------------- */
+.kv-list { margin: 0; }
+.kv { padding: 12px 0; border-top: 1px solid var(--line); }
+.kv:first-child { border-top: 0; padding-top: 0; }
+.kv__key { margin: 0; font-size: 14px; color: var(--gold-2); letter-spacing: .08em; }
+.kv__value { margin: 4px 0 0; font-size: 15px; color: var(--ink); }
+
+.before-after__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.before-after__item { border-top: 1px solid var(--line); padding-top: 14px; }
+.before-after__item:first-child { border-top: 0; padding-top: 0; }
+.before-after__row { margin: 0; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.before-after__tag {
+  flex: 0 0 auto; font-size: 14px; color: var(--ink-soft);
+  border: 1px solid var(--line); border-radius: 999px; padding: 0 10px;
+}
+.before-after__row--after .before-after__tag { color: var(--gold-2); border-color: var(--line-2); }
+.before-after__text { font-size: 15px; color: var(--ink-2); }
+.before-after__row--after .before-after__text { color: var(--ink); font-weight: 700; }
+.before-after__arrow { margin: 4px 0; color: var(--gold); font-size: 14px; }
+
+.score-keep { margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.score-keep__label { font-size: 14px; color: var(--ink-soft); letter-spacing: .1em; }
+.score-keep__value { font-family: var(--serif-en); font-size: 26px; color: var(--gold-2); }
+.score-keep__band { font-size: 14px; color: var(--ink-2); }
+.card--score-keep .card__note { margin: 8px 0 0; }
+
+.card--recap .recap { margin: 0; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.recap__label { font-size: 14px; color: var(--ink-soft); letter-spacing: .08em; }
+.recap__value { font-family: var(--mincho); font-size: 16px; font-weight: 700; color: var(--gold-2); }
+
+.done-badge { margin: 0; display: flex; align-items: center; gap: 10px; }
+.done-badge__mark {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--gold-2); color: #16110a;
+  display: inline-grid; place-items: center; font-size: 14px; line-height: 1;
+}
+.done-badge__text { font-family: var(--mincho); font-size: 16px; font-weight: 700; color: var(--ink); }
+
+.teaser { padding: 0; }
+.teaser__summary {
+  cursor: pointer; padding: 16px; font-size: 15px; font-weight: 700;
+  list-style: none; display: flex; align-items: center; gap: 10px;
+  font-family: var(--mincho); color: var(--ink); letter-spacing: .04em;
+}
+.teaser__summary::-webkit-details-marker { display: none; }
+.teaser__summary::before {
+  content: "＋"; color: var(--gold-2); font-family: var(--gothic); font-weight: 400;
+}
+.teaser[open] .teaser__summary::before { content: "－"; }
+.teaser__summary:hover { color: var(--gold-2); }
+.teaser__body { margin: 0; padding: 0 16px 16px; font-size: 15px; color: var(--ink-2); }
+
+/* --- ルール一覧（Screen B） --------------------------------------------- */
+.rule-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.rule { display: flex; gap: 12px; align-items: flex-start; }
+.rule__mark {
+  flex: 0 0 auto; width: 8px; height: 8px; margin-top: 9px; border-radius: 50%;
+  background: var(--gold-2);
+}
+.rule__body { display: block; min-width: 0; }
+.rule__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
+.rule__text { display: block; font-size: 14px; color: var(--ink-2); }
+
+/* --- 動画枠（第2段階で差し替え） ---------------------------------------- */
+.video-slot {
+  display: flex; align-items: center; gap: 14px;
+  padding: 20px 16px; border: 1px dashed var(--line-2); border-radius: 12px;
+  background: rgba(255, 255, 255, .025);
+}
+.video-slot__icon {
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--line-2); color: var(--gold-2);
+  display: inline-grid; place-items: center; font-size: 15px;
+}
+.video-slot__text { display: block; min-width: 0; }
+.video-slot__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
+.video-slot__tag { margin-top: 4px; }
+
+/* --- 前回までの振り返り -------------------------------------------------- */
+.recap-list { margin: 0; display: grid; gap: 10px; }
+.recap { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin: 0; }
+
+/* --- 短い自由入力 -------------------------------------------------------- */
+.text-input { margin: 12px 0 0; }
+.text-input__label {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  flex-wrap: wrap; font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px;
+}
+.text-input__meta { display: inline-flex; gap: 10px; align-items: baseline; font-weight: 400; }
+.text-input__count { font-family: var(--serif-en); font-size: 14px; color: var(--ink-soft); }
+.text-input__status { font-size: 14px; color: var(--ok); }
+.text-input__field {
+  display: block; width: 100%; padding: 12px;
+  background: rgba(0, 0, 0, .25); color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: 10px;
+  font-family: var(--gothic); font-size: 16px; line-height: 1.7; resize: vertical;
+}
+.text-input__field::placeholder { color: var(--ink-soft); opacity: .8; }
+.text-input__field:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 2px; }
+
+/* --- ひとりのお客様カード（DAY2成果物） ---------------------------------- */
+.persona-card {
+  margin: 0; padding: 16px 14px; border-left: 2px solid var(--gold-2);
+  background: rgba(227, 195, 129, .07); border-radius: 0 12px 12px 0;
+}
+.persona-card__line { margin: 0; font-size: 16px; line-height: 1.9; color: var(--ink); }
+.persona-card__line + .persona-card__line { margin-top: 2px; }
+
+/* --- この人を、ここへ連れていく（DAY3の接続表示） ------------------------ */
+.journey { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.journey__step {
+  position: relative; padding: 14px 0 14px 24px; border-left: 1px solid var(--line);
+  display: block;
+}
+.journey__step::before {
+  content: ""; position: absolute; left: -4px; top: 22px;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold-2);
+}
+.journey__step:last-child { border-left-color: transparent; }
+.journey__label { display: block; font-size: 14px; color: var(--gold-2); letter-spacing: .08em; }
+.journey__value { display: block; margin-top: 4px; font-size: 15px; color: var(--ink); }
+
+/* --- 中間地点の成長（DAY3完了） ----------------------------------------- */
+.growth-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+.growth-list__item { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--ink); }
+.growth-list__mark {
+  flex: 0 0 auto; width: 20px; height: 20px; margin-top: 3px; border-radius: 50%;
+  background: var(--gold-2); color: #16110a;
+  display: inline-grid; place-items: center; font-size: 14px; line-height: 1;
+}
+
+/* --- 前回までの再掲（DAY3導入） ----------------------------------------- */
+.recap__caption { margin: 14px 0 6px; }
+.persona-card--recap { background: rgba(255, 255, 255, .03); border-left-color: var(--line-2); }
+.persona-card--recap .persona-card__line { font-size: 15px; color: var(--ink-2); }
+
+/* --- 顧客導線図（DAY4）--------------------------------------------------- */
+.jmap { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: jmap; }
+.jmap__step {
+  position: relative; display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 0 16px 4px;
+}
+.jmap__step::after {
+  content: ""; position: absolute; left: 17px; top: 44px; bottom: -8px;
+  width: 1px; background: var(--line-2);
+}
+.jmap__step:last-child::after { display: none; }
+.jmap__num {
+  position: relative; z-index: 1; flex: 0 0 auto;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid var(--line-2); background: var(--lm-surface);
+  color: var(--gold-2); font-family: var(--serif-en); font-size: 15px;
+  display: inline-grid; place-items: center;
+}
+.jmap__body { display: block; min-width: 0; }
+.jmap__label { display: block; font-size: 14px; color: var(--gold-2); letter-spacing: .06em; }
+.jmap__value {
+  display: block; margin-top: 2px; font-family: var(--mincho);
+  font-size: 16px; font-weight: 700; line-height: 1.7; color: var(--ink);
+}
+.jmap__emotion { display: block; margin-top: 4px; font-size: 14px; color: var(--ink-2); }
+
+.journey-card { margin-top: 18px; }
+
+/* --- 今は使わない候補（DAY4）-------------------------------------------- */
+.unused { padding: 0; }
+.unused__summary {
+  cursor: pointer; list-style: none; padding: 16px;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.unused__summary::-webkit-details-marker { display: none; }
+.unused__summary::before { content: "＋"; color: var(--gold-2); font-weight: 400; }
+.unused[open] .unused__summary::before { content: "－"; }
+.unused .card__note { padding: 0 16px; }
+.unused__groups { padding: 0 16px 16px; display: grid; gap: 16px; }
+.unused__label { margin: 0 0 6px; font-size: 14px; color: var(--gold-2); }
+.unused__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.unused__item {
+  position: relative; padding-left: 18px; font-size: 15px; color: var(--ink-soft);
+}
+.unused__item::before {
+  content: ""; position: absolute; left: 0; top: 14px;
+  width: 10px; height: 1px; background: var(--ink-soft);
+}
+
+/* --- ボタン ------------------------------------------------------------ */
+.cta-area { display: grid; gap: 10px; margin-top: 22px; }
+
+.btn {
+  appearance: none; font-weight: 700; font-size: 16px;
+  width: 100%; min-height: 54px; padding: 13px 18px;
+  border-radius: 999px; cursor: pointer; border: 1px solid transparent;
+  letter-spacing: .06em;
+  transition: filter .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
+}
+/* エルラボ＋の主ボタンと同じゴールド */
+.btn--primary {
+  color: #16110a;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+  box-shadow: 0 14px 34px -16px rgba(227, 195, 129, .6);
+}
+.btn--primary:hover { filter: brightness(1.06); }
+.btn--secondary {
+  background: transparent; color: var(--ink-soft); border-color: var(--line);
+  min-height: 48px; font-size: 15px; font-weight: 400;
+}
+.btn--secondary:hover { color: var(--gold-2); border-color: var(--gold-2); }
+.btn--ghost {
+  background: transparent; color: var(--ink-soft); border-color: var(--line);
+  min-height: 40px; font-size: 14px; width: auto; padding: 7px 16px; border-radius: 999px;
+  font-weight: 400;
+}
+.btn--ghost:hover { color: var(--gold-2); border-color: var(--line-2); }
+
+/* --- 状態表示 ----------------------------------------------------------- */
+.save-status {
+  margin: 10px 0 0; font-size: 14px; color: var(--ok);
+  display: flex; align-items: center; gap: 8px;
+}
+.save-status--info { color: var(--ink-soft); }
+.save-status--warn { color: var(--warn); }
+.save-status__mark {
+  width: 19px; height: 19px; border-radius: 50%; flex: 0 0 auto;
+  display: inline-grid; place-items: center;
+  font-size: 14px; line-height: 1; color: #16110a; background: var(--ok);
+}
+.save-status--info .save-status__mark { background: var(--ink-soft); }
+.save-status--warn .save-status__mark { background: var(--warn); }
+
+.notice {
+  margin: 10px 0 0; font-size: 14px; color: var(--ink-2);
+  background: rgba(255, 255, 255, .03); border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px;
+}
+
+/* --- プレビュー用メニュー ----------------------------------------------- */
+.app-footer { margin-top: 32px; }
+.app-footer__note { font-size: 14px; color: var(--ink-soft); text-align: center; margin: 14px 0 0; opacity: .75; }
+
+.preview {
+  border: 1px dashed var(--line); border-radius: 10px; background: transparent;
+  padding: 10px 14px; font-size: 14px; color: var(--ink-soft);
+}
+.preview__summary { cursor: pointer; font-size: 14px; }
+.preview__note, .preview__meta { margin: 8px 0 0; font-size: 14px; }
+.preview__actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.preview__log {
+  max-height: 220px; overflow: auto;
+  background: rgba(0, 0, 0, .35); border: 1px solid var(--line);
+  border-radius: 8px; padding: 10px; font-size: 14px; line-height: 1.6;
+  white-space: pre-wrap; color: var(--ink-2);
+}
+
+/* --- レーダーチャート --------------------------------------------------- */
+.radar { padding: 26px 40px 30px; }
+.radar__plot { position: relative; width: 100%; max-width: 240px; margin: 0 auto; }
+.radar__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.radar__ring, .radar__spoke { fill: none; stroke: var(--line); stroke-width: 1; }
+.radar__ring:last-of-type { stroke: var(--line-2); }
+
+.radar__area {
+  fill: rgba(227, 195, 129, .16);
+  stroke: var(--gold-2); stroke-width: 2; stroke-linejoin: round;
+}
+.radar__dot { fill: var(--gold-2); }
+.radar__dot--lowest { fill: #16110a; stroke: var(--gold-2); stroke-width: 2.5; }
+
+/* 改善後のかたちは「線種」で区別する（色だけに頼らない） */
+.radar__improved {
+  fill: none; stroke: var(--gold); stroke-width: 1.5;
+  stroke-dasharray: 5 4; stroke-linejoin: round;
+}
+.radar__target { fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.radar__pulse { fill: none; stroke: var(--gold-2); stroke-width: 2; opacity: 0; }
+
+.radar__label {
+  position: absolute; font-size: 14px; line-height: 1.3;
+  color: var(--ink-soft); white-space: nowrap;
+}
+.radar__label.is-lowest { color: var(--gold-2); font-weight: 700; }
+.radar__label--0 { transform: translate(-50%, -145%); }
+.radar__label--1 { transform: translate(-38%, -145%); }
+.radar__label--2 { transform: translate(-50%, 35%); }
+.radar__label--3 { transform: translate(-50%, 35%); }
+.radar__label--4 { transform: translate(-62%, -145%); }
+
+.card__subtitle {
+  font-family: var(--mincho); font-size: 15px; font-weight: 700;
+  margin: 18px 0 0; letter-spacing: .06em; color: var(--ink);
+}
+.card__note--center { text-align: center; }
+
+.target-line {
+  margin: 12px 0 0; padding: 12px 14px; font-size: 15px; color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: 10px;
+  background: rgba(227, 195, 129, .07);
+}
+.card--score-keep .target-line, .score-summary .target-line { text-align: left; }
+
+/* --- 導入アニメーション（短く1回だけ・スクロール連動はしない） ----------- */
+@keyframes sc-radar-grow {
+  from { transform: scale(.12); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+@keyframes sc-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sc-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes sc-pulse {
+  from { opacity: .85; transform: scale(1); }
+  to   { opacity: 0; transform: scale(2.8); }
+}
+/* 増えた部分・注目してほしい部分を、1回だけ軽く点滅させる */
+@keyframes sc-blink {
+  0%, 100% { opacity: 1; }
+  35%      { opacity: .35; }
+  70%      { opacity: 1; }
+}
+@keyframes sc-screen-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.radar.is-intro .radar__shape {
+  transform-box: view-box; transform-origin: 100px 100px;
+  animation: sc-radar-grow .7s cubic-bezier(.2, .8, .2, 1) both;
+}
+.radar.is-intro .radar__improved,
+.radar.is-intro .radar__target { animation: sc-fade-in .5s ease-out .85s both; }
+.radar.is-intro .radar__pulse {
+  transform-box: view-box;
+  animation: sc-pulse 1.2s ease-out .85s 1 both;
+}
+
+.meter.is-intro .meter__fill { animation: sc-grow-x .9s cubic-bezier(.2, .8, .2, 1) both; }
+/* 改善後の目安：現れたあとに一度だけ点滅させて、増える部分だと分かるようにする */
+.meter.is-intro .meter__target {
+  animation: sc-fade-in .5s ease-out 1s both, sc-blink 1.1s ease-in-out 1.5s 1 both;
+}
+/* 最低軸の「まずここ」も一度だけ点滅させる */
+.screen--result.is-intro .axis--lowest .tag--focus {
+  animation: sc-blink 1.2s ease-in-out 1.3s 1 both;
+}
+/* 数字は等幅で送り、増えているあいだ幅が揺れないようにする */
+.score-summary__num, .axis__score { font-variant-numeric: tabular-nums; }
+
+.axis-list.is-intro .axis__bar-fill {
+  transform-origin: left center;
+  animation: sc-grow-x .6s cubic-bezier(.2, .8, .2, 1) both;
+  animation-delay: calc(.1s + var(--i, 0) * .07s);
+}
+
+.screen.is-entering { animation: sc-screen-in .2s ease-out both; }
+
+/* --- 完了演出（1回だけ・動きが苦手な設定では停止） ---------------------- */
+@keyframes sc-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.is-celebrating .card--project { animation: sc-rise .45s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-celebrating .card--project { animation: none; }
+  /* 最終状態だけを表示する（both 指定のため、瞬時に終端へ進む） */
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* --- 狭幅（320px）対応 --------------------------------------------------- */
+@media (max-width: 359px) {
+  .app-shell { padding: 12px 12px 48px; }
+  .app-header__title { font-size: 20px; }
+  .score-summary__num { font-size: 48px; }
+  .choice-list--inline { grid-template-columns: 1fr; }
+  .card { padding: 16px 14px; }
+  .radar { padding: 26px 34px 30px; }
+  .btn { font-size: 15px; letter-spacing: .04em; }
+}
+
+
+/* --- スクロールで現れる（2026-08-21 とーる指示・正本§9の見直し対象）---------
+ * .sc-reveal はJSからしか付かない。JSが動かない環境では最初から見えている。 */
+.sc-reveal { opacity: 0; }
+.sc-reveal.is-shown {
+  animation: sc-reveal-in .72s cubic-bezier(.2, .8, .2, 1) both;
+  animation-delay: var(--rd, 0ms);
+}
+@keyframes sc-reveal-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-reveal { opacity: 1; }
+  .sc-reveal.is-shown { animation: none; }
+}
+
+
+/* --- DAY5（§29-D）------------------------------------------------------- */
+.card__note--after { margin: 14px 0 0; }
+.jmap-wrap { margin: 14px 0 0; }
+
+.schedule__label {
+  margin: 22px 0 10px; font-family: var(--mincho); font-size: 15px; font-weight: 700; color: var(--ink);
+}
+.schedule__summary {
+  margin: 20px 0 0; padding: 14px 16px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: rgba(227, 195, 129, .07);
+  font-family: var(--mincho); font-size: 16px; font-weight: 700; line-height: 1.8; color: var(--ink);
+}
+
+/* 完成した一本線シート（Screen AI） */
+.final-sheet { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.final-sheet__item {
+  display: grid; gap: 4px;
+  padding: 16px 16px; border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.final-sheet__day {
+  font-family: var(--serif-en); font-size: 15px; color: var(--gold-2); letter-spacing: .1em;
+}
+.final-sheet__label {
+  font-family: var(--mincho); font-size: 15px; font-weight: 700; color: var(--ink);
+}
+.final-sheet__value { font-size: 15px; line-height: 1.9; color: var(--ink-2); }
+.card--project:focus { outline: none; }
+.card--project:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 4px; }
+
+
+/* --- 長い本文の読ませ方（2026-08-21 とーる指示）---------------------------
+ * 句点ごとに段落へ分け、行間と段落間を広く取る。文章そのものは変えていない。 */
+.prose { margin: 0; }
+.prose__line {
+  margin: 0 0 30px; font-size: 16px; line-height: 2.3;
+  color: var(--ink-2); letter-spacing: .03em;
+}
+.prose__line:last-child { margin-bottom: 0; }
+.prose + .prose { margin-top: 40px; }
+
+/* 段落が続くカードは、内側の余白も広く取る */
+.card--reading { padding: 34px 22px; margin-bottom: 26px; }
+@media (min-width: 720px) { .card--reading { padding: 42px 32px; } }
+.card--reading .card__title { margin-bottom: 30px; line-height: 1.8; }
+.card--reading .target-line { margin: 40px 0 0; }
+.card--reading .prose + .target-line { margin-top: 40px; }
+.card--reading .target-line + .prose { margin-top: 36px; }
+
+/* 密着していた本文どうしに間隔を入れる（全画面共通の底上げ） */
+.card__body + .card__body { margin-top: 18px; }
+.card__body + .card__note { margin-top: 18px; }
+
+/* 結果画面は、カードどうしの間隔も広めに取ってスクロールで読ませる */
+.screen--result .card { margin-bottom: 26px; }
+.screen--result .card--reading + .card { margin-top: 4px; }
+
+/* 注記の段落は、本文より一段落ち着いたトーンにする */
+.prose--note .prose__line { font-size: 14px; line-height: 2.15; color: var(--ink-soft); margin-bottom: 22px; }
+
+/* 導入文（3行）も、結果画面では行間・行あきを広く取る */
+.screen--result .card--lead .lead-line { margin: 0 0 28px; font-size: 16px; line-height: 2.3; }
+.screen--result .card--lead .lead-line:last-child { margin-bottom: 0; }
+
+
+/* --- 1軸だけのメーター（いま → 目標）------------------------------------ */
+.axis-meter { margin: 26px 0 0; }
+.axis-meter__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin: 0 0 10px;
+}
+.axis-meter__label { font-family: var(--mincho); font-size: 15px; font-weight: 700; color: var(--ink); }
+.axis-meter__value {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  font-family: var(--serif-en); font-size: 17px;
+}
+.axis-meter__now { color: var(--ink-2); }
+.axis-meter__arrow { color: var(--ink-soft); font-size: 15px; }
+.axis-meter__goal { color: var(--gold-2); font-weight: 600; }
+.axis-meter__track {
+  position: relative; height: 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, .06); border: 1px solid var(--line);
+}
+.axis-meter__target {
+  position: absolute; left: 0; top: 0; height: 100%;
+  border-radius: 999px; background: rgba(227, 195, 129, .18);
+  border-right: 2px dashed var(--gold-2);
+}
+.axis-meter__fill {
+  position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transform-origin: left center;
+}
+.axis-meter.is-intro .axis-meter__fill { animation: sc-grow-x .9s cubic-bezier(.2, .8, .2, 1) both; }
+.axis-meter.is-intro .axis-meter__target {
+  animation: sc-fade-in .5s ease-out 1s both, sc-blink 1.1s ease-in-out 1.5s 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .axis-meter.is-intro .axis-meter__fill,
+  .axis-meter.is-intro .axis-meter__target { animation: none; }
+}
+
+
+/* --- 30日後の再診断と、希望者向けサポート（§36-4／§36-5）------------------ */
+.reassess__due {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin: 26px 0 0; padding: 16px 18px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: rgba(227, 195, 129, .07);
+}
+.reassess__due-label { font-size: 14px; color: var(--gold-2); letter-spacing: .1em; }
+.reassess__due-date {
+  font-family: var(--serif-en); font-size: 20px; color: #fff;
+}
+.support__title {
+  margin: 0 0 20px; font-family: var(--mincho); font-size: 16px; font-weight: 700;
+  line-height: 1.9; color: var(--ink);
+}
+/* サポート案内は、完了体験より目立たせない（§36-4 絶対条件） */
+.card--support { border-color: var(--line); background: rgba(255, 255, 255, .02); }
+.card--support .cta-area { margin-top: 24px; }
+
+
+/* --- フッターの規約リンクと運営者表示（公開版）--------------------------- */
+.app-footer__legal, .lp-footer__legal {
+  margin: 14px 0 0; font-size: 14px; line-height: 2;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px;
+}
+.app-footer__legal a, .lp-footer__legal a { color: var(--ink-soft); }
+.app-footer__legal a:hover, .lp-footer__legal a:hover { color: var(--gold-2); }
+.app-footer__legal span, .lp-footer__legal span { color: var(--line-2); }
+.app-footer__owner, .lp-footer__owner {
+  margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); text-align: center;
+}

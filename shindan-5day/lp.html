@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="診断結果の続きとして、5日間で事業の一本線をつくる無料チャレンジのご案内です。">
+<link rel="canonical" href="https://columns.l-mine.com/shindan-5day/lp.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SNS事業の一本線 5DAY｜参加のご案内">
+<meta property="og:description" content="診断結果の続きとして、5日間で事業の一本線をつくる無料チャレンジのご案内です。">
+<meta property="og:url" content="https://columns.l-mine.com/shindan-5day/lp.html">
+<meta property="og:site_name" content="L-MINE">
+<meta name="twitter:card" content="summary">
+<!-- og:image は正式なシェア画像（1200×630）が用意でき次第ここへ追加する -->
+<meta name="theme-color" content="#0e121a">
+<title>SNS事業の一本線 5DAY｜参加のご案内</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho+B1:wght@600;700;800&display=swap">
+<!-- スタイル -->
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/lp.css">
+
+<!-- 読み込む順番は変えないこと -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/data/axes.js"></script>
+<script src="assets/js/data/copy.js"></script>
+<script src="assets/js/data/sample-diagnosis.js"></script>
+<script src="assets/js/store/storage-adapter.js"></script>
+<script src="assets/js/store/track.js"></script>
+<script src="assets/js/store/challenge-store.js"></script>
+<script src="assets/js/ui/dom.js"></script>
+<script src="assets/js/ui/components.js"></script>
+<script src="assets/js/ui/radar-chart.js"></script>
+<script src="assets/js/ui/story-deck.js"></script>
+<script src="assets/js/lp.js"></script>
+</head>
+<body class="lp-body">
+  <a class="skip-link" href="#lp-main">本文へ移動</a>
+
+  <!-- 0. 未解除時の案内（診断結果を経ていない人へ） -->
+  <div id="lp-gate" class="lp-gate" hidden>
+    <div class="lp-gate__inner">
+      <p class="lp-gate__eyebrow" data-lp="diagnosisName"></p>
+      <h1 class="lp-gate__title" data-lp="gateTitle"></h1>
+      <p class="lp-gate__text" data-lp="gateBody"></p>
+      <a class="btn btn--primary lp-gate__btn" href="index.html" data-lp="gateCta"></a>
+    </div>
+  </div>
+
+  <main id="lp-main" class="lp" hidden>
+
+    <!-- 1. ヒーロー｜診断結果の続き -->
+    <header class="lp-hero">
+      <div class="lp-hero__inner">
+        <p class="lp-hero__eyebrow" data-lp="heroEyebrow"></p>
+        <h1 class="lp-hero__title" data-lp="heroTitle"></h1>
+        <p class="lp-hero__subtitle" data-lp="heroSubtitle"></p>
+        <div class="lp-hero__score" data-lp="scoreSlot"></div>
+        <p class="lp-hero__body" data-lp="heroBody"></p>
+        <div class="lp-hero__cta">
+          <button type="button" class="btn btn--primary" data-lp-vsl="start" data-lp="heroPrimaryCta"></button>
+          <button type="button" class="btn btn--secondary" data-lp-chapter="outcome" data-lp="heroSecondaryCta"></button>
+        </div>
+        <p class="lp-hero__micro" data-lp="heroMicro"></p>
+      </div>
+    </header>
+
+    <!-- 2〜7. 読み進めるブロック（テキスト型VSL）
+         正本§23-Bの 共感／問題の再定義／仕組み／成果物／中間CTA／5日間の流れ を
+         順番どおり1枚ずつ送る形にまとめている。文言は変えていない。
+         「まとめて読む」を押すと、従来どおりの縦並びで全文が読める。 -->
+    <section class="lp-section lp-story" id="story">
+      <div data-lp="storyDeck"></div>
+      <!-- 既読の人だけに出す、控えめな再読ボタン（§36-2） -->
+      <div class="lp-restart" data-lp="restartSlot"></div>
+    </section>
+
+    <!-- 8〜12. 読み切るまで開かない部分
+         （2026-08-21 とーる指示：最後まで進むと、ここから先が現れる）-->
+    <div id="lp-after" hidden>
+
+    <!-- 8. 適合性 -->
+    <section class="lp-section">
+      <h2 class="lp-section__title" data-lp="fitHeading"></h2>
+      <ul class="lp-list lp-list--for" data-lp="fitFor"></ul>
+      <h3 class="lp-subtitle" data-lp="fitNotForHeading"></h3>
+      <ul class="lp-list lp-list--notfor" data-lp="fitNotFor"></ul>
+      <p class="lp-section__note" data-lp="fitNote"></p>
+    </section>
+
+    <!-- 9. 設計者プロフィール -->
+    <section class="lp-section lp-author">
+      <h2 class="lp-section__title" data-lp="authorHeading"></h2>
+      <p class="lp-author__name" data-lp="authorName"></p>
+      <p class="lp-author__role" data-lp="authorRole"></p>
+      <p class="lp-section__body" data-lp="authorBody"></p>
+      <p class="lp-author__credential" data-lp="authorCredential"></p>
+      <p class="lp-section__note" data-lp="authorCredentialNote"></p>
+      <p class="lp-author__qualification" data-lp="authorQualification"></p>
+    </section>
+
+    <!-- 10. 参加前の4項目 -->
+    <section class="lp-section">
+      <h2 class="lp-section__title" data-lp="beforeHeading"></h2>
+      <ol class="lp-before" data-lp="beforeItems"></ol>
+    </section>
+
+    <!-- 11.4 参加費の説明（§36-3）。参加前ルールの直後、FAQの前 -->
+    <section class="lp-section lp-free">
+      <h2 class="lp-section__title" data-lp="freeHeading"></h2>
+      <div class="lp-free__body" data-lp="freeBody"></div>
+      <p class="lp-section__note" data-lp="freeNote"></p>
+    </section>
+
+    <!-- 11. よくある質問 -->
+    <section class="lp-section">
+      <h2 class="lp-section__title" data-lp="faqHeading"></h2>
+      <div class="lp-faq" data-lp="faqItems"></div>
+    </section>
+
+    <!-- 11.5 参加直前の後押し（§34-D／§34-E）
+         順番：現在地 → 向かう先 → 5日間の役割 → 負担・不安の軽減 → 次の行動
+         このCTAでは参加を確定させない（確定するのは最終参加CTAだけ） -->
+    <section class="lp-section lp-offer" id="offer">
+      <div data-lp="offerSlot"></div>
+    </section>
+
+    <!-- 12. 最終参加表明（参加が確定する唯一のCTA） -->
+    <section class="lp-join" id="join">
+      <div class="lp-join__inner">
+        <h2 class="lp-join__title" data-lp="joinHeading"></h2>
+        <p class="lp-join__body" data-lp="joinBody"></p>
+        <div class="lp-join__reminder" data-lp="reminderSlot"></div>
+        <div class="lp-join__cta">
+          <button type="button" class="btn btn--primary" id="lp-join-btn"></button>
+          <button type="button" class="btn btn--secondary" id="lp-later-btn"></button>
+        </div>
+        <p class="lp-join__status" id="lp-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    </div><!-- /#lp-after -->
+
+    <footer class="lp-footer">
+      <div id="preview-slot"></div>
+      <p class="lp-footer__note">このアプリの回答は、お使いの端末の中にだけ保存されます。外部へは送信していません。</p>
+      <p class="lp-footer__legal"><a href="/legal/privacy.html">プライバシーポリシー</a><span aria-hidden="true">｜</span><a href="/legal/terms.html">利用規約</a><span aria-hidden="true">｜</span><a href="/legal/mensekizikou.html">免責事項</a></p>
+      <p class="lp-footer__owner">L-MINE（エルマイン）</p>
+    </footer>
+  </main>
+
+  <!-- アプリと同じ定数・保存・部品を使う -->
+</body>
+</html>
