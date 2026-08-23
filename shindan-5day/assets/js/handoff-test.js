@@ -111,13 +111,27 @@
     /* ① 保存は残っているか（別の入れ物なので、普通は残らない） */
     var saved = '';
     try { saved = global.localStorage.getItem(STORE_KEY) || ''; } catch (e) { saved = ''; }
+    var fromUrl = param('k');
     r.step2Saved = !!saved;
-    row(dl, '① 保存が引き継がれた', saved ? 'はい' : 'いいえ（別の入れ物）',
-      saved ? 'ok' : 'ng');
+    r.step2SavedKey = saved;
+    r.step2UrlKey = fromUrl;
+
+    /* 保存が「本当に引き継がれた」のか「前の残り」なのかを見分ける。
+     * URLのキーと一致すれば引き継ぎ、違えば前回の残り。 */
+    var carried = !!(saved && fromUrl && saved === fromUrl);
+    var leftover = !!(saved && fromUrl && saved !== fromUrl);
+    r.step2Carried = carried;
+    r.step2Leftover = leftover;
+
+    row(dl, '① 保存が引き継がれた',
+      carried ? 'はい（URLのキーと一致）'
+        : leftover ? 'いいえ（前に開いたときの残り）'
+        : saved ? 'はい？（URLにkが無いので判別できず）'
+        : 'いいえ（別の入れ物）',
+      carried ? 'ok' : 'ng');
     if (saved) row(dl, '　 見えたキー', saved);
 
     /* ② URLで渡せたか */
-    var fromUrl = param('k');
     r.step2Url = !!fromUrl;
     row(dl, '② URLで渡せた', fromUrl ? 'はい' : 'いいえ（URLにkが無い）',
       fromUrl ? 'ok' : 'ng');
@@ -198,7 +212,10 @@
       '　キーをコピーできた：' + yn(r.step1Copy) + '（' + (r.step1CopyHow || '未実行') + '）',
       '',
       '【STEP 2｜LINE内の結果ページの役】',
-      '　① 保存が引き継がれた：' + yn(r.step2Saved),
+      '　① 保存が引き継がれた：' + (r.step2Carried ? 'はい（一致）'
+        : r.step2Leftover ? 'いいえ（前回の残り）' : yn(r.step2Saved)),
+      '　　 見えたキー：' + (r.step2SavedKey || '—'),
+      '　　 URLのキー：' + (r.step2UrlKey || '—'),
       '　② URLで渡せた：' + yn(r.step2Url),
       '　③ コピーから自動で読めた：' + yn(r.step2Read),
       '　　 中身がキーだった：' + yn(r.step2ReadIsKey),
@@ -226,6 +243,10 @@
     el('btn-step1').addEventListener('click', runStep1);
     el('btn-step2').addEventListener('click', runStep2);
     el('btn-report').addEventListener('click', copyReport);
+    el('btn-reset').addEventListener('click', function () {
+      try { global.localStorage.removeItem(STORE_KEY); } catch (e) { /* noop */ }
+      el('reset-status').textContent = 'この端末の保存を消しました。まっさらな状態で試せます。';
+    });
     el('btn-copy-url').addEventListener('click', function () {
       copyText(el('url-box').value, function (ok) {
         el('btn-copy-url').textContent = ok ? 'コピーしました' : '長押しで選択してください';
