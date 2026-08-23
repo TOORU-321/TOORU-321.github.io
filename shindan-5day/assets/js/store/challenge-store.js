@@ -68,6 +68,8 @@
       reassessmentReminderSelected: false,
       reassessmentCompletedAt: null,
       reassessmentDiagnosisId: null,
+      /* モニター招待コード（?m= で来た人にだけ入る）。感想のお願いを出すかの判断に使う */
+      voiceMonitorId: null,
       /* DAY2の回答（§21-C）。custom を選んだときだけ *Custom を使う */
       day2: buildDay2(),
       /* DAY3の回答（§23-E）。bridgeDraft は自動生成文、bridgeEdited は本人が直したか */
@@ -150,6 +152,7 @@
     if (typeof state.lpUnlocked !== 'boolean') state.lpUnlocked = false;
     if (typeof state.lpStoryRead !== 'boolean') state.lpStoryRead = false;
     if (typeof state.reassessmentReminderSelected !== 'boolean') state.reassessmentReminderSelected = false;
+    if (state.voiceMonitorId === undefined) state.voiceMonitorId = null;
     ['experimentStartedAt', 'reassessmentDueAt', 'reassessmentCompletedAt', 'reassessmentDiagnosisId']
       .forEach(function (k) { if (state[k] === undefined) state[k] = null; });
     if (typeof state.pendingNotice !== 'string') state.pendingNotice = null;

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="モニターのみなさま向けの感想フォームです。">
+<link rel="canonical" href="https://columns.l-mine.com/shindan-5day/voice.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="5日間チャレンジ｜感想のお願い">
+<meta property="og:description" content="モニターのみなさま向けの感想フォームです。">
+<meta property="og:url" content="https://columns.l-mine.com/shindan-5day/voice.html">
+<meta property="og:site_name" content="L-MINE">
+<meta name="twitter:card" content="summary">
+<!-- og:image は正式なシェア画像（1200×630）が用意でき次第ここへ追加する -->
+<meta name="theme-color" content="#0e121a">
+<title>5日間チャレンジ｜感想のお願い</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho+B1:wght@600;700;800&display=swap">
+<!-- スタイル -->
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/voice.css">
+
+<!-- 読み込む順番は変えないこと -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/config-endpoints.js"></script>
+<script src="assets/js/data/voice-copy.js"></script>
+<script src="assets/js/ui/dom.js"></script>
+<script src="assets/js/voice.js"></script>
+</head>
+<body class="voice-body">
+  <a class="skip-link" href="#voice-main">本文へ移動</a>
+
+  <!-- 招待コードがないときの案内 -->
+  <div id="voice-gate" class="vgate" hidden>
+    <div class="vgate__inner">
+      <h1 class="vgate__title" data-voice="gateTitle"></h1>
+      <p class="vgate__text" data-voice="gateBody"></p>
+    </div>
+  </div>
+
+  <main id="voice-main" class="vwrap" hidden>
+    <header class="vhead">
+      <p class="vhead__eyebrow" data-voice="eyebrow"></p>
+      <h1 class="vhead__title" data-voice="heading"></h1>
+      <p class="vhead__lead" data-voice="lead"></p>
+    </header>
+
+    <div data-voice="formSlot"></div>
+  </main>
+
+  <!-- 送信後 -->
+  <div id="voice-done" class="vdone" hidden>
+    <div class="vdone__inner">
+      <h1 class="vdone__title" data-voice="doneHeading"></h1>
+      <p class="vdone__text" data-voice="doneBody"></p>
+      <a class="btn btn--secondary vdone__back" data-voice="backToApp" href="index.html"></a>
+    </div>
+  </div>
+</body>
+</html>

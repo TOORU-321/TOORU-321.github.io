@@ -168,6 +168,25 @@
         /* 5. 希望者向けサポート */
         supportCard,
 
+        /* モニターへの感想のお願い。招待コードを持っている人にだけ出す */
+        state.voiceMonitorId ? (function () {
+          var v = SC.copy.voiceInvite;
+          return SC.ui.card(v.heading, [
+            SC.ui.prose(v.body),
+            SC.ui.ctaArea([
+              SC.ui.secondaryCta({
+                label: v.cta,
+                onClick: function () {
+                  ctx.track('voice_invite_clicked', { day: 5 });
+                  global.location.href = 'voice.html?m=' +
+                    encodeURIComponent(state.voiceMonitorId);
+                }
+              })
+            ]),
+            h('p', { class: 'card__note card__note--after', text: v.note })
+          ], 'card--reading');
+        })() : null,
+
         SC.ui.card(null, SC.ui.prose(c.completeText), 'card--complete card--reading'),
 
         /* 6. 次のCTA。主導線は一本線シートを見返すこと */

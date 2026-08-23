@@ -64,6 +64,8 @@
     'course_recommendation_view', 'course_link_clicked',
     'consultation_recommendation_view', 'consultation_link_clicked',
     'offer_unavailable', 'offer_dismissed',
+    /* モニター感想（本文・連絡先・掲載同意の内容は送らない） */
+    'voice_invite_clicked',
       'challenge_intro_view',
       'participation_selected',
       'day2_intro_view',

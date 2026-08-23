@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="モニター感想の一覧（運営用）。">
+<link rel="canonical" href="https://columns.l-mine.com/shindan-5day/voices-admin.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="5DAY モニター感想｜一覧">
+<meta property="og:description" content="モニター感想の一覧（運営用）。">
+<meta property="og:url" content="https://columns.l-mine.com/shindan-5day/voices-admin.html">
+<meta property="og:site_name" content="L-MINE">
+<meta name="twitter:card" content="summary">
+<!-- og:image は正式なシェア画像（1200×630）が用意でき次第ここへ追加する -->
+<meta name="theme-color" content="#0e121a">
+<title>5DAY モニター感想｜一覧</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho+B1:wght@600;700;800&display=swap">
+<!-- スタイル -->
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/voice.css">
+
+<!-- 読み込む順番は変えないこと -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/config-endpoints.js"></script>
+<script src="assets/js/data/voice-copy.js"></script>
+<script src="assets/js/ui/dom.js"></script>
+<script src="assets/js/voices-admin.js"></script>
+</head>
+<body class="voice-body">
+  <main class="vadmin">
+    <div class="vadmin__head">
+      <h1 class="vadmin__title" id="admin-heading"></h1>
+      <span class="vadmin__count" id="admin-count"></span>
+    </div>
+
+    <!-- 合言葉はコードに書かない。ここで入れてもらい、この端末にだけ記憶する -->
+    <div class="vadmin__key">
+      <label class="vform__label" for="admin-key" id="admin-key-label"></label>
+      <div class="vadmin__keyrow">
+        <input type="password" id="admin-key" autocomplete="off" spellcheck="false">
+        <button type="button" class="btn btn--primary" id="admin-load"></button>
+      </div>
+      <p class="vform__note" id="admin-key-note"></p>
+    </div>
+
+    <div class="vadmin__tools">
+      <button type="button" class="btn btn--ghost" id="admin-reload"></button>
+      <button type="button" class="btn btn--ghost" id="admin-filter" aria-pressed="false"></button>
+      <button type="button" class="btn btn--ghost" id="admin-forget"></button>
+    </div>
+
+    <p class="vadmin__status" id="admin-status" role="status" aria-live="polite"></p>
+
+    <div class="vadmin__list" id="admin-list"></div>
+  </main>
+</body>
+</html>

@@ -242,7 +242,19 @@
     ]);
   }
 
+  /* モニター招待コード（?m=）を拾って覚える。
+   * 感想のお願いを出すかどうかの判断にだけ使い、計測へは送らない。 */
+  function captureMonitorId() {
+    var m = /[?&]m=([^&#]*)/.exec(global.location.search);
+    if (!m) return;
+    var id = decodeURIComponent(m[1].replace(/\+/g, ' ')).slice(0, 40).trim();
+    if (!id) return;
+    if (SC.store.getState().voiceMonitorId === id) return;
+    SC.store.saveChallengeState({ voiceMonitorId: id });
+  }
+
   function boot() {
+    captureMonitorId();
     root = doc.getElementById('app');
     footerSlot = doc.getElementById('preview-slot');
 

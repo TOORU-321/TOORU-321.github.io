@@ -1,0 +1,182 @@
+@charset "utf-8";
+/* voice.css : モニター感想フォームと管理ページ
+ * 色・書体・ボタンは app.css のトークンをそのまま使う。
+ */
+
+.voice-body { background-attachment: fixed; }
+
+/* --- 招待コードがないとき ------------------------------------------------ */
+.vgate { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.vgate__inner {
+  width: min(100%, 460px); text-align: center;
+  padding: 40px 26px; border: 1px solid var(--line); border-radius: 24px;
+  background: linear-gradient(145deg, rgba(19, 23, 33, .78), rgba(10, 13, 20, .58));
+  box-shadow: var(--shadow);
+}
+.vgate__title {
+  margin: 0; font-family: var(--mincho); font-size: 21px; font-weight: 700; line-height: 1.8; color: #fff;
+}
+.vgate__text { margin: 18px 0 0; font-size: 15px; line-height: 2.1; color: var(--ink-2); text-align: left; }
+
+/* --- 全体 ---------------------------------------------------------------- */
+.vwrap { max-width: 620px; margin: 0 auto; padding: 0 20px 80px; }
+@media (min-width: 720px) { .vwrap { padding: 0 24px 96px; } }
+
+.vhead {
+  margin: 0 -20px 40px; padding: 56px 22px 44px; text-align: center;
+  background:
+    radial-gradient(620px 300px at 50% 0%, rgba(227, 195, 129, .13), transparent 68%),
+    linear-gradient(180deg, rgba(19, 23, 33, .9), rgba(9, 12, 18, 0));
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 720px) { .vhead { margin: 0 -24px 52px; padding: 72px 30px 56px; } }
+.vhead__eyebrow {
+  margin: 0; font-size: 14px; color: var(--gold-2); letter-spacing: .2em; text-indent: .2em;
+}
+.vhead__title {
+  margin: 16px 0 0; font-family: var(--mincho); font-weight: 800;
+  font-size: clamp(22px, 5.4vw, 30px); line-height: 1.7; letter-spacing: .06em; color: #fff;
+}
+.vhead__lead {
+  margin: 24px 0 0; text-align: left; font-size: 16px; line-height: 2.3; color: var(--ink-2);
+}
+
+/* --- カード --------------------------------------------------------------- */
+.vcard {
+  margin: 0 0 24px; padding: 28px 20px;
+  border: 1px solid var(--line); border-radius: 18px;
+  background: linear-gradient(145deg, rgba(29, 36, 48, .94), rgba(16, 20, 28, .94));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .045);
+}
+@media (min-width: 720px) { .vcard { padding: 34px 28px; } }
+.vcard__title {
+  margin: 0 0 18px; font-family: var(--mincho); font-size: 17px; font-weight: 700;
+  line-height: 1.8; color: var(--ink);
+}
+.vcard__subtitle {
+  margin: 36px 0 12px; font-family: var(--mincho); font-size: 16px; font-weight: 700; color: var(--ink);
+}
+
+.vlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.vlist__item {
+  position: relative; padding-left: 22px; font-size: 15px; line-height: 2; color: var(--ink-2);
+}
+.vlist__item::before {
+  content: ''; position: absolute; left: 2px; top: .9em;
+  width: 8px; height: 1px; background: var(--gold);
+}
+
+/* --- 入力 ---------------------------------------------------------------- */
+.vform__label {
+  display: block; margin: 0 0 10px;
+  font-family: var(--mincho); font-size: 16px; font-weight: 700; color: var(--ink);
+}
+.vform__note { margin: 0 0 14px; font-size: 14px; line-height: 2; color: var(--ink-soft); }
+.vform__input {
+  width: 100%; padding: 14px 14px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: rgba(255, 255, 255, .04); color: var(--ink);
+  font-family: var(--gothic); font-size: 16px; line-height: 1.9;
+  resize: vertical;
+}
+.vform__input:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 2px; }
+.vform__input--body { min-height: 190px; }
+.vform__namewrap { margin: 18px 0 0; }
+
+.vform__group { margin: 26px 0 0; padding: 0; border: 0; }
+.vform__legend {
+  padding: 0; margin: 0 0 12px;
+  font-family: var(--mincho); font-size: 16px; font-weight: 700; color: var(--ink);
+}
+.vform__choices { display: grid; gap: 10px; }
+.vform__choice {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 14px 14px; border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.vform__choice input { margin-top: 5px; accent-color: var(--gold-2); width: 18px; height: 18px; }
+.vform__choice label { font-size: 15px; line-height: 1.9; color: var(--ink-2); cursor: pointer; }
+.vform__choice:has(input:checked) { border-color: var(--line-2); background: rgba(227, 195, 129, .07); }
+.vform__choice:has(input:checked) label { color: var(--ink); }
+
+.vform__privacy {
+  margin: 8px 0 0; padding: 16px 18px;
+  border-left: 2px solid var(--gold); border-radius: 0 12px 12px 0;
+  background: rgba(255, 255, 255, .025);
+  font-size: 14px; line-height: 2; color: var(--ink-soft);
+}
+.vform__cta { margin: 28px 0 0; }
+
+/* --- 送信後 --------------------------------------------------------------- */
+.vdone { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.vdone__inner {
+  width: min(100%, 460px); text-align: center;
+  padding: 44px 26px; border: 1px solid var(--line-2); border-radius: 24px;
+  background: linear-gradient(145deg, rgba(19, 23, 33, .82), rgba(10, 13, 20, .62));
+  box-shadow: var(--shadow);
+}
+.vdone__inner:focus { outline: none; }
+.vdone__title {
+  margin: 0; font-family: var(--mincho); font-size: 22px; font-weight: 700; color: #fff;
+}
+.vdone__text { margin: 20px 0 28px; font-size: 15px; line-height: 2.1; color: var(--ink-2); text-align: left; }
+.vdone__back {
+  display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+}
+
+/* --- 管理ページ ----------------------------------------------------------- */
+.vadmin { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+.vadmin__head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin: 0 0 24px;
+}
+.vadmin__title {
+  margin: 0; font-family: var(--mincho); font-size: 24px; font-weight: 700; color: #fff;
+}
+.vadmin__count { font-family: var(--serif-en); font-size: 18px; color: var(--gold-2); }
+
+.vadmin__key { display: grid; gap: 12px; margin: 0 0 28px; }
+.vadmin__keyrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.vadmin__keyrow input {
+  flex: 1 1 260px; padding: 12px 14px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: rgba(255, 255, 255, .04); color: var(--ink);
+  font-family: var(--gothic); font-size: 15px;
+}
+.vadmin__keyrow .btn { width: auto; min-height: 46px; padding: 10px 20px; }
+
+.vadmin__tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 22px; }
+.vadmin__tools .btn { width: auto; min-height: 42px; padding: 8px 18px; font-size: 14px; }
+
+.vadmin__list { display: grid; gap: 20px; }
+.vitem {
+  padding: 24px 22px; border: 1px solid var(--line); border-radius: 16px;
+  background: linear-gradient(145deg, rgba(29, 36, 48, .94), rgba(16, 20, 28, .94));
+}
+.vitem--no-publish { opacity: .68; border-style: dashed; }
+.vitem__meta {
+  display: flex; gap: 8px 14px; flex-wrap: wrap; margin: 0 0 16px;
+  font-size: 14px; color: var(--ink-soft);
+}
+.vitem__tag {
+  padding: 2px 10px; border: 1px solid var(--line-2); border-radius: 999px;
+  font-size: 14px; color: var(--gold-2);
+}
+.vitem__tag--ng { border-color: var(--line); color: var(--ink-soft); }
+.vitem__body {
+  margin: 0; font-family: var(--mincho); font-size: 16px; line-height: 2.15;
+  color: var(--ink); white-space: pre-wrap;
+}
+.vitem__edited {
+  margin: 18px 0 0; padding: 16px 18px;
+  border-left: 2px solid var(--gold-2); border-radius: 0 12px 12px 0;
+  background: rgba(227, 195, 129, .07);
+  font-size: 15px; line-height: 2.05; color: var(--ink); white-space: pre-wrap;
+}
+.vitem__foot {
+  margin: 18px 0 0; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.vitem__foot .btn { width: auto; min-height: 38px; padding: 6px 16px; font-size: 14px; }
+.vitem__name { font-family: var(--mincho); font-weight: 700; color: var(--ink); }
+
+.vadmin__status { margin: 18px 0 0; font-size: 15px; color: var(--ink-2); }
