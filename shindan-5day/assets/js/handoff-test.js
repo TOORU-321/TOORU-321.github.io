@@ -1,22 +1,23 @@
-/* handoff-test.js : 引き継ぎの技術検証（診断ファネル §LINE連携と本人紐付け）
+/* handoff-test.js : 「診断ページ → LINE内の詳しい結果ページ」の引き継ぎ検証
  *
- * 確かめること
- *   ① どのブラウザで開いているか（LINE内ブラウザかどうか）
- *   ② localStorage が使えるか
- *   ③ クリップボードへ書けるか
- *   ④ クリップボードから読めるか      ← 「自動で復元」が成立するかの分かれ目
- *   ⑤ ページを移動しても保存が残るか
- *   ⑥ URLパラメータ（uid / k）を受け取れるか
+ * 本当に確かめたいこと（診断ファネル §LINE連携と本人紐付け）
+ *   ・普通のブラウザ（診断ページ）と、LINE内ブラウザ（結果ページ）は別の入れ物。
+ *     保存したものは引き継がれない。そこで「引き継ぎキー」をコピーして渡す設計になっている。
+ *   ・その「コピー → LINEで自動読み取り」が、実機で本当に成立するか。
  *
- * 個人情報は集めない。結果は画面に出すだけで、どこへも送信しない。
+ * STEP 1（普通のブラウザ）：保存する ＋ キーをコピーする
+ * STEP 2（LINEの中）      ：保存が残っているか ＋ キーを読み取れるか ＋ URLで渡せるか
+ *
+ * 個人情報は集めない。どこへも送信しない。
  */
 (function (global) {
   'use strict';
   var doc = global.document;
-  var STORE_KEY = 'sc_handoff_test';
-  var TEST_VALUE = 'HANDOFF-TEST-';
 
-  var results = {};
+  var STORE_KEY = 'sc_handoff_test';
+  var PAGE_URL = global.location.origin + global.location.pathname;
+
+  var r = {};   /* 結果をためる */
 
   function el(id) { return doc.getElementById(id); }
 
@@ -35,78 +36,128 @@
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
   }
 
-  /* --- ① 環境 ---------------------------------------------------------- */
-  function detectBrowser() {
+  function isInLine() { return /Line\//i.test(global.navigator.userAgent); }
+
+  function browserName() {
     var ua = global.navigator.userAgent;
-    if (/Line\//i.test(ua)) return 'LINE内ブラウザ';
-    if (/FBAN|FBAV|Instagram/i.test(ua)) return 'SNSアプリ内ブラウザ';
+    if (/Line\//i.test(ua)) return 'LINEの中のブラウザ';
+    if (/FBAN|FBAV|Instagram/i.test(ua)) return 'SNSアプリの中のブラウザ';
     if (/CriOS/i.test(ua)) return 'iPhoneのChrome';
     if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhoneのSafari';
     if (/Android/i.test(ua)) return 'AndroidのChrome等';
     return 'パソコンのブラウザ';
   }
 
-  function showEnv() {
-    var dl = el('env');
-    var ua = global.navigator.userAgent;
-    var browser = detectBrowser();
+  /* --- どちらのSTEPをやればいいか案内する ------------------------------- */
+  function showGuide() {
+    var inLine = isInLine();
+    r.browser = browserName();
+    r.inLine = inLine;
 
-    results.browser = browser;
-    results.ua = ua;
-    results.secure = global.isSecureContext === true;
-    results.hasClipboardWrite = !!(global.navigator.clipboard && global.navigator.clipboard.writeText);
-    results.hasClipboardRead = !!(global.navigator.clipboard && global.navigator.clipboard.readText);
-    results.uid = param('uid');
-    results.k = param('k');
+    el('now').textContent = 'いま開いているのは：' + r.browser;
 
-    row(dl, 'ブラウザ', browser, 'ok');
-    row(dl, '安全な接続（https）', results.secure ? 'はい' : 'いいえ', results.secure ? 'ok' : 'ng');
-    row(dl, 'コピー機能がある', results.hasClipboardWrite ? 'はい' : 'いいえ',
-      results.hasClipboardWrite ? 'ok' : 'ng');
-    row(dl, '読み取り機能がある', results.hasClipboardRead ? 'はい' : 'いいえ',
-      results.hasClipboardRead ? 'ok' : 'ng');
-    row(dl, 'URLのuid', results.uid || '（付いていない）', results.uid ? 'ok' : '');
-    row(dl, 'URLのk', results.k || '（付いていない）', results.k ? 'ok' : '');
-    row(dl, '端末の文字', ua.slice(0, 90) + (ua.length > 90 ? '…' : ''));
-  }
-
-  /* --- ② 保存できるか --------------------------------------------------- */
-  function testSave() {
-    var dl = el('save-result');
-    dl.textContent = '';
-    var value = TEST_VALUE + new Date().getTime();
-    var ok = false, readBack = '';
-    try {
-      global.localStorage.setItem(STORE_KEY, value);
-      readBack = global.localStorage.getItem(STORE_KEY) || '';
-      ok = readBack === value;
-    } catch (e) {
-      readBack = String(e && e.message ? e.message : e);
+    if (inLine) {
+      el('guide-title').textContent = 'いまLINEの中です → STEP 2 をやってください';
+      el('guide-text').textContent =
+        '先に普通のブラウザで STEP 1 を済ませてから、ここへ来てください。まだなら、いったんSafariなどでこのページを開いて STEP 1 を押してから戻ってきてください。';
+      el('step1').classList.add('is-dim');
+      el('step2').classList.add('is-active');
+    } else {
+      el('guide-title').textContent = 'いま普通のブラウザです → STEP 1 をやってください';
+      el('guide-text').textContent =
+        'STEP 1 を押したあと、出てきたURLをLINEの自分あてトークへ貼って送り、そこからタップして開いてください。';
+      el('step1').classList.add('is-active');
+      el('step2').classList.add('is-dim');
     }
-    results.storageWrite = ok;
-    row(dl, '保存して読み戻せた', ok ? 'はい' : 'いいえ', ok ? 'ok' : 'ng');
-    if (!ok && readBack) row(dl, '理由', readBack, 'ng');
   }
 
-  /* 戻ってきたときに、②の保存が残っているかを見る */
-  function checkSurvived() {
+  /* --- STEP 1：保存する ＋ キーをコピーする ------------------------------ */
+  function runStep1() {
+    var dl = el('step1-result');
+    dl.textContent = '';
+
+    var key = 'SC-' + Math.random().toString(36).slice(2, 10).toUpperCase();
+    r.key = key;
+
+    /* 保存できるか */
+    var saved = false;
+    try {
+      global.localStorage.setItem(STORE_KEY, key);
+      saved = global.localStorage.getItem(STORE_KEY) === key;
+    } catch (e) { saved = false; }
+    r.step1Save = saved;
+    row(dl, 'このブラウザに保存できた', saved ? 'はい' : 'いいえ', saved ? 'ok' : 'ng');
+
+    /* キーをコピーできるか */
+    copyText(key, function (ok, how) {
+      r.step1Copy = ok;
+      r.step1CopyHow = how;
+      row(dl, 'キーをコピーできた', ok ? 'はい（' + how + '）' : 'いいえ', ok ? 'ok' : 'ng');
+      row(dl, 'このときのキー', key);
+
+      /* LINEへ送るURL。URLでも渡せるかを同時に試すため k= を付ける */
+      var url = PAGE_URL + '?k=' + encodeURIComponent(key);
+      el('url-box').value = url;
+      el('step1-url').hidden = false;
+      el('step1-hint').hidden = false;
+    });
+  }
+
+  /* --- STEP 2：引き継げているか調べる ------------------------------------ */
+  function runStep2() {
+    var dl = el('step2-result');
+    dl.textContent = '';
+
+    /* ① 保存は残っているか（別の入れ物なので、普通は残らない） */
     var saved = '';
     try { saved = global.localStorage.getItem(STORE_KEY) || ''; } catch (e) { saved = ''; }
-    if (!saved) return;
-    results.storageSurvived = true;
-    var dl = el('save-result');
-    row(dl, '移動後', '残っていた', 'ok');
+    r.step2Saved = !!saved;
+    row(dl, '① 保存が引き継がれた', saved ? 'はい' : 'いいえ（別の入れ物）',
+      saved ? 'ok' : 'ng');
+    if (saved) row(dl, '　 見えたキー', saved);
+
+    /* ② URLで渡せたか */
+    var fromUrl = param('k');
+    r.step2Url = !!fromUrl;
+    row(dl, '② URLで渡せた', fromUrl ? 'はい' : 'いいえ（URLにkが無い）',
+      fromUrl ? 'ok' : 'ng');
+    if (fromUrl) row(dl, '　 URLのキー', fromUrl);
+
+    var uid = param('uid');
+    if (uid) {
+      r.uid = uid;
+      row(dl, '　 URLのuid', uid, 'ok');
+    }
+
+    /* ③ クリップボードから読めるか（ここが本命） */
+    if (!(global.navigator.clipboard && global.navigator.clipboard.readText)) {
+      r.step2Read = false;
+      r.step2ReadReason = '読み取り機能そのものが無い';
+      row(dl, '③ コピーから自動で読めた', 'いいえ', 'ng');
+      row(dl, '　 理由', 'このブラウザに読み取り機能がありません', 'ng');
+      return;
+    }
+
+    global.navigator.clipboard.readText().then(function (text) {
+      r.step2Read = true;
+      r.step2ReadText = (text || '').slice(0, 30);
+      var looksKey = /^SC-[A-Z0-9]{8}$/.test((text || '').trim());
+      r.step2ReadIsKey = looksKey;
+      row(dl, '③ コピーから自動で読めた', 'はい', 'ok');
+      row(dl, '　 中身がキーだった', looksKey ? 'はい' : 'いいえ（別のもの）',
+        looksKey ? 'ok' : 'ng');
+      row(dl, '　 読めた文字', (text || '').slice(0, 30));
+    }).catch(function (e) {
+      r.step2Read = false;
+      r.step2ReadReason = String(e && e.name ? e.name : e);
+      row(dl, '③ コピーから自動で読めた', 'いいえ', 'ng');
+      row(dl, '　 理由', '許可されませんでした（' + r.step2ReadReason + '）', 'ng');
+    });
   }
 
-  /* --- ③ クリップボードへ書けるか -------------------------------------- */
-  function testCopy() {
-    var dl = el('copy-result');
-    dl.textContent = '';
-    var text = 'SC-KEY-' + Math.random().toString(36).slice(2, 10).toUpperCase();
-    results.copiedText = text;
-
+  /* --- コピー（新しい方法 → だめなら昔ながらの方法）---------------------- */
+  function copyText(text, done) {
     function fallback() {
-      /* 昔ながらの方法。iOSの一部ではこちらしか通らない */
       var ta = doc.createElement('textarea');
       ta.value = text;
       ta.setAttribute('readonly', '');
@@ -118,121 +169,67 @@
       var ok = false;
       try { ok = doc.execCommand('copy'); } catch (e) { ok = false; }
       doc.body.removeChild(ta);
-      results.copyWrite = ok;
-      results.copyMethod = ok ? '昔ながらの方法' : '両方だめ';
-      row(dl, 'コピーできた', ok ? 'はい（昔ながらの方法）' : 'いいえ', ok ? 'ok' : 'ng');
-      if (ok) row(dl, 'コピーした合言葉', text);
+      done(ok, ok ? '昔ながらの方法' : '両方だめ');
     }
-
     if (global.navigator.clipboard && global.navigator.clipboard.writeText) {
-      global.navigator.clipboard.writeText(text).then(function () {
-        results.copyWrite = true;
-        results.copyMethod = '新しい方法';
-        row(dl, 'コピーできた', 'はい（新しい方法）', 'ok');
-        row(dl, 'コピーした合言葉', text);
-      }).catch(function () {
-        fallback();
-      });
+      global.navigator.clipboard.writeText(text)
+        .then(function () { done(true, '新しい方法'); })
+        .catch(fallback);
     } else {
       fallback();
     }
   }
 
-  /* --- ④ クリップボードから読めるか（本命）------------------------------ */
-  function testRead() {
-    var dl = el('read-result');
-    dl.textContent = '';
-
-    if (!(global.navigator.clipboard && global.navigator.clipboard.readText)) {
-      results.copyRead = false;
-      results.copyReadReason = '読み取り機能そのものが無い';
-      row(dl, '読み取れた', 'いいえ', 'ng');
-      row(dl, '理由', 'このブラウザには読み取り機能がありません', 'ng');
-      return;
-    }
-
-    global.navigator.clipboard.readText().then(function (text) {
-      var matched = !!(results.copiedText && text === results.copiedText);
-      results.copyRead = true;
-      results.copyReadMatched = matched;
-      row(dl, '読み取れた', 'はい', 'ok');
-      row(dl, '中身が一致した', matched ? 'はい' : 'いいえ（別のものが入っていた）',
-        matched ? 'ok' : 'ng');
-      row(dl, '読み取れた文字', (text || '').slice(0, 40));
-    }).catch(function (e) {
-      results.copyRead = false;
-      results.copyReadReason = String(e && e.name ? e.name : e);
-      row(dl, '読み取れた', 'いいえ', 'ng');
-      row(dl, '理由', '許可されませんでした（' + results.copyReadReason + '）', 'ng');
-    });
-  }
-
-  /* --- ⑥ まとめてコピー -------------------------------------------------- */
-  function buildReport() {
-    var lines = [
-      '── 引き継ぎ検証の結果 ──',
-      '日時：' + new Date().toLocaleString('ja-JP'),
-      'ブラウザ：' + (results.browser || '—'),
-      'https：' + (results.secure ? 'はい' : 'いいえ'),
-      '',
-      '② 保存できた：' + yn(results.storageWrite),
-      '⑤ 移動しても残った：' + yn(results.storageSurvived),
-      '',
-      '③ コピーできた：' + yn(results.copyWrite) + '（' + (results.copyMethod || '未実行') + '）',
-      '④ 読み取れた：' + yn(results.copyRead),
-      '　 中身が一致：' + yn(results.copyReadMatched),
-      '　 だめな理由：' + (results.copyReadReason || '—'),
-      '',
-      '⑥ URLのuid：' + (results.uid || '（なし）'),
-      '　 URLのk：' + (results.k || '（なし）'),
-      '',
-      'UA：' + (results.ua || '—')
-    ];
-    return lines.join('\n');
-  }
-
+  /* --- 結果をまとめる ---------------------------------------------------- */
   function yn(v) {
     if (v === true) return 'はい';
     if (v === false) return 'いいえ';
     return '未実行';
   }
 
+  function buildReport() {
+    return [
+      '── 引き継ぎ検証 ──',
+      '日時：' + new Date().toLocaleString('ja-JP'),
+      '開いた場所：' + (r.browser || '—'),
+      '',
+      '【STEP 1｜診断ページの役】',
+      '　保存できた：' + yn(r.step1Save),
+      '　キーをコピーできた：' + yn(r.step1Copy) + '（' + (r.step1CopyHow || '未実行') + '）',
+      '',
+      '【STEP 2｜LINE内の結果ページの役】',
+      '　① 保存が引き継がれた：' + yn(r.step2Saved),
+      '　② URLで渡せた：' + yn(r.step2Url),
+      '　③ コピーから自動で読めた：' + yn(r.step2Read),
+      '　　 中身がキーだった：' + yn(r.step2ReadIsKey),
+      '　　 だめな理由：' + (r.step2ReadReason || '—'),
+      '　　 読めた文字：' + (r.step2ReadText || '—'),
+      '　 URLのuid：' + (r.uid || '（なし）'),
+      '',
+      'UA：' + global.navigator.userAgent
+    ].join('\n');
+  }
+
   function copyReport() {
     var text = buildReport();
     el('report').value = text;
-    var status = el('report-status');
-
-    function done(msg) { status.textContent = msg; }
-
-    if (global.navigator.clipboard && global.navigator.clipboard.writeText) {
-      global.navigator.clipboard.writeText(text)
-        .then(function () { done('コピーしました。そのまま貼って送ってください。'); })
-        .catch(function () { done('コピーできませんでした。下の枠を長押しして選択してください。'); });
-    } else {
-      done('下の枠を長押しして選択し、コピーしてください。');
-    }
+    copyText(text, function (ok) {
+      el('report-status').textContent = ok
+        ? 'コピーしました。そのまま貼って送ってください。'
+        : '下の枠を長押しして選択し、コピーしてください。';
+    });
   }
 
   /* --- 起動 -------------------------------------------------------------- */
   function boot() {
-    showEnv();
-    if (param('hop') === '1') {
-      /* 別ページから戻ってきた。保存が残っているかだけ見る */
-      testSave();
-      checkSurvived();
-    }
-
-    el('btn-save').addEventListener('click', testSave);
-    el('btn-copy').addEventListener('click', testCopy);
-    el('btn-read').addEventListener('click', testRead);
+    showGuide();
+    el('btn-step1').addEventListener('click', runStep1);
+    el('btn-step2').addEventListener('click', runStep2);
     el('btn-report').addEventListener('click', copyReport);
-
-    el('btn-hop').addEventListener('click', function () {
-      /* いったん別のページへ出て、戻ってくる */
-      var back = global.location.pathname + '?hop=1' +
-        (results.uid ? '&uid=' + encodeURIComponent(results.uid) : '');
-      global.location.href = 'lp.html#handoff-hop';
-      global.setTimeout(function () { global.location.href = back; }, 400);
+    el('btn-copy-url').addEventListener('click', function () {
+      copyText(el('url-box').value, function (ok) {
+        el('btn-copy-url').textContent = ok ? 'コピーしました' : '長押しで選択してください';
+      });
     });
   }
 
