@@ -17,6 +17,7 @@
   var STORE_KEY = 'sc_handoff_test';
   var PAGE_URL = global.location.origin + global.location.pathname;
 
+  var VERSION = 'v3';
   var r = {};   /* 結果をためる */
 
   function el(id) { return doc.getElementById(id); }
@@ -54,7 +55,7 @@
     r.browser = browserName();
     r.inLine = inLine;
 
-    el('now').textContent = 'いま開いているのは：' + r.browser;
+    el('now').textContent = 'いま開いているのは：' + r.browser + '（検証ページ ' + VERSION + '）';
 
     if (inLine) {
       el('guide-title').textContent = 'いまLINEの中です → STEP 2 をやってください';
@@ -203,7 +204,7 @@
 
   function buildReport() {
     return [
-      '── 引き継ぎ検証 ──',
+      '── 引き継ぎ検証 ' + VERSION + ' ──',
       '日時：' + new Date().toLocaleString('ja-JP'),
       '開いた場所：' + (r.browser || '—'),
       '',
