@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* handoff-test.css : 引き継ぎ検証ページ（技術検証用・一般公開しない） */
+
+.ht .vcard { margin-bottom: 20px; }
+.ht .vcard__title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.ht-key {
+  padding: 2px 10px; border-radius: 999px;
+  border: 1px solid var(--gold-2); color: var(--gold-2);
+  font-family: var(--gothic); font-size: 14px; font-weight: 400;
+}
+
+.ht-list {
+  margin: 18px 0 0; padding: 0;
+  display: grid; grid-template-columns: auto 1fr; gap: 10px 16px;
+  font-size: 15px; line-height: 1.9;
+}
+.ht-list dt { margin: 0; color: var(--ink-soft); }
+.ht-list dd {
+  margin: 0; color: var(--ink); word-break: break-all;
+}
+.ht-list dd.ht-ok { color: var(--ok); font-weight: 700; }
+.ht-list dd.ht-ng { color: var(--warn); font-weight: 700; }
+
+.ht .btn { margin-top: 4px; }
+.ht-report { margin-top: 14px; font-size: 14px; line-height: 1.8; }
+
+@media (max-width: 359px) {
+  .ht-list { grid-template-columns: 1fr; gap: 4px 0; }
+  .ht-list dt { margin-top: 10px; }
+}
