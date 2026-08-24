@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TLV00VTDZL');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>エルラボ＋ はじめにご確認ください｜使い方ガイド</title>
+<meta name="description" content="エルラボ＋にご加入いただいた方向けの使い方ガイド。メンバー限定動画・限定コラムの場所と、オンライン勉強会の参加方法をご案内します。">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08090b;
+    --bg-deep:#050608;
+    --panel:#0d0f12;
+    --panel-2:#111317;
+    --ink:#f0ede6;
+    --sub:#aaa69d;
+    --mut:#77736b;
+    --gold:#b99a5f;
+    --gold-soft:#d0b77e;
+    --gold-pale:#e4d2a7;
+    --line:rgba(208,183,126,.22);
+    --line-strong:rgba(208,183,126,.38);
+    --hair:rgba(255,255,255,.075);
+    --mincho:"Shippori Mincho B1",serif;
+    --gothic:"Noto Sans JP",sans-serif;
+    --en:"Cormorant Garamond",serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 50% -10%,rgba(185,154,95,.085),transparent 34rem),
+      radial-gradient(circle at 8% 38%,rgba(255,255,255,.025),transparent 28rem),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--gothic);
+    font-weight:400;
+    line-height:1.9;
+    letter-spacing:.018em;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.15;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.09'/%3E%3C/svg%3E");
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px}
+  a{color:var(--gold-soft);text-decoration:none}
+
+  /* header */
+  header{padding:26px 0 0;text-align:center}
+  .brandmark{font-family:var(--mincho);font-weight:600;letter-spacing:.14em;font-size:15px;color:var(--gold-pale)}
+  .brandmark span{font-size:.7em;vertical-align:top}
+
+  /* hero */
+  .hero{padding:54px 0 46px;text-align:center;border-bottom:1px solid var(--hair)}
+  .hero .eyebrow{font-family:var(--en);font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
+  .hero h1{font-family:var(--mincho);font-weight:600;font-size:clamp(26px,4.6vw,36px);line-height:1.6;margin:0 0 20px;text-wrap:balance;color:#fff}
+  .hero h1 em{font-style:normal;color:var(--gold-pale)}
+  .hero p{max-width:480px;margin:0 auto;color:var(--sub);font-size:14.5px;line-height:2}
+
+  /* section */
+  .step{padding:56px 0;border-bottom:1px solid var(--hair)}
+  .step:last-of-type{border-bottom:none}
+  .step-head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+  .step-no{font-family:var(--en);font-size:15px;color:var(--gold);letter-spacing:.06em;flex:none;padding-top:2px}
+  .step-head h2{font-family:var(--mincho);font-weight:600;font-size:clamp(21px,3.4vw,26px);color:#fff;margin:0;letter-spacing:.03em;text-wrap:balance}
+  .step p.lead{color:var(--sub);font-size:14px;line-height:2;margin:0 0 28px}
+  .step p.lead b{color:var(--gold-pale);font-weight:600}
+
+  /* mock UI panels */
+  .mock{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px 22px 24px;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .mock::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent)}
+  .mock-caption{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.08em;color:var(--mut);margin-bottom:16px}
+  .mock-caption .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none}
+
+  /* menu mock */
+  .m-topbar{display:flex;justify-content:flex-end;margin-bottom:14px}
+  .m-pill{display:inline-flex;align-items:center;gap:8px;background:#15171b;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--ink)}
+  .m-pill .bars{display:flex;flex-direction:column;gap:2.5px}
+  .m-pill .bars i{display:block;width:13px;height:1.4px;background:var(--gold-soft)}
+  .m-drop{background:#15171b;border:1px solid var(--line-strong);border-radius:6px;padding:8px;max-width:210px;margin-left:auto;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .m-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:4px;font-size:12.5px;color:var(--sub)}
+  .m-item.hit{background:rgba(185,154,95,.14);color:var(--gold-pale);font-weight:600}
+  .m-item .ico{width:14px;text-align:center;font-size:12px}
+  .m-note{margin-top:14px;font-size:12px;color:var(--gold-soft);display:flex;align-items:center;gap:6px}
+
+  /* mypage rows mock */
+  .m-rows{display:grid;gap:9px}
+  .m-row{display:flex;align-items:center;gap:12px;background:#15171b;border:1px solid var(--hair);border-radius:5px;padding:12px 14px}
+  .m-row.hit{border-color:var(--line-strong);background:rgba(185,154,95,.07)}
+  .m-row .ic{width:30px;height:30px;border-radius:50%;background:#1c1e23;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;color:var(--gold-soft)}
+  .m-row .tx{flex:1;min-width:0}
+  .m-row .tx b{display:block;font-size:13px;color:var(--ink);font-weight:600}
+  .m-row .tx small{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+  .m-row .go{flex:none;font-size:11px;color:var(--gold-pale);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+
+  /* news mock */
+  .n-card{background:#15171b;border:1px solid var(--hair);border-radius:5px;padding:18px 18px 16px}
+  .n-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--gold-soft);margin-bottom:8px}
+  .n-card h4{margin:0 0 6px;font-size:14.5px;color:#fff;font-weight:600;line-height:1.6}
+  .n-date{font-size:11px;color:var(--mut);margin-bottom:10px}
+  .n-body{font-size:12.5px;color:var(--sub);line-height:1.9}
+  .n-arrow{margin:18px 0 0;text-align:center;color:var(--mut);font-size:11px}
+  .n-card.reply{margin-top:12px}
+  .n-card.reply .n-tag{color:#8fb0a0}
+
+  /* CTA button (matches elabo-plus-join.html) */
+  .cta{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;
+    min-width:260px;min-height:58px;padding:15px 30px;
+    border:1px solid var(--gold-soft);border-radius:1px;
+    font-family:var(--gothic);font-size:13.5px;font-weight:600;letter-spacing:.12em;
+    color:#17130c;background:linear-gradient(180deg,#d9c28f 0%,#c5a66b 100%);
+    box-shadow:0 15px 38px rgba(0,0,0,.32),0 7px 22px rgba(185,154,95,.14),inset 0 1px 0 rgba(255,255,255,.42);
+    transition:transform .25s ease,box-shadow .25s ease;
+  }
+  .cta:hover{transform:translateY(-2px)}
+  .step-cta{margin-top:26px;text-align:center}
+  .step-cta .sub{display:block;margin-top:10px;font-size:11.5px;color:var(--mut)}
+
+  /* final */
+  .final{padding:64px 0 70px;text-align:center}
+  .final h2{font-family:var(--mincho);font-weight:600;font-size:clamp(23px,4vw,29px);color:#fff;margin:0 0 14px;text-wrap:balance}
+  .final p{color:var(--sub);font-size:14px;margin:0 0 30px}
+
+  footer{border-top:1px solid var(--hair);padding:30px 0 46px;text-align:center}
+  footer nav{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;font-size:11.5px;margin-bottom:12px}
+  footer nav a{color:var(--mut)}
+  footer .cc{font-size:11px;color:var(--mut);opacity:.7}
+
+  @media(max-width:600px){
+    .wrap{padding:0 20px}
+    .hero{padding:44px 0 36px}
+    .step{padding:44px 0}
+    .m-drop{max-width:170px}
+  }
+</style>
+</head>
+<body>
+
+<header><div class="wrap"><span class="brandmark">L-MINE エルラボ<span>＋</span></span></div></header>
+
+<section class="hero"><div class="wrap">
+  <p class="eyebrow">Welcome Guide</p>
+  <h1>ご加入ありがとうございます。<br>はじめに、<em>3つ</em>だけ確認してください。</h1>
+  <p>「メンバー限定の動画」「限定コラム」「オンライン勉強会」——<br>この3つの場所と使い方を、この1枚にまとめました。</p>
+</div></section>
+
+<section class="step"><div class="wrap">
+  <div class="step-head"><span class="step-no">01</span><h2>メンバー限定の動画は、どこ？</h2></div>
+  <p class="lead">アプリ右上のメニューを開き、<b>「マイページ」</b>をタップしてください。<br>「受講中のコンテンツ」に、メンバー限定の動画がまとまっています。</p>
+  <div class="mock">
+    <div class="mock-caption"><span class="dot"></span>アプリ右上のメニュー</div>
+    <div class="m-topbar"><span class="m-pill">とーる <span class="bars"><i></i><i></i><i></i></span></span></div>
+    <div class="m-drop">
+      <div class="m-item hit"><span class="ico">👤</span>マイページ</div>
+      <div class="m-item"><span class="ico">🔑</span>パスワード再設定</div>
+    </div>
+    <div class="m-note">↓ タップすると「マイページ」が開きます</div>
+  </div>
+  <div class="mock" style="margin-top:14px">
+    <div class="mock-caption"><span class="dot"></span>マイページ ＞ 受講中のコンテンツ</div>
+    <div class="m-rows">
+      <div class="m-row hit"><span class="ic">▶</span><span class="tx"><b>エルラボ＋　オンライン勉強会</b><small>メンバー限定のオンライン講義アーカイブ</small></span><span class="go">視聴 →</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="step"><div class="wrap">
+  <div class="step-head"><span class="step-no">02</span><h2>限定コラムは、どこ？</h2></div>
+  <p class="lead">同じ「マイページ」の中、動画のすぐ下に<b>「シークレットコラム」</b>があります。<br>メンバーだけが読める最新コラムが、ここから読めます。</p>
+  <div class="mock">
+    <div class="mock-caption"><span class="dot"></span>マイページ ＞ 受講中のコンテンツ</div>
+    <div class="m-rows">
+      <div class="m-row"><span class="ic">▶</span><span class="tx"><b>エルラボ＋　オンライン勉強会</b><small>メンバー限定のオンライン講義アーカイブ</small></span><span class="go">視聴 →</span></div>
+      <div class="m-row hit"><span class="ic">🔒</span><span class="tx"><b>シークレットコラム</b><small>メンバー限定の最新コラム</small></span><span class="go">読む →</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="step"><div class="wrap">
+  <div class="step-head"><span class="step-no">03</span><h2>オンライン勉強会には、どう参加する？</h2></div>
+  <p class="lead">開催日が決まると、まずアプリの<b>「お知らせ」</b>で告知します。<br>そして<b>当日</b>になると、同じお知らせにZoomの参加リンクが追記され、<b>登録メールアドレス宛にも同じ内容が届きます。</b>特別な準備は必要ありません。</p>
+  <div class="mock">
+    <div class="mock-caption"><span class="dot"></span>お知らせ（開催が決まったら）</div>
+    <div class="n-card">
+      <div class="n-tag">📢 お知らせ</div>
+      <h4>【勉強会】◯月◯日（◯）◯◯について</h4>
+      <div class="n-date">20XX.XX.XX</div>
+      <div class="n-body">次回のエルラボ＋オンライン勉強会のテーマと開催日時をお知らせします。当日は本ページのお知らせにZoomリンクを追記しますので、そちらからご参加ください。</div>
+    </div>
+    <div class="n-arrow">当日 ↓</div>
+    <div class="n-card reply">
+      <div class="n-tag">✅ 当日のお知らせ（更新）</div>
+      <h4>本日20:00〜開催です</h4>
+      <div class="n-date">20XX.XX.XX（当日）</div>
+      <div class="n-body">Zoom参加リンクを追記しました。同じ内容を登録メールアドレスにも送信しています。時間になりましたらリンクからご参加ください。</div>
+    </div>
+  </div>
+</div></section>
+
+<section class="final"><div class="wrap">
+  <h2>準備は、これだけです。</h2>
+  <p>さっそくアプリを開いて、マイページをのぞいてみてください。</p>
+  <a class="cta" href="https://columns.l-mine.com/app/?p=mypage">アプリを開く →</a>
+</div></section>
+
+<footer><div class="wrap">
+  <nav>
+    <a href="legal/tokusho.html">特定商取引法に基づく表記</a>
+    <a href="legal/terms.html">利用規約</a>
+    <a href="legal/privacy.html">プライバシーポリシー</a>
+  </nav>
+  <div class="cc">© 2026 L-MINE</div>
+</div></footer>
+
+</body>
+</html>
