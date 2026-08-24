@@ -849,6 +849,12 @@
   #payDone p{color:#aaa69d;font-size:13.5px;line-height:1.95;margin:0 0 26px}
   #payDone .pay-donenote{max-width:380px;margin:22px auto 0;color:#77736b;font-size:11px;line-height:1.9}
   #payDone .pay-donenote b{color:#aaa69d;font-weight:600}
+  #payDone .guide-eyebrow{color:var(--gold-pale,#e4d2a7);font-size:12px;letter-spacing:.1em;margin:0 0 12px;font-weight:600}
+  #payDone .cta-emph{position:relative;isolation:isolate;animation:guidePulse 2.2s ease-in-out infinite}
+  #payDone .cta-emph::after{content:"";position:absolute;inset:-3px;z-index:-1;border-radius:1px;background:linear-gradient(180deg,#d9c28f,#c5a66b);opacity:.55;filter:blur(9px);animation:guideGlow 2.2s ease-in-out infinite}
+  @keyframes guidePulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  @keyframes guideGlow{0%,100%{opacity:.4}50%{opacity:.75}}
+  @media(prefers-reduced-motion:reduce){#payDone .cta-emph,#payDone .cta-emph::after{animation:none}}
 </style>
 <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="加入手続き">
   <div class="pay-backdrop" onclick="closeCheckout()"></div>
@@ -859,13 +865,17 @@
     <div id="payDone">
       <div class="mk">✓</div>
       <h3>ご加入ありがとうございます</h3>
-      <p>下の「アプリを更新する」を押すと、<br>ご登録のメールアドレスに視聴権が反映されます。</p>
-      <button type="button" id="syncBtn" onclick="syncPurchase()" class="cta">アプリを更新する</button>
-      <p class="pay-donenote">※反映まで、少しお時間がかかる場合があります。うまくいかない時は、もう一度お試しください。</p>
+      <div id="syncPrompt">
+        <p>下の「アプリを更新する」を押すと、<br>ご登録のメールアドレスに視聴権が反映されます。</p>
+        <button type="button" id="syncBtn" onclick="syncPurchase()" class="cta">アプリを更新する</button>
+        <p class="pay-donenote">※反映まで、少しお時間がかかる場合があります。うまくいかない時は、もう一度お試しください。</p>
+      </div>
       <div id="syncOk" style="display:none">
-        <p class="pay-donenote"><b>反映できました。</b>はじめに、使い方を1分だけご確認ください。</p>
-        <a href="https://columns.l-mine.com/elabo-plus-guide.html" class="cta">使い方ガイドを見る</a>
-        <p class="pay-donenote" style="margin-top:14px"><a href="https://columns.l-mine.com/app/" style="color:#77736b">ガイドを見ずにアプリを開く →</a></p>
+        <p class="pay-donenote" style="color:#d0b77e"><b style="color:#fff">反映できました！</b>あと1分だけ、お付き合いください。</p>
+        <p class="guide-eyebrow">🎬 はじめての方は、まずこちら</p>
+        <a href="https://columns.l-mine.com/elabo-plus-guide.html" class="cta cta-emph">使い方ガイドを見る</a>
+        <p class="pay-donenote" style="margin-top:16px"><a href="https://columns.l-mine.com/app/" style="color:#77736b">ガイドを見ずにアプリを開く →</a></p>
+      </div>
       </div>
       <div id="syncNg" style="display:none">
         <p class="pay-donenote">まだ反映できていないようです。少し時間をおいて、もう一度「アプリを更新する」をお試しください。<br>それでも視聴できない場合は、下記からお問い合わせください。</p>
@@ -938,7 +948,7 @@
     btn.textContent = '確認しています…';
     try{
       var r = await fetch(CHECKOUT_GAS + '?action=sync_purchase&session_id=' + encodeURIComponent(_lastSessionId) + '&_=' + Date.now()).then(function(x){ return x.json(); });
-      if(r && r.ok){ okBox.style.display = 'block'; }
+      if(r && r.ok){ okBox.style.display = 'block'; var pr=document.getElementById('syncPrompt'); if(pr) pr.style.display='none'; }
       else { ngBox.style.display = 'block'; }
     }catch(e){ ngBox.style.display = 'block'; }
     btn.disabled = false;
