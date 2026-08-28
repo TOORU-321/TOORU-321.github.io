@@ -228,12 +228,14 @@ def inline(s):
     s = re.sub(r'\x00(\d+)\x00', lambda m: stash[int(m.group(1))], s)
     return s
 
-def convert_body(body, sign, readable_breaks=False):
+def convert_body(body, sign, readable_breaks=False, note_layout=False):
     # 見出し・区切りは、原稿側に空行がなくても独立ブロックとして扱う。
-    # readable_breaks は長い改行列を最大3行の段落へ分け、文字の壁を防ぐ。
+    # note_layout は行数で機械的に切らず、文の終わりを見て意味段落へ整える。
     body = re.sub(r'(?m)^(\*\*\*|## .+|> .+)$', r'\n\1\n', body)
     blocks = re.split(r'\n[ \t]*\n', body.strip("\n"))
     out = []
+    headings = []
+    heading_no = 0
     for blk in blocks:
         lines = [l for l in blk.split("\n") if l.strip() != ""]
         if not lines:
@@ -261,7 +263,14 @@ def convert_body(body, sign, readable_breaks=False):
             continue
         # 見出し
         if len(lines) == 1 and lines[0].startswith("## "):
-            out.append(f'<h2>{inline(lines[0][3:].strip())}</h2>')
+            heading_text = lines[0][3:].strip()
+            if note_layout:
+                heading_no += 1
+                heading_id = f"section-{heading_no}"
+                headings.append((heading_id, heading_text))
+                out.append(f'<h2 id="{heading_id}">{inline(heading_text)}</h2>')
+            else:
+                out.append(f'<h2>{inline(heading_text)}</h2>')
             continue
         # STEP
         m = re.match(r'^\*\*\s*(STEP\s*\d+)\s*[：:]\s*(.+?)\s*\*\*$', lines[0]) if len(lines) == 1 else None
@@ -283,9 +292,24 @@ def convert_body(body, sign, readable_breaks=False):
                     inner.append(f'<p>{inline(l.strip())}</p>')
             out.append('<div class="flowbox">' + "".join(inner) + '</div>')
             continue
-        # 通常まとまり。狭いスマホ幅（日本語約18字/行）で見た目が最大4行になるよう分割する。
-        # <br> の個数だけでは、長い1行が端末上で折り返して文字の壁になるため、文字数も見る。
-        if readable_breaks:
+        # 通常まとまり。短い原稿行を文章として連結し、句点・疑問符などの
+        # 「文の終わり」で段落を作る。表示上の3〜4行を理由に途中では切らない。
+        if note_layout:
+            chunks, chunk, completed_sentences = [], [], 0
+            for line in lines:
+                clean = line.strip()
+                chunk.append(clean)
+                plain = re.sub(r'[*_]', '', clean)
+                if re.search(r'[。！？!?](?:[」』）】\"])?$', plain):
+                    completed_sentences += 1
+                joined_len = len(re.sub(r'[*_]', '', ''.join(chunk)))
+                # noteに近い呼吸感：原則2文、長い文は1文で独立させる。
+                if (completed_sentences >= 2 and joined_len >= 45) or joined_len >= 130:
+                    chunks.append(chunk)
+                    chunk, completed_sentences = [], 0
+            if chunk:
+                chunks.append(chunk)
+        elif readable_breaks:
             chunks, chunk, visual_lines = [], [], 0
             for line in lines:
                 plain = re.sub(r'[*_]', '', line.strip())
@@ -300,9 +324,35 @@ def convert_body(body, sign, readable_breaks=False):
         else:
             chunks = [lines]
         for chunk in chunks:
-            out.append("<p>" + "<br>".join(inline(l.strip()) for l in chunk) + "</p>")
+            if note_layout:
+                # 日本語の短い改行は編集上のもの。ブラウザでは自然な一続きの文章にする。
+                content = "".join(inline(l.strip()) for l in chunk)
+            else:
+                # 従来記事は、原稿で明示された改行をそのまま維持する。
+                content = "<br>".join(inline(l.strip()) for l in chunk)
+            out.append("<p>" + content + "</p>")
     if sign:
         out.append(f'<p class="sign">{inline(sign)}</p>')
+
+    # noteと同じく、導入文の後・最初の本編見出しの前にネイティブ目次を置く。
+    if note_layout and headings:
+        toc_items = "".join(
+            f'<li><a href="#{hid}"><span>{i:02d}</span>{inline(text)}</a></li>'
+            for i, (hid, text) in enumerate(headings, 1)
+        )
+        toc = ('<nav class="article-toc" aria-label="目次">'
+               '<div class="toc-label"><span>Contents</span><b>目次</b></div>'
+               f'<ol>{toc_items}</ol></nav>')
+        insert_at = next((i for i, item in enumerate(out)
+                          if item.startswith('<p class="sec">') or item.startswith('<h2 ')), len(out))
+        out.insert(insert_at, toc)
+
+    # 冒頭の最初の意味段落にだけ導入用クラスを付ける。
+    if note_layout:
+        for i, item in enumerate(out):
+            if item.startswith('<p>'):
+                out[i] = item.replace('<p>', '<p class="intro-lead">', 1)
+                break
     return "\n      ".join(out)
 
 # ---------- フロントマター ----------
@@ -321,6 +371,11 @@ def parse(path):
 
 def hero_exists(n):
     return os.path.exists(os.path.join(ASSETS, f"column{n}-hero.jpg"))
+
+def write_generated(path, content):
+    """テンプレート内の改行を変換せず、そのまま書き出す。"""
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write(content)
 
 def thumb_html(c, cls):
     n = c["number"]
@@ -389,7 +444,12 @@ def render_article(c, cols):
     else:
         hero_block = ''
     tags = "".join(f'<a href="#">{t}</a>' for t in c["tags"])
-    body = convert_body(c["body"], c.get("sign", ""), c.get("readable_breaks", "").lower() == "true")
+    body = convert_body(
+        c["body"],
+        c.get("sign", ""),
+        c.get("readable_breaks", "").lower() == "true",
+        c.get("note_layout", "").lower() == "true",
+    )
     title_html = c.get("title_html", html.escape(c["title"]))
     return f'''<!DOCTYPE html>
 <html lang="ja">
@@ -403,7 +463,7 @@ def render_article(c, cols):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/column.css">
+<link rel="stylesheet" href="assets/column.css?v=20260828-note-layout">
 </head>
 <body>
 <div class="top-rule"></div>
@@ -480,9 +540,9 @@ def render_index(page_cols, page, pages):
         has_img = hero_exists(n)
         cls = "post" if has_img else "post noimg"
         thumb = f'<div class="thumb"><img src="assets/column{n}-hero.jpg" alt=""></div>' if has_img else ''
+        thumb_line = f'      {thumb}\n' if thumb else ''
         posts.append(f'''    <a class="{cls}" href="column{n}.html">
-      {thumb}
-      <div class="pbody">
+{thumb_line}      <div class="pbody">
         <div class="meta">{label(c)} — {html.escape(c["date_disp_short"])}</div>
         <h2>{html.escape(c["title"])}</h2>
         {ex_html}
@@ -503,7 +563,7 @@ def render_index(page_cols, page, pages):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/column.css">
+<link rel="stylesheet" href="assets/column.css?v=20260828-note-layout">
 </head>
 <body>
 <div class="top-rule"></div>
@@ -573,7 +633,7 @@ def build_sitemap(cols, pages):
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
            f'{body}\n</urlset>\n')
-    open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8").write(xml)
+    write_generated(os.path.join(ROOT, "sitemap.xml"), xml)
     return len(urls)
 
 def main():
@@ -588,7 +648,7 @@ def main():
     cols.sort(key=lambda z: z["number"])
     VALID_NUMS.update(c["number"] for c in cols)  # コラム間リンク用
     for c in cols:
-        open(os.path.join(OUT, f'column{c["number"]}.html'), "w", encoding="utf-8").write(render_article(c, cols))
+        write_generated(os.path.join(OUT, f'column{c["number"]}.html'), render_article(c, cols))
     desc = sorted(cols, key=lambda z: (z["date"], z["number"]), reverse=True)  # 投稿日の新しい順
     PER = 12
     chunks = [desc[i:i+PER] for i in range(0, len(desc), PER)] or [[]]
@@ -596,7 +656,7 @@ def main():
     for f in glob.glob(os.path.join(OUT, "columns-*.html")):
         os.remove(f)
     for idx, chunk in enumerate(chunks):
-        open(os.path.join(OUT, page_file(idx+1)), "w", encoding="utf-8").write(render_index(chunk, idx+1, pages))
+        write_generated(os.path.join(OUT, page_file(idx+1)), render_index(chunk, idx+1, pages))
     n_urls = build_sitemap(cols, pages)
     print(f"生成完了: {len(cols)}記事 + 一覧{pages}ページ -> {OUT}")
     print(f"sitemap.xml 更新: {n_urls} URL（TOP + 主要ページ + 一覧 + 全コラム）")
