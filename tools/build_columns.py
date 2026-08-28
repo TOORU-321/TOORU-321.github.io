@@ -228,6 +228,49 @@ def inline(s):
     s = re.sub(r'\x00(\d+)\x00', lambda m: stash[int(m.group(1))], s)
     return s
 
+def note_reading_units(lines):
+    """句読点で視線を縦へ送りつつ、短すぎる行は前後へつなぐ。"""
+    units = []
+    for source_line in lines:
+        line = source_line.strip()
+        plain = re.sub(r'[*_]', '', line)
+        # Markdown強調を途中で切るとタグが段落をまたぐため、強調行は原稿単位を優先する。
+        if "**" in line or len(plain) <= 30:
+            candidates = [line]
+        else:
+            # まず句点・疑問符で切り、まだ長いときだけ読点を改行候補にする。
+            candidates = [s for s in re.findall(r'.*?[。！？!?](?:[」』）】"])*|.+$', line) if s]
+            expanded = []
+            for candidate in candidates:
+                candidate_plain = re.sub(r'[*_]', '', candidate)
+                if len(candidate_plain) > 34:
+                    expanded.extend(s for s in re.split(r'(?<=、)', candidate) if s)
+                else:
+                    expanded.append(candidate)
+            candidates = expanded
+
+        for candidate in candidates:
+            candidate = candidate.strip()
+            candidate_len = len(re.sub(r'[*_]', '', candidate))
+            previous_len = len(re.sub(r'[*_]', '', units[-1])) if units else 0
+            # 短い一言だけが孤立する場合は、直前の行につないで不自然な空行を防ぐ。
+            if units and (candidate_len < 11 or previous_len < 9) and previous_len + candidate_len <= 34:
+                units[-1] += candidate
+            else:
+                units.append(candidate)
+    return units
+
+
+def note_paragraphs(lines):
+    """3〜4行を基本に、意味の切れ目で段落を閉じる。"""
+    units = note_reading_units(lines)
+    chunks = [units[i:i + 4] for i in range(0, len(units), 4)]
+    # 最後が1行だけなら、直前の4行段落から1行移して3行+2行にする。
+    if len(chunks) >= 2 and len(chunks[-1]) == 1 and len(chunks[-2]) == 4:
+        chunks[-1].insert(0, chunks[-2].pop())
+    return chunks
+
+
 def convert_body(body, sign, readable_breaks=False, note_layout=False):
     # 見出し・区切りは、原稿側に空行がなくても独立ブロックとして扱う。
     # note_layout は行数で機械的に切らず、文の終わりを見て意味段落へ整える。
@@ -292,23 +335,9 @@ def convert_body(body, sign, readable_breaks=False, note_layout=False):
                     inner.append(f'<p>{inline(l.strip())}</p>')
             out.append('<div class="flowbox">' + "".join(inner) + '</div>')
             continue
-        # 通常まとまり。短い原稿行を文章として連結し、句点・疑問符などの
-        # 「文の終わり」で段落を作る。表示上の3〜4行を理由に途中では切らない。
+        # 通常まとまり。note型は句読点改行を基本に、3〜4行で意味段落を閉じる。
         if note_layout:
-            chunks, chunk, completed_sentences = [], [], 0
-            for line in lines:
-                clean = line.strip()
-                chunk.append(clean)
-                plain = re.sub(r'[*_]', '', clean)
-                if re.search(r'[。！？!?](?:[」』）】\"])?$', plain):
-                    completed_sentences += 1
-                joined_len = len(re.sub(r'[*_]', '', ''.join(chunk)))
-                # noteに近い呼吸感：原則2文、長い文は1文で独立させる。
-                if (completed_sentences >= 2 and joined_len >= 45) or joined_len >= 130:
-                    chunks.append(chunk)
-                    chunk, completed_sentences = [], 0
-            if chunk:
-                chunks.append(chunk)
+            chunks = note_paragraphs(lines)
         elif readable_breaks:
             chunks, chunk, visual_lines = [], [], 0
             for line in lines:
@@ -325,8 +354,8 @@ def convert_body(body, sign, readable_breaks=False, note_layout=False):
             chunks = [lines]
         for chunk in chunks:
             if note_layout:
-                # 日本語の短い改行は編集上のもの。ブラウザでは自然な一続きの文章にする。
-                content = "".join(inline(l.strip()) for l in chunk)
+                # 句読点で視線を下へ送り、横方向の目線移動を短くする。
+                content = "<br>".join(inline(l.strip()) for l in chunk)
             else:
                 # 従来記事は、原稿で明示された改行をそのまま維持する。
                 content = "<br>".join(inline(l.strip()) for l in chunk)

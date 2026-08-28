@@ -58,7 +58,7 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 
 /* 本文：意味段落を保ち、noteのように余白・見出し・引用でリズムを作る */
 .body{font-size:16.5px;color:var(--ink-2);margin-top:30px}
-.body p{margin:0 0 1.75em;line-height:2.05;letter-spacing:.015em}
+.body p{margin:0 0 2.7em;line-height:2.05;letter-spacing:.015em;max-width:40em}
 .body>p:first-of-type::first-letter{float:left;font-family:var(--mincho);font-weight:700;color:var(--gold);font-size:3.1em;line-height:.82;padding:.04em .12em 0 0}
 .body .intro-lead{font-family:var(--mincho);font-size:17.5px;line-height:2.15;color:var(--ink)}
 .body h2{font-family:var(--mincho);font-weight:700;font-size:clamp(22px,3vw,27px);line-height:1.55;color:var(--ink);margin:3.1em 0 1.35em;padding:0 0 .7em;position:relative;border-bottom:1px solid var(--line)}
@@ -106,7 +106,7 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body .sign{font-family:var(--mincho);color:var(--ink);margin-top:2.4em}
 @media(max-width:600px){
   .body{font-size:16px}
-  .body p{margin-bottom:1.65em;line-height:2}
+  .body p{margin-bottom:2.5em;line-height:2}
   .body .intro-lead{font-size:16.5px}
   .body h2{margin-top:2.75em;font-size:22px}
   .body .key-message{margin:2.2em -.15em 2.4em;padding:1.1em 1em 1.1em 1.2em;font-size:18px}
