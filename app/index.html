@@ -4072,6 +4072,23 @@ if("serviceWorker" in navigator){ navigator.serviceWorker.register("firebase-mes
 // ===== Webプッシュ通知（FCM） =====
 const VAPID_KEY = "BAtxAvwJITAJ_q2DHtIajcTI_UEgJQhOlPI3uQ8IlXoV_kfyG3SQyRSVkT83Iyln9RsReuwgcR3By6g7roWif1Y";
 function pushSupported(){ return ("Notification" in window) && ("serviceWorker" in navigator) && ("PushManager" in window); }
+// アプリを開いている間（フォアグラウンド）に届いた通知は onBackgroundMessage が発火しないため、
+// ここで受け取ってポップアップ表示する（アプリを閉じている時と同じ見た目にする）
+try{
+  if(window.firebase && firebase.messaging){
+    firebase.messaging().onMessage(function(payload){
+      const d = payload.data || payload.notification || {};
+      const title = d.title || "エルラボ＋";
+      const body = d.body || "";
+      showToast("🔔 " + title);
+      try{
+        navigator.serviceWorker.getRegistration().then(function(reg){
+          if(reg) reg.showNotification(title, { body: body, icon: "../assets/favicon.png", badge: "../assets/favicon.png", data:{ url: d.url || "https://columns.l-mine.com/app/" } });
+        });
+      }catch(_e){}
+    });
+  }
+}catch(e){}
 // 通知の状態：on / off / unsupported
 function notifyState(){
   if(!pushSupported()) return "unsupported";
