@@ -884,3 +884,140 @@ button, input { font: inherit; }
 .app-footer__owner, .lp-footer__owner {
   margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); text-align: center;
 }
+
+
+/* --- 各DAYの共通動画（§41-C／依頼15）--------------------------------
+ * 素材が未登録のあいだは、そもそもこの要素自体が作られない。
+ * 動画を見なくてもワークへ進めるので、CTAより控えめな見た目にする。 */
+.btn--small { padding: 10px 16px; font-size: 14px; }
+
+.dvid { padding: 20px 16px; }
+.dvid__head { margin: 0 0 14px; }
+.dvid__eyebrow { margin: 0 0 6px; font-size: 14px; color: var(--ink-soft); }
+.dvid__title {
+  margin: 0; font-family: var(--mincho);
+  font-size: 17px; line-height: 1.7; color: var(--ink);
+}
+.dvid__duration { margin: 6px 0 0; font-size: 14px; color: var(--ink-soft); }
+
+.dvid__player {
+  display: block; width: 100%; height: auto; max-width: 100%;
+  border-radius: 12px; background: #000;
+}
+.dvid__player:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+.dvid__transcript { margin: 14px 0 0; }
+.dvid__transcript-summary {
+  cursor: pointer; font-size: 14px; color: var(--gold-2);
+  padding: 8px 0; list-style: none;
+}
+.dvid__transcript-summary::-webkit-details-marker { display: none; }
+.dvid__transcript-summary::before { content: "＋ "; }
+.dvid__transcript[open] .dvid__transcript-summary::before { content: "− "; }
+.dvid__transcript-summary:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+
+.dvid__script { margin: 10px 0 0; }
+.dvid__seg { margin: 0 0 16px; }
+.dvid__seg:last-child { margin-bottom: 0; }
+.dvid__seg-label { margin: 0 0 6px; font-size: 14px; color: var(--gold-2); }
+.dvid__seg-line { margin: 0 0 8px; font-size: 15px; line-height: 1.95; color: var(--ink-2); }
+.dvid__seg-line:last-child { margin-bottom: 0; }
+
+.dvid__actions { margin: 16px 0 0; display: flex; gap: 10px; flex-wrap: wrap; }
+.dvid__actions .btn { flex: 1 1 auto; }
+.dvid__note { margin: 12px 0 0; font-size: 14px; color: var(--ink-soft); }
+
+.dvid--script .dvid__summary {
+  cursor: pointer; font-size: 14px; color: var(--ink-soft);
+  list-style: none; padding: 4px 0;
+}
+.dvid--script .dvid__summary::-webkit-details-marker { display: none; }
+
+@media (max-width: 359px) {
+  .dvid__actions { flex-direction: column; }
+}
+
+
+/* --- 最低軸のイメージイラスト（2026-08-24 Codex・あかり確定）------------
+ * 「いま最初に整える場所」を表す絵。性格タイプではない。
+ * 並びは 一言 → 補助文 → イラスト。軸名は焼き込まず文字で重ねる。
+ * レーダーチャートとCTAより強くならないよう、幅を抑えて中央に置く。
+ * 画像は3:2。枠も3:2なので切り取りは起きない（object-fitは使わない）。 */
+.rti {
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rti__head { margin: 0 0 14px; text-align: center; }
+
+.rti__caption {
+  margin: 0;
+  font-family: var(--mincho);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--gold-2);
+}
+
+.rti__note {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink-soft);
+}
+
+.rti__frame {
+  position: relative;
+  width: 100%;
+  /* レーダーチャート（描画部240px）より目立たせない。
+   * 大きくしすぎると、結果の主役が絵になってしまう。 */
+  max-width: 300px;
+  /* 読み込み前でも高さが決まるので、あとから下の文章が押し下げられない */
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--lm-surface-2);
+}
+
+.rti__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+/* 軸名。画像の左上には余白があるので、そこへ重ねる。
+ * 絵柄が明るくても読めるよう、下に薄い影を敷く。 */
+.rti__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  max-width: calc(100% - 16px);
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(9, 12, 18, .62);
+  border: 1px solid rgba(227, 195, 129, .34);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  backdrop-filter: blur(2px);
+}
+
+/* 詳細結果は情報が多いので、少し控えめにする */
+.rti--compact .rti__frame { max-width: 260px; }
+.rti--compact .rti__caption { font-size: 16px; }
+
+/* aspect-ratio が使えない環境では、width/height属性の比率がそのまま効く */
+@supports not (aspect-ratio: 3 / 2) {
+  .rti__frame { height: auto; }
+}
+
+@media (max-width: 359px) {
+  .rti__frame { max-width: 100%; }
+  .rti__badge { font-size: 14px; top: 6px; left: 6px; }
+}

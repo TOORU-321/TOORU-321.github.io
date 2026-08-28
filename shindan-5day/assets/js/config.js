@@ -21,7 +21,8 @@
     screenOrder: [
       /* 結果 → 参加表明LP（lp.html）→ DAY1。LPは別ページなので画面順に含めない */
       'result',
-      'day1_focus', 'day1_pause', 'day1_done',
+      /* day1_intro は §41-C で追加した軽量な導入（参加表明 → 導入 → Screen C） */
+      'day1_intro', 'day1_focus', 'day1_pause', 'day1_done',
       'day2_intro', 'day2_scene', 'day2_voice', 'day2_hope', 'day2_done',
       'day3_intro', 'day3_current', 'day3_wall', 'day3_first_change',
       'day3_destination', 'day3_role', 'day3_bridge', 'day3_done',

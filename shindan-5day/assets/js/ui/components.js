@@ -38,23 +38,44 @@
     var stagger = (opts && opts.stagger) || 0;
     var delay = (opts && opts.delay) || 0;
 
+    /* 画面が裏にあるあいだ requestAnimationFrame は動かない。
+     * 0 から数え上げる作りのままだと、数字が 0 のまま止まって見える。
+     * 裏で描かれたときは、動かさずに最終値を入れる。 */
+    var doc = global.document;
+    if (doc && doc.hidden) {
+      nodes.forEach(function (node) {
+        var v = parseInt(node.getAttribute('data-count-to'), 10);
+        if (!isNaN(v)) node.textContent = String(v);
+      });
+      return;
+    }
+
     nodes.forEach(function (node, i) {
       var to = parseInt(node.getAttribute('data-count-to'), 10);
       if (isNaN(to)) return;
       var startAt = null;
       var wait = delay + i * stagger;
+      var done = false;
       node.textContent = '0';
+      function settle() {
+        if (done) return;
+        done = true;
+        node.textContent = String(to);
+      }
       function frame(now) {
+        if (done) return;
         if (startAt === null) startAt = now;
         var t = (now - startAt - wait) / duration;
         if (t < 0) { global.requestAnimationFrame(frame); return; }
-        if (t >= 1) { node.textContent = String(to); return; }
+        if (t >= 1) { settle(); return; }
         /* 終わりにかけてゆっくり止まる */
         var eased = 1 - Math.pow(1 - t, 3);
         node.textContent = String(Math.round(to * eased));
         global.requestAnimationFrame(frame);
       }
       global.requestAnimationFrame(frame);
+      /* 保険：途中で画面が裏へ回るなどして描画が止まっても、必ず数字が出る */
+      global.setTimeout(settle, wait + duration + 600);
     });
   };
 

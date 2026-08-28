@@ -33,6 +33,9 @@
 
         SC.ui.card(null, h('p', { class: 'card__body', text: c.note })),
 
+        /* 共通動画（§41-C）。回答を始める前に置く。素材が無いあいだは出ない */
+        SC.ui.videoBlock({ day: 2, screen: 'day2_intro', track: ctx.track }),
+
         SC.ui.ctaArea([
           SC.ui.primaryCta({ label: c.primaryCta, onClick: function () { ctx.go('day2_scene'); } })
         ])

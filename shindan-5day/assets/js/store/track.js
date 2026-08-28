@@ -108,19 +108,47 @@
       'day4_journey_view',
       'day4_journey_edited',
       'day4_completed',
-      'day5_teaser_opened'
+      'day5_teaser_opened',
+      /* DAY1導入（§41-C）。参加表明とScreen Cのあいだに置く軽量な導入 */
+      'day1_intro_view',
+      /* 各DAY共通動画（§41-C／依頼18）。動画URL・字幕URL・台本本文は送らない。
+         正本§8への追記はCodex・あかりの確認待ち */
+      'day_video_view',
+      'day_video_played',
+      'day_video_completed',
+      'day_video_skipped',
+      'day_video_transcript_opened',
+      'day_video_replayed'
+    ],
+
+    /* 依頼18：動画のイベントには匿名診断IDを載せない。
+       （5DAY本体の他のイベントは、これまでどおり載せる） */
+    NO_ID_EVENTS: [
+      'day_video_view',
+      'day_video_played',
+      'day_video_completed',
+      'day_video_skipped',
+      'day_video_transcript_opened',
+      'day_video_replayed'
     ],
 
     event: function (name, meta) {
       var d = SC.store.getDiagnosis();
-      var payload = {
-        event: name,
-        campaignId: d ? d.campaignId : SC.config.campaignId,
-        anonymousDiagnosisId: d ? d.anonymousDiagnosisId : null,
-        scoreBand: d && d.scoreBand ? d.scoreBand.key : null,
-        lowestAxis: d ? d.lowestAxis : null,
-        timestamp: new Date().toISOString()
-      };
+      var withoutId = SC.track.NO_ID_EVENTS.indexOf(name) !== -1;
+      var payload = withoutId
+        ? {
+            event: name,
+            campaignId: d ? d.campaignId : SC.config.campaignId,
+            timestamp: new Date().toISOString()
+          }
+        : {
+            event: name,
+            campaignId: d ? d.campaignId : SC.config.campaignId,
+            anonymousDiagnosisId: d ? d.anonymousDiagnosisId : null,
+            scoreBand: d && d.scoreBand ? d.scoreBand.key : null,
+            lowestAxis: d ? d.lowestAxis : null,
+            timestamp: new Date().toISOString()
+          };
       /* 回答本文は載せない。許可した補助キーだけ通す */
       if (meta) {
         for (var i = 0; i < META_WHITELIST.length; i++) {

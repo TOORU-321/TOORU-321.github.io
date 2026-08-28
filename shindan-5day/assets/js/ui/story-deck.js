@@ -21,6 +21,9 @@
  *     ],
  *     finalCta: { label: '5日間をはじめる', onClick: fn },
  *     renderAll: function () { return 展開時に見せる要素 },
+ *     toggle: false,          // 「まとめて読む」を置かない（枚数が少ない画面向け）
+ *     progress: 'none',       // 進み具合を出さない（文字だけ見せたい画面向け）
+ *     prev: false,            // 「戻る」を置かない（同上）
  *     onStep: fn(index), onComplete: fn(), onExpand: fn(),
  *     expose: fn({ go, goToChapter, indexOf, isExpanded })
  *   })
@@ -61,6 +64,7 @@
      * 読み上げには枚数を残す（見えないだけで、位置は分かるようにする）。 */
     var progressMode = opts.progress || 'auto';
     if (progressMode === 'auto') progressMode = total > 8 ? 'bar' : 'dots';
+    var showPrev = opts.prev !== false;
 
     var progressText = h('p', { class: 'deck__progress' });
     var dots = h('div', { class: 'deck__dots', 'aria-hidden': 'true' });
@@ -192,6 +196,15 @@
       progressText.textContent = TEXT.progress
         .replace('{current}', String(index + 1))
         .replace('{total}', String(total));
+      /* 進み具合を出さない画面では、点やバーの組み立ても飛ばす */
+      if (progressMode === 'none') {
+        prevBtn.disabled = index === 0;
+        var lastOnly = index === total - 1;
+        nextBtn.textContent = (lastOnly && opts.finalCta) ? opts.finalCta.label : TEXT.next;
+        nextBtn.classList.toggle('deck__next--final', !!(lastOnly && opts.finalCta));
+        if (opts.onStep) opts.onStep(index, step);
+        return;
+      }
 
       barFill.style.width = (total < 2 ? 100 : ((index + 1) / total) * 100) + '%';
       bar.setAttribute('aria-valuenow', String(index + 1));
@@ -269,8 +282,10 @@
     var deckBody = h('div', { class: 'deck__body-wrap' }, [
       stage,
       h('div', { class: 'deck__controls' }, [
-        h('div', { class: 'deck__meta' }, [dots, progressText, bar]),
-        h('div', { class: 'deck__buttons' }, [prevBtn, nextBtn])
+        progressMode === 'none'
+          ? null
+          : h('div', { class: 'deck__meta' }, [dots, progressText, bar]),
+        h('div', { class: 'deck__buttons' }, showPrev ? [prevBtn, nextBtn] : [nextBtn])
       ])
     ]);
 
@@ -283,7 +298,14 @@
           if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
         }
       }
-    }, [chapterHead, deckBody, allSlot, h('div', { class: 'deck__toggle-wrap' }, [toggleBtn])]);
+    }, [
+      chapterHead, deckBody, allSlot,
+      /* 枚数が多い画面では全体像を先に見たい人のために必ず置く。
+       * 数枚しかない画面（診断のはじめかたなど）では、順番に読ませたいので置かない。 */
+      opts.toggle === false
+        ? null
+        : h('div', { class: 'deck__toggle-wrap' }, [toggleBtn])
+    ]);
 
     renderStep();
 

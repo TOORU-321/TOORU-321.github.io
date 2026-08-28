@@ -1,0 +1,472 @@
+@charset "utf-8";
+/* diagnosis-lp.css : 診断前LP（ビジター第一接触）
+ *
+ * app.css のトークン（色・書体・角丸）をそのまま使う。
+ * 条件：本文14px未満にしない／320pxから崩れない／色だけで状態を表さない。
+ *
+ * このページの目的は「診断を始める」ひとつだけ。
+ * CTA以外に目立つものを置かない。
+ */
+
+.dlp-body { padding: 0; }
+
+.dlp {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 28px 18px 40px;
+}
+
+/* --- 見出し・本文の共通 ------------------------------------------------ */
+.dlp-heading {
+  margin: 0 0 20px;
+  font-family: var(--mincho);
+  font-size: 21px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+.dlp-heading__line { margin: 0; }
+
+.dlp-body { margin: 0; }
+.dlp-body__line {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 2;
+  color: var(--ink-2);
+}
+.dlp-body__line:last-child { margin-bottom: 0; }
+
+.dlp-lead { margin: 0 0 20px; font-size: 15px; line-height: 2; color: var(--ink-2); }
+.dlp-close { margin: 20px 0 0; font-size: 15px; line-height: 2; color: var(--ink); }
+.dlp-note { margin: 20px 0 0; font-size: 14px; line-height: 1.95; color: var(--ink-soft); }
+.dlp-note__line { margin: 0 0 6px; font-size: 14px; line-height: 1.95; color: var(--ink-soft); }
+.dlp-note__line:last-child { margin-bottom: 0; }
+
+/* --- セクション -------------------------------------------------------- */
+.dlp-section { margin: 0 0 46px; }
+.dlp-section--reframe,
+.dlp-section--author,
+.dlp-section--final {
+  padding: 28px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--lm-surface);
+}
+
+/* --- ヒーロー ----------------------------------------------------------
+ * 2026-08-25 とーる指示：画像は背景へうっすら。文字が主役。 */
+/* 2026-08-25 とーる指示：背景は画面の横幅いっぱい。左右を空けない。
+ * 親（.dlp）の余白を打ち消して、画面の端から端まで広げる。
+ * 文字は中で元の幅へ戻す。 */
+.dlp-hero {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: -28px;          /* .dlp の上余白を打ち消す */
+  margin-bottom: 46px;
+  padding: 56px 0 44px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 背景の絵。横は端から端まで。下へ向かって消え、
+ * その切れ目のすぐ下から共感セクションが始まる。 */
+.dlp-hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
+  /* 左右は切らない。下だけフェードさせる */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 58%, transparent 100%);
+}
+
+/* 文字は元の読みやすい幅へ戻す */
+.dlp-hero__copy {
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.dlp-hero__eyebrow {
+  margin: 0 0 14px;
+  font-size: 14px;
+  letter-spacing: .04em;
+  color: var(--gold-2);
+}
+
+.dlp-hero__title {
+  margin: 0 0 22px;
+  font-family: var(--mincho);
+  font-size: 26px;
+  line-height: 1.78;
+  color: var(--ink);
+}
+.dlp-hero__title-line { margin: 0; }
+
+.dlp-facts {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dlp-facts__item {
+  padding: 5px 13px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: rgba(9, 12, 18, .45);
+  font-size: 14px;
+  color: var(--gold-2);
+}
+
+/* ヒーローの入場。上から順に浮かび上がる */
+.dlp-hero.is-entering .dlp-hero__eyebrow,
+.dlp-hero.is-entering .dlp-hero__title-line,
+.dlp-hero.is-entering .dlp-body__line,
+.dlp-hero.is-entering .dlp-facts,
+.dlp-hero.is-entering .dlp-cta {
+  animation: dlp-rise .9s cubic-bezier(.16, .8, .24, 1) both;
+}
+.dlp-hero.is-entering .dlp-hero__eyebrow { animation-delay: 60ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(1) { animation-delay: 180ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(2) { animation-delay: 300ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(3) { animation-delay: 420ms; }
+.dlp-hero.is-entering .dlp-body__line { animation-delay: 560ms; }
+.dlp-hero.is-entering .dlp-facts { animation-delay: 680ms; }
+.dlp-hero.is-entering .dlp-cta { animation-delay: 800ms; }
+
+@keyframes dlp-rise {
+  from { opacity: 0; transform: translateY(14px); filter: blur(5px); }
+  55%  { opacity: .85; filter: blur(1px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dlp-hero.is-entering * { animation: none !important; filter: none !important; }
+}
+
+/* --- CTA --------------------------------------------------------------- */
+.dlp-cta { margin: 26px 0 0; }
+.dlp-cta__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 20px;
+  font-size: 17px;
+  text-align: center;
+  text-decoration: none;
+}
+.dlp-cta__note { margin: 12px 0 0; text-align: center; }
+.dlp-cta__note-line {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ink-soft);
+}
+.dlp-cta__note-line:last-child { margin-bottom: 0; }
+
+/* --- 共感セクション（2026-08-25 とーる指示）-----------------------------
+ * ここが共感をつかむ場所。中央寄せにして、文字が固まらないよう
+ * 大きさと上下の間隔をしっかり取る。 */
+.dlp-section--empathy { margin-bottom: 56px; }
+.dlp-section--empathy .dlp-heading {
+  margin-bottom: 40px;
+  font-size: 23px;
+  line-height: 1.95;
+  text-align: center;
+}
+
+.dlp-blocks { margin: 0; text-align: center; }
+.dlp-block { margin: 0 0 42px; }
+.dlp-block:last-child { margin-bottom: 0; }
+.dlp-block__line {
+  margin: 0 0 14px;
+  font-size: 16px;
+  line-height: 2.3;
+  color: var(--ink-2);
+}
+.dlp-block__line:last-child { margin-bottom: 0; }
+/* 最後のかたまり（診断へ戻す一文）だけ、少し明るく大きくする */
+.dlp-block:last-child .dlp-block__line {
+  color: var(--ink);
+  font-size: 17px;
+}
+
+/* --- 箇条書き ---------------------------------------------------------- */
+.dlp-checks, .dlp-list { margin: 20px 0 0; padding: 0; list-style: none; }
+.dlp-checks__item, .dlp-list__item {
+  position: relative;
+  margin: 0 0 12px;
+  padding-left: 26px;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-2);
+}
+.dlp-checks__item:last-child, .dlp-list__item:last-child { margin-bottom: 0; }
+/* 記号は文字として置く（色だけに頼らない） */
+.dlp-checks__item::before {
+  content: "―";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+.dlp-list__item::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--gold-2);
+}
+
+/* --- 5つの軸 ----------------------------------------------------------- */
+.dlp-axes { margin: 0; padding: 0; list-style: none; }
+.dlp-axis {
+  display: flex;
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 0 0 22px;
+  border-bottom: 1px solid var(--line);
+}
+.dlp-axis:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.dlp-axis__num {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif-en);
+  font-size: 16px;
+  color: var(--gold-2);
+}
+.dlp-axis__body { flex: 1 1 auto; }
+.dlp-axis__name {
+  margin: 2px 0 8px;
+  font-family: var(--mincho);
+  font-size: 17px;
+  color: var(--ink);
+}
+.dlp-axis__text { margin: 0; font-size: 15px; line-height: 1.95; color: var(--ink-2); }
+
+/* --- 結果イメージ ------------------------------------------------------ */
+.dlp-sample {
+  margin: 26px 0 0;
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--lm-surface-2);
+}
+.dlp-sample__title {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.dlp-sample__note {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* --- 診断の流れ -------------------------------------------------------- */
+.dlp-steps { margin: 0; padding: 0; list-style: none; }
+.dlp-step {
+  margin: 0 0 20px;
+  padding: 18px 18px;
+  border-left: 2px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  background: var(--lm-surface);
+}
+.dlp-step:last-child { margin-bottom: 0; }
+.dlp-step__title {
+  margin: 0 0 8px;
+  font-family: var(--mincho);
+  font-size: 16px;
+  color: var(--ink);
+}
+.dlp-step__body { margin: 0; font-size: 15px; line-height: 1.95; color: var(--ink-2); }
+
+/* --- できないこと ------------------------------------------------------ */
+.dlp-limit {
+  margin: 26px 0 0;
+  padding: 20px 18px;
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+}
+.dlp-limit__title {
+  margin: 0 0 12px;
+  font-family: var(--mincho);
+  font-size: 16px;
+  color: var(--gold-2);
+}
+
+/* --- 設計者 ------------------------------------------------------------
+ * 2026-08-25 とーる指示：この節は畳まず、顔写真も出す。 */
+.dlp-author__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 22px;
+}
+.dlp-author__photo {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  object-fit: cover;
+  background: var(--lm-surface-2);
+}
+.dlp-author__id { flex: 1 1 auto; min-width: 0; }
+.dlp-author__name {
+  margin: 0 0 6px;
+  font-family: var(--mincho);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.dlp-author__role { margin: 0; font-size: 14px; line-height: 1.75; color: var(--gold-2); }
+.dlp-author__qual { margin: 18px 0 0; font-size: 14px; line-height: 1.9; color: var(--ink-soft); }
+
+@media (max-width: 359px) {
+  .dlp-author__head { gap: 14px; }
+  .dlp-author__photo { width: 72px; height: 72px; }
+  .dlp-author__name { font-size: 17px; }
+}
+
+/* --- FAQ --------------------------------------------------------------- */
+.dlp-faq { margin: 0; }
+.dlp-faq__item {
+  margin: 0 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--lm-surface);
+  overflow: hidden;
+}
+.dlp-faq__q {
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.dlp-faq__q::-webkit-details-marker { display: none; }
+.dlp-faq__q::before { content: "＋ "; color: var(--gold-2); }
+.dlp-faq__item[open] .dlp-faq__q::before { content: "− "; }
+.dlp-faq__q:focus-visible { outline: 2px solid var(--gold-2); outline-offset: -3px; }
+.dlp-faq__a {
+  margin: 0;
+  padding: 0 18px 18px;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-2);
+}
+
+/* --- 最終CTA ----------------------------------------------------------- */
+.dlp-section--final { margin-bottom: 0; }
+
+/* --- フッター ---------------------------------------------------------- */
+.dlp-footer { padding: 26px 18px 34px; text-align: center; }
+.dlp-footer__note { margin: 0; font-size: 14px; line-height: 1.9; color: var(--ink-soft); }
+
+/* --- PC：コピーと画像の2カラム ----------------------------------------- */
+@media (min-width: 768px) {
+  .dlp { max-width: 960px; padding: 44px 24px 56px; }
+
+  .dlp-hero {
+    margin-top: -44px;
+    margin-bottom: 64px;
+    padding: 88px 0 72px;
+  }
+  .dlp-hero__copy { max-width: 720px; padding: 0 24px; }
+  .dlp-hero__title { font-size: 32px; }
+
+  .dlp-section { margin-bottom: 64px; }
+  .dlp-heading { font-size: 23px; }
+  .dlp-section--reframe,
+  .dlp-section--author,
+  .dlp-section--final { padding: 36px 32px; }
+
+  .dlp-cta__btn { max-width: 420px; margin: 0 auto; }
+}
+
+/* --- 320px ------------------------------------------------------------- */
+@media (max-width: 359px) {
+  .dlp { padding: 22px 14px 34px; }
+  .dlp-hero { margin-top: -22px; padding: 44px 0 36px; }
+  .dlp-hero__copy { padding: 0 14px; }
+  .dlp-hero__title { font-size: 22px; }
+  .dlp-heading { font-size: 19px; }
+  .dlp-cta__btn { font-size: 16px; min-height: 52px; }
+  .dlp-facts__item { font-size: 14px; padding: 4px 11px; }
+}
+
+/* --- 動きを減らす設定 --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .dlp * { animation: none !important; transition: none !important; }
+}
+
+
+/* --- 畳めるセクション（2026-08-25 とーる指示）---------------------------
+ * 判断に要らない詳しい説明は畳んでおく。中身は削っていない。 */
+.dlp-fold {
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--lm-surface);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.dlp-fold__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 20px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+.dlp-fold__summary::-webkit-details-marker { display: none; }
+.dlp-fold__summary:focus-visible { outline: 2px solid var(--gold-2); outline-offset: -3px; }
+.dlp-fold__title {
+  font-family: var(--mincho);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.dlp-fold__more {
+  flex: none;
+  font-size: 14px;
+  color: var(--gold-2);
+}
+.dlp-fold__more::after { content: " ＋"; }
+.dlp-fold[open] .dlp-fold__more::after { content: " −"; }
+.dlp-fold__body { padding: 0 20px 24px; }
+
+/* 畳んだ中では、外枠つきの子要素の枠を外す（二重枠を避ける） */
+.dlp-fold .dlp-faq__item { background: var(--lm-surface-2); }
+.dlp-fold .dlp-step { background: var(--lm-surface-2); }
+
+@media (min-width: 768px) {
+  .dlp-fold__summary { padding: 24px 28px; }
+  .dlp-fold__body { padding: 0 28px 28px; }
+  .dlp-section--empathy .dlp-heading { font-size: 26px; }
+  .dlp-block__line { font-size: 17px; }
+}
+
+@media (max-width: 359px) {
+  .dlp-section--empathy .dlp-heading { font-size: 20px; }
+  .dlp-block__line { font-size: 15px; line-height: 2.2; }
+  .dlp-block:last-child .dlp-block__line { font-size: 16px; }
+  .dlp-fold__title { font-size: 16px; }
+}

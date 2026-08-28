@@ -16,6 +16,7 @@
 
   var HASH = {
     result: '#/result',
+    day1_intro: '#/day1-intro',
     day1_focus: '#/day1-focus',
     day1_pause: '#/day1-pause',
     day1_done: '#/day1-done',
@@ -68,7 +69,7 @@
 
     /* DAY5はDAY4完了が前提（§29-G） */
     if (screenId.indexOf('day5_') === 0 && !day4Done) {
-      if (!day1Done) return state.startedAt ? 'day1_focus' : 'result';
+      if (!day1Done) return state.startedAt ? 'day1_intro' : 'result';
       if (!day2Done) return 'day2_intro';
       if (!day3Done) return 'day3_intro';
       return 'day4_intro';
@@ -79,7 +80,7 @@
 
     /* DAY4はDAY3完了が前提 */
     if (screenId.indexOf('day4_') === 0 && !day3Done) {
-      if (!day1Done) return state.startedAt ? 'day1_focus' : 'result';
+      if (!day1Done) return state.startedAt ? 'day1_intro' : 'result';
       if (!day2Done) return 'day2_intro';
       return 'day3_intro';
     }
@@ -90,7 +91,7 @@
 
     /* DAY3はDAY2完了が前提 */
     if (screenId.indexOf('day3_') === 0 && !day2Done) {
-      if (!day1Done) return state.startedAt ? 'day1_focus' : 'result';
+      if (!day1Done) return state.startedAt ? 'day1_intro' : 'result';
       return 'day2_intro';
     }
     if (screenId === 'day3_done' && !day3Done) return 'day3_current';
@@ -99,14 +100,15 @@
 
     /* DAY2はDAY1完了が前提 */
     if (screenId.indexOf('day2_') === 0 && !day1Done) {
-      return state.startedAt ? 'day1_focus' : 'result';
+      return state.startedAt ? 'day1_intro' : 'result';
     }
     if (screenId === 'day2_done' && !day2Done) return 'day2_scene';
 
     if (screenId === 'day1_done' && !day1Done) {
-      return state.startedAt ? 'day1_focus' : 'result';
+      return state.startedAt ? 'day1_intro' : 'result';
     }
-    if ((screenId === 'day1_focus' || screenId === 'day1_pause') && !state.startedAt) return 'result';
+    if ((screenId === 'day1_intro' || screenId === 'day1_focus' || screenId === 'day1_pause') &&
+        !state.startedAt) return 'result';
     return screenId;
   }
 

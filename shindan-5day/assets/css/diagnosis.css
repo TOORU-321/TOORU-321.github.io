@@ -1,0 +1,396 @@
+@charset "utf-8";
+/* diagnosis.css : 20問診断ページ／LINE復元画面（開発版）
+ * app.css のトークン（色・書体・角丸）をそのまま使う。
+ * 条件：本文14px未満にしない／320pxから崩れない／色だけで状態を表さない。
+ */
+
+/* --- 見出し ---------------------------------------------------------- */
+.dg-head { margin: 0 0 22px; }
+
+.dg-head__eyebrow {
+  margin: 0 0 10px;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.dg-badge {
+  padding: 2px 10px; border-radius: 999px;
+  border: 1px solid var(--line-2); color: var(--gold-2);
+  font-size: 14px; line-height: 1.7;
+}
+.dg-head__program { font-size: 14px; color: var(--ink-soft); }
+
+.dg-head__title {
+  margin: 0; font-family: var(--mincho);
+  font-size: 22px; line-height: 1.7; color: var(--ink);
+}
+.dg-head__title:focus { outline: none; }
+.dg-head__title:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 4px; }
+.dg-head__sub { margin: 10px 0 0; font-size: 15px; color: var(--ink-2); }
+
+/* --- 進み具合 -------------------------------------------------------- */
+.dg-progress { margin: 0 0 22px; }
+.dg-progress__track {
+  height: 6px; border-radius: 999px;
+  background: var(--lm-surface-3);
+  overflow: hidden;
+}
+.dg-progress__fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transition: width .3s ease;
+}
+.dg-progress__meta {
+  margin: 8px 0 0;
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  font-size: 14px;
+}
+.dg-progress__count { font-family: var(--serif-en); font-size: 16px; color: var(--gold-2); }
+.dg-progress__phase { color: var(--ink-soft); }
+
+/* --- カード ---------------------------------------------------------- */
+.dg-card {
+  margin: 0 0 20px; padding: 22px 18px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--lm-surface);
+  box-shadow: var(--shadow);
+}
+.dg-card__title {
+  margin: 0 0 14px; font-family: var(--mincho);
+  font-size: 17px; line-height: 1.7; color: var(--ink);
+}
+.dg-card--lead { background: var(--lm-surface-2); }
+
+.dg-question {
+  margin: 0 0 18px; font-family: var(--mincho);
+  font-size: 17px; line-height: 1.9; color: var(--ink);
+}
+
+/* --- 案内・注意 ------------------------------------------------------ */
+.dg-notice, .dg-devnote, .dg-warn, .dg-foot-note {
+  font-size: 14px; line-height: 1.9;
+}
+.dg-notice {
+  margin: 0 0 18px; padding: 12px 14px;
+  border-left: 2px solid var(--gold); border-radius: 0 12px 12px 0;
+  background: var(--gold-soft); color: var(--ink-2);
+}
+.dg-devnote { margin: 0 0 18px; color: var(--ink-soft); }
+.dg-warn {
+  margin: -6px 0 18px; padding: 12px 14px;
+  border: 1px solid var(--warn); border-radius: 12px;
+  color: var(--warn);
+}
+/* 色だけに頼らない。記号を文字として添える */
+.dg-warn::before { content: "！ "; }
+.dg-warn:focus { outline: none; }
+.dg-warn:focus-visible { outline: 2px solid var(--warn); outline-offset: 3px; }
+.dg-foot-note { margin: 16px 0 0; color: var(--ink-soft); text-align: center; }
+
+/* --- 前へ／次へ ------------------------------------------------------ */
+.dg-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 4px 0 0;
+}
+.dg-nav .btn { flex: 1 1 auto; }
+.dg-nav__spacer { flex: 1 1 auto; }
+.dg-nav--single { justify-content: stretch; }
+.dg-nav--stack { flex-direction: column; align-items: stretch; }
+/* 戻るボタンだけの行。主役にしないよう左に小さく置く */
+.dg-nav--back { justify-content: flex-start; margin-top: 18px; }
+.dg-nav--back .btn { flex: 0 0 auto; }
+
+@media (max-width: 359px) {
+  .dg-nav { flex-direction: column-reverse; align-items: stretch; }
+  .dg-nav__spacer { display: none; }
+}
+
+/* --- 採点中（進み具合のバー＋段階）------------------------------------
+ * 2026-08-24 とーる指示：じらしと「あとどれくらい」を見せる。
+ * 済んだ段階は ✓ と語尾で示す（色だけに頼らない）。 */
+.dg-bar { margin: 0 0 22px; }
+.dg-bar__track {
+  height: 8px; border-radius: 999px;
+  background: var(--lm-surface-3); overflow: hidden;
+}
+.dg-bar__fill {
+  height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-2));
+  transition: width .2s linear;
+}
+.dg-bar__remain {
+  margin: 8px 0 0; text-align: right;
+  font-size: 14px; color: var(--ink-soft);
+}
+
+.dg-scoring__list { margin: 0; padding: 0; list-style: none; }
+
+.dg-step {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin: 0 0 16px;
+  font-size: 15px; line-height: 1.9;
+  color: var(--ink-soft);
+  opacity: .45;
+  transition: opacity .35s ease, color .35s ease;
+}
+.dg-step:last-child { margin-bottom: 0; }
+.dg-step.is-doing { opacity: 1; color: var(--ink); }
+.dg-step.is-done { opacity: 1; color: var(--ink-2); }
+
+.dg-step__mark {
+  flex: none; width: 20px; height: 20px; margin-top: 6px;
+  border: 1px solid var(--line-2); border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--gold-2);
+}
+.dg-step.is-doing .dg-step__mark {
+  border-color: var(--gold-2);
+  border-top-color: transparent;
+  animation: dg-spin 1s linear infinite;
+}
+.dg-step.is-done .dg-step__mark::before { content: "✓"; }
+.dg-step.is-done .dg-step__mark {
+  border-color: var(--ok); color: var(--ok); animation: none;
+}
+
+.dg-spinner {
+  display: block; width: 26px; height: 26px; margin: 0 auto 14px;
+  border: 2px solid var(--line-2); border-top-color: var(--gold-2);
+  border-radius: 999px;
+  animation: dg-spin 1s linear infinite;
+}
+.dg-checking { text-align: center; }
+.dg-checking__text { margin: 0; font-size: 15px; color: var(--ink-2); }
+
+@keyframes dg-spin { to { transform: rotate(360deg); } }
+
+/* 動きが苦手な設定では、回さず・待たせず、最初から済んだ形で見せる */
+@media (prefers-reduced-motion: reduce) {
+  .dg-step { opacity: 1; transition: none; }
+  .dg-step__mark { animation: none !important; }
+  .dg-bar__fill { transition: none; }
+  .dg-progress__fill { transition: none; }
+  .dg-spinner { animation: none; border-top-color: var(--line-2); }
+}
+
+/* --- 補助フラグ ------------------------------------------------------ */
+.dg-flag { border-color: var(--line-2); }
+.dg-flag__title {
+  margin: 0 0 10px; font-family: var(--mincho);
+  font-size: 16px; color: var(--gold-2);
+}
+.dg-flag__body { margin: 0; font-size: 15px; line-height: 1.9; color: var(--ink-2); }
+
+/* --- 引き継ぎ -------------------------------------------------------- */
+.dg-handoff__body { margin: 0 0 16px; font-size: 15px; line-height: 1.9; color: var(--ink-2); }
+.dg-handoff__status { margin: 12px 0 0; font-size: 14px; color: var(--ink-soft); }
+.dg-handoff__done { margin: 0 0 12px; font-size: 15px; color: var(--ok); }
+.dg-handoff__done::before { content: "✓ "; }
+.dg-handoff__warn { margin: 0 0 12px; font-size: 15px; color: var(--warn); }
+.dg-handoff__warn::before { content: "！ "; }
+.dg-handoff__keep {
+  margin: 14px 0 0; font-size: 14px; line-height: 1.8;
+  color: var(--ink-soft); text-align: center;
+}
+.dg-handoff__keep.is-soon { color: var(--warn); }
+.dg-handoff__note { margin: 12px 0 0; font-size: 14px; line-height: 1.85; color: var(--ink-soft); }
+.dg-handoff__manual { margin: 0 0 16px; }
+.dg-handoff__manual-label {
+  display: block; margin: 0 0 8px; font-size: 14px; color: var(--ink-soft);
+}
+.dg-handoff__field {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--line-2); border-radius: 12px;
+  background: var(--lm-surface-3); color: var(--ink);
+  font-family: var(--serif-en); font-size: 18px; letter-spacing: .06em;
+  line-height: 1.7; resize: vertical;
+}
+.dg-handoff__field:focus { outline: 2px solid var(--gold-2); outline-offset: 2px; }
+
+/* --- 結果 ------------------------------------------------------------ */
+.dg-result { margin: 0; }
+.dg-screen--result .card,
+.dg-screen--result .dg-card { margin-bottom: 20px; }
+
+
+/* --- 診断のはじめかた（2026-08-24 とーる指示）--------------------------
+ * LP → 設問 のあいだに置く説明画面。1タップ＝1メッセージ。
+ *
+ * 「その文字演出以外なし」「枠もいりません。それだけに集中させたい」
+ *   → 見出し・進み具合・戻る・補足文・カードの枠を置かない。
+ *     文章と「次へ」だけを、画面の真ん中に浮かせる。 */
+.dg-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* ヘッダーもフッターも無いので、画面の高さいっぱいで中央に置く */
+  min-height: 72vh;
+  padding: 0 4px;
+}
+.dg-intro .deck { margin: 0; }
+
+/* 枠・背景・影を消す。文章だけが浮かぶ */
+.dg-intro .deck__body-wrap,
+.dg-intro .deck__stage,
+.dg-intro .deck__step {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* 章見出しと進み具合は、そもそも出さない */
+.dg-intro .deck__chapter,
+.dg-intro .deck__meta { display: none; }
+
+/* 本文。ここが主役なので、いちばん大きく・いちばん明るく（2026-08-24 とーる指示） */
+.dg-intro .deck__body {
+  font-size: 18px;
+  line-height: 2.25;
+  color: var(--ink);
+  text-align: left;
+}
+
+/* 文字の出かた（2026-08-24 とーる指示：もう少しゆっくり「フワー」と）。
+ * LPの標準は0.5秒＋右から14pxだが、この画面は読ませる間を取りたいので、
+ * 横ずれをやめて、ぼかしから輪郭が結ばれるようにゆっくり出す。
+ * ★上書きは .dg-intro の中だけ。LP（22枚のほう）はこれまでどおり。 */
+.dg-intro .deck__step.is-appearing {
+  animation: dg-intro-fade .6s ease both;
+}
+.dg-intro .deck__step.is-appearing > * {
+  animation: dg-intro-in 1.15s cubic-bezier(.16, .8, .24, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes dg-intro-fade {
+  from { opacity: .25; }
+  to   { opacity: 1; }
+}
+@keyframes dg-intro-in {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  55%  { opacity: .85; filter: blur(1.5px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+/* 最後の1枚に添える署名は、本文と離して右へ寄せる */
+.dg-intro .deck__note {
+  margin-top: 28px;
+  text-align: right;
+  color: var(--gold-2);
+}
+
+/* 「次へ」は控えめに。読ませたいのは文章のほうなので、目立たせない。
+ * 最後の「診断をはじめる」だけは、これまでどおり大きく出す。 */
+.dg-intro .deck__controls { margin-top: 44px; }
+.dg-intro .deck__buttons { display: flex; justify-content: center; }
+
+.dg-intro .deck__next:not(.deck__next--final) {
+  /* lp.css 側で flex:1 と max-width が効いているので、ここで打ち消す */
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  min-width: 120px;
+  min-height: 42px;
+  padding: 9px 20px;
+  font-size: 15px;
+  /* 金のグラデーションをやめ、細い線だけにする */
+  background: none;
+  color: var(--ink-2);
+  border: 1px solid var(--line-2);
+  box-shadow: none;
+}
+.dg-intro .deck__next:not(.deck__next--final):hover {
+  color: var(--gold-2);
+  border-color: var(--gold-2);
+  filter: none;
+}
+
+/* 最後の1枚。ここだけは主役に戻す */
+.dg-intro .deck__next--final { flex: 1 1 auto; width: 100%; max-width: none; }
+
+@media (max-width: 359px) {
+  .dg-intro { min-height: 68vh; }
+  /* 本文はここが主役なので、狭い画面でも小さくしない */
+  .dg-intro .deck__next:not(.deck__next--final) { min-width: 112px; }
+}
+
+/* 光に包まれる。中心から白と金がひろがって画面を満たす */
+.dg-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(.25);
+  background: radial-gradient(circle at 50% 52%,
+    #ffffff 0%,
+    var(--gold-2) 18%,
+    rgba(227, 195, 129, .55) 38%,
+    rgba(227, 195, 129, 0) 66%);
+  transition: opacity .3s ease, transform .95s cubic-bezier(.4, 0, .2, 1);
+}
+.dg-flash.is-on { opacity: 1; transform: scale(3.6); }
+
+/* 動きが苦手な設定では光らせない（そもそもJS側で出さない） */
+@media (prefers-reduced-motion: reduce) {
+  .dg-flash { display: none; }
+  .dg-intro .deck__step.is-appearing,
+  .dg-intro .deck__step.is-appearing > * { animation: none; filter: none; }
+}
+
+
+/* --- 設問画面の入場（2026-08-24 とーる指示）----------------------------
+ * 「光に包まれで設問なんですが、含めて設問表示も文字などアニメーション要素」
+ * 質問文 → 選択肢の順に、少しずつ浮かび上がらせる。
+ * 自動送りが0.32秒なので、切り替わりの邪魔にならない短さにしてある。 */
+@keyframes dg-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dg-screen--question.is-entering .dg-progress,
+.dg-screen--question.is-entering .dg-question,
+.dg-screen--question.is-entering .choice,
+.dg-screen--question.is-entering .dg-nav--back,
+.dg-screen--question.is-entering .dg-foot-note {
+  animation: dg-rise .42s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+/* 質問文が先。選択肢はうしろから順に */
+.dg-screen--question.is-entering .dg-progress { animation-delay: 0ms; }
+.dg-screen--question.is-entering .dg-question { animation-delay: 60ms; }
+.dg-screen--question.is-entering .choice {
+  animation-delay: calc(110ms + var(--i, 0) * 55ms);
+}
+.dg-screen--question.is-entering .dg-nav--back { animation-delay: 420ms; }
+.dg-screen--question.is-entering .dg-foot-note { animation-delay: 470ms; }
+
+/* 結果画面も、同じ呼吸で入ってくるようにする */
+.dg-screen--result.is-entering,
+.dg-screen--scoring.is-entering {
+  animation: dg-rise .45s cubic-bezier(.2, .8, .2, 1) both;
+}
+
+/* 「はじめかた」の光から、そのままつながって見えるようにする白い幕 */
+.dg-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 45%,
+    #ffffff 0%,
+    var(--gold-2) 42%,
+    rgba(227, 195, 129, .8) 100%);
+  transition: opacity .85s ease;
+}
+.dg-veil.is-on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dg-screen--question.is-entering .dg-progress,
+  .dg-screen--question.is-entering .dg-question,
+  .dg-screen--question.is-entering .choice,
+  .dg-screen--question.is-entering .dg-nav--back,
+  .dg-screen--question.is-entering .dg-foot-note,
+  .dg-screen--result.is-entering,
+  .dg-screen--scoring.is-entering { animation: none; }
+  .dg-veil { display: none; }
+}

@@ -443,9 +443,9 @@
     laterBtn.textContent = lp.join.secondaryCta;
 
     joinBtn.addEventListener('click', function () {
-      SC.store.setParticipation('joined', 'day1_focus');
+      SC.store.setParticipation('joined', 'day1_intro');
       SC.track.event('participation_selected', { choice: 'joined' });
-      global.location.href = APP_URL + '#/day1-focus';
+      global.location.href = APP_URL + '#/day1-intro';
     });
 
     laterBtn.addEventListener('click', function () {

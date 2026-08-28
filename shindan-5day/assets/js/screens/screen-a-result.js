@@ -77,6 +77,9 @@
 
         SC.ui.card(c.axisHeading, [
           h('p', { class: 'card__note', text: c.axisNote }),
+          /* LINE追加前の簡易結果と同じ絵を再掲する（2026-08-24）。
+           * 「別のページへ来ても、同じ結果が引き継がれている」と分かるようにするため。 */
+          SC.ui.resultTypeImage(d.lowestAxis, { variant: 'compact' }),
           SC.ui.axisList({
             mode: 'view',
             scores: d.axisScores,

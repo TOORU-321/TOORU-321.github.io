@@ -40,6 +40,9 @@
 
         SC.ui.card(c.lessonHeading, SC.ui.prose(c.lessonBody)),
 
+        /* 共通動画（§41-C）。回答を始める前に置く。素材が無いあいだは出ない */
+        SC.ui.videoBlock({ day: 4, screen: 'day4_intro', track: ctx.track }),
+
         SC.ui.ctaArea([
           SC.ui.primaryCta({ label: c.primaryCta, onClick: function () { ctx.go('day4_entry'); } })
         ])

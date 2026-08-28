@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- uidを外部リンクのRefererへ渡さない（実装依頼11） -->
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#0e121a">
+<title>診断のはじめかた｜SNS事業生存力スコア（開発版）</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho+B1:wght@600;700;800&display=swap">
+<!-- スタイル -->
+<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/lp.css">
+<link rel="stylesheet" href="assets/css/diagnosis.css">
+
+<!-- 読み込む順番は変えないこと -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/config-diagnosis.js"></script>
+<script src="assets/js/data/axes.js"></script>
+<script src="assets/js/data/copy.js"></script>
+<script src="assets/js/data/diagnosis-v04.js"></script>
+<script src="assets/js/data/diagnosis-copy.js"></script>
+<script src="assets/js/data/diagnosis-intro-copy.js"></script>
+<script src="assets/js/store/storage-adapter.js"></script>
+<script src="assets/js/store/diagnosis-track.js"></script>
+<script src="assets/js/ui/dom.js"></script>
+<script src="assets/js/ui/components.js"></script>
+<script src="assets/js/ui/story-deck.js"></script>
+<script src="assets/js/diagnosis-intro.js"></script>
+</head>
+<body class="dg-body">
+  <a class="skip-link" href="#dg-app">本文へ移動</a>
+  <div class="app-shell">
+    <main id="dg-app" class="app-main"></main>
+    <!-- 2026-08-24 とーる指示：この画面は文章と「次へ」だけにする。
+         開発版の注記も置かない（設問ページと結果ページには残してある）。 -->
+  </div>
+</body>
+</html>
