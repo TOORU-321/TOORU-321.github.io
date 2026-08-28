@@ -1048,6 +1048,10 @@ a{text-decoration:none}
 .news-compact .nc-badge.member{background:linear-gradient(135deg,#f0c579,#e0a95a);color:#2a2114}
 .news-compact .nc-badge.mail{background:rgba(126,146,206,.18);color:#9fb0d8;border:1px solid rgba(126,146,206,.4)}
 .news-compact .nc-arrow{color:#6f6f68;font-size:17px;flex:none;line-height:1}
+.news-pager{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 4px}
+.news-pagebtn{font-family:var(--gothic);font-size:12.5px;color:#b7b6b0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.news-pagebtn:hover{background:rgba(255,255,255,.08)}
+.news-pagebtn.active{color:#1c1a14;background:linear-gradient(135deg,#e0a95a,#caa75f);border-color:transparent;font-weight:700}
 .ni-like{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 15px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:#b7b6b0;font-family:var(--gothic);font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,color .15s,transform .1s}
 .ni-like:hover{background:rgba(227,110,120,.10);border-color:rgba(227,110,120,.34)}
 .ni-like:active{transform:scale(.95)}
@@ -3500,6 +3504,8 @@ function closeNews(){
 }
 function showNewsForm(){ document.getElementById("newsForm").hidden = false; }
 function hideNewsForm(){ document.getElementById("newsForm").hidden = true; document.getElementById("nfMsg").textContent = ""; }
+const NEWS_PAGE_SIZE = 10;   // 「以前のお知らせ」は10件ずつページ切り替え
+let _newsOlderItems = [], _newsPage = 1;
 async function loadNews(){
   const list = document.getElementById("newsList");
   list.innerHTML = COL_LOADING;   // アニメ付きプログレスバー（コラムと共通）
@@ -3508,16 +3514,37 @@ async function loadNews(){
     const items = (data && data.items) || [];
     if(!items.length){ list.innerHTML = `<div class="vstate">お知らせはまだありません。</div>`; return; }
     list.innerHTML = "";
-    let compactHeaderAdded = false;
-    items.forEach((n, idx) => {
-      if(idx < 2){ const el = newsItemEl(n); if(el) list.appendChild(el); return; }   // 最新2件は全文
-      const el = newsCompactEl(n); if(!el) return;                                     // それ以前は簡易一覧
-      if(!compactHeaderAdded){ const h = document.createElement("div"); h.className = "news-more-h"; h.textContent = "以前のお知らせ"; list.appendChild(h); compactHeaderAdded = true; }
-      list.appendChild(el);
-    });
+    items.slice(0, 2).forEach(n => { const el = newsItemEl(n); if(el) list.appendChild(el); });   // 最新2件は全文
+    _newsOlderItems = items.slice(2);   // それ以前は簡易一覧をページ分割
+    _newsPage = 1;
+    if(_newsOlderItems.length){
+      const h = document.createElement("div"); h.className = "news-more-h"; h.textContent = "以前のお知らせ"; list.appendChild(h);
+      const box = document.createElement("div"); box.id = "newsOlderList"; list.appendChild(box);
+      const pager = document.createElement("div"); pager.id = "newsPager"; pager.className = "news-pager"; list.appendChild(pager);
+      renderNewsPage();
+    }
     startPollCountdowns();
     window.__LM_NEWS = items; if(window.__evalDLBar) window.__evalDLBar();   // 期限バー用にキャッシュ＆再判定
   }catch(e){ list.innerHTML = `<div class="vstate">お知らせを読み込めませんでした。</div>`; }
+}
+function renderNewsPage(){
+  const box = document.getElementById("newsOlderList"), pager = document.getElementById("newsPager");
+  if(!box) return;
+  box.innerHTML = "";
+  const pages = Math.max(1, Math.ceil(_newsOlderItems.length / NEWS_PAGE_SIZE));
+  if(_newsPage > pages) _newsPage = pages;
+  const start = (_newsPage - 1) * NEWS_PAGE_SIZE;
+  _newsOlderItems.slice(start, start + NEWS_PAGE_SIZE).forEach(n => { const el = newsCompactEl(n); if(el) box.appendChild(el); });
+  if(!pager) return;
+  pager.innerHTML = "";
+  if(pages <= 1) return;
+  for(let p = 1; p <= pages; p++){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "news-pagebtn" + (p === _newsPage ? " active" : "");
+    b.textContent = "ページ" + p;
+    b.onclick = () => { _newsPage = p; renderNewsPage(); box.scrollIntoView({ behavior:"smooth", block:"start" }); };
+    pager.appendChild(b);
+  }
 }
 function fmtDur(ms){
   var s=Math.floor(ms/1000), d=Math.floor(s/86400), h=Math.floor((s%86400)/3600), m=Math.floor((s%3600)/60), sec=s%60;
