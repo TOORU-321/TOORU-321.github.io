@@ -82,6 +82,11 @@
       if (!question) return question;
       if (!SC.questionVariant.isEnabled()) return question;
 
+      /* Q21はテストの対象外。必ず正本の文だけを出す（2026-08-28）。
+       * いまは question-variants.js に定義が無いので素通りするが、
+       * あとから足されても通らないよう、ここで止めておく。 */
+      if (question.no === SC.diagnosisData.confidenceEvidenceGap.question) return question;
+
       var v = SC.questionVariant.current();
       if (v === CONTROL) return question;
 

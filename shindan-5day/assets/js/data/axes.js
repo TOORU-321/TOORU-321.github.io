@@ -1,4 +1,4 @@
-/* axes.js : 5軸マスタ。表示名・専門名はNotion「診断ファネル｜SNS事業生存力スコア」に合わせる。 */
+/* axes.js : 5軸マスタ。表示名・専門名はNotion「診断ファネル｜SNS事業の現在地診断」に合わせる。 */
 (function (global) {
   'use strict';
   var SC = (global.SC = global.SC || {});

@@ -15,7 +15,7 @@
      * 既存のGASプロジェクトとは別物で、そちらには触れない。 */
     voices: 'https://script.google.com/macros/s/AKfycbxSCo5pmW4bjtOGhPN2evqjFX66MlOHLp5MvAzxoGx6KuF8WQfADF22Y5_2fzdSfNjinA/exec',
 
-    /* 診断（20問）の保存と、uid ⇔ 匿名診断ID の結合（新規GAS・スタンドアロン）。
+    /* 診断（21問）の保存と、uid ⇔ 匿名診断ID の結合（新規GAS・スタンドアロン）。
      * コード控え：tools/gas/diagnosis.gs.txt
      *
      * ★null のあいだは「開発モード」で動く。

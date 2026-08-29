@@ -1,4 +1,4 @@
-/* diagnosis.js : 20問診断ページ（開発版）の画面と進行。
+/* diagnosis.js : 21問診断ページ（開発版）の画面と進行。
  *
  * 正本：診断設計書 v0.4（data/diagnosis-v04.js）／Notion §41-B
  * 保存：SC.diagnosisStore（画面から localStorage を直接触らない）
@@ -46,15 +46,18 @@
   /* 到達してよい画面か確かめ、だめなら安全な場所へ落とす */
   function guard(target) {
     var state = SC.diagnosisStore.get();
-    var last = data().questions.length;
     if (!target) target = { view: 'question', no: state.currentQuestion };
 
     if (target.view === 'question') {
       var no = target.no;
-      if (isNaN(no) || no < 1 || no > last) return { view: 'question', no: state.currentQuestion };
+      /* 番号の範囲では見ない。並び順に実在する番号かで見る（2026-08-28）。
+       * Q21のように、順番と番号が一致しない設問があるため。 */
+      if (isNaN(no) || data().positionOf(no) === 0) {
+        return { view: 'question', no: state.currentQuestion };
+      }
       return { view: 'question', no: no };
     }
-    /* 採点・結果は20問そろってから */
+    /* 採点・結果は全問そろってから */
     if (!SC.diagnosisScore.isComplete(state.answers)) {
       var missing = SC.diagnosisScore.unanswered(state.answers);
       return { view: 'question', no: missing[0] };
@@ -92,21 +95,25 @@
     });
   }
 
+  /* 進み具合は「何問目か」で出す。設問番号ではない。
+   * Q21 は番号こそ21だが7問目なので、ここで取り違えると
+   * 「21問中21問目」と出てしまう（2026-08-28）。 */
   function progressBar(no) {
     var total = data().questions.length;
     var phase = data().phaseOf(no);
-    var pct = (no / total) * 100;
+    var position = data().positionOf(no);
+    var pct = (position / total) * 100;
     return h('div', { class: 'dg-progress' }, [
       h('div', {
         class: 'dg-progress__track', role: 'img',
-        'aria-label': '全' + total + '問中 ' + no + '問目' + (phase ? '（' + phase.title + '）' : '')
+        'aria-label': '全' + total + '問中 ' + position + '問目' + (phase ? '（' + phase.title + '）' : '')
       }, [
         h('div', { class: 'dg-progress__fill', style: 'width:' + pct + '%' })
       ]),
       h('p', { class: 'dg-progress__meta' }, [
         h('span', {
           class: 'dg-progress__count',
-          text: c().progress.replace('{current}', String(no)).replace('{total}', String(total))
+          text: c().progress.replace('{current}', String(position)).replace('{total}', String(total))
         }),
         phase ? h('span', { class: 'dg-progress__phase', text: phase.title }) : null
       ])
@@ -123,7 +130,6 @@
     var state = SC.diagnosisStore.get();
     /* 表現バリアントを通す。テストOFFのあいだは正本がそのまま返る（2026-08-25） */
     var q = SC.questionVariant.resolve(data().questionByNo(no));
-    var total = data().questions.length;
     var answered = state.answers[no];
     var hasAnswer = answered !== undefined && answered !== null;
     var moving = false;   /* 続けて押しても飛ばしすぎないように */
@@ -144,13 +150,15 @@
         syncSelected(choices);
         moving = true;
         global.setTimeout(function () {
-          if (no === total) {
+          /* 次の設問は番号を足して求めない。並び順から引く（2026-08-28） */
+          var next = data().nextNo(no);
+          if (next === null) {
             SC.diagnosisStore.setCurrentQuestion(no);
             go('scoring');
             return;
           }
-          SC.diagnosisStore.setCurrentQuestion(no + 1);
-          go('question', no + 1);
+          SC.diagnosisStore.setCurrentQuestion(next);
+          go('question', next);
         }, ADVANCE_MS);
       }
     });
@@ -173,15 +181,17 @@
         choices
       ]),
 
-      /* 進むボタンは置かない。戻るときだけ押してもらう */
-      no > 1
+      /* 進むボタンは置かない。戻るときだけ押してもらう。
+       * 戻り先も番号を引き算せず、並び順から求める（2026-08-28） */
+      data().prevNo(no) !== null
         ? h('div', { class: 'dg-nav dg-nav--back' }, [
             h('button', {
               type: 'button', class: 'btn btn--ghost', id: 'dg-back',
               on: { click: function () {
+                var prev = data().prevNo(no);
                 track('diagnosis_back_clicked', { question: no });
-                SC.diagnosisStore.setCurrentQuestion(no - 1);
-                go('question', no - 1);
+                SC.diagnosisStore.setCurrentQuestion(prev);
+                go('question', prev);
               } }
             }, c().back)
           ])

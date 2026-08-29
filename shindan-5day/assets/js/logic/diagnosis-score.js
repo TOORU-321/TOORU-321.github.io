@@ -110,6 +110,11 @@
         businessFitIndex += pointOf(optionIndex(answers, no));
       });
 
+      /* 非加点：根拠と自己評価の差（2026-08-28）。
+       * 回答値をそのまま持つだけ。判定もフラグも作らない。
+       * businessFit・fatigue・environmentMismatch のどれにも混ぜない。 */
+      var confidenceGap = optionIndex(answers, d.confidenceEvidenceGap.question);
+
       return {
         diagnosisVersion: d.version,
         axisRaw: axisRaw,
@@ -125,7 +130,9 @@
         environmentMismatchFlag: envChoice !== null && envChoice >= d.environmentMismatch.threshold,
         businessFitIndex: businessFitIndex,
         /* 商品接続は未確定のため、判定値の保持だけ行い画面には出さない */
-        businessFitCandidate: businessFitIndex >= d.businessFit.candidateThreshold
+        businessFitCandidate: businessFitIndex >= d.businessFit.candidateThreshold,
+        /* 0〜4、未回答ならnull。本人向けの画面には出さない（2026-08-28） */
+        confidenceEvidenceGapScore: confidenceGap
       };
     },
 

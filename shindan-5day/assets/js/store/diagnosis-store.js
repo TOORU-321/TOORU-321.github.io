@@ -1,4 +1,4 @@
-/* diagnosis-store.js : 診断（20問）の保存。画面はここだけを呼ぶ（依頼6）。
+/* diagnosis-store.js : 診断（21問）の保存。画面はここだけを呼ぶ（依頼6）。
  * 保存の実体は storage-adapter.js（5DAY本体と共用）だが、
  * キーの名前空間は分けてあるので、モニター版の保存とは混ざらない。
  *
@@ -6,7 +6,7 @@
  *   diagnosisVersion / anonymousDiagnosisId / answers / currentQuestion
  *   startedAt / completedAt / totalScore / scoreBand / axisScores
  *   lowestAxis / tiedLowestAxes / fatigueFlag / environmentMismatchFlag
- *   businessFitIndex / handoffStatus / updatedAt
+ *   businessFitIndex / confidenceEvidenceGapScore / handoffStatus / updatedAt
  *
  * 破損・不正値・旧バージョンは、黙って捨てて最初からやり直せる状態へ戻す。
  */
@@ -46,10 +46,11 @@
       anonymousDiagnosisId: id,
       /* { 問番号: 選択肢インデックス(0始まり) } */
       answers: {},
-      currentQuestion: 1,
+      /* 最初の設問番号。並び順の先頭であって、定数の1ではない */
+      currentQuestion: SC.diagnosisData.firstNo(),
       startedAt: null,
       completedAt: null,
-      /* 採点結果。20問そろうまでは null */
+      /* 採点結果。全問そろうまでは null */
       totalScore: null,
       scoreBand: null,
       axisScores: null,
@@ -59,6 +60,8 @@
       fatigueFlag: false,
       environmentMismatchFlag: false,
       businessFitIndex: null,
+      /* Q21の回答値（0〜4）。観察用で、本人向けの画面には出さない（2026-08-28） */
+      confidenceEvidenceGapScore: null,
       /* 引き継ぎ（依頼7）。キーの平文はここに保存しない。
        * 平文は発行直後に一度だけ画面へ渡し、handoffKeyPreview に保持する。
        * （保存すると端末に残り続けるため、期限切れで自動的に消す） */
@@ -93,9 +96,11 @@
 
     state.answers = sanitizeAnswers(state.answers);
 
-    var last = SC.diagnosisData.questions.length;
+    /* 番号の範囲ではなく、並び順に実在する番号かで見る（2026-08-28）。
+     * Q21のように、順番と番号が一致しない設問があるため。 */
     var cur = parseInt(state.currentQuestion, 10);
-    state.currentQuestion = (isNaN(cur) || cur < 1 || cur > last) ? 1 : cur;
+    state.currentQuestion =
+      (isNaN(cur) || SC.diagnosisData.positionOf(cur) === 0) ? SC.diagnosisData.firstNo() : cur;
 
     if (HANDOFF.indexOf(state.handoffStatus) === -1) state.handoffStatus = 'none';
     if (Object.prototype.toString.call(state.tiedLowestAxes) !== '[object Array]') {
@@ -189,18 +194,19 @@
         patch.fatigueFlag = false;
         patch.environmentMismatchFlag = false;
         patch.businessFitIndex = null;
+        patch.confidenceEvidenceGapScore = null;
       }
       return SC.diagnosisStore.save(patch);
     },
 
     setCurrentQuestion: function (no) {
-      var last = SC.diagnosisData.questions.length;
       var n = parseInt(no, 10);
-      if (isNaN(n) || n < 1 || n > last) return SC.diagnosisStore.get();
+      /* 並び順に実在する番号かで見る（2026-08-28） */
+      if (isNaN(n) || SC.diagnosisData.positionOf(n) === 0) return SC.diagnosisStore.get();
       return SC.diagnosisStore.save({ currentQuestion: n });
     },
 
-    /* 採点して保存する。20問そろっていなければ何もしない（依頼1） */
+    /* 採点して保存する。全問そろっていなければ何もしない（依頼1） */
     complete: function () {
       var state = SC.diagnosisStore.get();
       if (!SC.diagnosisScore.isComplete(state.answers)) return null;
@@ -218,7 +224,9 @@
         structuralRiskFlag: r.structuralRiskFlag,
         fatigueFlag: r.fatigueFlag,
         environmentMismatchFlag: r.environmentMismatchFlag,
-        businessFitIndex: r.businessFitIndex
+        businessFitIndex: r.businessFitIndex,
+        /* 観察用。0〜4かnull。画面には出さず、5DAY本体へも渡さない（2026-08-28） */
+        confidenceEvidenceGapScore: r.confidenceEvidenceGapScore
       });
     },
 
@@ -296,7 +304,8 @@
       SC.diagnosisStore.save({
         answers: clean,
         startedAt: nowIso(),
-        currentQuestion: SC.diagnosisData.questions.length,
+        /* 最後の設問番号。問数ではない（Q21があるので一致しない・2026-08-28） */
+        currentQuestion: SC.diagnosisData.lastNo(),
         caseId: typeof caseId === 'string' ? caseId.slice(0, 40) : null
       });
       return SC.diagnosisStore.complete() || SC.diagnosisStore.get();

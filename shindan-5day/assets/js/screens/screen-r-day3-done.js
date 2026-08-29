@@ -68,7 +68,7 @@
           heading: c.progressHeading
         }),
 
-        /* 生存力スコアと設計図進捗を混ぜない（絶対条件1・2） */
+        /* 現在地スコアと設計図進捗を混ぜない（絶対条件1・2） */
         SC.ui.card(null, [
           h('p', { class: 'score-keep' }, [
             h('span', { class: 'score-keep__label', text: SC.copy.diagnosisName }),
