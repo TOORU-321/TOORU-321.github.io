@@ -895,6 +895,20 @@
   var SUB_PRICE_ID = "price_1TrzawDffCAQquMFANsJN7YK";   // エルラボ＋オンライン講義 月額1,980円
   var PREFILL_EMAIL = "";
   try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+  // 既にサブスク加入中（契約状態=active）／VIPタグ保持の方には再決済させない → アプリへ戻す
+  (function(){
+    if(!PREFILL_EMAIL) return;   // メール不明（直接訪問など）は通常表示
+    try{
+      fetch(CHECKOUT_GAS + "?action=verify&email=" + encodeURIComponent(PREFILL_EMAIL) + "&_=" + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          const tags = (d && d.tags || []).map(function(t){ return String(t).toLowerCase(); });
+          if(d && d.ok && (d.subActive || tags.indexOf("vip") >= 0)){
+            location.replace("https://columns.l-mine.com/app/");   // 加入済み・VIP＝重複課金しない
+          }
+        }).catch(function(){});
+    }catch(e){}
+  })();
   var _stripe = null, _checkout = null, _lastSessionId = '';
   async function openCheckout(){
     var modal = document.getElementById('payModal');
