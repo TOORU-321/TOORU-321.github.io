@@ -301,6 +301,10 @@
     var before = state.completedAt;
     SC.diagnosisStore.complete();
     if (!before) track('diagnosis_completed');
+    /* 5DAY本体がこの結果を読めるようにしておく（2026-08-31）。
+     * 同じ端末でそのまま5DAYへ進んだ場合に、サンプルの47点が出ないようにする。
+     * LINEを経由する人は、復元画面でuidつきの記録に上書きされる。 */
+    SC.diagnosisBridge.handOver();
     go('result');
   }
 

@@ -232,4 +232,18 @@
     var c = SC.config;
     return [c.appId, c.campaignId, anonymousDiagnosisId || 'unknown', c.storageVersion, kind].join(':');
   };
+
+  /* 「いま見せる診断結果はどれか」を指す目印（2026-08-31）。
+   *
+   * 診断ページと5DAY本体は、保存の名前空間を分けてある
+   * （lmine-shindan-diagnosis と lmine-shindan-challenge）。
+   * 混ざらないのは良いが、そのままでは5DAY側が診断結果を読めない。
+   *
+   * そこで診断側が「5DAYへ渡す形」に整えたものを5DAY側の名前空間へ置き、
+   * どの診断IDを見ればよいかをこの目印で伝える。
+   * こうすると5DAY本体は診断の内部構造を何も知らずに済む。 */
+  SC.config.currentDiagnosisPointerKey = function () {
+    var c = SC.config;
+    return [c.appId, c.campaignId, c.storageVersion, 'current-diagnosis'].join(':');
+  };
 })(window);

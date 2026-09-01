@@ -144,6 +144,13 @@
 
   /* --- 9. 復元できた ---------------------------------------------------- */
   function viewResult(record) {
+    /* 5DAY本体がこの結果を読めるようにしておく（2026-08-31）。
+     * これをしないと「詳しい結果を見る」の先でサンプルの47点が出る。
+     *
+     * uidも一緒に渡す。5DAY側からLINEへ通知を送るのに要るため。
+     * uidは画面・URL・計測・コンソールへは出さない（依頼11）。 */
+    SC.diagnosisBridge.handOverRecord(record, uid);
+
     var animate = SC.motion.once('restore-result');
     var el = h('div', { class: 'dg-screen dg-screen--result' }, [
       head(c().resultTitle),

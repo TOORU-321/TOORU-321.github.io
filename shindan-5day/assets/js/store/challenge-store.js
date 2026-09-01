@@ -225,15 +225,38 @@
   SC.store = {
     SCHEMA_VERSION: SCHEMA_VERSION,
 
-    /* --- 診断データ --------------------------------------------------- */
-    /* Phase1はサンプル固定。Phase2ではURLパラメータ／LINE uid／GAS取得に差し替える */
+    /* --- 診断データ ---------------------------------------------------
+     * 2026-08-31：本物の診断結果があれば、それを使う。
+     *
+     * 診断ページ・復元画面が SC.diagnosisBridge で置いていったものを読む。
+     * 無ければ従来どおりサンプル（47点）。プレビューはこれで動き続ける。
+     *
+     * ★ここでは診断側のファイルを読み込まない。目印のキーを見るだけ。 */
     loadDiagnosis: function () {
       if (diagnosisCache) return diagnosisCache;
+
+      var pointer = SC.storage.read(SC.config.currentDiagnosisPointerKey());
+      if (isPlainObject(pointer) && typeof pointer.anonymousDiagnosisId === 'string' &&
+          pointer.anonymousDiagnosisId) {
+        var real = SC.storage.read(diagnosisKey(pointer.anonymousDiagnosisId));
+        if (isPlainObject(real) && typeof real.totalScore === 'number') {
+          diagnosisCache = real;
+          return diagnosisCache;
+        }
+      }
+
       var sample = SC.sampleDiagnosis;
       var saved = SC.storage.read(diagnosisKey(sample.anonymousDiagnosisId));
       diagnosisCache = isPlainObject(saved) && saved.totalScore === sample.totalScore ? saved : sample;
       SC.storage.write(diagnosisKey(sample.anonymousDiagnosisId), diagnosisCache);
       return diagnosisCache;
+    },
+
+    /* 本物の診断結果を見ているのか、サンプルなのか。
+     * 画面の出し分けではなく、確認・テスト用 */
+    isRealDiagnosis: function () {
+      var d = SC.store.loadDiagnosis();
+      return !!d && d.anonymousDiagnosisId !== SC.sampleDiagnosis.anonymousDiagnosisId;
     },
 
     getDiagnosis: function () { return diagnosisCache; },
