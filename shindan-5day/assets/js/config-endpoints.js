@@ -25,6 +25,16 @@
      *
      * 2026-08-24 デプロイ済み（バージョン1）。ここから通信モードで動く。
      * ★診断ページ・復元画面はまだ一般公開していない（公開物から除外される）。 */
-    diagnosis: 'https://script.google.com/macros/s/AKfycbxB8ZFERP4cCcZTzc-RucwpEs9Y0HPCXUCxwZVcn-8iBGS4LMLEdt7ZZt2kylbioI3_bw/exec'
+    diagnosis: 'https://script.google.com/macros/s/AKfycbxB8ZFERP4cCcZTzc-RucwpEs9Y0HPCXUCxwZVcn-8iBGS4LMLEdt7ZZt2kylbioI3_bw/exec',
+
+    /* LINE公式アカウントの友だち追加（プロライン発行・2026-09-01 とーる提供）。
+     *
+     * 診断結果の画面から、引き継ぎの準備ができた人だけをここへ送る。
+     * ★準備できる前には出さない。キーを持たずに友だち追加へ行くと、
+     *   LINE側で結果を引き継げなくなるため。
+     *
+     * 友だち追加のあとは、シナリオの1通目に置いた
+     * 自作ページ転送URL（/cp/…?uid=[[uid]]）から restore.html へ戻ってくる。 */
+    lineAddFriend: 'https://vjbsvali.autosns.app/addfriend/s/OJwYZlOe21/@956nvdmi'
   };
 })(window);

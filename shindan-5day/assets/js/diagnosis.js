@@ -431,6 +431,29 @@
     var status = h('p', { class: 'dg-handoff__status', role: 'status', 'aria-live': 'polite' });
     var manual = h('div', { class: 'dg-handoff__manual', hidden: true });
 
+    /* LINEへの入口（2026-09-01 とーる指摘で追加）。
+     *
+     * 引き継ぎの準備ができるまでは出さない。
+     * キーを持たずに友だち追加へ行くと、LINE側で結果を引き継げないため。
+     * 自動で用意できなかった人には、先にコピーを促す一文を添える。 */
+    var lineBox = h('div', { class: 'dg-handoff__line', hidden: true });
+
+    function showLineCta(needsManualCopy) {
+      SC.dom.clear(lineBox);
+      SC.dom.append(lineBox, [
+        needsManualCopy
+          ? h('p', { class: 'dg-handoff__note', text: c().handoffLineAfterCopy })
+          : null,
+        h('a', {
+          class: 'btn btn--primary dg-handoff__line-cta',
+          href: SC.endpoints.lineAddFriend,
+          rel: 'noreferrer',
+          on: { click: function () { track('handoff_line_opened'); } }
+        }, c().handoffLineCta)
+      ]);
+      lineBox.hidden = false;
+    }
+
     var cta = h('button', {
       type: 'button', class: 'btn btn--primary',
       on: { click: function () {
@@ -446,6 +469,7 @@
             SC.dom.append(manual, h('p', { class: 'dg-handoff__note', text: c().handoffCopiedNote }));
             manual.hidden = false;
             cta.disabled = true;
+            showLineCta(false);
           } else {
             track('handoff_copy_failed');
             status.className = 'dg-handoff__warn';
@@ -453,17 +477,22 @@
             SC.dom.clear(manual);
             SC.dom.append(manual, manualBox(key));
             manual.hidden = false;
+            /* 自動で用意できなくても、行き止まりにしない。
+             * ただし先にコピーしてもらう必要がある */
+            showLineCta(true);
           }
         });
       } }
     }, c().handoffCta);
 
+    /* 一度コピー済みで戻ってきた人にも、LINEへの入口を出しておく */
     if (copied) {
       cta.disabled = true;
       status.className = 'dg-handoff__done';
       status.textContent = c().handoffCopied;
       SC.dom.append(manual, h('p', { class: 'dg-handoff__note', text: c().handoffCopiedNote }));
       manual.hidden = false;
+      showLineCta(false);
     }
 
     SC.dom.append(box, [
@@ -472,7 +501,8 @@
       cta,
       keep,
       status,
-      manual
+      manual,
+      lineBox
     ]);
   }
 

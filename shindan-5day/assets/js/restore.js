@@ -126,6 +126,14 @@
           h('button', {
             type: 'button', class: 'btn btn--primary',
             on: { click: function () {
+              /* 空のまま押されたときに「もう一度貼り付けて」と言わない（2026-09-01）。
+               * 一度も貼っていない人に「もう一度」は通じないため、分けて伝える。 */
+              if (!field.value || !field.value.replace(/\s+/g, '')) {
+                status.hidden = false;
+                status.textContent = c().restorePasteEmpty;
+                field.focus();
+                return;
+              }
               var key = SC.handoffKey.normalize(field.value);
               if (!key) {
                 track('handoff_bind_failed');
@@ -137,6 +145,19 @@
               bind(key, 'paste');
             } }
           }, c().restoreCta)
+        ])
+      ]),
+
+      /* 診断をまだ受けていない人の行き止まりをなくす（2026-09-01）。
+       * 貼るものを持っていない人が、ここで詰まらないようにする。 */
+      h('section', { class: 'dg-card dg-card--quiet' }, [
+        h('h2', { class: 'dg-subhead', text: c().restoreNotYetHeading }),
+        h('p', { class: 'dg-handoff__body', text: c().restoreNotYetBody }),
+        h('div', { class: 'dg-nav dg-nav--single' }, [
+          /* uid付きURLを外部リンクへ引き継がない（依頼11） */
+          h('a', {
+            class: 'btn btn--ghost', href: 'shindan-lp.html', rel: 'noreferrer'
+          }, c().restoreNotYetCta)
         ])
       ])
     ]);
@@ -235,7 +256,7 @@
     });
   }
 
-  SC.restoreApp = { boot: boot, _tryClipboard: tryClipboard };
+  SC.restoreApp = { boot: boot, _tryClipboard: tryClipboard, viewPaste: viewPaste };
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot);
   else boot();

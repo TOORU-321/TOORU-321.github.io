@@ -55,6 +55,8 @@
     'handoff_copy_attempted',
     'handoff_copy_succeeded',
     'handoff_copy_failed',
+    /* 2026-09-01：結果画面からLINEの友だち追加へ進んだ（uidは載せない） */
+    'handoff_line_opened',
     'handoff_restore_view',
     'handoff_clipboard_attempted',
     'handoff_clipboard_succeeded',

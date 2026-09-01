@@ -59,6 +59,21 @@
 }
 .dg-card--lead { background: var(--lm-surface-2); }
 
+/* 主役ではない案内。復元画面で「まだ診断を受けていない方へ」に使う
+ * （2026-09-01）。本来やってほしいのは貼り付けなので、控えめに置く。 */
+.dg-card--quiet {
+  background: transparent;
+  box-shadow: none;
+  border-style: dashed;
+}
+.dg-subhead {
+  margin: 0 0 10px;
+  font-family: var(--mincho);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
 .dg-question {
   margin: 0 0 18px; font-family: var(--mincho);
   font-size: 17px; line-height: 1.9; color: var(--ink);
@@ -193,6 +208,15 @@
 .dg-handoff__keep.is-soon { color: var(--warn); }
 .dg-handoff__note { margin: 12px 0 0; font-size: 14px; line-height: 1.85; color: var(--ink-soft); }
 .dg-handoff__manual { margin: 0 0 16px; }
+
+/* LINEへの入口（2026-09-01）。準備ができた人にだけ出す。
+ * ここが結果画面の最後の一歩なので、押しやすい大きさにする。 */
+.dg-handoff__line { margin: 18px 0 0; padding: 16px 0 0; border-top: 1px solid var(--line); }
+.dg-handoff__line-cta {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 56px; padding: 14px 20px;
+  font-size: 17px; text-align: center; text-decoration: none;
+}
 .dg-handoff__manual-label {
   display: block; margin: 0 0 8px; font-size: 14px; color: var(--ink-soft);
 }
