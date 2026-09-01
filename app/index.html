@@ -1048,6 +1048,8 @@ a{text-decoration:none}
 .news-compact .nc-badge.member{background:linear-gradient(135deg,#f0c579,#e0a95a);color:#2a2114}
 .news-compact .nc-badge.mail{background:rgba(126,146,206,.18);color:#9fb0d8;border:1px solid rgba(126,146,206,.4)}
 .news-compact .nc-arrow{color:#6f6f68;font-size:17px;flex:none;line-height:1}
+.news-compact .nc-del{flex:none;background:none;border:1px solid rgba(224,169,169,.4);color:#e0a9a9;border-radius:6px;font-size:12px;padding:4px 8px;cursor:pointer;line-height:1}
+.news-compact .nc-del:hover{background:rgba(224,169,169,.12)}
 .news-pager{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 4px}
 .news-pagebtn{font-family:var(--gothic);font-size:12.5px;color:#b7b6b0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 14px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
 .news-pagebtn:hover{background:rgba(255,255,255,.08)}
@@ -4049,8 +4051,18 @@ async function toggleNewsDrafts(){
       const el = document.createElement("div");
       el.className = "news-compact";
       const tag = (n.status === "予約") ? `予約：${escapeHtml(String(n.scheduledAt||"").replace("T"," ").slice(0,16))}` : "下書き";
-      el.innerHTML = `<span class="nc-date">${escapeHtml(n.date)}</span><span class="nc-title">${escapeHtml(n.title || "(無題)")}</span><span class="nc-badge member">${tag}</span><span class="nc-arrow">›</span>`;
-      el.addEventListener("click", () => { box.hidden = true; editNews(n); });
+      el.innerHTML = `<span class="nc-date">${escapeHtml(n.date)}</span><span class="nc-title">${escapeHtml(n.title || "(無題)")}</span><span class="nc-badge member">${tag}</span><button type="button" class="nc-del">削除</button><span class="nc-arrow">›</span>`;
+      el.addEventListener("click", (e) => { if(e.target.closest(".nc-del")) return; box.hidden = true; editNews(n); });
+      el.querySelector(".nc-del").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        if(!confirm(`「${n.title || "(無題)"}」を削除しますか？`)) return;
+        const body = new URLSearchParams({ action:"news_del", email:(SESSION && SESSION.email)||"", id:n.id });
+        try{
+          const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
+          if(res.ok){ el.remove(); if(!box.children.length) box.innerHTML = `<div class="vstate">下書き・予約中のお知らせはありません。</div>`; }
+          else showToast("削除できませんでした。");
+        }catch(err){ showToast("通信エラーが発生しました。"); }
+      });
       box.appendChild(el);
     });
   }catch(e){ box.innerHTML = `<div class="vstate">読み込めませんでした。</div>`; }
