@@ -162,7 +162,7 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .pagenav .pn-side{font-family:var(--serif-en);font-size:13px;letter-spacing:.06em;color:var(--ink-2);padding:7px 14px}
 .pagenav .pn-side:hover{color:var(--gold)}
 .pagenav .pn-side.off{color:#c9c4b8;pointer-events:none}
-.pagenav .pn-nums{display:flex;gap:6px;margin:0 6px}
+.pagenav .pn-nums{display:flex;gap:6px;margin:0 6px;flex-wrap:wrap;justify-content:center}
 .pagenav .pn-num{display:grid;place-items:center;min-width:34px;height:34px;padding:0 8px;font-family:var(--serif-en);font-size:14px;color:var(--ink-2);border:1px solid var(--line-2)}
 .pagenav .pn-num:hover{border-color:var(--gold);color:var(--gold)}
 .pagenav .pn-num.current{background:var(--ink);color:#fff;border-color:var(--ink)}
