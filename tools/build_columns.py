@@ -56,7 +56,7 @@ AUTHOR_NAME = "とーる"                             # 記事著者（JSON-LD a
 DEFAULT_OG_IMAGE = BASE_URL + "columns/assets/columns-top.jpg"  # ヒーロー画像が無い記事のOGP代替
 
 # おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
-RECOMMENDED = [107, 103, 89, 73, 71, 65]
+RECOMMENDED = [112, 107, 103, 89, 73, 71, 65]
 
 # 記事末尾のオプトイン枠。n>=ELABO_OPTIN_FROM でエルラボ＋主体、それ未満はメルマガ主体（n>=TEMPLATE_FROM でエルラボ＋の控えめ1行を追記）
 def optin_footer(n):
