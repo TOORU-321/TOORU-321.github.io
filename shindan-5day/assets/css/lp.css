@@ -309,6 +309,16 @@
   font-size: clamp(17px, 4.3vw, 20px); line-height: 2;
   letter-spacing: .05em; color: var(--ink);
 }
+
+/* 意味の切れ目でだけ改行させる（2026-09-03 とーる指示）。
+ *
+ * ブラウザ任せだと「文字が入らなくなった場所」で改行されるので、
+ * 語の途中や助詞の前で切れる。句読点で区切った塊をこれで囲むと、
+ * 塊の内側では改行されず、句読点のうしろでだけ行が変わる。
+ *
+ * ★塊ひとつが幅を超えたら、その中では従来どおり折り返す。
+ * ★行数は増える。読みやすさを優先する判断（とーる）。 */
+.deck__phrase { display: inline-block; }
 .deck__list {
   list-style: none; margin: 22px 0 0; padding: 0; text-align: left;
   display: grid; gap: 12px;

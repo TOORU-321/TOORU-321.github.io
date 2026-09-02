@@ -57,6 +57,38 @@
     });
   }
 
+  /* 意味の切れ目でだけ改行させる（2026-09-03 とーる指示）。
+   *
+   * ブラウザの折り返しに任せると、日本語は「文字が入らなくなった場所」で
+   * 改行されるので、語の途中や助詞の前で切れて読みにくくなる。
+   *
+   * 句読点のうしろで区切り、それぞれを display:inline-block の塊にすると、
+   * 塊の途中では改行されなくなる。結果、句読点の後ろだけで行が変わる。
+   * 行数は増えるが、そのぶん読みやすくなる（とーるの判断）。
+   *
+   * ★塊ひとつが画面幅を超えたときは、その中で折り返す（従来どおり）。
+   * ★区切り文字は残す。読点・句点が行頭へ落ちるのも防げる。 */
+  function splitPhrases(text) {
+    var out = [];
+    var buf = '';
+    var s = String(text);
+    for (var i = 0; i < s.length; i++) {
+      buf += s.charAt(i);
+      if (s.charAt(i) === '、' || s.charAt(i) === '。') {
+        out.push(buf);
+        buf = '';
+      }
+    }
+    if (buf) out.push(buf);
+    return out;
+  }
+
+  function phrases(text, className) {
+    return splitPhrases(text).map(function (t) {
+      return h('span', { class: className || 'phrase', text: t });
+    });
+  }
+
   function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
 
   /* SVG用。属性はそのまま setAttribute する（createElementNS が必要なため h とは別にする） */
@@ -78,6 +110,7 @@
   SC.dom = {
     h: h, svg: svg, lines: lines,
     sentences: sentences, splitSentences: splitSentences,
+    phrases: phrases, splitPhrases: splitPhrases,
     clear: clear, append: append
   };
 })(window);

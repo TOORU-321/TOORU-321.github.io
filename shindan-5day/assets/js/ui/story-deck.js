@@ -122,7 +122,11 @@
       var card = h('div', { class: 'deck__step' }, [
         step.eyebrow ? h('p', { class: 'deck__eyebrow', text: step.eyebrow }) : null,
         step.title ? h('p', { class: 'deck__title', text: step.title }) : null,
-        step.body ? h('p', { class: 'deck__body', text: step.body }) : null,
+        /* 2026-09-03 とーる指示：変なところで改行させない。
+         * 句読点のうしろでだけ行が変わるよう、意味の塊に分けて置く。 */
+        step.body
+          ? h('p', { class: 'deck__body' }, SC.dom.phrases(step.body, 'deck__phrase'))
+          : null,
         step.items && step.items.length
           ? h('ul', { class: 'deck__list' }, step.items.map(function (t) {
               return h('li', { class: 'deck__list-item', text: t });
