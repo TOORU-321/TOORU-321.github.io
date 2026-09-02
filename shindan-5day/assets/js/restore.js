@@ -115,37 +115,84 @@
       text: errorMessage || '', hidden: !errorMessage
     });
 
+    /* 手で貼り付ける欄は、最初は隠しておく（2026-09-01 とーる指摘）。
+     * まず下のボタン一つで済ませてもらい、だめだったときだけ出す。 */
+    var manualCta = h('button', {
+      type: 'button', class: 'btn btn--ghost',
+      on: { click: function () {
+        /* 空のまま押されたときに「もう一度貼り付けて」と言わない（2026-09-01）。
+         * 一度も貼っていない人に「もう一度」は通じないため、分けて伝える。 */
+        if (!field.value || !field.value.replace(/\s+/g, '')) {
+          status.hidden = false;
+          status.textContent = c().restorePasteEmpty;
+          field.focus();
+          return;
+        }
+        var key = SC.handoffKey.normalize(field.value);
+        if (!key) {
+          track('handoff_bind_failed');
+          status.hidden = false;
+          status.textContent = SC.diagnosisRemote.MESSAGES.handoff_rejected;
+          return;
+        }
+        track('handoff_manual_paste_used');
+        bind(key, 'paste');
+      } }
+    }, c().restoreCta);
+
+    var manualArea = h('div', { class: 'dg-handoff__manual', hidden: !errorMessage }, [
+      h('label', { class: 'dg-handoff__manual-label', for: 'dg-paste', text: c().restoreInputLabel }),
+      field,
+      status,
+      h('div', { class: 'dg-nav dg-nav--single' }, [manualCta])
+    ]);
+
+    function showManual(message) {
+      manualArea.hidden = false;
+      status.hidden = false;
+      status.textContent = message;
+      field.focus();
+    }
+
+    /* ★ボタンを押した流れの中でクリップボードを読む（2026-09-01）。
+     *
+     * これまでは画面を開いた瞬間に読んでいた。ユーザーが何も押していない
+     * ところでの読み取りは、iOSのLINE内ブラウザでは拒否される。
+     * とーるの実機確認でも、毎回「長押し→ペースト」が必要になっていた。
+     *
+     * 押した直後なら許可されることがあるので、ここで読み直す。
+     * だめでも従来どおり手で貼り付ける道を残す。 */
+    var autoPaste = h('button', {
+      type: 'button', class: 'btn btn--primary',
+      on: { click: function () {
+        if (!(global.navigator.clipboard && global.navigator.clipboard.readText)) {
+          track('handoff_clipboard_failed');
+          showManual(c().restoreAutoPasteUnsupported);
+          return;
+        }
+        track('handoff_clipboard_attempted');
+        global.navigator.clipboard.readText().then(function (text) {
+          var key = SC.handoffKey.normalize(text);
+          if (!key) {
+            track('handoff_clipboard_failed');
+            showManual(c().restoreAutoPasteNotFound);
+            return;
+          }
+          track('handoff_clipboard_succeeded');
+          bind(key, 'auto-paste');
+        })['catch'](function () {
+          track('handoff_clipboard_failed');
+          showManual(c().restoreAutoPasteDenied);
+        });
+      } }
+    }, c().restoreAutoPasteCta);
+
     show([
       head(c().restoreHeading),
       h('section', { class: 'dg-card' }, [
-        h('p', { class: 'dg-handoff__body', text: c().restoreBody }),
-        h('label', { class: 'dg-handoff__manual-label', for: 'dg-paste', text: c().restoreInputLabel }),
-        field,
-        status,
-        h('div', { class: 'dg-nav dg-nav--single' }, [
-          h('button', {
-            type: 'button', class: 'btn btn--primary',
-            on: { click: function () {
-              /* 空のまま押されたときに「もう一度貼り付けて」と言わない（2026-09-01）。
-               * 一度も貼っていない人に「もう一度」は通じないため、分けて伝える。 */
-              if (!field.value || !field.value.replace(/\s+/g, '')) {
-                status.hidden = false;
-                status.textContent = c().restorePasteEmpty;
-                field.focus();
-                return;
-              }
-              var key = SC.handoffKey.normalize(field.value);
-              if (!key) {
-                track('handoff_bind_failed');
-                status.hidden = false;
-                status.textContent = SC.diagnosisRemote.MESSAGES.handoff_rejected;
-                return;
-              }
-              track('handoff_manual_paste_used');
-              bind(key, 'paste');
-            } }
-          }, c().restoreCta)
-        ])
+        h('p', { class: 'dg-handoff__body', text: c().restoreAutoPasteBody }),
+        h('div', { class: 'dg-nav dg-nav--single' }, [autoPaste]),
+        manualArea
       ]),
 
       /* 診断をまだ受けていない人の行き止まりをなくす（2026-09-01）。
