@@ -212,6 +212,12 @@ def inline(s):
         return f'\x00{len(stash)-1}\x00'
     # <url> の角括弧を除去
     s = re.sub(r'&lt;(https?://[^&\s]+?)&gt;', r'\1', s)
+    # Markdownリンクは生URL変換より先に退避する。
+    s = re.sub(
+        r'\[([^\]]+)\]\((https?://[^)]+)\)',
+        lambda m: hold(f'<a href="{m.group(2)}" target="_blank" rel="noopener">{m.group(1)}</a>'),
+        s,
+    )
     # 生URL → リンク（プレースホルダに退避して bold/em の影響を受けないように）
     s = re.sub(r'https?://[^\s<>「」（）、。&]+',
                lambda m: hold(f'<a href="{m.group(0)}" target="_blank" rel="noopener">{m.group(0)}</a>'), s)
