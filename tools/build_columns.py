@@ -234,7 +234,7 @@ def inline(s):
     s = re.sub(r'\x00(\d+)\x00', lambda m: stash[int(m.group(1))], s)
     return s
 
-def note_reading_units(lines):
+def note_reading_units(lines, sentence_breaks_only=False):
     """句読点で視線を縦へ送りつつ、短すぎる行は前後へつなぐ。"""
     units = []
     for source_line in lines:
@@ -244,12 +244,12 @@ def note_reading_units(lines):
         if "**" in line or len(plain) <= 30:
             candidates = [line]
         else:
-            # まず句点・疑問符で切り、まだ長いときだけ読点を改行候補にする。
+            # まず句点・疑問符で切る。読点では、記事側が明示した場合だけ改行する。
             candidates = [s for s in re.findall(r'.*?[。！？!?](?:[」』）】"])*|.+$', line) if s]
             expanded = []
             for candidate in candidates:
                 candidate_plain = re.sub(r'[*_]', '', candidate)
-                if len(candidate_plain) > 34:
+                if not sentence_breaks_only and len(candidate_plain) > 34:
                     expanded.extend(s for s in re.split(r'(?<=、)', candidate) if s)
                 else:
                     expanded.append(candidate)
@@ -259,17 +259,21 @@ def note_reading_units(lines):
             candidate = candidate.strip()
             candidate_len = len(re.sub(r'[*_]', '', candidate))
             previous_len = len(re.sub(r'[*_]', '', units[-1])) if units else 0
+            continues_previous = re.match(
+                r'^(の方|という|といった|みたい|だから|なので|ですが|でも|そして|また|から|ので|のに|を|が|に|で|と|へ)',
+                re.sub(r'^[「『（(]+', '', candidate),
+            )
             # 短い一言だけが孤立する場合は、直前の行につないで不自然な空行を防ぐ。
-            if units and (candidate_len < 11 or previous_len < 9) and previous_len + candidate_len <= 34:
+            if units and (continues_previous or ((candidate_len < 11 or previous_len < 9) and previous_len + candidate_len <= 34)):
                 units[-1] += candidate
             else:
                 units.append(candidate)
     return units
 
 
-def note_paragraphs(lines):
+def note_paragraphs(lines, sentence_breaks_only=False):
     """3〜4行を基本に、意味の切れ目で段落を閉じる。"""
-    units = note_reading_units(lines)
+    units = note_reading_units(lines, sentence_breaks_only)
     chunks = [units[i:i + 4] for i in range(0, len(units), 4)]
     # 最後が1行だけなら、直前の4行段落から1行移して3行+2行にする。
     if len(chunks) >= 2 and len(chunks[-1]) == 1 and len(chunks[-2]) == 4:
@@ -277,7 +281,7 @@ def note_paragraphs(lines):
     return chunks
 
 
-def convert_body(body, sign, readable_breaks=False, note_layout=False):
+def convert_body(body, sign, readable_breaks=False, note_layout=False, sentence_breaks_only=False):
     # 見出し・区切りは、原稿側に空行がなくても独立ブロックとして扱う。
     # note_layout は行数で機械的に切らず、文の終わりを見て意味段落へ整える。
     body = re.sub(r'(?m)^(\*\*\*|## .+|> .+)$', r'\n\1\n', body)
@@ -343,7 +347,7 @@ def convert_body(body, sign, readable_breaks=False, note_layout=False):
             continue
         # 通常まとまり。note型は句読点改行を基本に、3〜4行で意味段落を閉じる。
         if note_layout:
-            chunks = note_paragraphs(lines)
+            chunks = note_paragraphs(lines, sentence_breaks_only)
         elif readable_breaks:
             chunks, chunk, visual_lines = [], [], 0
             for line in lines:
@@ -484,6 +488,7 @@ def render_article(c, cols):
         c.get("sign", ""),
         c.get("readable_breaks", "").lower() == "true",
         c.get("note_layout", "").lower() == "true",
+        c.get("sentence_breaks_only", "").lower() == "true",
     )
     title_html = c.get("title_html", html.escape(c["title"]))
     return f'''<!DOCTYPE html>
