@@ -254,6 +254,9 @@
         id: 'lp-story-deck',
         label: lp.vsl.chapters[0].title,
         steps: cards,
+        /* 2026-09-03 とーる指示：「まとめて読む」は置かない。
+         * 一気に流し読みできると、1枚ずつ読ませる意味がなくなるため。 */
+        toggle: false,
         finalCta: { label: lp.deck.more, onClick: function () { revealAfter(); } },
         renderAll: function () { return renderCardsFlat(cards); },
         expose: function (api) { deckApi = api; },

@@ -201,11 +201,30 @@
 .dg-handoff__done::before { content: "✓ "; }
 .dg-handoff__warn { margin: 0 0 12px; font-size: 15px; color: var(--warn); }
 .dg-handoff__warn::before { content: "！ "; }
+/* 保存の残り時間（2026-09-03 とーる指示で強調した）。
+ *
+ * 文の中に小さく置くと気づかれない。囲みを付けて、時間の数字だけ大きくする。
+ * ★煽らない。残りが少なくなったら色を変えるだけで、点滅も赤の多用もしない（v0.4 §9）。 */
 .dg-handoff__keep {
-  margin: 14px 0 0; font-size: 14px; line-height: 1.8;
-  color: var(--ink-soft); text-align: center;
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--lm-surface-2);
+  text-align: center;
+  line-height: 1.9;
 }
-.dg-handoff__keep.is-soon { color: var(--warn); }
+.dg-handoff__keep-text { font-size: 15px; color: var(--ink-2); }
+.dg-handoff__keep-time {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gold-2);
+  letter-spacing: .01em;
+  padding: 0 2px;
+}
+.dg-handoff__keep.is-soon { border-color: var(--warn); background: rgba(200, 90, 70, .08); }
+.dg-handoff__keep.is-soon .dg-handoff__keep-text { color: var(--ink); }
+.dg-handoff__keep.is-soon .dg-handoff__keep-time { color: var(--warn); }
 .dg-handoff__note { margin: 12px 0 0; font-size: 14px; line-height: 1.85; color: var(--ink-soft); }
 .dg-handoff__manual { margin: 0 0 16px; }
 

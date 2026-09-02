@@ -417,12 +417,22 @@
     var copied = state.handoffStatus === 'copied';
     var keep = h('p', { class: 'dg-handoff__keep' });
 
+    /* 残り時間は、数字だけを大きく見せる（2026-09-03 とーる指示）。
+     * 文の中に紛れていると気づかれないため、時間の部分を切り出して強調する。
+     * ★煽らない。残り少なくなったときに色を変えるだけで、点滅はさせない（v0.4 §9）。 */
     function refreshKeep() {
       var left = handoffSecondsLeft();
       if (left <= 0) { renderHandoff(box); return; }
       var warnSec = SC.diagnosisConfig.handoff.warnMinutes * 60;
       var template = left <= warnSec ? c().handoffKeepShort : c().handoffKeep;
-      keep.textContent = template.replace('{time}', timeText(left));
+      var parts = template.split('{time}');
+
+      SC.dom.clear(keep);
+      SC.dom.append(keep, [
+        parts[0] ? h('span', { class: 'dg-handoff__keep-text', text: parts[0] }) : null,
+        h('strong', { class: 'dg-handoff__keep-time', text: timeText(left) }),
+        parts[1] ? h('span', { class: 'dg-handoff__keep-text', text: parts[1] }) : null
+      ]);
       keep.className = 'dg-handoff__keep' + (left <= warnSec ? ' is-soon' : '');
     }
     refreshKeep();
