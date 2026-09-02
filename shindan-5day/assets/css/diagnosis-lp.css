@@ -26,17 +26,29 @@
 }
 .dlp-heading__line { margin: 0; }
 
+/* --- 読ませる本文の基準（2026-09-03 とーる指示）------------------------
+ * 「文字の集合体になって読まれない」という指摘を受けて測り直した。
+ *
+ * 行間は足りていた（2.0倍）。足りなかったのは段落と段落の間で、
+ * 行の間が2.0倍あるのに段落の間が1.4倍しかなく、
+ * 「行が変わった」のか「話が変わった」のかを目で追えない状態だった。
+ *
+ * 5DAY本体の .prose__line（16px／行間2.3／段落間30px＝1.82倍）が
+ * すでにこの基準を満たしているので、そちらへ揃える。
+ * 一般的な目安も「段落間は行の高さの1.5〜2倍」「本文は16px以上」。
+ *
+ * ★注記（.dlp-note など）は補助情報なので14pxのままにする。 */
 .dlp-body { margin: 0; }
 .dlp-body__line {
-  margin: 0 0 12px;
-  font-size: 15px;
-  line-height: 2;
+  margin: 0 0 28px;
+  font-size: 16px;
+  line-height: 2.3;
   color: var(--ink-2);
 }
 .dlp-body__line:last-child { margin-bottom: 0; }
 
-.dlp-lead { margin: 0 0 20px; font-size: 15px; line-height: 2; color: var(--ink-2); }
-.dlp-close { margin: 20px 0 0; font-size: 15px; line-height: 2; color: var(--ink); }
+.dlp-lead { margin: 0 0 28px; font-size: 16px; line-height: 2.3; color: var(--ink-2); }
+.dlp-close { margin: 28px 0 0; font-size: 16px; line-height: 2.3; color: var(--ink); }
 .dlp-note { margin: 20px 0 0; font-size: 14px; line-height: 1.95; color: var(--ink-soft); }
 .dlp-note__line { margin: 0 0 6px; font-size: 14px; line-height: 1.95; color: var(--ink-soft); }
 .dlp-note__line:last-child { margin-bottom: 0; }
@@ -187,7 +199,7 @@
 .dlp-block { margin: 0 0 42px; }
 .dlp-block:last-child { margin-bottom: 0; }
 .dlp-block__line {
-  margin: 0 0 14px;
+  margin: 0 0 28px;
   font-size: 16px;
   line-height: 2.3;
   color: var(--ink-2);
@@ -203,10 +215,10 @@
 .dlp-checks, .dlp-list { margin: 20px 0 0; padding: 0; list-style: none; }
 .dlp-checks__item, .dlp-list__item {
   position: relative;
-  margin: 0 0 12px;
+  margin: 0 0 20px;
   padding-left: 26px;
-  font-size: 15px;
-  line-height: 1.95;
+  font-size: 16px;
+  line-height: 2.15;
   color: var(--ink-2);
 }
 .dlp-checks__item:last-child, .dlp-list__item:last-child { margin-bottom: 0; }
@@ -254,7 +266,7 @@
   font-size: 17px;
   color: var(--ink);
 }
-.dlp-axis__text { margin: 0; font-size: 15px; line-height: 1.95; color: var(--ink-2); }
+.dlp-axis__text { margin: 0; font-size: 16px; line-height: 2.15; color: var(--ink-2); }
 
 /* --- 結果イメージ ------------------------------------------------------ */
 .dlp-sample {
@@ -293,7 +305,7 @@
   font-size: 16px;
   color: var(--ink);
 }
-.dlp-step__body { margin: 0; font-size: 15px; line-height: 1.95; color: var(--ink-2); }
+.dlp-step__body { margin: 0; font-size: 16px; line-height: 2.15; color: var(--ink-2); }
 
 /* --- できないこと ------------------------------------------------------ */
 .dlp-limit {
@@ -356,8 +368,8 @@
   padding: 16px 18px;
   cursor: pointer;
   list-style: none;
-  font-size: 15px;
-  line-height: 1.85;
+  font-size: 16px;
+  line-height: 1.9;
   color: var(--ink);
 }
 .dlp-faq__q::-webkit-details-marker { display: none; }
@@ -366,9 +378,9 @@
 .dlp-faq__q:focus-visible { outline: 2px solid var(--gold-2); outline-offset: -3px; }
 .dlp-faq__a {
   margin: 0;
-  padding: 0 18px 18px;
-  font-size: 15px;
-  line-height: 1.95;
+  padding: 0 18px 22px;
+  font-size: 16px;
+  line-height: 2.15;
   color: var(--ink-2);
 }
 
@@ -464,9 +476,10 @@
   .dlp-block__line { font-size: 17px; }
 }
 
+/* 狭い画面では見出しだけ小さくする。
+ * 本文は16pxを下回らせない（2026-09-03。読みやすさの下限） */
 @media (max-width: 359px) {
   .dlp-section--empathy .dlp-heading { font-size: 20px; }
-  .dlp-block__line { font-size: 15px; line-height: 2.2; }
-  .dlp-block:last-child .dlp-block__line { font-size: 16px; }
+  .dlp-block__line { line-height: 2.2; }
   .dlp-fold__title { font-size: 16px; }
 }

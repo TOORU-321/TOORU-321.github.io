@@ -28,10 +28,14 @@
 /* --- 全体 ---------------------------------------------------------------- */
 .lp { max-width: 620px; margin: 0 auto; padding: 0 20px 72px; }
 
-/* 本文は句点ごとに段落へ分け、行間と段落間を広く取る */
+/* 本文は句点ごとに段落へ分け、行間と段落間を広く取る。
+ *
+ * 2026-09-03：段落の間が行の高さの1.52倍しかなく、
+ * 段落の切れ目が見えにくかったので 1.76倍まで開けた。
+ * 目安は「段落間＝行の高さの1.5〜2倍」。診断前LPと同じ基準にそろえている。 */
 .lp-prose { margin: 0; }
 .lp-prose__line {
-  margin: 0 0 18px; font-size: 16px; line-height: 2.15;
+  margin: 0 0 26px; font-size: 16px; line-height: 2.15;
   color: var(--ink-2); letter-spacing: .02em;
 }
 .lp-prose__line:last-child { margin-bottom: 0; }
@@ -66,7 +70,7 @@
   margin: 14px 0 0; font-size: 15px; color: var(--gold-2); letter-spacing: .04em;
 }
 .lp-hero__lead { margin: 24px 0 0; text-align: left; }
-.lp-hero__lead .lead-line { margin: 0 0 8px; font-size: 15px; color: var(--ink-2); }
+.lp-hero__lead .lead-line { margin: 0 0 14px; font-size: 16px; line-height: 2.1; color: var(--ink-2); }
 .lp-hero__lead .lead-line:last-child { margin-bottom: 0; }
 .lp-hero__rule {
   width: 64px; height: 1px; margin: 32px auto 0;
@@ -197,7 +201,7 @@
 .lp-faq__a { margin: 0; padding: 0 18px 20px; font-size: 16px; line-height: 2; color: var(--ink-2); }
 
 /* --- 設計者プロフィール ---------------------------------------------------- */
-.lp-author .lp-section__body { font-size: 15px; }
+.lp-author .lp-section__body { font-size: 16px; }
 
 /* --- 5日間の流れ --------------------------------------------------------- */
 .lp-days { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 0; }
