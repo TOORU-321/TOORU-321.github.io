@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>セルフケアナビ｜使い方ガイド</title>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:"Zen Maru Gothic",sans-serif;color:#463a3d;background:linear-gradient(180deg,#fffaf8 0%,#fff7f6 44%,#fffaf8 100%);line-height:1.85;font-size:16px}
+.container{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+header{text-align:center;padding:24px 0 32px;border-bottom:1px dashed #eadedf;margin-bottom:36px}
+.eyebrow{display:inline-block;padding:5px 14px;border:1px solid #c98791;border-radius:999px;color:#a96874;font-size:12px;font-weight:700;letter-spacing:0.15em;margin-bottom:16px}
+h1{font-family:"Kaisei Decol",serif;font-size:clamp(1.7rem,5.5vw,2.4rem);color:#8f5662;margin:0 0 8px;font-weight:600}
+.lead{color:#77676b;font-size:15px;margin:0}
+section{margin-bottom:44px}
+h2{font-family:"Kaisei Decol",serif;font-size:clamp(1.3rem,4.2vw,1.7rem);color:#4d3e42;border-left:5px solid #c98791;padding-left:14px;margin:0 0 18px}
+h3{font-family:"Kaisei Decol",serif;font-size:1.15rem;color:#8f5662;margin:26px 0 10px}
+p{margin:0 0 14px}
+.card{background:rgba(255,253,252,0.94);border:1px solid rgba(220,196,200,0.72);border-radius:20px;padding:24px 22px;margin:18px 0;box-shadow:0 8px 24px rgba(130,91,99,0.07)}
+.card-title{font-weight:700;color:#a96874;margin:0 0 10px;font-size:1.05rem}
+.step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:start;padding:16px 0;border-top:1px solid #f0e5e7}
+.step:first-child{border-top:0;padding-top:0}
+.step-num{width:34px;height:34px;display:grid;place-items:center;background:#a96874;color:#fff;border-radius:50%;font-family:"Kaisei Decol",serif;font-weight:700;font-size:15px}
+.step-body strong{color:#664d54;display:block;margin-bottom:4px;font-size:1.02rem}
+.step-body p{margin:0;color:#756268;font-size:0.94rem;line-height:1.8}
+.faq{background:#fff8f9;border-left:4px solid #c98791;padding:14px 18px;border-radius:10px;margin:12px 0}
+.faq-q{font-weight:700;color:#8f5662;margin:0 0 6px}
+.faq-a{margin:0;color:#665156;font-size:0.95rem}
+.svg-wrap{background:#fff;border:1px solid #eadedf;border-radius:16px;padding:16px;margin:20px 0;text-align:center}
+.callout{background:linear-gradient(145deg,#f8eaed 0%,#f3dfe3 100%);border-radius:16px;padding:18px 20px;margin:20px 0}
+.callout p{margin:0;font-weight:700;color:#5f444c}
+.tag-mini{display:inline-block;padding:2px 9px;border-radius:999px;background:#fbf0f2;color:#a96874;font-size:0.78rem;font-weight:700;margin-right:5px}
+nav.toc{background:#fff;border:1px dashed #d9c0c5;border-radius:12px;padding:18px 22px;margin:0 0 32px}
+nav.toc ol{margin:0;padding-left:20px}
+nav.toc a{color:#8f5662;text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+footer{margin-top:64px;padding-top:20px;border-top:1px dashed #eadedf;text-align:center;color:#a49297;font-size:12px}
+img.screenshot{max-width:100%;border:1px solid #eadedf;border-radius:10px;box-shadow:0 8px 20px rgba(130,91,99,0.10);margin:12px 0}
+.placeholder-img{background:repeating-linear-gradient(45deg,#fbf0f2,#fbf0f2 8px,#fff 8px,#fff 16px);border:2px dashed #d9a3ab;border-radius:12px;padding:40px 20px;text-align:center;color:#a96874;font-weight:700;font-size:0.9rem;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<span class="eyebrow">USER GUIDE</span>
+<h1>セルフケアナビ｜使い方ガイド</h1>
+<p class="lead">3日間の体質チャレンジ・参加者向けマニュアル</p>
+</header>
+
+<nav class="toc">
+<strong style="color:#8f5662">目次</strong>
+<ol>
+<li><a href="#flow">3日間の全体の流れ</a></li>
+<li><a href="#diagnosis">STEP1: 診断を受ける</a></li>
+<li><a href="#addfriend">STEP2: LINEを追加する</a></li>
+<li><a href="#day1">STEP3: Day1を進める</a></li>
+<li><a href="#day23">STEP4: Day2 / Day3</a></li>
+<li><a href="#reminder">リマインドについて</a></li>
+<li><a href="#screenshot">結果スクショの送り方</a></li>
+<li><a href="#faq">よくある質問</a></li>
+</ol>
+</nav>
+
+<section id="flow">
+<h2>3日間の全体の流れ</h2>
+<p>診断からアプリ完了までの流れです。所要時間は各Day 1〜3分。</p>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">
+<defs>
+<marker id="arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#a96874"/>
+</marker>
+</defs>
+<style>.node{fill:#fff9fa;stroke:#c98791;stroke-width:1.5}.label{font-family:"Zen Maru Gothic",sans-serif;font-size:13px;fill:#4d3e42;font-weight:700}.sub{font-size:10px;fill:#8f7880}.arrow{stroke:#a96874;stroke-width:1.8;fill:none;marker-end:url(#arr)}</style>
+<rect class="node" x="20" y="20" width="130" height="60" rx="12"/>
+<text class="label" x="85" y="45" text-anchor="middle">診断LP</text>
+<text class="sub" x="85" y="63" text-anchor="middle">18問・約1分</text>
+<path class="arrow" d="M 155 50 L 195 50"/>
+<rect class="node" x="200" y="20" width="130" height="60" rx="12"/>
+<text class="label" x="265" y="45" text-anchor="middle">診断結果ページ</text>
+<text class="sub" x="265" y="63" text-anchor="middle">動画・解説</text>
+<path class="arrow" d="M 335 50 L 375 50"/>
+<rect class="node" x="380" y="20" width="150" height="60" rx="12" fill="#e8f6ed" stroke="#69ad82"/>
+<text class="label" x="455" y="45" text-anchor="middle" fill="#39734f">LINE友だち追加</text>
+<text class="sub" x="455" y="63" text-anchor="middle" fill="#5c7d68">タイプ別に案内</text>
+<path class="arrow" d="M 535 50 L 575 50"/>
+<rect class="node" x="580" y="20" width="120" height="60" rx="12"/>
+<text class="label" x="640" y="45" text-anchor="middle">セルフケア</text>
+<text class="sub" x="640" y="63" text-anchor="middle">アプリ Day1</text>
+<path class="arrow" d="M 640 85 L 640 130"/>
+<rect class="node" x="580" y="135" width="120" height="60" rx="12"/>
+<text class="label" x="640" y="160" text-anchor="middle">Day 2</text>
+<text class="sub" x="640" y="178" text-anchor="middle">翌日</text>
+<path class="arrow" d="M 640 200 L 640 245"/>
+<rect class="node" x="580" y="250" width="120" height="60" rx="12"/>
+<text class="label" x="640" y="275" text-anchor="middle">Day 3</text>
+<text class="sub" x="640" y="293" text-anchor="middle">翌々日</text>
+<path class="arrow" d="M 580 280 L 480 280"/>
+<rect class="node" x="330" y="250" width="150" height="60" rx="12" fill="#fbf0f2"/>
+<text class="label" x="405" y="270" text-anchor="middle">精密分析（54問）</text>
+<text class="sub" x="405" y="288" text-anchor="middle">結果をスクショ送信</text>
+<path class="arrow" d="M 330 280 L 195 280"/>
+<rect class="node" x="60" y="250" width="130" height="60" rx="12" fill="#e8f6ed" stroke="#69ad82"/>
+<text class="label" x="125" y="270" text-anchor="middle" fill="#39734f">個別アドバイス</text>
+<text class="sub" x="125" y="288" text-anchor="middle" fill="#5c7d68">ともこ先生から</text>
+</svg>
+</div>
+</section>
+
+<section id="diagnosis">
+<h2>STEP 1｜診断を受ける</h2>
+<p>Instagram等のリンクから「ダイエット迷子診断」ページを開き、18問に答えます。</p>
+<div class="card">
+<div class="card-title">診断でわかること</div>
+<p>あなたの体質を <strong>6タイプ</strong>のいずれかに分類：</p>
+<p><span class="tag-mini">ぐったり迷子</span><span class="tag-mini">もやもや迷子</span><span class="tag-mini">ふらふら迷子</span><span class="tag-mini">ぽちゃぽちゃ迷子</span><span class="tag-mini">どよ〜ん迷子</span><span class="tag-mini">からから迷子</span></p>
+</div>
+<div class="placeholder-img">📷 診断LPスクショ（後日追加）</div>
+</section>
+
+<section id="addfriend">
+<h2>STEP 2｜LINEを追加する</h2>
+<p>診断結果ページの案内に沿って、公式LINEを友だち追加してください。<strong>タイプ別に自動で案内が届きます</strong>。</p>
+<div class="callout"><p>💡 診断結果ページに動画解説もあります。3〜5分程度なので、ぜひご視聴を。</p></div>
+</section>
+
+<section id="day1">
+<h2>STEP 3｜Day1 を進める（3〜5分）</h2>
+<p>LINEから届く「今日のセルフケアナビ」リンクをタップして、アプリを開始します。</p>
+
+<div class="card">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body"><strong>名前を入力（初回のみ）</strong><p>下の名前、ニックネームでOKです。</p></div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body"><strong>体質タイプを確認</strong><p>診断結果のタイプが自動セットされています。違うと感じたら変更もOK。</p></div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body"><strong>「今日の状態」を選ぶ</strong><p>体感に近いものを 3〜5つ タップ。「なんとなくで進める」も可。</p></div>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<div class="step-body"><strong>おすすめケアを見る</strong><p>あなたの体質×今日の状態から、<strong>今日やること3つ</strong>を提案します。</p></div>
+</div>
+<div class="step">
+<div class="step-num">5</div>
+<div class="step-body"><strong>やったかどうかを記録</strong><p>「やった」「少しやった」「できなかった」の3択でOK。完璧でなくて大丈夫。</p></div>
+</div>
+</div>
+
+<div class="placeholder-img">📷 Day1画面（後日追加）</div>
+</section>
+
+<section id="day23">
+<h2>STEP 4｜Day2 / Day3 も同じ流れ</h2>
+<p>翌日・翌々日にも、朝のLINE通知から続きを再開してください。</p>
+<div class="card">
+<div class="card-title">Day別の変化ポイント</div>
+<p>💫 提案されるアクションは <strong>Dayごとに違う</strong> ものが出ます。同じことを繰り返さない設計です。</p>
+<p>💫 3日完了後は、<strong>より精密な54問分析</strong>が受けられます（無料）。</p>
+</div>
+</section>
+
+<section id="reminder">
+<h2>リマインドについて</h2>
+<p>もし忙しくてスキップした場合、以下のリマインドが自動で届きます：</p>
+<div class="card">
+<p>🌿 <strong>朝9時ごろ</strong>: 「今日もお待ちしてます」</p>
+<p>🌸 <strong>夜20時ごろ</strong>: 「今日まだ記録してないかも」</p>
+<p>🌷 <strong>3日完了後</strong>: 個別相談のご案内</p>
+</div>
+<div class="callout"><p>各Dayは <strong>最大3日</strong> 猶予があります。金曜スタート→土日忙しい→月曜再開、も OK！</p></div>
+</section>
+
+<section id="screenshot">
+<h2>結果スクショの送り方（精密分析後）</h2>
+<p>Day3完了後の「精密分析」で出た結果をスクショして、ともこ先生にLINEで送ってください。</p>
+<div class="card">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body"><strong>点線枠内をスクショ</strong><p>iPhone: サイドボタン＋音量↑ / Android: 電源＋音量↓</p></div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body"><strong>「スクショを送って特典を受け取る」ボタン</strong><p>タップするとフォームが開きます。</p></div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body"><strong>画像を選択して送信</strong><p>複数枚まとめて選べます。送信までに1〜3分かかることも。閉じずにお待ちください。</p></div>
+</div>
+</div>
+</section>
+
+<section id="faq">
+<h2>よくある質問</h2>
+
+<div class="faq">
+<p class="faq-q">Q. 途中で閉じても大丈夫？</p>
+<p class="faq-a">大丈夫です。LINEから同じリンクを開けば <strong>続きから再開</strong> できます。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q. Day2に進んだのに、まだDay1をやってないとダメ？</p>
+<p class="faq-a">Day1が未完了なら、翌日開いても <strong>Day1</strong> のままです。順番に進めてください。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q. タイプを間違えて選んじゃった</p>
+<p class="faq-a">Screen 1（トップ）で「タイプを変更する」ボタンからいつでも変えられます。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q. スクショ送信が固まっちゃう</p>
+<p class="faq-a">画像サイズによって1〜3分かかることがあります。画面を閉じずお待ちください。それでも進まない場合は、直接LINEで画像を送ってもOKです。</p>
+</div>
+
+<div class="faq">
+<p class="faq-q">Q. 「精密分析」を最初からやり直したい</p>
+<p class="faq-a">結果画面の下にある「→ もう一度精密診断をやり直す」リンクをタップしてください。54問からやり直せます。</p>
+</div>
+</section>
+
+<footer>
+© 2026 セルフケアナビ｜このマニュアルはユーザー向けガイドです<br>
+質問・不具合の連絡はともこ先生のLINEまで
+</footer>
+
+</div>
+</body>
+</html>
