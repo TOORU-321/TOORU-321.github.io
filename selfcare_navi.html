@@ -1403,7 +1403,13 @@ function renderResult(){
   avo.appendChild(adiv);
   const actWrap=$('#actionList');actWrap.innerHTML='';
   if(!state.done||state.done.length!==3)state.done=[false,false,false];
-  cat1.actions.slice(0,2).forEach(function(text,i){
+  // A: Day別にアクションをローテーション (Day1→idx0, Day2→idx1, Day3→idx2)
+  // C: 1つ目はcat1、2つ目はcat2から取ることで組み合わせバリエーション増加
+  const _dayNum=(state.day&&state.day.display)?state.day.display:1;
+  const _dayIdx=(_dayNum-1)%3;
+  const _act1=cat1.actions[_dayIdx]||cat1.actions[0];
+  const _act2=cat2.actions[_dayIdx]||cat2.actions[0];
+  [_act1,_act2].forEach(function(text,i){
     const b=document.createElement('button');
     b.type='button';b.className='action-card'+(state.done[i]?' is-done':'');b.dataset.idx=i;
     b.innerHTML='<span class="check" aria-hidden="true"></span><span class="text">'+text+'</span><span class="tag">生活</span>';
