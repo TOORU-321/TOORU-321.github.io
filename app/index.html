@@ -1345,6 +1345,9 @@ a{text-decoration:none}
 /* 公開前（予告）：タイトルは隠さず、公開日を添える */
 .ch-item.ch-soon .ch-t{color:#b8b3a3}
 .ch-item .ch-soonmark{font-size:10.5px;font-weight:700;flex:none;color:#1c1a14;background:linear-gradient(135deg,#e6c47f,#caa75f);border-radius:999px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
+/* 視聴済みマーク */
+.ch-item.ch-watched .ch-t{color:#8f918f}
+.ch-item .ch-donemark{font-size:10.5px;font-weight:600;flex:none;color:#8fd0a3;background:rgba(143,208,163,.12);border:1px solid rgba(143,208,163,.32);border-radius:999px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
 /* 視聴ページの公開カウントダウン */
 .lk-cd{display:block;margin-top:12px;font-size:13px;font-weight:700;color:#f0d69c;letter-spacing:.04em}
 .chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
@@ -2016,6 +2019,8 @@ a{text-decoration:none}
   .mp-h1{font:500 28px/1.2 "Yu Mincho",serif;margin:3px 0 8px}
   .mp-rank{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid #c4a064;border-radius:999px;font-size:11px;color:#e3c381}
   .mp-rank i{width:6px;height:6px;border-radius:50%;background:#e3c381;display:inline-block}
+  .mp-overall{margin:12px 0 0;font-size:12.5px;color:#9c968a}
+  .mp-overall b{color:#ece7db}
   .mp-sec{margin-top:26px}
   .mp-sech{display:flex;align-items:center;gap:9px;margin-bottom:13px}
   .mp-sech span{font-size:14px;font-weight:700;color:#ece7db}
@@ -2438,19 +2443,22 @@ function openMyPage(){
   }
   var owned=[]; (COURSES||[]).forEach(function(c,ci){ var tg=coursePurchasedTag(c); if(tg && hasTag(tg)) owned.push({c:c,ci:ci}); });
   var isSubMember = !!(SESSION.subActive || hasTag("vip"));   // VIP または シークレットメンバー（エルラボ＋）
+  function mpProgressLabel(p, fallback){ return (p && p.total > 0) ? (p.done+"/"+p.total+"本 視聴済み") : fallback; }
   function mpCourseBtn(ci,title,sub,ico,cta){ return '<button class="mp-course" data-mp-course="'+ci+'"><span class="mp-th">'+(ico||"▶")+'</span><span class="mp-cinfo"><b>'+mpEsc(title)+'</b><em>'+mpEsc(sub||"")+'</em></span><span class="mp-go">'+(cta||"視聴 →")+'</span></button>'; }
   var rows = "";
   if(isSubMember){   // ① エルラボ＋ オンライン勉強会（オンライン講義アーカイブ）
     var ol = findOnlineLectureCourse();
-    if(ol) rows += mpCourseBtn(ol.ci, ol.c.name||"エルラボ＋ オンライン勉強会", "メンバー限定のオンライン講義アーカイブ", "▶", "視聴 →");
+    if(ol) rows += mpCourseBtn(ol.ci, ol.c.name||"エルラボ＋ オンライン勉強会", mpProgressLabel(courseWatchProgress(ol.c), "メンバー限定のオンライン講義アーカイブ"), "▶", "視聴 →");
   }
   owned.forEach(function(o){   // ② 個々で購入したアクセスパス
-    rows += mpCourseBtn(o.ci, o.c.name||"講座", "全"+((o.c.videos||[]).length)+"本", "▶", "視聴 →");
+    rows += mpCourseBtn(o.ci, o.c.name||"講座", mpProgressLabel(courseWatchProgress(o.c), "全"+((o.c.videos||[]).length)+"本"), "▶", "視聴 →");
   });
   if(isSubMember){   // ③ シークレットコラム入口
     rows += '<button class="mp-course" data-mp-secretcol="1"><span class="mp-th">🔒</span><span class="mp-cinfo"><b>シークレットコラム</b><em>メンバー限定の最新コラム</em></span><span class="mp-go">読む →</span></button>';
   }
   var courseHtml = rows || '<p class="mp-empty">まだ受講中の講座はありません。<br>気になる講座から始めてみましょう。</p>';
+  var overall = overallWatchProgress();
+  var overallHtml = overall.total > 0 ? ('<p class="mp-overall">今見られる動画のうち　<b>'+overall.done+' / '+overall.total+'本</b>　視聴済み</p>') : '';
   var svcHtml = myPageServices().map(function(s){
     if(svcUnlocked(s)){
       return '<a class="mp-svc" href="'+mpEsc(s.url)+'" target="_blank" rel="noopener"><span class="mp-svic">📅</span>'
@@ -2467,6 +2475,7 @@ function openMyPage(){
     +'<p class="mp-hello">こんにちは、<b>'+mpEsc(SESSION.name||"")+'</b>さん</p>'
     +'<h2 class="mp-h1">マイページ</h2>'
     +'<span class="mp-rank"><i></i>'+mpEsc(accountStatusLabel()||"メンバー")+'</span>'
+    +overallHtml
     +'<div class="mp-sec"><div class="mp-sech"><em>01</em><span>受講中のコンテンツ</span><i></i></div>'+courseHtml+'</div>'
     +'<div class="mp-sec"><div class="mp-sech"><em>02</em><span>特典・サービス</span><i></i></div>'+svcHtml+'</div>'
     +'<p class="mp-foot">ロック項目は、特別なご案内のときに自動で解放されます。</p>'
@@ -2532,6 +2541,7 @@ function enterLibrary(withIntro){
   //   本当にオンだった場合だけ後から画面を差し替える＝低速回線でもログイン画面に固まらせない。
   document.getElementById("entry").hidden   = true;
   document.getElementById("library").hidden = false;
+  loadWatched();
   if(withIntro) playIntro();
   // スマホ：まだ動画を選んでいなければ、コース一覧のドロワーを開いて見せる
   if(isMobile() && curCourse == null) setTimeout(openDrawer, withIntro ? 300 : 60);
@@ -2627,6 +2637,47 @@ function canWatchVideo(v, ci, vi){
 function courseWatchable(ci){
   const c = COURSES[ci]; if(!c) return false;
   return (c.videos || []).some((vv, idx) => canWatchVideo(vv, ci, idx));
+}
+
+/* ===== 視聴済みマーク・進捗（「どれをもう見たか忘れる」問題への対応） ===== */
+let WATCHED = new Set();
+function videoKey_(v){ return String((v && v.platform) || "") + ":" + String((v && v.id) || ""); }
+async function loadWatched(){
+  if(!(SESSION && SESSION.email)){ WATCHED = new Set(); return; }
+  try{
+    const d = await fetch(GAS_URL + "?action=watch_list&email=" + encodeURIComponent(SESSION.email) + "&_=" + Date.now()).then(r => r.json());
+    WATCHED = new Set((d && d.keys) || []);
+  }catch(e){}
+}
+let _watchMarkTimer = null;
+function cancelWatchMark(){ if(_watchMarkTimer){ clearTimeout(_watchMarkTimer); _watchMarkTimer = null; } }
+// 動画を開いて30秒経ったら「視聴済み」にする（最後まで見るのを強制しない・ざっくりでよい）
+function scheduleWatchMark(v){
+  cancelWatchMark();
+  if(!(SESSION && SESSION.email)) return;
+  const key = videoKey_(v);
+  if(!key || key === ":" || WATCHED.has(key)) return;
+  _watchMarkTimer = setTimeout(() => markWatched(v), 30000);
+}
+async function markWatched(v){
+  const key = videoKey_(v);
+  if(!key || key === ":" || WATCHED.has(key)) return;
+  WATCHED.add(key);   // 楽観的に即バッジ反映（サーバー応答を待たない）
+  if(typeof curCourse === "number" && typeof curVideo === "number") renderChapterUI(curCourse, curVideo);
+  try{ await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"watch_mark", email:SESSION.email, videoKey:key }) }); }catch(e){}
+}
+// このコースで「今見られる動画」のうち視聴済みの本数
+function courseWatchProgress(course){
+  const vids = (course && course.videos) || [];
+  let total = 0, done = 0;
+  vids.forEach(v => { if(!videoAccessible(v)) return; total++; if(WATCHED.has(videoKey_(v))) done++; });
+  return { done, total };
+}
+// 全コース通算（今見られる動画のうち何本見たか）
+function overallWatchProgress(){
+  let total = 0, done = 0;
+  (COURSES || []).forEach(c => { const p = courseWatchProgress(c); total += p.total; done += p.done; });
+  return { done, total };
 }
 // 日付＋時刻を部品に分解（時刻は任意）。視聴開始／視聴期限で共通利用
 // 対応：2026-07-10 / 2026/7/10 15:00 / 7月10日 21時 / 7/10 15:30 / gvizの Date(2026,6,10[,15,0,0])
@@ -4721,11 +4772,12 @@ function renderChapterUI(ci, vi){
     const v = course.videos[i];
     const soon = isUpcoming(v);                       // 公開前：タイトルは隠さず「〇/〇公開」と予告
     const vlock = !soon && !videoAccessible(v);
+    const watched = !soon && !vlock && WATCHED.has(videoKey_(v));
     const num = rev ? (idxs.length - pos) : (pos + 1);
     const b = document.createElement("button");
-    b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "") + (soon ? " ch-soon" : "");
+    b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "") + (soon ? " ch-soon" : "") + (watched ? " ch-watched" : "");
     b.innerHTML = `<span class="ch-no">${String(num).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`
-      + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vlock ? `<span class="ch-lockmark">🔒</span>` : ""));
+      + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vlock ? `<span class="ch-lockmark">🔒</span>` : (watched ? `<span class="ch-donemark">✓ 視聴済み</span>` : "")));
     b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     list.appendChild(b);
   });
@@ -4741,6 +4793,7 @@ function select(ci, vi){
   vmeta.classList.remove("meta-upcoming");   // 毎回リセット（前の動画の状態を持ち越さない）
   hideThumb();                               // サムネも毎回リセット
   cancelWatchOffer();                        // 予約中のオファーは一旦キャンセル（再生時に再予約）
+  cancelWatchMark();                         // 視聴済み判定タイマーも一旦キャンセル（動画を切り替えたので）
 
   // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
   if(isUpcoming(v)){
@@ -4828,6 +4881,7 @@ function select(ci, vi){
     hidePwOption();
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
+    scheduleWatchMark(v);   // 視聴開始 → 30秒見たら「視聴済み」にする
     // ② 補足（本文・改行/URLはそのままリンク化）
     if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
     // ③ 添付要素（ワーク・課題シート等のリンクボタン）
