@@ -37,6 +37,13 @@ nav.toc a{color:#8f5662;text-decoration:none}
 nav.toc a:hover{text-decoration:underline}
 footer{margin-top:64px;padding-top:20px;border-top:1px dashed #eadedf;text-align:center;color:#a49297;font-size:12px}
 img.screenshot{max-width:100%;border:1px solid #eadedf;border-radius:10px;box-shadow:0 8px 20px rgba(130,91,99,0.10);margin:12px 0}
+
+img.appshot{max-width:340px;width:100%;border:1px solid #eadedf;border-radius:14px;box-shadow:0 10px 24px rgba(130,91,99,0.12);margin:14px auto;display:block}
+.shots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:20px 0}
+.shot-card{text-align:center;background:#fff;border:1px solid #eadedf;border-radius:14px;padding:14px}
+.shot-card img{max-width:100%;border-radius:8px;margin-bottom:8px}
+.shot-card .cap{font-size:0.85rem;color:#8f5662;font-weight:700}
+
 .placeholder-img{background:repeating-linear-gradient(45deg,#fbf0f2,#fbf0f2 8px,#fff 8px,#fff 16px);border:2px dashed #d9a3ab;border-radius:12px;padding:40px 20px;text-align:center;color:#a96874;font-weight:700;font-size:0.9rem;margin:14px 0}
 </style>
 </head>
@@ -117,7 +124,7 @@ img.screenshot{max-width:100%;border:1px solid #eadedf;border-radius:10px;box-sh
 <p>あなたの体質を <strong>6タイプ</strong>のいずれかに分類：</p>
 <p><span class="tag-mini">ぐったり迷子</span><span class="tag-mini">もやもや迷子</span><span class="tag-mini">ふらふら迷子</span><span class="tag-mini">ぽちゃぽちゃ迷子</span><span class="tag-mini">どよ〜ん迷子</span><span class="tag-mini">からから迷子</span></p>
 </div>
-<div class="placeholder-img">📷 診断LPスクショ（後日追加）</div>
+
 </section>
 
 <section id="addfriend">
@@ -153,7 +160,15 @@ img.screenshot{max-width:100%;border:1px solid #eadedf;border-radius:10px;box-sh
 </div>
 </div>
 
-<div class="placeholder-img">📷 Day1画面（後日追加）</div>
+<h3>実際の画面イメージ</h3>
+<div class="shots-grid">
+  <div class="shot-card"><img src="images/screen1_welcome.jpg" alt="Screen1 - ようこそ"><div class="cap">① あなたの名前入り Welcome</div></div>
+  <div class="shot-card"><img src="images/screen2_chips.jpg" alt="Screen2 - チップ選択"><div class="cap">② 今日の状態を選ぶ</div></div>
+  <div class="shot-card"><img src="images/screen3_result.jpg" alt="Screen3 - 結果"><div class="cap">③ あなたに合いやすい方向性</div></div>
+  <div class="shot-card"><img src="images/screen3_actions.jpg" alt="Screen3 - アクション"><div class="cap">④ 今日やること3つ</div></div>
+  <div class="shot-card"><img src="images/screen4_review.jpg" alt="Screen4 - 振り返り"><div class="cap">⑤ 振り返り記録</div></div>
+  <div class="shot-card"><img src="images/screen4_bottom.jpg" alt="Screen4 - また明日"><div class="cap">⑥ 完了・また明日</div></div>
+</div>
 </section>
 
 <section id="day23">
