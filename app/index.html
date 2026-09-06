@@ -1348,6 +1348,7 @@ a{text-decoration:none}
 /* 視聴済みマーク */
 .ch-item.ch-watched .ch-t{color:#8f918f}
 .ch-item .ch-donemark{font-size:10.5px;font-weight:600;flex:none;color:#8fd0a3;background:rgba(143,208,163,.12);border:1px solid rgba(143,208,163,.32);border-radius:999px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
+.v-donemark{display:inline-block;margin:2px 0 8px;font-size:11px;font-weight:600;color:#8fd0a3;background:rgba(143,208,163,.12);border:1px solid rgba(143,208,163,.32);border-radius:999px;padding:3px 11px;letter-spacing:.02em}
 /* 視聴ページの公開カウントダウン */
 .lk-cd{display:block;margin-top:12px;font-size:13px;font-weight:700;color:#f0d69c;letter-spacing:.04em}
 .chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
@@ -1628,6 +1629,7 @@ a{text-decoration:none}
       <div class="np">Now Playing</div>
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
+      <span class="v-donemark" id="vDoneMark" hidden>✓ 視聴済み</span>
       <div class="vlimit" id="vlimit" hidden></div>
       <div class="vfiled" id="vfiled"></div>
       <div class="vsupp" id="vsupp" hidden></div>
@@ -2664,6 +2666,8 @@ async function markWatched(v){
   if(!key || key === ":" || WATCHED.has(key)) return;
   WATCHED.add(key);   // 楽観的に即バッジ反映（サーバー応答を待たない）
   if(typeof curCourse === "number" && typeof curVideo === "number") renderChapterUI(curCourse, curVideo);
+  const dm = document.getElementById("vDoneMark"); if(dm) dm.hidden = false;   // 今見ている動画のバッジも即表示
+  if(typeof render === "function") render();   // 左のコース一覧の進捗表示も更新
   try{ await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"watch_mark", email:SESSION.email, videoKey:key }) }); }catch(e){}
 }
 // このコースで「今見られる動画」のうち視聴済みの本数
@@ -4504,7 +4508,8 @@ function render(){
     const maxR = ranks.length ? Math.max.apply(null, ranks) : RANK.guest;
     const partiallyFree = (minR <= RANK.free) && (maxR >= RANK.plus);   // 無料〜有料が混在＝一部無料
     const ti = partiallyFree ? `<span class="c-tier tier-partial">一部無料</span>` : tierBadge(minR);
-    const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : `<span class="c-tag">${vids.length}本</span>`;
+    const cp = courseWatchProgress(course);
+    const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : (cp.total > 0 ? `<span class="c-tag">${cp.done}/${cp.total}本</span>` : `<span class="c-tag">${vids.length}本</span>`);
     head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
@@ -4794,6 +4799,7 @@ function select(ci, vi){
   hideThumb();                               // サムネも毎回リセット
   cancelWatchOffer();                        // 予約中のオファーは一旦キャンセル（再生時に再予約）
   cancelWatchMark();                         // 視聴済み判定タイマーも一旦キャンセル（動画を切り替えたので）
+  document.getElementById("vDoneMark").hidden = true;   // 視聴済みバッジも毎回リセット
 
   // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
   if(isUpcoming(v)){
@@ -4882,6 +4888,7 @@ function select(ci, vi){
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
     scheduleWatchMark(v);   // 視聴開始 → 30秒見たら「視聴済み」にする
+    document.getElementById("vDoneMark").hidden = !WATCHED.has(videoKey_(v));
     // ② 補足（本文・改行/URLはそのままリンク化）
     if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
     // ③ 添付要素（ワーク・課題シート等のリンクボタン）
