@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>セルフケアナビ｜運用マニュアル（ともこさん用）</title>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:"Zen Maru Gothic",sans-serif;color:#463a3d;background:linear-gradient(180deg,#fffaf8 0%,#fff7f6 44%,#fffaf8 100%);line-height:1.85;font-size:16px}
+.container{max-width:840px;margin:0 auto;padding:32px 20px 80px}
+header{text-align:center;padding:24px 0 32px;border-bottom:1px dashed #eadedf;margin-bottom:36px}
+.eyebrow{display:inline-block;padding:5px 14px;border:1px solid #c98791;border-radius:999px;color:#a96874;font-size:12px;font-weight:700;letter-spacing:0.15em;margin-bottom:16px}
+h1{font-family:"Kaisei Decol",serif;font-size:clamp(1.7rem,5.5vw,2.4rem);color:#8f5662;margin:0 0 8px;font-weight:600}
+.lead{color:#77676b;font-size:15px;margin:0}
+section{margin-bottom:48px}
+h2{font-family:"Kaisei Decol",serif;font-size:clamp(1.3rem,4.2vw,1.7rem);color:#4d3e42;border-left:5px solid #c98791;padding-left:14px;margin:0 0 18px}
+h3{font-family:"Kaisei Decol",serif;font-size:1.15rem;color:#8f5662;margin:26px 0 10px}
+p{margin:0 0 14px}
+.card{background:rgba(255,253,252,0.94);border:1px solid rgba(220,196,200,0.72);border-radius:20px;padding:24px 22px;margin:18px 0;box-shadow:0 8px 24px rgba(130,91,99,0.07)}
+.card-title{font-weight:700;color:#a96874;margin:0 0 10px;font-size:1.05rem}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.9rem;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 14px rgba(130,91,99,0.06)}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #f0e5e7}
+th{background:#fbf0f2;color:#8f5662;font-weight:700}
+tr:last-child td{border-bottom:0}
+code{background:#fff8f9;padding:2px 6px;border-radius:6px;color:#8f5662;font-size:0.85em;border:1px solid #f0e5e7}
+pre{background:#463a3d;color:#fff9f7;padding:14px 18px;border-radius:10px;overflow-x:auto;font-size:0.85rem;line-height:1.6}
+.svg-wrap{background:#fff;border:1px solid #eadedf;border-radius:16px;padding:20px 16px;margin:20px 0;text-align:center}
+.callout{background:linear-gradient(145deg,#f8eaed 0%,#f3dfe3 100%);border-radius:16px;padding:18px 20px;margin:20px 0}
+.callout p{margin:0;font-weight:700;color:#5f444c}
+.warning{background:#fff5e8;border-left:5px solid #d99a3f;padding:14px 18px;border-radius:10px;margin:14px 0}
+.warning p{margin:0;color:#7a5d33;font-size:0.94rem}
+.step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:start;padding:16px 0;border-top:1px solid #f0e5e7}
+.step:first-child{border-top:0;padding-top:0}
+.step-num{width:34px;height:34px;display:grid;place-items:center;background:#a96874;color:#fff;border-radius:50%;font-family:"Kaisei Decol",serif;font-weight:700;font-size:15px}
+.step-body strong{color:#664d54;display:block;margin-bottom:4px;font-size:1.02rem}
+.step-body p{margin:0;color:#756268;font-size:0.94rem;line-height:1.8}
+.tag-mini{display:inline-block;padding:2px 9px;border-radius:999px;background:#fbf0f2;color:#a96874;font-size:0.78rem;font-weight:700;margin-right:5px;margin-bottom:4px}
+nav.toc{background:#fff;border:1px dashed #d9c0c5;border-radius:12px;padding:18px 22px;margin:0 0 32px}
+nav.toc ol{margin:0;padding-left:20px}
+nav.toc a{color:#8f5662;text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+footer{margin-top:64px;padding-top:20px;border-top:1px dashed #eadedf;text-align:center;color:#a49297;font-size:12px}
+.placeholder-img{background:repeating-linear-gradient(45deg,#fbf0f2,#fbf0f2 8px,#fff 8px,#fff 16px);border:2px dashed #d9a3ab;border-radius:12px;padding:40px 20px;text-align:center;color:#a96874;font-weight:700;font-size:0.9rem;margin:14px 0}
+a{color:#8f5662}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+<span class="eyebrow">OWNER GUIDE</span>
+<h1>セルフケアナビ｜運用マニュアル</h1>
+<p class="lead">ともこさん向け・アプリ管理者ガイド</p>
+</header>
+
+<nav class="toc">
+<strong style="color:#8f5662">目次</strong>
+<ol>
+<li><a href="#overview">アプリ全体像</a></li>
+<li><a href="#sheets">スプシの見方（ログ/履歴/配信履歴）</a></li>
+<li><a href="#reminder">リマインドの仕組み</a></li>
+<li><a href="#dashboard">Dashboard（ユーザー状況一覧）</a></li>
+<li><a href="#result-pages">診断結果ページ（6タイプ）</a></li>
+<li><a href="#screenshot-flow">スクショ受信フォームの流れ</a></li>
+<li><a href="#gas">GASの操作方法</a></li>
+<li><a href="#trouble">トラブルシューティング</a></li>
+</ol>
+</nav>
+
+<section id="overview">
+<h2>1. アプリ全体像</h2>
+<p>診断LP → LINE友だち追加 → セルフケアナビアプリ（3日間）→ 精密分析 → 個別アドバイス、の一本道です。</p>
+
+<div class="svg-wrap">
+<svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto">
+<defs>
+<marker id="arr2" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#a96874"/>
+</marker>
+</defs>
+<style>.node{fill:#fff9fa;stroke:#c98791;stroke-width:1.5}.label{font-family:"Zen Maru Gothic",sans-serif;font-size:13px;fill:#4d3e42;font-weight:700}.sub{font-size:10px;fill:#8f7880}.arrow{stroke:#a96874;stroke-width:1.8;fill:none;marker-end:url(#arr2)}</style>
+
+<rect class="node" x="20" y="20" width="140" height="60" rx="12"/>
+<text class="label" x="90" y="43" text-anchor="middle">診断LP</text>
+<text class="sub" x="90" y="60" text-anchor="middle">18問・6タイプ判定</text>
+<path class="arrow" d="M 165 50 L 205 50"/>
+
+<rect class="node" x="210" y="20" width="140" height="60" rx="12"/>
+<text class="label" x="280" y="43" text-anchor="middle">結果ページ</text>
+<text class="sub" x="280" y="60" text-anchor="middle">動画・タイプ解説</text>
+<path class="arrow" d="M 355 50 L 395 50"/>
+
+<rect class="node" x="400" y="20" width="160" height="60" rx="12" fill="#e8f6ed" stroke="#69ad82"/>
+<text class="label" x="480" y="43" text-anchor="middle" fill="#39734f">LINE友だち追加</text>
+<text class="sub" x="480" y="60" text-anchor="middle" fill="#5c7d68">タイプ別シナリオ</text>
+<path class="arrow" d="M 565 50 L 605 50"/>
+
+<rect class="node" x="610" y="20" width="160" height="60" rx="12"/>
+<text class="label" x="690" y="43" text-anchor="middle">セルフケアアプリ</text>
+<text class="sub" x="690" y="60" text-anchor="middle">Day1 / 2 / 3</text>
+<path class="arrow" d="M 690 85 L 690 125"/>
+
+<rect class="node" x="580" y="130" width="220" height="70" rx="12" fill="#fbf0f2"/>
+<text class="label" x="690" y="152" text-anchor="middle">スプシに記録</text>
+<text class="sub" x="690" y="170" text-anchor="middle">「ログ」「ログ_履歴」</text>
+<text class="sub" x="690" y="185" text-anchor="middle">GASが受信・保存</text>
+
+<rect class="node" x="330" y="130" width="200" height="70" rx="12"/>
+<text class="label" x="430" y="152" text-anchor="middle">自動リマインドLINE</text>
+<text class="sub" x="430" y="170" text-anchor="middle">朝9時 / 夜20時</text>
+<text class="sub" x="430" y="185" text-anchor="middle">未完了Day毎に3日ループ</text>
+<path class="arrow" d="M 580 165 L 535 165"/>
+
+<path class="arrow" d="M 690 205 L 690 245"/>
+<rect class="node" x="610" y="250" width="180" height="60" rx="12"/>
+<text class="label" x="700" y="272" text-anchor="middle">Day3完了で精密分析</text>
+<text class="sub" x="700" y="290" text-anchor="middle">54問→タイプ分布</text>
+
+<path class="arrow" d="M 610 280 L 470 280"/>
+<rect class="node" x="290" y="250" width="180" height="60" rx="12"/>
+<text class="label" x="380" y="272" text-anchor="middle">スクショをLINE送信</text>
+<text class="sub" x="380" y="290" text-anchor="middle">画像アップロード</text>
+
+<path class="arrow" d="M 290 280 L 175 280"/>
+<rect class="node" x="20" y="250" width="155" height="60" rx="12" fill="#e8f6ed" stroke="#69ad82"/>
+<text class="label" x="97" y="272" text-anchor="middle" fill="#39734f">ともこ先生</text>
+<text class="sub" x="97" y="290" text-anchor="middle" fill="#5c7d68">個別アドバイス送信</text>
+
+</svg>
+</div>
+
+<div class="card">
+<div class="card-title">主要リソース</div>
+<table>
+<tr><th>項目</th><th>URL / 場所</th></tr>
+<tr><td>アプリ本体</td><td><a href="https://columns.l-mine.com/selfcare_navi.html">columns.l-mine.com/selfcare_navi.html</a></td></tr>
+<tr><td>管理者URL（Dashboard付き）</td><td><a href="https://columns.l-mine.com/selfcare_navi.html?admin=1">columns.l-mine.com/selfcare_navi.html?admin=1</a></td></tr>
+<tr><td>診断LP（Instagramプロフ用）</td><td>ProLine内: /cp/Xk5Kbvuxd7</td></tr>
+<tr><td>スプシ</td><td>「ともこさんアプリデータ」（Google Drive）</td></tr>
+<tr><td>Apps Script</td><td>スプシ→拡張機能→Apps Script</td></tr>
+</table>
+</div>
+</section>
+
+<section id="sheets">
+<h2>2. スプシの見方</h2>
+<p>スプシは3枚のシート構成です：</p>
+
+<div class="card">
+<h3>📊「ログ」シート（メイン・27列・1人1行）</h3>
+<p>参加者の <strong>現在の状態一覧</strong>。同じ人が記録すると同じ行が上書きされます。</p>
+
+<table>
+<tr><th>列</th><th>内容</th></tr>
+<tr><td>A: 名前</td><td>ユーザーが入力した名前</td></tr>
+<tr><td>B: UID</td><td>アプリ内部識別ID（気にしなくてOK）</td></tr>
+<tr><td>C: LINE UID</td><td>LINEユーザーID（リマインド送信の宛先）</td></tr>
+<tr><td>D: タイプ</td><td>体質タイプ（ぐったり迷子さん等）</td></tr>
+<tr><td>E: 初回訪問日</td><td>Day1をやった日</td></tr>
+<tr><td>F: 最終更新</td><td>最後に記録した日時</td></tr>
+<tr><td>G〜M: Day1のデータ</td><td>状態/おすすめ1/おすすめ2/控えたい/やった数/振り返り/更新時刻</td></tr>
+<tr><td>N〜T: Day2のデータ</td><td>同じ7項目</td></tr>
+<tr><td>U〜AA: Day3のデータ</td><td>同じ7項目</td></tr>
+</table>
+
+<div class="callout"><p>💡 各Day枠の「振り返り」列で <strong>やった / 少しやった / できなかった</strong> がわかります。</p></div>
+</div>
+
+<div class="card">
+<h3>📝「ログ_履歴」シート（縦持ち・追記のみ）</h3>
+<p>記録するたびに <strong>下に1行ずつ追加</strong> される全記録。同じ人が複数回記録すればその回数分。</p>
+<p>用途: 「あの人、いつDay2やったっけ？」等の <strong>時系列確認</strong>や、複数セッションで別ブラウザから入った履歴の追跡。</p>
+</div>
+
+<div class="card">
+<h3>📮「配信履歴」シート</h3>
+<p>朝リマインド／夜リマインド／個別相談リマインドが <strong>いつ・誰に・成功したか</strong> を記録。</p>
+</div>
+
+<div class="warning"><p>⚠️ セルに <strong>色付け・条件付き書式</strong> はOKですが、<strong>値を直接編集</strong>したり <strong>列の並び替え・削除</strong> はNG。アプリの記録が壊れる可能性あり。</p></div>
+</section>
+
+<section id="reminder">
+<h2>3. リマインドの仕組み</h2>
+<p>GAS が毎朝9時と毎晩20時に、対象者を判定してLINEリマインドを自動送信します。</p>
+
+<h3>いつ、誰に送るか</h3>
+<div class="card">
+<table>
+<tr><th>リマインド</th><th>時刻</th><th>対象</th></tr>
+<tr><td>朝リマインド</td><td>毎日 9〜10時</td><td>未完了のDayがある人・今日まだ記録してない</td></tr>
+<tr><td>夜リマインド</td><td>毎日 20〜21時</td><td>朝と同じ</td></tr>
+<tr><td>個別相談オファー</td><td>毎日 9〜10時</td><td>Day3完了後・1〜3日以内・生涯1回</td></tr>
+</table>
+</div>
+
+<h3>Day毎の3日間ループ</h3>
+<div class="callout"><p>各Day（1・2・3）は <strong>3日間の猶予</strong> あり。金曜Day1→土日忙しくてスキップ→月曜開いてもDay1のまま、というUX。4日目に持ち越すと停止します。</p></div>
+
+<h3>個別相談リマインドは生涯1回</h3>
+<p>同じ人に複数回オファーが飛ばないよう制御しています。</p>
+</section>
+
+<section id="dashboard">
+<h2>4. Dashboard（ユーザー状況一覧）</h2>
+<p><a href="https://columns.l-mine.com/selfcare_navi.html?admin=1">管理者URL</a> を開くと、上部にDashboardボタンが出ます。</p>
+<div class="card">
+<div class="card-title">Dashboardで見えるもの</div>
+<ul>
+<li>ユーザー一覧（Day進捗・タイプ・最終更新）</li>
+<li>30秒ごとに自動更新</li>
+<li>タイプ別・Day別のフィルタ可能</li>
+</ul>
+</div>
+<div class="placeholder-img">📷 Dashboardスクショ（後日追加）</div>
+</section>
+
+<section id="result-pages">
+<h2>5. 診断結果ページ（6タイプ）</h2>
+<p>診断で判定された結果に応じて、6つのProLineコンテンツページのどれかが表示されます：</p>
+<div class="card">
+<p><span class="tag-mini">ぐったり迷子（気虚）</span><span class="tag-mini">もやもや迷子（気滞）</span><span class="tag-mini">ふらふら迷子（血虚）</span><span class="tag-mini">ぽちゃぽちゃ迷子（水滞）</span><span class="tag-mini">どよ〜ん迷子（瘀血）</span><span class="tag-mini">からから迷子（陰虚）</span></p>
+</div>
+
+<h3>各ページの構成</h3>
+<div class="card">
+<div class="step">
+<div class="step-num">1</div><div class="step-body"><strong>タイプ紹介</strong><p>診断結果イラスト＋タイプ名＋東洋医学タイプ（気虚など）</p></div>
+</div>
+<div class="step">
+<div class="step-num">2</div><div class="step-body"><strong>動画解説</strong><p>Vimeo埋め込み。動画再生から15秒経過で下記の解説が表示される仕組み。</p></div>
+</div>
+<div class="step">
+<div class="step-num">3</div><div class="step-body"><strong>タイプ特徴の解説</strong><p>カラダの傾向／ココロ・思考の傾向</p></div>
+</div>
+<div class="step">
+<div class="step-num">4</div><div class="step-body"><strong>今日からできる腸活アドバイス</strong><p>タイプ別の食材リスト</p></div>
+</div>
+<div class="step">
+<div class="step-num">5</div><div class="step-body"><strong>精密分析（54問）</strong><p>ユーザーが体調項目を選ぶ → タイプ別スコアを表示 → スクショ推奨</p></div>
+</div>
+<div class="step">
+<div class="step-num">6</div><div class="step-body"><strong>スクショ送信フォーム</strong><p>結果画像をアップロード → ともこ先生に届く</p></div>
+</div>
+</div>
+
+<div class="warning"><p>⚠️ 各ページのHTMLはProLine上に保存されています。修正時はローカルの「ProLine貼付用.html」を全コピー→貼付・保存。</p></div>
+</section>
+
+<section id="screenshot-flow">
+<h2>6. スクショ受信フォームの流れ</h2>
+<p>ユーザーが精密分析結果を送信すると、ProLineのフォームから画像が届きます。</p>
+
+<div class="card">
+<div class="card-title">画像はどこに届く？</div>
+<p>ProLine管理画面 → 「フォーム受信」→ 該当フォーム（SmXWEqGVnN）で確認できます。</p>
+<p>また、ユーザーのLINE個別チャットにも画像が入るので、そこで返信するのが早いです。</p>
+</div>
+
+<div class="card">
+<div class="card-title">受信後にやること</div>
+<div class="step">
+<div class="step-num">1</div><div class="step-body"><strong>画像内容を確認</strong><p>6タイプそれぞれのチェック項目数（X/9）を見る</p></div>
+</div>
+<div class="step">
+<div class="step-num">2</div><div class="step-body"><strong>個別アドバイスをLINEで返信</strong><p>目安1〜2日以内。テンプレート活用OK。</p></div>
+</div>
+<div class="step">
+<div class="step-num">3</div><div class="step-body"><strong>60分特典対象なら「秘密のアイテム」も送る</strong><p>ProLine内で該当タグ付けして自動送信するか、手動送信。</p></div>
+</div>
+</div>
+</section>
+
+<section id="gas">
+<h2>7. GASの操作方法</h2>
+<p>スプシ → 拡張機能 → Apps Script でエディタが開きます。</p>
+
+<h3>コードの更新方法</h3>
+<div class="card">
+<div class="step">
+<div class="step-num">1</div><div class="step-body"><strong>とーるさんから受け取った <code>selfcare_navi_AppsScript.txt</code> を全コピー</strong><p>メモ帳で開いてCtrl+A→Ctrl+C</p></div>
+</div>
+<div class="step">
+<div class="step-num">2</div><div class="step-body"><strong>Apps Scriptエディタで既存コードを全削除</strong><p>Ctrl+A → Delete</p></div>
+</div>
+<div class="step">
+<div class="step-num">3</div><div class="step-body"><strong>貼付＋保存</strong><p>Ctrl+V → Ctrl+S</p></div>
+</div>
+<div class="step">
+<div class="step-num">4</div><div class="step-body"><strong>デプロイ</strong><p>右上「デプロイ」→「デプロイを管理」→鉛筆マーク→バージョン「新しいバージョン」→デプロイ</p></div>
+</div>
+</div>
+
+<h3>手動でリマインドを発火したい時</h3>
+<p>Apps Scriptエディタで関数選択ドロップダウンから <code>sendMorningReminders</code> や <code>sendEveningReminders</code> を選び「▶ 実行」。</p>
+
+<h3>トリガー（自動実行）の確認</h3>
+<p>左メニューの時計マーク → 3本のトリガー（朝・夜・オファー）が動いているか確認できます。</p>
+</section>
+
+<section id="trouble">
+<h2>8. トラブルシューティング</h2>
+
+<div class="card">
+<div class="card-title">❓ リマインドが飛ばない</div>
+<p>1. 「配信履歴」シートに ng:xxx のログがないか確認</p>
+<p>2. Apps Scriptで <code>sendMorningReminders</code> を手動実行してエラー内容を確認</p>
+<p>3. トリガーが有効になっているか確認</p>
+</div>
+
+<div class="card">
+<div class="card-title">❓ スプシに新規行が増えない</div>
+<p>1. アプリのURLに <code>?uid=</code> パラメータが渡っているか確認</p>
+<p>2. ProLine配信メッセージのURLに <code>?uid=[[uid]]</code> が付いているか</p>
+<p>3. Apps Scriptのウェブアプリが正常デプロイされているか（アクセス:全員）</p>
+</div>
+
+<div class="card">
+<div class="card-title">❓ 同じ人が別行で増えていく（重複）</div>
+<p>新しいGAS（横持ち版）ではこの現象は起きません。もし発生したら、とーるさんに連絡。</p>
+</div>
+
+<div class="card">
+<div class="card-title">❓ ユーザーから「アプリが動かない」報告</div>
+<p>1. まずキャッシュクリアを提案（LINE内ブラウザを一度閉じてから再オープン）</p>
+<p>2. それでもダメなら、症状の詳細（画面のスクショ・操作手順）を教えてもらう</p>
+<p>3. とーるさんに転送</p>
+</div>
+</section>
+
+<footer>
+© 2026 セルフケアナビ｜運用マニュアル<br>
+技術的な質問・不具合の連絡は、とーるさんまで
+</footer>
+
+</div>
+</body>
+</html>
