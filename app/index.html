@@ -1348,8 +1348,9 @@ a{text-decoration:none}
 /* 視聴済みマーク */
 .ch-item.ch-watched .ch-t{color:#8f918f}
 .ch-item .ch-donemark{font-size:10.5px;font-weight:600;flex:none;color:#8fd0a3;background:rgba(143,208,163,.12);border:1px solid rgba(143,208,163,.32);border-radius:999px;padding:2px 9px;letter-spacing:.02em;white-space:nowrap}
-.v-donemark{display:inline-block;margin:2px 0 8px;font-size:11px;font-weight:600;color:#8fd0a3;background:rgba(143,208,163,.12);border:1px solid rgba(143,208,163,.32);border-radius:999px;padding:3px 11px;letter-spacing:.02em}
+.v-donemark{display:inline-block;margin:2px 0 8px;font-size:11px;font-weight:600;border-radius:999px;padding:3px 11px;letter-spacing:.02em;color:#9a9c99;background:rgba(154,156,153,.12);border:1px solid rgba(154,156,153,.32)}
 .v-donemark[hidden]{display:none}
+.v-donemark.is-watched{color:#1c1a14;background:linear-gradient(135deg,#e6c47f,#caa75f);border-color:transparent}
 /* 視聴ページの公開カウントダウン */
 .lk-cd{display:block;margin-top:12px;font-size:13px;font-weight:700;color:#f0d69c;letter-spacing:.04em}
 .chap-tab.chap-locked{color:#9a9c99;border-style:dashed}
@@ -1630,7 +1631,7 @@ a{text-decoration:none}
       <div class="np">Now Playing</div>
       <div class="kick" id="vkick">Course</div>
       <h1 id="vtitle">コースを選択してください</h1>
-      <span class="v-donemark" id="vDoneMark" hidden>✓ 視聴済み</span>
+      <span class="v-donemark" id="vDoneMark" hidden>未視聴</span>
       <div class="vlimit" id="vlimit" hidden></div>
       <div class="vfiled" id="vfiled"></div>
       <div class="vsupp" id="vsupp" hidden></div>
@@ -2667,7 +2668,8 @@ async function markWatched(v){
   if(!key || key === ":" || WATCHED.has(key)) return;
   WATCHED.add(key);   // 楽観的に即バッジ反映（サーバー応答を待たない）
   if(typeof curCourse === "number" && typeof curVideo === "number") renderChapterUI(curCourse, curVideo);
-  const dm = document.getElementById("vDoneMark"); if(dm) dm.hidden = false;   // 今見ている動画のバッジも即表示
+  const dm = document.getElementById("vDoneMark");   // 今見ている動画のバッジも即座に「視聴済み」表示へ
+  if(dm){ dm.hidden = false; dm.textContent = "✓ 視聴済み"; dm.classList.add("is-watched"); }
   if(typeof render === "function") render();   // 左のコース一覧の進捗表示も更新
   try{ await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"watch_mark", email:SESSION.email, videoKey:key }) }); }catch(e){}
 }
@@ -4889,7 +4891,13 @@ function select(ci, vi){
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
     scheduleWatchMark(v);   // 視聴開始 → 30秒見たら「視聴済み」にする
-    document.getElementById("vDoneMark").hidden = !WATCHED.has(videoKey_(v));
+    (() => {
+      const dm = document.getElementById("vDoneMark");
+      const isWatched = WATCHED.has(videoKey_(v));
+      dm.hidden = false;
+      dm.textContent = isWatched ? "✓ 視聴済み" : "未視聴";
+      dm.classList.toggle("is-watched", isWatched);
+    })();
     // ② 補足（本文・改行/URLはそのままリンク化）
     if(v.supp){ supp.innerHTML = linkify(v.supp); supp.hidden = false; } else { supp.innerHTML = ""; supp.hidden = true; }
     // ③ 添付要素（ワーク・課題シート等のリンクボタン）
