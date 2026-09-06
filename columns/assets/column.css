@@ -90,6 +90,18 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body .sec{text-align:center;color:var(--gold-2);letter-spacing:.5em;margin:2.6em 0 2.4em;font-size:12px}
 .body .key-message{margin:2.5em 0 2.7em;padding:1.25em 1.35em 1.25em 1.55em;border-left:4px solid var(--gold);background:#f8f6f1;font-family:var(--mincho);font-size:clamp(18px,2.8vw,22px);font-weight:600;line-height:1.85;color:var(--ink);box-shadow:0 8px 24px rgba(54,45,29,.05)}
 .body .key-message strong{color:var(--ink);background:none}
+.body .member-gate{margin:2.6em 0 1em;padding:34px 28px;border:1px solid var(--line-2);background:linear-gradient(150deg,#fbf8f0,#f3ede0);border-radius:10px;text-align:center}
+.body .member-gate .mg-load{font-size:13.5px;color:var(--ink-soft);padding:16px 0}
+.body .member-gate .mg-lock{font-size:28px;margin-bottom:.35em;line-height:1}
+.body .member-gate .mg-msg{font-family:var(--mincho);font-size:17px;line-height:1.9;color:var(--ink);margin:0 0 1.3em}
+.body .member-gate .mg-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.body .member-gate .mg-btn{display:inline-block;padding:12px 26px;border-radius:999px;font-weight:700;font-size:13.5px;text-decoration:none;letter-spacing:.02em}
+.body .member-gate .mg-btn-primary{background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#fff}
+.body .member-gate .mg-btn-primary:hover{filter:brightness(1.06)}
+.body .member-gate .mg-btn-secondary{border:1px solid var(--gold-2);color:var(--ink);background:#fff}
+.body .member-gate .mg-btn-secondary:hover{background:var(--card)}
+.body .mg-unlocked{margin-top:.4em}
+@media(max-width:560px){.body .member-gate{padding:26px 20px}.body .member-gate .mg-btn{width:100%}}
 .article-toc{margin:3em 0 3.4em;padding:24px 26px 22px;border:1px solid var(--line-2);background:linear-gradient(145deg,#fff,#faf8f3)}
 .toc-label{display:flex;align-items:baseline;gap:12px;padding-bottom:13px;border-bottom:1px solid var(--line)}
 .toc-label span{font-family:var(--serif-en);font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
