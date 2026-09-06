@@ -34,7 +34,7 @@
         ? null
         : h('section', { class: 'dg-card dg-card--lead' }, SC.ui.prose(d.resultLead)),
 
-      /* 2〜3. 総合スコア → スコア帯 */
+      /* 2〜3. 現在地スコア → スコア帯 */
       SC.ui.scoreSummary({
         caption: c().scoreCaption,
         totalScore: record.totalScore,

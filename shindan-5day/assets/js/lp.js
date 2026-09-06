@@ -193,8 +193,45 @@
 
   var revealAfterReady = false;
 
+  /* 本人の診断結果が無いときの案内（2026-09-06 §58｜判断1）。
+   *
+   * それまではゲートの「診断結果へ戻る」から index.html へ送っており、
+   * その先でサンプルの47点が本人の結果として出ていた。
+   * ここで止めて、引き継ぐ道と受ける道の両方を示す。 */
+  function renderNoDiagnosisGate() {
+    var c = SC.copy.noDiagnosis;
+    var inner = doc.querySelector('#lp-gate .lp-gate__inner');
+    if (!inner) return;
+    SC.dom.clear(inner);
+    SC.dom.append(inner, [
+      h('p', { class: 'lp-gate__eyebrow', text: SC.copy.diagnosisName }),
+      h('h1', { class: 'lp-gate__title', text: c.heading }),
+      h('div', { class: 'lp-gate__text' }, SC.dom.lines(c.body, 'lp-prose__line')),
+      h('a', {
+        class: 'btn btn--primary lp-gate__btn screen__cta-link',
+        href: SC.endpoints.lineDiagnosisRestore, rel: 'noreferrer'
+      }, c.primaryCta),
+      h('p', { class: 'lp-gate__text', text: c.primaryNote }),
+      h('h2', { class: 'lp-gate__title', text: c.secondaryHeading }),
+      h('p', { class: 'lp-gate__text', text: c.secondaryBody }),
+      h('a', {
+        class: 'btn btn--ghost lp-gate__btn screen__cta-link',
+        href: c.secondaryHref, rel: 'noreferrer'
+      }, c.secondaryCta)
+    ]);
+    doc.getElementById('lp-gate').hidden = false;
+  }
+
   function boot() {
     var lp = SC.copy.lp;
+
+    /* ★本人の結果が無いなら、ここで止める（§58｜判断1）。
+     * loadDiagnosis() より前に見るので、サンプルを書き込まない。 */
+    if (!SC.store.hasRealDiagnosis()) {
+      renderNoDiagnosisGate();
+      return;
+    }
+
     var diagnosis = SC.store.loadDiagnosis();
     var state = SC.store.loadChallengeState();
     var lowestLabel = SC.axisLabel(diagnosis.lowestAxis);
@@ -436,6 +473,12 @@
           if (again) again.focus();
           statusEl.textContent = SC.copy.common.saved;
         }
+      }));
+      /* 2026-09-06（§58｜判断4）：通知時刻の設定だと思われないよう、
+       * 選んだあとに必ず断りを置く。ここは自分で開く目安であって、
+       * LINEのDAY案内（毎日20時）とは連動しない。 */
+      reminderSlot.appendChild(h('p', {
+        class: 'lp-join__note', text: SC.copy.start.reminderCaution
       }));
     }
     if (reminderSlot) renderReminder();

@@ -203,7 +203,7 @@
 
   /* --- ScoreSummary --------------------------------------------------- */
   ui.scoreSummary = function (opts) {
-    return h('section', { class: 'card score-summary', 'aria-label': '総合スコア' }, [
+    return h('section', { class: 'card score-summary', 'aria-label': '現在地スコア' }, [
       h('p', { class: 'score-summary__caption', text: opts.caption || SC.copy.result.scoreCaption }),
       h('p', { class: 'score-summary__value' }, [
         h('span', {
@@ -237,7 +237,7 @@
     });
 
     var targetPct = opts.target ? Math.max(0, Math.min(100, (opts.target / opts.max) * 100)) : null;
-    var label = '総合スコア ' + opts.value + ' / ' + opts.max + '（基準40・理想60）';
+    var label = '現在地スコア ' + opts.value + ' / ' + opts.max + '（基準40・理想60）';
     if (opts.target) label += '。改善後の目安 ' + opts.target;
 
     return h('div', { class: 'meter' + (opts.animate ? ' is-intro' : '') }, [

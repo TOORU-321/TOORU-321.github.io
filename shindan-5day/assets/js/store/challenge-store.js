@@ -259,6 +259,25 @@
       return !!d && d.anonymousDiagnosisId !== SC.sampleDiagnosis.anonymousDiagnosisId;
     },
 
+    /* 本人の診断結果があるか（2026-09-06 §58｜判断1）。
+     *
+     * ★loadDiagnosis() と違い、何も書き込まない。
+     *   判定のためにサンプルを保存してしまうと、
+     *   そのあと「本物がある」と誤判定してしまうため。
+     * ★同期で答える。画面を描く前に判定できるので、
+     *   サンプルの47点が一瞬映ることがない。 */
+    hasRealDiagnosis: function () {
+      var pointer = SC.storage.read(SC.config.currentDiagnosisPointerKey());
+      if (!isPlainObject(pointer) ||
+          typeof pointer.anonymousDiagnosisId !== 'string' ||
+          !pointer.anonymousDiagnosisId) return false;
+      /* sample と同じIDを指していたら、本物とはみなさない */
+      if (pointer.anonymousDiagnosisId === SC.sampleDiagnosis.anonymousDiagnosisId) return false;
+      var rec = SC.storage.read(diagnosisKey(pointer.anonymousDiagnosisId));
+      /* 既存の検証と同じ条件で見る（点数が数値として入っているか） */
+      return isPlainObject(rec) && typeof rec.totalScore === 'number';
+    },
+
     getDiagnosis: function () { return diagnosisCache; },
 
     /* --- チャレンジ状態 ------------------------------------------------ */

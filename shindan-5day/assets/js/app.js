@@ -255,10 +255,58 @@
     SC.store.saveChallengeState({ voiceMonitorId: id });
   }
 
+  /* 本人の診断結果が無いときの案内（2026-09-06 §58｜判断1）。
+   *
+   * それまでは sample-diagnosis.js の47点を本人の結果として見せていた。
+   * ★端末に記録が無いだけで「診断していない」と決めつけない。
+   *   LINEから引き継ぐ道と、これから受ける道の両方を出す。 */
+  function renderNoDiagnosis() {
+    var c = SC.copy.noDiagnosis;
+    SC.dom.clear(root);
+    SC.dom.append(root, [
+      h('div', { class: 'screen screen--no-diagnosis' }, [
+        h('header', { class: 'screen__head' }, [
+          h('h1', { class: 'screen__title', text: c.heading })
+        ]),
+        h('section', { class: 'card' }, [
+          h('div', { class: 'prose' }, SC.dom.lines(c.body, 'prose__line')),
+          h('div', { class: 'screen__cta' }, [
+            h('a', {
+              class: 'btn btn--primary screen__cta-link',
+              href: SC.endpoints.lineDiagnosisRestore,
+              rel: 'noreferrer'
+            }, c.primaryCta)
+          ]),
+          h('p', { class: 'card__note', text: c.primaryNote })
+        ]),
+        h('section', { class: 'card card--quiet' }, [
+          h('h2', { class: 'card__title', text: c.secondaryHeading }),
+          h('p', { class: 'card__body', text: c.secondaryBody }),
+          h('div', { class: 'screen__cta' }, [
+            h('a', {
+              class: 'btn btn--ghost screen__cta-link',
+              href: c.secondaryHref, rel: 'noreferrer'
+            }, c.secondaryCta)
+          ])
+        ])
+      ])
+    ]);
+  }
+
   function boot() {
     captureMonitorId();
     root = doc.getElementById('app');
     footerSlot = doc.getElementById('preview-slot');
+
+    /* ★本人の結果が無いなら、ここで止める（§58｜判断1）。
+     * loadDiagnosis() より前に見るので、サンプルを書き込まないし、
+     * 47点が一瞬映ることもない。 */
+    if (!SC.store.hasRealDiagnosis()) {
+      footerSlot = doc.getElementById('preview-slot');
+      renderNoDiagnosis();
+      if (footerSlot) footerSlot.appendChild(buildPreviewMenu());
+      return;
+    }
 
     SC.store.loadDiagnosis();
     var state = SC.store.loadChallengeState();

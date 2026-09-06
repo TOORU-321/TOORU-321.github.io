@@ -544,6 +544,15 @@ button, input { font: inherit; }
   letter-spacing: .06em;
   transition: filter .2s ease, border-color .2s ease, color .2s ease, background .2s ease;
 }
+/* リンクをボタンとして置くときの共通指定（2026-09-06 §58）。
+ * a要素は既定が inline なので、幅と高さの指定が効かない。
+ * タップ目標を確保するため、ここでブロックにそろえる。 */
+.screen__cta-link {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 54px; text-decoration: none; text-align: center;
+}
+.screen__cta { margin: 18px 0 0; }
+
 /* エルラボ＋の主ボタンと同じゴールド */
 .btn--primary {
   color: #16110a;

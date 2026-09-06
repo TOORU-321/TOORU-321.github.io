@@ -8,7 +8,17 @@
  * CTA以外に目立つものを置かない。
  */
 
-.dlp-body { padding: 0; }
+/* ヒーローを画面幅いっぱいにするため 100vw を使っているが、
+ * 100vw は縦スクロールバーの幅を含む。そのため環境によっては
+ * 数px 横へはみ出し、横スクロールが出てしまう（2026-09-06 確認）。
+ *
+ * はみ出しぶんだけを切る。clip はスクロール枠を作らないので、
+ * ページ内の位置固定などに影響しない。古い環境では hidden で受ける。 */
+.dlp-body {
+  padding: 0;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
 
 .dlp {
   max-width: 560px;
@@ -54,7 +64,10 @@
 .dlp-note__line:last-child { margin-bottom: 0; }
 
 /* --- セクション -------------------------------------------------------- */
-.dlp-section { margin: 0 0 46px; }
+/* セクションの間（2026-09-06 とーる指示）。
+ * 46pxでは段落の間（28px）との差が小さく、話が変わったことが伝わらなかった。
+ * 参加表明LP（.lp-section）が88pxで読みやすいので、同じ基準へそろえる。 */
+.dlp-section { margin: 0 0 88px; }
 .dlp-section--reframe,
 .dlp-section--author,
 .dlp-section--final {
@@ -75,7 +88,7 @@
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   margin-top: -28px;          /* .dlp の上余白を打ち消す */
-  margin-bottom: 46px;
+  margin-bottom: 88px;
   padding: 56px 0 44px;
   overflow: hidden;
   isolation: isolate;
@@ -187,7 +200,8 @@
 /* --- 共感セクション（2026-08-25 とーる指示）-----------------------------
  * ここが共感をつかむ場所。中央寄せにして、文字が固まらないよう
  * 大きさと上下の間隔をしっかり取る。 */
-.dlp-section--empathy { margin-bottom: 56px; }
+/* 共感の節だけ、次へ移る前にもう少し間を置く */
+.dlp-section--empathy { margin-bottom: 104px; }
 .dlp-section--empathy .dlp-heading {
   margin-bottom: 40px;
   font-size: 23px;
@@ -267,6 +281,73 @@
   color: var(--ink);
 }
 .dlp-axis__text { margin: 0; font-size: 16px; line-height: 2.15; color: var(--ink-2); }
+
+/* --- タイプ分けとの違い（2026-09-05 §57）------------------------------
+ * 「結果で分かること」の中、レーダー見本の直前に置く。
+ * 数字を主役にするが、煽らない。補足は根拠と「何の数でないか」を示す。
+ * ★補足も本文の下限（14px）を守る。読めない小ささにしない。 */
+.dlp-variety {
+  margin: 26px 0 0;
+  padding: 22px 18px;
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  background: var(--lm-surface-2);
+}
+.dlp-variety__heading {
+  margin: 0 0 16px;
+  font-family: var(--mincho);
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.dlp-variety__body { margin: 0; }
+.dlp-variety__line {
+  margin: 0 0 14px;
+  font-size: 16px;
+  line-height: 2.15;
+  color: var(--ink-2);
+}
+.dlp-variety__line:last-child { margin-bottom: 0; }
+
+/* 数字はここだけ大きく。文の中で浮かせる */
+.dlp-variety__emphasis {
+  margin: 20px 0;
+  padding: 14px 12px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mincho);
+  font-size: 20px;
+  line-height: 1.8;
+  text-align: center;
+  color: var(--gold-2);
+}
+
+.dlp-variety__close {
+  margin: 0;
+  font-size: 16px;
+  line-height: 2.15;
+  color: var(--ink-2);
+}
+/* 補足は控えめに見せる（2026-09-06 とーる指示）。
+ *
+ * ★文字を14pxより小さくはしない。このページの条件（本文14px未満にしない）
+ *   と、§57の「補足も本文最小サイズ条件を守り、読める大きさに」に従う。
+ *   代わりに「※」を付け、色を落とし、行間を詰めて目立たなくする。 */
+.dlp-variety__note { margin: 18px 0 0; }
+.dlp-variety__note-line {
+  margin: 0 0 4px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  opacity: .82;
+}
+/* 1行目にだけ印を置く。2行目は続きなので付けない */
+.dlp-variety__note-line:first-child::before { content: "※ "; }
+.dlp-variety__note-line:last-child { margin-bottom: 0; }
+
+@media (max-width: 359px) {
+  .dlp-variety__emphasis { font-size: 18px; }
+}
 
 /* --- 結果イメージ ------------------------------------------------------ */
 .dlp-sample {
@@ -464,6 +545,12 @@
 .dlp-fold__more::after { content: " ＋"; }
 .dlp-fold[open] .dlp-fold__more::after { content: " −"; }
 .dlp-fold__body { padding: 0 20px 24px; }
+
+/* 畳んだ見出しが続くあいだは詰めて並べる（上の14px）。
+ * ただし、そのあとに通常のセクションが来るときは、他と同じだけ間を空ける
+ * （2026-09-06 とーる指示。ここだけ14pxのままで詰まって見えていた）。
+ * 隣り合う余白は大きいほうへまとまるので、88pxを指定すれば他の節と揃う。 */
+.dlp-fold + .dlp-section:not(.dlp-fold) { margin-top: 88px; }
 
 /* 畳んだ中では、外枠つきの子要素の枠を外す（二重枠を避ける） */
 .dlp-fold .dlp-faq__item { background: var(--lm-surface-2); }

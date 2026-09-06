@@ -141,6 +141,19 @@
     ]);
   }
 
+  /* タイプ分けとの違いを数字で示す一角（2026-09-05 §57）。
+   * 強調文だけ大きく見せる。数字は必ず「5軸スコアの組み合わせ」と一緒に出す。 */
+  function variety(copy) {
+    return h('div', { class: 'dlp-variety' }, [
+      h('h3', { class: 'dlp-variety__heading', text: copy.heading }),
+      h('div', { class: 'dlp-variety__body' }, SC.dom.lines(copy.body, 'dlp-variety__line')),
+      h('p', { class: 'dlp-variety__emphasis', text: copy.emphasis }),
+      h('p', { class: 'dlp-variety__close', text: copy.close }),
+      /* 数字の出どころと、何の数でないかを添える（§57の決まり） */
+      h('div', { class: 'dlp-variety__note' }, SC.dom.lines(copy.note, 'dlp-variety__note-line'))
+    ]);
+  }
+
   /* --- 5. 結果で分かること -------------------------------------------- */
   function resultSection() {
     var copy = c().result;
@@ -156,6 +169,10 @@
       h('ul', { class: 'dlp-list' }, copy.items.map(function (t) {
         return h('li', { class: 'dlp-list__item', text: t });
       })),
+      /* タイプ分けとの違い（2026-09-05 §57）。レーダー見本の直前へ置く。
+       * このセクションは折りたたみではないので、compact でもそのまま見える。 */
+      variety(copy.variety),
+
       h('div', { class: 'dlp-sample' }, [
         h('p', { class: 'dlp-sample__title', text: copy.sampleHeading }),
         SC.ui.radarChart({

@@ -35,6 +35,13 @@
      *
      * 友だち追加のあとは、シナリオの1通目に置いた
      * 自作ページ転送URL（/cp/…?uid=[[uid]]）から restore.html へ戻ってくる。 */
-    lineAddFriend: 'https://vjbsvali.autosns.app/addfriend/s/OJwYZlOe21/@956nvdmi'
+    lineAddFriend: 'https://vjbsvali.autosns.app/addfriend/s/OJwYZlOe21/@956nvdmi',
+
+    /* LINEから診断結果を開く入口（プロラインの自作ページ転送）。
+     * 2026-09-03 の実機確認で、?uid=[[uid]] を付けなくても
+     * プロライン側がuidを付けてくれることを確認済み（§56）。
+     *
+     * LINEのシナリオ1通目と、診断結果が見つからないときの案内（§58｜判断1）で使う。 */
+    lineDiagnosisRestore: 'https://vjbsvali.autosns.app/cp/hGc6WqKvQw'
   };
 })(window);
