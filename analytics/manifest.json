@@ -2,7 +2,6 @@
   "name": "エルラボ アクセス解析",
   "short_name": "解析",
   "description": "columns.l-mine.com の週次アクセスレポート（管理用）",
-  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

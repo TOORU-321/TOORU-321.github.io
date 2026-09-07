@@ -121,12 +121,20 @@ var FB = {
 var VAPID_KEY = "BAtxAvwJITAJ_q2DHtIajcTI_UEgJQhOlPI3uQ8IlXoV_kfyG3SQyRSVkT83Iyln9RsReuwgcR3By6g7roWif1Y";
 
 var KEY_STORE = "an_view_key";
+function isStandalone(){
+  try{
+    return window.navigator.standalone === true ||
+           window.matchMedia("(display-mode: standalone)").matches;
+  }catch(e){ return false; }
+}
 function getKey(){
   try{
     var u = new URLSearchParams(location.search).get("key");
     if(u){
-      localStorage.setItem(KEY_STORE, u);
-      history.replaceState(null, "", location.pathname);   // URLから合言葉を消す
+      try{ localStorage.setItem(KEY_STORE, u); }catch(e){}
+      // ホーム画面アプリとして開いているときだけURLから消す。
+      // ブラウザで開いている間は残す（「ホーム画面に追加」で合言葉ごと保存されるため）
+      if(isStandalone()) history.replaceState(null, "", location.pathname);
       return u;
     }
     return localStorage.getItem(KEY_STORE) || "";
@@ -280,10 +288,14 @@ function load(){
 function gate(msg){
   el("app").innerHTML =
     '<div class="gate"><h1 style="font-size:16px;color:#f3d98d">エルラボ アクセス解析</h1>' +
-    '<p>合言葉を入れてください</p>' +
+    '<p>合言葉（パスワード）を貼り付けてください</p>' +
     (msg ? '<p style="color:#ff8a8a">' + esc(msg) + '</p>' : '') +
-    '<input id="k" type="password" autocomplete="off" placeholder="合言葉">' +
-    '<div class="btns" style="justify-content:center"><button class="primary" id="go">開く</button></div></div>';
+    '<input id="k" type="text" inputmode="latin" autocomplete="off" ' +
+    'autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="b768d6…">' +
+    '<div class="btns" style="justify-content:center"><button class="primary" id="go">開く</button></div>' +
+    '<p style="font-size:12px;margin-top:18px;line-height:1.9">' +
+    'ホーム画面のアイコンから開いた場合、Safariとは別あつかいになるため<br>' +
+    '最初の1回だけ聞かれます。入れたらもう聞かれません。</p></div>';
   el("go").onclick = function(){
     var v = el("k").value.trim();
     if(!v) return;
