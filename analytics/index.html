@@ -88,6 +88,14 @@ button.primary{background:var(--gold);color:#07111f;border-color:var(--gold);fon
 button:disabled{opacity:.5}
 .msg{font-size:12px;color:var(--dim);margin-top:8px;white-space:pre-wrap}
 
+/* 週／月の切り替え */
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:4px;margin:0 0 12px}
+.tabs button{flex:1;background:transparent;border:0;border-radius:9px;padding:9px 0;
+  color:var(--dim);font-size:13px;font-weight:600}
+.tabs button.on{background:var(--card2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.tabs button:disabled{opacity:.35}
+
 .gate{padding:40px 16px;text-align:center;color:var(--dim)}
 .gate input{
   width:100%;max-width:340px;padding:12px;border-radius:10px;
@@ -141,6 +149,8 @@ function getKey(){
   }catch(e){ return ""; }
 }
 var KEY = getKey();
+var SPAN = "week";        // "week" か "month"
+var HAS_MONTH = false;
 
 /* ---------- 小道具 ---------- */
 function el(id){ return document.getElementById(id); }
@@ -153,19 +163,21 @@ function num(n){ return (Number(n) || 0).toLocaleString("ja-JP"); }
 function col(header, name){ return header.indexOf(name); }
 
 function cmpHtml(now, prev){
-  if(prev === null || prev === undefined || prev === "") return '<div class="cmp flat">前週なし</div>';
+  var P = (SPAN === "month") ? "前月" : "前週";
+  if(prev === null || prev === undefined || prev === "") return '<div class="cmp flat">' + P + 'なし</div>';
   now = Number(now) || 0; prev = Number(prev) || 0;
-  if(prev === 0) return '<div class="cmp flat">前週 0</div>';
+  if(prev === 0) return '<div class="cmp flat">' + P + ' 0</div>';
   var d = Math.round((now / prev - 1) * 1000) / 10;
-  if(d === 0) return '<div class="cmp flat">前週と同じ</div>';
+  if(d === 0) return '<div class="cmp flat">' + P + 'と同じ</div>';
   var cls = d > 0 ? "up" : "down";
-  return '<div class="cmp ' + cls + '">' + (d > 0 ? "▲" : "▼") + Math.abs(d) + '%（前週 ' + num(prev) + '）</div>';
+  return '<div class="cmp ' + cls + '">' + (d > 0 ? "▲" : "▼") + Math.abs(d) + '%（' + P + ' ' + num(prev) + '）</div>';
 }
 
 /* 推移グラフ（依存なしの手書きSVG） */
 function sparkline(values, labels){
   var n = values.length;
-  if(n < 2) return '<div class="empty">2週分たまるとグラフが出ます</div>';
+  if(n < 2) return '<div class="empty">' +
+    ((SPAN === "month") ? "2か月分たまるとグラフが出ます" : "2週分たまるとグラフが出ます") + '</div>';
   var w = 600, h = 96, pad = 6;
   var max = Math.max.apply(null, values), min = Math.min.apply(null, values);
   if(max === min){ max = max + 1; min = Math.max(0, min - 1); }
@@ -211,10 +223,10 @@ function render(d){
 
   var sesIdx = col(sh, "セッション");
   var vals = rows.map(function(r){ return Number(r[sesIdx]) || 0; });
-  var labs = rows.map(function(r){ return String(r[0]).slice(5); });
+  var labs = rows.map(function(r){ var s = String(r[0]); return isMonth ? s : s.slice(5); });
 
   var rank = function(data, iName, iSub, iVal, valLabel){
-    if(!data.rows.length) return '<div class="empty">今週はデータがありません</div>';
+    if(!data.rows.length) return '<div class="empty">' + ((SPAN === "month") ? "先月はデータがありません" : "今週はデータがありません") + '</div>';
     return '<ol class="rank">' + data.rows.slice(0, 10).map(function(r, i){
       return '<li><span class="n">' + (i + 1) + '</span>' +
         '<span class="t"><b>' + esc(r[iName]) + '</b>' +
@@ -225,18 +237,30 @@ function render(d){
 
   var ph = d.pages.header, sh2 = d.sources.header, qh = d.queries.header;
 
+  var isMonthN = (d.span === "month");
   var noteHtml = d.note && d.note.text
     ? '<div class="body">' + esc(d.note.text) + '</div><div class="at">あかり ' + esc(d.note.at) + '</div>'
-    : '<div class="empty">今週のコメントはまだありません。月曜の朝に届きます。</div>';
+    : '<div class="empty">' + (isMonthN
+        ? "先月のまとめはまだありません。毎月1日の朝に届きます。"
+        : "今週のコメントはまだありません。月曜の朝に届きます。") + '</div>';
+
+  var isMonth = (d.span === "month");
+  var periodLabel = isMonth ? esc(d.latestWeek) : (esc(d.latestWeek) + " の週");
 
   el("app").innerHTML =
     '<header><h1>📊 アクセス解析</h1>' +
-      '<span class="week">' + esc(d.latestWeek) + ' の週</span>' +
+      '<span class="week">' + periodLabel + '</span>' +
       '<span class="upd">取得 ' + esc(d.updated) + '</span></header>' +
 
-    '<div class="card note"><h2>あかりの今週のコメント</h2>' + noteHtml + '</div>' +
+    '<div class="tabs">' +
+      '<button id="tabWeek" class="' + (isMonth ? "" : "on") + '">週ごと</button>' +
+      '<button id="tabMonth" class="' + (isMonth ? "on" : "") + '"' +
+        (HAS_MONTH ? "" : " disabled") + '>月ごと</button>' +
+    '</div>' +
 
-    '<div class="card"><h2>今週の数字</h2><div class="kpis">' + kpis + '</div></div>' +
+    '<div class="card note"><h2>' + (isMonth ? "あかりの先月のまとめ" : "あかりの今週のコメント") + '</h2>' + noteHtml + '</div>' +
+
+    '<div class="card"><h2>' + (isMonth ? "先月の数字" : "今週の数字") + '</h2><div class="kpis">' + kpis + '</div></div>' +
 
     '<div class="card"><h2>セッションの推移</h2>' + sparkline(vals, labs) + '</div>' +
 
@@ -262,13 +286,15 @@ function render(d){
 
   el("btnReload").onclick = function(){ load(); };
   el("btnPush").onclick = enablePush;
+  el("tabWeek").onclick  = function(){ if(SPAN !== "week"){  SPAN = "week";  load(); } };
+  el("tabMonth").onclick = function(){ if(SPAN !== "month"){ SPAN = "month"; load(); } };
 }
 
 /* ---------- 読み込み ---------- */
 function load(){
   if(!KEY){ gate(); return; }
   el("app").innerHTML = '<div class="gate">読み込んでいます…</div>';
-  fetch(GAS + "?key=" + encodeURIComponent(KEY), { method:"GET" })
+  fetch(GAS + "?key=" + encodeURIComponent(KEY) + "&span=" + SPAN, { method:"GET" })
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(!d.ok){
@@ -276,6 +302,7 @@ function load(){
         el("app").innerHTML = '<div class="gate">エラー：' + esc(d.error) + '</div>';
         return;
       }
+      if(typeof d.hasMonthly === "boolean") HAS_MONTH = d.hasMonthly;
       render(d);
     })
     .catch(function(e){
