@@ -46,6 +46,7 @@ X_URL = "https://x.com/LMeta321"
 LP_URL = "https://l-mine.com/business/the-3-2-1-lab"
 APP_URL = "https://columns.l-mine.com/app/"           # 会員制の動画視聴Webアプリ「エルラボ＋」本体
 ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の案内LP（コラム内の誘導はこちら経由）
+QUIZ_URL = "https://columns.l-mine.com/kiso_quiz.html"      # 行動経済学クイズ（2級が入口。ページ上部から1級へ移動できる）
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
 ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
 
@@ -57,6 +58,16 @@ DEFAULT_OG_IMAGE = BASE_URL + "columns/assets/columns-top.jpg"  # ヒーロー�
 
 # おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
 RECOMMENDED = [112, 107, 103, 89, 73, 71, 65]
+
+# 記事末尾のクイズ案内（全コラム共通・エルラボ＋の枠の上）。
+# 登録不要ですぐ試せる無料の入口として置き、そのままエルラボ＋の案内へつなぐ。
+# 入口は2級。ページ上部の切り替えから1級・応用コースにも移動できるので、リンクは1本にしている。
+def quiz_footer():
+    return f'''    <aside class="optin optin-quiz">
+      <div class="optin-k">無料で腕試し｜行動経済学クイズ</div>
+      <p>読んだ知識は、使ってみると身につきます。2級・基礎コース99問と、1級・応用コース60問。登録不要、5問から挑戦できます。</p>
+      <a class="optin-btn" href="{QUIZ_URL}" target="_blank" rel="noopener">クイズに挑戦する →</a>
+    </aside>'''
 
 # 記事末尾のオプトイン枠。n>=ELABO_OPTIN_FROM でエルラボ＋主体、それ未満はメルマガ主体（n>=TEMPLATE_FROM でエルラボ＋の控えめ1行を追記）
 def optin_footer(n):
@@ -531,6 +542,7 @@ def render_article(c, cols):
       {body}
     </div>
 
+{quiz_footer()}
 {optin_footer(n)}
 
     <div class="filed"><span class="lab">Filed under</span>{tags}</div>
@@ -652,7 +664,8 @@ FIXED_PAGES = [
     "behavioral-economics-lp.html",   # 行動経済学への想い（LP）
     "elabo-plus-lp.html",             # エルラボ＋案内LP
     "book-intro-dark.html",           # KINDLE小説
-    "kiso_quiz.html",                 # 行動経済学クイズ
+    "kiso_quiz.html",                 # 行動経済学クイズ（2級・基礎コース）
+    "ouyou_quiz.html",                # 行動経済学クイズ（1級・応用コース）
 ]
 
 def build_sitemap(cols, pages):
