@@ -1296,6 +1296,9 @@ input:checked + .toggle-slider::before {
   color: var(--gold);
   border-bottom-color: var(--hairline-gold);
 }
+/* クイズから出るときの行き先はコラム（会員向けアプリへは誘導しない） */
+.footer-nav { margin-bottom: 16px; }
+.footer-nav a { font-size: 1rem; }
 .site-footer p {
   font-size: 0.75rem;
   color: var(--text-3);
@@ -1687,6 +1690,7 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(185,148,85,.10),tran
 </main>
 
 <footer class="site-footer">
+  <p class="footer-nav"><a href="https://columns.l-mine.com/columns/index.html">行動経済学のコラムを読む →</a></p>
   <a href="https://x.com/LMeta321" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a>
   <p>行動経済学の発信・講座コンテンツ制作</p>
   <p class="footer-version">L-MINE · エルラボ＋</p>
