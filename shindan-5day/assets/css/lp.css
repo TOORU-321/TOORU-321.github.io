@@ -472,6 +472,27 @@
 /* 図のまわりに少し余白を足す */
 .deck__visual + .deck__note { margin-top: 22px; }
 
+/* --- 挿絵の写真（2026-09-07 Codex・あかり指示）----------------------------
+ * 本文コンテナの幅に合わせて、3:2をそのまま出す。切り取らない。
+ * width/height をHTML側に書いてあるので、読み込み前から場所が確保される。
+ * 上に文字やボタンを重ねない。暗いオーバーレイも動きも足さない。 */
+.lp-photo { margin: 0; }
+.lp-photo__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  /* 読み込み前の空白が抜けて見えないように、暗い写真に近い色を敷く */
+  background: rgba(255, 255, 255, .04);
+}
+.lp-photo__caption {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--ink-soft);
+  text-align: left;
+}
+
 
 /* --- 参加直前の後押し（§34-D／§34-E）------------------------------------
  * 現在地 → 向かう先 → 5日間の役割 → 負担・不安の軽減 → 次の行動 の順で読ませる。 */

@@ -261,7 +261,14 @@
    * ★端末に記録が無いだけで「診断していない」と決めつけない。
    *   LINEから引き継ぐ道と、これから受ける道の両方を出す。 */
   function renderNoDiagnosis() {
-    var c = SC.copy.noDiagnosis;
+    var c = SC.copy && SC.copy.noDiagnosis;
+    /* 文言ファイルを読み込めていないときは、ここで組み立てない。
+     * 空の画面を出すより、読み込みの失敗として扱う（2026-09-07）。
+     * ローカルのプレビューでは copy.js の取得がまれに失敗する。 */
+    if (!c || !root) {
+      if (global.console) global.console.warn('[app] 文言を読み込めていません（SC.copy.noDiagnosis）');
+      return;
+    }
     SC.dom.clear(root);
     SC.dom.append(root, [
       h('div', { class: 'screen screen--no-diagnosis' }, [

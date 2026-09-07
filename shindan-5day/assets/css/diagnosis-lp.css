@@ -157,13 +157,15 @@
 .dlp-hero.is-entering .dlp-cta {
   animation: dlp-rise .9s cubic-bezier(.16, .8, .24, 1) both;
 }
-.dlp-hero.is-entering .dlp-hero__eyebrow { animation-delay: 60ms; }
-.dlp-hero.is-entering .dlp-hero__title-line:nth-child(1) { animation-delay: 180ms; }
-.dlp-hero.is-entering .dlp-hero__title-line:nth-child(2) { animation-delay: 300ms; }
-.dlp-hero.is-entering .dlp-hero__title-line:nth-child(3) { animation-delay: 420ms; }
-.dlp-hero.is-entering .dlp-body__line { animation-delay: 560ms; }
-.dlp-hero.is-entering .dlp-facts { animation-delay: 680ms; }
-.dlp-hero.is-entering .dlp-cta { animation-delay: 800ms; }
+/* 2026-09-07 とーる承認：読むまでの待ち時間を詰める。
+ * 以前は最後のCTAが 800ms 待ちだった（+0.9秒のアニメーション）。 */
+.dlp-hero.is-entering .dlp-hero__eyebrow { animation-delay: 40ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(1) { animation-delay: 100ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(2) { animation-delay: 160ms; }
+.dlp-hero.is-entering .dlp-hero__title-line:nth-child(3) { animation-delay: 220ms; }
+.dlp-hero.is-entering .dlp-body__line { animation-delay: 290ms; }
+.dlp-hero.is-entering .dlp-facts { animation-delay: 350ms; }
+.dlp-hero.is-entering .dlp-cta { animation-delay: 410ms; }
 
 @keyframes dlp-rise {
   from { opacity: 0; transform: translateY(14px); filter: blur(5px); }
@@ -569,4 +571,60 @@
   .dlp-section--empathy .dlp-heading { font-size: 20px; }
   .dlp-block__line { line-height: 2.2; }
   .dlp-fold__title { font-size: 16px; }
+}
+
+
+/* --- スクロールで現れる演出の見直し（2026-09-07 Codex指示／とーる承認）-----
+ *
+ * 共通の .sc-reveal は opacity:0 から始まり、画面に入って観測されるまで
+ * 文字が出てこない。さらに1要素ずつ90msずらしているので、行の多い節では
+ * 最後の行が半秒以上あとに現れる。
+ * 結果として「スクロールした直後、本文がほぼ見えない」状態になっていた。
+ * （自動撮影すると本文が1文字も写らないほど、初期状態で見えていなかった）
+ *
+ * ここでは
+ *   ・最初から見えている（opacity を 0 にしない）
+ *   ・観測されたら、ごく短く落ち着くだけ（0.28秒・ずらし無し）
+ * にする。読むために待つ時間はゼロになり、動きの気配だけが残る。
+ *
+ * ★.dlp-body で囲ってあるので、この診断前LPだけに効く。
+ *   参加表明LP（lp.html）と5DAY本体の .sc-reveal は今までどおり。
+ *   共通の app.css は触っていない。 */
+.dlp-body .sc-reveal { opacity: 1; }
+.dlp-body .sc-reveal.is-shown {
+  animation: dlp-settle .28s ease-out both;
+  animation-delay: 0ms;
+}
+@keyframes dlp-settle {
+  from { opacity: .55; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dlp-body .sc-reveal,
+  .dlp-body .sc-reveal.is-shown { opacity: 1; animation: none !important; }
+}
+
+
+/* --- 暗い地で本文がにじむのを抑える（2026-09-07 とーる決定）---------------
+ *
+ * 暗い地に細い線の文字を置くと、輪郭がにじんで読み疲れる（ハレーション）。
+ * コントラストは足りていた（本文 #c9c5bb × 地 #0e121a で約11:1）ので、
+ * 足りていなかったのは線の太さのほう。
+ *
+ * 太さを1段上げるだけにする。字間を広げる案も試したが、
+ * 改行の位置が変わってしまい、2026-09-03に直した「意味の切れ目で改行する」を
+ * 壊すため採らなかった。太さだけなら、改行は1文字も動かない。
+ *
+ * ★この診断前LPだけに効く。参加表明LPと5DAY本体は今までどおり。 */
+.dlp-body__line,
+.dlp-block__line,
+.dlp-lead,
+.dlp-checks__item,
+.dlp-list__item,
+.dlp-axis__text,
+.dlp-step__body,
+.dlp-faq__a,
+.dlp-variety__line,
+.dlp-variety__close {
+  font-weight: 500;
 }

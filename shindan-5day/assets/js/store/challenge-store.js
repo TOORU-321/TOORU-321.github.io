@@ -222,6 +222,28 @@
     return null;
   }
 
+  /* 保存の前後を見比べて、新しく起きたことだけをLINEへ知らせる（2026-09-07）。
+   *
+   * ・参加した              → joined
+   * ・DAYが新しく完了した   → day◯_done
+   *
+   * 同じことを二度送らないよう、notify.js 側と GAS 側の両方で止めている。
+   * notify.js が読み込まれていない画面（診断ページなど）では何もしない。 */
+  function notifyProgress_(beforeDays, beforeJoined, state) {
+    if (!SC.notify) return;
+
+    if (!beforeJoined && state.participation === 'joined') {
+      SC.notify.send('joined');
+    }
+
+    var after = state.completedDays || [];
+    for (var day = 1; day <= 5; day++) {
+      var was = beforeDays.indexOf(day) !== -1;
+      var now = after.indexOf(day) !== -1;
+      if (!was && now) SC.notify.send('day' + day + '_done');
+    }
+  }
+
   SC.store = {
     SCHEMA_VERSION: SCHEMA_VERSION,
 
@@ -310,6 +332,9 @@
     saveChallengeState: function (patch) {
       var d = SC.store.loadDiagnosis();
       var state = SC.store.getState();
+      var beforeDays = state.completedDays ? state.completedDays.slice() : [];
+      var beforeJoined = state.participation === 'joined';
+
       if (patch) {
         for (var k in patch) {
           if (Object.prototype.hasOwnProperty.call(patch, k)) state[k] = patch[k];
@@ -318,6 +343,16 @@
       state.updatedAt = nowIso();
       SC.storage.write(stateKey(d.anonymousDiagnosisId), state);
       stateCache = state;
+
+      /* 進み具合をLINEへ知らせる（2026-09-07）。
+       *
+       * DAY完了は logic/day1〜day5.js の5か所で記録されるので、
+       * 呼び出し側へ散らさず、保存の一点でまとめて拾う。
+       * こうすると、あとでDAYが増えても足し忘れが起きない。
+       *
+       * ★通知はおまけ。送れなくても画面は止めない。
+       * ★LINEと結合していない人（uidが無い人）には送らない。 */
+      notifyProgress_(beforeDays, beforeJoined, state);
       return state;
     },
 

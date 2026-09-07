@@ -137,6 +137,46 @@
   /* --- LP専用テキストVSL｜22カード（正本§29-B）--------------------------
    * 句点による機械的な分割は廃止した。カードの並びと文言は正本そのまま。
    * 診断連動はCard 2〜3だけ（{score}／{axis}）。 */
+  /* 参加表明LPの挿絵（2026-09-07 Codex・あかり指示）。
+   *
+   * 「5日後に残るもの」＝章 takeaway の説明文のあとへ置く。
+   * 雰囲気を補うだけの写真なので alt は空にして、読み上げでは飛ばす。
+   * ★実際の参加者・お客様の声・完成した一本線シートではない。
+   *   そう読まれないよう、下に「取り組みのイメージ（AI生成）」と必ず出す。
+   *
+   * 写真が出せなくても、内容と操作は成立する（読み込みに失敗したら消すだけ）。 */
+  var PHOTO = {
+    src: 'assets/images/challenge-planning-woman-dark-v1.jpg',
+    width: 1536,
+    height: 1024,
+    caption: '取り組みのイメージ（AI生成）'
+  };
+
+  function photoFigure() {
+    var img = h('img', {
+      class: 'lp-photo__img',
+      src: PHOTO.src,
+      alt: '',
+      /* 表示前から場所を取らせて、読み込み後にガタつかせない */
+      width: String(PHOTO.width),
+      height: String(PHOTO.height),
+      /* 下のほうの章なので、見えるまで読み込まない */
+      loading: 'lazy',
+      decoding: 'async'
+    });
+    var fig = h('figure', { class: 'lp-photo' }, [
+      img,
+      h('figcaption', { class: 'lp-photo__caption', text: PHOTO.caption })
+    ]);
+    img.addEventListener('error', function () {
+      if (fig.parentNode) fig.parentNode.removeChild(fig);
+    });
+    return fig;
+  }
+
+  /* 挿絵を置く場所。章のキーと、その章の何枚目か（0から数える） */
+  var PHOTO_AT = { chapter: 'takeaway', index: 0 };
+
   function buildCards(lp, diagnosis, lowestLabel) {
     var values = {
       score: String(diagnosis.totalScore) + '／' + SC.config.totalMax,
@@ -145,12 +185,15 @@
     var out = [];
     lp.vsl.chapters.forEach(function (chapter) {
       var meta = { key: chapter.key, title: chapter.title };
-      chapter.cards.forEach(function (card) {
+      chapter.cards.forEach(function (card, i) {
         var step = {
           chapter: meta,
           eyebrow: card.eyebrow || null,
           body: card.linked ? fill(card.body, values) : card.body
         };
+        if (chapter.key === PHOTO_AT.chapter && i === PHOTO_AT.index) {
+          step.visual = photoFigure;
+        }
         out.push(step);
       });
     });
