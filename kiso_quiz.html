@@ -11,82 +11,65 @@
     gtag('config', 'G-TLV00VTDZL');
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#faf7ef">
-  <title>行動経済学基礎コース 知識クイズ（Ivory版）— 100問で学び直すバイアスの基礎</title>
-  <meta name="description" content="日本営業科学協会「行動経済学基礎コース」の内容に即した100問の知識クイズ。45以上の認知バイアスを、例題と詳細な解説で学び直せます。">
+  <meta name="theme-color" content="#090c12">
+  <title>行動経済学 基礎クイズ｜エルラボ＋</title>
+  <meta name="description" content="日本営業科学協会「行動経済学基礎コース」の第2回〜第53回講座の内容から出題する99問の知識クイズ。第54回以降の追加講座は出題範囲に含まれません。">
   <meta property="og:title" content="行動経済学基礎コース 知識クイズ">
-  <meta property="og:description" content="45以上の認知バイアスを、100問の例題と解説で学び直す。">
+  <meta property="og:description" content="行動経済学基礎コースの第2回〜第53回講座の内容を、99問の例題と解説で学び直す。第54回以降の追加講座は対象外です。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://columns.l-mine.com/kiso_quiz.html">
   <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/app-icon-192.png">
+  <link rel="apple-touch-icon" href="assets/app-icon-512.png">
   <link rel="canonical" href="https://columns.l-mine.com/kiso_quiz.html">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23faf7ef'/%3E%3Crect x='4.5' y='4.5' width='23' height='23' rx='4' fill='none' stroke='%238c6f2c' stroke-width='0.6' opacity='0.45'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,Times New Roman,serif' font-size='20' font-weight='800' fill='%231a1612' letter-spacing='-0.5'%3EB%3C/text%3E%3Crect x='10' y='25' width='12' height='1.4' fill='%238c6f2c' opacity='0.9'/%3E%3Ccircle cx='23' cy='25.7' r='0.9' fill='%238c6f2c'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23faf7ef'/%3E%3Crect x='25' y='25' width='130' height='130' rx='22' fill='none' stroke='%238c6f2c' stroke-width='3' opacity='0.5'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='110' font-weight='800' fill='%231a1612' letter-spacing='-3'%3EB%3C/text%3E%3Crect x='56' y='140' width='68' height='8' fill='%238c6f2c' opacity='0.9'/%3E%3C/svg%3E">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Playfair+Display:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-/* ══════════════════════════════════════════════════════════════
-   DESIGN TOKENS — Dark Editorial
-   ══════════════════════════════════════════════════════════════ */
+/* Brand tokens aligned with app/index.html (エルラボ＋). */
 :root {
-  /* Surfaces — inverted to warm ivory */
-  --ink:            #faf7ef;   /* Page bg (warm ivory) */
-  --ink-surface:    #ffffff;   /* Cards (crisp white for lift) */
-  --ink-elev:       #f4f0e4;   /* Elevated (hover, modal) */
-  --ink-deep:       #f1ecdc;   /* Deepest edge */
-  --paper:          #1a1612;   /* Inverse accent (used sparingly) */
-
-  /* Hairlines — now dark-on-light */
-  --hairline:       rgba(26, 22, 18, 0.09);
-  --hairline-2:     rgba(26, 22, 18, 0.18);
-  --hairline-gold:  rgba(140, 111, 44, 0.35);
-
-  /* Text — warm near-black scale */
-  --text-1:         #1a1612;   /* Primary body / heading */
-  --text-2:         #555048;   /* Secondary / muted */
-  --text-3:         #857e6f;   /* Tertiary / captions */
-  --text-4:         #b8b0a0;   /* Disabled */
-  --text-ink:       #1a1612;   /* On-accent-button text (dark on gold) */
-
-  /* Accent — burnished gold (darkened for contrast on light bg) */
-  --gold:           #8c6f2c;   /* 5.3:1 on ivory (AA body-ok) */
-  --gold-hover:     #9c7e35;
-  --gold-bright:    #c9a96a;   /* Kept for button backgrounds only */
-  --gold-soft:      rgba(140, 111, 44, 0.09);
-  --gold-softer:    rgba(140, 111, 44, 0.04);
-
-  /* Level + State (slightly darkened for light bg legibility) */
-  --lv1:            #445d9c;   /* Dusty blue, darkened */
-  --lv2:            #8c6f2c;   /* Gold (same as accent) */
-  --lv3:            #8b4232;   /* Terracotta, darkened */
-  --success:        #4a7c52;   /* Moss green, darkened */
-  --success-soft:   rgba(74, 124, 82, 0.12);
-  --error:          #8b4232;
-  --error-soft:     rgba(139, 66, 50, 0.10);
-
-  /* Type (unchanged from V3) */
-  --font-display: 'Shippori Mincho B1', 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:    'Noto Sans JP', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, ui-monospace, monospace;
-
-  /* Radius (unchanged from V3) */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 20px;
-
-  /* Elevation — soft shadows that work on ivory */
-  --shadow-card:   0 1px 0 rgba(255,255,255,0.6) inset, 0 2px 10px rgba(60,45,20,0.07);
-  --shadow-hero:   0 1px 0 rgba(255,255,255,0.7) inset, 0 6px 24px rgba(60,45,20,0.10);
-
-  /* Motion (unchanged from V3) */
+  color-scheme: dark;
+  --ink: #090c12;
+  --ink-surface: #121720;
+  --ink-elev: #171d27;
+  --ink-deep: #0e121a;
+  --paper: #f7f4ec;
+  --hairline: rgba(225,197,139,.14);
+  --hairline-2: rgba(225,197,139,.28);
+  --hairline-gold: rgba(227,195,129,.48);
+  --text-1: #f7f4ec;
+  --text-2: #c9c5bb;
+  --text-3: #a8a49b;
+  --text-4: #929087;
+  --text-ink: #17140d;
+  --gold: #e3c381;
+  --gold-hover: #eed6a3;
+  --gold-bright: #e3c381;
+  --gold-soft: rgba(185,148,85,.13);
+  --gold-softer: rgba(185,148,85,.06);
+  --lv1: #a6bce5;
+  --lv2: #e3c381;
+  --lv3: #e6ad93;
+  --success: #9ac8ab;
+  --success-soft: rgba(112,170,133,.13);
+  --error: #edaa9c;
+  --error-soft: rgba(214,126,109,.13);
+  --font-display: 'Shippori Mincho B1', 'Yu Mincho', serif;
+  --font-body: 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+  --font-number: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'SF Mono', Menlo, ui-monospace, monospace;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 22px;
+  --radius-xl: 26px;
+  --shadow-card: 0 12px 34px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.025);
+  --shadow-hero: 0 24px 70px rgba(0,0,0,.34);
   --duration-fast: 120ms;
   --duration-base: 200ms;
   --duration-slow: 320ms;
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-standard: cubic-bezier(.2,0,0,1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1400,6 +1383,65 @@ button, a, input, [tabindex] {
     scroll-behavior: auto !important;
   }
 }
+
+/* エルラボ＋ learning surface: shared palette, typography, and card treatment. */
+body{background:radial-gradient(900px 520px at 88% -8%,rgba(185,148,85,.10),transparent 62%),radial-gradient(760px 520px at -10% 30%,rgba(74,91,124,.12),transparent 64%),linear-gradient(180deg,#0e121a,#090c12);text-rendering:optimizeLegibility}
+.site-header{background:rgba(14,18,26,.94);border-bottom-color:var(--hairline)}
+.header-inner{max-width:1096px;padding:18px 28px}
+.brand{gap:12px}.brand-mark{width:40px;height:40px;border-radius:12px;font-family:var(--font-number);font-size:27px;background:linear-gradient(145deg,rgba(227,195,129,.14),rgba(227,195,129,.025))}
+.brand-title{font-size:21px;letter-spacing:.08em;overflow:visible}.brand-plus{font-size:.6em;vertical-align:.5em;color:var(--gold)}
+.brand-sub{display:block;font-size:12px;letter-spacing:.15em;margin-top:5px}
+.header-meta{font-size:14px;font-weight:500;letter-spacing:.04em;border:0;color:var(--text-2)}.header-meta span{color:var(--text-3)}
+.container{max-width:1096px;padding:36px 28px 56px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:32px;text-align:left;background:none;border:0;border-radius:0;box-shadow:none;padding:0 0 30px;margin-bottom:0;overflow:visible}
+.hero::before{display:none}.hero-copy{min-width:0}.hero-eyebrow{font-family:var(--font-number);font-size:14px;letter-spacing:.21em;margin-bottom:12px}
+.hero-title{font-size:clamp(26px,3.2vw,36px);letter-spacing:.06em;line-height:1.5;margin-bottom:12px}.hero-title span{display:inline-block;font-size:.68em;margin-left:18px;color:var(--gold)}
+.hero-lede{font-size:14px;font-weight:400;margin:0;line-height:1.9;color:var(--text-3)}
+.course-scope{display:inline-block;margin-top:14px;padding:5px 12px;border:1px solid var(--hairline-2);border-radius:8px;background:var(--gold-softer);font-size:14px;line-height:1.7;color:var(--gold)}
+.quiz-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.quiz-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid var(--hairline-2);border-radius:999px;background:var(--ink-surface);color:var(--text-2);font:inherit;font-size:14px;cursor:pointer;transition:background var(--duration-base),border-color var(--duration-base)}
+.quiz-action:hover{background:var(--ink-elev);border-color:var(--hairline-gold);color:var(--gold)}
+.quiz-action svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hero-stats{flex-shrink:0;gap:24px;margin:0;padding:24px 0 24px 32px;border-left:1px solid var(--hairline)}
+.hero-stat{text-align:center}.hero-stat-num{font-family:var(--font-number);font-size:36px;font-weight:500;color:var(--gold);line-height:1.1}.hero-stat-num span{font-family:var(--font-body);font-size:12px;margin-left:4px;color:var(--text-2)}
+.hero-stat-label{font-size:12px;letter-spacing:.04em;margin-top:8px;color:var(--text-3)}.hero-rule{display:none}
+.setup-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.section-card,.q-card,.result-hero,.review-card,.weak-card,.nickname-card,.ranking-card{background:linear-gradient(145deg,rgba(23,29,39,.98),rgba(18,23,32,.98));border-color:var(--hairline);border-radius:22px}
+.setup-grid .section-card{margin:0;padding:26px;min-width:0}.section-label{font-size:16px;letter-spacing:.04em;text-transform:none;color:var(--text-1);line-height:1.6;margin-bottom:18px;font-weight:500}.section-label::after{display:none}
+.step-number{font-family:var(--font-number);font-size:20px;color:var(--gold);margin-right:4px}.section-hint{font-size:13px;color:var(--text-3);margin:-8px 0 20px}
+.level-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.level-card-all{grid-column:auto}
+.level-card{background:rgba(9,12,18,.32);border-color:var(--hairline);padding:16px;min-height:118px;border-radius:14px}
+.level-card:hover{background:var(--ink-elev);border-color:var(--hairline-gold)}.level-card.selected{background:linear-gradient(135deg,rgba(185,148,85,.17),rgba(185,148,85,.055));border-color:#b99455;box-shadow:inset 0 1px 0 rgba(227,195,129,.08)}
+.level-card-head{gap:8px;align-items:end;padding-right:0;margin-bottom:8px}.level-label{font-size:16px;line-height:1.45}.level-label small{display:block;font-family:var(--font-body);font-weight:500;font-size:12px;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px}
+.level-card.selected .level-label small{color:var(--gold)}.level-count{border:0;padding:0;font-size:12px;white-space:nowrap;font-weight:400}.level-desc{font-size:13px;font-weight:400;color:var(--text-2);line-height:1.6}.check-icon{top:13px;right:13px}
+.session-section{display:flex;flex-direction:column}.q-count-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.q-count-btn{min-width:0;padding:16px 4px 12px;gap:7px;border-color:var(--hairline);background:rgba(9,12,18,.32)}
+.qc-num{font-family:var(--font-number);font-size:30px;font-weight:600}.qc-num.qc-all{font-family:var(--font-display);font-size:20px;line-height:30px}.qc-label{font-size:12px;letter-spacing:0}
+.timer-toggle-row{padding:23px 0;margin-top:22px;border-top:1px solid var(--hairline);gap:14px}.toggle-switch{order:2;margin-left:auto;width:44px;height:26px}.toggle-slider::before{width:18px;height:18px}.toggle-sub{font-size:13px;margin-top:3px}.toggle-title{font-size:14px}
+.toggle-switch:focus-within .toggle-slider{outline:2px solid var(--gold);outline-offset:4px}
+.start-button,.next-btn,.btn-primary,.nickname-submit{background:linear-gradient(135deg,#e3c381,#b99455);color:#17140d;border:1px solid #caaa70;border-radius:999px;box-shadow:0 8px 24px rgba(185,148,85,.12);font-weight:700;min-height:48px}
+.start-button{margin-top:auto;padding:15px 22px;justify-content:space-between;letter-spacing:.05em}
+.start-button:hover,.next-btn:hover,.btn-primary:hover,.nickname-submit:hover:not(:disabled){background:linear-gradient(135deg,#eed6a3,#caaa70);color:#17140d}
+.disclaimer{background:transparent;border:0;border-radius:0;padding:0 4px;margin:22px 0 30px;font-size:12px;line-height:1.9;color:var(--text-3)}.disclaimer-label{font-size:12px;color:var(--text-2);letter-spacing:.03em;margin-bottom:5px}.disclaimer strong{font-weight:500;color:var(--text-2)}
+.home-ranking{margin-top:0}.ranking-card{padding:26px}.ranking-filter{gap:8px}.rf-btn{border-radius:999px;font-size:14px;min-height:40px;padding:7px 16px}.ranking-note{font-size:13px}.ranking-table th{font-size:12px;letter-spacing:.03em}.ranking-table td{font-size:14px;overflow-wrap:anywhere}.ranking-table th:nth-child(2){width:48%}.ranking-loading{font-size:14px;color:var(--text-3)}
+#quiz-screen,#result-screen{max-width:800px;margin:0 auto}.quiz-topbar{margin:6px 0 22px;gap:14px}.q-counter{font-family:var(--font-body);font-size:14px}.progress-track{height:4px}.score-pill{border-radius:999px;padding:7px 13px}.score-pill-label,.streak-pill-label{font-size:12px;letter-spacing:.04em}.score-pill-num{font-family:var(--font-body);font-size:16px}
+.q-card{padding:32px}.q-card-top{margin-bottom:22px}.diff-chip{font-size:12px;letter-spacing:.06em;border-radius:999px;padding:5px 13px}.q-text{font-family:var(--font-body);font-size:20px;font-weight:500;line-height:1.9}.choices{gap:12px;margin-top:28px}
+.choice{font-size:16px;line-height:1.8;padding:18px;background:rgba(9,12,18,.26);border-color:var(--hairline)}.choice-key{font-family:var(--font-number);font-size:18px;width:32px;height:32px;border-radius:9px}.choice.wrong .choice-key{color:var(--text-ink)}
+.explanation,.review-exp{font-size:16px;line-height:1.9}.exp-label{font-size:14px;letter-spacing:.03em}.yt-link,.review-yt{font-size:14px;min-height:44px;border-radius:999px;padding:8px 16px}.timer-display{font-family:var(--font-body);font-size:14px}
+.next-btn{font-size:16px;min-width:210px}.result-hero{padding:36px}.rank-eyebrow{font-size:14px;letter-spacing:.12em}.rank-display,.score-display,.r-stat-num{font-family:var(--font-number)}.result-msg{font-size:22px}.result-sub{font-size:16px}.r-stat-label{font-size:13px;letter-spacing:.03em}.result-actions{gap:10px}.btn-secondary,.btn-social{border-radius:999px;min-height:48px}.review-q{font-family:var(--font-body);font-size:16px}.review-ans-wrong,.review-ans-correct{font-size:14px}.review-ans-label{font-size:12px;letter-spacing:.02em}.weak-topic{font-size:16px}.weak-count{font-size:14px}
+.nickname-input{min-width:0;font-size:16px}.nickname-note{font-size:13px}.site-footer{border-top:1px solid var(--hairline);padding:28px 20px 32px}.site-footer a{font-size:14px}.site-footer p{font-size:12px}.footer-version{letter-spacing:.1em!important;font-size:12px!important}
+@media(max-width:900px){.hero{gap:20px}.hero-stats{padding-left:20px;gap:16px}.hero-stat-num{font-size:30px}.setup-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}.setup-grid .section-card{padding:22px}.level-card{padding:14px}.level-count{display:none}}
+@media(max-width:720px){.header-inner{padding:14px 20px}.brand-title{font-size:19px}.header-meta{display:block;font-size:12px}.header-meta span{display:none}.container{padding:26px 20px 36px}.hero{display:block;padding:0 0 24px}.hero-title{font-size:28px;margin-bottom:10px}.hero-title span{font-size:20px;margin-left:12px}.hero-eyebrow{font-size:12px;margin-bottom:8px}.hero-lede{font-size:14px}.hero-stats{justify-content:flex-start;border:0;padding:0;margin-top:20px;gap:28px}.hero-stat{display:flex;align-items:baseline;gap:8px}.hero-stat-num{font-size:26px}.hero-stat-label{margin:0;font-size:12px}.hero-stat-num span{display:none}.setup-grid{grid-template-columns:1fr;gap:16px}.setup-grid .section-card{padding:22px}.level-count{display:block}.level-card{min-height:108px}.session-section .timer-toggle-row{margin-top:18px;padding:18px 0}.start-button{margin-top:2px}.level-desc{font-size:13px}.q-card{padding:24px}.q-text{font-size:18px}.choice{font-size:16px;padding:16px 14px;gap:12px}.ranking-card,.review-card,.weak-card,.nickname-card{padding:22px}.section-label{font-size:16px}.nickname-row{flex-wrap:wrap}.nickname-input{flex-basis:180px}.nickname-submit{flex-grow:1}.result-actions{flex-direction:row}.btn-primary,.btn-secondary{flex-basis:calc(50% - 10px)}.btn-social{flex-basis:100%}.review-ans-label{min-width:64px}.weak-bar{max-width:100px}}
+@media(max-width:400px){.container{padding-inline:14px}.header-inner{padding-inline:16px}.brand-mark{width:34px;height:34px}.hero-title{font-size:25px}.hero-title span{font-size:18px;margin-left:10px}.hero-stats{gap:18px}.hero-stat{gap:5px}.hero-stat-label{font-size:12px}.setup-grid .section-card{padding:18px}.level-card{padding:12px}.level-label{font-size:15px}.level-count{display:none}.qc-label{font-size:12px}.q-card,.ranking-card,.review-card{padding:18px}.q-text{font-size:18px}.nickname-card{padding:18px}.ranking-table th,.ranking-table td{padding-inline:5px}.next-btn{width:100%}}
+
+
+/* Course navigation opens independent question sets. */
+.course-switch{display:flex;gap:6px;max-width:460px;padding:5px;margin:0 0 28px;background:rgba(9,12,18,.6);border:1px solid var(--hairline);border-radius:16px}
+.course-switch a{flex:1;padding:11px 12px;border-radius:11px;text-align:center;text-decoration:none;font-size:15px;color:var(--text-3);transition:background .2s,color .2s}
+.course-switch a:hover{color:var(--text-1);background:var(--ink-elev)}
+.course-switch a[aria-current="page"]{color:var(--gold);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--hairline-gold);font-weight:700}
+.course-switch small{font-size:13px;font-weight:400;margin-left:8px}
+.question-source{margin-left:auto;font-size:13px;color:var(--text-3)}
+@media(max-width:400px){.course-switch a{font-size:14px;padding-inline:8px}.course-switch small{margin-left:5px;font-size:12px}}
   </style>
 </head>
 <body>
@@ -1408,38 +1450,44 @@ button, a, input, [tabindex] {
 <header class="site-header">
   <div class="header-inner">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true">B</div>
+      <div class="brand-mark" aria-hidden="true">L</div>
       <div class="brand-text">
-        <div class="brand-title">行動経済学基礎コース 知識クイズ</div>
-        <div class="brand-sub">100問で学び直すバイアスの基礎</div>
+        <div class="brand-title">エルラボ<span class="brand-plus">＋</span></div>
+        <div class="brand-sub">L-MINE · LEARNING</div>
       </div>
     </div>
-    <div class="header-meta">Vol.III · 2026</div>
+    <div class="header-meta">2級 <span>／ 基礎コース</span></div>
   </div>
 </header>
 
 <main class="container">
+  <nav class="course-switch" aria-label="受講コースを切り替える">
+    <a href="kiso_quiz.html" aria-current="page">2級<small>基礎コース</small></a>
+    <a href="ouyou_quiz.html">1級<small>応用コース</small></a>
+  </nav>
+
 
   <!-- ═══════════════════ START SCREEN ═══════════════════ -->
   <section id="start-screen" aria-labelledby="hero-title">
     <div class="hero">
-      <div class="hero-eyebrow">Behavioral Economics — Foundation</div>
-      <h1 id="hero-title" class="hero-title">バイアスを知り、<br>判断を磨く。</h1>
-      <p class="hero-lede">日本営業科学協会「行動経済学基礎コース」の内容に即して、<br>45以上の認知バイアスを100問の例題と解説で学び直す。</p>
+      <div class="hero-copy"><div class="hero-eyebrow">BEHAVIORAL ECONOMICS</div>
+      <h1 id="hero-title" class="hero-title">行動経済学<span>基礎クイズ</span></h1>
+      <p class="hero-lede">99問の例題と解説で、バイアスの理解を深める。<br>難易度と問題数を選んで、さっそく始めましょう。</p>
+      <p class="course-scope">出題範囲：第2回〜第53回講座</p></div>
       <div class="hero-stats">
         <div class="hero-stat">
-          <div class="hero-stat-num">100</div>
-          <div class="hero-stat-label">Questions</div>
+          <div class="hero-stat-num">99<span>問</span></div>
+          <div class="hero-stat-label">収録問題</div>
         </div>
         <div class="hero-rule" aria-hidden="true"></div>
         <div class="hero-stat">
-          <div class="hero-stat-num">03</div>
-          <div class="hero-stat-label">Levels</div>
+          <div class="hero-stat-num">3<span>段階</span></div>
+          <div class="hero-stat-label">難易度</div>
         </div>
         <div class="hero-rule" aria-hidden="true"></div>
         <div class="hero-stat">
-          <div class="hero-stat-num">04</div>
-          <div class="hero-stat-label">Choices</div>
+          <div class="hero-stat-num">4<span>択</span></div>
+          <div class="hero-stat-label">選択肢</div>
         </div>
       </div>
     </div>
@@ -1449,13 +1497,15 @@ button, a, input, [tabindex] {
       <div class="chal-text">挑戦状が届いています。同じ問題セットで対決できます。</div>
     </div>
 
-    <section class="section-card">
-      <div class="section-label">01 — Level</div>
+    <div class="setup-grid">
+    <section class="section-card level-section" aria-labelledby="level-heading">
+      <h2 class="section-label" id="level-heading"><span class="step-number">01</span> 難易度を選ぶ</h2>
+      <p class="section-hint">レベルは複数選べます。</p>
       <div class="level-grid">
         <button type="button" class="level-card" id="lv1-card" onclick="toggleLevel(1)" aria-pressed="false">
           <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div class="level-card-head">
-            <span class="level-label">Level 1</span>
+            <span class="level-label"><small>LEVEL 1</small>基礎知識</span>
             <span class="level-count">35問</span>
           </div>
           <p class="level-desc">基本用語・定義の理解</p>
@@ -1463,49 +1513,46 @@ button, a, input, [tabindex] {
         <button type="button" class="level-card" id="lv2-card" onclick="toggleLevel(2)" aria-pressed="false">
           <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div class="level-card-head">
-            <span class="level-label">Level 2</span>
+            <span class="level-label"><small>LEVEL 2</small>応用力</span>
             <span class="level-count">40問</span>
           </div>
           <p class="level-desc">場面への当てはめ・応用</p>
         </button>
-        <button type="button" class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')" aria-pressed="true">
-          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <div class="level-card-head">
-            <span class="level-label">All Levels</span>
-            <span class="level-count">100問</span>
-          </div>
-          <p class="level-desc">全難易度からランダム出題</p>
-        </button>
         <button type="button" class="level-card" id="lv3-card" onclick="toggleLevel(3)" aria-pressed="false">
           <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
           <div class="level-card-head">
-            <span class="level-label">Level 3</span>
-            <span class="level-count">25問</span>
+            <span class="level-label"><small>LEVEL 3</small>理解を深める</span>
+            <span class="level-count">24問</span>
           </div>
           <p class="level-desc">深い理解・複合問題</p>
         </button>
+        <button type="button" class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')" aria-pressed="true">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label"><small>ALL LEVELS</small>全レベル</span>
+            <span class="level-count">99問</span>
+          </div>
+          <p class="level-desc">全難易度からランダム出題</p>
+        </button>
       </div>
     </section>
 
-    <section class="section-card">
-      <div class="section-label">02 — Question Count</div>
+    <section class="section-card session-section" aria-labelledby="count-heading">
+      <h2 class="section-label" id="count-heading"><span class="step-number">02</span> 問題数を選ぶ</h2>
       <div class="q-count-row">
-        <button type="button" class="q-count-btn" onclick="selectCount(5,this)">
-          <span class="qc-num">5</span><span class="qc-label">Short</span>
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(5,this)">
+          <span class="qc-num">5</span><span class="qc-label">問</span>
         </button>
-        <button type="button" class="q-count-btn selected" onclick="selectCount(10,this)">
-          <span class="qc-num">10</span><span class="qc-label">Standard</span>
+        <button type="button" class="q-count-btn selected" aria-pressed="true" onclick="selectCount(10,this)">
+          <span class="qc-num">10</span><span class="qc-label">問</span>
         </button>
-        <button type="button" class="q-count-btn" onclick="selectCount(20,this)">
-          <span class="qc-num">20</span><span class="qc-label">Deep Dive</span>
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(20,this)">
+          <span class="qc-num">20</span><span class="qc-label">問</span>
         </button>
-        <button type="button" class="q-count-btn" onclick="selectCount(999,this)">
-          <span class="qc-num">All</span><span class="qc-label">Full Set</span>
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(999,this)">
+          <span class="qc-num qc-all">全問</span><span class="qc-label">選択レベル</span>
         </button>
       </div>
-    </section>
-
-    <section class="section-card">
       <div class="timer-toggle-row">
         <label class="toggle-switch">
           <input type="checkbox" id="timer-toggle" checked>
@@ -1516,27 +1563,40 @@ button, a, input, [tabindex] {
           <div class="toggle-sub">1問あたり30秒で回答</div>
         </div>
       </div>
-    </section>
-
-    <div class="disclaimer" role="note">
-      <div class="disclaimer-label">Note</div>
-      <p>本クイズは日本営業科学協会の承諾を得て作成・一般公開しております。<strong>行動経済学基礎コースの学習補助を目的とした練習問題です。</strong>協会主宰の検定・資格試験とは関係ありません。検定や問題に関するお問い合わせにはお答えいたしかねます。</p>
-    </div>
 
     <button type="button" class="start-button" onclick="startQuiz()">
       <span>演習を始める</span>
       <svg class="start-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </button>
 
-    <section class="ranking-card" style="margin-top:32px;">
-      <div class="section-label">03 — Ranking</div>
+    </section>
+    </div>
+
+    <div class="disclaimer" role="note">
+      <div class="disclaimer-label">ご利用にあたって</div>
+      <p><strong>出題範囲は、行動経済学基礎コースの第2回〜第53回講座です。</strong>第54回以降に追加された講座の内容は含まれません。</p>
+      <p>本クイズは日本営業科学協会の承諾を得て作成・一般公開しております。<strong>行動経済学基礎コースの学習補助を目的とした練習問題です。</strong>協会主宰の検定・資格試験とは関係ありません。検定や問題に関するお問い合わせにはお答えいたしかねます。</p>
+    </div>
+
+    <section class="ranking-card home-ranking">
+      <h2 class="section-label"><span class="step-number">03</span> みんなの記録</h2>
       <div class="ranking-filter" id="top-ranking-filter"></div>
-      <div id="top-ranking-body"><p class="ranking-loading">Loading…</p></div>
+      <div id="top-ranking-body"><p class="ranking-loading">記録を読み込んでいます…</p></div>
     </section>
   </section>
 
   <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
   <section id="quiz-screen" aria-labelledby="q-text">
+    <nav class="quiz-actions" aria-label="演習の操作">
+      <button type="button" class="quiz-action" onclick="goStart()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg>
+        <span>ホームに戻る</span>
+      </button>
+      <button type="button" class="quiz-action" onclick="retry()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg>
+        <span>やり直す</span>
+      </button>
+    </nav>
     <div id="timer-bar-wrap" class="timer-bar-wrap" style="display:none;" aria-hidden="true">
       <div class="timer-bar" id="timer-bar" style="width:100%"></div>
     </div>
@@ -1600,17 +1660,17 @@ button, a, input, [tabindex] {
     </div>
 
     <div id="weak-section" class="weak-card" style="display:none;">
-      <div class="section-label">Analysis — 苦手分野</div>
+      <div class="section-label">苦手分野</div>
       <div id="weak-list"></div>
     </div>
 
     <div id="wrong-section" class="review-card" style="display:none;">
-      <div class="section-label">Review — 間違えた問題</div>
+      <div class="section-label">間違えた問題を振り返る</div>
       <div id="wrong-list"></div>
     </div>
 
     <div id="nickname-card" class="nickname-card" style="display:none;">
-      <div class="section-label">Record — ランキングに記録（任意）</div>
+      <div class="section-label">ランキングに記録する（任意）</div>
       <div class="nickname-row">
         <input class="nickname-input" id="nickname-input" type="text" placeholder="例：とーる" maxlength="20" aria-label="ニックネーム">
         <button type="button" class="nickname-submit" id="nickname-submit" onclick="submitRanking()">記録する</button>
@@ -1619,9 +1679,9 @@ button, a, input, [tabindex] {
     </div>
 
     <div id="ranking-card" class="ranking-card" style="display:none;">
-      <div class="section-label">Ranking</div>
+      <div class="section-label">みんなの記録</div>
       <div class="ranking-filter" id="ranking-filter"></div>
-      <div id="ranking-body"><p class="ranking-loading">Loading…</p></div>
+      <div id="ranking-body"><p class="ranking-loading">記録を読み込んでいます…</p></div>
     </div>
   </section>
 </main>
@@ -1629,7 +1689,7 @@ button, a, input, [tabindex] {
 <footer class="site-footer">
   <a href="https://x.com/LMeta321" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a>
   <p>行動経済学の発信・講座コンテンツ制作</p>
-  <p class="footer-version">バージョン3.0</p>
+  <p class="footer-version">L-MINE · エルラボ＋</p>
 </footer>
 
 <script>
@@ -1830,11 +1890,13 @@ function toggleLevel(lv){
     else{selLv.push(lv);card.classList.add('selected');}
     if(!selLv.length){selLv=['all'];document.getElementById('lv-all-card').classList.add('selected');}
   }
+  document.querySelectorAll('.level-card').forEach(b=>b.setAttribute('aria-pressed',String(b.classList.contains('selected'))));
 }
 function selectCount(n,btn){
   selCnt=n;
   document.querySelectorAll('.q-count-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
+  document.querySelectorAll('.q-count-btn').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
 }
 // ─── START ────────────────────────────────────────────────────
 function startQuiz(){
@@ -2037,16 +2099,16 @@ function showResult(){
       const ytUrl=TOPIC_LINKS[w.topic];
       const ytBtn=ytUrl?`<a class="review-yt" href="${ytUrl}" target="_blank" rel="noopener">関連講座：${escHtml(w.topic)}</a>`:'';
       return `<div class="review-item">
-        <div class="review-q">Q. ${escHtml(w.q)}</div>
+        <div class="review-q">${escHtml(w.q)}</div>
         <div class="review-ans-wrong"><span class="review-ans-label">Your answer</span>${escHtml(w.your)}</div>
         <div class="review-ans-correct"><span class="review-ans-label">Correct</span>${escHtml(w.correct)}</div>
         <div class="review-exp">${escHtml(w.exp)}${ytBtn}</div>
       </div>`;
     }).join('');
   } else wrongSec.style.display='none';
-  document.getElementById('nickname-card').style.display='block';
-  document.getElementById('nickname-input').value='';
-  document.getElementById('nickname-submit').disabled=false;
+  document.getElementById('nickname-card').style.display=db?'block':'none';
+  resetRankingUi();
+  rankingFilter=currentLevelLabel();
   document.getElementById('ranking-card').style.display='block';
   loadRanking();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -2074,8 +2136,19 @@ function shareChallenge(){
   }
 }
 // ─── NAV ──────────────────────────────────────────────────────
-function retry(){idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;show('quiz');render();}
-function goStart(){stopTimer();show('start');loadTopRanking();window.scrollTo({top:0,behavior:'smooth'});}
+function retry(){
+  stopTimer();
+  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
+  document.getElementById('streak-popup').classList.remove('show');
+  show('quiz');render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goStart(){
+  stopTimer();
+  document.getElementById('streak-popup').classList.remove('show');
+  show('start');loadTopRanking();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
 function formatTime(sec){
   const m=Math.floor(sec/60), s=sec%60;
@@ -2094,23 +2167,41 @@ const firebaseConfig = {
   messagingSenderId: "174262139361",
   appId: "1:174262139361:web:1fa68f41aa6283d43e3aa0"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-let currentEntry=null, rankingFilter=null;
+const RANKING_COLLECTION = 'rankings';
+let db=null;
+try{
+  if(typeof firebase!=='undefined' && firebase.initializeApp){
+    firebase.initializeApp(firebaseConfig);
+    db=firebase.firestore();
+  }
+}catch(e){ db=null; }
+if(!db) console.warn('ランキングに接続できません。演習・採点・復習はそのまま利用できます。');
+function rankingCol(){ return db.collection(RANKING_COLLECTION); }
+const RANKING_OFFLINE_MSG='ただいまランキングに接続できません。演習・採点・復習はそのままご利用いただけます。';
+let currentEntry=null, rankingFilter=null, submitting=false;
 // ランキング方針：各レベル内の「正解数」順（同値は所要時間の短い順）。
 // 正答率で並べると "少ししか挑戦しない人" が上位になり、多く解く挙動が抑制されるため廃止。
 let topRankingAll=[], topRankingFilter=null;
+// 保存するレベル名。選択した順序に左右されないよう昇順へ正規化する。
+function currentLevelLabel(){
+  return selLv.includes('all')?'全レベルMIX'
+    :[...selLv].map(Number).sort((a,b)=>a-b).map(l=>'Level '+l).join('+');
+}
+// 表示前に数値へ寄せる（想定外の値が保存されていても表示が壊れないように）
+function safeNum(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
 async function loadTopRanking(){
   const body=document.getElementById('top-ranking-body');
   const filterDiv=document.getElementById('top-ranking-filter');
   if(!body)return;
-  body.innerHTML='<p class="ranking-loading">Loading…</p>';
+  if(!db){ if(filterDiv) filterDiv.innerHTML=''; body.innerHTML='<p class="ranking-loading">'+RANKING_OFFLINE_MSG+'</p>'; return; }
+  body.innerHTML='<p class="ranking-loading">記録を読み込んでいます…</p>';
   try{
     // 正解数の降順で広めに取得。レベル分布に偏りがあっても各バケットが代表を持てる深さ。
-    const snap=await db.collection('rankings').orderBy('score','desc').limit(300).get();
+    const snap=await rankingCol().orderBy('score','desc').limit(300).get();
     topRankingAll=[];
     snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
     if(!topRankingAll.length){
+      if(filterDiv) filterDiv.innerHTML='';
       body.innerHTML='<p class="ranking-loading">記録がまだありません。最初の挑戦者になりませんか。</p>';
       return;
     }
@@ -2132,7 +2223,9 @@ async function loadTopRanking(){
     });
     renderTopRanking();
   }catch(e){
-    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。時間をおいて再度お試しください。</p>';
+    console.warn('ランキングの読み込みに失敗しました。');
+    if(filterDiv) filterDiv.innerHTML='';
+    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。 <button type="button" class="rf-btn" onclick="loadTopRanking()">再読み込み</button></p>';
   }
 }
 function renderTopRanking(){
@@ -2150,8 +2243,8 @@ function renderTopRanking(){
   const medals=['🥇','🥈','🥉'];
   const rows=ranked.map((r,i)=>{
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
-    const tDisp=r.time!=null?formatTime(r.time):'—';
-    return `<tr><td>${rankDisp}</td><td>${escHtml(r.nickname)}</td><td>${r.score}<span class="score-denom">/${r.total}</span></td><td>${tDisp}</td></tr>`;
+    const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
+    return `<tr><td>${rankDisp}</td><td>${escHtml(String(r.nickname==null?'':r.nickname))}</td><td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td><td>${tDisp}</td></tr>`;
   }).join('');
   body.innerHTML=`<p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
   <table class="ranking-table">
@@ -2161,16 +2254,31 @@ function renderTopRanking(){
 }
 // ページ読み込み時に実行
 window.addEventListener('load', loadTopRanking);
-async function submitRanking(){
-  const nick=document.getElementById('nickname-input').value.trim();
-  if(!nick){alert('ニックネームを入力してください。');return;}
+// リトライ／別の問題セットのたびに、前回の登録状態を持ち越さない
+function resetRankingUi(){
+  currentEntry=null; submitting=false;
+  const card=document.getElementById('nickname-card');
   const btn=document.getElementById('nickname-submit');
+  const input=document.getElementById('nickname-input');
+  if(card) card.classList.remove('registered');
+  if(btn){ btn.disabled=false; btn.textContent='記録する'; }
+  if(input) input.value='';
+}
+async function submitRanking(){
+  const btn=document.getElementById('nickname-submit');
+  if(submitting||currentEntry) return;            // 二重送信の防止
+  const nick=document.getElementById('nickname-input').value.trim().slice(0,20);
+  if(!nick){alert('ニックネームを入力してください。');return;}
+  if(!db){alert('ただいまランキングに接続できません。時間をおいて再度お試しください。');return;}
+  const total=qs.length;
+  if(!total) return;
+  submitting=true;
   btn.disabled=true;btn.textContent='記録中…';
-  const total=qs.length,rate=Math.round(sc/total*100);
-  const lvLabel=selLv.includes('all')?'全レベルMIX':selLv.map(l=>'Level '+l).join('+');
+  const rate=Math.round(sc/total*100);
+  const lvLabel=currentLevelLabel();
   try{
     const timeVal=timerEnabled?totalTimeSec:null;
-    const ref=await db.collection('rankings').add({
+    const ref=await rankingCol().add({
       nickname:nick,score:sc,total:total,rate:rate,level:lvLabel,
       questions:total,time:timeVal,timestamp:firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -2180,21 +2288,26 @@ async function submitRanking(){
     rankingFilter=lvLabel; // プレイしたレベルのボードを自動選択
     loadRanking();
   }catch(e){
-    btn.disabled=false;btn.textContent='登録';
+    console.warn('記録の保存に失敗しました。');
+    btn.disabled=false;btn.textContent='記録する';   // 失敗時はそのまま再試行できる
     alert('記録に失敗しました。もう一度お試しください。');
+  }finally{
+    submitting=false;
   }
 }
 async function loadRanking(){
   const body=document.getElementById('ranking-body');
-  body.innerHTML='<p class="ranking-loading">Loading…</p>';
+  const filterDiv=document.getElementById('ranking-filter');
+  if(!body)return;
+  if(!db){ if(filterDiv) filterDiv.innerHTML=''; body.innerHTML='<p class="ranking-loading">'+RANKING_OFFLINE_MSG+'</p>'; return; }
+  body.innerHTML='<p class="ranking-loading">記録を読み込んでいます…</p>';
   try{
-    const snap=await db.collection('rankings').orderBy('score','desc').limit(300).get();
+    const snap=await rankingCol().orderBy('score','desc').limit(300).get();
     const all=[];
     snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
     const levels=[...new Set(all.map(r=>r.level))].sort();
     // 直前プレイと一致するレベルがあればそれを優先、無ければ先頭
     if(!levels.includes(rankingFilter)) rankingFilter=levels[0]||null;
-    const filterDiv=document.getElementById('ranking-filter');
     filterDiv.innerHTML='';
     levels.forEach(lv=>{
       const b=document.createElement('button');
@@ -2205,8 +2318,9 @@ async function loadRanking(){
     });
     renderRanking(all);
   }catch(e){
-    console.error('Ranking load error:', e);
-    body.innerHTML='<p class="ranking-loading">ランキングの読み込みに失敗しました。<br><small>'+e.message+'</small></p>';
+    console.warn('ランキングの読み込みに失敗しました。');
+    if(filterDiv) filterDiv.innerHTML='';
+    body.innerHTML='<p class="ranking-loading">ランキングを読み込めませんでした。演習・採点・復習はそのまま利用できます。 <button type="button" class="rf-btn" onclick="loadRanking()">再読み込み</button></p>';
   }
 }
 function updateFilterBtns(active){
@@ -2229,11 +2343,11 @@ function renderRanking(all){
   const rows=ranked.map((r,i)=>{
     const isMe=currentEntry&&r.id===currentEntry;
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
-    const tDisp=r.time!=null?formatTime(r.time):'—';
+    const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
-      <td>${escHtml(r.nickname)}${isMe?' <span class="me-tag">YOU</span>':''}</td>
-      <td>${r.score}<span class="score-denom">/${r.total}</span></td>
+      <td>${escHtml(String(r.nickname==null?'':r.nickname))}${isMe?' <span class="me-tag">YOU</span>':''}</td>
+      <td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td>
       <td>${tDisp}</td>
     </tr>`;
   }).join('');

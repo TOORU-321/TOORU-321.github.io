@@ -1,0 +1,3224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TLV00VTDZL');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090c12">
+  <title>行動経済学 応用クイズ｜エルラボ＋</title>
+  <meta name="description" content="行動経済学検定1級・応用コースの学習補助用オリジナル問題60問。第2回〜第49回（第26回を除く）の講座内容を、具体的な場面と解説で復習できます。">
+  <meta property="og:title" content="行動経済学応用コース 知識クイズ">
+  <meta property="og:description" content="1級・応用コースの学習を60問で。営業・交渉・子育て・集団の意思決定を、講座回付きの解説で振り返れます。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://columns.l-mine.com/ouyou_quiz.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/app-icon-192.png">
+  <link rel="apple-touch-icon" href="assets/app-icon-512.png">
+  <link rel="canonical" href="https://columns.l-mine.com/ouyou_quiz.html">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700;800&family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+/* Brand tokens aligned with app/index.html (エルラボ＋). */
+:root {
+  color-scheme: dark;
+  --ink: #090c12;
+  --ink-surface: #121720;
+  --ink-elev: #171d27;
+  --ink-deep: #0e121a;
+  --paper: #f7f4ec;
+  --hairline: rgba(157,195,225,.14);
+  --hairline-2: rgba(157,195,225,.28);
+  --hairline-gold: rgba(182,212,237,.48);
+  --text-1: #f7f4ec;
+  --text-2: #c9c5bb;
+  --text-3: #a8a49b;
+  --text-4: #929087;
+  --text-ink: #0d1924;
+  --gold: #b6d4ed;
+  --gold-hover: #d6e8f6;
+  --gold-bright: #b6d4ed;
+  --gold-soft: rgba(122,163,196,.13);
+  --gold-softer: rgba(122,163,196,.06);
+  --lv1: #a6bce5;
+  --lv2: #b6d4ed;
+  --lv3: #e6ad93;
+  --success: #9ac8ab;
+  --success-soft: rgba(112,170,133,.13);
+  --error: #edaa9c;
+  --error-soft: rgba(214,126,109,.13);
+  --font-display: 'Shippori Mincho B1', 'Yu Mincho', serif;
+  --font-body: 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+  --font-number: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'SF Mono', Menlo, ui-monospace, monospace;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 22px;
+  --radius-xl: 26px;
+  --shadow-card: 0 12px 34px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.025);
+  --shadow-hero: 0 24px 70px rgba(0,0,0,.34);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-standard: cubic-bezier(.2,0,0,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text-1);
+  min-height: 100vh;
+  line-height: 1.75;
+  font-weight: 400;
+  font-size: 16px;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--gold); color: var(--text-ink); }
+
+a { color: inherit; }
+
+button { font-family: inherit; color: inherit; }
+
+/* ══════════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════════ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250, 247, 239, 0.88);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid var(--hairline);
+}
+.header-inner {
+  max-width: 760px; margin: 0 auto;
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand-mark {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+  background: var(--gold-softer);
+}
+.brand-text { display: flex; flex-direction: column; min-width: 0; }
+.brand-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brand-sub {
+  font-size: 0.6875rem; color: var(--text-3);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.header-meta {
+  font-size: 0.6875rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-left: 14px;
+  border-left: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════════════════════════ */
+.container {
+  max-width: 720px; margin: 0 auto;
+  padding: 40px 20px 100px;
+}
+
+/* Utility: hairline rule */
+.hairline-rule {
+  height: 1px; background: var(--hairline);
+  margin: 24px 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ══════════════════════════════════════════════════════════════ */
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: var(--hairline);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   START SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#start-screen { animation: fadeUp .5s var(--ease-standard); }
+
+.hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 56px 40px 48px;
+  text-align: center;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at top, var(--gold-softer) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+.hero-title {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 5.2vw, 2.625rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  margin-bottom: 16px;
+}
+.hero-lede {
+  position: relative;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  max-width: 520px;
+  margin: 0 auto;
+  font-weight: 500;
+}
+.hero-stats {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 36px;
+}
+.hero-stat { text-align: center; }
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.75rem; font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.hero-rule {
+  width: 1px; height: 32px;
+  background: var(--hairline);
+}
+
+/* Challenge banner */
+#challenge-banner {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline-gold);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.chal-label {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px;
+}
+.chal-text {
+  font-size: 0.875rem; color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* Section card */
+.section-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Level grid */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.level-card {
+  position: relative;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+}
+.level-card:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.level-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.level-card-head {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 10px;
+}
+.level-label {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text-1);
+}
+.level-card.selected .level-label { color: var(--gold); }
+.level-count {
+  font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  padding: 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-body);
+}
+.level-card.selected .level-count {
+  color: var(--gold);
+  border-color: var(--hairline-gold);
+}
+.level-desc {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  line-height: 1.6;
+  font-weight: 500;
+}
+.level-card-all { grid-column: span 2; }
+.check-icon {
+  position: absolute; top: 12px; right: 12px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: none;
+  color: var(--text-ink);
+}
+.check-icon svg {
+  width: 12px; height: 12px;
+  display: block; margin: 2px auto;
+}
+.level-card.selected .check-icon { display: block; }
+
+/* Question count buttons */
+.q-count-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.q-count-btn {
+  flex: 1; min-width: 70px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  cursor: pointer;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard);
+  font-family: inherit;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px;
+}
+.qc-num {
+  font-family: var(--font-display);
+  font-size: 1.125rem; font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.qc-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.q-count-btn:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.q-count-btn.selected {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.q-count-btn.selected .qc-num { color: var(--gold); }
+.q-count-btn.selected .qc-label { color: var(--gold); }
+
+/* Timer toggle */
+.timer-toggle-row {
+  display: flex; align-items: center; gap: 16px;
+}
+.toggle-switch {
+  position: relative; width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: 22px;
+  transition: background var(--duration-base) var(--ease-standard),
+              border-color var(--duration-base) var(--ease-standard);
+}
+.toggle-slider::before {
+  position: absolute; content: '';
+  height: 14px; width: 14px;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+  background: var(--text-2);
+  border-radius: 50%;
+  transition: transform var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+input:checked + .toggle-slider {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+input:checked + .toggle-slider::before {
+  transform: translateY(-50%) translateX(18px);
+  background: var(--text-ink);
+}
+.toggle-text { display: flex; flex-direction: column; }
+.toggle-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+}
+.toggle-sub {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* Disclaimer */
+.disclaimer {
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--hairline-gold);
+  background: var(--gold-softer);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+.disclaimer-label {
+  font-size: 0.625rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.disclaimer p {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  line-height: 1.8;
+  font-weight: 500;
+}
+.disclaimer strong {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+/* Start button */
+.start-button {
+  width: 100%;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 18px 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  transition: background var(--duration-base) var(--ease-standard);
+  margin-top: 8px;
+}
+.start-button:hover { background: var(--gold-hover); }
+.start-arrow {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#quiz-screen { display: none; animation: fadeUp .32s var(--ease-standard); }
+
+.quiz-topbar {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.q-counter {
+  font-family: var(--font-display);
+  font-size: 0.9375rem; font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1; min-width: 80px;
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width .6s var(--ease-standard);
+}
+.score-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.score-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.score-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Streak */
+.streak-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  animation: pulseQuiet .3s var(--ease-standard);
+}
+.streak-pill-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.streak-pill-num {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes pulseQuiet {
+  0% { transform: scale(0.96); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.streak-popup {
+  position: fixed; top: 84px; left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-gold);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hero);
+  z-index: 999;
+  transition: transform var(--duration-base) var(--ease-standard),
+              opacity var(--duration-base) var(--ease-standard);
+  opacity: 0; pointer-events: none;
+  letter-spacing: 0.04em;
+}
+.streak-popup.show {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* Timer */
+.timer-bar-wrap {
+  height: 2px;
+  background: var(--hairline);
+  border-radius: 99px; overflow: hidden;
+  margin-bottom: 12px;
+}
+.timer-bar {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 99px;
+  transition: width 1s linear;
+}
+.timer-bar.warning { background: var(--error); }
+.timer-display {
+  font-family: var(--font-display);
+  font-size: 0.8125rem; font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.timer-display.warning { color: var(--error); }
+
+/* Question card */
+.q-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 32px 32px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.q-card-top {
+  display: flex; align-items: center;
+  margin-bottom: 20px;
+}
+.diff-chip {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+}
+.diff-1 {
+  color: var(--lv1);
+  background: rgba(140, 161, 204, 0.08);
+  border: 1px solid rgba(140, 161, 204, 0.22);
+}
+.diff-2 {
+  color: var(--lv2);
+  background: var(--gold-soft);
+  border: 1px solid var(--hairline-gold);
+}
+.diff-3 {
+  color: var(--lv3);
+  background: rgba(177, 107, 83, 0.08);
+  border: 1px solid rgba(177, 107, 83, 0.22);
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.85;
+  color: var(--text-1);
+  letter-spacing: 0.005em;
+}
+
+/* Choices */
+.choices {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 24px;
+}
+.choice {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px 18px;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  width: 100%;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.choice:hover:not(:disabled) {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.choice-key {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-2);
+  background: var(--ink-elev);
+  margin-top: 1px;
+}
+.choice.correct {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.choice.correct .choice-key {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-ink);
+}
+.choice.wrong {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.choice.wrong .choice-key {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--text-1);
+}
+.choice:disabled { cursor: default; opacity: 0.95; }
+
+/* Explanation */
+.explanation {
+  display: none;
+  margin-top: 18px;
+  padding: 18px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  animation: fadeUp .3s var(--ease-standard);
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+.explanation.correct {
+  background: var(--success-soft);
+  border-left-color: var(--success);
+  color: var(--text-1);
+}
+.explanation.wrong {
+  background: var(--error-soft);
+  border-left-color: var(--error);
+  color: var(--text-1);
+}
+.exp-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.explanation.correct .exp-label { color: var(--success); }
+.explanation.wrong .exp-label { color: var(--error); }
+.yt-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-size: 0.75rem; font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.yt-link::before {
+  content: '';
+  width: 12px; height: 12px;
+  background: var(--gold);
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polygon points='23 7 16 12 23 17 23 7'/><rect x='1' y='5' width='15' height='14' rx='2' ry='2'/></svg>") center/contain no-repeat;
+}
+.yt-link:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Next button */
+.next-wrap {
+  display: flex; justify-content: flex-end;
+  margin-top: 16px;
+}
+.next-btn {
+  display: none;
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.next-btn:hover { background: var(--gold-hover); }
+
+/* ══════════════════════════════════════════════════════════════
+   RESULT SCREEN
+   ══════════════════════════════════════════════════════════════ */
+#result-screen { display: none; animation: fadeUp .4s var(--ease-standard); }
+
+.result-hero {
+  position: relative;
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  padding: 48px 40px 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-hero);
+  overflow: hidden;
+}
+.rank-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.rank-display {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.rank-display.S { color: var(--gold); }
+.rank-display.A { color: var(--lv1); }
+.rank-display.B { color: var(--success); }
+.rank-display.C { color: var(--error); }
+
+.score-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 7vw, 3.25rem);
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.score-display .denom {
+  font-size: 0.45em;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.result-msg {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 18px 0 6px;
+  letter-spacing: -0.005em;
+}
+.result-sub {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.75;
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.result-streak-info {
+  margin-top: 16px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+}
+.rsi-chip {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-right: 6px;
+}
+.result-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: 24px;
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+}
+.stat-rule {
+  width: 1px; height: 40px;
+  background: var(--hairline);
+}
+.r-stat { text-align: center; }
+.r-stat-num {
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.r-stat-num.green { color: var(--success); }
+.r-stat-num.red   { color: var(--error); }
+.r-stat-num.white { color: var(--text-1); }
+.r-stat-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* Weak bias */
+.weak-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.weak-item {
+  display: flex; align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.weak-item:last-child { border-bottom: none; padding-bottom: 0; }
+.weak-item:first-child { padding-top: 0; }
+.weak-topic {
+  flex: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  font-family: var(--font-display);
+}
+.weak-bar {
+  flex: 1.5;
+  max-width: 180px;
+  height: 4px;
+  background: var(--hairline);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.weak-bar-fill {
+  height: 100%;
+  background: var(--error);
+  border-radius: 99px;
+}
+.weak-count {
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--error);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* Review */
+.review-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.review-item {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.review-item:last-child { border-bottom: none; padding-bottom: 0; }
+.review-item:first-child { padding-top: 0; }
+.review-q {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.75;
+  color: var(--text-1);
+  margin-bottom: 14px;
+}
+.review-q::before {
+  content: 'Q. ';
+  color: var(--gold);
+  font-weight: 700;
+}
+.review-ans-wrong, .review-ans-correct {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin-bottom: 4px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.review-ans-wrong { color: var(--error); }
+.review-ans-correct { color: var(--success); margin-bottom: 12px; }
+.review-ans-label {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  min-width: 80px;
+}
+.review-exp {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  line-height: 1.85;
+  background: var(--ink-elev);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline);
+}
+.review-yt {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-1);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.review-yt:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Result actions */
+.result-actions {
+  display: flex; gap: 10px;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  flex: 1; min-width: 160px;
+  background: var(--text-1);
+  color: var(--ink);
+  border: 1px solid var(--text-1);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.btn-primary:hover { background: #2d251e; }
+.btn-secondary {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.btn-secondary:hover {
+  border-color: var(--hairline-gold);
+  background: var(--gold-softer);
+}
+.btn-social {
+  flex: 1; min-width: 140px;
+  background: transparent;
+  color: var(--text-1);
+  border: 1px solid var(--hairline-2);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+  white-space: nowrap;
+}
+.btn-social:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+
+/* Nickname card */
+.nickname-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--duration-slow) var(--ease-standard);
+}
+.nickname-card.registered { border-color: var(--success); }
+.nickname-row {
+  display: flex; gap: 8px;
+}
+.nickname-input {
+  flex: 1;
+  background: var(--ink-elev);
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--duration-base) var(--ease-standard);
+}
+.nickname-input:focus { border-color: var(--gold); }
+.nickname-input::placeholder { color: var(--text-4); }
+.nickname-submit {
+  background: var(--gold);
+  color: var(--text-ink);
+  border: 1px solid var(--gold);
+  padding: 14px 22px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.nickname-submit:hover:not(:disabled) { background: var(--gold-hover); }
+.nickname-submit:disabled {
+  background: var(--ink-elev);
+  color: var(--text-3);
+  border-color: var(--hairline);
+  cursor: not-allowed;
+}
+.nickname-note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* Ranking */
+.ranking-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.ranking-filter {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.rf-btn {
+  background: transparent;
+  border: 1px solid var(--hairline-2);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.rf-btn:hover { border-color: var(--hairline-gold); color: var(--gold); }
+.rf-btn.active {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  color: var(--gold);
+}
+.ranking-note {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+.score-denom {
+  color: var(--text-3);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  margin-left: 1px;
+}
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ranking-table th {
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.ranking-table th:last-child { text-align: right; }
+.ranking-table td {
+  padding: 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--hairline);
+  font-variant-numeric: tabular-nums;
+}
+.ranking-table td:last-child { text-align: right; font-weight: 700; color: var(--text-1); }
+.ranking-table tr:last-child td { border-bottom: none; }
+.ranking-table tr.me td {
+  color: var(--text-1);
+  background: var(--gold-softer);
+}
+.rank-medal { font-size: 1rem; }
+.rank-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-3);
+}
+.rank-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.06em;
+}
+.rank-badge.S { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--hairline-gold); }
+.rank-badge.A { background: rgba(140, 161, 204, 0.10); color: var(--lv1); border: 1px solid rgba(140, 161, 204, 0.25); }
+.rank-badge.B { background: var(--success-soft); color: var(--success); border: 1px solid rgba(127, 160, 132, 0.25); }
+.rank-badge.C { background: var(--error-soft); color: var(--error); border: 1px solid rgba(177, 107, 83, 0.25); }
+.me-tag {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.16em;
+  padding-left: 8px;
+}
+.ranking-loading {
+  text-align: center;
+  padding: 28px 0;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════ */
+.site-footer {
+  margin-top: 64px;
+  padding: 32px 20px;
+  border-top: 1px solid var(--hairline);
+  text-align: center;
+}
+.site-footer a {
+  font-family: var(--font-display);
+  color: var(--text-1);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: color var(--duration-base) var(--ease-standard);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.site-footer a:hover {
+  color: var(--gold);
+  border-bottom-color: var(--hairline-gold);
+}
+.site-footer p {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+}
+.footer-version {
+  display: inline-block;
+  margin-top: 16px !important;
+  padding: 4px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display) !important;
+  font-size: 0.6875rem !important;
+  font-weight: 600 !important;
+  color: var(--text-3) !important;
+  letter-spacing: 0.14em !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOTION
+   ══════════════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   A11Y: FOCUS
+   ══════════════════════════════════════════════════════════════ */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+button, a, input, [tabindex] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .header-meta { display: none; }
+  .brand-title { font-size: 0.875rem; }
+  .brand-sub { display: none; }
+  .container { padding: 28px 16px 96px; }
+  .hero { padding: 40px 24px 36px; border-radius: var(--radius-lg); }
+  .hero-stats { gap: 18px; }
+  .hero-rule { height: 24px; }
+  .section-card { padding: 20px 20px; }
+  .q-card { padding: 24px 22px 22px; }
+  .result-hero { padding: 36px 22px 32px; border-radius: var(--radius-lg); }
+  .result-stats { gap: 16px; padding-top: 20px; margin-top: 24px; }
+  .stat-rule { height: 32px; }
+  .review-card, .weak-card, .nickname-card, .ranking-card { padding: 20px 20px; }
+  .result-actions { flex-direction: column; gap: 8px; }
+  .btn-primary, .btn-secondary, .btn-social { min-width: 0; }
+  .ranking-table { font-size: 0.8125rem; }
+  .ranking-table th, .ranking-table td { padding-left: 8px; padding-right: 8px; }
+}
+@media (max-width: 480px) {
+  .level-grid { grid-template-columns: 1fr; }
+  .level-card-all { grid-column: span 1; }
+  .hero-title { font-size: 1.625rem; }
+  .hero-lede { font-size: 0.875rem; }
+  .q-text { font-size: 1.0625rem; }
+  .choice { font-size: 0.875rem; padding: 14px 16px; }
+  .q-count-row { flex-wrap: wrap; }
+  .q-count-btn { min-width: calc(50% - 4px); }
+  .rank-display { font-size: 3rem; }
+  .score-display { font-size: 2.25rem; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* エルラボ＋ learning surface: shared palette, typography, and card treatment. */
+body{background:radial-gradient(900px 520px at 88% -8%,rgba(122,163,196,.10),transparent 62%),radial-gradient(760px 520px at -10% 30%,rgba(74,91,124,.12),transparent 64%),linear-gradient(180deg,#0e121a,#090c12);text-rendering:optimizeLegibility}
+.site-header{background:rgba(14,18,26,.94);border-bottom-color:var(--hairline)}
+.header-inner{max-width:1096px;padding:18px 28px}
+.brand{gap:12px}.brand-mark{width:40px;height:40px;border-radius:12px;font-family:var(--font-number);font-size:27px;background:linear-gradient(145deg,rgba(182,212,237,.14),rgba(182,212,237,.025))}
+.brand-title{font-size:21px;letter-spacing:.08em;overflow:visible}.brand-plus{font-size:.6em;vertical-align:.5em;color:var(--gold)}
+.brand-sub{display:block;font-size:12px;letter-spacing:.15em;margin-top:5px}
+.header-meta{font-size:14px;font-weight:500;letter-spacing:.04em;border:0;color:var(--text-2)}.header-meta span{color:var(--text-3)}
+.container{max-width:1096px;padding:36px 28px 56px}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:32px;text-align:left;background:none;border:0;border-radius:0;box-shadow:none;padding:0 0 30px;margin-bottom:0;overflow:visible}
+.hero::before{display:none}.hero-copy{min-width:0}.hero-eyebrow{font-family:var(--font-number);font-size:14px;letter-spacing:.21em;margin-bottom:12px}
+.hero-title{font-size:clamp(26px,3.2vw,36px);letter-spacing:.06em;line-height:1.5;margin-bottom:12px}.hero-title span{display:inline-block;font-size:.68em;margin-left:18px;color:var(--gold)}
+.hero-lede{font-size:14px;font-weight:400;margin:0;line-height:1.9;color:var(--text-3)}
+.course-scope{display:inline-block;margin-top:14px;padding:5px 12px;border:1px solid var(--hairline-2);border-radius:8px;background:var(--gold-softer);font-size:14px;line-height:1.7;color:var(--gold)}
+.quiz-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.quiz-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border:1px solid var(--hairline-2);border-radius:999px;background:var(--ink-surface);color:var(--text-2);font:inherit;font-size:14px;cursor:pointer;transition:background var(--duration-base),border-color var(--duration-base)}
+.quiz-action:hover{background:var(--ink-elev);border-color:var(--hairline-gold);color:var(--gold)}
+.quiz-action svg{width:18px;height:18px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hero-stats{flex-shrink:0;gap:24px;margin:0;padding:24px 0 24px 32px;border-left:1px solid var(--hairline)}
+.hero-stat{text-align:center}.hero-stat-num{font-family:var(--font-number);font-size:36px;font-weight:500;color:var(--gold);line-height:1.1}.hero-stat-num span{font-family:var(--font-body);font-size:12px;margin-left:4px;color:var(--text-2)}
+.hero-stat-label{font-size:12px;letter-spacing:.04em;margin-top:8px;color:var(--text-3)}.hero-rule{display:none}
+.setup-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.section-card,.q-card,.result-hero,.review-card,.weak-card,.nickname-card,.ranking-card{background:linear-gradient(145deg,rgba(23,29,39,.98),rgba(18,23,32,.98));border-color:var(--hairline);border-radius:22px}
+.setup-grid .section-card{margin:0;padding:26px;min-width:0}.section-label{font-size:16px;letter-spacing:.04em;text-transform:none;color:var(--text-1);line-height:1.6;margin-bottom:18px;font-weight:500}.section-label::after{display:none}
+.step-number{font-family:var(--font-number);font-size:20px;color:var(--gold);margin-right:4px}.section-hint{font-size:13px;color:var(--text-3);margin:-8px 0 20px}
+.level-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.level-card-all{grid-column:auto}
+.level-card{background:rgba(9,12,18,.32);border-color:var(--hairline);padding:16px;min-height:118px;border-radius:14px}
+.level-card:hover{background:var(--ink-elev);border-color:var(--hairline-gold)}.level-card.selected{background:linear-gradient(135deg,rgba(122,163,196,.17),rgba(122,163,196,.055));border-color:#7aa3c4;box-shadow:inset 0 1px 0 rgba(182,212,237,.08)}
+.level-card-head{gap:8px;align-items:end;padding-right:0;margin-bottom:8px}.level-label{font-size:16px;line-height:1.45}.level-label small{display:block;font-family:var(--font-body);font-weight:500;font-size:12px;letter-spacing:.08em;color:var(--text-3);margin-bottom:6px}
+.level-card.selected .level-label small{color:var(--gold)}.level-count{border:0;padding:0;font-size:12px;white-space:nowrap;font-weight:400}.level-desc{font-size:13px;font-weight:400;color:var(--text-2);line-height:1.6}.check-icon{top:13px;right:13px}
+.session-section{display:flex;flex-direction:column}.q-count-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.q-count-btn{min-width:0;padding:16px 4px 12px;gap:7px;border-color:var(--hairline);background:rgba(9,12,18,.32)}
+.qc-num{font-family:var(--font-number);font-size:30px;font-weight:600}.qc-num.qc-all{font-family:var(--font-display);font-size:20px;line-height:30px}.qc-label{font-size:12px;letter-spacing:0}
+.timer-toggle-row{padding:23px 0;margin-top:22px;border-top:1px solid var(--hairline);gap:14px}.toggle-switch{order:2;margin-left:auto;width:44px;height:26px}.toggle-slider::before{width:18px;height:18px}.toggle-sub{font-size:13px;margin-top:3px}.toggle-title{font-size:14px}
+.toggle-switch:focus-within .toggle-slider{outline:2px solid var(--gold);outline-offset:4px}
+.start-button,.next-btn,.btn-primary,.nickname-submit{background:linear-gradient(135deg,#b6d4ed,#7aa3c4);color:#0d1924;border:1px solid #95bad7;border-radius:999px;box-shadow:0 8px 24px rgba(122,163,196,.12);font-weight:700;min-height:48px}
+.start-button{margin-top:auto;padding:15px 22px;justify-content:space-between;letter-spacing:.05em}
+.start-button:hover,.next-btn:hover,.btn-primary:hover,.nickname-submit:hover:not(:disabled){background:linear-gradient(135deg,#d6e8f6,#95bad7);color:#0d1924}
+.disclaimer{background:transparent;border:0;border-radius:0;padding:0 4px;margin:22px 0 30px;font-size:12px;line-height:1.9;color:var(--text-3)}.disclaimer-label{font-size:12px;color:var(--text-2);letter-spacing:.03em;margin-bottom:5px}.disclaimer strong{font-weight:500;color:var(--text-2)}
+.home-ranking{margin-top:0}.ranking-card{padding:26px}.ranking-filter{gap:8px}.rf-btn{border-radius:999px;font-size:14px;min-height:40px;padding:7px 16px}.ranking-note{font-size:13px}.ranking-table th{font-size:12px;letter-spacing:.03em}.ranking-table td{font-size:14px;overflow-wrap:anywhere}.ranking-table th:nth-child(2){width:48%}.ranking-loading{font-size:14px;color:var(--text-3)}
+#quiz-screen,#result-screen{max-width:800px;margin:0 auto}.quiz-topbar{margin:6px 0 22px;gap:14px}.q-counter{font-family:var(--font-body);font-size:14px}.progress-track{height:4px}.score-pill{border-radius:999px;padding:7px 13px}.score-pill-label,.streak-pill-label{font-size:12px;letter-spacing:.04em}.score-pill-num{font-family:var(--font-body);font-size:16px}
+.q-card{padding:32px}.q-card-top{margin-bottom:22px}.diff-chip{font-size:12px;letter-spacing:.06em;border-radius:999px;padding:5px 13px}.q-text{font-family:var(--font-body);font-size:20px;font-weight:500;line-height:1.9}.choices{gap:12px;margin-top:28px}
+.choice{font-size:16px;line-height:1.8;padding:18px;background:rgba(9,12,18,.26);border-color:var(--hairline)}.choice-key{font-family:var(--font-number);font-size:18px;width:32px;height:32px;border-radius:9px}.choice.wrong .choice-key{color:var(--text-ink)}
+.explanation,.review-exp{font-size:16px;line-height:1.9}.exp-label{font-size:14px;letter-spacing:.03em}.yt-link,.review-yt{font-size:14px;min-height:44px;border-radius:999px;padding:8px 16px}.timer-display{font-family:var(--font-body);font-size:14px}
+.next-btn{font-size:16px;min-width:210px}.result-hero{padding:36px}.rank-eyebrow{font-size:14px;letter-spacing:.12em}.rank-display,.score-display,.r-stat-num{font-family:var(--font-number)}.result-msg{font-size:22px}.result-sub{font-size:16px}.r-stat-label{font-size:13px;letter-spacing:.03em}.result-actions{gap:10px}.btn-secondary,.btn-social{border-radius:999px;min-height:48px}.review-q{font-family:var(--font-body);font-size:16px}.review-ans-wrong,.review-ans-correct{font-size:14px}.review-ans-label{font-size:12px;letter-spacing:.02em}.weak-topic{font-size:16px}.weak-count{font-size:14px}
+.nickname-input{min-width:0;font-size:16px}.nickname-note{font-size:13px}.site-footer{border-top:1px solid var(--hairline);padding:28px 20px 32px}.site-footer a{font-size:14px}.site-footer p{font-size:12px}.footer-version{letter-spacing:.1em!important;font-size:12px!important}
+@media(max-width:900px){.hero{gap:20px}.hero-stats{padding-left:20px;gap:16px}.hero-stat-num{font-size:30px}.setup-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}.setup-grid .section-card{padding:22px}.level-card{padding:14px}.level-count{display:none}}
+@media(max-width:720px){.header-inner{padding:14px 20px}.brand-title{font-size:19px}.header-meta{display:block;font-size:12px}.header-meta span{display:none}.container{padding:26px 20px 36px}.hero{display:block;padding:0 0 24px}.hero-title{font-size:28px;margin-bottom:10px}.hero-title span{font-size:20px;margin-left:12px}.hero-eyebrow{font-size:12px;margin-bottom:8px}.hero-lede{font-size:14px}.hero-stats{justify-content:flex-start;border:0;padding:0;margin-top:20px;gap:28px}.hero-stat{display:flex;align-items:baseline;gap:8px}.hero-stat-num{font-size:26px}.hero-stat-label{margin:0;font-size:12px}.hero-stat-num span{display:none}.setup-grid{grid-template-columns:1fr;gap:16px}.setup-grid .section-card{padding:22px}.level-count{display:block}.level-card{min-height:108px}.session-section .timer-toggle-row{margin-top:18px;padding:18px 0}.start-button{margin-top:2px}.level-desc{font-size:13px}.q-card{padding:24px}.q-text{font-size:18px}.choice{font-size:16px;padding:16px 14px;gap:12px}.ranking-card,.review-card,.weak-card,.nickname-card{padding:22px}.section-label{font-size:16px}.nickname-row{flex-wrap:wrap}.nickname-input{flex-basis:180px}.nickname-submit{flex-grow:1}.result-actions{flex-direction:row}.btn-primary,.btn-secondary{flex-basis:calc(50% - 10px)}.btn-social{flex-basis:100%}.review-ans-label{min-width:64px}.weak-bar{max-width:100px}}
+@media(max-width:400px){.container{padding-inline:14px}.header-inner{padding-inline:16px}.brand-mark{width:34px;height:34px}.hero-title{font-size:25px}.hero-title span{font-size:18px;margin-left:10px}.hero-stats{gap:18px}.hero-stat{gap:5px}.hero-stat-label{font-size:12px}.setup-grid .section-card{padding:18px}.level-card{padding:12px}.level-label{font-size:15px}.level-count{display:none}.qc-label{font-size:12px}.q-card,.ranking-card,.review-card{padding:18px}.q-text{font-size:18px}.nickname-card{padding:18px}.ranking-table th,.ranking-table td{padding-inline:5px}.next-btn{width:100%}}
+
+
+/* Course navigation opens independent question sets. */
+.course-switch{display:flex;gap:6px;max-width:460px;padding:5px;margin:0 0 28px;background:rgba(9,12,18,.6);border:1px solid var(--hairline);border-radius:16px}
+.course-switch a{flex:1;padding:11px 12px;border-radius:11px;text-align:center;text-decoration:none;font-size:15px;color:var(--text-3);transition:background .2s,color .2s}
+.course-switch a:hover{color:var(--text-1);background:var(--ink-elev)}
+.course-switch a[aria-current="page"]{color:var(--gold);background:var(--gold-soft);box-shadow:inset 0 0 0 1px var(--hairline-gold);font-weight:700}
+.course-switch small{font-size:13px;font-weight:400;margin-left:8px}
+.question-source{margin-left:auto;font-size:13px;color:var(--text-3)}
+@media(max-width:400px){.course-switch a{font-size:14px;padding-inline:8px}.course-switch small{margin-left:5px;font-size:12px}}
+  </style>
+</head>
+<body>
+<div id="streak-popup" class="streak-popup" aria-live="polite"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">L</div>
+      <div class="brand-text">
+        <div class="brand-title">エルラボ<span class="brand-plus">＋</span></div>
+        <div class="brand-sub">L-MINE · LEARNING</div>
+      </div>
+    </div>
+    <div class="header-meta">1級 <span>／ 応用コース</span></div>
+  </div>
+</header>
+
+<main class="container">
+  <nav class="course-switch" aria-label="受講コースを切り替える">
+    <a href="kiso_quiz.html">2級<small>基礎コース</small></a>
+    <a href="ouyou_quiz.html" aria-current="page">1級<small>応用コース</small></a>
+  </nav>
+
+
+  <!-- ═══════════════════ START SCREEN ═══════════════════ -->
+  <section id="start-screen" aria-labelledby="hero-title">
+    <div class="hero">
+      <div class="hero-copy"><div class="hero-eyebrow">APPLIED BEHAVIORAL ECONOMICS</div>
+      <h1 id="hero-title" class="hero-title">行動経済学<span>応用クイズ</span></h1>
+      <p class="hero-lede">60問の場面問題で、知識を使う力を磨く。<br>難易度と問題数を選んで、さっそく始めましょう。</p>
+      <p class="course-scope">出題範囲：第2回〜第49回（第26回を除く）</p></div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">60<span>問</span></div>
+          <div class="hero-stat-label">収録問題</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">3<span>段階</span></div>
+          <div class="hero-stat-label">難易度</div>
+        </div>
+        <div class="hero-rule" aria-hidden="true"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4<span>択</span></div>
+          <div class="hero-stat-label">選択肢</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="challenge-banner" style="display:none;" role="status">
+      <div class="chal-label">Challenge Invitation</div>
+      <div class="chal-text">挑戦状が届いています。同じ問題セットで対決できます。</div>
+    </div>
+
+    <div class="setup-grid">
+    <section class="section-card level-section" aria-labelledby="level-heading">
+      <h2 class="section-label" id="level-heading"><span class="step-number">01</span> 難易度を選ぶ</h2>
+      <p class="section-hint">レベルは複数選べます。</p>
+      <div class="level-grid">
+        <button type="button" class="level-card" id="lv1-card" onclick="toggleLevel(1)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label"><small>LEVEL 1</small>概念を見抜く</span>
+            <span class="level-count">15問</span>
+          </div>
+          <p class="level-desc">場面から心理を読み取る</p>
+        </button>
+        <button type="button" class="level-card" id="lv2-card" onclick="toggleLevel(2)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label"><small>LEVEL 2</small>仕組みを読む</span>
+            <span class="level-count">24問</span>
+          </div>
+          <p class="level-desc">判断が変わる理由を考える</p>
+        </button>
+        <button type="button" class="level-card" id="lv3-card" onclick="toggleLevel(3)" aria-pressed="false">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label"><small>LEVEL 3</small>判断を磨く</span>
+            <span class="level-count">21問</span>
+          </div>
+          <p class="level-desc">複合的な分析・対策の検討</p>
+        </button>
+        <button type="button" class="level-card level-card-all selected" id="lv-all-card" onclick="toggleLevel('all')" aria-pressed="true">
+          <span class="check-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <div class="level-card-head">
+            <span class="level-label"><small>ALL LEVELS</small>全レベル</span>
+            <span class="level-count">60問</span>
+          </div>
+          <p class="level-desc">全難易度からランダム出題</p>
+        </button>
+      </div>
+    </section>
+
+    <section class="section-card session-section" aria-labelledby="count-heading">
+      <h2 class="section-label" id="count-heading"><span class="step-number">02</span> 問題数を選ぶ</h2>
+      <div class="q-count-row">
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(5,this)">
+          <span class="qc-num">5</span><span class="qc-label">問</span>
+        </button>
+        <button type="button" class="q-count-btn selected" aria-pressed="true" onclick="selectCount(10,this)">
+          <span class="qc-num">10</span><span class="qc-label">問</span>
+        </button>
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(20,this)">
+          <span class="qc-num">20</span><span class="qc-label">問</span>
+        </button>
+        <button type="button" class="q-count-btn" aria-pressed="false" onclick="selectCount(999,this)">
+          <span class="qc-num qc-all">全問</span><span class="qc-label">選択レベル</span>
+        </button>
+      </div>
+      <div class="timer-toggle-row">
+        <label class="toggle-switch">
+          <input type="checkbox" id="timer-toggle" checked>
+          <span class="toggle-slider" aria-hidden="true"></span>
+        </label>
+        <div class="toggle-text">
+          <label for="timer-toggle" class="toggle-title">制限時間モード</label>
+          <div class="toggle-sub">1問あたり30秒で回答</div>
+        </div>
+      </div>
+
+    <button type="button" class="start-button" onclick="startQuiz()">
+      <span>演習を始める</span>
+      <svg class="start-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+
+    </section>
+    </div>
+
+    <div class="disclaimer" role="note">
+      <div class="disclaimer-label">出題範囲について</div>
+      <p><strong>第2回〜第49回のうち、第26回を除く講座内容から出題します。</strong>応用コースの学習補助用に作成したオリジナル問題で、実際の検定問題・過去問ではありません。</p>
+      <p>各解説に参照講座の回数を記載しています。講座動画へのリンクは今後追加予定です。</p>
+    </div>
+
+    <section class="ranking-card home-ranking">
+      <h2 class="section-label"><span class="step-number">03</span> みんなの記録</h2>
+      <div class="ranking-filter" id="top-ranking-filter"></div>
+      <div id="top-ranking-body"><p class="ranking-loading">記録を読み込んでいます…</p></div>
+    </section>
+  </section>
+
+  <!-- ═══════════════════ QUIZ SCREEN ═══════════════════ -->
+  <section id="quiz-screen" aria-labelledby="q-text">
+    <nav class="quiz-actions" aria-label="演習の操作">
+      <button type="button" class="quiz-action" onclick="goStart()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg>
+        <span>ホームに戻る</span>
+      </button>
+      <button type="button" class="quiz-action" onclick="retry()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg>
+        <span>やり直す</span>
+      </button>
+    </nav>
+    <div id="timer-bar-wrap" class="timer-bar-wrap" style="display:none;" aria-hidden="true">
+      <div class="timer-bar" id="timer-bar" style="width:100%"></div>
+    </div>
+    <div class="quiz-topbar">
+      <span class="q-counter" id="q-counter">01 / 10</span>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <div class="score-pill" id="score-pill">
+        <span class="score-pill-label">Score</span><span class="score-pill-num">0</span>
+      </div>
+      <div id="streak-display" style="display:none;"></div>
+      <div id="timer-display" class="timer-display" style="display:none;"></div>
+    </div>
+    <article class="q-card">
+      <div class="q-card-top">
+        <span class="diff-chip" id="q-diff"></span>
+        <span class="question-source" id="q-source"></span>
+      </div>
+      <p class="q-text" id="q-text"></p>
+      <div class="choices" id="choices"></div>
+      <div class="explanation" id="explanation"></div>
+    </article>
+    <div class="next-wrap">
+      <button type="button" class="next-btn" id="next-btn" onclick="nextQ()"></button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════ RESULT SCREEN ═══════════════════ -->
+  <section id="result-screen" aria-labelledby="rank-display">
+    <article class="result-hero">
+      <div class="rank-eyebrow">Result</div>
+      <div class="rank-display" id="rank-display">RANK</div>
+      <div class="score-display" id="score-display">0<span class="denom"> / 10</span></div>
+      <p class="result-msg" id="result-msg"></p>
+      <p class="result-sub" id="result-sub"></p>
+      <div id="result-streak-info" class="result-streak-info" style="display:none;"></div>
+      <div class="result-stats">
+        <div class="r-stat">
+          <div class="r-stat-num green" id="r-correct">0</div>
+          <div class="r-stat-label">正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num red" id="r-wrong">0</div>
+          <div class="r-stat-label">不正解</div>
+        </div>
+        <div class="stat-rule" aria-hidden="true"></div>
+        <div class="r-stat">
+          <div class="r-stat-num white" id="r-rate">0%</div>
+          <div class="r-stat-label">正答率</div>
+        </div>
+      </div>
+    </article>
+
+    <div class="result-actions">
+      <button type="button" class="btn-secondary" onclick="goStart()">トップへ戻る</button>
+      <button type="button" class="btn-primary" onclick="retry()">もう一度挑戦する</button>
+      <button type="button" class="btn-social" onclick="shareX()">𝕏 でシェア</button>
+      <button type="button" class="btn-social" onclick="shareThreads()">Threads でシェア</button>
+      <button type="button" class="btn-social" onclick="shareChallenge()">同じ問題を友人に送る</button>
+    </div>
+
+    <div id="weak-section" class="weak-card" style="display:none;">
+      <div class="section-label">苦手分野</div>
+      <div id="weak-list"></div>
+    </div>
+
+    <div id="wrong-section" class="review-card" style="display:none;">
+      <div class="section-label">間違えた問題を振り返る</div>
+      <div id="wrong-list"></div>
+    </div>
+
+    <div id="nickname-card" class="nickname-card" style="display:none;">
+      <div class="section-label">ランキングに記録する（任意）</div>
+      <div class="nickname-row">
+        <input class="nickname-input" id="nickname-input" type="text" placeholder="例：とーる" maxlength="20" aria-label="ニックネーム">
+        <button type="button" class="nickname-submit" id="nickname-submit" onclick="submitRanking()">記録する</button>
+      </div>
+      <p class="nickname-note">※ ニックネームは公開されます。個人情報は入力しないでください。</p>
+    </div>
+
+    <div id="ranking-card" class="ranking-card" style="display:none;">
+      <div class="section-label">みんなの記録</div>
+      <div class="ranking-filter" id="ranking-filter"></div>
+      <div id="ranking-body"><p class="ranking-loading">記録を読み込んでいます…</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <a href="https://x.com/LMeta321" target="_blank" rel="noopener">とーる｜猫好きの行動経済アナリスト</a>
+  <p>行動経済学の発信・講座コンテンツ制作</p>
+  <p class="footer-version">L-MINE · エルラボ＋</p>
+</footer>
+
+<script>
+// Original practice questions adapted from the supplied lecture transcript.
+const Q = [
+  {
+    "lv": 1,
+    "lecture": 2,
+    "sourceLine": 488,
+    "t": "現在バイアス",
+    "q": "同じ総効果のサービスでも「半年後にまとめて」より「今日から効果を実感」に強くひかれる。講座の説明に最も近い心理は？",
+    "c": [
+      "他人が選んだという理由で追随する",
+      "過去に支払った費用の回収にこだわる",
+      "目先の便益を将来の便益より重く評価する",
+      "選択肢が多いほど判断を先送りする"
+    ],
+    "a": 2,
+    "e": "現在バイアスでは、将来について考えるときより、目の前の利益があるときに評価が偏りやすくなります。ここでの決め手は人気や支出済みの費用ではなく、便益を得る時期です。（参照：応用コース 第2回）",
+    "id": "advanced-001"
+  },
+  {
+    "lv": 2,
+    "lecture": 2,
+    "sourceLine": 563,
+    "t": "バンドワゴン効果",
+    "q": "利用者が増えるほど「みんなが使っている」と気づかれやすくしたい。講座の製品設計の考え方に合うものは？",
+    "c": [
+      "利用者数に関係なく毎日形状を変える",
+      "使用している事実が外から分からないようにする",
+      "利用者の比較を困難にするため製品名をなくす",
+      "利用中だと周囲にも分かる特徴的な形や色にする"
+    ],
+    "a": 3,
+    "e": "他人の利用が見えると、それを手掛かりに自分も使いたいという同調が生じやすくなります。第2回では、製品の特徴が目立つことを、その連鎖を促す設計として扱っています。（参照：応用コース 第2回）",
+    "id": "advanced-002"
+  },
+  {
+    "lv": 1,
+    "lecture": 3,
+    "sourceLine": 40,
+    "t": "ハロー効果",
+    "q": "サービスの実績を調べず「有名な一等地に本社があるから、仕事の質も高い」と評価した。最も直接的な説明は？",
+    "c": [
+      "立地の好印象をサービス全体の評価に広げている",
+      "購入後に手放す損失を強く感じている",
+      "同じ広告への接触回数から親近感が増している",
+      "既に支払った費用を無駄にしたくない"
+    ],
+    "a": 0,
+    "e": "立地という一面の印象が、確認していない仕事の質にまで波及するのがハロー効果です。住所自体がサービス品質を証明するわけではありません。（参照：応用コース 第3回）",
+    "id": "advanced-003"
+  },
+  {
+    "lv": 2,
+    "lecture": 3,
+    "sourceLine": 76,
+    "t": "社会的証明",
+    "q": "店の行列を通行人から見える配置にしたところ「人が集まる店だから良さそう」と入店が増えた。狙っている働きは？",
+    "c": [
+      "選択の自由を制限されると反発すること",
+      "他人の選択を品質の手掛かりとして利用すること",
+      "自分で組み立てたものを高く評価すること",
+      "商品の最初の提示価格を基準にすること"
+    ],
+    "a": 1,
+    "e": "行列が見えることで「多くの人が選んでいる」という情報が伝わります。講座では、行列そのものだけでなく、その可視性が同調の連鎖に関わると説明しています。（参照：応用コース 第3回）",
+    "id": "advanced-004"
+  },
+  {
+    "lv": 1,
+    "lecture": 4,
+    "sourceLine": 1029,
+    "t": "営業のハロー効果",
+    "q": "初対面の営業担当者の身だしなみや話し方だけで、提案内容まで優秀だと感じた。どの判断の広がりが起きている？",
+    "c": [
+      "損失が出る前に費用の上限を定めている",
+      "多くの独立した実績を比較して評価している",
+      "接し方という一面から能力全体への評価が広がる",
+      "将来の価値を割り引かずに評価している"
+    ],
+    "a": 2,
+    "e": "営業アプローチの段階でも、一部の好印象が相手全体の評価に波及します。提案の質を実際に検証することとは区別が必要です。（参照：応用コース 第4回）",
+    "id": "advanced-005"
+  },
+  {
+    "lv": 1,
+    "lecture": 4,
+    "sourceLine": 1110,
+    "t": "アンダードッグ効果",
+    "q": "応援するチームを決めていなかった観客が、大差で負けている側を応援し始めた。最も近い概念は？",
+    "c": [
+      "バンドワゴン効果",
+      "保有効果",
+      "アンカリング効果",
+      "アンダードッグ効果"
+    ],
+    "a": 3,
+    "e": "不利な立場や弱い側を応援したくなる心理を、アンダードッグ効果と呼びます。人気のある側へ追随するバンドワゴン効果とは、注目している条件が異なります。（参照：応用コース 第4回）",
+    "id": "advanced-006"
+  },
+  {
+    "lv": 2,
+    "lecture": 5,
+    "sourceLine": 1378,
+    "t": "スリーパー効果",
+    "q": "当初は発信者の信用が低く提案を退けたが、時間がたつと出所への不信が薄れ、内容の説得力を感じ始めた。この説明に最も近いものは？",
+    "c": [
+      "情報源への評価と内容の記憶が時間とともに離れる",
+      "時間がたつほど必ず情報が正確になる",
+      "発信回数だけで内容の論理が改善する",
+      "提案を断った費用が必ず増えていく"
+    ],
+    "a": 0,
+    "e": "スリーパー効果では、情報源の低い信用による割引が薄れ、メッセージの影響が表れ得ます。時間の経過が情報の正しさを保証するという意味ではありません。（参照：応用コース 第5回）",
+    "id": "advanced-007"
+  },
+  {
+    "lv": 1,
+    "lecture": 5,
+    "sourceLine": 1428,
+    "t": "カリギュラ効果",
+    "q": "「この内容は見ないでください」と言われ、かえって見たくなった。講座で紹介された呼び名は？",
+    "c": [
+      "デフォルト効果",
+      "カリギュラ効果",
+      "ピア効果",
+      "単純接触効果"
+    ],
+    "a": 1,
+    "e": "禁止によって興味や欲求が強まる現象として、講座ではカリギュラ効果を紹介しています。繰り返し接した結果として好感が高まる単純接触効果とは異なります。（参照：応用コース 第5回）",
+    "id": "advanced-008"
+  },
+  {
+    "lv": 2,
+    "lecture": 6,
+    "sourceLine": 1960,
+    "t": "損失回避",
+    "q": "第6回で「もっと良くなりたい」という願いと「今あるものを失いたくない」という願いを比較する際、中心になる考え方は？",
+    "c": [
+      "人は利得と損失を常に対称に評価すること",
+      "将来の損失は全員に同じ感情を生むこと",
+      "同程度の利得より損失を強く受け止める傾向",
+      "宗教的な願いには必ず因果的な効果があること"
+    ],
+    "a": 2,
+    "e": "講座は、損失を避けたい願いの切実さをプロスペクト理論から説明しています。これは願う人の心理についての説明であり、祈りの効力を証明する話ではありません。（参照：応用コース 第6回）",
+    "id": "advanced-009"
+  },
+  {
+    "lv": 2,
+    "lecture": 7,
+    "sourceLine": 2305,
+    "t": "サンクコスト",
+    "q": "続けてきた慣習を見直そうとしても「長年こんなにお金を払ったのだから、今やめたら無駄だ」と考えてしまう。焦点となるバイアスは？",
+    "c": [
+      "選択のパラドックス",
+      "初頭効果",
+      "類似性効果",
+      "サンクコストのバイアス"
+    ],
+    "a": 3,
+    "e": "既に回収できない支出を、今後も継続する理由にしている点がサンクコストです。慣習そのものの価値とは分けて、これからの負担と得られるものを考える必要があります。（参照：応用コース 第7回）",
+    "id": "advanced-010"
+  },
+  {
+    "lv": 3,
+    "lecture": 8,
+    "sourceLine": 2664,
+    "t": "参照点依存性",
+    "q": "ある関係を続けるかについて、同じ選択肢でも「失ったものを取り戻す」から「今ある生活を守る」へ捉え方が変わった。リスクへの姿勢が変わる理由として最も適切なのは？",
+    "c": [
+      "参照点が変わり、利得・損失の認識が変わるから",
+      "選択肢が同じなら参照点は影響しないから",
+      "保有する情報が増えると必ずリスクを好むから",
+      "対人関係では損失回避が一切働かないから"
+    ],
+    "a": 0,
+    "e": "第8回は、関係をどう位置づけるかで参照点が変わり、危険を冒して取り戻す局面と、現状を守る局面が入れ替わり得ると説明しています。全員の行動を一律に予測するものではありません。（参照：応用コース 第8回）",
+    "id": "advanced-011"
+  },
+  {
+    "lv": 1,
+    "lecture": 9,
+    "sourceLine": 2881,
+    "t": "選択のパラドックス",
+    "q": "紹介される相手が増えるほど「もっと良い人がいるかも」と比較を続け、誰にも決められなくなった。最も近い説明は？",
+    "c": [
+      "少数派を応援したくなる心理が働いている",
+      "選択肢の豊富さが決定の負担と先送りを生んでいる",
+      "最初に得た相手を所有していると感じている",
+      "過去の成功率を客観的に計算できている"
+    ],
+    "a": 1,
+    "e": "選択肢が増えることは、常に選びやすさにつながるとは限りません。比較の負担や、より良い選択肢への期待が決定を妨げるのが選択のパラドックスです。（参照：応用コース 第9回）",
+    "id": "advanced-012"
+  },
+  {
+    "lv": 3,
+    "lecture": 9,
+    "sourceLine": 2931,
+    "t": "サンクコストと選択",
+    "q": "相談サービスで「高い入会金を払ったから、合わなくてもここで決めないと」と考えた。判断の偏りを抑える問いは？",
+    "c": [
+      "もっと支払えば今の判断に自信が持てるか",
+      "他の利用者と同じ結論なら安心できるか",
+      "支払い済みの額を除けば、この相手や選択は自分に合うか",
+      "入会金を回収した気分になるには最短でいつ決めるか"
+    ],
+    "a": 2,
+    "e": "講座では、高い入会金が元を取りたい気持ちを生む点を扱っています。意思決定の見直しでは、既に払った額と、今後の選択の適合性を切り離すことが重要です。（参照：応用コース 第9回）",
+    "id": "advanced-013"
+  },
+  {
+    "lv": 1,
+    "lecture": 10,
+    "sourceLine": 3416,
+    "t": "危機管理と現状維持",
+    "q": "環境の変化に気づいているのに「変えるのは面倒だし、今のやり方が居心地よい」と対応を先送りした。直接的な要因は？",
+    "c": [
+      "アンダードッグ効果",
+      "返報性の原理",
+      "単純接触効果",
+      "現状維持バイアス"
+    ],
+    "a": 3,
+    "e": "変化の兆候を認識していても、現在の状態を変える抵抗が対応を妨げることがあります。講座は、危機管理の遅れを知識の不足だけで説明しない視点を示しています。（参照：応用コース 第10回）",
+    "id": "advanced-014"
+  },
+  {
+    "lv": 3,
+    "lecture": 10,
+    "sourceLine": 3457,
+    "t": "危機管理と埋没費用",
+    "q": "多額の開発費をかけた事業に新たな危険が判明した。「ここで止めると投資が無駄」と続行を主張している。検討の軸として適切なのは？",
+    "c": [
+      "今後の追加負担・危険と、今後得られる便益を比較する",
+      "既に使った開発費が多いほど続行を優先する",
+      "事業を提案した人の自信の強さだけで決める",
+      "過去の投資額を将来の確実な収益として数える"
+    ],
+    "a": 0,
+    "e": "既に費やした費用は、続行しても中止しても取り戻せない場合があります。危機管理では、その額へのこだわりが将来のリスク評価をゆがめていないかを確認します。（参照：応用コース 第10回）",
+    "id": "advanced-015"
+  },
+  {
+    "lv": 2,
+    "lecture": 11,
+    "sourceLine": 4768,
+    "t": "資産運用と先送り",
+    "q": "将来の資金計画が必要だと分かっているのに、調べる手間を避けて「来月でいい」と繰り返す。講座が指摘する心理は？",
+    "c": [
+      "弱い側を応援したくなるアンダードッグ効果",
+      "目先の負担を避け、将来の便益を軽く見る現在バイアス",
+      "一度得た運用商品を高く評価する保有効果",
+      "専門家の肩書きだけで信じる権威バイアス"
+    ],
+    "a": 1,
+    "e": "長期的な必要性を理解することと、今日行動することは別です。講座は、直近の手間を避ける心理が検討の先送りに関わると説明しています。（参照：応用コース 第11回）",
+    "id": "advanced-016"
+  },
+  {
+    "lv": 2,
+    "lecture": 12,
+    "sourceLine": 4011,
+    "t": "損失後の追加投資",
+    "q": "「ここまで損をしたのだから取り戻す」と、見通しを検証せず投入額を増やした。最も直接的に示されている問題は？",
+    "c": [
+      "継続すれば過去の費用は必ず回収できる",
+      "過去の支出を将来の判断から除外している",
+      "過去の損失が次の投入判断を縛っている",
+      "投入額が増えるほど客観的な成功率も上がる"
+    ],
+    "a": 2,
+    "e": "講座は、元を取ろうという気持ちが追加投入を膨らませる過程を取り上げています。過去に失った金額そのものは、次の機会の有利さを示す根拠にはなりません。（参照：応用コース 第12回）",
+    "id": "advanced-017"
+  },
+  {
+    "lv": 3,
+    "lecture": 13,
+    "sourceLine": 4230,
+    "t": "判断ルールと感情",
+    "q": "売買判断に感情が入り込みやすい状況で、事前に売買条件を決めておく狙いとして最も適切なのは？",
+    "c": [
+      "条件を決めるだけで利益を保証する",
+      "市場の変化を検証する必要をなくす",
+      "一度作ったルールを永久に変更しない",
+      "その場の感情による判断のぶれを抑える"
+    ],
+    "a": 3,
+    "e": "第13回は、感情に振り回される判断を抑えるためのルール化を扱います。ルールの存在と、収益性や妥当性の保証は別であり、無条件の必勝を意味しません。（参照：応用コース 第13回）",
+    "id": "advanced-018"
+  },
+  {
+    "lv": 3,
+    "lecture": 14,
+    "sourceLine": 5496,
+    "t": "企業の評判と情報収集",
+    "q": "ある企業を「危ない」と聞いた後、それに合う噂ばかり集め、否定する情報を退けてしまう。組み合わせとして適切なのは？",
+    "c": [
+      "最初の情報への固着と、支持する証拠への偏り",
+      "単純接触による好感と、弱者への応援",
+      "自作物への愛着と、初期設定の維持",
+      "選択肢の増加と、短期報酬の獲得"
+    ],
+    "a": 0,
+    "e": "講座では、最初の確信やストーリーがアンカーになり、それに合う証拠の収集によって増幅する過程を説明しています。企業の実態と、情報が広がる心理は分けて考える必要があります。（参照：応用コース 第14回）",
+    "id": "advanced-019"
+  },
+  {
+    "lv": 2,
+    "lecture": 15,
+    "sourceLine": 5570,
+    "t": "信頼の区別",
+    "q": "「仕事を遂行できる」「損得上、裏切りにくい」「人柄として裏切らないと思う」。第15・16回の整理に合う理解は？",
+    "c": [
+      "三つとも過去に会った回数だけで決まる",
+      "同じ信頼という言葉でも、根拠が異なる三つの評価である",
+      "能力が高ければ人柄も必ず信頼できる",
+      "契約で守られた安心と人柄への信頼は常に同一である"
+    ],
+    "a": 1,
+    "e": "講座は、能力に関する信頼、仕組みによる安心、人間性に関する信頼を区別しています。一つの根拠を、そのまま他の評価の証明に使わないことが大切です。（参照：応用コース 第15回）",
+    "id": "advanced-020"
+  },
+  {
+    "lv": 2,
+    "lecture": 16,
+    "sourceLine": 6028,
+    "t": "構造的信頼",
+    "q": "一度裏切れば以後の取引を失う仕組みがあり、相手もそれを分かっている。ここで生まれる安心の主な根拠は？",
+    "c": [
+      "一回限りの取引であること",
+      "相手の人柄を検証し終えたこと",
+      "継続取引を失う不利益が裏切りを抑えること",
+      "相手の能力が自動的に高まること"
+    ],
+    "a": 2,
+    "e": "将来の取引を失う損得の構造が、裏切りにくさを支えています。これは相手の道徳性そのものを証明することとは異なる、構造による安心です。（参照：応用コース 第16回）",
+    "id": "advanced-021"
+  },
+  {
+    "lv": 3,
+    "lecture": 16,
+    "sourceLine": 6071,
+    "t": "信頼を支える仕組み",
+    "q": "人柄をまだよく知らない取引相手との安心を、双方で設計したい。講座の構造的信頼に最も沿う対応は？",
+    "c": [
+      "相手の服装だけで誠実さを判断する",
+      "重要事項を曖昧にしたまま親しさを演出する",
+      "有名人と知り合いだと繰り返し伝える",
+      "双方の責任や違反時の扱いを協議し、約束として明確にする"
+    ],
+    "a": 3,
+    "e": "第16回は、相互の協議によって信頼を支えるメカニズムを作る方法を挙げています。印象を良くすることと、約束が守られやすい構造を作ることは区別できます。（参照：応用コース 第16回）",
+    "id": "advanced-022"
+  },
+  {
+    "lv": 3,
+    "lecture": 17,
+    "sourceLine": 6454,
+    "t": "問題の定義",
+    "q": "「エレベーターが遅い」という苦情を受け、増速だけを検討している。問題設定の固着を避ける問いは？",
+    "c": [
+      "困っているのは速度そのものか、待ち時間の体験か",
+      "最初に増速と言ったのは誰か",
+      "増速以外の案をどう排除するか",
+      "今の案を支持する事例だけをどこで集めるか"
+    ],
+    "a": 0,
+    "e": "講座では、目の前の問題設定にとらわれず、より上位の目的を見直すことを扱っています。解決方法を先に固定せず、何を改善したいのかを問い直します。（参照：応用コース 第17回）",
+    "id": "advanced-023"
+  },
+  {
+    "lv": 3,
+    "lecture": 17,
+    "sourceLine": 6547,
+    "t": "組織の同質化",
+    "q": "皆が同じ経験を持つ会議で、外部から見れば大きな問題が議題に上らない。講座の視点に沿う改善は？",
+    "c": [
+      "全員の結論が一致するまで外部情報を遮断する",
+      "異なる経験を持つ人の視点を取り入れ、疑問を出せるようにする",
+      "同じ経験の人だけでさらに会議を重ねる",
+      "異論が出ないことを問題の不存在の証拠にする"
+    ],
+    "a": 1,
+    "e": "同質な集団では問題を思いつけないことに加え、疑問を持っても周囲に合わせて言わないことがあります。異なる視点と、意見を出せる条件の両方が重要です。（参照：応用コース 第17回）",
+    "id": "advanced-024"
+  },
+  {
+    "lv": 1,
+    "lecture": 18,
+    "sourceLine": 7158,
+    "t": "交渉とアンカリング",
+    "q": "相手の最初の提示価格が高く、その後の自分の予算感まで上がってしまった。最も近いバイアスは？",
+    "c": [
+      "単純接触効果",
+      "不作為バイアス",
+      "アンカリング効果",
+      "アンダーマイニング効果"
+    ],
+    "a": 2,
+    "e": "最初の提示条件が判断の基準として強く残るのがアンカリングです。提示額は交渉上の主張であり、対象の価値をそのまま証明する情報ではありません。（参照：応用コース 第18回）",
+    "id": "advanced-025"
+  },
+  {
+    "lv": 2,
+    "lecture": 19,
+    "sourceLine": 7416,
+    "t": "交渉とフレーミング",
+    "q": "同じ条件の提案を「合意で得られるもの」と「不合意で失うもの」の二通りで説明した。反応の違いを見る際の主要な観点は？",
+    "c": [
+      "説明の順番が変わると契約内容も必ず変わる",
+      "損失を強調すれば全員が必ず合意する",
+      "利益の表現には心理的な影響が一切ない",
+      "利得と損失の枠づけによって評価が変わり得る"
+    ],
+    "a": 3,
+    "e": "フレーミング効果は、同じ内容でも提示する枠によって判断が変わり得ることを指します。損失回避と関わりますが、相手の合意を保証する手法ではありません。（参照：応用コース 第19回）",
+    "id": "advanced-026"
+  },
+  {
+    "lv": 2,
+    "lecture": 20,
+    "sourceLine": 7773,
+    "t": "後知恵バイアス",
+    "q": "試合前には結果が読めなかったのに、敗戦後「その作戦が失敗するのは最初から明らかだった」と評した。最も近いものは？",
+    "c": [
+      "後知恵バイアス",
+      "デフォルト効果",
+      "類似性効果",
+      "返報性の原理"
+    ],
+    "a": 0,
+    "e": "結果を知ってから、事前にも予測できたはずだと捉え直すのが後知恵バイアスです。講座では、このような批判への恐れが指導者の選択にも影響し得ると説明しています。（参照：応用コース 第20回）",
+    "id": "advanced-027"
+  },
+  {
+    "lv": 2,
+    "lecture": 21,
+    "sourceLine": 8050,
+    "t": "不作為バイアス",
+    "q": "審判が「判断して間違えるより、見送る方がまし」と考える。講座が取り上げる判断の非対称性は？",
+    "c": [
+      "介入した場合の方が後悔が必ず小さい",
+      "行動による誤りを、何もしない誤りより重く捉える",
+      "何もしない判断には試合への影響がない",
+      "試合終盤なら常に見送りが正しい"
+    ],
+    "a": 1,
+    "e": "不作為バイアスでは、行動による結果と、行動しないことによる結果の評価が偏ります。見送ることも結果に影響し得るため、無介入だから中立とは限りません。（参照：応用コース 第21回）",
+    "id": "advanced-028"
+  },
+  {
+    "lv": 3,
+    "lecture": 22,
+    "sourceLine": 8599,
+    "t": "スポーツと参照点",
+    "q": "同じ点差でも、追い上げている側は逆転を狙い、追い上げられた側はリードを守ろうとする。講座の説明に合う見方は？",
+    "c": [
+      "勝っている側ほど常に大きなリスクを取る",
+      "過去の試合展開は評価に影響しない",
+      "現在の点差だけでなく、参照点と利得・損失の捉え方を見る",
+      "点差が同じなら両者の心理も必ず同じになる"
+    ],
+    "a": 2,
+    "e": "第22回では、同じ局面でも利得を守るか損失を取り戻すかによって選択が変わり得ると説明しています。また、その心理が競技成績を必ず改善するわけではありません。（参照：応用コース 第22回）",
+    "id": "advanced-029"
+  },
+  {
+    "lv": 2,
+    "lecture": 23,
+    "sourceLine": 8932,
+    "t": "公共政策と参照点",
+    "q": "受け取ってきた給付が縮小されると、同額の新規給付を得る場合以上に強く反応する。主な説明は？",
+    "c": [
+      "受給期間にかかわらず参照点は常にゼロである",
+      "給付への反応は名目金額だけで決まる",
+      "損失は同額の利得より常に軽く感じられる",
+      "給付のある状態が参照点となり、縮小が損失になる"
+    ],
+    "a": 3,
+    "e": "いったん当たり前になった状態からの減少は、損失として受け止められやすくなります。これは反応の心理的な説明であり、個別政策の是非そのものを決めるものではありません。（参照：応用コース 第23回）",
+    "id": "advanced-030"
+  },
+  {
+    "lv": 3,
+    "lecture": 24,
+    "sourceLine": 9235,
+    "t": "現在バイアスへの対策",
+    "q": "長期目標を決めても「明日から」と先送りしがちな行動を見直す。講座の対策に沿うのは？",
+    "c": [
+      "短期の到達点を置き、進捗を継続的に記録する",
+      "達成時期をできるだけ遠くして途中では見ない",
+      "費やした金額だけを成果の指標にする",
+      "うまくいった日の記録だけを残す"
+    ],
+    "a": 0,
+    "e": "講座は、マイルストーンと継続的な確認によって、遠い目標を直近の行動につなぐ方法を挙げています。都合のよい説明で進捗の不足を見えなくしないことにもつながります。（参照：応用コース 第24回）",
+    "id": "advanced-031"
+  },
+  {
+    "lv": 2,
+    "lecture": 25,
+    "sourceLine": 9433,
+    "t": "価格提示と希少性",
+    "q": "実際の通常価格と割引価格を並べ、さらに正確な終了期限を示した。講座が説明する二つの働きは？",
+    "c": [
+      "共有情報バイアスと後知恵バイアス",
+      "アンカリング効果と希少性効果",
+      "保有効果とアンダードッグ効果",
+      "類似性効果と不作為バイアス"
+    ],
+    "a": 1,
+    "e": "通常価格が比較の基準となり、期限が機会の限られた性質を示します。価格差の評価と、今判断したい気持ちという異なる働きが組み合わされています。（参照：応用コース 第25回）",
+    "id": "advanced-032"
+  },
+  {
+    "lv": 3,
+    "lecture": 27,
+    "sourceLine": 9769,
+    "t": "投票行動の解釈",
+    "q": "「投票率が低いのは無関心だから」とだけ結論づける前に、講座が促す検討は？",
+    "c": [
+      "投票に関する固定観念は検証しなくてよいと考える",
+      "個々人の理由を確認せず一つの原因で説明する",
+      "選択による違いを感じられるかなど、別の説明も検討する",
+      "低い投票率を見たら必ず政治への満足と判断する"
+    ],
+    "a": 2,
+    "e": "第27回は、当たり前とされる解釈を固定せず、別の理由を考える視点を示しています。無関心とも満足とも一律に決めつけないことが、思い込みの検証になります。（参照：応用コース 第27回）",
+    "id": "advanced-033"
+  },
+  {
+    "lv": 1,
+    "lecture": 28,
+    "sourceLine": 11216,
+    "t": "デフォルト効果",
+    "q": "寄付額の選択画面で、初めから選ばれていた金額をそのまま確定した。最も直接的な説明は？",
+    "c": [
+      "アンダードッグ効果",
+      "スリーパー効果",
+      "ピーク・エンドの法則",
+      "デフォルト効果"
+    ],
+    "a": 3,
+    "e": "初期設定を変更せず受け入れやすいのがデフォルト効果です。講座では、現状維持の傾向が寄付額の選択にも関わる例として扱っています。（参照：応用コース 第28回）",
+    "id": "advanced-034"
+  },
+  {
+    "lv": 2,
+    "lecture": 29,
+    "sourceLine": 10023,
+    "t": "治療判断とサンクコスト",
+    "q": "治療について「ここまで時間と費用をかけた」という理由だけが、今後の方針を考える際に強く影響した。この心理の名前は？",
+    "c": [
+      "サンクコストのバイアス",
+      "単純接触効果",
+      "アンダードッグ効果",
+      "デフォルト効果"
+    ],
+    "a": 0,
+    "e": "既に費やした負担を無駄にしたくない心理が、将来の評価に入り込んでいます。この設問は心理の識別を扱うもので、特定の治療の継続・変更を判断するものではありません。（参照：応用コース 第29回）",
+    "id": "advanced-035"
+  },
+  {
+    "lv": 3,
+    "lecture": 30,
+    "sourceLine": 10438,
+    "t": "現状維持の基準",
+    "q": "同じ措置について、開始前は「始めたくない」、開始後は「やめたくない」と感じる。講座の分析に合う説明は？",
+    "c": [
+      "開始した後には参照点がなくなる",
+      "何を現状とみなすかが、開始前後で変わる",
+      "現状維持は常に何もしない状態だけを指す",
+      "措置の価値が開始した瞬間に客観的に増える"
+    ],
+    "a": 1,
+    "e": "開始前は未実施、開始後は実施中という状態が、それぞれ現状になります。第30回はこの心理の非対称性を扱っており、医療上・倫理上の判断の同一性を断定する話とは区別します。（参照：応用コース 第30回）",
+    "id": "advanced-036"
+  },
+  {
+    "lv": 2,
+    "lecture": 31,
+    "sourceLine": 10746,
+    "t": "受診行動と現在バイアス",
+    "q": "将来の健康上の便益は理解していても、今かかる手間が気になり予定を立てない。講座で取り上げる心理に最も近いのは？",
+    "c": [
+      "ハロー効果",
+      "類似性効果",
+      "現在バイアス",
+      "アンダーマイニング効果"
+    ],
+    "a": 2,
+    "e": "将来の便益より直近の負担が大きく感じられ、行動が遅れる例です。設問は先送りの心理を扱っており、個別の検査の必要性や効果を判定するものではありません。（参照：応用コース 第31回）",
+    "id": "advanced-037"
+  },
+  {
+    "lv": 3,
+    "lecture": 32,
+    "sourceLine": 11393,
+    "t": "詐欺と判断の切迫",
+    "q": "権威を名乗る相手が家族の危機を伝え、今すぐ支払うよう迫る。心理の組み合わせを理解した上での対応として適切なのは？",
+    "c": [
+      "権威の肩書きがあれば内容の確認を省く",
+      "急ぐほど正しい話だと判断して従う",
+      "自分は騙されないと思って相手だけに確認する",
+      "いったん通話を切り、既知の連絡先から別途確認する"
+    ],
+    "a": 3,
+    "e": "講座は、権威、損失への恐れ、時間的な切迫が重なり、判断が偏る過程を説明しています。相手が作った枠から離れて確認することが、その影響を弱める対応になります。（参照：応用コース 第32回）",
+    "id": "advanced-038"
+  },
+  {
+    "lv": 3,
+    "lecture": 33,
+    "sourceLine": 11886,
+    "t": "子育てと固定観念",
+    "q": "「親ならこうすべき」と思い込み、それに合う話だけ集め、周囲と違う分担を避けている。見直しとして適切なのは？",
+    "c": [
+      "役割の前提を問い直し、家庭の状況と異なる事例も検討する",
+      "周囲が同じなら自分の家庭にも必ず最適だと考える",
+      "最初に覚えた役割分担を検討対象から外す",
+      "前提に合わない経験談をすべて例外として退ける"
+    ],
+    "a": 0,
+    "e": "講座は、ステレオタイプへの固着に、支持証拠の収集や同調が重なる点を扱っています。固定した役割を出発点とせず、状況に即して考え直すことが重要です。（参照：応用コース 第33回）",
+    "id": "advanced-039"
+  },
+  {
+    "lv": 3,
+    "lecture": 34,
+    "sourceLine": 12226,
+    "t": "選択の枠と自律性",
+    "q": "片付けを促す際、必要な条件は明確にしつつ子どもが決める余地を残したい。講座の考え方に近いのは？",
+    "c": [
+      "本人に相談せず選んだことにして進める",
+      "理由と範囲を共有し、その中から方法を選んでもらう",
+      "理由を示さず命令の回数だけ増やす",
+      "何でも自由と伝えた後で全ての選択を否定する"
+    ],
+    "a": 1,
+    "e": "第34回では、前提を示した上で複数の選択肢から本人が決める構成を扱っています。必要な条件を曖昧にすることや、選択権があるふりをすることとは異なります。（参照：応用コース 第34回）",
+    "id": "advanced-040"
+  },
+  {
+    "lv": 2,
+    "lecture": 35,
+    "sourceLine": 12393,
+    "t": "報酬の基準",
+    "q": "大きなご褒美を続けた後、小さなご褒美では動かなくなった。講座が挙げる注意点に合う説明は？",
+    "c": [
+      "子どもには将来の期待水準が形成されない",
+      "一度報酬を受けると金額の違いを感じなくなる",
+      "高い報酬水準が次の期待の基準になり得る",
+      "報酬は高いほど将来も必ず有効になる"
+    ],
+    "a": 2,
+    "e": "講座は、大きな報酬が欲求や期待を引き上げ、以後の小さな報酬を魅力的でなくする可能性を述べています。目先に動くかだけでなく、その後への影響も考える視点です。（参照：応用コース 第35回）",
+    "id": "advanced-041"
+  },
+  {
+    "lv": 1,
+    "lecture": 36,
+    "sourceLine": 12778,
+    "t": "教育と同調",
+    "q": "「周りの家庭がみんな受験するから、うちも同じにしないと遅れる」と考えた。まず注目する心理は？",
+    "c": [
+      "スリーパー効果",
+      "アンダーマイニング効果",
+      "不作為バイアス",
+      "同調バイアス"
+    ],
+    "a": 3,
+    "e": "周囲から取り残されたくないという意識が、選択に影響しています。講座では、他の家庭の行動と、自分の子どもに合う選択を区別して眺める視点を示しています。（参照：応用コース 第36回）",
+    "id": "advanced-042"
+  },
+  {
+    "lv": 1,
+    "lecture": 37,
+    "sourceLine": 13138,
+    "t": "メンタルアカウンティング",
+    "q": "普段は支出に慎重なのに「これは生活費ではなく遊び用のお金だから」と、同じ金額を気軽に使った。最も近いものは？",
+    "c": [
+      "メンタルアカウンティング",
+      "後知恵バイアス",
+      "共有情報バイアス",
+      "権威バイアス"
+    ],
+    "a": 0,
+    "e": "心の中で用途別の財布を作り、同じお金でも評価を変えるのがメンタルアカウンティングです。講座では、生活費とレジャー費の心理的な区分を例にしています。（参照：応用コース 第37回）",
+    "id": "advanced-043"
+  },
+  {
+    "lv": 1,
+    "lecture": 38,
+    "sourceLine": 13484,
+    "t": "単純接触効果",
+    "q": "宝くじの広告で同じ音楽やフレーズを何度も聞き、親しみを感じるようになった。講座で挙げられるものは？",
+    "c": [
+      "選択のパラドックス",
+      "ザイアンス効果（単純接触効果）",
+      "サンクコストのバイアス",
+      "不作為バイアス"
+    ],
+    "a": 1,
+    "e": "繰り返し接することで親近感や好感が生じやすくなる現象です。親しみがあることと、当選確率や金銭的な有利さは別の問題です。（参照：応用コース 第38回）",
+    "id": "advanced-044"
+  },
+  {
+    "lv": 2,
+    "lecture": 39,
+    "sourceLine": 13709,
+    "t": "アンダーマイニング効果",
+    "q": "楽しさや貢献したい気持ちで行っていた活動に報酬を導入したところ、自発的な意欲が弱まった。最も近い説明は？",
+    "c": [
+      "報酬がない活動では動機づけは生じない",
+      "活動への関心は報酬額だけで説明できる",
+      "外的な報酬が内発的な動機づけを損なうことがある",
+      "報酬はどんな活動でも意欲を必ず高める"
+    ],
+    "a": 2,
+    "e": "第39回は、金銭的なインセンティブが万能ではないことを扱っています。もともとの動機を見ずに報酬だけを加えると、活動の意味の捉え方が変わる場合があります。（参照：応用コース 第39回）",
+    "id": "advanced-045"
+  },
+  {
+    "lv": 3,
+    "lecture": 40,
+    "sourceLine": 14087,
+    "t": "信頼と学習の循環",
+    "q": "「仕事ができない」と見られ、経験を積む機会も減った人の悪循環を変えたい。講座の提案に近いのは？",
+    "c": [
+      "経験を積む機会を全てなくし失敗だけを防ぐ",
+      "不得意な仕事だけを増やして評判を固定する",
+      "能力の評価は変えられないと本人に伝える",
+      "得意な仕事で実績を作り、信頼と学習機会の循環につなげる"
+    ],
+    "a": 3,
+    "e": "第40回は、得意分野での評価を起点に、仕事・経験・能力がつながる正の循環を作る考え方を示しています。印象だけを飾るのでなく、実際に学べる機会へつなげることが要点です。（参照：応用コース 第40回）",
+    "id": "advanced-046"
+  },
+  {
+    "lv": 3,
+    "lecture": 41,
+    "sourceLine": 14512,
+    "t": "就職活動の同質化",
+    "q": "就活指導の型を信じ、型を守って成功した話だけ集めている。講座の観点から注意すべきことは？",
+    "c": [
+      "同調と支持証拠への偏りで、型の有効性を過大評価し得る",
+      "皆が同じ型なら全員に同じ効果が保証される",
+      "型に合わない成功例は検討する価値がない",
+      "情報が多いほど確証への偏りは必ず消える"
+    ],
+    "a": 0,
+    "e": "講座では、周囲に合わせて採用した型が固定化し、その型を支持する話で強化される過程を扱います。共通の型を使うことと、自分の強みを伝えられることは同じではありません。（参照：応用コース 第41回）",
+    "id": "advanced-047"
+  },
+  {
+    "lv": 2,
+    "lecture": 42,
+    "sourceLine": 14923,
+    "t": "バーナム効果",
+    "q": "誰にでも当てはまる性格診断を「自分を完全に言い当てている」と受け止め、自己分析を固定した。最も近いものは？",
+    "c": [
+      "メンタルアカウンティング",
+      "バーナム効果",
+      "アンダードッグ効果",
+      "デフォルト効果"
+    ],
+    "a": 1,
+    "e": "一般的な記述を、自分に特有の正確な説明だと感じるのがバーナム効果です。講座では、それを前提に支持する経験だけを集めると、自己理解の柔軟性が失われる点も扱います。（参照：応用コース 第42回）",
+    "id": "advanced-048"
+  },
+  {
+    "lv": 2,
+    "lecture": 43,
+    "sourceLine": 15133,
+    "t": "内定と保有効果",
+    "q": "先に内定した会社が、内定前より魅力的に感じられ、断ることが惜しくなった。直接的な説明は？",
+    "c": [
+      "先に決まった会社は客観的に常に最適である",
+      "選択肢を持つと損失への感覚がなくなる",
+      "自分が確保した選択肢になったことで評価が高まる",
+      "内定した瞬間に会社の労働条件が必ず改善する"
+    ],
+    "a": 2,
+    "e": "内定によって自分の持ち駒と感じると、失うことの心理的な負担が大きくなります。講座は、この保有効果が進路選択を左右し得ると説明しています。（参照：応用コース 第43回）",
+    "id": "advanced-049"
+  },
+  {
+    "lv": 1,
+    "lecture": 44,
+    "sourceLine": 15382,
+    "t": "保険と初期設定",
+    "q": "申込画面で初めから選ばれていたコースを、比較せずそのまま選んだ。最も近い心理は？",
+    "c": [
+      "大差で負けている側を応援する心理",
+      "事後的に予測できたと思う心理",
+      "同じ広告を繰り返し見て好きになる心理",
+      "初期設定を変えず受け入れるデフォルト効果"
+    ],
+    "a": 3,
+    "e": "講座は、見本や画面の選択済みの項目が、そのまま選ばれやすい点を扱っています。初期設定は、自分に合う補償かどうかの確認を代わりにしてくれるものではありません。（参照：応用コース 第44回）",
+    "id": "advanced-050"
+  },
+  {
+    "lv": 3,
+    "lecture": 45,
+    "sourceLine": 15897,
+    "t": "不正の同調",
+    "q": "「仲間もやっているから、この程度はよい」と不正への抵抗が下がっている。講座の説明に合う対策の方向は？",
+    "c": [
+      "周囲の行動と許される基準を分け、監視の独立性を保つ",
+      "仲間への信頼があれば確認を全てやめる",
+      "皆がやっているなら問題がないと判断する",
+      "不正を知っても雰囲気を守るため共有しない"
+    ],
+    "a": 0,
+    "e": "第45回は、不正を目にすることが心理的なハードルを下げる点と、実行者・監視者の近さが監視を弱める点を扱います。親しさや慣れで基準が変わらない仕組みが重要です。（参照：応用コース 第45回）",
+    "id": "advanced-051"
+  },
+  {
+    "lv": 1,
+    "lecture": 46,
+    "sourceLine": 16116,
+    "t": "地域プロモーションとバーナム効果",
+    "q": "観光地の「人生に迷いがあるあなたへ」という広い表現を、自分だけへの特別な呼びかけに感じた。最も近いものは？",
+    "c": [
+      "共有情報バイアス",
+      "バーナム効果",
+      "サンクコストのバイアス",
+      "不作為バイアス"
+    ],
+    "a": 1,
+    "e": "多くの人に当てはまる記述でも、自分にぴったりの表現だと受け止めることがあります。講座では、訪れる必然性を感じる過程に関わる例として紹介しています。（参照：応用コース 第46回）",
+    "id": "advanced-052"
+  },
+  {
+    "lv": 2,
+    "lecture": 47,
+    "sourceLine": 16328,
+    "t": "地域の第一印象",
+    "q": "小さな観光地が、全てで大都市を上回る代わりに一つの魅力を最初に強く伝える。講座の狙いに合うのは？",
+    "c": [
+      "情報を減らせば必ず満足が高まる効果",
+      "滞在の最後さえ良ければ最初は無関係という効果",
+      "初頭効果と、一面の好印象が全体へ広がるハロー効果",
+      "訪問者の期待を無制限に上げ続ける効果"
+    ],
+    "a": 2,
+    "e": "第47回は、最初の体験を整え、特に優れた一面から全体の印象を高める方法を示しています。期待を過度に膨らませることではなく、体験で裏づけることが大切です。（参照：応用コース 第47回）",
+    "id": "advanced-053"
+  },
+  {
+    "lv": 1,
+    "lecture": 48,
+    "sourceLine": 16620,
+    "t": "共有情報バイアス",
+    "q": "会議で全員が知る情報ばかり議論され、一人だけが持つ重要な情報が判断に反映されなかった。どの概念が最も近い？",
+    "c": [
+      "アンダードッグ効果",
+      "デフォルト効果",
+      "カリギュラ効果",
+      "共有情報バイアス"
+    ],
+    "a": 3,
+    "e": "全員が知る情報は会話に上がりやすい一方、一部の人だけが持つ情報は軽視されることがあります。情報量が集団内に存在することと、判断に使われることは別です。（参照：応用コース 第48回）",
+    "id": "advanced-054"
+  },
+  {
+    "lv": 2,
+    "lecture": 49,
+    "sourceLine": 16917,
+    "t": "集団浅慮",
+    "q": "反対材料を知っているが「会議の雰囲気を悪くしたくない」と黙る人が増えた。集団浅慮の徴候として最も近いものは？",
+    "c": [
+      "自己検閲",
+      "独立した証拠の照合",
+      "少数意見の保護",
+      "評価基準の明確化"
+    ],
+    "a": 0,
+    "e": "自己検閲は、集団の心地よさや一体感を守るために、自分で異論を抑えることです。異論が出ないことを、十分な検討の結果と取り違えないようにする必要があります。（参照：応用コース 第49回）",
+    "id": "advanced-055"
+  },
+  {
+    "lv": 3,
+    "lecture": 18,
+    "sourceLine": 7158,
+    "t": "交渉の基準づくり",
+    "q": "相手の初回提示額に引きずられないため、交渉前に準備する情報として適切なのは？",
+    "c": [
+      "過去に交渉へ費やした時間の合計だけ",
+      "独立した比較資料と、自分たちの条件・評価基準",
+      "相手の最初の数字をそのまま使った上限額",
+      "相手に都合のよい成功談だけの一覧"
+    ],
+    "a": 1,
+    "e": "第18回は初回提示額の影響、第19回は過去の経緯や現在の立場から距離を取る視点を扱っています。交渉相手の数字とは独立した基準を持つことで、比較の土台を作れます。（参照：応用コース 第18回）",
+    "id": "advanced-056"
+  },
+  {
+    "lv": 3,
+    "lecture": 25,
+    "sourceLine": 9433,
+    "t": "割引表示の基準変化",
+    "q": "「期間限定の特価」を長期間続けると、当初ほどお得に見えなくなった。講座の説明に合うのは？",
+    "c": [
+      "消費者の価格の基準は一度決まると変わらない",
+      "期限は長くなるほど切迫感が必ず増す",
+      "特価の方が通常の価格として認識され始める",
+      "割引が長いほど希少性は必ず強まる"
+    ],
+    "a": 2,
+    "e": "長く続く価格は、実質的な通常価格として受け止められ得ます。比較の基準が変わると、元の価格との差を示す訴求も弱まるという説明です。（参照：応用コース 第25回）",
+    "id": "advanced-057"
+  },
+  {
+    "lv": 2,
+    "lecture": 37,
+    "sourceLine": 13207,
+    "t": "少数の法則",
+    "q": "独立で公平なコインが5回続けて表だった。「次は必ず裏に近づく」と考える点の問題は？",
+    "c": [
+      "独立なら過去の結果が次の確率を変えないと考えている",
+      "表と裏の確率を事前に等しく置いている",
+      "短い系列では偏りが起こり得ると認めている",
+      "短い系列でも結果が均等に戻るはずだと期待している"
+    ],
+    "a": 3,
+    "e": "独立で公平という条件なら、次の表・裏はそれぞれ2分の1です。講座が指摘するのは、短い連続結果にも大きな標本と同じ均等さを期待してしまう誤りです。（参照：応用コース 第37回）",
+    "id": "advanced-058"
+  },
+  {
+    "lv": 2,
+    "lecture": 48,
+    "sourceLine": 16586,
+    "t": "集団極性化",
+    "q": "慎重な人が多い会議で、討論後の結論が各人の当初案よりさらに慎重になった。集団極性化について正しい説明は？",
+    "c": [
+      "集団の結論は危険な方向だけでなく、保守的な方向にも極端化する",
+      "集団極性化は必ず危険を好む方向だけに生じる",
+      "話し合えば必ず中間的な結論に落ち着く",
+      "慎重な方向への変化は集団極性化に含まれない"
+    ],
+    "a": 0,
+    "e": "講座では、リスキーシフトと慎重な方向へのシフトの両方を扱っています。集団極性化は「危険な結論になること」だけを指す言葉ではありません。（参照：応用コース 第48回）",
+    "id": "advanced-059"
+  },
+  {
+    "lv": 3,
+    "lecture": 49,
+    "sourceLine": 16917,
+    "t": "集団浅慮への対応",
+    "q": "リーダーへの賛成ばかりで決定が進み、反対の根拠を話しにくい会議を見直したい。最も適切なのは？",
+    "c": [
+      "賛成者だけを選んで客観性を確認する",
+      "リーダーの結論を先に固定せず、懸念や反対根拠を出す時間を設ける",
+      "全員一致を優先し、反対を言う時間を省く",
+      "創業者の考えと違う情報を先に除く"
+    ],
+    "a": 1,
+    "e": "第49回の自己検閲や反対者への圧力という説明からは、異論を表に出せる条件を整えることが対策になります。集団のまとまりだけでなく、根拠を十分に検討できたかを確認します。（参照：応用コース 第49回）",
+    "id": "advanced-060"
+  }
+];
+// Add verified lecture URLs here when the link list is available.
+// 講座回ごとの動画リンク（提供されたURLリストのまま。推測・流用はしていません）
+const LECTURE_LINKS = {
+  1: { title: "行動経済学検定1級を目指す（2027年2月受験者用）", url: "https://www.youtube.com/watch?v=eUnjLZJe9VI&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=48" },
+  2: { title: "マーケティング（１）", url: "https://www.youtube.com/watch?v=HuOd1X7GvcQ&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=2" },
+  3: { title: "マーケティング（２）", url: "https://www.youtube.com/watch?v=mQtsCsUI1P0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3" },
+  4: { title: "営業（１）", url: "https://www.youtube.com/watch?v=T9FghAp6EXI&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=3" },
+  5: { title: "営業（２）", url: "https://www.youtube.com/watch?v=4WguzDy2DvY&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=4" },
+  6: { title: "宗教（１）", url: "https://www.youtube.com/watch?v=rzIH5cwiVhM&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=5" },
+  7: { title: "宗教（２）", url: "https://www.youtube.com/watch?v=3l85hu__ht0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=6" },
+  8: { title: "恋愛と結婚（１）", url: "https://www.youtube.com/watch?v=c5k6i6gvSw4&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=7" },
+  9: { title: "恋愛と結婚（２）", url: "https://www.youtube.com/watch?v=PP_gKRT_DMs&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=8" },
+  10: { title: "危機管理", url: "https://www.youtube.com/watch?v=3H7hsxrAm4o&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=9" },
+  11: { title: "資産運用（１）", url: "https://www.youtube.com/watch?v=SySLArPAYXc&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=12" },
+  12: { title: "資産運用（２）", url: "https://www.youtube.com/watch?v=Z0aq1ud7ksw&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=10" },
+  13: { title: "資産運用（３）", url: "https://www.youtube.com/watch?v=OVGiE36sq-c&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=11" },
+  14: { title: "企業成長と企業倒産", url: "https://www.youtube.com/watch?v=Y3pEgGx47XI&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=13" },
+  15: { title: "信頼構築（１）", url: "https://www.youtube.com/watch?v=tkbssxX73a8&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=14" },
+  16: { title: "信頼構築（2）", url: "https://www.youtube.com/watch?v=WDwhPB8OvMo&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=15" },
+  17: { title: "問題解決", url: "https://www.youtube.com/watch?v=47ADHm8lOj8&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=16" },
+  18: { title: "交渉（1）", url: "https://www.youtube.com/watch?v=Zl1S0zjOVSQ&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=17" },
+  19: { title: "交渉（2）", url: "https://www.youtube.com/watch?v=R5lWQKHswMY&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=18" },
+  20: { title: "スポーツ（1）", url: "https://www.youtube.com/watch?v=zNvlx5KafP4&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=19" },
+  21: { title: "スポーツ（2）", url: "https://www.youtube.com/watch?v=7xbIOp4Xato&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=20" },
+  22: { title: "スポーツ（3）", url: "https://www.youtube.com/watch?v=teSJQ2emM38&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=21" },
+  23: { title: "公共政策", url: "https://www.youtube.com/watch?v=gzdUqTi2Cbg&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=22" },
+  24: { title: "ダイエット", url: "https://www.youtube.com/watch?v=CycWraFDQrc&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=23" },
+  25: { title: "デジタルマーケティング", url: "https://www.youtube.com/watch?v=Yo_wRHs7R4w&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=24" },
+  26: { title: "1級検定受験ガイド（2027年2月検定受験者向け）", url: "https://www.youtube.com/watch?v=-BtrdI0IBZ8&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=49" },
+  27: { title: "選挙と投票行動", url: "https://www.youtube.com/watch?v=m3_VPl99524&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=25" },
+  28: { title: "寄付・クラウドファンディング", url: "https://www.youtube.com/watch?v=Sa3NKIle95w&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=29" },
+  29: { title: "医療と健康維持(1)", url: "https://www.youtube.com/watch?v=SfkojfP6rS0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=26" },
+  30: { title: "医療と健康維持(2)", url: "https://www.youtube.com/watch?v=ffWphPz7OKA&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=27" },
+  31: { title: "医療と健康維持(3)", url: "https://www.youtube.com/watch?v=_6Z9dRY10N0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=28" },
+  32: { title: "詐欺", url: "https://www.youtube.com/watch?v=IkzqS23JGxQ&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=30" },
+  33: { title: "子育て(1)", url: "https://www.youtube.com/watch?v=Oi0YKosk2aE&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=31" },
+  34: { title: "子育て(2)", url: "https://www.youtube.com/watch?v=YYuas4q69Ro&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=32" },
+  35: { title: "子育て(3)", url: "https://www.youtube.com/watch?v=5UCHAD8paZQ&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=33" },
+  36: { title: "子育て(4)", url: "https://www.youtube.com/watch?v=tTFIgM_Jl3o&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=34" },
+  37: { title: "ギャンブル", url: "https://www.youtube.com/watch?v=vePSGHNgSV0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=35" },
+  38: { title: "宝くじ", url: "https://www.youtube.com/watch?v=5V8qfdbuac0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=36" },
+  39: { title: "モティベーション", url: "https://www.youtube.com/watch?v=b8eyeGskVuE&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=37" },
+  40: { title: "働き方改革", url: "https://www.youtube.com/watch?v=z-7Iiupht8w&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=38" },
+  41: { title: "就職活動(1)", url: "https://www.youtube.com/watch?v=2zY_MMdnbSI&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=39" },
+  42: { title: "就職活動(2)", url: "https://www.youtube.com/watch?v=me6sP3yHe_U&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=40" },
+  43: { title: "就職活動(3)", url: "https://www.youtube.com/watch?v=0jyh3BY-MgI&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=41" },
+  44: { title: "保険", url: "https://www.youtube.com/watch?v=h9VQXI_GbpM&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=42" },
+  45: { title: "不正行為", url: "https://www.youtube.com/watch?v=WbajXguBK-Y&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=43" },
+  46: { title: "地域振興(1)", url: "https://www.youtube.com/watch?v=RIMO_MXh7r0&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=44" },
+  47: { title: "地域振興(2)", url: "https://www.youtube.com/watch?v=ss5DqoqOPpk&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=45" },
+  48: { title: "集団的意思決定(1)", url: "https://www.youtube.com/watch?v=jb8PaEC7txk&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=46" },
+  49: { title: "集団的意思決定(2)", url: "https://www.youtube.com/watch?v=4y9Wbh2kvTA&list=PLEfIOJuY0l7hks77UBOtM1ZDC7XuplQk3&index=47" },
+};
+// 解説・復習から該当回の講座へ飛ぶリンク
+function lectureLinkHtml(n, cls){
+  const l=LECTURE_LINKS[n];
+  if(!l) return '';
+  return '<a class="'+cls+'" href="'+escHtml(l.url)+'" target="_blank" rel="noopener">'
+    +escHtml('関連講座：第'+n+'回 '+l.title)+'</a>';
+}
+// ─── STATE ──────────────────────────────────────────────────
+let selLv=['all'], selCnt=10, qs=[], idx=0, sc=0, ans=false, wrongs=[];
+let streak=0, maxStreak=0;
+let timerEnabled=false, timerInterval=null, timerLeft=30;
+let challengeIndices=null;
+let currentCorrectIdx=0, currentShuffledChoices=[];
+let totalTimeSec=0, qStartTime=0;
+// ─── URL CHALLENGE PARAM ─────────────────────────────────────
+(function(){
+  const p = new URLSearchParams(location.search);
+  const c = p.get('challenge');
+  if(c){
+    try{
+      const arr = c.split(',').map(Number).filter(n=>n>=0&&n<Q.length);
+      if(arr.length>0){ challengeIndices=arr; document.getElementById('challenge-banner').style.display='block'; }
+    }catch(e){}
+  }
+})();
+// ─── LEVEL / COUNT SELECT ─────────────────────────────────────
+function toggleLevel(lv){
+  if(lv==='all'){
+    selLv=['all'];
+    [1,2,3].forEach(l=>document.getElementById('lv'+l+'-card').classList.remove('selected'));
+    document.getElementById('lv-all-card').classList.add('selected');
+  } else {
+    document.getElementById('lv-all-card').classList.remove('selected');
+    if(selLv.includes('all')) selLv=[];
+    const card=document.getElementById('lv'+lv+'-card');
+    if(selLv.includes(lv)){selLv=selLv.filter(l=>l!==lv);card.classList.remove('selected');}
+    else{selLv.push(lv);card.classList.add('selected');}
+    if(!selLv.length){selLv=['all'];document.getElementById('lv-all-card').classList.add('selected');}
+  }
+  document.querySelectorAll('.level-card').forEach(b=>b.setAttribute('aria-pressed',String(b.classList.contains('selected'))));
+}
+function selectCount(n,btn){
+  selCnt=n;
+  document.querySelectorAll('.q-count-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.querySelectorAll('.q-count-btn').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+}
+// ─── START ────────────────────────────────────────────────────
+function startQuiz(){
+  timerEnabled = document.getElementById('timer-toggle').checked;
+  if(challengeIndices){
+    qs = challengeIndices.map(i=>Q[i]);
+    challengeIndices=null;
+  } else {
+    let pool=selLv.includes('all')?[...Q]:Q.filter(q=>selLv.includes(q.lv));
+    pool=pool.sort(()=>Math.random()-.5);
+    qs=pool.slice(0,Math.min(selCnt,pool.length));
+  }
+  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
+  show('quiz');render();
+}
+// ─── RENDER QUESTION ──────────────────────────────────────────
+function render(){
+  const q=qs[idx],tot=qs.length;
+  document.getElementById('q-counter').textContent=String(idx+1).padStart(2,'0')+' / '+String(tot).padStart(2,'0');
+  document.getElementById('prog-fill').style.width=(idx/tot*100)+'%';
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
+  const de=document.getElementById('q-diff');
+  de.textContent=['','Level 1','Level 2','Level 3'][q.lv];
+  de.className='diff-chip diff-'+q.lv;
+  document.getElementById('q-source').textContent='参照：第'+q.lecture+'回';
+  document.getElementById('q-text').textContent=q.q;
+  // 選択肢をシャッフルして正解位置を更新
+  const shuffleIdx=[0,1,2,3].sort(()=>Math.random()-0.5);
+  currentShuffledChoices=shuffleIdx.map(i=>q.c[i]);
+  currentCorrectIdx=shuffleIdx.indexOf(q.a);
+  const ce=document.getElementById('choices');
+  ce.innerHTML='';
+  ['A','B','C','D'].forEach((k,i)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.innerHTML='<span class="choice-key">'+k+'</span><span>'+escHtml(currentShuffledChoices[i])+'</span>';
+    b.onclick=()=>pick(i);
+    ce.appendChild(b);
+  });
+  const ex=document.getElementById('explanation');
+  ex.style.display='none';ex.className='explanation';
+  document.getElementById('next-btn').style.display='none';
+  ans=false;
+  qStartTime=Date.now();
+  updateStreakDisplay();
+  if(timerEnabled) startTimer();
+  else stopTimer();
+}
+// ─── TIMER ────────────────────────────────────────────────────
+function startTimer(){
+  stopTimer();
+  timerLeft=30;
+  document.getElementById('timer-bar-wrap').style.display='block';
+  document.getElementById('timer-display').style.display='block';
+  updateTimerUI();
+  timerInterval=setInterval(()=>{
+    timerLeft--;
+    updateTimerUI();
+    if(timerLeft<=0){
+      stopTimer();
+      if(!ans) timeUp();
+    }
+  },1000);
+}
+function stopTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  document.getElementById('timer-bar-wrap').style.display='none';
+  document.getElementById('timer-display').style.display='none';
+}
+function updateTimerUI(){
+  const pct=timerLeft/30*100;
+  const bar=document.getElementById('timer-bar');
+  const disp=document.getElementById('timer-display');
+  bar.style.width=pct+'%';
+  bar.className='timer-bar'+(timerLeft<=8?' warning':'');
+  disp.textContent=timerLeft+'s';
+  disp.className='timer-display'+(timerLeft<=8?' warning':'');
+}
+function timeUp(){
+  totalTimeSec+=30;
+  ans=true;
+  const q=qs[idx];
+  document.querySelectorAll('.choice').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===currentCorrectIdx)b.classList.add('correct');
+  });
+  streak=0;updateStreakDisplay();
+  const ex=document.getElementById('explanation');
+  const ll=lectureLinkHtml(q.lecture,'yt-link');
+  const ytLink=ll?'<br>'+ll:'';
+  ex.className='explanation wrong';
+  ex.innerHTML=`<span class="exp-label">時間切れ ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
+  ex.style.display='block';
+  wrongs.push({q:q.q,your:'（時間切れ）',correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t,lecture:q.lecture});
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
+}
+// ─── PICK ANSWER ─────────────────────────────────────────────
+function pick(sel){
+  if(ans)return;ans=true;
+  totalTimeSec+=timerEnabled?(30-timerLeft):Math.round((Date.now()-qStartTime)/1000);
+  stopTimer();
+  const q=qs[idx];
+  const btns=document.querySelectorAll('.choice');
+  const ok=currentCorrectIdx===sel;
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===currentCorrectIdx)b.classList.add('correct');
+    else if(i===sel&&!ok)b.classList.add('wrong');
+  });
+  const ll=lectureLinkHtml(q.lecture,'yt-link');
+  const ytLink=ll?'<br>'+ll:'';
+  const ex=document.getElementById('explanation');
+  if(ok){
+    sc++;
+    streak++;if(streak>maxStreak)maxStreak=streak;
+    checkStreakPopup();
+    ex.className='explanation correct';
+    ex.innerHTML='<span class="exp-label">正解</span>'+escHtml(q.e);
+  } else {
+    streak=0;
+    ex.className='explanation wrong';
+    ex.innerHTML=`<span class="exp-label">不正解 ― 正解は ${'ABCD'[currentCorrectIdx]}</span>${escHtml(q.e)}${ytLink}`;
+    wrongs.push({q:q.q,your:currentShuffledChoices[sel],correct:currentShuffledChoices[currentCorrectIdx],exp:q.e,topic:q.t,lecture:q.lecture});
+  }
+  ex.style.display='block';
+  document.getElementById('score-pill').innerHTML='<span class="score-pill-label">Score</span><span class="score-pill-num">'+sc+'</span>';
+  updateStreakDisplay();
+  const nb=document.getElementById('next-btn');
+  nb.style.display='block';
+  nb.textContent=idx>=qs.length-1?'結果を見る':'次の問題';
+}
+// ─── STREAK ──────────────────────────────────────────────────
+function updateStreakDisplay(){
+  const sd=document.getElementById('streak-display');
+  if(streak>=2){
+    sd.style.display='block';
+    sd.innerHTML=`<span class="streak-pill"><span class="streak-pill-label">Streak</span><span class="streak-pill-num">${streak}</span></span>`;
+  } else {
+    sd.style.display='none';
+  }
+}
+function checkStreakPopup(){
+  const msgs={3:'Run of 3',5:'Run of 5',10:'Perfect Run'};
+  if(msgs[streak]){
+    const pop=document.getElementById('streak-popup');
+    pop.textContent=msgs[streak];
+    pop.classList.add('show');
+    setTimeout(()=>pop.classList.remove('show'),2000);
+  }
+}
+// ─── NEXT / RESULT ─────────────────────────────────────────────
+function nextQ(){
+  idx++;
+  if(idx>=qs.length) showResult();
+  else{render();window.scrollTo({top:0,behavior:'smooth'});}
+}
+function showResult(){
+  stopTimer();
+  show('result');
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  // Large rank & score display
+  const rd=document.getElementById('rank-display');
+  rd.textContent='RANK '+rank; rd.setAttribute('data-rank', rank);
+  rd.className='rank-display '+rank;
+  document.getElementById('score-display').innerHTML=sc+'<span class="denom"> / '+tot+'</span>';
+  document.getElementById('r-correct').textContent=sc;
+  document.getElementById('r-wrong').textContent=tot-sc;
+  document.getElementById('r-rate').textContent=rate+'%';
+  const m={S:['達成。','90%以上の正答率です。別の場面でも知識を使えるか確かめましょう。'],A:['良好。','講座の理解はおおむね良好です。迷った場面を復習しましょう。'],B:['要復習。','解説を読み返し、再挑戦を推奨します。'],C:['再学習を。','該当するトピックの講座で基礎を確認してから再挑戦してください。']};
+  document.getElementById('result-msg').textContent=m[rank][0];
+  document.getElementById('result-sub').textContent=m[rank][1];
+  // Streak info & time
+  const si=document.getElementById('result-streak-info');
+  si.style.display='block';
+  const timeStr=timerEnabled?formatTime(totalTimeSec):'タイマーOFF';
+  si.innerHTML=(maxStreak>=3?'<span class="rsi-chip">Max streak</span>'+maxStreak+'問　':'')+'<span class="rsi-chip">Time</span>'+timeStr;
+  // Weak bias analysis
+  const topicWrong={};
+  wrongs.forEach(w=>{
+    if(!topicWrong[w.topic]) topicWrong[w.topic]=0;
+    topicWrong[w.topic]++;
+  });
+  const weakTopics=Object.entries(topicWrong).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const ws=document.getElementById('weak-section');
+  if(weakTopics.length){
+    const maxW=weakTopics[0][1];
+    ws.style.display='block';
+    document.getElementById('weak-list').innerHTML=weakTopics.map(([t,n])=>`
+      <div class="weak-item">
+        <span class="weak-topic">${escHtml(t)}</span>
+        <div class="weak-bar"><div class="weak-bar-fill" style="width:${n/maxW*100}%"></div></div>
+        <span class="weak-count">${n}問ミス</span>
+      </div>`).join('');
+  } else ws.style.display='none';
+  // Wrong review with YouTube links
+  const wrongSec=document.getElementById('wrong-section');
+  if(wrongs.length){
+    wrongSec.style.display='block';
+    document.getElementById('wrong-list').innerHTML=wrongs.map(w=>{
+      const ytBtn=lectureLinkHtml(w.lecture,'review-yt');
+      return `<div class="review-item">
+        <div class="review-q">${escHtml(w.q)}</div>
+        <div class="review-ans-wrong"><span class="review-ans-label">Your answer</span>${escHtml(w.your)}</div>
+        <div class="review-ans-correct"><span class="review-ans-label">Correct</span>${escHtml(w.correct)}</div>
+        <div class="review-exp">${escHtml(w.exp)}${ytBtn}</div>
+      </div>`;
+    }).join('');
+  } else wrongSec.style.display='none';
+  document.getElementById('nickname-card').style.display=db?'block':'none';
+  resetRankingUi();
+  rankingFilter=currentLevelLabel();
+  document.getElementById('ranking-card').style.display='block';
+  loadRanking();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+// ─── SHARE ──────────────────────────────────────────────────
+function shareX(){
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  const text=`行動経済学応用コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\n#行動経済学応用コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/ouyou_quiz.html`;
+  window.open('https://x.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
+}
+function shareThreads(){
+  const tot=qs.length, rate=Math.round(sc/tot*100);
+  const rank=rate>=90?'S':rate>=70?'A':rate>=50?'B':'C';
+  const text=`行動経済学応用コース 知識クイズ\nRANK ${rank}｜${sc}/${tot}問正解（${rate}%）\n最大連続正解：${maxStreak}問\n\nあなたも挑戦してみませんか。\n#行動経済学応用コースクイズ #行動経済学検定 #行動経済学\nhttps://columns.l-mine.com/ouyou_quiz.html`;
+  window.open('https://www.threads.net/intent/post?text='+encodeURIComponent(text),'_blank');
+}
+function shareChallenge(){
+  const indices=qs.map(q=>Q.indexOf(q)).filter(i=>i>=0);
+  const url=location.origin+location.pathname+'?challenge='+indices.join(',');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>alert('URLをコピーしました。友人に送ってください。'));
+  } else {
+    prompt('このURLをコピーして友人に送ってください。',url);
+  }
+}
+// ─── NAV ──────────────────────────────────────────────────────
+function retry(){
+  stopTimer();
+  idx=0;sc=0;wrongs=[];ans=false;streak=0;maxStreak=0;totalTimeSec=0;
+  document.getElementById('streak-popup').classList.remove('show');
+  show('quiz');render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goStart(){
+  stopTimer();
+  document.getElementById('streak-popup').classList.remove('show');
+  show('start');loadTopRanking();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function show(s){['start','quiz','result'].forEach(id=>document.getElementById(id+'-screen').style.display=id===s?'block':'none');}
+function formatTime(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return m>0?m+'m '+String(s).padStart(2,'0')+'s':s+'s';
+}
+function escHtml(s){
+  if(typeof s!=='string') return s;
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// ─── Firebase ──────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCMaWDoe-jI46fS4REGWVVFEt5PdmOm3Fo",
+  authDomain: "behavioral-economics-quiz-kiso.firebaseapp.com",
+  projectId: "behavioral-economics-quiz-kiso",
+  storageBucket: "behavioral-economics-quiz-kiso.firebasestorage.app",
+  messagingSenderId: "174262139361",
+  appId: "1:174262139361:web:1fa68f41aa6283d43e3aa0"
+};
+const RANKING_COLLECTION = 'rankings_advanced';
+let db=null;
+try{
+  if(typeof firebase!=='undefined' && firebase.initializeApp){
+    firebase.initializeApp(firebaseConfig);
+    db=firebase.firestore();
+  }
+}catch(e){ db=null; }
+if(!db) console.warn('ランキングに接続できません。演習・採点・復習はそのまま利用できます。');
+function rankingCol(){ return db.collection(RANKING_COLLECTION); }
+const RANKING_OFFLINE_MSG='ただいまランキングに接続できません。演習・採点・復習はそのままご利用いただけます。';
+let currentEntry=null, rankingFilter=null, submitting=false;
+// ランキング方針：各レベル内の「正解数」順（同値は所要時間の短い順）。
+// 正答率で並べると "少ししか挑戦しない人" が上位になり、多く解く挙動が抑制されるため廃止。
+let topRankingAll=[], topRankingFilter=null;
+// 保存するレベル名。選択した順序に左右されないよう昇順へ正規化する。
+function currentLevelLabel(){
+  return selLv.includes('all')?'全レベルMIX'
+    :[...selLv].map(Number).sort((a,b)=>a-b).map(l=>'Level '+l).join('+');
+}
+// 表示前に数値へ寄せる（想定外の値が保存されていても表示が壊れないように）
+function safeNum(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
+async function loadTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  const filterDiv=document.getElementById('top-ranking-filter');
+  if(!body)return;
+  if(!db){ if(filterDiv) filterDiv.innerHTML=''; body.innerHTML='<p class="ranking-loading">'+RANKING_OFFLINE_MSG+'</p>'; return; }
+  body.innerHTML='<p class="ranking-loading">記録を読み込んでいます…</p>';
+  try{
+    // 正解数の降順で広めに取得。レベル分布に偏りがあっても各バケットが代表を持てる深さ。
+    const snap=await rankingCol().orderBy('score','desc').limit(300).get();
+    topRankingAll=[];
+    snap.forEach(doc=>topRankingAll.push({id:doc.id,...doc.data()}));
+    if(!topRankingAll.length){
+      if(filterDiv) filterDiv.innerHTML='';
+      body.innerHTML='<p class="ranking-loading">記録がまだありません。最初の挑戦者になりませんか。</p>';
+      return;
+    }
+    // フィルターボタン生成（レベル別ランキング = "全体" は敢えて出さない）
+    const levels=[...new Set(topRankingAll.map(r=>r.level))].sort();
+    if(!levels.includes(topRankingFilter)) topRankingFilter=levels[0];
+    filterDiv.innerHTML='';
+    levels.forEach(lv=>{
+      const b=document.createElement('button');
+      b.className='rf-btn'+(topRankingFilter===lv?' active':'');
+      b.textContent=lv;
+      b.onclick=()=>{
+        topRankingFilter=lv;
+        document.querySelectorAll('#top-ranking-filter .rf-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderTopRanking();
+      };
+      filterDiv.appendChild(b);
+    });
+    renderTopRanking();
+  }catch(e){
+    console.warn('ランキングの読み込みに失敗しました。');
+    if(filterDiv) filterDiv.innerHTML='';
+    body.innerHTML='<p class="ranking-loading">読み込みに失敗しました。 <button type="button" class="rf-btn" onclick="loadTopRanking()">再読み込み</button></p>';
+  }
+}
+function renderTopRanking(){
+  const body=document.getElementById('top-ranking-body');
+  const filtered=topRankingAll.filter(r=>r.level===topRankingFilter);
+  if(!filtered.length){
+    body.innerHTML='<p class="ranking-loading">このカテゴリーの記録はまだありません。</p>';
+    return;
+  }
+  // 同一ニックネームは「正解数が最大」の記録を採用
+  const seen=new Map();
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.score>seen.get(r.nickname).score)seen.set(r.nickname,r);});
+  // 並び順：正解数の降順 → 同値時は所要時間の短い順（未計測は末尾）
+  const ranked=[...seen.values()].sort((a,b)=>b.score-a.score||(a.time==null?Infinity:a.time)-(b.time==null?Infinity:b.time)).slice(0,10);
+  const medals=['🥇','🥈','🥉'];
+  const rows=ranked.map((r,i)=>{
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
+    return `<tr><td>${rankDisp}</td><td>${escHtml(String(r.nickname==null?'':r.nickname))}</td><td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td><td>${tDisp}</td></tr>`;
+  }).join('');
+  body.innerHTML=`<p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
+  <table class="ranking-table">
+    <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+// ページ読み込み時に実行
+window.addEventListener('load', loadTopRanking);
+// リトライ／別の問題セットのたびに、前回の登録状態を持ち越さない
+function resetRankingUi(){
+  currentEntry=null; submitting=false;
+  const card=document.getElementById('nickname-card');
+  const btn=document.getElementById('nickname-submit');
+  const input=document.getElementById('nickname-input');
+  if(card) card.classList.remove('registered');
+  if(btn){ btn.disabled=false; btn.textContent='記録する'; }
+  if(input) input.value='';
+}
+async function submitRanking(){
+  const btn=document.getElementById('nickname-submit');
+  if(submitting||currentEntry) return;            // 二重送信の防止
+  const nick=document.getElementById('nickname-input').value.trim().slice(0,20);
+  if(!nick){alert('ニックネームを入力してください。');return;}
+  if(!db){alert('ただいまランキングに接続できません。時間をおいて再度お試しください。');return;}
+  const total=qs.length;
+  if(!total) return;
+  submitting=true;
+  btn.disabled=true;btn.textContent='記録中…';
+  const rate=Math.round(sc/total*100);
+  const lvLabel=currentLevelLabel();
+  try{
+    const timeVal=timerEnabled?totalTimeSec:null;
+    const ref=await rankingCol().add({
+      nickname:nick,score:sc,total:total,rate:rate,level:lvLabel,
+      questions:total,time:timeVal,timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    currentEntry=ref.id;
+    btn.textContent='記録しました';
+    document.getElementById('nickname-card').classList.add('registered');
+    rankingFilter=lvLabel; // プレイしたレベルのボードを自動選択
+    loadRanking();
+  }catch(e){
+    console.warn('記録の保存に失敗しました。');
+    btn.disabled=false;btn.textContent='記録する';   // 失敗時はそのまま再試行できる
+    alert('記録に失敗しました。もう一度お試しください。');
+  }finally{
+    submitting=false;
+  }
+}
+async function loadRanking(){
+  const body=document.getElementById('ranking-body');
+  const filterDiv=document.getElementById('ranking-filter');
+  if(!body)return;
+  if(!db){ if(filterDiv) filterDiv.innerHTML=''; body.innerHTML='<p class="ranking-loading">'+RANKING_OFFLINE_MSG+'</p>'; return; }
+  body.innerHTML='<p class="ranking-loading">記録を読み込んでいます…</p>';
+  try{
+    const snap=await rankingCol().orderBy('score','desc').limit(300).get();
+    const all=[];
+    snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
+    const levels=[...new Set(all.map(r=>r.level))].sort();
+    // 直前プレイと一致するレベルがあればそれを優先、無ければ先頭
+    if(!levels.includes(rankingFilter)) rankingFilter=levels[0]||null;
+    filterDiv.innerHTML='';
+    levels.forEach(lv=>{
+      const b=document.createElement('button');
+      b.className='rf-btn'+(rankingFilter===lv?' active':'');
+      b.textContent=lv;
+      b.onclick=()=>{rankingFilter=lv;renderRanking(all);updateFilterBtns(lv);};
+      filterDiv.appendChild(b);
+    });
+    renderRanking(all);
+  }catch(e){
+    console.warn('ランキングの読み込みに失敗しました。');
+    if(filterDiv) filterDiv.innerHTML='';
+    body.innerHTML='<p class="ranking-loading">ランキングを読み込めませんでした。演習・採点・復習はそのまま利用できます。 <button type="button" class="rf-btn" onclick="loadRanking()">再読み込み</button></p>';
+  }
+}
+function updateFilterBtns(active){
+  document.querySelectorAll('#ranking-filter .rf-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent===active);
+  });
+}
+function renderRanking(all){
+  const filtered=all.filter(r=>r.level===rankingFilter);
+  // 同一ニックネームは「正解数が最大」の記録を採用
+  const seen=new Map();
+  filtered.forEach(r=>{if(!seen.has(r.nickname)||r.score>seen.get(r.nickname).score)seen.set(r.nickname,r);});
+  // 並び順：正解数の降順 → 同値時は所要時間の短い順（未計測は末尾）
+  const ranked=[...seen.values()].sort((a,b)=>b.score-a.score||(a.time==null?Infinity:a.time)-(b.time==null?Infinity:b.time)).slice(0,20);
+  if(!ranked.length){
+    document.getElementById('ranking-body').innerHTML='<p class="ranking-loading">まだ登録者がいません。記録を残してください。</p>';
+    return;
+  }
+  const medals=['🥇','🥈','🥉'];
+  const rows=ranked.map((r,i)=>{
+    const isMe=currentEntry&&r.id===currentEntry;
+    const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
+    const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
+    return `<tr class="${isMe?'me':''}">
+      <td>${rankDisp}</td>
+      <td>${escHtml(String(r.nickname==null?'':r.nickname))}${isMe?' <span class="me-tag">YOU</span>':''}</td>
+      <td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td>
+      <td>${tDisp}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('ranking-body').innerHTML=`
+    <p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
+    <table class="ranking-table">
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+</script>
+</body>
+</html>
