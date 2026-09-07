@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>エルラボ アクセス解析</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="解析">
+<link rel="apple-touch-icon" href="../assets/favicon.png">
+<link rel="icon" href="../assets/favicon.png">
+<style>
+:root{
+  --bg:#07111f; --card:#0e1c2f; --card2:#132540; --line:#1e3350;
+  --fg:#eef4fb; --dim:#8ea5c0; --gold:#f3d98d; --up:#5fd6a4; --down:#ff8a8a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  line-height:1.7; -webkit-text-size-adjust:100%;
+  padding:0 0 env(safe-area-inset-bottom);
+}
+.wrap{max-width:680px;margin:0 auto;padding:16px 14px 60px}
+
+header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 14px}
+header h1{font-size:17px;margin:0;letter-spacing:.04em}
+header .week{color:var(--gold);font-size:13px;font-variant-numeric:tabular-nums}
+header .upd{color:var(--dim);font-size:11px;margin-left:auto}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+.card h2{font-size:13px;margin:0 0 10px;color:var(--gold);letter-spacing:.06em;font-weight:600}
+
+/* あかりのコメント */
+.note{background:linear-gradient(180deg,#14273f,#0e1c2f);border-color:#2b456b}
+.note .body{white-space:pre-wrap;font-size:14px}
+.note .at{color:var(--dim);font-size:11px;margin-top:8px}
+.note .empty{color:var(--dim);font-size:13px}
+
+/* 数字 */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kpi{background:var(--card2);border-radius:12px;padding:12px 12px 10px}
+.kpi .lbl{font-size:11px;color:var(--dim);letter-spacing:.05em}
+.kpi .num{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.25}
+.kpi .cmp{font-size:11px;font-variant-numeric:tabular-nums}
+.cmp.up{color:var(--up)} .cmp.down{color:var(--down)} .cmp.flat{color:var(--dim)}
+
+/* 推移 */
+.spark{width:100%;height:96px;display:block}
+.spark-x{display:flex;justify-content:space-between;color:var(--dim);font-size:10px;margin-top:2px}
+
+/* 一覧 */
+ol.rank{list-style:none;margin:0;padding:0;counter-reset:r}
+ol.rank li{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:9px 0;border-top:1px solid var(--line);
+}
+ol.rank li:first-child{border-top:0}
+ol.rank .n{
+  flex:0 0 22px;height:22px;border-radius:6px;background:var(--card2);
+  color:var(--dim);font-size:11px;display:flex;align-items:center;justify-content:center;
+  margin-top:2px;font-variant-numeric:tabular-nums;
+}
+ol.rank li:nth-child(-n+3) .n{background:var(--gold);color:#07111f;font-weight:700}
+ol.rank .t{flex:1;min-width:0}
+ol.rank .t b{display:block;font-size:13.5px;font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ol.rank .t span{display:block;color:var(--dim);font-size:11px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ol.rank .v{flex:0 0 auto;text-align:right;font-variant-numeric:tabular-nums}
+ol.rank .v b{font-size:15px} ol.rank .v span{display:block;color:var(--dim);font-size:10px}
+
+.empty{color:var(--dim);font-size:13px;padding:6px 0}
+
+/* ボタン */
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+button,a.btn{
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+  background:var(--card2);color:var(--fg);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;font-size:13px;font-family:inherit;
+  text-decoration:none;display:inline-block;
+}
+button.primary{background:var(--gold);color:#07111f;border-color:var(--gold);font-weight:700}
+button:disabled{opacity:.5}
+.msg{font-size:12px;color:var(--dim);margin-top:8px;white-space:pre-wrap}
+
+.gate{padding:40px 16px;text-align:center;color:var(--dim)}
+.gate input{
+  width:100%;max-width:340px;padding:12px;border-radius:10px;
+  border:1px solid var(--line);background:var(--card2);color:var(--fg);
+  font-size:15px;margin:12px 0;font-family:inherit;
+}
+.foot{color:var(--dim);font-size:11px;text-align:center;margin-top:18px;line-height:2}
+.foot a{color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="gate" id="loading">読み込んでいます…</div>
+</div>
+
+<script>
+/* ==========================================================================
+ *  エルラボ アクセス解析ダッシュボード
+ *  データ元：Apps Script「エルラボ アクセス解析」の doGet
+ *  合言葉は ?key= で受け取り、以後は端末に保存する（URLからは消す）
+ * ========================================================================== */
+var GAS = "https://script.google.com/macros/s/AKfycbzdhNjnrg22uYbG1w6HoIxElmmdGUtcnXQD6mad94RFMe13RnNB7H1P_s3IKx-EsIbt/exec";
+var FB = {
+  apiKey: "AIzaSyBpBpGmxfWhyHq3rzwH2Oa_6IWDIZbOAj8",
+  authDomain: "elabo-plus.firebaseapp.com",
+  projectId: "elabo-plus",
+  storageBucket: "elabo-plus.firebasestorage.app",
+  messagingSenderId: "452649305918",
+  appId: "1:452649305918:web:4bef5bae57aee4d86c4e6f"
+};
+var VAPID_KEY = "BAtxAvwJITAJ_q2DHtIajcTI_UEgJQhOlPI3uQ8IlXoV_kfyG3SQyRSVkT83Iyln9RsReuwgcR3By6g7roWif1Y";
+
+var KEY_STORE = "an_view_key";
+function getKey(){
+  try{
+    var u = new URLSearchParams(location.search).get("key");
+    if(u){
+      localStorage.setItem(KEY_STORE, u);
+      history.replaceState(null, "", location.pathname);   // URLから合言葉を消す
+      return u;
+    }
+    return localStorage.getItem(KEY_STORE) || "";
+  }catch(e){ return ""; }
+}
+var KEY = getKey();
+
+/* ---------- 小道具 ---------- */
+function el(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function num(n){ return (Number(n) || 0).toLocaleString("ja-JP"); }
+function col(header, name){ return header.indexOf(name); }
+
+function cmpHtml(now, prev){
+  if(prev === null || prev === undefined || prev === "") return '<div class="cmp flat">前週なし</div>';
+  now = Number(now) || 0; prev = Number(prev) || 0;
+  if(prev === 0) return '<div class="cmp flat">前週 0</div>';
+  var d = Math.round((now / prev - 1) * 1000) / 10;
+  if(d === 0) return '<div class="cmp flat">前週と同じ</div>';
+  var cls = d > 0 ? "up" : "down";
+  return '<div class="cmp ' + cls + '">' + (d > 0 ? "▲" : "▼") + Math.abs(d) + '%（前週 ' + num(prev) + '）</div>';
+}
+
+/* 推移グラフ（依存なしの手書きSVG） */
+function sparkline(values, labels){
+  var n = values.length;
+  if(n < 2) return '<div class="empty">2週分たまるとグラフが出ます</div>';
+  var w = 600, h = 96, pad = 6;
+  var max = Math.max.apply(null, values), min = Math.min.apply(null, values);
+  if(max === min){ max = max + 1; min = Math.max(0, min - 1); }
+  var x = function(i){ return pad + i * (w - pad * 2) / (n - 1); };
+  var y = function(v){ return h - pad - (v - min) / (max - min) * (h - pad * 2); };
+  var d = "", a = "";
+  for(var i = 0; i < n; i++){
+    d += (i ? " L" : "M") + x(i).toFixed(1) + "," + y(values[i]).toFixed(1);
+  }
+  a = d + " L" + x(n - 1).toFixed(1) + "," + h + " L" + x(0).toFixed(1) + "," + h + " Z";
+  var dots = "";
+  for(var j = 0; j < n; j++){
+    dots += '<circle cx="' + x(j).toFixed(1) + '" cy="' + y(values[j]).toFixed(1) +
+            '" r="' + (j === n - 1 ? 4 : 2.5) + '" fill="' + (j === n - 1 ? "#f3d98d" : "#5fd6a4") + '"/>';
+  }
+  return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0%" stop-color="#5fd6a4" stop-opacity=".28"/>' +
+    '<stop offset="100%" stop-color="#5fd6a4" stop-opacity="0"/></linearGradient></defs>' +
+    '<path d="' + a + '" fill="url(#g)"/>' +
+    '<path d="' + d + '" fill="none" stroke="#5fd6a4" stroke-width="2.5" ' +
+    'stroke-linejoin="round" stroke-linecap="round"/>' + dots + '</svg>' +
+    '<div class="spark-x"><span>' + esc(labels[0]) + '</span><span>' + esc(labels[n - 1]) + '</span></div>';
+}
+
+/* ---------- 描画 ---------- */
+function render(d){
+  var sh = d.summary.header, rows = d.summary.rows;
+  var last = rows[rows.length - 1] || [];
+  var prev = rows.length >= 2 ? rows[rows.length - 2] : null;
+  var g = function(r, name){ var i = col(sh, name); return (i >= 0 && r) ? r[i] : null; };
+
+  var kpis = [
+    ["セッション", "セッション"],
+    ["ユーザー", "ユーザー"],
+    ["閲覧数", "閲覧数"],
+    ["新規ユーザー", "新規ユーザー"]
+  ].map(function(p){
+    return '<div class="kpi"><div class="lbl">' + esc(p[0]) + '</div>' +
+      '<div class="num">' + num(g(last, p[1])) + '</div>' +
+      cmpHtml(g(last, p[1]), prev ? g(prev, p[1]) : null) + '</div>';
+  }).join("");
+
+  var sesIdx = col(sh, "セッション");
+  var vals = rows.map(function(r){ return Number(r[sesIdx]) || 0; });
+  var labs = rows.map(function(r){ return String(r[0]).slice(5); });
+
+  var rank = function(data, iName, iSub, iVal, valLabel){
+    if(!data.rows.length) return '<div class="empty">今週はデータがありません</div>';
+    return '<ol class="rank">' + data.rows.slice(0, 10).map(function(r, i){
+      return '<li><span class="n">' + (i + 1) + '</span>' +
+        '<span class="t"><b>' + esc(r[iName]) + '</b>' +
+        (iSub != null ? '<span>' + esc(r[iSub]) + '</span>' : '') + '</span>' +
+        '<span class="v"><b>' + num(r[iVal]) + '</b><span>' + esc(valLabel) + '</span></span></li>';
+    }).join("") + '</ol>';
+  };
+
+  var ph = d.pages.header, sh2 = d.sources.header, qh = d.queries.header;
+
+  var noteHtml = d.note && d.note.text
+    ? '<div class="body">' + esc(d.note.text) + '</div><div class="at">あかり ' + esc(d.note.at) + '</div>'
+    : '<div class="empty">今週のコメントはまだありません。月曜の朝に届きます。</div>';
+
+  el("app").innerHTML =
+    '<header><h1>📊 アクセス解析</h1>' +
+      '<span class="week">' + esc(d.latestWeek) + ' の週</span>' +
+      '<span class="upd">取得 ' + esc(d.updated) + '</span></header>' +
+
+    '<div class="card note"><h2>あかりの今週のコメント</h2>' + noteHtml + '</div>' +
+
+    '<div class="card"><h2>今週の数字</h2><div class="kpis">' + kpis + '</div></div>' +
+
+    '<div class="card"><h2>セッションの推移</h2>' + sparkline(vals, labs) + '</div>' +
+
+    '<div class="card"><h2>読まれたページ TOP10</h2>' +
+      rank(d.pages, col(ph, "タイトル"), col(ph, "ページ"), col(ph, "閲覧数"), "閲覧") + '</div>' +
+
+    '<div class="card"><h2>流入元 TOP10</h2>' +
+      rank(d.sources, col(sh2, "流入元"), col(sh2, "メディア"), col(sh2, "セッション"), "セッション") + '</div>' +
+
+    '<div class="card"><h2>検索キーワード TOP10</h2>' +
+      rank(d.queries, col(qh, "検索キーワード"), null, col(qh, "表示回数"), "表示") + '</div>' +
+
+    '<div class="card"><h2>通知</h2>' +
+      '<div class="btns">' +
+        '<button class="primary" id="btnPush">この端末で通知を受け取る</button>' +
+        '<button id="btnReload">更新</button>' +
+      '</div><div class="msg" id="pushMsg"></div></div>' +
+
+    '<div class="foot">' +
+      '<a href="' + esc(d.sheetUrl) + '" target="_blank" rel="noopener">元のスプレッドシートを開く</a><br>' +
+      'iPhoneは「共有 → ホーム画面に追加」で通知が使えるようになります' +
+    '</div>';
+
+  el("btnReload").onclick = function(){ load(); };
+  el("btnPush").onclick = enablePush;
+}
+
+/* ---------- 読み込み ---------- */
+function load(){
+  if(!KEY){ gate(); return; }
+  el("app").innerHTML = '<div class="gate">読み込んでいます…</div>';
+  fetch(GAS + "?key=" + encodeURIComponent(KEY), { method:"GET" })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){
+        if(d.error === "unauthorized"){ try{ localStorage.removeItem(KEY_STORE); }catch(e){} gate("合言葉が違うようです"); return; }
+        el("app").innerHTML = '<div class="gate">エラー：' + esc(d.error) + '</div>';
+        return;
+      }
+      render(d);
+    })
+    .catch(function(e){
+      el("app").innerHTML = '<div class="gate">読み込めませんでした<br><small>' + esc(e) + '</small>' +
+        '<div class="btns" style="justify-content:center;margin-top:14px">' +
+        '<button onclick="location.reload()">もう一度</button></div></div>';
+    });
+}
+
+function gate(msg){
+  el("app").innerHTML =
+    '<div class="gate"><h1 style="font-size:16px;color:#f3d98d">エルラボ アクセス解析</h1>' +
+    '<p>合言葉を入れてください</p>' +
+    (msg ? '<p style="color:#ff8a8a">' + esc(msg) + '</p>' : '') +
+    '<input id="k" type="password" autocomplete="off" placeholder="合言葉">' +
+    '<div class="btns" style="justify-content:center"><button class="primary" id="go">開く</button></div></div>';
+  el("go").onclick = function(){
+    var v = el("k").value.trim();
+    if(!v) return;
+    try{ localStorage.setItem(KEY_STORE, v); }catch(e){}
+    KEY = v; load();
+  };
+  el("k").addEventListener("keydown", function(e){ if(e.key === "Enter") el("go").click(); });
+}
+
+/* ---------- プッシュ通知 ---------- */
+function post(params){
+  var body = new URLSearchParams();
+  body.set("key", KEY);
+  Object.keys(params).forEach(function(k){ body.set(k, params[k]); });
+  return fetch(GAS, { method:"POST", body:body }).then(function(r){ return r.json(); });
+}
+
+function loadScript(src){
+  return new Promise(function(res, rej){
+    var s = document.createElement("script");
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function enablePush(){
+  var msg = el("pushMsg"), btn = el("btnPush");
+  btn.disabled = true;
+  msg.textContent = "準備しています…";
+  try{
+    if(!("serviceWorker" in navigator) || !("Notification" in window))
+      throw new Error("この端末／ブラウザは通知に対応していません");
+
+    if(!window.matchMedia("(display-mode: standalone)").matches &&
+       /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.navigator.standalone){
+      msg.textContent = "iPhoneでは先に「共有 → ホーム画面に追加」をして、\nそのアイコンから開いてもう一度押してください。";
+      btn.disabled = false; return;
+    }
+
+    var perm = await Notification.requestPermission();
+    if(perm !== "granted"){ msg.textContent = "通知が許可されませんでした。"; btn.disabled = false; return; }
+
+    await loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
+    await loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js");
+    if(!firebase.apps.length) firebase.initializeApp(FB);
+
+    var reg = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+    await navigator.serviceWorker.ready;
+
+    var token = await firebase.messaging().getToken({
+      vapidKey: VAPID_KEY, serviceWorkerRegistration: reg
+    });
+    if(!token) throw new Error("端末トークンが取れませんでした");
+
+    var res = await post({ action:"push_register", token:token, memo:navigator.userAgent.slice(0, 60) });
+    if(!res.ok) throw new Error(res.error || "登録に失敗しました");
+
+    msg.textContent = res.already
+      ? "この端末はすでに登録済みです。"
+      : "登録しました。毎週月曜の朝に通知が届きます。";
+    btn.textContent = "通知オン ✓";
+
+    firebase.messaging().onMessage(function(p){
+      var d = p.data || {};
+      new Notification(d.title || "エルラボ アクセス解析", { body: d.body || "" });
+    });
+  }catch(e){
+    msg.textContent = "うまくいきませんでした：" + e;
+    btn.disabled = false;
+  }
+}
+
+load();
+</script>
+</body>
+</html>
