@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>L-MINE 2.0｜5日間の続きを、相談しながら進める方へ</title>
+<meta name="description" content="5日間で整理した一本線を、相談しながら実行したい方向けのご案内。支援内容・料金・条件を先にご確認いただけます。">
+<style>
+  :root{--bg:#07111f;--bg-soft:#0b1728;--panel:#101d30;--text:#fff;--muted:#c4cbd5;--gold:#d4af57;--gold-light:#f3d98d;--green:#58c896;--line:rgba(255,255,255,.11);--gold-line:rgba(212,175,87,.34);--shadow:0 18px 45px rgba(0,0,0,.28);--radius:10px;--max:1080px}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Helvetica Neue",Arial,"Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,sans-serif;font-size:16px;line-height:2;letter-spacing:.035em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit} button,a{-webkit-tap-highlight-color:transparent}
+  .container{width:min(calc(100% - 40px),var(--max));margin-inline:auto}
+  .narrow{width:min(calc(100% - 40px),820px);margin-inline:auto}
+  .section{padding:76px 0;position:relative}
+  .section-soft{background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .center{text-align:center}
+  .muted{color:var(--muted)}
+  .eyebrow{display:inline-block;color:var(--gold-light);font-size:12px;font-weight:800;letter-spacing:.12em;border-bottom:1px solid var(--gold);padding-bottom:7px}
+  h1,h2,h3,p{margin-top:0}
+  h1{margin:20px 0 24px;font-size:clamp(30px,5.4vw,54px);line-height:1.4;letter-spacing:-.02em;font-weight:900}
+  h2{margin-bottom:20px;font-size:clamp(25px,3.4vw,38px);line-height:1.5;letter-spacing:-.01em;font-weight:900}
+  h3{margin-bottom:12px;font-size:clamp(18px,2vw,23px);line-height:1.55;font-weight:800}
+  .lead{max-width:740px;margin:0 auto 26px;color:#e2e6eb;font-size:clamp(15px,1.7vw,18px);line-height:2}
+  .small{font-size:13px;color:var(--muted);line-height:1.85}
+  .divider{width:60px;height:1px;margin:22px auto 28px;background:var(--gold)}
+
+  /* header / footer */
+  .site-header{border-bottom:1px solid var(--line);background:rgba(7,17,31,.92);backdrop-filter:blur(6px);position:sticky;top:0;z-index:20}
+  .site-header .inner{width:min(calc(100% - 40px),var(--max));margin-inline:auto;min-height:66px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:10px 0}
+  .site-logo{font-weight:900;letter-spacing:.03em;font-size:16px;text-decoration:none;color:#fff}
+  .site-logo small{display:block;font-size:10px;font-weight:600;color:var(--gold-light);letter-spacing:.08em}
+  .back-link{font-size:12.5px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px}
+  .back-link:hover{color:#fff;border-color:var(--gold-line)}
+  .site-footer{padding:44px 0 60px;border-top:1px solid var(--line)}
+  .site-footer .fnav{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;margin-bottom:16px}
+  .site-footer .fnav a{color:var(--muted);font-size:12px;text-decoration:none}
+  .site-footer .fnav a:hover{color:#fff}
+  .site-footer .copy{color:#6f7883;font-size:11px;margin:0;text-align:center;font-family:Georgia,"Times New Roman",serif;letter-spacing:.05em}
+  .preview-flag{background:#3a2a08;color:#f0b45c;text-align:center;font-size:12px;letter-spacing:.05em;padding:9px 14px;border-bottom:1px solid rgba(240,180,92,.35)}
+
+  /* hero */
+  .hero{padding:64px 0 60px;border-bottom:1px solid var(--gold-line);background:radial-gradient(circle at 82% 10%,rgba(91,143,217,.16),transparent 40%)}
+  .hero .eyebrow{display:block;width:fit-content;margin:0 auto}
+  .hero h1{text-align:center}
+  .cta-wrap{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px}
+  .cta{display:inline-flex;min-height:58px;align-items:center;justify-content:center;padding:15px 30px;border-radius:5px;background:linear-gradient(180deg,#e8ca7c,#cfa746);color:#11161e;font-size:15px;font-weight:900;text-decoration:none;box-shadow:0 12px 28px rgba(0,0,0,.3);transition:.2s ease;border:1px solid #f3dc9e;cursor:pointer}
+  .cta.secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.26);box-shadow:none}
+  .cta:hover{transform:translateY(-2px);filter:brightness(1.05)}
+  .cta:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+  .unset-note{display:block;text-align:center;margin-top:10px;font-size:11.5px;color:#f0b45c;letter-spacing:.03em}
+
+  /* 簡易プランチェック（あくまで目安・自動で契約を決めるものではない） */
+  .plan-quiz{max-width:640px;margin:0 auto 30px;border:1px solid var(--gold-line);border-radius:var(--radius);background:rgba(212,175,87,.05);overflow:hidden;text-align:left}
+  .plan-quiz-toggle{display:block;width:100%;text-align:left;background:none;border:none;color:var(--gold-light);font-weight:800;font-size:14px;padding:18px 22px;cursor:pointer;font-family:inherit}
+  .plan-quiz-toggle:hover{color:#fff}
+  .plan-quiz-body{padding:0 22px 26px}
+  .pq-q{margin-top:20px}
+  .pq-question{font-size:14px;font-weight:700;margin-bottom:10px;color:#fff}
+  .pq-opt{display:block;font-size:13.5px;color:var(--muted);padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:border-color .15s,color .15s}
+  .pq-opt:hover{border-color:var(--gold-line);color:#fff}
+  .pq-opt input{margin-right:8px}
+  .pq-opt.checked{border-color:var(--gold);color:#fff;background:rgba(212,175,87,.08)}
+  #planQuizGo{margin-top:22px;width:100%;min-height:52px}
+  #planQuizGo:disabled{opacity:.35;cursor:not-allowed}
+  #planQuizGo:disabled:hover{transform:none;filter:none}
+  .pq-result{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted);line-height:1.9}
+  .pq-result b{color:var(--gold-light);font-size:15.5px}
+  .pq-result a{color:var(--gold-light);text-decoration:underline}
+
+  /* plan comparison */
+  .plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:38px}
+  .plan-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px 26px;text-align:left}
+  .plan-card.deep{border-color:var(--gold-line)}
+  .plan-tag{font-size:11px;letter-spacing:.1em;color:var(--gold-light);font-weight:800}
+  .plan-name{font-size:21px;font-weight:900;margin:8px 0 6px}
+  .plan-copy{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+  .plan-price{font-size:32px;font-weight:900}
+  .plan-price small{font-size:13.5px;font-weight:600;color:var(--muted)}
+  .plan-annual{font-size:12px;color:var(--muted);margin:8px 0 20px;line-height:1.85}
+  .plan-list{list-style:none;margin:0;padding:0;font-size:13.5px;color:#dfe3e8}
+  .plan-list li{padding:9px 0;border-top:1px solid var(--line)}
+  .plan-list li:first-child{border-top:none}
+  .plan-cond{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.8}
+  @media(max-width:760px){.plan-grid{grid-template-columns:1fr}}
+
+  /* build options */
+  .build-note{max-width:740px;margin:0 auto 30px;color:var(--muted);font-size:14px;text-align:center}
+  .build-list{max-width:780px;margin:0 auto}
+  .build-list details{border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin-bottom:14px;background:var(--bg-soft)}
+  .build-list summary{cursor:pointer;font-weight:800;font-size:14.5px;display:flex;justify-content:space-between;gap:12px;align-items:baseline;list-style:none}
+  .build-list summary::-webkit-details-marker{display:none}
+  .build-list summary .price{color:var(--gold-light);font-weight:900;font-size:13.5px;white-space:nowrap}
+  .build-list .body{margin-top:14px;color:var(--muted);font-size:13.5px;line-height:1.9}
+  .build-list ul{margin:10px 0;padding-left:18px}
+  .build-cond{margin-top:12px;font-size:11.5px;color:#9aa2ac;border-top:1px solid var(--line);padding-top:10px;line-height:1.8}
+
+  /* fit / not-yet grid */
+  .fit-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}
+  .fit-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .fit-card h3{color:var(--gold-light)}
+  .fit-card ul{margin:0;padding-left:18px;color:#dfe3e8;font-size:14px;line-height:2}
+  @media(max-width:760px){.fit-grid{grid-template-columns:1fr}}
+
+  /* instructor */
+  .instructor{display:flex;gap:26px;align-items:flex-start;max-width:740px;margin:0 auto;flex-wrap:wrap}
+  .instructor .name{font-size:19px;font-weight:900}
+  .instructor .role{font-size:13.5px;color:var(--gold-light);letter-spacing:.04em;margin:4px 0 12px}
+  .instructor .bio{color:var(--muted);font-size:13.5px;line-height:2;margin:0}
+
+  /* steps */
+  .step-list{max-width:740px;margin:36px auto 0;display:flex;flex-direction:column}
+  .step{display:flex;gap:18px;padding:20px 0;border-top:1px solid var(--line)}
+  .step:first-child{border-top:none}
+  .step .num{font-size:11.5px;color:var(--gold-light);font-weight:900;letter-spacing:.06em;min-width:60px;padding-top:3px}
+  .step .txt h3{margin-bottom:6px;font-size:16px}
+  .step .txt p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.9}
+
+  /* faq */
+  .faq{max-width:740px;margin:36px auto 0}
+  .faq details{border-top:1px solid var(--line);padding:16px 0}
+  .faq summary{cursor:pointer;font-weight:800;font-size:15px;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq .a{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.9}
+
+  .unset-badge{display:inline-block;margin-top:12px;font-size:11px;color:#f0b45c;background:rgba(240,180,92,.1);border:1px solid rgba(240,180,92,.32);border-radius:999px;padding:4px 12px}
+
+  /* 常に読める状態を基本にし、演出は「動き」だけに留める（opacityをJS任せにしない） */
+  .reveal{opacity:1}
+  @media(prefers-reduced-motion:no-preference){
+    .reveal{transform:translateY(14px);transition:transform .5s ease}
+    .reveal.show{transform:none}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.reveal.show{transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<div class="preview-flag">🔧 プレビュー版（noindex・未公開・どこからもリンクしていません）</div>
+
+<header class="site-header">
+  <div class="inner">
+    <a href="#top" class="site-logo">L-MINE 2.0</a>
+    <a href="https://columns.l-mine.com/l-mine-2.0.html" class="back-link">通常のL-MINE 2.0ページ →</a>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="narrow center">
+    <span class="eyebrow">FOR 5DAY CHALLENGE GRADUATES</span>
+    <h1>整理した「一本線」を、<br>実際のビジネスで動かしていくために。</h1>
+    <p class="lead">5日間で、自分のお客様、届けたい変化、届ける順番、<br class="br-pc">これから試すことを整理しました。</p>
+    <p class="lead">ここからは、自分で試していくこともできます。<br>もし、判断に迷うところを相談しながら進めたいなら、<br>L-MINEの伴走サポートを選ぶこともできます。</p>
+    <p class="lead">まずは、支援内容と料金をご覧ください。</p>
+    <div class="cta-wrap">
+      <a href="#plan" class="cta">支援内容と料金を見る</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="when">
+  <div class="narrow center reveal">
+    <span class="eyebrow">WHEN TO USE THIS</span>
+    <h2>一人で決めにくいところを、一緒に整理する。</h2>
+    <p class="lead">
+      考えた商品が、お客様の望む変化につながっているか。<br>
+      SNSから、その先の案内まで無理なくつながっているか。<br>
+      試した結果を見て、次にどこを直すか。
+    </p>
+    <p class="lead">
+      L-MINEは、こうした判断を相談しながら、<br>
+      自分のビジネスを整えていくための継続サポートです。
+    </p>
+    <p class="lead">
+      今すぐ仕組みや制作物を増やすのではなく、<br>
+      現在の活動に必要なことから一緒に考えます。
+    </p>
+  </div>
+</section>
+
+<section class="section section-soft" id="plan">
+  <div class="container">
+    <div class="narrow center reveal">
+      <span class="eyebrow">CONSULTING PLAN</span>
+      <h2>必要な相談の深さに合わせて、プランを確認する。</h2>
+      <p class="small">料金は現行のL-MINE 2.0ページと同じ内容です。ここで新しい条件は作っていません。</p>
+    </div>
+    <div class="plan-quiz reveal" id="planQuiz">
+      <button type="button" class="plan-quiz-toggle" id="planQuizToggle">✓ 自分に近いプランを考える（簡易チェック・5問）</button>
+      <div class="plan-quiz-body" id="planQuizBody" hidden>
+        <div class="pq-q">
+          <p class="pq-question">Q1. 今のビジネスの実績は、どちらに近いですか？</p>
+          <label class="pq-opt"><input type="radio" name="pq1" value="0">これから商品・売上を作っていく段階</label>
+          <label class="pq-opt"><input type="radio" name="pq1" value="1">すでに売上の実績がある（単発でも継続でも）</label>
+        </div>
+        <div class="pq-q">
+          <p class="pq-question">Q2. 相談したい範囲は？</p>
+          <label class="pq-opt"><input type="radio" name="pq2" value="0">今困っている一点だけ相談したい</label>
+          <label class="pq-opt"><input type="radio" name="pq2" value="1">事業全体を一緒に見直したい</label>
+        </div>
+        <div class="pq-q">
+          <p class="pq-question">Q3. 希望する相談頻度は？</p>
+          <label class="pq-opt"><input type="radio" name="pq3" value="0">月1〜2回で十分</label>
+          <label class="pq-opt"><input type="radio" name="pq3" value="1">もっと頻繁に伴走してほしい</label>
+        </div>
+        <div class="pq-q">
+          <p class="pq-question">Q4. 進めたいスピード感は？</p>
+          <label class="pq-opt"><input type="radio" name="pq4" value="0">じっくり整理しながら進めたい</label>
+          <label class="pq-opt"><input type="radio" name="pq4" value="1">できるだけ早く形にしたい</label>
+        </div>
+        <div class="pq-q">
+          <p class="pq-question">Q5. 今抱えている課題は？</p>
+          <label class="pq-opt"><input type="radio" name="pq5" value="0">1つに絞れている</label>
+          <label class="pq-opt"><input type="radio" name="pq5" value="1">複数絡み合っていて整理が必要</label>
+        </div>
+        <button type="button" class="cta" id="planQuizGo" disabled>目安を見る</button>
+        <div class="pq-result" id="planQuizResult" hidden></div>
+      </div>
+    </div>
+    <div class="plan-grid reveal">
+      <div class="plan-card">
+        <span class="plan-tag">BASIC｜すべてはここから</span>
+        <div class="plan-name">ライトプラン</div>
+        <p class="plan-copy">まずは無理なく、でも一人で悩まないための伴走。</p>
+        <div class="plan-price">27,500円<small>／月（税込）</small></div>
+        <p class="plan-annual">年間一括：280,500円（税込）<br>月額12か月総額330,000円より49,500円割引</p>
+        <ul class="plan-list">
+          <li>個別Zoom：月2回</li>
+          <li>チャットサポート</li>
+          <li>現状整理と優先順位の決定</li>
+          <li>商品設計・販売戦略</li>
+          <li>販売導線の設計相談</li>
+          <li>LP・LINE等の添削</li>
+        </ul>
+        <p class="plan-cond">月額は最低利用期間なし。解約の申出がない限り1か月ごとに自動更新されます。</p>
+      </div>
+      <div class="plan-card deep">
+        <span class="plan-tag">DEEP SUPPORT</span>
+        <div class="plan-name">顧問プラン</div>
+        <p class="plan-copy">設計から実行まで、より深く・早く進めたい方向け。</p>
+        <div class="plan-price">52,250円<small>／月（税込）</small></div>
+        <p class="plan-annual">年間一括：532,950円（税込）<br>月額12か月総額627,000円より94,050円割引</p>
+        <ul class="plan-list">
+          <li>個別Zoom：月4回</li>
+          <li>ライトプランの全内容</li>
+          <li>ファネル・導線の深い設計相談</li>
+          <li>商品構成・価格・オファーの改善</li>
+          <li>企画・ローンチの具体設計</li>
+          <li>事業全体の戦略パートナー</li>
+        </ul>
+        <p class="plan-cond">月額は最低利用期間なし。解約の申出がない限り1か月ごとに自動更新されます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="build">
+  <div class="narrow center reveal">
+    <span class="eyebrow">IF NEEDED, LATER</span>
+    <h2>制作や構築は、必要になったときに。</h2>
+    <p class="lead">
+      相談した結果、制作や構築が必要になる場合は、<br>
+      対応する内容と費用を確認したうえで検討できます。<br>
+      最初からすべてを依頼する必要はありません。
+    </p>
+    <p class="build-note">以下はライト／顧問プランのご契約者限定のオプションです（単体依頼は原則お受けしていません）。タップすると詳細が開きます。</p>
+  </div>
+  <div class="build-list reveal">
+    <details>
+      <summary><span>LINE構築 SMALL｜ひとつの販売導線を、しっかり整える</span><span class="price">385,000円（税込）</span></summary>
+      <div class="body">
+        登録から商品案内・申込みまで。実現したいことに合わせて、日々使いやすいシンプルな仕組みを作ります。
+        <ul>
+          <li>販売導線の全体設計</li>
+          <li>LINE・メニュー・ステップ配信</li>
+          <li>商品案内と必要なタグ・分岐</li>
+          <li>フォーム・決済・関連ページの接続</li>
+          <li>公開前テスト・操作レクチャー</li>
+        </ul>
+        <div class="build-cond">月額コンサルティング料金は別途（ライト：27,500円／月・税込）。ご契約中の基本プランに重ねて、同額の基本料金が追加されることはありません。プロラインフリーを使用。ツール使用料は別途かかる場合があります。納品日は別途相談。公開後6か月間の運用サポート付き。</div>
+      </div>
+    </details>
+    <details>
+      <summary><span>LINE構築 GROWTH｜複数の販売導線と顧客管理を、まとめて整える</span><span class="price">550,000円（税込）〜</span></summary>
+      <div class="body">
+        商品やお客様に合わせた案内を整理。複数の企画やスタッフでの運用も見据えて設計します（SMALLの基本内容を含みます）。
+        <ul>
+          <li>複数商品・入口ごとの販売導線</li>
+          <li>購入状況・行動に応じた案内の出し分け</li>
+          <li>既存顧客への案内・追加オファー</li>
+          <li>スタッフ運用を見据えた管理設計</li>
+        </ul>
+        <div class="build-cond">月額コンサルティング料金は別途（ライト：27,500円／月・税込）。ご契約中の基本プランに重ねて、同額の基本料金が追加されることはありません。プロラインフリーを使用。ツール使用料は別途かかる場合があります。納品日は別途相談。公開後6か月間の運用サポート付き。</div>
+      </div>
+    </details>
+    <details>
+      <summary><span>販売企画構築｜新しい企画の導線を追加する</span><span class="price">55,000円（税込）〜</span></summary>
+      <div class="body">
+        初期構築後、新商品・キャンペーン・ローンチなど、新しい販売企画の導線を追加します。
+        <ul>
+          <li>新しい販売戦略</li>
+          <li>既存LINEへの追加導線</li>
+          <li>関連LP</li>
+          <li>申込み・決済への接続</li>
+        </ul>
+        <div class="build-cond">SMALLへの追加は55,000円〜。GROWTHへの追加は88,000〜110,000円（税込）が基本目安です。追加内容に応じてお見積もりし、複雑な追加構築は個別見積もりとなります。納品日は別途相談。公開後6か月間の運用サポート付き。</div>
+      </div>
+    </details>
+    <details>
+      <summary><span>EBOOK出版ブートキャンプ</span><span class="price">99,000円（税込）</span></summary>
+      <div class="body">
+        Kindle出版を活用した戦略設計と書籍制作支援。タイミングによりグループ形式で開催します。
+        <ul>
+          <li>テーマ・企画設計</li>
+          <li>構成・原稿・出版サポート</li>
+          <li>著者としてのブランディング</li>
+          <li>書籍からLINE・商品への導線相談</li>
+        </ul>
+        <div class="build-cond">ライト／顧問プラン契約者限定。</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="section section-soft" id="fit">
+  <div class="container">
+    <div class="narrow center reveal">
+      <span class="eyebrow">IS THIS FOR YOU?</span>
+      <h2>合う方／今は申し込まなくてもよい方</h2>
+    </div>
+    <div class="fit-grid reveal">
+      <div class="fit-card">
+        <h3>合う方</h3>
+        <ul>
+          <li>自分で考えた内容に、第三者の視点がほしい方</li>
+          <li>相談しながら実行し、試した結果を見て改善したい方</li>
+          <li>支援内容と料金を確認し、継続サポートを検討したい方</li>
+        </ul>
+      </div>
+      <div class="fit-card">
+        <h3>今は申し込まなくてもよい方</h3>
+        <ul>
+          <li>まずは30日間、自分で試してみたい方</li>
+          <li>今の段階では継続サポートを必要としていない方</li>
+          <li>費用が生活や事業の負担になる方</li>
+        </ul>
+      </div>
+    </div>
+    <p class="lead reveal" style="margin-top:34px">
+      チャレンジで整理した内容は、そのままご自身で使えます。<br>
+      サービスを利用しないことで、チャレンジの完了や成果物の利用が<br>
+      制限されることはありません。
+    </p>
+  </div>
+</section>
+
+<section class="section" id="instructor">
+  <div class="narrow reveal">
+    <div class="center" style="margin-bottom:30px">
+      <span class="eyebrow">INSTRUCTOR</span>
+      <h2>案内役の紹介</h2>
+    </div>
+    <div class="instructor">
+      <div>
+        <div class="name">とーる</div>
+        <p class="role">行動経済アナリスト／デジタルコンテンツ制作者</p>
+        <p class="bio">
+          1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て、現在はオンライン講座の制作やLINE構築を専門に、コンテンツビジネスの構築支援を行う。<br>
+          第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-soft" id="flow">
+  <div class="container">
+    <div class="narrow center reveal">
+      <span class="eyebrow">FROM CHECK TO APPLY</span>
+      <h2>内容確認から申し込みまで</h2>
+    </div>
+    <div class="step-list reveal">
+      <div class="step">
+        <div class="num">STEP 01</div>
+        <div class="txt"><h3>支援内容・料金・条件を確認</h3><p>このページで、プランの内容と料金、契約・解約条件をご確認いただけます。</p></div>
+      </div>
+      <div class="step">
+        <div class="num">STEP 02</div>
+        <div class="txt"><h3>希望プランの空き状況を確認、または質問</h3><p>気になるプランの受付状況を確認したり、内容について質問したりできます。</p></div>
+      </div>
+      <div class="step">
+        <div class="num">STEP 03</div>
+        <div class="txt"><h3>現在の活動と希望する支援について文章で確認</h3><p>今どんな活動をしていて、何を相談したいかをお知らせください。</p></div>
+      </div>
+      <div class="step">
+        <div class="num">STEP 04</div>
+        <div class="txt"><h3>対応可能な内容・開始時期・条件をご案内</h3><p>お伺いした内容をもとに、対応できる範囲と条件をお伝えします。</p></div>
+      </div>
+      <div class="step">
+        <div class="num">STEP 05</div>
+        <div class="txt"><h3>納得した場合のみ申し込み</h3><p>ここまでの内容にご自身で納得された場合のみ、お申し込みください。</p></div>
+      </div>
+    </div>
+    <p class="small center" style="margin-top:28px">
+      空き状況の確認やご質問の時点では、契約・決済は発生しません。<br>
+      申し込み前のZoom面談は必須ではありません。必要に応じて相互確認の方法をご案内します。
+    </p>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="narrow center reveal" style="margin-bottom:10px">
+    <span class="eyebrow">FAQ</span>
+    <h2>よくあるご質問</h2>
+  </div>
+  <div class="faq reveal">
+    <details>
+      <summary>空き状況を確認したら、申し込む必要がありますか？</summary>
+      <div class="a">ありません。対応内容や条件を確認し、納得した場合のみお申し込みください。</div>
+    </details>
+    <details>
+      <summary>どのプランが合うか決まっていなくても質問できますか？</summary>
+      <div class="a">はい。現在の活動と、相談したいことをお知らせください。</div>
+    </details>
+    <details>
+      <summary>Zoomで説明を聞かないと、料金は分かりませんか？</summary>
+      <div class="a">料金と支援内容はこのページで確認できます。個別のお見積もりが必要な内容は、範囲と費用をご案内します。</div>
+    </details>
+    <details>
+      <summary>制作や構築も一緒に依頼する必要がありますか？</summary>
+      <div class="a">ありません。追加対応は必要性と費用を確認したうえで検討できます。</div>
+    </details>
+    <details>
+      <summary>まず30日間、自分で試してからでも大丈夫ですか？</summary>
+      <div class="a">はい。必要だと感じたタイミングでご確認ください。その時点の受付状況や提供条件をご案内します。</div>
+    </details>
+    <details>
+      <summary>月額プランはいつ解約できますか？</summary>
+      <div class="a">月額プランに最低利用期間はありません。解約の申出がない限り1か月ごとに自動更新されます。</div>
+    </details>
+  </div>
+</section>
+
+<section class="section section-soft" id="last">
+  <div class="narrow center reveal">
+    <span class="eyebrow">FINAL</span>
+    <h2>内容を確認して、必要だと感じたら。</h2>
+    <p class="lead">
+      相談しながら進めたいと思った方は、<br>
+      希望するプランの空き状況をご確認ください。<br>
+      プラン選びで気になることがあれば、質問だけでも大丈夫です。
+    </p>
+    <div class="cta-wrap">
+      <a href="#" class="cta" onclick="return false;" aria-disabled="true">希望プランの空き状況を確認する</a>
+      <a href="#" class="cta secondary" onclick="return false;" aria-disabled="true">プランについて質問する</a>
+    </div>
+    <span class="unset-badge">🔧 接続先未設定（プレビュー用の仮表示・押しても何も起きません）</span>
+    <p class="small" style="margin-top:22px">
+      この時点で契約・決済は発生しません。<br>
+      対応内容と条件を確認したうえで、ご自身でお決めください。
+    </p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <nav class="fnav">
+      <a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a>
+      <a href="https://columns.l-mine.com/legal/terms.html">利用規約</a>
+      <a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a>
+      <a href="https://columns.l-mine.com/legal/mensekizikou.html">免責事項</a>
+      <a href="https://columns.l-mine.com/contact.html">お問い合わせ</a>
+    </nav>
+    <p class="copy">© 2026 L-MINE. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  document.querySelectorAll('.reveal').forEach(function(el,i){ el.style.transitionDelay=((i%4)*70)+'ms'; });
+  var targets=[].slice.call(document.querySelectorAll('.reveal'));
+  function show(el){ el.classList.add('show'); }
+  function showAll(){ targets.forEach(show); }
+  function checkInView(){
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    targets.forEach(function(el){
+      if(el.classList.contains('show'))return;
+      var r=el.getBoundingClientRect();
+      if(r.top<vh*0.92&&r.bottom>0)show(el);
+    });
+  }
+  if(!('IntersectionObserver' in window)){ showAll(); }
+  else{
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ show(e.target); io.unobserve(e.target); } }); },{threshold:.12});
+    targets.forEach(function(el){ io.observe(el); });
+    window.addEventListener('scroll',checkInView,{passive:true});
+    window.addEventListener('resize',checkInView);
+    window.addEventListener('load',checkInView);
+    checkInView();
+    setTimeout(showAll,3000);
+  }
+  // FAQ・構築オプションのdetails：ひとつ開くと同じグループの他を閉じる
+  ['.faq details','.build-list details'].forEach(function(sel){
+    var group = document.querySelectorAll(sel);
+    group.forEach(function(d){
+      d.addEventListener('toggle', function(){
+        if(d.open){ group.forEach(function(o){ if(o!==d) o.open=false; }); }
+      });
+    });
+  });
+
+  // 簡易プランチェック（5問・目安表示のみ。契約や申込みを自動で決めるものではない）
+  var pqToggle = document.getElementById('planQuizToggle');
+  if(pqToggle){
+    var pqBody = document.getElementById('planQuizBody');
+    pqToggle.addEventListener('click', function(){ pqBody.hidden = !pqBody.hidden; });
+    var pqGo = document.getElementById('planQuizGo');
+    var pqResult = document.getElementById('planQuizResult');
+    var pqNames = ['pq1','pq2','pq3','pq4','pq5'];
+    var pqRadios = pqBody.querySelectorAll('input[type="radio"]');
+    function pqUpdateGoState(){
+      var answered = pqNames.filter(function(name){ return !!pqBody.querySelector('input[name="'+name+'"]:checked'); });
+      pqGo.disabled = answered.length < pqNames.length;
+    }
+    pqRadios.forEach(function(r){
+      r.addEventListener('change', function(){
+        pqBody.querySelectorAll('input[name="'+r.name+'"]').forEach(function(g){ g.closest('.pq-opt').classList.remove('checked'); });
+        r.closest('.pq-opt').classList.add('checked');
+        pqUpdateGoState();
+      });
+    });
+    pqGo.addEventListener('click', function(){
+      var score = 0;
+      pqNames.forEach(function(name){
+        var checked = pqBody.querySelector('input[name="'+name+'"]:checked');
+        if(checked) score += Number(checked.value);
+      });
+      var plan = score >= 3 ? '顧問プラン' : 'ライトプラン';
+      pqResult.hidden = false;
+      pqResult.innerHTML = '目安として、<b>' + plan + '</b>が近いかもしれません。<br>'
+        + 'あくまで参考です。実際に合うかどうかは、内容を確認しながらご自身で判断してください。<br>'
+        + '迷ったら、<a href="#flow">質問だけ</a>でも大丈夫です。';
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
