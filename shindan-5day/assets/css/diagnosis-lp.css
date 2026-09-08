@@ -14,6 +14,24 @@
  *
  * はみ出しぶんだけを切る。clip はスクロール枠を作らないので、
  * ページ内の位置固定などに影響しない。古い環境では hidden で受ける。 */
+/* ★2026-09-09 修正：body だけでは止まっていなかった。
+ *
+ * はみ出しを切る指定は、html が visible のときだけ body から
+ * ビューポートへ引き継がれる。ただし引き継がれるのは hidden / scroll / auto で、
+ * clip は引き継がれない。つまり上の2行は、clip が hidden を上書きした時点で
+ * 「どこにも効かない指定」になっていた（PC幅で実際に8px動いていた）。
+ *
+ * html 自身に置けば、html の箱がはみ出しを切るので確実に止まる。
+ * clip はスクロール枠を作らないので、位置固定などに影響しない。
+ * 古い環境向けに hidden を先に書いておく。
+ *
+ * ★このCSSを読むのは shindan-lp.html だけなので、html へ書いても
+ *   ほかのページには影響しない。 */
+html {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
 .dlp-body {
   padding: 0;
   overflow-x: hidden;
