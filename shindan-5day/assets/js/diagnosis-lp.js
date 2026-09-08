@@ -72,6 +72,63 @@
     return h('div', { class: 'dlp-body' }, SC.dom.lines(text, 'dlp-body__line'));
   }
 
+  /* --- 挿絵の写真（2026-09-08 Codex・あかり指示／とーる採用承認済み）------
+   *
+   * 文章が続くこのページで、読む人が自分の場面を思い浮かべられるように置く。
+   *
+   * ★主役は文章。写真はその情景を思い浮かべるための添え物として、
+   *   本文よりはっきり小さく置く（2026-09-08 とーる指示）。
+   * ★生成したイメージ写真であって、実在のお客様・実績・体験談ではない。
+   *   診断の実画面でもない。
+   * ★装飾なので alt は空にして、読み上げでは飛ばす。
+   *   断り書き（イメージ／AI生成）は、強調しすぎるため出さない（とーる判断）。
+   * ★軽いほうを先に出す（WebP）。読めない環境ではJPGが使われる。
+   *   JPGの原本はそのまま置いてある。
+   * ★下のほうにあるので遅延読み込み。width/height を書いて場所を先に確保し、
+   *   読み込みで行がずれないようにする。
+   * ★読み込めなかったら図ごと消す。写真が無くても本文と操作は成立する。 */
+  var PHOTOS = {
+    /* ① 共感の終わり：スマホからノートへ意識を戻す */
+    reflection: { base: 'assets/images/diagnosis-lp-reflection-woman-v1', size: 'wide' },
+    /* ② 問題の再定義の終わり：自分の商品をスマホで撮る。控えめに置く */
+    product:    { base: 'assets/images/diagnosis-lp-product-owner-v1',    size: 'small' },
+    /* ③ 最終の診断案内の直前：スマホを見ながら考える。v1ではなくv2を使う */
+    assessment: { base: 'assets/images/diagnosis-lp-phone-assessment-v2', size: 'wide' }
+  };
+  /* 原本はすべて3:2（1536×1024）。WebPを縮めても比率は同じなので、
+   * 場所取りの数字はこの1組でよい */
+  var PHOTO_W = 1536;
+  var PHOTO_H = 1024;
+
+  function photo(key, extraClass) {
+    var p = PHOTOS[key];
+    if (!p) return null;
+
+    var img = h('img', {
+      class: 'dlp-photo__img',
+      src: p.base + '.jpg',
+      alt: '',
+      width: String(PHOTO_W),
+      height: String(PHOTO_H),
+      loading: 'lazy',
+      decoding: 'async'
+    });
+
+    var fig = h('figure', {
+      class: 'dlp-photo dlp-photo--' + p.size + (extraClass ? ' ' + extraClass : '')
+    }, [
+      h('picture', {}, [
+        h('source', { type: 'image/webp', srcset: p.base + '.webp' }),
+        img
+      ])
+    ]);
+
+    img.addEventListener('error', function () {
+      if (fig.parentNode) fig.parentNode.removeChild(fig);
+    });
+    return fig;
+  }
+
   /* --- 1. ヒーロー ---------------------------------------------------- */
   function heroSection() {
     var copy = c().hero;
@@ -109,6 +166,7 @@
           return h('p', { class: 'dlp-block__line', text: line });
         }));
       })),
+      photo('reflection'),
       copy.showCta ? cta('empathy') : null
     ], 'dlp-section--empathy');
   }
@@ -119,7 +177,8 @@
     return section('reframe', [
       heading(copy.heading),
       body(copy.body),
-      h('p', { class: 'dlp-note', text: copy.note })
+      h('p', { class: 'dlp-note', text: copy.note }),
+      photo('product')
     ], 'dlp-section--reframe');
   }
 
@@ -308,6 +367,7 @@
       authorSection(),
       voicesSection(),
       faqSection(),
+      photo('assessment', 'dlp-photo--before-final'),
       finalSection()
     ];
     SC.dom.append(root, built);

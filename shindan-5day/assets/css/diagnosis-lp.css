@@ -595,9 +595,13 @@
   animation: dlp-settle .28s ease-out both;
   animation-delay: 0ms;
 }
+/* ★2026-09-08 修正：opacity を .55 から始めていたのが誤り。
+ *   土台を opacity:1 にしてあるので、画面に入った瞬間に
+ *   「いったん薄くなってから戻る」ちらつきが起きていた。
+ *   明るさは動かさず、わずかに持ち上がるだけにする。 */
 @keyframes dlp-settle {
-  from { opacity: .55; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
+  from { transform: translateY(5px); }
+  to   { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dlp-body .sc-reveal,
@@ -627,4 +631,58 @@
 .dlp-variety__line,
 .dlp-variety__close {
   font-weight: 500;
+}
+
+
+/* --- 挿絵の写真（2026-09-08 Codex・あかり指示／とーる採用承認済み）---------
+ *
+ * 3枚。①共感の終わり ②問題の再定義の終わり（さらに小さく） ③最終CTAの直前。
+ *
+ * ★主役は文章。写真は情景を思い浮かべるための添え物（2026-09-08 とーる指示）。
+ *   最初は本文と同じ幅で置いたが「画像がメインに見える」ため、はっきり小さくした。
+ *   本文幅の6割を上限にし、さらにpxでも頭を押さえる。
+ *   こうすると、PCで本文が広がっても写真だけが大きくならない。
+ *
+ * ・中央に置く。文字やボタンを重ねない
+ * ・3:2をそのまま出す。顔・手元・商品を切らない（object-fit を使わない）
+ * ・暗く塗る加工はしない
+ * ・width/height をHTMLに書いてあるので、読み込み前から場所が確保される
+ * ・断り書きは出さない（とーる判断）。新しい動きも足さない */
+/* 大きさはスマホで決める（2026-09-08 とーる指示）。
+ * 本文と同じ幅では「画像がメイン」に見え、6割では小さすぎた。
+ * 8割弱にして、pxの上限はPCで大きくなりすぎない保険として置く。 */
+.dlp-photo {
+  margin: 26px auto 0;
+  max-width: 420px;               /* min() が読めない環境向けの控え */
+  max-width: min(78%, 420px);
+}
+.dlp-photo picture { display: block; }
+.dlp-photo__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* 角丸は付けない（2026-09-08 とーる指示） */
+  /* 読み込み前の空白が穴に見えないよう、うっすら地を敷く */
+  background: rgba(227, 195, 129, .04);
+}
+
+/* ②はさらに控えめ。①と続けて写真が並ぶ区間なので、差をはっきりさせる */
+.dlp-photo--small {
+  max-width: 320px;
+  max-width: min(60%, 320px);
+}
+
+/* 写真のすぐ下にCTAが来ると、写真がボタンの飾りに見える（2026-09-08）。
+ * スマホは全部が縦に積まれるので、ここだけ間を広げて切り離す。 */
+.dlp-photo + .dlp-cta { margin-top: 40px; }
+
+/* ③は最終の診断案内へつなぐ絵。
+ * 見出し・説明・CTAのまとまりは割らず、その手前に置く。
+ * セクション間の88pxより詰めて、次のブロックと一続きに見せる。 */
+.dlp-photo--before-final { margin: 0 auto 30px; }
+
+@media (max-width: 359px) {
+  .dlp-photo { margin-top: 22px; max-width: min(82%, 260px); }
+  .dlp-photo--small { max-width: min(64%, 200px); }
+  .dlp-photo--before-final { margin-bottom: 24px; }
 }
