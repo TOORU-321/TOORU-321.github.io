@@ -2374,6 +2374,7 @@ function renderAcctMenu(){
   if(member){
     html += `<button class="acct-item" data-act="mypage"><span class="ai-ico">👤</span>マイページ</button>`;
     html += `<button class="acct-item" data-act="taskalarm"><span class="ai-ico">⏰</span>タスクアラーム</button>`;
+    html += `<button class="acct-item" data-act="quizapp"><span class="ai-ico">📝</span>行動経済学検定 練習アプリ</button>`;
     if(isVip()) html += `<button class="acct-item acct-vip" data-act="taskapp"><span class="ai-ico">🗂️</span>タスク管理アプリ<span class="acct-badge">VIP</span></button>`;
     if(!SESSION.subActive && !isVip()) html += `<button class="acct-item acct-join" data-act="subjoin"><span class="ai-ico">✨</span>エルラボ＋に加入</button>`;
     html += `<button class="acct-item" data-act="changename"><span class="ai-ico">✏️</span>表示名を変更</button>`;
@@ -2385,12 +2386,12 @@ function renderAcctMenu(){
     html += `<button class="acct-item" data-act="login"><span class="ai-ico">🔓</span>ログイン</button>`;
     html += `<button class="acct-item" data-act="register"><span class="ai-ico">✍️</span>新規無料登録</button>`;
     html += `<button class="acct-item" data-act="exit"><span class="ai-ico">🚪</span>退室（トップへ戻る）</button>`;
+    html += `<button class="acct-item" data-act="quizapp"><span class="ai-ico">📝</span>行動経済学検定 練習アプリ</button>`;
   }
   html += `<div class="acct-div"></div>`;
   const _ns = notifyState();
   const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
   html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
-  html += `<button class="acct-item" data-act="quizapp"><span class="ai-ico">📝</span>行動経済学検定 練習アプリ</button>`;
   html += `<button class="acct-item" data-act="site"><span class="ai-ico">🏠</span>L-MINEサイトへ戻る</button>`;
   if(!isStandalone()) html += `<button class="acct-item acct-join" data-act="addhome"><span class="ai-ico">📲</span>ホーム画面に追加</button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="broadcast"><span class="ai-ico">📧</span>メール案内を送る<span class="acct-badge">admin</span></button>`;
