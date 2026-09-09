@@ -39,11 +39,19 @@
   .site-footer .fnav a:hover{color:#fff}
   .site-footer .copy{color:#6f7883;font-size:11px;margin:0;text-align:center;font-family:Georgia,"Times New Roman",serif;letter-spacing:.05em}
   .preview-flag{background:#3a2a08;color:#f0b45c;text-align:center;font-size:12px;letter-spacing:.05em;padding:9px 14px;border-bottom:1px solid rgba(240,180,92,.35)}
+  .preview-flag__link{color:#f0b45c;margin-left:10px;white-space:nowrap}
 
   /* hero */
   .hero{padding:64px 0 60px;border-bottom:1px solid var(--gold-line);background:radial-gradient(circle at 82% 10%,rgba(91,143,217,.16),transparent 40%)}
   .hero .eyebrow{display:block;width:fit-content;margin:0 auto}
   .hero h1{text-align:center}
+  /* 意味の塊の中では折らない。塊と塊のあいだ（wbr）でだけ折れる。
+     320pxでいちばん長い塊が「あなたのビジネスで」で、はみ出さない長さ。 */
+  .nb{white-space:nowrap}
+  /* 最終CTAは文言が長い。狭い画面では意味のまとまり（.nb）ごとに
+     折り返し、ボタンが画面からはみ出さないようにする（2026-09-09）。 */
+  #last .cta{max-width:100%;flex-wrap:wrap;text-align:center;line-height:1.55}
+
   .cta-wrap{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px}
   .cta{display:inline-flex;min-height:58px;align-items:center;justify-content:center;padding:15px 30px;border-radius:5px;background:linear-gradient(180deg,#e8ca7c,#cfa746);color:#11161e;font-size:15px;font-weight:900;text-decoration:none;box-shadow:0 12px 28px rgba(0,0,0,.3);transition:.2s ease;border:1px solid #f3dc9e;cursor:pointer}
   .cta.secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.26);box-shadow:none}
@@ -133,23 +141,123 @@
     .reveal.show{transform:none}
   }
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.reveal.show{transform:none;transition:none}}
+
+  /* ===================================================================
+     元LP（l-mine-2.0.html）へデザインを寄せる（2026-09-09 とーる指示）
+
+     このページは元LPと同じ配色トークンを使っていたが、フォント・ヒーロー・
+     ラベル・演出の「上書き分」が入っていなかったため、別物に見えていた。
+     元LPの該当ブロックと同じ指定をここへ置く。
+
+     ★元LP（l-mine-2.0.html）は読むだけで、1文字も変更していない。
+     ★ヒーロー写真は元LPにbase64で埋まっていたものを
+       assets/l-mine-2.0-hero.jpg として取り出し、両方から使える形にした。
+     =================================================================== */
+
+  /* --- フォント：見出し＝游明朝／英字ラベル・数字＝Georgia／本文＝ゴシック --- */
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",sans-serif}
+  h1,h2,h3{font-family:"Yu Mincho","Hiragino Mincho ProN","Yu Gothic",serif}
+  h1{font-weight:700;letter-spacing:.03em;line-height:1.3}
+  h2{font-weight:700;letter-spacing:.03em;line-height:1.55}
+  h3{font-weight:700;letter-spacing:.02em}
+  .eyebrow,.step .num{font-family:Georgia,"Times New Roman",serif;font-weight:700}
+  .eyebrow{letter-spacing:.2em}
+  .price,.plan-price,.site-logo{font-family:Georgia,"Times New Roman",serif}
+  .site-logo{font-weight:700;letter-spacing:.14em;color:var(--gold-light)}
+
+  /* --- 余白とサイズ：元LPと同じ刻みへ --- */
+  .section{padding:92px 0}
+  h1{margin:14px 0 17px;font-size:clamp(33px,5.7vw,64px);line-height:1.18}
+  h2{margin-bottom:26px;font-size:clamp(29px,4.2vw,49px)}
+  h3{margin-bottom:13px;font-size:clamp(20px,2.1vw,27px)}
+  .lead{max-width:790px;margin:0 auto 30px;font-size:clamp(16px,1.8vw,20px);line-height:2}
+
+  /* --- ヒーロー：写真＋暗幕。左に文字、右に人物が見える --- */
+  .hero{
+    padding:86px 0 70px;
+    border-bottom:1px solid var(--gold-line);
+    background:linear-gradient(90deg,rgba(7,17,31,.93) 0%,rgba(7,17,31,.78) 46%,rgba(7,17,31,.40) 100%),
+               url("assets/l-mine-2.0-hero.jpg") right center/cover no-repeat;
+  }
+  /* 下端の金の細い線（元LPと同じ） */
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.7}
+  .hero .narrow{max-width:900px}
+  .hero h1,.hero .lead,.hero .eyebrow{text-align:left}
+  .hero .center{text-align:left}
+  .hero .cta-wrap{justify-content:flex-start}
+  .hero .lead{margin-left:0;font-size:clamp(13.5px,1.45vw,15.5px);line-height:1.8;margin-bottom:24px}
+
+  @media(max-width:950px){
+    /* 狭い画面では、人物の上に文字が乗るので暗幕を縦向きにする（元LPと同じ） */
+    .hero{background:linear-gradient(180deg,rgba(7,17,31,.85) 0%,rgba(7,17,31,.8) 55%,rgba(7,17,31,.9) 100%),
+                    url("assets/l-mine-2.0-hero.jpg") center/cover no-repeat}
+  }
+  @media(max-width:600px){
+    .section{padding:72px 0}
+    .hero h1{font-size:clamp(28px,8vw,38px)}
+  }
+
+  /* --- FAQ：元LPと同じカード型。開閉の＋−は金で右端 --- */
+  .faq{display:grid;gap:10px;margin:35px auto 0;max-width:820px}
+  .faq details{background:var(--panel);border:1px solid var(--line);border-top:1px solid var(--line);
+    border-radius:6px;padding:0 20px}
+  .faq summary{padding:18px 30px 18px 0;font-weight:800;position:relative}
+  .faq summary::after{content:"＋";position:absolute;right:0;top:50%;transform:translateY(-50%);
+    color:var(--gold);font-size:21px}
+  .faq details[open] summary::after{content:"−"}
+  .faq .a{padding:0 0 19px;margin-top:0}
+
+  /* --- スクロールで現れる演出：元LPと同じ動き ---
+     ★ただし「出るまで読めない」事故を避けるため、JSが動かなくても
+       2.5秒後には必ず出る安全弁（元LPと同じ仕組み）を必ず残す。 */
+  @media(prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(24px);
+      transition:opacity .7s ease,transform .7s ease;
+      animation:revealSafe .01s linear 2.5s forwards}
+    .reveal.show{opacity:1;transform:none;animation:none}
+    @keyframes revealSafe{to{opacity:1;transform:none}}
+  }
+
+  /* --- ボタン：元LPと同じ扱い（2026-09-09）------------------------------
+     元LPは「金＝内容を見る」「赤＝申し込み・審査へ進む」で色を分けている。
+     このページも最終CTAは審査予約なので、元LPと同じ赤にする。
+     ページ内移動のCTA（支援内容と料金を見る）は金のまま。 */
+  .cta-red{background:#d64027;background-image:none;color:#fff;border:1px solid #e15a43;
+    border-radius:6px;box-shadow:0 12px 28px rgba(214,64,39,.34);
+    width:auto;max-width:100%;padding:16px 40px;font-size:17px;letter-spacing:.04em}
+  .cta-red:hover{filter:brightness(1.06)}
+
+  /* ボタンの上を光が走る演出（元LPと同じ） */
+  .cta{position:relative;overflow:hidden;isolation:isolate}
+  .cta::after{content:"";position:absolute;top:-50%;left:-60%;width:26%;height:200%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:rotate(18deg);pointer-events:none;z-index:0;
+    animation:ctaShine 5s 1.6s ease-in-out infinite}
+  @keyframes ctaShine{0%,72%{left:-60%}90%,100%{left:135%}}
+  @media(prefers-reduced-motion:reduce){.cta::after{animation:none}}
 </style>
 </head>
 <body>
 
-<div class="preview-flag">🔧 プレビュー版（noindex・未公開・どこからもリンクしていません）</div>
+<!-- 開発・プレビュー用の帯。公開時はこの div ごと外す。
+     通常版LPへのリンクは、見比べる用としてここへ移した（2026-09-09）。
+     利用者向けのヘッダーからは外している。通常版LP自体は変更していない。 -->
+<div class="preview-flag">
+  🔧 プレビュー版（noindex・未公開・どこからもリンクしていません）
+  <a href="https://columns.l-mine.com/l-mine-2.0.html" class="preview-flag__link">通常のL-MINE 2.0ページ →</a>
+</div>
 
 <header class="site-header">
   <div class="inner">
     <a href="#top" class="site-logo">L-MINE 2.0</a>
-    <a href="https://columns.l-mine.com/l-mine-2.0.html" class="back-link">通常のL-MINE 2.0ページ →</a>
   </div>
 </header>
 
 <section class="hero" id="top">
   <div class="narrow center">
     <span class="eyebrow">FOR 5DAY CHALLENGE GRADUATES</span>
-    <h1>整理した「一本線」を、<br>実際のビジネスで動かしていくために。</h1>
+    <h1><span class="nb">整理した「一本線」を、</span><br><span class="nb">あなたのビジネスで</span><wbr><span class="nb">動かしていく。</span></h1>
     <p class="lead">5日間で、自分のお客様、届けたい変化、届ける順番、<br class="br-pc">これから試すことを整理しました。</p>
     <p class="lead">ここからは、自分で試していくこともできます。<br>もし、判断に迷うところを相談しながら進めたいなら、<br>L-MINEの伴走サポートを選ぶこともできます。</p>
     <p class="lead">まずは、支援内容と料金をご覧ください。</p>
@@ -184,9 +292,12 @@
     <div class="narrow center reveal">
       <span class="eyebrow">CONSULTING PLAN</span>
       <h2>必要な相談の深さに合わせて、プランを確認する。</h2>
-      <p class="small">料金は現行のL-MINE 2.0ページと同じ内容です。ここで新しい条件は作っていません。</p>
     </div>
-    <div class="plan-quiz reveal" id="planQuiz">
+    <!-- 簡易チェックは非表示（2026-09-09 とーる了承）。
+         実装は消していない。hidden を外せばそのまま戻る。
+         hidden なので、フォーカスも読み上げも入らない。
+         このページに計測は入っていないため、発火するイベントも無い。 -->
+    <div class="plan-quiz reveal" id="planQuiz" hidden>
       <button type="button" class="plan-quiz-toggle" id="planQuizToggle">✓ 自分に近いプランを考える（簡易チェック・5問）</button>
       <div class="plan-quiz-body" id="planQuizBody" hidden>
         <div class="pq-q">
@@ -355,6 +466,34 @@
   </div>
 </section>
 
+<!-- 参加審査の目的（2026-09-09 Codex・あかり指示）。
+     「合う方／今は申し込まなくてもよい方」の直後に置く。
+     ★点数による足切りや、未確定の受付条件は書かない。
+     ★Zoomの必須／任意と受付の流れは、この追記では変更していない。
+     既存に「審査」の説明は無かったので、集約する対象は無し。 -->
+<section class="section" id="screening">
+  <div class="narrow center reveal">
+    <span class="eyebrow">BEFORE YOU APPLY</span>
+    <h2>お申し込みより先に、<br>今のあなたに合う支援かを確かめます。</h2>
+    <p class="lead">
+      興味を持っていただいた方全員に、契約をおすすめするわけではありません。
+    </p>
+    <p class="lead">
+      今取り組みたいことに、僕の支援が役立つか。<br>
+      サポートの進め方が、お互いに合っているか。<br>
+      費用や取り組む時間に、無理がないか。
+    </p>
+    <p class="lead">
+      内容を伺ったうえで、今はご自身で試す段階だと考えた場合や、<br class="br-pc">
+      僕の支援ではお応えできない場合は、その理由をお伝えします。
+    </p>
+    <p class="lead">
+      審査は、あなたの能力や可能性に合否をつけるものではありません。<br class="br-pc">
+      納得して一緒に取り組めるかを、お互いに確認するためのものです。
+    </p>
+  </div>
+</section>
+
 <section class="section" id="instructor">
   <div class="narrow reveal">
     <div class="center" style="margin-bottom:30px">
@@ -383,28 +522,29 @@
     <div class="step-list reveal">
       <div class="step">
         <div class="num">STEP 01</div>
-        <div class="txt"><h3>支援内容・料金・条件を確認</h3><p>このページで、プランの内容と料金、契約・解約条件をご確認いただけます。</p></div>
+        <div class="txt"><h3>支援内容・料金・条件を確認</h3><p>このページで、プランの内容と料金、契約・解約条件をご確認ください。</p></div>
       </div>
       <div class="step">
         <div class="num">STEP 02</div>
-        <div class="txt"><h3>希望プランの空き状況を確認、または質問</h3><p>気になるプランの受付状況を確認したり、内容について質問したりできます。</p></div>
+        <div class="txt"><h3>空き状況を確認し、参加審査を予約</h3><p>公式LINEの案内に沿って、空き状況を確認し、Zoom審査の日程をご予約ください。</p></div>
       </div>
       <div class="step">
         <div class="num">STEP 03</div>
-        <div class="txt"><h3>現在の活動と希望する支援について文章で確認</h3><p>今どんな活動をしていて、何を相談したいかをお知らせください。</p></div>
+        <div class="txt"><h3>Zoomで、支援が合うかを確認</h3><p>現在の活動や希望する支援を伺い、L-MINEで対応できる内容か、進め方が合うかを確認します。プランについて気になる点も、この場で確認できます。</p></div>
       </div>
       <div class="step">
         <div class="num">STEP 04</div>
-        <div class="txt"><h3>対応可能な内容・開始時期・条件をご案内</h3><p>お伺いした内容をもとに、対応できる範囲と条件をお伝えします。</p></div>
+        <div class="txt"><h3>対応内容と申し込み条件をご案内</h3><p>審査の結果、サポート可能な方へ、対応内容・開始時期・料金・契約条件と正式な申し込み方法をご案内します。</p></div>
       </div>
       <div class="step">
         <div class="num">STEP 05</div>
-        <div class="txt"><h3>納得した場合のみ申し込み</h3><p>ここまでの内容にご自身で納得された場合のみ、お申し込みください。</p></div>
+        <div class="txt"><h3>納得した場合のみ申し込み</h3><p>案内内容を改めて確認し、ご自身で納得した場合のみお申し込みください。審査を通過しても、申し込む義務はありません。</p></div>
       </div>
     </div>
     <p class="small center" style="margin-top:28px">
-      空き状況の確認やご質問の時点では、契約・決済は発生しません。<br>
-      申し込み前のZoom面談は必須ではありません。必要に応じて相互確認の方法をご案内します。
+      お申し込みの前に、Zoomでの参加審査を受けていただきます。<br>
+      審査は、支援内容と進め方が合うかをお互いに確認するためのものです。<br>
+      予約・面談の時点で契約・決済は発生しません。
     </p>
   </div>
 </section>
@@ -416,26 +556,27 @@
   </div>
   <div class="faq reveal">
     <details>
-      <summary>空き状況を確認したら、申し込む必要がありますか？</summary>
-      <div class="a">ありません。対応内容や条件を確認し、納得した場合のみお申し込みください。</div>
+      <summary>参加審査を予約したら、申し込む必要がありますか？</summary>
+      <div class="a">ありません。審査を通過した場合も、支援内容・料金・契約条件を確認し、納得した場合のみお申し込みください。予約や面談の時点で契約・決済は発生しません。</div>
     </details>
     <details>
-      <summary>どのプランが合うか決まっていなくても質問できますか？</summary>
-      <div class="a">はい。現在の活動と、相談したいことをお知らせください。</div>
+      <summary>どのプランが合うか決まっていなくても、審査を受けられますか？</summary>
+      <div class="a">はい。各プランの内容と料金をご確認のうえ、迷っている点をZoom審査でお伝えください。希望する支援に対応できるかを、一緒に確認します。</div>
     </details>
     <details>
-      <summary>Zoomで説明を聞かないと、料金は分かりませんか？</summary>
-      <div class="a">料金と支援内容はこのページで確認できます。個別のお見積もりが必要な内容は、範囲と費用をご案内します。</div>
+      <summary>参加前のZoom審査は必須ですか？</summary>
+      <div class="a">はい。お申し込みの前に、Zoomでの参加審査を受けていただきます。料金と支援内容は、事前にこのページで確認できます。面談では現在の活動や希望を伺い、支援内容と進め方が合うかを確認します。その場で申し込みを決める必要はありません。</div>
     </details>
     <details>
       <summary>制作や構築も一緒に依頼する必要がありますか？</summary>
-      <div class="a">ありません。追加対応は必要性と費用を確認したうえで検討できます。</div>
+      <div class="a">ありません。追加対応は、必要性・対応範囲・費用を確認したうえで検討できます。</div>
     </details>
     <details>
       <summary>まず30日間、自分で試してからでも大丈夫ですか？</summary>
       <div class="a">はい。必要だと感じたタイミングでご確認ください。その時点の受付状況や提供条件をご案内します。</div>
     </details>
     <details>
+      <!-- Q6の解約条件は現行の契約内容そのまま。今回の判断では変更しない -->
       <summary>月額プランはいつ解約できますか？</summary>
       <div class="a">月額プランに最低利用期間はありません。解約の申出がない限り1か月ごとに自動更新されます。</div>
     </details>
@@ -445,20 +586,26 @@
 <section class="section section-soft" id="last">
   <div class="narrow center reveal">
     <span class="eyebrow">FINAL</span>
-    <h2>内容を確認して、必要だと感じたら。</h2>
+    <h2>内容を確認して、<br>相談しながら進めたいと思ったら。</h2>
     <p class="lead">
-      相談しながら進めたいと思った方は、<br>
-      希望するプランの空き状況をご確認ください。<br>
-      プラン選びで気になることがあれば、質問だけでも大丈夫です。
+      支援内容と料金をご確認いただき、<br>
+      L-MINEへの参加を検討したい方は、<br>
+      空き状況の確認とZoomでの参加審査の予約へお進みください。
     </p>
+    <p class="lead">
+      プラン選びで気になる点は、審査面談の際に確認できます。<br>
+      その場でお申し込みを決める必要はありません。
+    </p>
+    <!-- 主CTA1本（2026-09-09）。同じ予約先へ進むボタンを2つ並べない。
+         文章だけで質問する窓口は無いため、補助CTAは削除した。 -->
     <div class="cta-wrap">
-      <a href="https://vjbsvali.autosns.app/addfriend/s/IbPmuXZGSW/@956nvdmi" target="_blank" rel="noopener" class="cta">希望プランの空き状況を確認する</a>
-      <a href="https://vjbsvali.autosns.app/addfriend/s/IbPmuXZGSW/@956nvdmi" target="_blank" rel="noopener" class="cta secondary">プランについて質問する</a>
+      <a href="https://vjbsvali.autosns.app/addfriend/s/IbPmuXZGSW/@956nvdmi" target="_blank" rel="noopener" class="cta cta-red"><span class="nb">空き状況を確認して、</span><wbr><span class="nb">参加審査を予約する</span></a>
     </div>
     <span class="line-note">🟢 公式LINEより受付できます</span>
     <p class="small" style="margin-top:22px">
-      この時点で契約・決済は発生しません。<br>
-      対応内容と条件を確認したうえで、ご自身でお決めください。
+      公式LINEへ移動します。<br>
+      参加には、事前のZoom審査が必要です。<br>
+      予約・面談の時点では、契約・決済は発生しません。
     </p>
   </div>
 </section>
@@ -540,7 +687,7 @@
       pqResult.hidden = false;
       pqResult.innerHTML = '目安として、<b>' + plan + '</b>が近いかもしれません。<br>'
         + 'あくまで参考です。実際に合うかどうかは、内容を確認しながらご自身で判断してください。<br>'
-        + '迷ったら、<a href="#flow">質問だけ</a>でも大丈夫です。';
+        + '迷っている点は、<a href="#flow">参加審査の場</a>で確認できます。';
     });
   }
 })();
