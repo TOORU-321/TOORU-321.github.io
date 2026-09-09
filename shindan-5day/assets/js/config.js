@@ -15,8 +15,10 @@
     storageVersion: 'v1',
     /* Phase1はプレビュー固定値。Phase2以降はURLパラメータ／LINE uidから受け取る */
     campaignId: 'preview-campaign',
-    /* Phase1では本番送信しない。ローカルログのみ */
-    trackingEnabled: false,
+    /* 計測をスプレッドシートへ送る（2026-09-10 とーる指示）。
+     * 送るのは track.js が作った補助キーだけで、回答本文は入らない。
+     * 本物の診断結果を持っている人だけが対象（プレビューは送らない）。 */
+    trackingEnabled: true,
     /* 画面の並び（この順で進み、戻る） */
     screenOrder: [
       /* 結果 → 参加表明LP（lp.html）→ DAY1。LPは別ページなので画面順に含めない */

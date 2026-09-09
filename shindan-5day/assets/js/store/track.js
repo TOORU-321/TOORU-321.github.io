@@ -164,7 +164,11 @@
       if (log.length > MAX_LOG) log = log.slice(log.length - MAX_LOG);
       SC.storage.write(logKey(), log);
       if (global.console && global.console.debug) global.console.debug('[track]', payload);
-      /* Phase2でGA4／GAS等へ送るのはここ。Phase1は送信しない */
+      /* スプレッドシートへ送る（2026-09-10）。
+       * 送るかどうかの判断は track-remote.js 側が持つ
+       * （本物の診断結果があるか、送り先が決まっているか、設定が入っているか）。
+       * 読み込まれていない画面では、何も起きない。 */
+      if (SC.trackRemote) SC.trackRemote.push(payload);
       return payload;
     },
 

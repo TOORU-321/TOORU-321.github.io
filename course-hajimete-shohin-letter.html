@@ -102,6 +102,18 @@ body{padding-top:96px}
 .price-letter .now small{font-size:11px;color:#ffffffb8;font-weight:400}
 .deadline-hero{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(100%,540px);margin:14px auto 22px;padding:22px 26px;border:2px solid #ff6a4d;border-radius:22px;background:linear-gradient(145deg,#3d1210,#1a0605);box-shadow:0 0 0 4px rgba(255,90,60,.14),0 18px 44px rgba(0,0,0,.5);animation:urgencyPulse 1.8s ease-in-out infinite}
 .dh-label{font-size:17px;font-weight:900;color:#ffb199;letter-spacing:.02em}
+/* 期限の根拠。どこから来たかで文が変わるので、出す文はJSで入れる。
+   根拠を言えないときは出さない（根拠のない期限は表示しない） */
+.dh-basis{font-size:15px;font-weight:900;color:#ffd9c6;line-height:1.7;text-align:center}
+.dh-note{font-size:12px;color:#ffd6c8c2;line-height:1.8;text-align:center}
+.dh-until{font-size:13px;font-weight:800;color:#fff;letter-spacing:.02em;text-align:center}
+/* 期限が確認できないとき・終わったときの表示。特別価格は出さない */
+.offer-closed{margin:26px auto 0;max-width:560px;padding:24px 22px;border:1px solid #e15a43;
+  border-radius:12px;background:rgba(61,18,16,.55);text-align:center}
+.offer-closed .oc-msg{margin:0;color:#ffd6c8;font-size:14px;line-height:1.9}
+.offer-closed .oc-cta{display:inline-block;margin-top:16px;padding:13px 26px;border-radius:6px;
+  background:linear-gradient(180deg,#e8ca7c,#cfa746);color:#11161e;font-weight:900;
+  text-decoration:none}
 .flipclock{display:inline-flex;align-items:flex-end;gap:12px;vertical-align:middle}
 .fc-unit{display:flex;flex-direction:column;align-items:center;gap:7px}
 .fc-unit .flip-card{position:relative;width:62px;height:74px;perspective:300px}
@@ -151,7 +163,7 @@ body{padding-top:96px}
     <p class="hero-copy">“売れる”だけではなく、<br><strong>“あなたから選ばれる”をデザインする。</strong></p>
     <div class="value-line"><span>想い</span><b>×</b><span>市場</span><b>×</b><span>価値</span></div>
     <div class="chips"><span>初心者向け</span><span>全6本・約30分</span><span>買い切り</span></div>
-    <div class="price-letter"><span class="was">通常価格 <s>3,980円</s></span><span class="now">特別価格 <strong>1,980円</strong><small>（税込・買い切り）</small></span></div><div class="deadline-hero"><span class="dh-label">⏳ この特別価格は残り</span><div class="flipclock"><div class="fc-unit" data-fc-unit="d"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">0</div><div class="flip-back">0</div></div></div><span class="fc-label">日</span></div><div class="fc-unit" data-fc-unit="h"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">時間</span></div><div class="fc-unit" data-fc-unit="m"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">分</span></div><div class="fc-unit" data-fc-unit="s"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">秒</span></div></div></div>
+    <div class="price-letter"><span class="was">通常価格 <s>3,980円</s></span><span class="now">特別価格 <strong>1,980円</strong><small>（税込・買い切り）</small></span></div><div class="deadline-hero" id="dhWrap"><span class="dh-basis" id="dhBasis" hidden></span><span class="dh-label">⏳ この特別価格は残り</span><div class="flipclock"><div class="fc-unit" data-fc-unit="d"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">0</div><div class="flip-back">0</div></div></div><span class="fc-label">日</span></div><div class="fc-unit" data-fc-unit="h"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">時間</span></div><div class="fc-unit" data-fc-unit="m"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">分</span></div><div class="fc-unit" data-fc-unit="s"><div class="flip-card"><div class="flip-card-inner"><div class="flip-front">00</div><div class="flip-back">00</div></div></div><span class="fc-label">秒</span></div></div><span class="dh-until" id="dhUntil" hidden></span><span class="dh-note" id="dhNote" hidden></span></div>
     <a class="cta" data-purchase href="#purchase"><span>1,980円で講座を見る →</span></a>
     <p class="micro">購入後、アプリですぐに視聴できます。</p>
   </div>
@@ -312,8 +324,75 @@ body{padding-top:96px}
   var PREFILL_EMAIL = "";
   try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
   var _stripe = null, _checkout = null, _lastSessionId = '';
-  async function openCheckout(){
+
+  /* --- 決済フォーム表示中のキーボード操作（2026-09-10 Codex承認）--------
+   *
+   * フォームは画面全体を覆うので、マウスとタッチは背後へ届かない。
+   * ただしキーボードは届いてしまう（閉じるボタンからShift+Tabで、背後の
+   * 購入ボタンへフォーカスが移る）。開いている間は背後をinertにして外し、
+   * 閉じたら必ず元へ戻す。
+   *
+   * ★フォーム自身と、その祖先はinertにしない（自分を触れなくしてしまう）
+   * ★フォームの中のStripeのiframeは別ドキュメント。その内側の移動は
+   *   Stripe側の担当で、こちらからは制御も確認もできない。 */
+  var _inerted = [], _payTrigger = null;
+
+  function lockBackground(){
     var modal = document.getElementById('payModal');
+    _inerted = [];
+    [].forEach.call(document.body.children, function (el) {
+      if (el === modal || el.contains(modal)) return;
+      if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+      if (el.hasAttribute('inert')) return;   /* もともとinertなものは触らない */
+      el.setAttribute('inert', '');
+      _inerted.push(el);
+    });
+  }
+
+  function unlockBackground(){
+    _inerted.forEach(function (el) { el.removeAttribute('inert'); });
+    _inerted = [];
+  }
+
+  function payFocusables(){
+    var sheet = document.querySelector('#payModal .pay-sheet');
+    if (!sheet) return [];
+    return [].filter.call(sheet.querySelectorAll(
+      'a[href],button:not([disabled]),input:not([disabled]),select,textarea,iframe,[tabindex]:not([tabindex="-1"])'
+    ), function (el) { return el.offsetWidth > 0 || el.offsetHeight > 0; });
+  }
+
+  /* inertが効かない環境のための保険。Tabで外へ出ようとしたら中へ戻す */
+  function trapTab(e){
+    if (e.key !== 'Tab') return;
+    var sheet = document.querySelector('#payModal .pay-sheet');
+    var f = payFocusables();
+    if (!sheet || !f.length) return;
+    var first = f[0], last = f[f.length - 1], now = document.activeElement;
+    var inside = sheet.contains(now);
+    if (e.shiftKey && (!inside || now === first)) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (!inside || now === last)) { e.preventDefault(); first.focus(); }
+  }
+
+  /* 閉じたあとの行き先。開いたボタンへ返すのが原則。
+   * 期限切れでボタンが消えているときは、終了メッセージへ移す */
+  function returnFocus(){
+    var t = _payTrigger;
+    if (t && document.body.contains(t) && (t.offsetWidth > 0 || t.offsetHeight > 0) &&
+        !t.closest('[inert]')) { t.focus(); return; }
+    var box = document.querySelector('.offer-closed');
+    if (box) { box.setAttribute('tabindex', '-1'); box.focus(); return; }
+    var h = document.querySelector('h1');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+  }
+
+  async function openCheckout(trigger){
+    var modal = document.getElementById('payModal');
+    /* すでに開いているなら、開く処理を重ねない */
+    if (modal.classList.contains('open')) return;
+    _payTrigger = trigger ||
+      (document.activeElement && document.activeElement.closest
+        ? document.activeElement.closest('[data-purchase]') : null);
     var cont  = document.getElementById('embedded-checkout');
     var done  = document.getElementById('payDone');
     done.style.display = 'none';
@@ -325,6 +404,11 @@ body{padding-top:96px}
       else { enote.style.display = 'none'; }
     }
     modal.classList.add('open');
+    lockBackground();
+    document.addEventListener('keydown', trapTab, true);
+    /* 読み込み中は閉じるボタンが唯一の操作先。まずそこへ移す */
+    var closeBtn = modal.querySelector('.pay-close');
+    if (closeBtn) closeBtn.focus();
     try{
       if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
       if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
@@ -351,6 +435,10 @@ body{padding-top:96px}
   function closeCheckout(){
     document.getElementById('payModal').classList.remove('open');
     if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+    /* 背後の操作を必ず戻してから、行き先へフォーカスを返す */
+    document.removeEventListener('keydown', trapTab, true);
+    unlockBackground();
+    returnFocus();
   }
   async function syncPurchase(){
     var btn = document.getElementById('syncBtn');
@@ -397,7 +485,7 @@ body{padding-top:96px}
   /* 全CTA（data-purchase）→ Stripe埋め込みチェックアウトを開く */
   document.querySelectorAll('[data-purchase]').forEach(link => {
     link.setAttribute('href', '#');
-    link.addEventListener('click', e => { e.preventDefault(); openCheckout(); });
+    link.addEventListener('click', e => { e.preventDefault(); openCheckout(link); });
   });
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -434,6 +522,102 @@ body{padding-top:96px}
     try{ dl=+localStorage.getItem(KEY); if(!dl){ dl=Date.now()+SPAN; localStorage.setItem(KEY,String(dl)); } }
     catch(e){ dl=Date.now()+SPAN; }
   }
+  /* 5日間チャレンジから来た人には、期限の根拠を書いておく。
+     ofs= はチャレンジを終えた時刻なので、そう言い切れる。
+     メルマガから来た人（src が無い）には、これまでどおり何も足さない。 */
+  /* --- 5DAY経由の扱い（§66追加判断）--------------------------------------
+   *
+   * ofs は「DAY5を初回完了した時刻」。ここから72時間が期限。
+   *
+   * ・欠損／不正／未来の時刻 … 特別価格を出さない。開き直してもらう。
+   *   期限が分からないまま安く売ると、実質いつでも安い状態になるため。
+   * ・期限切れ … 特別価格を終了し、通常価格の案内へ切り替える。
+   *
+   * ★決済そのものに期限は掛かっていない。ここで止めているのは案内であって、
+   *   決済URLを直接開かれた場合までは止められない。
+   *   既知の制約は shindan-challenge-app/tools/offer-deadline-constraints.md に記録。
+   * ★メルマガ経由（src が無い）は、これまでどおり何も変えない。 */
+  var isFrom5day = new URLSearchParams(location.search).get('src') === '5day';
+  var ofsBad = isFrom5day && (!ofs || !isFinite(ofs) || ofs > Date.now());
+
+  function hideSpecialPrice(message, showNormal) {
+    /* 消える要素にフォーカスが乗っていたら、行き先を失わせない。
+     * 消したあとでは body になってしまうので、消す前に控える */
+    var prevFocus = document.activeElement;
+    ['cdBar', 'dhWrap'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.remove();
+    });
+    document.querySelectorAll('.deadline-hero, .price-letter, .letter-note, .card-cd-wrap')
+      .forEach(function (el) { el.remove(); });
+    document.querySelectorAll('[data-purchase], .cta, .sticky').forEach(function (el) {
+      el.remove();
+    });
+    var box = document.createElement('div');
+    box.className = 'offer-closed';
+    box.setAttribute('tabindex', '-1');
+    box.innerHTML = '<p class="oc-msg"></p>' + (showNormal
+      ? '<a class="oc-cta" href="https://columns.l-mine.com/course-hajimete-shohin.html">'
+      + '通常価格のご案内を見る</a>' : '');
+    box.querySelector('.oc-msg').textContent = message;
+    var hero = document.querySelector('.hero .hero-in') || document.body;
+    hero.appendChild(box);
+    /* 読み込み直後（まだどこも触っていない）は動かさない。
+     * 触っていた要素が消えたときだけ、案内の行き先へ移す */
+    if (prevFocus && prevFocus !== document.body && !document.body.contains(prevFocus)) {
+      box.focus();
+    }
+  }
+
+  if (ofsBad) {
+    hideSpecialPrice(
+      'ご案内期限を確認できませんでした。チャレンジのアプリから、もう一度お開きください。',
+      false);
+    return;
+  }
+  /* 期限切れ（5DAY経由）。案内を閉じて、通常価格のページへ移す。
+   * すぐ飛ばすと何が起きたか分からないので、一度説明を出してから移す。
+   * 待てない人のためにリンクも残す。メルマガ経由はここへ来ない。 */
+  var NORMAL_URL = 'https://columns.l-mine.com/course-hajimete-shohin.html';
+  var closed = false;
+  function closeExpired() {
+    if (closed) return;
+    closed = true;
+    hideSpecialPrice('この特別価格のご案内は終了しました。'
+      + '通常価格のご案内へ移動します。', true);
+    setTimeout(function () { location.replace(NORMAL_URL); }, 4000);
+  }
+
+  if (isFrom5day && ofs && dl <= Date.now()) {
+    closeExpired();
+    return;
+  }
+
+  var basisEl = document.getElementById('dhBasis');
+  if (basisEl && isFrom5day && ofs) {
+    /* 終了日時を、日本時間で数字のまま出す（残り時間だけに頼らない） */
+    var untilEl = document.getElementById('dhUntil');
+    if (untilEl) {
+      var d0 = new Date(dl);
+      untilEl.textContent = 'ご案内期限：' + (d0.getMonth() + 1) + '月' + d0.getDate() + '日 '
+        + d0.getHours() + '時' + ('0' + d0.getMinutes()).slice(-2) + '分（日本時間）';
+      untilEl.hidden = false;
+    }
+    basisEl.textContent = 'チャレンジ完了後72時間の特別価格のご案内';
+    basisEl.hidden = false;
+    /* ラベルは5DAY経由のときだけ差し替える。
+     * メルマガ経由は期限が過ぎても案内が残るため、
+     * 「ご案内終了まで」とは言えない（挙動の不一致は正本に記録済み） */
+    var labelEl = document.querySelector('#dhWrap .dh-label');
+    if (labelEl) labelEl.textContent = '⏳ 特別価格のご案内終了まで';
+    var noteEl = document.getElementById('dhNote');
+    if (noteEl) {
+      /* 「購入できません」とは書かない。終わるのは、このページでの案内 */
+      noteEl.textContent = 'このページでの特別価格のご案内は、上記日時で終了します。';
+      noteEl.hidden = false;
+    }
+  }
+
   var textEls  = [].slice.call(document.querySelectorAll('.cd-val'));
   var flipUnits = [].slice.call(document.querySelectorAll('[data-fc-unit]'));
   function pad(n){ return (n<10?'0':'')+n; }
@@ -456,6 +640,15 @@ body{padding-top:96px}
   function tick(){
     var left = dl - Date.now();
     var expired = left <= 0;
+    /* ページを開いたまま期限が来た場合。表示だけ「まもなく終了」にして
+     * 買えるままにしない（2026-09-09 とーる判断） */
+    if (expired && isFrom5day) {
+      var pm = document.getElementById('payModal');
+      /* 決済の途中なら、終わるまで待つ。手続きを途中で切らない */
+      if (!pm || !pm.classList.contains('open')) {
+        clearInterval(timer); closeExpired(); return;
+      }
+    }
     var d=0,h=0,m=0,s=0;
     if(!expired){
       d = Math.floor(left/86400000);
@@ -472,7 +665,8 @@ body{padding-top:96px}
       setFlip(el, str);
     });
   }
-  tick(); setInterval(tick,1000);
+  var timer;
+  tick(); timer = setInterval(tick,1000);
 })();
 </script>
 </body>

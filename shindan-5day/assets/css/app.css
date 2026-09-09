@@ -1030,3 +1030,27 @@ button, input { font: inherit; }
   .rti__frame { max-width: 100%; }
   .rti__badge { font-size: 14px; top: 6px; left: 6px; }
 }
+
+
+/* --- ほかの講座も見る（2026-09-09 §66-5）---------------------------------
+ * 推薦ではなく、通常価格の選択肢。開くまで場所を取らない。
+ * おすすめのCTAより弱く見せる（同じ強さで並べない）。 */
+.course-list { margin: 26px 0 0; border-top: 1px solid var(--line); padding-top: 18px; }
+.course-list__summary {
+  cursor: pointer; list-style: none;
+  font-size: 14px; color: var(--ink-soft); letter-spacing: .02em;
+}
+.course-list__summary::-webkit-details-marker { display: none; }
+.course-list__summary::before { content: "＋ "; color: var(--gold-2); }
+.course-list[open] .course-list__summary::before { content: "− "; }
+.course-list__summary:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+.course-list__note { margin: 12px 0 0; }
+.course-list__items { margin: 14px 0 0; padding: 0; list-style: none; }
+.course-list__item {
+  display: flex; flex-direction: column; gap: 4px;
+  margin: 0 0 16px; padding: 0 0 16px; border-bottom: 1px solid var(--line);
+}
+.course-list__item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+.course-list__link { font-size: 15px; color: var(--gold-2); }
+.course-list__summary-text { font-size: 14px; line-height: 1.9; color: var(--ink-2); }
+.course-list__price { font-size: 14px; color: var(--ink-soft); }

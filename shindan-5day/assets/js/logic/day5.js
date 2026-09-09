@@ -211,7 +211,7 @@
     /* 出し分けは SC.offers へ移した（§37-7）。ここは呼び出し口だけ残す。 */
     supportRecommendation: function (state) {
       var d = SC.store.loadDiagnosis();
-      return SC.offers.resolveSupportRecommendation((state.day5 || {}).supportMode, d.lowestAxis);
+      return SC.offers.resolveSupportRecommendation((state.day5 || {}).supportMode, d.lowestAxis, state.day5CompletedAt);
     },
 
     /* 再診断の予定日（§36-5）。未設定なら null */

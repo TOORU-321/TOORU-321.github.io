@@ -29,6 +29,9 @@
   function c() { return SC.diagnosisCopy; }
   function track(name, meta) { return SC.diagnosisTrack.event(name, meta); }
 
+  /* 復元のときに一緒に返ってきた、5日間チャレンジの続き */
+  var carriedChallenge = null;
+
   function readUidFromUrl() {
     var m = /[?&]uid=([^&#]*)/.exec(global.location.search);
     if (!m) return null;
@@ -219,6 +222,12 @@
      * uidは画面・URL・計測・コンソールへは出さない（依頼11）。 */
     SC.diagnosisBridge.handOverRecord(record, uid);
 
+    /* 別の端末で進めていた続きがあれば、この端末へ持ってくる（2026-09-10）。
+     * この端末にすでに続きがあるときは、何もしない（store側で判断する）。 */
+    if (carriedChallenge && SC.store && SC.store.adoptChallengeState) {
+      SC.store.adoptChallengeState(carriedChallenge);
+    }
+
     var animate = SC.motion.once('restore-result');
     var el = h('div', { class: 'dg-screen dg-screen--result' }, [
       head(c().resultTitle),
@@ -296,6 +305,8 @@
     SC.diagnosisRemote.restoreByUid(uid).then(function (res) {
       if (res.ok && res.result) {
         stripUidFromUrl();
+        /* 5日間チャレンジの続き。無ければ null のまま */
+        carriedChallenge = (res.challenge && res.challenge.answers) || null;
         viewResult(res.result);
         return;
       }

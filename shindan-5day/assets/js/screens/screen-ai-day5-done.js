@@ -80,7 +80,7 @@
        * ・商品名・URL・価格は計測へ送らない（IDと分類だけ） */
       var s = SC.copy.day5Support;
       var rec = SC.offers.resolveSupportRecommendation(
-        (state.day5 || {}).supportMode, d.lowestAxis);
+        (state.day5 || {}).supportMode, d.lowestAxis, state.day5CompletedAt);
       var timing = SC.offers.timingFor(state) || 'day5';
       var offerMeta = {
         mode: rec.mode, axis: rec.axis, contentType: rec.contentType,
@@ -116,15 +116,63 @@
         global.open(rec.url, '_blank', 'noopener');
       }
 
+      /* 「ほかの講座も見る」（§66-5）。
+       *
+       * ・推薦ではなく、通常価格の選択肢。たたんだ状態で置く
+       * ・進み方が learn のときだけ出す。self には有料を自動表示しない（§37-5）
+       * ・consult では出さない。有料講座と伴走を同じ画面へ同格に並べないため
+       * ・おすすめに選ばれた講座は、この一覧から除く（重複表示しない）
+       * ・つなぐのは通常版のページだけ。期限の演出がある割引版へはつながない */
+      function courseListBlock() {
+        if (rec.mode !== 'learn') return null;
+        var cl = (SC.offerCatalog || {}).courseList || [];
+        var copyList = s.courseList;
+        if (!cl.length || !copyList) return null;
+
+        var recUrl = rec.url || null;
+        var items = cl.filter(function (c) { return c.url && c.url !== recUrl; });
+        if (!items.length) return null;
+
+        return h('details', { class: 'course-list' }, [
+          h('summary', { class: 'course-list__summary', text: copyList.summary }),
+          h('p', { class: 'card__note course-list__note', text: copyList.note }),
+          h('ul', { class: 'course-list__items' }, items.map(function (c) {
+            return h('li', { class: 'course-list__item' }, [
+              h('a', {
+                class: 'course-list__link',
+                href: c.url, target: '_blank', rel: 'noopener',
+                on: { click: function () {
+                  /* 送るのはIDと分類だけ。商品名・URL・価格は送らない（§37-11） */
+                  SC.offers.trackOfferEvent('course_list_clicked', {
+                    mode: rec.mode, axis: c.axis || null,
+                    offerId: c.id, contentType: 'course', timing: timing
+                  });
+                } }
+              }, c.title),
+              h('span', { class: 'course-list__summary-text', text: c.summary })
+            ]);
+          }))
+        ]);
+      }
+
       var supportCard = SC.ui.card(s.heading, [
         /* 共通注記は案内より先（§37-4） */
         h('p', { class: 'card__note support__note', text: s.note }),
         h('h3', { class: 'support__title', text: rec.heading }),
         SC.ui.prose(rec.body),
         /* 接続先が決まっているものだけボタンにする。無ければ非操作の準備中表示 */
-        rec.isAvailable
+        /* 準備中の断りと、進める道は両立させる（§66追加判断-6）。
+         * 対応講座が無いときも「準備中」で終わらせず、30日実験へ戻れるようにする。 */
+        rec.pending
+          ? h('p', { class: 'card__note card__note--after support__pending', text: rec.pending })
+          : null,
+        /* 外へ出る接続先があるとき（isAvailable）と、
+         * 同じ画面の30日実験へ戻すとき（internal）だけボタンにする。
+         * 接続先が未確定のオファーは、どちらも立たないのでボタンにならない */
+        rec.isAvailable || rec.internal
           ? SC.ui.ctaArea([SC.ui.secondaryCta({ label: rec.ctaLabel, onClick: onOfferClick })])
-          : h('p', { class: 'card__note card__note--after support__pending', text: rec.pending })
+          : null,
+        courseListBlock()
       ], 'card--reading card--support');
 
       return h('div', { class: 'screen screen--day5-done' + (celebrate ? ' is-celebrating' : '') }, [

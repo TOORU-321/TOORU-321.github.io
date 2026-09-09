@@ -302,6 +302,30 @@
 
     getDiagnosis: function () { return diagnosisCache; },
 
+    /* 別の端末で書いた続きを受け取る（2026-09-10）。
+     *
+     * LINEから復元したとき、スプレッドシートに続きがあれば持ってくる。
+     * ★この端末にすでに続きがあるときは、上書きしない。
+     *   目の前の人が書いたもののほうが新しいため。
+     * ★形が合わないものは受け取らない（validate を通す）。 */
+    adoptChallengeState: function (incoming) {
+      if (!isPlainObject(incoming)) return false;
+      var d = SC.store.loadDiagnosis();
+      if (!d || !d.anonymousDiagnosisId) return false;
+      if (incoming.anonymousDiagnosisId &&
+          incoming.anonymousDiagnosisId !== d.anonymousDiagnosisId) return false;
+
+      var here = SC.storage.readEntry(stateKey(d.anonymousDiagnosisId));
+      if (here.status === 'ok' && validate(here.value, d)) return false;
+
+      var valid = validate(incoming, d);
+      if (!valid) return false;
+      SC.storage.write(stateKey(d.anonymousDiagnosisId), valid);
+      stateCache = valid;
+      lastLoadStatus = 'restored';
+      return true;
+    },
+
     /* --- チャレンジ状態 ------------------------------------------------ */
     loadChallengeState: function () {
       var d = SC.store.loadDiagnosis();
@@ -353,6 +377,21 @@
        * ★通知はおまけ。送れなくても画面は止めない。
        * ★LINEと結合していない人（uidが無い人）には送らない。 */
       notifyProgress_(beforeDays, beforeJoined, state);
+
+      /* 書いた中身をスプレッドシートへ残す（2026-09-10）。
+       *
+       * 節目（参加した・DAYが終わった）はすぐ送る。
+       * それ以外の書きかけは、少し待ってからまとめて送る。
+       * 1文字ごとに通信すると、GASの実行回数の上限にすぐ届いてしまうため。
+       *
+       * ★これもおまけ。送れなくても画面は止めない。
+       * ★プレビュー（サンプルの診断）では送らない。判断は challenge-remote.js 側。 */
+      if (SC.challengeRemote) {
+        var milestone = (!beforeJoined && state.participation === 'joined') ||
+                        (state.completedDays || []).length !== beforeDays.length;
+        if (milestone) SC.challengeRemote.save(state);
+        else SC.challengeRemote.saveSoon(state);
+      }
       return state;
     },
 

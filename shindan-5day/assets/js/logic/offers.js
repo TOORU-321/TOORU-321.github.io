@@ -77,7 +77,33 @@
     /* 画面が使う唯一の入口。
      * 戻り値：mode / axis / contentType / offerId / heading / body / ctaLabel / url / isAvailable
      *        （ほかに internal・pending・level を添える） */
-    resolveSupportRecommendation: function (supportMode, lowestAxis) {
+    /* 期限のあるオファーだけ、開くときに起点の時刻を足す（2026-09-09）。
+     *
+     * 渡すのは「DAY5を終えた時刻」と「どこから来たか」の印だけ。
+     * 回答本文・診断結果・自由入力・個人情報は渡さない（§37-11）。
+     * 時刻が無ければ何も足さない（期限の演出が出ないだけで、買える）。 */
+    withDeadline: function (url, offer, day5CompletedAt) {
+      if (!url || !offer || !offer.deadlineFromDay5) return url;
+      var t = SC.offers.deadlineOrigin(day5CompletedAt);
+      if (t === null) return null;   /* 起点が無いなら、そのオファーへは出さない */
+      return url + (url.indexOf('?') === -1 ? '?' : '&') + 'ofs=' + t + '&src=5day';
+    },
+
+    /* 期限の起点として使ってよい時刻か。使えないなら null。
+     *
+     * ★使えないときに「期限なしの割引」へ落とさない（§66追加判断-2）。
+     *   起点が分からないまま特別価格を出すと、実質いつでも安い状態になる。
+     * ★未来の時刻も受け付けない。端末の時計がずれている・値が壊れている場合に、
+     *   本来より長い期限を作らないため。 */
+    deadlineOrigin: function (value) {
+      if (!value) return null;
+      var t = new Date(value).getTime();
+      if (!t || isNaN(t)) return null;
+      if (t > Date.now()) return null;
+      return t;
+    },
+
+    resolveSupportRecommendation: function (supportMode, lowestAxis, day5CompletedAt) {
       var mode = normalizeMode(supportMode);
       var copy = SC.copy.day5Support.modes[mode];
       var offer = SC.offers.findOffer(mode, lowestAxis);
@@ -92,14 +118,32 @@
         };
       }
 
-      if (!offer) {
-        /* 接続先が未確定。文言は出すが、外部遷移CTAは出さない（§37-5／§37-13） */
+      /* 対応講座が無い／期限の起点が無い場合の共通の受け皿。
+       *
+       * ★「準備中」だけで終わらせない（§66追加判断-6）。
+       *   30日実験へ戻る道は残す。これは商品ではなく同じ画面の中の移動。
+       * ★推測で別の講座や、確認できていない無料コンテンツへはつながない。 */
+      function fallback() {
+        var selfCopy = SC.copy.day5Support.modes.self;
         return {
           mode: mode, axis: lowestAxis, contentType: null, offerId: null,
-          heading: copy.heading, body: copy.body, ctaLabel: copy.cta,
-          url: null, isAvailable: false, internal: false,
+          heading: copy.heading, body: copy.body,
+          ctaLabel: selfCopy.cta,
+          /* isAvailable は「外へ出る接続先がある」の意味のまま使う（§37-12）。
+           * ここは外へ出さないので false。代わりに internal を立て、
+           * 画面には30日実験へ戻るボタンを出してもらう。 */
+          url: null, isAvailable: false, internal: true,
           pending: copy.pending || null, level: 0
         };
+      }
+
+      if (!offer) return fallback();
+
+      /* 期限つきのオファーは、起点が取れないときに出さない。
+       * 期限なしの割引へ落とさないため（§66追加判断-2）。 */
+      if (offer.deadlineFromDay5 &&
+          SC.offers.deadlineOrigin(day5CompletedAt) === null) {
+        return fallback();
       }
 
       return {
@@ -110,7 +154,7 @@
         heading: offer.heading || copy.heading,
         body: offer.body || copy.body,
         ctaLabel: offer.ctaLabel || copy.cta,
-        url: offer.url || null,
+        url: SC.offers.withDeadline(offer.url || null, offer, day5CompletedAt),
         isAvailable: !!offer.url,
         internal: false,
         pending: offer.url ? null : (copy.pending || null),
