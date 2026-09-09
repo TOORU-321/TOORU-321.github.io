@@ -4049,11 +4049,20 @@ async function pushNews(n, test){
   try{
     const body = new URLSearchParams({ action:"news_push", email:(SESSION && SESSION.email) || "", id:String(n.id) });
     if(test) body.set("test", "1");
-    const res = await fetch(GAS_URL, { method:"POST", body }).then(r=>r.json());
-    if(res.ok){ showToast(`✅ ${res.sent}/${res.total}件に通知しました。`); }
-    else if(res.error === "no_fcm_credentials"){ showToast("FCMの鍵が未設定です（GASのスクリプトプロパティ）。"); }
-    else if(res.error === "no_tokens"){ showToast(test ? "あなたの端末が通知オンになっていません。" : "通知オンの会員がまだいません。"); }
-    else if(res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
+    const lineBody = new URLSearchParams({ action:"nl_news_push", email:(SESSION && SESSION.email) || "", id:String(n.id) });
+    if(test) lineBody.set("test", "1");
+    const [res, lineRes] = await Promise.all([
+      fetch(GAS_URL, { method:"POST", body }).then(r=>r.json()).catch(()=>null),
+      fetch(GAS_URL, { method:"POST", body:lineBody }).then(r=>r.json()).catch(()=>null)   // LINE会員へcall-beaconで定型メッセージ（失敗しても本処理は続ける）
+    ]);
+    if(res && res.ok){
+      let okMsg = `✅ ${res.sent}/${res.total}件に通知しました。`;
+      if(lineRes && lineRes.ok && lineRes.total > 0) okMsg += `（LINE ${lineRes.sent}/${lineRes.total}件）`;
+      showToast(okMsg);
+    }
+    else if(res && res.error === "no_fcm_credentials"){ showToast("FCMの鍵が未設定です（GASのスクリプトプロパティ）。"); }
+    else if(res && res.error === "no_tokens"){ showToast(test ? "あなたの端末が通知オンになっていません。" : "通知オンの会員がまだいません。"); }
+    else if(res && res.error === "not_admin"){ showToast("管理者権限が必要です。"); }
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
