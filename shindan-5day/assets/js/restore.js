@@ -239,10 +239,54 @@
         h('a', {
           class: 'btn btn--primary', href: 'index.html', rel: 'noreferrer'
         }, c().restoreNextCta)
+      ]),
+
+      /* もう一度診断を受けた人のための切り替え（2026-09-10）。
+       * ★押した流れの中でクリップボードを読む。開いた瞬間に読むと、
+       *   iOSのLINE内ブラウザで必ず拒否される。 */
+      h('div', { class: 'dg-switch' }, [
+        h('p', { class: 'dg-devnote', text: c().restoreSwitchNote }),
+        h('button', {
+          type: 'button', class: 'btn btn--ghost',
+          on: { click: function (e) { switchToNewest(e.currentTarget); } }
+        }, c().restoreSwitchCta)
       ])
     ]);
     show([el]);
     if (animate) SC.motion.countUp(el, { duration: 900, stagger: 90, delay: 120 });
+  }
+
+  /* もう一度受けた診断へ切り替える（2026-09-10）。
+   *
+   * 新しい合図を持っていることが、本人が受け直した証拠になる。
+   * GAS側は、その合図を確かめてから結合の行き先を書き換える。 */
+  function switchToNewest(btn) {
+    if (btn) { btn.disabled = true; btn.textContent = c().restoreChecking; }
+    var done = function (label) {
+      if (!btn) return;
+      btn.disabled = false;
+      btn.textContent = label;
+    };
+
+    if (!(global.navigator.clipboard && global.navigator.clipboard.readText)) {
+      done(c().restoreSwitchFailed);
+      return;
+    }
+    global.navigator.clipboard.readText().then(function (text) {
+      var key = (text || '').trim();
+      if (!key) { done(c().restoreSwitchFailed); return; }
+      SC.diagnosisRemote.bindWithKey(uid, key).then(function (res) {
+        if (res.ok && res.result) {
+          track('handoff_switch_succeeded');
+          viewResult(res.result);
+          return;
+        }
+        track('handoff_switch_failed');
+        done(c().restoreSwitchFailed);
+      });
+    })['catch'](function () {
+      done(c().restoreSwitchFailed);
+    });
   }
 
   /* --- 7. 結合 ---------------------------------------------------------- */

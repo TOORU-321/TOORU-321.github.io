@@ -214,7 +214,11 @@
       ]),
       h('p', { class: 'score-summary__band' }, [
         h('span', { class: 'tag tag--band', text: opts.band.label }),
-        h('span', { class: 'score-summary__range', text: opts.band.range + '点' })
+        /* LINEから戻ってきた結果は、スコア帯の名前しか持っていないことがある。
+         * 範囲が無いときに「undefined点」と出さない（2026-09-10 とーる実機報告） */
+        opts.band.range
+          ? h('span', { class: 'score-summary__range', text: opts.band.range + '点' })
+          : null
       ]),
       opts.band.meaning ? h('p', { class: 'score-summary__meaning', text: opts.band.meaning }) : null,
       /* メーターは別カードにせず、現在地として同じカードへ入れる */

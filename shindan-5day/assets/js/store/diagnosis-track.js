@@ -63,6 +63,9 @@
     'handoff_clipboard_failed',
     'handoff_manual_paste_used',
     'handoff_bind_succeeded',
+    /* もう一度受けた診断への切り替え（2026-09-10） */
+    'handoff_switch_succeeded',
+    'handoff_switch_failed',
     'handoff_bind_failed'
   ];
 
