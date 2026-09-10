@@ -144,13 +144,13 @@
             if(!t) return;
             if(/^-{3,}$/.test(t)){ out += '<hr>'; return; }
             if(/^#\s+/.test(t)){ out += '<h2>'+esc(t.replace(/^#\s+/,"").trim())+'</h2>'; return; }
-            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display='none'">'; return; }
+            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\'none\'">'; return; }
             out += '<p>'+inline(raw.replace(/\s+$/,"")).replace(/\n/g,"<br>")+'</p>';
           });
           return out;
         }
         function showLocked(){
-          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="https://columns.l-mine.com/elabo-plus-lp.html" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="https://columns.l-mine.com/app/" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div>';
+          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="https://columns.l-mine.com/elabo-plus-lp.html" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="https://columns.l-mine.com/app/" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div><p class="mg-alt">続きだけ読みたい方は、noteでも単品でお読みいただけます（¥300）。<br><a href="https://note.com/tooru_column/n/n631e596d9268" target="_blank" rel="noopener">noteで読む →</a><br><span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>';
         }
         fetch("https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec?action=column&id=4&email=" + encodeURIComponent(email) + "&_=" + Date.now())
           .then(function(r){ return r.json(); })

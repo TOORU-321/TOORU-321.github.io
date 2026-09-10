@@ -102,13 +102,13 @@ _MEMBER_GATE_TEMPLATE = '''
             if(!t) return;
             if(/^-{3,}$/.test(t)){ out += '<hr>'; return; }
             if(/^#\\s+/.test(t)){ out += '<h2>'+esc(t.replace(/^#\\s+/,"").trim())+'</h2>'; return; }
-            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\'none\'">'; return; }
+            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\\'none\\'">'; return; }
             out += '<p>'+inline(raw.replace(/\\s+$/,"")).replace(/\\n/g,"<br>")+'</p>';
           });
           return out;
         }
         function showLocked(){
-          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="__APP_URL__" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div>';
+          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="__APP_URL__" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div>__NOTE_ALT__';
         }
         fetch("__GAS_URL__?action=column&id=__GID__&email=" + encodeURIComponent(email) + "&_=" + Date.now())
           .then(function(r){ return r.json(); })
@@ -121,12 +121,22 @@ _MEMBER_GATE_TEMPLATE = '''
       })();
       </script>'''
 
-def member_gate_html(gate_id):
+def member_gate_html(gate_id, note_url="", note_price=""):
+    # note単品購入の導線は showLocked() の中だけに出す。会員はゲートが開くので showLocked() が
+    # 走らず、この導線は表示されない（＝月額会員に「単品でも買える」と見せない）。
+    alt = ""
+    if note_url:
+        price = note_price or "¥300"
+        alt = ('<p class="mg-alt">続きだけ読みたい方は、noteでも単品でお読みいただけます（'
+               + html.escape(price) + '）。<br>'
+               + '<a href="' + html.escape(note_url) + '" target="_blank" rel="noopener">noteで読む →</a><br>'
+               + '<span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>')
     return (_MEMBER_GATE_TEMPLATE
             .replace("__GID__", html.escape(str(gate_id)))
             .replace("__ELABO_LP__", ELABO_LP)
             .replace("__APP_URL__", APP_URL)
-            .replace("__GAS_URL__", ELABO_GAS_URL))
+            .replace("__GAS_URL__", ELABO_GAS_URL)
+            .replace("__NOTE_ALT__", alt))
 
 def optin_footer(n):
     # 全コラム統一：記事末尾は「エルラボ＋」案内に統一（旧『3-2-1ラボ』メルマガ＝停止中のため撤去）。
@@ -561,7 +571,11 @@ def render_article(c, cols):
         c.get("sentence_breaks_only", "").lower() == "true",
     )
     title_html = c.get("title_html", html.escape(c["title"]))
-    gate_html = member_gate_html(c["member_gate_id"]) if has_gate else ""
+    gate_html = member_gate_html(
+        c["member_gate_id"],
+        c.get("member_gate_note_url", ""),
+        c.get("member_gate_note_price", ""),
+    ) if has_gate else ""
     sign_after_gate = f'<p class="sign">{inline(c.get("sign", ""))}</p>' if has_gate else ""
     return f'''<!DOCTYPE html>
 <html lang="ja">

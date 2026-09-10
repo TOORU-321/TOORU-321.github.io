@@ -108,6 +108,10 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .body .member-gate .mg-btn-primary:hover{filter:brightness(1.06)}
 .body .member-gate .mg-btn-secondary{border:1px solid var(--gold-2);color:var(--ink);background:#fff}
 .body .member-gate .mg-btn-secondary:hover{background:var(--card)}
+.body .member-gate .mg-alt{margin:1.5em 0 0;padding-top:1.25em;border-top:1px solid var(--line-2);font-size:13px;line-height:1.85;color:var(--ink-soft)}
+.body .member-gate .mg-alt a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid var(--gold-2)}
+.body .member-gate .mg-alt a:hover{color:var(--gold-2)}
+.body .member-gate .mg-sub{font-size:12px;opacity:.85}
 .body .mg-unlocked{margin-top:.4em}
 @media(max-width:560px){.body .member-gate{padding:26px 20px}.body .member-gate .mg-btn{width:100%}}
 .article-toc{margin:3em 0 3.4em;padding:24px 26px 22px;border:1px solid var(--line-2);background:linear-gradient(145deg,#fff,#faf8f3)}
