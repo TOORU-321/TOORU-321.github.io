@@ -116,52 +116,10 @@
       <p class="sec">&#10022;</p>
       <p>ここまでは、“なぜ0→1が難しいのか”という話でした。<br>ここからは、実際に0→1を作る方法として「シードローンチ」という考え方に入っていきます。</p>
       <div class="member-gate" id="mgGate4" data-gate-id="4">
-        <div class="mg-load">読み込み中…</div>
-      </div>
-      <script>
-      (function(){
-        var box = document.getElementById("mgGate4");
-        if(!box) return;
-        var email = "";
-        try{
-          var s = JSON.parse(localStorage.getItem("lmine_member") || "null");
-          if(s && s.email) email = s.email;
-        }catch(e){}
-        function esc(x){ var d=document.createElement("div"); d.textContent=String(x); return d.innerHTML; }
-        function inline(s){
-          s = esc(s);
-          s = s.replace(/\[([^\]]+)\]\(((?:https?:)?[^)]+)\)/g, function(m,a,b){ return '<a href="'+b+'" target="_blank" rel="noopener">'+a+'</a>'; });
-          s = s.replace(/(https?:\/\/[^\s<)"']+)(?![^<]*>)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-          s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-          return s;
-        }
-        function isImg(u){ return /^https?:\/\/\S+$/i.test(u) && (/\.(png|jpe?g|gif|webp)(\?\S*)?$/i.test(u) || /drive\.google\.com\/(thumbnail|uc)\?/i.test(u)); }
-        function renderBody(text){
-          var blocks = String(text).replace(/\r\n/g,"\n").split(/\n{2,}/);
-          var out = "";
-          blocks.forEach(function(raw){
-            var t = raw.trim();
-            if(!t) return;
-            if(/^-{3,}$/.test(t)){ out += '<hr>'; return; }
-            if(/^#\s+/.test(t)){ out += '<h2>'+esc(t.replace(/^#\s+/,"").trim())+'</h2>'; return; }
-            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\'none\'">'; return; }
-            out += '<p>'+inline(raw.replace(/\s+$/,"")).replace(/\n/g,"<br>")+'</p>';
-          });
-          return out;
-        }
-        function showLocked(){
-          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="https://columns.l-mine.com/elabo-plus-lp.html" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="https://columns.l-mine.com/app/" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div><p class="mg-alt">続きだけ読みたい方は、noteでも単品でお読みいただけます（¥300）。<br><a href="https://note.com/tooru_column/n/n631e596d9268" target="_blank" rel="noopener">noteで読む →</a><br><span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>';
-        }
-        fetch("https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec?action=column&id=4&email=" + encodeURIComponent(email) + "&_=" + Date.now())
-          .then(function(r){ return r.json(); })
-          .then(function(res){
-            if(res && res.ok && !res.locked){
-              box.outerHTML = '<div class="mg-unlocked">' + renderBody(res.body || "") + '</div>';
-            } else { showLocked(); }
-          })
-          .catch(showLocked);
-      })();
-      </script><p class="sign">とーる｜猫好きの行動経済アナリスト</p>
+        <div class="mg-lock">&#128274;</div>
+        <p class="mg-msg">ここから先は、エルラボ＋メンバー限定です。<br>続きは、アプリ内のシークレットコラム<br><strong>「シードローンチという小さな売り方」</strong>でお読みいただけます。</p>
+        <div class="mg-actions"><a class="mg-btn mg-btn-primary" href="https://columns.l-mine.com/app/" target="_blank" rel="noopener">アプリで続きを読む &#8594;</a><a class="mg-btn mg-btn-secondary" href="https://columns.l-mine.com/elabo-plus-lp.html" target="_blank" rel="noopener">エルラボ＋について &#8594;</a></div><p class="mg-alt">続きだけ読みたい方は、noteでも単品でお読みいただけます（¥300）。<br><a href="https://note.com/tooru_column/n/n631e596d9268" target="_blank" rel="noopener">noteで読む →</a><br><span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>
+      </div><p class="sign">とーる｜猫好きの行動経済アナリスト</p>
     </div>
 
     <aside class="optin optin-quiz">

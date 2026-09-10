@@ -74,54 +74,12 @@ def quiz_footer():
 # 記事途中からのメンバー限定ゲート。本文は静的HTMLへ埋めず、既存のエルラボ＋認証とGASを利用する。
 _MEMBER_GATE_TEMPLATE = '''
       <div class="member-gate" id="mgGate__GID__" data-gate-id="__GID__">
-        <div class="mg-load">読み込み中…</div>
-      </div>
-      <script>
-      (function(){
-        var box = document.getElementById("mgGate__GID__");
-        if(!box) return;
-        var email = "";
-        try{
-          var s = JSON.parse(localStorage.getItem("lmine_member") || "null");
-          if(s && s.email) email = s.email;
-        }catch(e){}
-        function esc(x){ var d=document.createElement("div"); d.textContent=String(x); return d.innerHTML; }
-        function inline(s){
-          s = esc(s);
-          s = s.replace(/\\[([^\\]]+)\\]\\(((?:https?:)?[^)]+)\\)/g, function(m,a,b){ return '<a href="'+b+'" target="_blank" rel="noopener">'+a+'</a>'; });
-          s = s.replace(/(https?:\\/\\/[^\\s<)"']+)(?![^<]*>)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-          s = s.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');
-          return s;
-        }
-        function isImg(u){ return /^https?:\\/\\/\\S+$/i.test(u) && (/\\.(png|jpe?g|gif|webp)(\\?\\S*)?$/i.test(u) || /drive\\.google\\.com\\/(thumbnail|uc)\\?/i.test(u)); }
-        function renderBody(text){
-          var blocks = String(text).replace(/\\r\\n/g,"\\n").split(/\\n{2,}/);
-          var out = "";
-          blocks.forEach(function(raw){
-            var t = raw.trim();
-            if(!t) return;
-            if(/^-{3,}$/.test(t)){ out += '<hr>'; return; }
-            if(/^#\\s+/.test(t)){ out += '<h2>'+esc(t.replace(/^#\\s+/,"").trim())+'</h2>'; return; }
-            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\\'none\\'">'; return; }
-            out += '<p>'+inline(raw.replace(/\\s+$/,"")).replace(/\\n/g,"<br>")+'</p>';
-          });
-          return out;
-        }
-        function showLocked(){
-          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="__APP_URL__" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div>__NOTE_ALT__';
-        }
-        fetch("__GAS_URL__?action=column&id=__GID__&email=" + encodeURIComponent(email) + "&_=" + Date.now())
-          .then(function(r){ return r.json(); })
-          .then(function(res){
-            if(res && res.ok && !res.locked){
-              box.outerHTML = '<div class="mg-unlocked">' + renderBody(res.body || "") + '</div>';
-            } else { showLocked(); }
-          })
-          .catch(showLocked);
-      })();
-      </script>'''
+        <div class="mg-lock">&#128274;</div>
+        <p class="mg-msg">ここから先は、エルラボ＋メンバー限定です。<br>続きは、アプリ内のシークレットコラム<br><strong>「__GATE_TITLE__」</strong>でお読みいただけます。</p>
+        <div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__APP_URL__" target="_blank" rel="noopener">アプリで続きを読む &#8594;</a><a class="mg-btn mg-btn-secondary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋について &#8594;</a></div>__NOTE_ALT__
+      </div>'''
 
-def member_gate_html(gate_id, note_url="", note_price=""):
+def member_gate_html(gate_id, note_url="", note_price="", gate_title=""):
     # note単品購入の導線は showLocked() の中だけに出す。会員はゲートが開くので showLocked() が
     # 走らず、この導線は表示されない（＝月額会員に「単品でも買える」と見せない）。
     alt = ""
@@ -132,10 +90,10 @@ def member_gate_html(gate_id, note_url="", note_price=""):
                + '<a href="' + html.escape(note_url) + '" target="_blank" rel="noopener">noteで読む →</a><br>'
                + '<span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>')
     return (_MEMBER_GATE_TEMPLATE
+            .replace("__GATE_TITLE__", html.escape(gate_title or "メンバー限定コラム"))
             .replace("__GID__", html.escape(str(gate_id)))
             .replace("__ELABO_LP__", ELABO_LP)
             .replace("__APP_URL__", APP_URL)
-            .replace("__GAS_URL__", ELABO_GAS_URL)
             .replace("__NOTE_ALT__", alt))
 
 def optin_footer(n):
@@ -575,6 +533,7 @@ def render_article(c, cols):
         c["member_gate_id"],
         c.get("member_gate_note_url", ""),
         c.get("member_gate_note_price", ""),
+        c.get("member_gate_title", ""),
     ) if has_gate else ""
     sign_after_gate = f'<p class="sign">{inline(c.get("sign", ""))}</p>' if has_gate else ""
     return f'''<!DOCTYPE html>
