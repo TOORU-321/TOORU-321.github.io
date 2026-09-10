@@ -76,7 +76,7 @@ _MEMBER_GATE_TEMPLATE = '''
       <div class="member-gate" id="mgGate__GID__" data-gate-id="__GID__">
         <div class="mg-lock">&#128274;</div>
         <p class="mg-msg">ここから先は、エルラボ＋メンバー限定です。<br>続きは、アプリ内のシークレットコラム<br><strong>「__GATE_TITLE__」</strong>でお読みいただけます。</p>
-        <div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__APP_URL__" target="_blank" rel="noopener">アプリで続きを読む &#8594;</a><a class="mg-btn mg-btn-secondary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋について &#8594;</a></div>__NOTE_ALT__
+        <div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__APP_COLUMN_URL__" target="_blank" rel="noopener">アプリで続きを読む &#8594;</a><a class="mg-btn mg-btn-secondary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋について &#8594;</a></div>__NOTE_ALT__
       </div>'''
 
 def member_gate_html(gate_id, note_url="", note_price="", gate_title=""):
@@ -90,6 +90,8 @@ def member_gate_html(gate_id, note_url="", note_price="", gate_title=""):
                + '<a href="' + html.escape(note_url) + '" target="_blank" rel="noopener">noteで読む →</a><br>'
                + '<span class="mg-sub">※たくさん読むなら、エルラボ＋のほうが安いです。</span></p>')
     return (_MEMBER_GATE_TEMPLATE
+            # ?column=ID はアプリ側のディープリンク（該当の限定コラムを直接開く）
+            .replace("__APP_COLUMN_URL__", APP_URL + ("?column=" + html.escape(str(gate_id))))
             .replace("__GATE_TITLE__", html.escape(gate_title or "メンバー限定コラム"))
             .replace("__GID__", html.escape(str(gate_id)))
             .replace("__ELABO_LP__", ELABO_LP)
