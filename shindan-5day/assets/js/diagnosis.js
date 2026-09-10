@@ -14,6 +14,8 @@
 
   var root = null;
   var notice = null;          /* 起動直後に1回だけ出す案内 */
+  /* 診断を終えた人が開き直したか（2026-09-10）。結果画面に一言添えるのに使う */
+  var returningResult = false;
   var viewed = {};            /* *_view の二重発火防止 */
 
   /* LINE側の結び先を新しい結果へ張り替えたか（2026-09-10）。
@@ -51,6 +53,19 @@
   function guard(target) {
     var state = SC.diagnosisStore.get();
     if (!target) target = { view: 'question', no: state.currentQuestion };
+
+    /* 診断を終えた人は、設問へ戻さない（2026-09-10 とーる判断）。
+     *
+     * それまでは最後の設問（21/21）に戻していた。終わったのに未回答のような
+     * 画面に見えるので、「じゃあ選び直すか」を誘ってしまっていた。
+     * 匿名診断IDは受け直しても変わらないため記録は汚れないが、
+     * 体験として良くないので、結果を出す。
+     *
+     * ★?dev=1 のときだけ通す。校正で何度も受け直すため。 */
+    if (target.view === 'question' && state.completedAt &&
+        state.totalScore !== null && !SC.config.devTools()) {
+      return { view: 'result' };
+    }
 
     if (target.view === 'question') {
       var no = target.no;
@@ -327,6 +342,11 @@
     var el = h('div', { class: 'dg-screen dg-screen--result' }, [
       pageHeader(c().resultTitle, null),
       SC.config.devTools() ? h('p', { class: 'dg-devnote', text: c().devNotice }) : null,
+      /* 開き直した人にだけ、前回のものだと伝える（2026-09-10） */
+      returningResult
+        ? h('p', { class: 'dg-notice', role: 'status', 'aria-live': 'polite',
+                   text: c().resultReturnedNote })
+        : null,
       SC.ui.diagnosisResult(record, { animate: animate }),
       handoffBlock()
     ]);
@@ -736,7 +756,14 @@
 
     var state = SC.diagnosisStore.load();
     var status = SC.diagnosisStore.lastLoadStatus();
-    if (status === 'restored') notice = c().restoredNote;
+
+    /* もう終わっている人か（2026-09-10 とーる判断）。
+     * 終わった人は設問へ戻さず、前回の結果を出す。 */
+    var finished = !!state.completedAt && state.totalScore !== null;
+    returningResult = finished && status === 'restored';
+
+    if (finished) notice = null;
+    else if (status === 'restored') notice = c().restoredNote;
     else if (status === 'recovered') notice = c().recoveredNote;
     else if (status === 'new') track('diagnosis_started');
 
@@ -745,7 +772,8 @@
     global.addEventListener('hashchange', onHashChange);
 
     if (!parseHash()) {
-      global.history.replaceState(null, '', hashOf('question', state.currentQuestion));
+      global.history.replaceState(null, '',
+        finished ? hashOf('result') : hashOf('question', state.currentQuestion));
     }
     render();
   }
