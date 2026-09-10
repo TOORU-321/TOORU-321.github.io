@@ -1054,3 +1054,48 @@ button, input { font: inherit; }
 .course-list__link { font-size: 15px; color: var(--gold-2); }
 .course-list__summary-text { font-size: 14px; line-height: 1.9; color: var(--ink-2); }
 .course-list__price { font-size: 14px; color: var(--ink-soft); }
+
+/* --- 強みと5軸のつながり（2026-09-10）---------------------------------
+ * 例 → 転換 → 本文 → 結論。全部を同じ大きさで並べない。
+ * 色だけに頼らず、太さと大きさでも段をつける。 */
+.strength__examples { margin: 0 0 18px; }
+.strength__example {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-soft);
+}
+.strength__example:last-child { margin-bottom: 0; }
+/* 例の中で拾ってほしいところ。文の途中でも1つづきに読める */
+.strength__em { color: var(--ink); font-weight: 700; }
+
+.strength__turn {
+  margin: 0 0 20px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.9;
+  color: var(--ink);
+}
+
+.strength__body { margin: 0 0 18px; }
+.strength__line {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-soft);
+}
+.strength__line:last-child { margin-bottom: 0; }
+
+.strength__close {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--gold-2, #e3c381);
+}
+
+@media (max-width: 359px) {
+  .strength__turn { font-size: 16px; }
+  .strength__close { font-size: 18px; }
+}

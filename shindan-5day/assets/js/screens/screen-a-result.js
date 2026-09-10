@@ -90,10 +90,30 @@
           })
         ]),
 
+        /* 強みと5軸のつながり（2026-09-10 Codex確定）。
+         * 5軸の一覧を見たすぐあと、「全部を直す必要はありません」の手前に置く。
+         * 例は途中で強調をはさむが、1つづきの文として読めるようにしている
+         * （読み上げも1文で流れる）。 */
+        SC.ui.card(c.strength.heading, [
+          h('div', { class: 'strength' }, [
+            h('div', { class: 'strength__examples' }, c.strength.examples.map(function (ex) {
+              return h('p', { class: 'strength__example' }, [
+                ex.lead,
+                h('strong', { class: 'strength__em', text: ex.strong }),
+                ex.tail
+              ]);
+            })),
+            h('p', { class: 'strength__turn', text: c.strength.turn }),
+            h('div', { class: 'strength__body' }, c.strength.body.map(function (line) {
+              return h('p', { class: 'strength__line', text: line });
+            })),
+            h('p', { class: 'strength__close', text: c.strength.close })
+          ])
+        ], 'card--reading'),
+
         /* 長い説明は句点ごとに段落へ分け、上下の間隔をあけて読ませる（2026-08-21 とーる指示） */
         SC.ui.card(c.supportHeading, [
           SC.ui.prose(c.supportBody),
-          SC.ui.prose(c.synergyBody),
           h('p', { class: 'target-line', text: fill(c.improvementTarget, {
             axis: lowestLabel,
             step: step,

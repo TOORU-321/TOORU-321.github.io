@@ -229,20 +229,167 @@ html {
   text-align: center;
 }
 
-.dlp-blocks { margin: 0; text-align: center; }
-.dlp-block { margin: 0 0 42px; }
-.dlp-block:last-child { margin-bottom: 0; }
-.dlp-block__line {
-  margin: 0 0 28px;
+/* --- 共感（2026-09-10 組み替え）----------------------------------------
+ * 強調行だけを拾っても意味が通るように、大きさと色で段をつける。
+ * 全部を大きくしない・全部を金色にしない。同じ組の行は近づけ、話が変わるところで空ける。 */
+
+/* 入口の3つ。同じ大きさの短文を、少しだけ抑えた色で置く */
+.dlp-open { margin: 0 0 38px; text-align: center; }
+.dlp-open__line {
+  margin: 0 0 10px;
   font-size: 16px;
-  line-height: 2.3;
+  line-height: 1.85;
   color: var(--ink-2);
 }
-.dlp-block__line:last-child { margin-bottom: 0; }
-/* 最後のかたまり（診断へ戻す一文）だけ、少し明るく大きくする */
-.dlp-block:last-child .dlp-block__line {
+.dlp-open__line:last-child { margin-bottom: 0; }
+/* 行の中で強めるところ。色は変えず、太さだけで出す */
+.dlp-open__em { color: var(--ink); font-weight: 700; }
+/* 3つを受けとめる一行。少しだけ間を置く */
+.dlp-open__close {
+  margin: 16px 0 0;
+  font-size: 16px;
+  line-height: 1.85;
   color: var(--ink);
-  font-size: 17px;
+}
+
+/* 長い説明は左揃え、短いキーメッセージは中央（2026-09-10 Codex指示） */
+.dlp-pairs { margin: 0; text-align: left; }
+.dlp-pair { margin: 0 0 34px; }
+.dlp-pair:last-child { margin-bottom: 0; }
+
+/* 話の切り替わりに細い線を1本。装飾なので読み上げからは外してある */
+.dlp-pair__rule {
+  display: block;
+  width: 44px;
+  height: 1px;
+  margin: 0 auto 30px;
+  /* 線は中央に置く。前後の文字の揃え方には影響させない */
+  background: var(--line-2, rgba(227, 195, 129, .22));
+}
+
+/* 補助行（小さめ）と強調行（大きめ）を近づけて1組に見せる */
+.dlp-pair__lead {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+.dlp-pair__point {
+  margin: 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+/* その節の結論。ここだけ金色で、いちばん大きくする */
+.dlp-close__line { margin: 0; }
+.dlp-close {
+  margin: 44px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--gold-2, #e3c381);
+}
+
+/* --- 再定義の図（2026-09-10 追加）--------------------------------------
+ * 画像ではなく、ふつうの文字。読み上げは見た目と同じ順に流れる。
+ * 矢印と縦線は装飾なので、読み上げからは外してある。 */
+.dlp-heading--reframe .dlp-heading__strong {
+  color: var(--gold-2, #e3c381);
+  font-size: 1.18em;
+  font-weight: 800;
+}
+
+.dlp-map { margin: 30px 0 0; }
+.dlp-map__flow {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+}
+.dlp-map__cell {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 14px 10px;
+  border: 1px solid var(--line-2, rgba(227, 195, 129, .22));
+  text-align: center;
+}
+.dlp-map__label {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--gold-2, #e3c381);
+}
+.dlp-map__line {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--ink-2);
+}
+.dlp-map__arrow {
+  align-self: center;
+  flex: 0 0 auto;
+  font-size: 16px;
+  color: var(--gold, #b99455);
+}
+
+/* 上の3つと、支える2つをつなぐ縦線 */
+.dlp-map__stem {
+  display: block;
+  width: 1px;
+  height: 22px;
+  margin: 0 auto;
+  background: var(--line-2, rgba(227, 195, 129, .22));
+}
+.dlp-map__support-label {
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--ink-2);
+}
+.dlp-map__support {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.dlp-map__note {
+  margin: 22px 0 0;
+  text-align: left;
+}
+.dlp-map__note-line {
+  margin: 0 0 8px;
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+.dlp-map__note-line:last-child { margin-bottom: 0; }
+/* 再定義の注記は、小さく薄くしすぎない（2026-09-10 Codex指示） */
+.dlp-section--reframe .dlp-note {
+  font-size: 15px;
+  line-height: 1.95;
+  color: var(--ink-2);
+  text-align: left;
+}
+
+/* 狭い画面では縦に積む。矢印は下向きにする */
+@media (max-width: 519px) {
+  .dlp-map__flow, .dlp-map__support { flex-direction: column; }
+  .dlp-map__arrow { transform: rotate(90deg); font-size: 15px; }
+  /* 縦積みのときは、名前と説明を1行に並べて背を低くする */
+  .dlp-map__cell {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 11px 12px;
+    text-align: left;
+  }
+  .dlp-map__label { margin: 0; flex: 0 0 auto; }
+  .dlp-map__line { flex: 1 1 auto; }
 }
 
 /* --- 箇条書き ---------------------------------------------------------- */
@@ -526,6 +673,10 @@ html {
   .dlp-hero__copy { padding: 0 14px; }
   .dlp-hero__title { font-size: 22px; }
   .dlp-heading { font-size: 19px; }
+  .dlp-pair__point { font-size: 19px; }
+  .dlp-close { font-size: 22px; }
+  .dlp-map__label { font-size: 15px; }
+  .dlp-map__cell { padding: 12px 8px; }
   .dlp-cta__btn { font-size: 16px; min-height: 52px; }
   .dlp-facts__item { font-size: 14px; padding: 4px 11px; }
 }

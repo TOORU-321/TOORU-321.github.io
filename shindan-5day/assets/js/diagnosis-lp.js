@@ -159,13 +159,38 @@
    * 焦りを言葉にしたうえで、現在地の確認へ戻す。煽りへはつなげない。 */
   function empathySection() {
     var copy = c().empathy;
+
+    /* 入口の3つ。同じ大きさで、独立した短文として置く */
+    /* 行の中の一部だけを太字にする。文の意味は変えない（表示の強弱だけ） */
+    function openLine(item) {
+      var i = item.strong ? item.text.indexOf(item.strong) : -1;
+      if (i === -1) return h('p', { class: 'dlp-open__line', text: item.text });
+      return h('p', { class: 'dlp-open__line' }, [
+        item.text.slice(0, i),
+        h('strong', { class: 'dlp-open__em', text: item.strong }),
+        item.text.slice(i + item.strong.length)
+      ]);
+    }
+
+    var opening = h('div', { class: 'dlp-open' },
+      copy.opening.map(openLine).concat([
+        h('p', { class: 'dlp-open__close', text: copy.openingClose })
+      ]));
+
+    /* 補助行と強調行の組。区切り線は装飾なので読み上げから外す */
+    var groups = h('div', { class: 'dlp-pairs' }, copy.groups.map(function (g, i) {
+      return h('div', { class: 'dlp-pair' }, [
+        i === 0 ? null : h('span', { class: 'dlp-pair__rule', 'aria-hidden': 'true' }),
+        h('p', { class: 'dlp-pair__lead', text: g.lead }),
+        h('p', { class: 'dlp-pair__point', text: g.point })
+      ]);
+    }));
+
     return section('empathy', [
       heading(copy.heading),
-      h('div', { class: 'dlp-blocks' }, copy.blocks.map(function (lines) {
-        return h('div', { class: 'dlp-block' }, lines.map(function (line) {
-          return h('p', { class: 'dlp-block__line', text: line });
-        }));
-      })),
+      opening,
+      groups,
+      h('p', { class: 'dlp-close', text: copy.close }),
       photo('reflection'),
       copy.showCta ? cta('empathy') : null
     ], 'dlp-section--empathy');
@@ -174,9 +199,43 @@
   /* --- 3. 問題の再定義 ------------------------------------------------ */
   function reframeSection() {
     var copy = c().reframe;
+
+    /* 見出しは「見る順番」だけを強める */
+    var head = h('h2', { class: 'dlp-heading dlp-heading--reframe' }, [
+      copy.heading.before,
+      h('strong', { class: 'dlp-heading__strong', text: copy.heading.strong }),
+      copy.heading.after
+    ]);
+
+    /* 関係の図。矢印は装飾なので読み上げから外す。
+     * 中身はふつうの文字なので、拡大しても崩れない。 */
+    function cell(item) {
+      return h('div', { class: 'dlp-map__cell' }, [
+        h('p', { class: 'dlp-map__label', text: item.label }),
+        h('p', { class: 'dlp-map__line', text: item.line })
+      ]);
+    }
+
+    var flow = [];
+    copy.diagram.flow.forEach(function (item, i) {
+      if (i > 0) {
+        flow.push(h('span', { class: 'dlp-map__arrow', 'aria-hidden': 'true' }, '→'));
+      }
+      flow.push(cell(item));
+    });
+
+    var diagram = h('div', { class: 'dlp-map' }, [
+      h('div', { class: 'dlp-map__flow' }, flow),
+      h('span', { class: 'dlp-map__stem', 'aria-hidden': 'true' }),
+      h('p', { class: 'dlp-map__support-label', text: copy.diagram.supportLabel }),
+      h('div', { class: 'dlp-map__support' }, copy.diagram.support.map(cell))
+    ]);
+
     return section('reframe', [
-      heading(copy.heading),
-      body(copy.body),
+      head,
+      diagram,
+      h('div', { class: 'dlp-map__note' }, SC.dom.lines(copy.body, 'dlp-map__note-line')),
+      h('p', { class: 'dlp-close' }, SC.dom.lines(copy.close, 'dlp-close__line')),
       h('p', { class: 'dlp-note', text: copy.note }),
       photo('product')
     ], 'dlp-section--reframe');
