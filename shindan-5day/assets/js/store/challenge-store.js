@@ -315,15 +315,80 @@
       if (incoming.anonymousDiagnosisId &&
           incoming.anonymousDiagnosisId !== d.anonymousDiagnosisId) return false;
 
-      var here = SC.storage.readEntry(stateKey(d.anonymousDiagnosisId));
-      if (here.status === 'ok' && validate(here.value, d)) return false;
-
       var valid = validate(incoming, d);
       if (!valid) return false;
+
+      /* 手元にも続きがあるときは、更新の新しいほうを残す（2026-09-10 見直し）。
+       * それまでは手元を無条件に優先していたので、
+       * 別の端末で先に進めていた人が、古いところへ戻されることがあった。 */
+      var here = SC.storage.readEntry(stateKey(d.anonymousDiagnosisId));
+      var mine = here.status === 'ok' ? validate(here.value, d) : null;
+      if (mine && String(mine.updatedAt || '') >= String(valid.updatedAt || '')) return false;
       SC.storage.write(stateKey(d.anonymousDiagnosisId), valid);
       stateCache = valid;
       lastLoadStatus = 'restored';
       return true;
+    },
+
+    /* 前に受けた診断で進めていた続きを探す（2026-09-10 見直し）。
+     *
+     * 診断の版が上がったとき、保存が壊れたとき、別の端末から来たときは、
+     * 匿名診断IDが新しくなる。5日間の続きは前のIDの下に残ったままで、
+     * 誰も読まなくなる。消えてはいないので、拾えるようにする。
+     *
+     * ★勝手には戻さない。見つけたことだけ伝えて、本人に選んでもらう。
+     *   同じ端末を家族で使っている場合に、別の人の答えを見せないため。 */
+    findCarryOver: function () {
+      var d = SC.store.loadDiagnosis();
+      if (!d || !d.anonymousDiagnosisId) return null;
+      var mine = stateKey(d.anonymousDiagnosisId);
+      var tail = ':' + SC.config.storageVersion + ':challenge';
+      var best = null;
+
+      SC.storage.keysOfApp().forEach(function (k) {
+        if (k === mine || k.length <= tail.length) return;
+        if (k.slice(-tail.length) !== tail) return;
+        var v = SC.storage.read(k);
+        if (!isPlainObject(v)) return;
+        if (v.schemaVersion !== SCHEMA_VERSION) return;
+        if (v.challengeVersion !== SC.config.challengeVersion) return;
+        /* 何も進んでいないものを持ち出しても意味がない */
+        var days = v.completedDays || [];
+        if (!v.startedAt && !days.length) return;
+        if (!best || String(v.updatedAt || '') > String(best.updatedAt || '')) best = v;
+      });
+      if (!best) return null;
+
+      var ds = best.completedDays || [];
+      return {
+        state: best,
+        lastDay: ds.length ? Math.max.apply(null, ds) : 0,
+        updatedAt: best.updatedAt || null
+      };
+    },
+
+    /* 見つけた続きを、いまの診断結果へ引き継ぐ（本人が選んだときだけ）。
+     * ★整える軸は新しい診断のものにする。
+     *   自分で選び直していた人は、その選択を残す。 */
+    carryOver: function (found) {
+      if (!found || !isPlainObject(found.state)) return null;
+      var d = SC.store.loadDiagnosis();
+      var next = {};
+      for (var k in found.state) {
+        if (Object.prototype.hasOwnProperty.call(found.state, k)) next[k] = found.state[k];
+      }
+      next.anonymousDiagnosisId = d.anonymousDiagnosisId;
+      next.campaignId = d.campaignId;
+      if (!next.focusAxisChosenByUser) next.selectedFocusAxis = d.lowestAxis;
+      next.updatedAt = nowIso();
+
+      var valid = validate(next, d);
+      if (!valid) return null;
+      SC.storage.write(stateKey(d.anonymousDiagnosisId), valid);
+      stateCache = valid;
+      lastLoadStatus = 'restored';
+      SC.track.event('challenge_carried_over');
+      return valid;
     },
 
     /* --- チャレンジ状態 ------------------------------------------------ */

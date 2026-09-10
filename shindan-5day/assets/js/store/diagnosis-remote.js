@@ -114,23 +114,29 @@
       }
 
       var already = db.bindings[uid];
-      if (already && already !== entry.anonymousDiagnosisId) {
-        /* 同じuidに別の診断IDがある → 自動で上書きしない */
-        return Promise.resolve(fail('conflict'));
-      }
-      /* 同じ診断IDに別のuidがある → 自動で結合しない */
+
+      /* 同じ診断IDに別のuidがある → 自動で結合しない
+       * （他人の結果を自分のLINEへ結びつけられないようにするため） */
       for (var u in db.bindings) {
         if (db.bindings[u] === entry.anonymousDiagnosisId && u !== uid) {
           return Promise.resolve(fail('conflict'));
         }
       }
 
+      /* 同じuidに別の診断IDがある場合は、行き先を張り替える
+       * （2026-09-10・本番のGAS v1.4.0と同じ規則にそろえた）。
+       *
+       * ここまで来ているのは、期限内でまだ使われていない合図を
+       * 持ってきたときだけ。＝もう一度受け直した本人。
+       * ★勝手には替えない。合図を持って来たときだけ。 */
+      var rebound = !!(already && already !== entry.anonymousDiagnosisId);
+
       db.bindings[uid] = entry.anonymousDiagnosisId;
       entry.usedByUid = uid;
       devWrite(db);
       return Promise.resolve({
         ok: true,
-        status: already ? 'already_bound' : 'bound',
+        status: rebound ? 'rebound' : (already ? 'already_bound' : 'bound'),
         result: db.records[entry.anonymousDiagnosisId] &&
                 db.records[entry.anonymousDiagnosisId].result
       });

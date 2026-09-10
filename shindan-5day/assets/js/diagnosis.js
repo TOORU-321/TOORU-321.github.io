@@ -16,6 +16,10 @@
   var notice = null;          /* 起動直後に1回だけ出す案内 */
   var viewed = {};            /* *_view の二重発火防止 */
 
+  /* LINE側の結び先を新しい結果へ張り替えたか（2026-09-10）。
+   * 画面を描き直しても一言が残るように、ここに置く。 */
+  var reboundNotice = false;
+
   function c() { return SC.diagnosisCopy; }
   function data() { return SC.diagnosisData; }
   function track(name, meta) { return SC.diagnosisTrack.event(name, meta); }
@@ -303,8 +307,12 @@
     if (!before) track('diagnosis_completed');
     /* 5DAY本体がこの結果を読めるようにしておく（2026-08-31）。
      * 同じ端末でそのまま5DAYへ進んだ場合に、サンプルの47点が出ないようにする。
-     * LINEを経由する人は、復元画面でuidつきの記録に上書きされる。 */
-    SC.diagnosisBridge.handOver();
+     * LINEを経由する人は、復元画面でuidつきの記録に上書きされる。
+     *
+     * ★この端末がすでにLINEを知っているなら、それも引き継ぐ（2026-09-10）。
+     *   引き継がないと、受け直した人のLINE通知が止まってしまう。 */
+    var prev = SC.diagnosisBridge.current();
+    SC.diagnosisBridge.handOver(prev && prev.lineUid);
     go('result');
   }
 
@@ -391,6 +399,44 @@
       }
       SC.diagnosisStore.setHandoff('issued', res.handoffKey);
       renderHandoff(box);
+      /* LINEをすでに知っている人は、ここで結び先も新しくする（2026-09-10） */
+      reboundToNewest(res.handoffKey);
+    });
+  }
+
+  /* この端末が知っているLINEのuid。無ければ null。
+   * 画面・URL・計測・コンソールへは出さない（依頼11）。 */
+  function knownLineUid() {
+    var cur = SC.diagnosisBridge.current();
+    var v = cur && cur.lineUid;
+    return (typeof v === 'string' && v) ? v : null;
+  }
+
+  /* もう一度受けた結果を、LINE側にも反映させる（2026-09-10 とーる指摘）。
+   *
+   * 【起きていたこと】
+   * 9/3に診断した人が9/10に受け直しても、LINEの「詳しい結果」には
+   * 9/3の結果が出ていた。uidと診断IDの結びつけが初回だけだったため。
+   *
+   * 【直し方】
+   * いま発行した合図（期限内・未使用）を、この端末が知っているuidで
+   * そのまま使う。GAS側はその合図を確かめてから結び先を書き換える。
+   * 本人が何も押さなくても、LINEに出る結果が最新になる。
+   *
+   * ★合図を持っていないと成立しない。勝手には替わらない。
+   * ★端末の保存が消えていると uid を知らないので、ここは動かない。
+   *   その人のために、復元画面に手で切り替える道を残してある。
+   * ★失敗しても画面は止めない。 */
+  function reboundToNewest(key) {
+    var uid = knownLineUid();
+    if (!uid || !key) return;
+    SC.diagnosisRemote.bindWithKey(uid, key).then(function (res) {
+      if (!res || !res.ok) return;
+      if (res.status !== 'rebound') return;
+      reboundNotice = true;
+      track('handoff_rebound_auto');
+      var box = doc.querySelector('.dg-handoff');
+      if (box) renderHandoff(box);
     });
   }
 
@@ -526,6 +572,11 @@
     SC.dom.append(box, [
       h('h2', { class: 'dg-card__title', text: c().handoffHeading }),
       h('p', { class: 'dg-handoff__body', text: c().handoffBody }),
+      /* LINE側も入れ替わったときだけ、そのことを一言伝える（2026-09-10）。
+       * 黙って書き換えると、あとで「なぜ結果が変わった」となるため。 */
+      reboundNotice
+        ? h('p', { class: 'dg-handoff__done', role: 'status', text: c().handoffReboundNote })
+        : null,
       cta,
       keep,
       status,

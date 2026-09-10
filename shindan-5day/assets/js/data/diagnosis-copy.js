@@ -127,10 +127,13 @@
     restoreAutoPasteUnsupported: 'この環境では自動で読み取れません。下の欄を長押しして「ペースト」を選んでください。',
     /* もう一度診断を受けた人向け（2026-09-10）。
      * LINEには最初に結びついた結果が出るので、切り替える道を用意する。 */
-    restoreSwitchNote: 'もう一度診断を受けた方は、こちらから新しい結果に切り替えられます。',
-    restoreSwitchCta: '新しい診断結果に切り替える',
+    restoreSwitchHeading: 'もう一度診断を受けた方へ',
+    restoreSwitchNote: 'ここに出ているのは、最初にLINEで受け取った結果です。\nあとから受け直した方は、最新の結果に切り替えられます。',
+    restoreSwitchCta: '最新の診断結果に切り替える',
     restoreSwitchDone: '新しい診断結果に切り替えました。',
-    restoreSwitchFailed: '新しい結果が見つかりませんでした。診断のあと、時間が経つと切り替えられなくなります。',
+    restoreSwitchFailed: '新しい結果が見つかりませんでした。診断を終えたあと、時間が経つと切り替えられなくなります。',
+    /* 診断が終わった時点で、LINE側も自動で新しい結果に入れ替わったときの一言 */
+    handoffReboundNote: 'LINEに届く結果も、この新しい内容に更新しました。',
 
     restoreNotYetHeading: 'まだ診断を受けていない方へ',
     restoreNotYetBody: 'この画面は、診断を受けたあとの結果を引き継ぐためのものです。まだの方は、こちらから受けられます。',

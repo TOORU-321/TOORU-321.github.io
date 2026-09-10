@@ -304,6 +304,67 @@
     ]);
   }
 
+  /* 前回の続きが残っているときの選択画面（2026-09-10 見直し）。
+   *
+   * 診断の版が上がったり、保存が壊れたりすると匿名診断IDが新しくなり、
+   * それまでの5日間は前のIDの下に取り残される。消えてはいない。
+   *
+   * ★勝手には戻さない。同じ端末を家族で使っている場合に、
+   *   別の人の答えを見せてしまうため。 */
+  function renderCarryOver(found) {
+    var c = SC.copy && SC.copy.carryOver;
+    if (!c || !root) {
+      if (global.console) global.console.warn('[app] 文言を読み込めていません（SC.copy.carryOver）');
+      return;
+    }
+    SC.store.trackEvent('carry_over_offered');
+
+    /* 選び終わってから、いつもの画面の仕組みを動かし始める。
+     * 先に付けると、URLのハッシュだけで選択を飛ばせてしまう。 */
+    function resume(screenId) {
+      global.addEventListener('hashchange', onHashChange);
+      render(screenId);
+    }
+
+    var body = found.lastDay
+      ? c.bodyDay.replace('{day}', found.lastDay)
+      : c.body;
+
+    SC.dom.clear(root);
+    SC.dom.append(root, [
+      h('div', { class: 'screen screen--no-diagnosis' }, [
+        h('header', { class: 'screen__head' }, [
+          h('h1', { class: 'screen__title', text: c.heading })
+        ]),
+        h('section', { class: 'card' }, [
+          h('div', { class: 'prose' }, SC.dom.lines(body, 'prose__line')),
+          h('div', { class: 'screen__cta' }, [
+            h('button', {
+              type: 'button', class: 'btn btn--primary',
+              on: { click: function () {
+                SC.store.carryOver(found);
+                resume(SC.store.getState().currentScreen);
+              } }
+            }, c.keepCta)
+          ]),
+          h('div', { class: 'screen__cta' }, [
+            h('button', {
+              type: 'button', class: 'btn btn--ghost',
+              on: { click: function () {
+                SC.store.trackEvent('carry_over_declined');
+                /* いま作った状態を保存しておく。
+                 * 保存しないと、次に開いたときにまた同じことを聞いてしまう */
+                SC.store.saveChallengeState({});
+                resume('result');
+              } }
+            }, c.freshCta)
+          ]),
+          h('p', { class: 'card__note', text: c.note })
+        ])
+      ])
+    ]);
+  }
+
   function boot() {
     captureMonitorId();
     root = doc.getElementById('app');
@@ -322,6 +383,17 @@
     SC.store.loadDiagnosis();
     var state = SC.store.loadChallengeState();
     var status = SC.store.lastLoadStatus();
+
+    /* この診断での続きがまだ無いとき、前の診断での続きを探す（2026-09-10）。
+     * 見つかったら、進める前に本人に選んでもらう。 */
+    if (status === 'new') {
+      var found = SC.store.findCarryOver();
+      if (found) {
+        if (footerSlot && SC.config.devTools()) footerSlot.appendChild(buildPreviewMenu());
+        renderCarryOver(found);
+        return;
+      }
+    }
 
     if (status === 'restored') {
       var lastDay = state.completedDays.length

@@ -437,3 +437,8 @@
   .dg-screen--scoring.is-entering { animation: none; }
   .dg-veil { display: none; }
 }
+
+/* もう一度診断を受けた人への案内（2026-09-10 見直し）。
+   小さな注記では気づかれないので、カードとして出す。 */
+.dg-switch__body .dg-handoff__body { margin: 0 0 6px; }
+.dg-switch__body .dg-handoff__body:last-child { margin-bottom: 16px; }

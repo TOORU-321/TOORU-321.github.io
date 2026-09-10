@@ -242,14 +242,24 @@
       ]),
 
       /* もう一度診断を受けた人のための切り替え（2026-09-10）。
-       * ★押した流れの中でクリップボードを読む。開いた瞬間に読むと、
-       *   iOSのLINE内ブラウザで必ず拒否される。 */
-      h('div', { class: 'dg-switch' }, [
-        h('p', { class: 'dg-devnote', text: c().restoreSwitchNote }),
-        h('button', {
-          type: 'button', class: 'btn btn--ghost',
-          on: { click: function (e) { switchToNewest(e.currentTarget); } }
-        }, c().restoreSwitchCta)
+       *
+       * ふつうは、診断が終わった時点でLINE側も自動で新しくなる。
+       * ここが要るのは、端末の保存が消えた人・別の端末で受け直した人。
+       * その端末はもうuidを知らないので、自動では張り替えられない。
+       *
+       * ★小さな注記では気づかれない（2026-09-10 見直し）。
+       *   最初はカードとして出し、押した流れの中でだけ合図を読む。
+       *   開いた瞬間に読むと、iOSのLINE内ブラウザで必ず拒否される。 */
+      h('section', { class: 'dg-card dg-card--quiet' }, [
+        h('h2', { class: 'dg-subhead', text: c().restoreSwitchHeading }),
+        h('div', { class: 'dg-switch__body' },
+          SC.dom.lines(c().restoreSwitchNote, 'dg-handoff__body')),
+        h('div', { class: 'dg-nav dg-nav--single' }, [
+          h('button', {
+            type: 'button', class: 'btn btn--ghost',
+            on: { click: function (e) { switchToNewest(e.currentTarget); } }
+          }, c().restoreSwitchCta)
+        ])
       ])
     ]);
     show([el]);

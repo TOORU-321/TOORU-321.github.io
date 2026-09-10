@@ -31,9 +31,18 @@
     'day5_done'    /* DAY5が終わった    → 完了者向け */
   ];
 
+  /* 送った記録は、診断ごとに分ける（2026-09-10 見直し）。
+   *
+   * それまでは端末ごとにまとめていた。そのため
+   *   ・同じ端末を別の人が使うと、2人目のDAY1完了が送られない
+   *   ・もう一度診断を受けた人も、送られない
+   * ということが起きていた。
+   * ★二重送信を止める本体はGAS側（uid×きっかけで1回）。ここは無駄打ちを減らすだけ。 */
   function sentKey() {
     var c = SC.config;
-    return [c.appId, c.campaignId, c.storageVersion, 'notified'].join(':');
+    var d = (SC.store && SC.store.loadDiagnosis) ? SC.store.loadDiagnosis() : null;
+    var id = (d && d.anonymousDiagnosisId) || 'unknown';
+    return [c.appId, c.campaignId, id, c.storageVersion, 'notified'].join(':');
   }
 
   function readSent() {
