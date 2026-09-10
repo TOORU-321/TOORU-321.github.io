@@ -1716,6 +1716,9 @@ a{text-decoration:none}
   .ca-hero{width:100%;border-radius:12px;margin:0 0 20px}
   .ca-body{font-size:15px;line-height:1.95;color:#e4e0d5}
   .ca-body p{margin:0 0 1.4em}
+  .ca-body blockquote{margin:.25em 0 1.5em;padding:14px 15px;border-left:3px solid var(--gold,#b89555);border-radius:0 9px 9px 0;background:rgba(227,195,129,.08);color:#f1eadb}
+  .ca-body ul,.ca-body ol{margin:.2em 0 1.5em;padding-left:1.55em}
+  .ca-body li{margin:.35em 0;line-height:1.85}
   .ca-hr{border:0;border-top:1px solid rgba(227,195,129,.2);margin:1.7em 0}
   .ca-body h3{font-family:var(--mincho,serif);font-size:18.5px;color:#f0d69c;font-weight:700;margin:1.7em 0 .6em;padding-left:11px;border-left:3px solid var(--gold,#b89555)}
   .ca-body img{width:100%;border-radius:10px;margin:1.1em 0}
@@ -3350,7 +3353,7 @@ async function openColumnArticle(id){
     art.scrollTop = 0;
   }catch(e){ art.innerHTML = `<div class="col-empty">通信エラーが発生しました。</div>`; }
 }
-// コラム本文の整形（ルール準拠）：空行=段落／行頭#=見出し／画像URL行=画像／---=区切り／**太字**／[文字](URL)／URL自動リンク
+// コラム本文の整形（ルール準拠）：空行=段落／行頭#=見出し／引用／箇条書き／画像URL行=画像／---=区切り／**太字**／[文字](URL)／URL自動リンク
 function renderColumnBody(text){
   const inline = s => escapeHtml(s)
     .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')                                                          // **太字**
@@ -3364,8 +3367,21 @@ function renderColumnBody(text){
     const t = b.trim();
     if(!t) return;
     if(/^-{3,}$/.test(t)){ html += `<hr class="ca-hr">`; return; }
-    if(/^#\s+/.test(t)){ html += `<h3>${escapeHtml(t.replace(/^#\s+/,"").trim())}</h3>`; return; }
+    if(/^#{1,2}\s+/.test(t)){ html += `<h3>${escapeHtml(t.replace(/^#{1,2}\s+/,"").trim())}</h3>`; return; }
     if(isImg(t)){ html += `<img src="${escapeHtml(t)}" onerror="this.style.display='none'">`; return; }
+    const lines = b.split("\n").map(s=>s.trim()).filter(Boolean);
+    if(lines.length && lines.every(s=>/^>/.test(s))){
+      html += `<blockquote>${inline(lines.map(s=>s.replace(/^>\s?/,"")).join("\n")).replace(/\n/g,"<br>")}</blockquote>`;
+      return;
+    }
+    if(lines.length && lines.every(s=>/^[・•-]\s*/.test(s))){
+      html += `<ul>${lines.map(s=>`<li>${inline(s.replace(/^[・•-]\s*/,""))}</li>`).join("")}</ul>`;
+      return;
+    }
+    if(lines.length && lines.every(s=>/^\d+\.\s*/.test(s))){
+      html += `<ol>${lines.map(s=>`<li>${inline(s.replace(/^\d+\.\s*/,""))}</li>`).join("")}</ol>`;
+      return;
+    }
     html += `<p>${inline(b).replace(/\n/g,"<br>")}</p>`;   // 段落内の改行は<br>で保持
   });
   return html;
