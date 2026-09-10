@@ -14,7 +14,8 @@
   var c = SC.copy.voicesAdmin;
   var KEY_STORE = 'sc_voices_admin_key';
 
-  var state = { items: [], onlyPublishable: false };
+  /* loaded：一度でも読み込めたか。読み込む前に「届いていません」と言わないため */
+  var state = { items: [], onlyPublishable: false, loaded: false };
 
   function el(id) { return doc.getElementById(id); }
 
@@ -111,6 +112,13 @@
     var list = el('admin-list');
     SC.dom.clear(list);
 
+    /* まだ読み込んでいないときは、件数も「届いていません」も出さない */
+    if (!state.loaded) {
+      el('admin-count').textContent = '';
+      list.appendChild(h('p', { class: 'vadmin__status', text: c.beforeLoad }));
+      return;
+    }
+
     var items = state.onlyPublishable
       ? state.items.filter(publishable)
       : state.items;
@@ -129,16 +137,22 @@
     setStatus(c.loading);
     var url = SC.endpoints.voices + '?key=' + encodeURIComponent(key);
     global.fetch(url)
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        /* つながらなかったのか、合言葉が違うのかを分けて伝える */
+        if (!r.ok) { var e = new Error('network'); e.kind = 'network'; throw e; }
+        return r.json();
+      })
       .then(function (res) {
         if (!res || !res.ok) throw new Error((res && res.error) || 'failed');
         state.items = res.items || [];
+        state.loaded = true;
         storeKey(key);
         setStatus('');
         render();
       })
-      .catch(function () {
-        setStatus(c.error);
+      .catch(function (err) {
+        setStatus(err && (err.kind === 'network' || err.name === 'TypeError')
+          ? c.errorNetwork : c.error);
       });
   }
 
@@ -175,6 +189,7 @@
       forgetKey();
       el('admin-key').value = '';
       state.items = [];
+      state.loaded = false;
       render();
       setStatus('');
     });
