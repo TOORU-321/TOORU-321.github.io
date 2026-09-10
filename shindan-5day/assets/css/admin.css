@@ -1,0 +1,157 @@
+/* admin.css : 進み具合の一覧（とーる専用）
+ *
+ * スマホで見ることが多いので、片手で読める幅と並びにする。
+ * 色はアプリ本体（app.css）の変数をそのまま使う。
+ */
+
+.adm {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  padding: 22px 16px 60px;
+}
+
+.adm__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.adm__title { margin: 0; font: 700 20px/1.5 "Shippori Mincho B1", serif; color: var(--ink); }
+.adm__count { font-size: 12px; color: var(--ink-soft); }
+
+/* 合言葉 */
+.adm__key { margin-bottom: 14px; }
+.adm__keyrow { display: flex; gap: 8px; margin: 6px 0 6px; }
+.adm__keyrow input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--ice, #0f1620);
+  color: var(--ink);
+  font-size: 14px;
+}
+.adm__note { margin: 0; font-size: 12px; color: var(--ink-soft); line-height: 1.8; }
+
+.adm__tools { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+.adm-status { margin: 14px 0; font-size: 13px; color: var(--ink-soft); line-height: 1.9; }
+.adm-note { margin: 22px 0 0; font-size: 11px; color: var(--ink-soft); line-height: 1.9; }
+.adm-subhead { margin: 18px 0 8px; font-size: 13px; font-weight: 700; color: var(--ink); }
+
+/* まとめ */
+.adm-summary { margin: 8px 0 18px; }
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+@media (min-width: 560px) {
+  .adm-stats { grid-template-columns: repeat(4, 1fr); }
+}
+.adm-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+}
+.adm-stat__num { font-size: 20px; font-weight: 800; color: var(--gold-2, #e8ca7c); }
+.adm-stat__label { font-size: 11px; color: var(--ink-soft); }
+
+.adm-bars { display: flex; flex-direction: column; gap: 6px; }
+.adm-bar { display: grid; grid-template-columns: 52px 1fr 34px; align-items: center; gap: 8px; }
+.adm-bar__label { font-size: 11px; color: var(--ink-soft); }
+.adm-bar__track {
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .07);
+  overflow: hidden;
+}
+.adm-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #cfa746, #e8ca7c);
+}
+.adm-bar__num { font-size: 12px; color: var(--ink); text-align: right; }
+
+/* 絞り込み */
+.adm-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+.adm-filters .btn { font-size: 12px; padding: 8px 12px; }
+.adm-filters .is-on { border-color: var(--gold-2, #e8ca7c); color: var(--gold-2, #e8ca7c); }
+
+/* 一覧 */
+.adm-list { display: flex; flex-direction: column; gap: 8px; }
+.adm-row {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .02);
+  cursor: pointer;
+}
+.adm-row:hover { border-color: var(--gold-2, #e8ca7c); }
+.adm-row--stalled { border-left: 3px solid #e15a43; }
+
+.adm-row__head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.adm-row__score { font-size: 17px; font-weight: 800; color: var(--ink); }
+.adm-row__band { font-size: 12px; color: var(--ink-soft); }
+.adm-row__badge {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.adm-row__mid { display: flex; align-items: center; gap: 10px; margin: 8px 0 6px; }
+.adm-row__axis { font-size: 12px; color: var(--ink-soft); }
+
+.adm-dots { display: inline-flex; gap: 4px; }
+.adm-dot {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.adm-dot--on {
+  border-color: transparent;
+  background: linear-gradient(180deg, #e8ca7c, #cfa746);
+  color: #11161e;
+  font-weight: 800;
+}
+
+.adm-row__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.adm-row__open { margin-left: auto; color: var(--gold-2, #e8ca7c); }
+
+/* 詳細 */
+.adm-detail {
+  margin: 16px 0 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .03);
+}
+.adm-detail__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.adm-detail__head .adm-subhead { margin: 0; }
+.adm-detail__meta { margin: 4px 0 0; font-size: 11px; color: var(--ink-soft); }
+.adm-detail__sec { margin-top: 14px; }
+.adm-detail__body { margin: 0; font-size: 13px; line-height: 1.95; color: var(--ink); white-space: pre-wrap; }
+.adm-detail__list { margin: 0; padding-left: 1.1em; font-size: 13px; line-height: 1.95; color: var(--ink); }
+.adm-detail__list li { margin-bottom: 4px; }
+.adm-detail__foot { margin-top: 16px; }
