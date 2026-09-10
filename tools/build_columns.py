@@ -49,6 +49,7 @@ ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の
 QUIZ_URL = "https://columns.l-mine.com/kiso_quiz.html"      # 行動経済学クイズ（2級が入口。ページ上部から1級へ移動できる）
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
 ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
+ELABO_GAS_URL = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec"  # エルラボ＋アプリと同一のGAS
 
 # ---- SEO / アクセス解析 ----
 GA4_ID = "G-TLV00VTDZL"                            # Google Analytics 4 測定ID（全ページ共通）
@@ -70,6 +71,63 @@ def quiz_footer():
     </aside>'''
 
 # 記事末尾のオプトイン枠。n>=ELABO_OPTIN_FROM でエルラボ＋主体、それ未満はメルマガ主体（n>=TEMPLATE_FROM でエルラボ＋の控えめ1行を追記）
+# 記事途中からのメンバー限定ゲート。本文は静的HTMLへ埋めず、既存のエルラボ＋認証とGASを利用する。
+_MEMBER_GATE_TEMPLATE = '''
+      <div class="member-gate" id="mgGate__GID__" data-gate-id="__GID__">
+        <div class="mg-load">読み込み中…</div>
+      </div>
+      <script>
+      (function(){
+        var box = document.getElementById("mgGate__GID__");
+        if(!box) return;
+        var email = "";
+        try{
+          var s = JSON.parse(localStorage.getItem("lmine_member") || "null");
+          if(s && s.email) email = s.email;
+        }catch(e){}
+        function esc(x){ var d=document.createElement("div"); d.textContent=String(x); return d.innerHTML; }
+        function inline(s){
+          s = esc(s);
+          s = s.replace(/\\[([^\\]]+)\\]\\(((?:https?:)?[^)]+)\\)/g, function(m,a,b){ return '<a href="'+b+'" target="_blank" rel="noopener">'+a+'</a>'; });
+          s = s.replace(/(https?:\\/\\/[^\\s<)"']+)(?![^<]*>)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+          s = s.replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>');
+          return s;
+        }
+        function isImg(u){ return /^https?:\\/\\/\\S+$/i.test(u) && (/\\.(png|jpe?g|gif|webp)(\\?\\S*)?$/i.test(u) || /drive\\.google\\.com\\/(thumbnail|uc)\\?/i.test(u)); }
+        function renderBody(text){
+          var blocks = String(text).replace(/\\r\\n/g,"\\n").split(/\\n{2,}/);
+          var out = "";
+          blocks.forEach(function(raw){
+            var t = raw.trim();
+            if(!t) return;
+            if(/^-{3,}$/.test(t)){ out += '<hr>'; return; }
+            if(/^#\\s+/.test(t)){ out += '<h2>'+esc(t.replace(/^#\\s+/,"").trim())+'</h2>'; return; }
+            if(isImg(t)){ out += '<img src="'+esc(t)+'" style="max-width:100%;height:auto" onerror="this.style.display=\'none\'">'; return; }
+            out += '<p>'+inline(raw.replace(/\\s+$/,"")).replace(/\\n/g,"<br>")+'</p>';
+          });
+          return out;
+        }
+        function showLocked(){
+          box.innerHTML = '<div class="mg-lock">🔒</div><p class="mg-msg">ここから先はメンバー限定です。<br>エルラボ＋メンバーになると、続きを読めます。</p><div class="mg-actions"><a class="mg-btn mg-btn-primary" href="__ELABO_LP__" target="_blank" rel="noopener">エルラボ＋メンバーになる →</a><a class="mg-btn mg-btn-secondary" href="__APP_URL__" target="_blank" rel="noopener">すでにメンバーの方はこちら（ログイン） →</a></div>';
+        }
+        fetch("__GAS_URL__?action=column&id=__GID__&email=" + encodeURIComponent(email) + "&_=" + Date.now())
+          .then(function(r){ return r.json(); })
+          .then(function(res){
+            if(res && res.ok && !res.locked){
+              box.outerHTML = '<div class="mg-unlocked">' + renderBody(res.body || "") + '</div>';
+            } else { showLocked(); }
+          })
+          .catch(showLocked);
+      })();
+      </script>'''
+
+def member_gate_html(gate_id):
+    return (_MEMBER_GATE_TEMPLATE
+            .replace("__GID__", html.escape(str(gate_id)))
+            .replace("__ELABO_LP__", ELABO_LP)
+            .replace("__APP_URL__", APP_URL)
+            .replace("__GAS_URL__", ELABO_GAS_URL))
+
 def optin_footer(n):
     # 全コラム統一：記事末尾は「エルラボ＋」案内に統一（旧『3-2-1ラボ』メルマガ＝停止中のため撤去）。
     # メルマガ（消えないマーケティング 7日間無料レター）の登録は、各コラムの optin-popup.js が担当。
@@ -494,14 +552,17 @@ def render_article(c, cols):
     else:
         hero_block = ''
     tags = "".join(f'<a href="#">{t}</a>' for t in c["tags"])
+    has_gate = bool(c.get("member_gate_id"))
     body = convert_body(
         c["body"],
-        c.get("sign", ""),
+        "" if has_gate else c.get("sign", ""),
         c.get("readable_breaks", "").lower() == "true",
         c.get("note_layout", "").lower() == "true",
         c.get("sentence_breaks_only", "").lower() == "true",
     )
     title_html = c.get("title_html", html.escape(c["title"]))
+    gate_html = member_gate_html(c["member_gate_id"]) if has_gate else ""
+    sign_after_gate = f'<p class="sign">{inline(c.get("sign", ""))}</p>' if has_gate else ""
     return f'''<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -539,7 +600,7 @@ def render_article(c, cols):
     {hero_block}
 
     <div class="body">
-      {body}
+      {body}{gate_html}{sign_after_gate}
     </div>
 
 {quiz_footer()}
