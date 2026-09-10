@@ -883,12 +883,19 @@ button, input { font: inherit; }
 
 
 /* --- フッターの規約リンクと運営者表示（公開版）--------------------------- */
+/* 2026-09-10 とーる指示：押させたいものではないので、目立たせない。
+   下線と金色をやめ、小さく・暗くして、置いてあるだけの見え方にする。 */
 .app-footer__legal, .lp-footer__legal {
-  margin: 14px 0 0; font-size: 14px; line-height: 2;
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 6px;
+  margin: 14px 0 0; font-size: 12px; line-height: 1.9;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 3px 6px;
+  opacity: .72;
 }
-.app-footer__legal a, .lp-footer__legal a { color: var(--ink-soft); }
-.app-footer__legal a:hover, .lp-footer__legal a:hover { color: var(--gold-2); }
+.app-footer__legal a, .lp-footer__legal a {
+  color: var(--ink-soft); text-decoration: none;
+}
+.app-footer__legal a:hover, .lp-footer__legal a:hover {
+  color: var(--ink); text-decoration: underline;
+}
 .app-footer__legal span, .lp-footer__legal span { color: var(--line-2); }
 .app-footer__owner, .lp-footer__owner {
   margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); text-align: center;
