@@ -171,6 +171,9 @@
     var screen = SC.screens[screenId];
     if (!screen) { screenId = 'result'; screen = SC.screens.result; }
 
+    /* 規約類の出し分け用に、いまの画面IDを body へ出す（2026-09-10 とーる指示） */
+    doc.body.setAttribute("data-screen", screenId);
+
     var ctx = buildContext(screenId, state);
     var el = screen.render(ctx);
 

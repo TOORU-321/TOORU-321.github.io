@@ -1099,3 +1099,8 @@ button, input { font: inherit; }
   .strength__turn { font-size: 16px; }
   .strength__close { font-size: 18px; }
 }
+
+/* 規約類（特商法など）は、企画内の最後のオファー画面だけに出す（2026-09-10 とーる指示）。
+   最初の診断紹介は shindan-lp.html 側のフッターが担当する。 */
+.app-footer__legalbox{display:none}
+body[data-screen="day5_done"] .app-footer__legalbox{display:block}
