@@ -19,6 +19,17 @@
      * 送るのは track.js が作った補助キーだけで、回答本文は入らない。
      * 本物の診断結果を持っている人だけが対象（プレビューは送らない）。 */
     trackingEnabled: true,
+    /* 開発用の道具（想定回答の自動入力・保存内容のリセット・イベントログ）を
+     * 画面に出すかどうか。
+     *
+     * 本番では出さない。URLに ?dev=1 を付けたときだけ出す。
+     * 消さずに残してあるのは、公開したあとの確認でも使うため。 */
+    devTools: function () {
+      try {
+        return /(^|[?&])dev=1(&|$)/.test(global.location.search);
+      } catch (e) { return false; }
+    },
+
     /* 画面の並び（この順で進み、戻る） */
     screenOrder: [
       /* 結果 → 参加表明LP（lp.html）→ DAY1。LPは別ページなので画面順に含めない */

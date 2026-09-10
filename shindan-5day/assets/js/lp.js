@@ -579,7 +579,7 @@
 
     /* --- プレビュー用メニュー（本番では出さない）------------------------- */
     var previewSlot = doc.getElementById('preview-slot');
-    if (previewSlot) {
+    if (previewSlot && SC.config.devTools()) {
       previewSlot.appendChild(h('details', { class: 'preview' }, [
         h('summary', { class: 'preview__summary', text: SC.copy.common.previewMenu }),
         h('p', { class: 'preview__note', text: SC.copy.common.previewNote }),

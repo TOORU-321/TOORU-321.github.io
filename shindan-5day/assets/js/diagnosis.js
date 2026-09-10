@@ -76,7 +76,7 @@
   function pageHeader(title, subtitle) {
     return h('header', { class: 'dg-head' }, [
       h('p', { class: 'dg-head__eyebrow' }, [
-        h('span', { class: 'dg-badge', text: c().devBadge }),
+        SC.config.devTools() ? h('span', { class: 'dg-badge', text: c().devBadge }) : null,
         h('span', { class: 'dg-head__program', text: c().programName })
       ]),
       h('h1', { class: 'dg-head__title', text: title }),
@@ -318,7 +318,7 @@
 
     var el = h('div', { class: 'dg-screen dg-screen--result' }, [
       pageHeader(c().resultTitle, null),
-      h('p', { class: 'dg-devnote', text: c().devNotice }),
+      SC.config.devTools() ? h('p', { class: 'dg-devnote', text: c().devNotice }) : null,
       SC.ui.diagnosisResult(record, { animate: animate }),
       handoffBlock()
     ]);
@@ -671,7 +671,8 @@
     else if (status === 'recovered') notice = c().recoveredNote;
     else if (status === 'new') track('diagnosis_started');
 
-    if (slot) slot.appendChild(buildDevPanel());
+    /* 開発用メニューは ?dev=1 のときだけ。本番では出さない（2026-09-10） */
+    if (slot && SC.config.devTools()) slot.appendChild(buildDevPanel());
     global.addEventListener('hashchange', onHashChange);
 
     if (!parseHash()) {

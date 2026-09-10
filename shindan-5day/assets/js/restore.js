@@ -52,7 +52,7 @@
   function head(title) {
     return h('header', { class: 'dg-head' }, [
       h('p', { class: 'dg-head__eyebrow' }, [
-        h('span', { class: 'dg-badge', text: c().devBadge }),
+        SC.config.devTools() ? h('span', { class: 'dg-badge', text: c().devBadge }) : null,
         h('span', { class: 'dg-head__program', text: c().programName })
       ]),
       h('h1', { class: 'dg-head__title', text: title })
@@ -231,7 +231,7 @@
     var animate = SC.motion.once('restore-result');
     var el = h('div', { class: 'dg-screen dg-screen--result' }, [
       head(c().resultTitle),
-      h('p', { class: 'dg-devnote', text: c().devNotice }),
+      SC.config.devTools() ? h('p', { class: 'dg-devnote', text: c().devNotice }) : null,
       h('p', { class: 'dg-notice', role: 'status', 'aria-live': 'polite', text: c().restoreDone }),
       SC.ui.diagnosisResult(record, { animate: animate }),
       h('div', { class: 'dg-nav dg-nav--single' }, [

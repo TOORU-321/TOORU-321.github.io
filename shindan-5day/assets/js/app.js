@@ -311,7 +311,7 @@
     if (!SC.store.hasRealDiagnosis()) {
       footerSlot = doc.getElementById('preview-slot');
       renderNoDiagnosis();
-      if (footerSlot) footerSlot.appendChild(buildPreviewMenu());
+      if (footerSlot && SC.config.devTools()) footerSlot.appendChild(buildPreviewMenu());
       return;
     }
 
@@ -335,7 +335,7 @@
       restoreNotice = SC.copy.lp.join.laterNotice;
     }
 
-    footerSlot.appendChild(buildPreviewMenu());
+    if (SC.config.devTools()) footerSlot.appendChild(buildPreviewMenu());
     global.addEventListener('hashchange', onHashChange);
 
     /* 再読み込み時：URLのハッシュ優先、無ければ最後に保存した画面へ復帰 */
