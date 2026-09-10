@@ -35,7 +35,13 @@
      *
      * 友だち追加のあとは、シナリオの1通目に置いた
      * 自作ページ転送URL（/cp/…?uid=[[uid]]）から restore.html へ戻ってくる。 */
-    lineAddFriend: 'https://vjbsvali.autosns.app/addfriend/s/OJwYZlOe21/@956nvdmi',
+    /* 2026-09-10 とーる提供の正しい入口へ差し替え。
+     * 入口は2つあり、どちらから入るかでシナリオが変わる。
+     *   未参加（①が始まる）… /addfriend/s/pZpVl19Ggo/@956nvdmi  ← 診断のあとはこちら
+     *   参加者（②が始まる）… /addfriend/s/umikybQNGK/@956nvdmi
+     * 診断を終えた人はまだ5日間に参加していないので、未参加の方へつなぐ。
+     * 参加したときは、アプリがGAS経由でcall-beaconを叩いて②へ移す。 */
+    lineAddFriend: 'https://vjbsvali.autosns.app/addfriend/s/pZpVl19Ggo/@956nvdmi',
 
     /* LINEから診断結果を開く入口（プロラインの自作ページ転送）。
      * 2026-09-03 の実機確認で、?uid=[[uid]] を付けなくても

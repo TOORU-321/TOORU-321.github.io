@@ -462,6 +462,24 @@
         }, c().handoffLineCta)
       ]);
       lineBox.hidden = false;
+
+      /* 出しただけでは気づかれない（2026-09-10 とーる実機指摘）。
+       * 画面の下に現れるので、スクロールしない人はそのまま止まってしまう。
+       * 押した流れの中で、出てきたボタンまで動かす。
+       *
+       * ★「視差効果を減らす」設定の人には、動かさずに一瞬で移す。
+       * ★描き終わってから動かす（同じ処理の中だと位置が確定していない）。 */
+      global.setTimeout(function () {
+        if (!lineBox.scrollIntoView) return;
+        try {
+          lineBox.scrollIntoView({
+            behavior: SC.motion.allowed() ? 'smooth' : 'auto',
+            block: 'center'
+          });
+        } catch (e) {
+          lineBox.scrollIntoView(false);
+        }
+      }, 60);
     }
 
     var cta = h('button', {
