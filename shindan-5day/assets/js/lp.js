@@ -560,7 +560,9 @@
           declareBox,
           h('span', { class: 'lp-declare__text', text: lp.join.declareLabel })
         ]),
-        h('p', { class: 'lp-declare__note', text: lp.join.declareNote }),
+        /* §68 で2行になったので、行ごとに段落へ分ける（改行はHTMLでは潰れるため） */
+        h('div', { class: 'lp-declare__note' },
+          SC.dom.lines(lp.join.declareNote, 'lp-declare__note-line')),
         declareWarn
       ]);
     }

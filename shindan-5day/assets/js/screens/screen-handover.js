@@ -46,6 +46,13 @@
           h('div', { class: 'handover__body prose' },
             SC.dom.lines(c.body, 'prose__line')),
 
+          /* どう進むのか（2026-09-11 とーる指示）。
+           * 「5日間の企画」とだけ言われると、通話や集まりがあると思う人が出る。 */
+          c.flow
+            ? h('div', { class: 'handover__flow' },
+                SC.dom.lines(c.flow, 'handover__flow-line'))
+            : null,
+
           SC.ui.ctaArea([
             SC.ui.primaryCta({
               label: c.primaryCta,

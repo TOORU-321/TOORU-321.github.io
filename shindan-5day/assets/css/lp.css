@@ -592,6 +592,7 @@
 .lp-declare__box { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--gold); }
 .lp-declare__text { font-size: 16px; color: #fff; line-height: 1.7; }
 .lp-declare__note { margin: 12px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.8; }
+.lp-declare__note-line { margin: 0; }
 .lp-declare__warn { margin: 12px 0 0; font-size: 14px; color: var(--gold-2); }
 
 /* 企画の帯にも企画名を出したので、ヒーローのほうは重ねて見せない（2026-09-11）。

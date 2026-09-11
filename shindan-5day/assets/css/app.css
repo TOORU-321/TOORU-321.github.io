@@ -1125,17 +1125,65 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
 /* 診断 → 企画 の切り替わりを見せる一枚（2026-09-11 とーる判断C）。
    ここは説明の場ではないので、余白を多く取って、読むものを少なくする。
    スクロールさせないこと。1画面で終わらせる。 */
-.screen--handover { min-height: 100vh; display: grid; place-items: center; }
-.handover {
-  width: min(100%, 460px); text-align: center; padding: 32px 4px;
+/* 画面いっぱいに置くが、下のフッターぶんは空けておく。
+   ここを 100vh にすると、フッターのぶんだけページがはみ出す（§68｜5）。 */
+.screen--handover {
+  position: relative;
+  min-height: calc(100vh - 190px);
+  display: grid;
+  place-items: center;
 }
+
+/* 上部の背景写真（2026-09-11 §68）。
+   ★独立した画像ブロックにしない。置くと画面が縦に伸びて、収まらなくなる。
+   ★::before で描くので、読み上げにもタブ移動にも出てこない（装飾扱い）。
+   ★読み込めなくても、元の暗い背景が残るだけ。文字とボタンはそのまま使える。 */
+.screen--handover::before {
+  content: '';
+  position: absolute;
+  /* カードの内側いっぱいまで広げる。値は .app-shell の padding と同じ。
+     上も伸ばさないと、カードの中に四角が浮いて見える */
+  top: -14px;
+  left: -14px; right: -14px;
+  height: 300px;
+  pointer-events: none;
+  z-index: 0;
+  /* かぶせの層を先に書く。あとの層（写真）より上に乗る。
+     下へ向かうほど濃くして、そのまま元の背景色へ溶かす */
+  background-image:
+    linear-gradient(180deg,
+      rgba(9, 12, 18, .26) 0%,
+      rgba(9, 12, 18, .40) 24%,
+      rgba(9, 12, 18, .68) 46%,
+      rgba(9, 12, 18, .88) 70%,
+      rgba(9, 12, 18, .94) 100%),
+    url('../images/handover-business-woman-v1.webp');
+  background-size: cover, auto 122%;
+  /* 顔とスマホが上のほうに来るように寄せる。
+     文字（見出し）はこの下から始まるので、顔に重ならない */
+  background-position: center, 50% 4%;
+  background-repeat: no-repeat, no-repeat;
+  /* 下へ向かって帯ごと消す。背景色で塗ると、カードの地とわずかに違って
+     横一本の線に見えるため（2026-09-11 PC表示で確認）。 */
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* 文字は写真より前に置く */
+.handover { position: relative; z-index: 1; }
+.handover {
+  width: min(100%, 460px); text-align: center; padding: 18px 4px;
+}
+/* 写真の上に乗るので、字を明るくして、うしろに濃い影を敷く。
+   写真そのものを暗くせずに読めるようにするため（2026-09-11 実測 2.65:1 → 改善）。 */
 .handover__done {
   margin: 0; font-size: 13px; letter-spacing: .14em; text-indent: .14em;
-  color: var(--ink-2);
+  color: var(--ink);
+  text-shadow: 0 1px 10px rgba(9, 12, 18, .92), 0 0 3px rgba(9, 12, 18, .85);
 }
 /* 区切りの線。ここで場面が変わる、という合図 */
 .handover__rule {
-  width: 44px; height: 1px; margin: 26px auto;
+  width: 44px; height: 1px; margin: 20px auto;
   background: linear-gradient(90deg, transparent, var(--gold-2), transparent);
 }
 .handover__title {
@@ -1143,6 +1191,28 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
   font-size: clamp(24px, 7vw, 30px); line-height: 1.75;
 }
 .handover__title-line { margin: 0; }
-.handover__body { margin: 24px 0 8px; color: var(--ink-2); font-size: 15px; }
-.handover__body .prose__line { margin: 0 0 6px; }
+.handover__body { margin: 20px 0 4px; color: var(--ink-2); font-size: 15px; }
+/* 確定本文の1行（22字）を390px幅で折り返さないため、本文と同じ15pxにそろえる。
+   16pxのままだと「た。」だけが次の行に落ちる（§68｜5 の確認で判明）。 */
+.handover__body .prose__line { margin: 0 0 6px; font-size: 15px; }
 .handover__note { margin: 14px 0 0; font-size: 12px; color: var(--ink-3, var(--ink-2)); opacity: .8; }
+
+/* どう進むのか（2026-09-11 とーる指示）。
+   本文より一段小さく、囲って「事務的な説明」だと分かる見た目にする。 */
+.handover__flow {
+  margin: 14px 0 0; padding: 11px 14px;
+  border: 1px solid rgba(238, 214, 163, .18); border-radius: 12px;
+  background: rgba(238, 214, 163, .04);
+}
+.handover__flow-line { margin: 0; font-size: 13px; line-height: 1.85; color: var(--ink-2); }
+
+/* 画面が広いとき（.app-shell の padding が 24px になる）に合わせる。
+   カードの角も丸いので、写真の上端をそこへそろえる */
+@media (min-width: 560px) {
+  .screen--handover::before {
+    /* 枠の1pxぶんまで含めて、カードの角の丸みにそろえる */
+    top: -27px;
+    left: -25px; right: -25px;
+    border-radius: 30px 30px 0 0;
+  }
+}
