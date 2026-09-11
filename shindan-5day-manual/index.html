@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>診断＋5日間チャレンジ｜画面と仕組み（内部用）</title>
+<style>
+:root{
+  --bg:#090c12; --bg2:#0e121a; --card:#141a24; --line:rgba(238,214,163,.16);
+  --gold:#e3c381; --ink:#f7f4ec; --ink2:#c9c5bb; --ink3:#8f8b82;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho",serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.9 -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;}
+.head{padding:56px 20px 40px;text-align:center;
+  background:linear-gradient(180deg,#121722,var(--bg));border-bottom:1px solid var(--line)}
+.head__tag{margin:0 0 14px;font-size:12px;letter-spacing:.18em;color:var(--gold)}
+.head__title{margin:0;font-family:var(--mincho);font-size:clamp(24px,5vw,34px);line-height:1.6}
+.head__sub{margin:14px 0 0;font-size:13px;color:var(--ink3)}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px 80px}
+.block{margin:48px 0}
+.h2{font-family:var(--mincho);font-size:22px;margin:0 0 18px;padding-bottom:10px;
+  border-bottom:1px solid var(--line)}
+.h3{font-size:17px;margin:24px 0 8px;color:var(--ink)}
+.lead{color:var(--ink2);margin:0 0 24px}
+.prose p{margin:0 0 10px;color:var(--ink2)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;
+  background:rgba(238,214,163,.08);padding:1px 6px;border-radius:5px;color:var(--gold)}
+strong{color:var(--ink)}
+.flow{list-style:none;margin:0;padding:0;counter-reset:f}
+.flow__item{display:grid;grid-template-columns:28px 1fr;gap:4px 12px;
+  align-items:baseline;padding:10px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+.flow__n{grid-row:span 3;width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;font-size:12px;color:#16110a;
+  background:linear-gradient(135deg,var(--gold),#b99455)}
+.flow__name{font-weight:700}
+.flow__url{justify-self:start}
+.flow__note{color:var(--ink3);font-size:13px}
+.toc{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 22px}
+.toc ul{margin:0;padding-left:20px}
+.toc a{color:var(--gold)}
+.screen{display:grid;grid-template-columns:210px 1fr;gap:26px;
+  padding:26px 0;border-top:1px solid rgba(255,255,255,.07)}
+.screen__shot img{width:100%;height:auto;display:block;border-radius:12px;
+  border:1px solid var(--line);background:#000}
+.screen__url{margin:0 0 10px}
+.screen__body{margin:0 0 12px;color:var(--ink2)}
+.notes{margin:0;padding-left:20px;color:var(--ink2);font-size:14px}
+.notes li{margin:0 0 6px}
+.notes--wide{font-size:15px}
+.foot{margin:60px 0 0;padding-top:20px;border-top:1px solid var(--line);
+  color:var(--ink3);font-size:13px;text-align:center}
+@media (max-width:700px){
+  .screen{grid-template-columns:1fr;gap:16px}
+  .screen__shot img{max-width:320px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+<header class="head"><p class="head__tag">内部用・非公開</p><h1 class="head__title">診断＋5日間チャレンジ<br>画面と仕組み</h1><p class="head__sub">SNS事業の現在地診断 ／ SNS事業の一本線 5DAY</p></header>
+<div class="wrap">
+<section class="block"><div class="prose">
+<p>このページは、診断と5日間チャレンジの<strong>全画面と裏側の仕組み</strong>をまとめたものです。</p>
+<p>とーるとAIチーム（Codex・あかり）が見るためのもので、参加者には出しません。</p>
+<p>検索には出ません（noindex）。ファネルのどこからもリンクしていません。</p>
+</div></section>
+<section class="block"><h2 class="h2">全体の流れ</h2><ol class="flow">
+<li class="flow__item"><span class="flow__n">1</span><span class="flow__name">診断案内LP</span><code class="flow__url">shindan-lp.html</code><span class="flow__note">はじめて出会うページ</span></li>
+<li class="flow__item"><span class="flow__n">2</span><span class="flow__name">はじめかた</span><code class="flow__url">shindan-intro.html</code><span class="flow__note">ひと呼吸おいて設問へ</span></li>
+<li class="flow__item"><span class="flow__n">3</span><span class="flow__name">21の設問</span><code class="flow__url">shindan.html</code><span class="flow__note">選ぶと自動で次へ</span></li>
+<li class="flow__item"><span class="flow__n">4</span><span class="flow__name">診断結果</span><code class="flow__url">shindan.html#/result</code><span class="flow__note">スコアと最初に整える場所＋引き継ぎ</span></li>
+<li class="flow__item"><span class="flow__n">5</span><span class="flow__name">LINE友だち追加</span><code class="flow__url">（プロライン）</code><span class="flow__note">シナリオ①が始まる</span></li>
+<li class="flow__item"><span class="flow__n">6</span><span class="flow__name">詳しい結果</span><code class="flow__url">restore.html?uid=</code><span class="flow__note">uidと診断結果を結ぶ</span></li>
+<li class="flow__item"><span class="flow__n">7</span><span class="flow__name">切り替わり</span><code class="flow__url">index.html#/handover</code><span class="flow__note">ここから企画だと告げる</span></li>
+<li class="flow__item"><span class="flow__n">8</span><span class="flow__name">参加案内LP</span><code class="flow__url">lp.html</code><span class="flow__note">読んで、宣言して参加</span></li>
+<li class="flow__item"><span class="flow__n">9</span><span class="flow__name">DAY1〜5</span><code class="flow__url">index.html</code><span class="flow__note">1日ひとつずつ</span></li>
+<li class="flow__item"><span class="flow__n">10</span><span class="flow__name">完了とオファー</span><code class="flow__url">index.html#/day5-done</code><span class="flow__note">一本線シートと次の一歩</span></li>
+</ol></section>
+<nav class="toc"><h2 class="h2">目次</h2><ul>
+<li><a href="#diagnosis">① 診断</a></li>
+<li><a href="#handover">② 診断から企画へ</a></li>
+<li><a href="#day1">③ DAY1｜直す場所をひとつ決める</a></li>
+<li><a href="#day2">④ DAY2｜ひとりのお客様を見つける</a></li>
+<li><a href="#day3">⑤ DAY3｜届ける変化を一本の橋にする</a></li>
+<li><a href="#day4">⑥ DAY4｜SNSから支援までを一本道にする</a></li>
+<li><a href="#day5">⑦ DAY5｜次の30日で育てる実験を決める</a></li>
+<li><a href="#backstage">⑧ 裏側の仕組み</a></li>
+</ul></nav>
+<section class="block" id="diagnosis">
+<h2 class="h2">① 診断</h2>
+<p class="lead">21問・約3分。ここでの目的は「現在地を数字で見せること」と、その結果をLINEへ持っていける状態にすることです。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d01-shindan-lp.webp" alt="診断案内LP の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">診断案内LP</h3>
+<p class="screen__url"><code>shindan-lp.html</code></p>
+<p class="screen__body">いちばん最初に出会うページ。共感 → 再定義 → 診断の説明、の順に読ませます。</p>
+<ul class="notes">
+<li><strong>ここだけ</strong>は規約類（特商法・プライバシーポリシーなど）をフッターに出します</li>
+<li>スクロールでふわっと出る演出が入っています</li>
+<li>ここから先、診断が終わるまでLINEには一切つながりません</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d02-shindan-intro.webp" alt="はじめかた の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">はじめかた</h3>
+<p class="screen__url"><code>shindan-intro.html</code></p>
+<p class="screen__body">設問に入る前のひと呼吸。何問あるか、何分かかるか、途中で閉じても大丈夫か、を伝えます。</p>
+<ul class="notes">
+<li>「視差効果を減らす」設定の人には、演出を出さずにすぐ設問へ送ります</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d03-question.webp" alt="21の設問 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">21の設問</h3>
+<p class="screen__url"><code>shindan.html</code></p>
+<p class="screen__body">5段階から選ぶと、自動で次の設問へ進みます。進むボタンは置いていません。</p>
+<ul class="notes">
+<li>回答は<strong>その端末</strong>に1問ずつ保存されます。閉じても続きから</li>
+<li>戻るボタンだけ置いてあります。選び直せます</li>
+<li><strong>診断を終えた人がもう一度開くと、設問ではなく結果が出ます</strong>（何度も試す人が出ないように・2026-09-11）</li>
+<li><code>?dev=1</code> を付けたときだけ設問へ入れます（校正用）</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d04-result.webp" alt="診断結果（簡易） の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">診断結果（簡易）</h3>
+<p class="screen__url"><code>shindan.html#/result</code></p>
+<p class="screen__body">総合スコア、5軸のかたち、いちばん低い軸、そして「LINEで詳しい結果を受け取る」。</p>
+<ul class="notes">
+<li>この画面を開いた時点で、結果はスプレッドシートへ保存されます</li>
+<li>同時に<strong>引き継ぎの合図</strong>（使い捨ての文字列）を1本発行します。<strong>15分・1回きり</strong></li>
+<li>ボタンを押すと、押したその流れの中でコピーします（iOSは間に通信を挟むとコピーに失敗するため）</li>
+<li>コピーできて初めて、LINEの友だち追加ボタンが出ます</li>
+<li><strong>その端末がすでにLINEを知っている場合</strong>は、ここで結び先を新しい診断へ自動で張り替えます（受け直した人の対策）</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d05-restore-nouid.webp" alt="詳しい結果（LINE以外から開いたとき） の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">詳しい結果（LINE以外から開いたとき）</h3>
+<p class="screen__url"><code>restore.html</code></p>
+<p class="screen__body">この画面はLINEのメッセージから開くもの。uidが無いときは、その旨だけ出します。</p>
+<ul class="notes">
+<li>LINEから開くと <code>?uid=…</code> が付き、<strong>uidだけで結果を引き当てます</strong></li>
+<li>uidはURLからすぐ消します（履歴・共有で漏れないように）</li>
+<li>結びついていないときは、コピーした合図を読んで結びます</li>
+<li>もう一度診断を受けた人のために「最新の結果に切り替える」を置いています</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/d06-app-nodiagnosis.webp" alt="結果が見つからないとき の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">結果が見つからないとき</h3>
+<p class="screen__url"><code>index.html</code></p>
+<p class="screen__body">端末の保存が消えた人・別の端末の人が5日間アプリを開いたとき。行き止まりにしません。</p>
+<ul class="notes">
+<li>LINEから受け取る道と、これから受ける道の両方を出します</li>
+<li><strong>回答はスプレッドシートに残っている</strong>ので、LINEから開けば戻ります</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="handover">
+<h2 class="h2">② 診断から企画へ</h2>
+<p class="lead">ここが2026-09-11に作り直した部分です。診断の続きに見えないよう、区切りを入れて、参加を「宣言」にしました。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p01-handover.webp" alt="切り替わり（1枚だけ） の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">切り替わり（1枚だけ）</h3>
+<p class="screen__url"><code>index.html#/handover</code></p>
+<p class="screen__body">「ここまでが現在地を知る時間。ここからは5日間の企画」と告げるだけの画面。説明はしません。</p>
+<ul class="notes">
+<li><strong>説明はLPの仕事</strong>。ここは区切りだけで、1画面に収めています</li>
+<li>「通話・集まりなし」を先に伝えます（ZOOMがあると思う人が出るため）</li>
+<li>上部の写真は装飾です。読み上げにもタブ移動にも出てきません</li>
+<li><strong>一度決めた人（参加済み・見送り済み）には出ません</strong></li>
+<li>ここを見ても、まだ参加にはなりません</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p02-lp-top.webp" alt="参加案内LP（冒頭） の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">参加案内LP（冒頭）</h3>
+<p class="screen__url"><code>lp.html</code></p>
+<p class="screen__body">診断結果を引き継いで表示します。いちばん上に企画の帯を置いて、ページの性格が変わったことを示します。</p>
+<ul class="notes">
+<li><strong>診断結果のCTAを押した人にだけ開きます</strong>（直接開くと案内が出ます）</li>
+<li>読み進めるブロック（テキスト型VSL）が中ほどにあります</li>
+<li>ページの長さは約9,000px。スマホで11画面ぶん</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p03-lp-declare.webp" alt="参加の宣言 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">参加の宣言</h3>
+<p class="screen__url"><code>lp.html（最下部）</code></p>
+<p class="screen__body">取り組む時間を選び、約束にチェックしてから「参加します」。押すだけにしていません。</p>
+<ul class="notes">
+<li><strong>チェックしないと参加になりません</strong>。押すとチェック欄まで画面が動きます</li>
+<li>押せないボタンは置いていません（押せそうに見えるものを出さないため）</li>
+<li>ここで選ぶ時間は<strong>自分で開く目安</strong>。LINEのDAY案内とは連動しません</li>
+<li><strong>「参加します」を押した瞬間</strong>に参加が確定し、開始日時が立ちます</li>
+<li>同時にLINEのシナリオ②へ移ります（アプリ → GAS → プロライン）</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p04-app-result.webp" alt="詳細結果 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">詳細結果</h3>
+<p class="screen__url"><code>index.html#/result</code></p>
+<p class="screen__body">5日間アプリ側の結果画面。レーダー、5軸、改善仮説、そして「強みを活かしきれていますか？」。</p>
+<ul class="notes">
+<li>見送った人も、ここからいつでも参加案内へ戻れます</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="day1">
+<h2 class="h2">③ DAY1｜直す場所をひとつ決める</h2>
+<p class="lead">やることは2つだけ。今直す場所を一つ決め、今週は触らないものを一つ選ぶ。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p10-day1-intro.webp" alt="DAY1 導入 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY1 導入</h3>
+<p class="screen__url"><code>#/day1-intro</code></p>
+<p class="screen__body">今日やることの予告。3〜4分で終わることを伝えます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p11-day1-focus.webp" alt="整える軸を決める の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">整える軸を決める</h3>
+<p class="screen__url"><code>#/day1-focus</code></p>
+<p class="screen__body">診断でいちばん低かった軸が最初から選ばれています。本人が選び直せます。</p>
+<ul class="notes">
+<li>選び直したかどうかも記録します（おすすめのままか／自分で選んだか）</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p12-day1-pause.webp" alt="今週は触らないものを選ぶ の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">今週は触らないものを選ぶ</h3>
+<p class="screen__url"><code>#/day1-pause</code></p>
+<p class="screen__body">増やす前に、置く。同時に直そうとして止まるのを防ぎます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p13-day1-done.webp" alt="DAY1 完了 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY1 完了</h3>
+<p class="screen__url"><code>#/day1-done</code></p>
+<p class="screen__body">決めたことの確認、ここまで／ここから、一本線シートの進み具合。</p>
+<ul class="notes">
+<li><strong>完了した瞬間</strong>にLINEのシナリオ③へ移ります（DAY2の案内が届く）</li>
+<li><strong>次のDAYは翌日まで開きません。</strong>「DAY2は明日ひらきます」と出ます</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="day2">
+<h2 class="h2">④ DAY2｜ひとりのお客様を見つける</h2>
+<p class="lead">属性ではなく、ひとりの場面と感情を言葉にします。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p20-day2-intro.webp" alt="DAY2 導入 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY2 導入</h3>
+<p class="screen__url"><code>#/day2-intro</code></p>
+<p class="screen__body">前回まで（決めた軸）を見せてから始めます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p21-day2-scene.webp" alt="困っている場面 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">困っている場面</h3>
+<p class="screen__url"><code>#/day2-scene</code></p>
+<p class="screen__body">選択肢から選びます。当てはまらなければ自分の言葉で書けます。</p>
+<ul class="notes">
+<li><strong>自由入力は任意</strong>。選ぶだけでも先へ進めます</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p22-day2-voice.webp" alt="そのときの言葉 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">そのときの言葉</h3>
+<p class="screen__url"><code>#/day2-voice</code></p>
+<p class="screen__body">その場面で、お客様が口に出す言葉。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p23-day2-hope.webp" alt="本当はどうなりたいか の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">本当はどうなりたいか</h3>
+<p class="screen__url"><code>#/day2-hope</code></p>
+<p class="screen__body">望んでいる状態。DAY3の「届ける変化」につながります。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p24-day2-done.webp" alt="DAY2 完了 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY2 完了</h3>
+<p class="screen__url"><code>#/day2-done</code></p>
+<p class="screen__body">ひとりのお客様が一枚にまとまります。</p>
+<ul class="notes">
+<li>完了でシナリオ④へ（DAY3の案内）</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="day3">
+<h2 class="h2">⑤ DAY3｜届ける変化を一本の橋にする</h2>
+<p class="lead">今いる場所から望む状態へ。その間に自分の商品がどんな役割を持つのかを一文にします。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p30-day3-intro.webp" alt="DAY3 導入 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY3 導入</h3>
+<p class="screen__url"><code>#/day3-intro</code></p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p31-day3-current.webp" alt="5つの質問 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">5つの質問</h3>
+<p class="screen__url"><code>#/day3-current</code></p>
+<p class="screen__body">現在地・壁・最初の変化・行き先・商品の役割を順に選びます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p32-day3-bridge.webp" alt="価値の橋 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">価値の橋</h3>
+<p class="screen__url"><code>#/day3-bridge</code></p>
+<p class="screen__body">選んだ5つから文章を自動で組み立てます。本人が直せます。</p>
+<ul class="notes">
+<li><strong>自動生成した文と、本人が直した文を区別して記録</strong>しています</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p33-day3-done.webp" alt="DAY3 完了 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY3 完了</h3>
+<p class="screen__url"><code>#/day3-done</code></p>
+<ul class="notes">
+<li>完了でシナリオ⑤へ（DAY4の案内）</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="day4">
+<h2 class="h2">⑥ DAY4｜SNSから支援までを一本道にする</h2>
+<p class="lead">知ってもらう入口から、必要な支援まで。お客様が迷わない順番につなぎます。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p40-day4-intro.webp" alt="DAY4 導入 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY4 導入</h3>
+<p class="screen__url"><code>#/day4-intro</code></p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p41-day4-entry.webp" alt="4つの地点 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">4つの地点</h3>
+<p class="screen__url"><code>#/day4-entry</code></p>
+<p class="screen__body">入口・関わり・小さな行動・支援を選びます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p42-day4-order.webp" alt="真ん中の順番 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">真ん中の順番</h3>
+<p class="screen__url"><code>#/day4-order</code></p>
+<p class="screen__body">真ん中2つをどちらの順で置くか。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p43-day4-journey.webp" alt="導線図 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">導線図</h3>
+<p class="screen__url"><code>#/day4-journey</code></p>
+<p class="screen__body">4地点が一本道の図になります。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p44-day4-done.webp" alt="DAY4 完了 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY4 完了</h3>
+<p class="screen__url"><code>#/day4-done</code></p>
+<ul class="notes">
+<li>完了でシナリオ⑥へ（DAY5の案内）</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="day5">
+<h2 class="h2">⑦ DAY5｜次の30日で育てる実験を決める</h2>
+<p class="lead">一度で完成させない。何を試し、どの反応を見て、いつ振り返るかを決めます。</p>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p50-day5-intro.webp" alt="DAY5 導入 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY5 導入</h3>
+<p class="screen__url"><code>#/day5-intro</code></p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p51-day5-hypothesis.webp" alt="試すこと の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">試すこと</h3>
+<p class="screen__url"><code>#/day5-hypothesis</code></p>
+<p class="screen__body">仮説・週の行動・見る数字を選びます。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p52-day5-schedule.webp" alt="振り返りの日 の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">振り返りの日</h3>
+<p class="screen__url"><code>#/day5-schedule</code></p>
+<p class="screen__body">いつ振り返るか、どこを調整するか。</p>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p53-day5-experiment.webp" alt="30日実験カード の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">30日実験カード</h3>
+<p class="screen__url"><code>#/day5-experiment</code></p>
+<p class="screen__body">決めたことが1枚のカードになります。</p>
+<ul class="notes">
+<li>ここで<strong>30日後の再診断の予定日</strong>が決まります（初回だけ。以後は上書きしません）</li>
+</ul>
+</div></article>
+<article class="screen">
+<div class="screen__shot"><img src="shots/p54-day5-done.webp" alt="DAY5 完了・一本線シート の画面" loading="lazy" width="390"></div>
+<div class="screen__text">
+<h3 class="h3">DAY5 完了・一本線シート</h3>
+<p class="screen__url"><code>#/day5-done</code></p>
+<p class="screen__body">5日間で作ったものが1枚につながります。ここに次の一歩（オファー）が出ます。</p>
+<ul class="notes">
+<li>完了でシナリオ⑦へ（完了者向け）</li>
+<li>オファーは<strong>選んだ進み方に合わせて</strong>出し分けます</li>
+<li><strong>期限が切れたら閉じて、通常のご案内へ移します</strong>（決済側では期限を管理していません）</li>
+<li>規約類（特商法など）は、アプリの中では<strong>この画面だけ</strong>に出します</li>
+</ul>
+</div></article>
+</section>
+<section class="block" id="backstage"><h2 class="h2">⑧ 裏側の仕組み</h2>
+<h3 class="h3">どこに保存されるか</h3><ul class="notes notes--wide">
+<li><strong>端末（localStorage）</strong>：診断の回答、5日間の回答、今どの画面か。閉じても続きから</li>
+<li><strong>スプレッドシート</strong>：診断結果、uidとの結合、5日間の回答、LINE送信の記録、計測</li>
+<li>端末の保存が消えても、<strong>スプレッドシートに残っている</strong>ので、LINEから開けば戻ります</li>
+<li>アプリを開いたとき、サーバーに新しい続きがあれば<strong>自動で追いつきます</strong>（別の端末で進めた場合）</li>
+</ul>
+<h3 class="h3">LINEはいつ動くか</h3><ul class="notes notes--wide">
+<li><strong>友だち追加</strong>→ シナリオ①（生涯1回）</li>
+<li><strong>参加します</strong>→ ②へ移動（DAY1の案内）</li>
+<li><strong>DAY1〜5の完了</strong>→ それぞれ③〜⑦へ移動</li>
+<li>移動すると、前のシナリオの残りは止まります（リマインドの誤爆が起きない）</li>
+<li>送信はGAS経由。<strong>call-beaconのURLはアプリ側に持っていません</strong></li>
+<li>同じ人・同じきっかけは1回だけ（GASで止めています）</li>
+</ul>
+<h3 class="h3">1日1DAY</h3><ul class="notes notes--wide">
+<li>次のDAYは<strong>日付が変わったら</strong>開きます（完了から24時間ではありません）</li>
+<li>LINEの案内は翌日の9時・20時なので、必ず開いたあとに届きます</li>
+<li>閉じているあいだは「DAY◯は明日ひらきます」と出し、今日決めたことを一つ試してもらいます</li>
+<li><code>?dev=1</code> のときは通ります（校正用）</li>
+<li>切りたくなったら <code>SC.config.oneDayPerDay</code> を <code>false</code> に</li>
+</ul>
+<h3 class="h3">受け直したとき</h3><ul class="notes notes--wide">
+<li>同じ端末で保存が生きていれば、<strong>札は変わりません</strong>。記録は二重になりません</li>
+<li>保存が消えた・別の端末だと新しい札になります。<strong>ここは本人確認が無いと塞げません</strong></li>
+<li>新しい合図を持ってきたときだけ、LINEの結び先を張り替えます。勝手には替わりません</li>
+<li>他人の結果を自分のLINEへ結びつけることはできません</li>
+</ul>
+<h3 class="h3">運用のときに見る場所</h3><ul class="notes notes--wide">
+<li><strong>管理ページ</strong>：<code>/shindan-5day/admin.html</code>（合言葉が要ります）。エルラボ＋のメニューからも入れます（adminタグの人だけ）</li>
+<li><strong>スプレッドシート</strong>：診断結果／計測／チャレンジ／通知／結合／引き継ぎ の6シート</li>
+<li>止まっている人＝3日以上動いていない人を、管理ページで絞り込めます</li>
+</ul>
+<h3 class="h3">触ってはいけない決まり</h3><ul class="notes notes--wide">
+<li><code>shindan-5day/</code> を直接いじらない（書き出しのたびに消えます）。直すのは元のフォルダ</li>
+<li>call-beaconのURLは、GASのスクリプトプロパティ以外に置かない</li>
+<li>合言葉（ADMIN_KEY）をコードにも控えにも書かない</li>
+<li>引き継ぎの合図の平文を端末に残さない／URL・計測・コンソールへ出さない</li>
+<li>署名用の秘密情報をブラウザへ置く方式は採らない</li>
+</ul>
+</section>
+<footer class="foot"><p>内部用の資料です。参加者には出しません。</p></footer>
+</div></body></html>
