@@ -68,6 +68,10 @@
     'voice_invite_clicked',
       'challenge_intro_view',
       'participation_selected',
+    /* 参加の宣言（2026-09-11）。押しただけの人と、約束した人を分けて見る */
+    'participation_declared', 'participation_declare_missing',
+    /* 診断と企画の境目の一枚（2026-09-11） */
+    'handover_view',
       'day2_intro_view',
       'day2_scene_view',
       'day2_scene_selected',

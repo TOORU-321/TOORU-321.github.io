@@ -295,6 +295,10 @@
     SC.track.event('lp_view');
 
     /* --- 1. ヒーロー ---------------------------------------------------- */
+    /* 企画の帯（2026-09-11）。ここから先が企画だと目で伝える */
+    setText('programName', SC.copy.programName);
+    setText('programLabel', lp.programLabel);
+
     setText('heroEyebrow', lp.hero.eyebrow);
     setText('heroTitle', lp.hero.title);
     setText('heroSubtitle', lp.hero.subtitle);
@@ -526,12 +530,60 @@
     }
     if (reminderSlot) renderReminder();
 
+    /* 参加の宣言（2026-09-11 とーる指示）。
+     *
+     * それまでは「5日間をはじめる」を押すだけだった。
+     * 押すのと、自分で約束するのは別のことなので、ひとつチェックを置く。
+     *
+     * ★押せないボタンは置かない。チェックが無いまま押されたら、
+     *   その場で伝えてチェックへ目を移してもらう。 */
+    var declareSlot = slot('declareSlot');
+    var declareBox = null;
+    var declareWarn = null;
+
+    if (declareSlot) {
+      declareBox = h('input', { type: 'checkbox', id: 'lp-declare', class: 'lp-declare__box' });
+      declareWarn = h('p', {
+        class: 'lp-declare__warn', role: 'status', 'aria-live': 'polite',
+        text: '', hidden: true
+      });
+      declareBox.addEventListener('change', function () {
+        if (declareBox.checked) {
+          declareWarn.hidden = true;
+          SC.track.event('participation_declared');
+        }
+      });
+
+      SC.dom.append(declareSlot, [
+        h('p', { class: 'lp-declare__heading', text: lp.join.declareHeading }),
+        h('label', { class: 'lp-declare__row', for: 'lp-declare' }, [
+          declareBox,
+          h('span', { class: 'lp-declare__text', text: lp.join.declareLabel })
+        ]),
+        h('p', { class: 'lp-declare__note', text: lp.join.declareNote }),
+        declareWarn
+      ]);
+    }
+
     var joinBtn = doc.getElementById('lp-join-btn');
     var laterBtn = doc.getElementById('lp-later-btn');
     joinBtn.textContent = lp.join.primaryCta;
     laterBtn.textContent = lp.join.secondaryCta;
 
     joinBtn.addEventListener('click', function () {
+      /* 約束にチェックが無いうちは、まだ参加にしない */
+      if (declareBox && !declareBox.checked) {
+        declareWarn.hidden = false;
+        declareWarn.textContent = lp.join.declareRequired;
+        SC.track.event('participation_declare_missing');
+        declareBox.focus();
+        if (declareBox.scrollIntoView) {
+          declareBox.scrollIntoView({
+            behavior: SC.motion.allowed() ? 'smooth' : 'auto', block: 'center'
+          });
+        }
+        return;
+      }
       SC.store.setParticipation('joined', 'day1_intro');
       SC.track.event('participation_selected', { choice: 'joined' });
       global.location.href = APP_URL + '#/day1-intro';

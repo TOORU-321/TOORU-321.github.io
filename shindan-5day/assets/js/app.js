@@ -16,6 +16,7 @@
 
   var HASH = {
     result: '#/result',
+    handover: '#/handover',
     day1_intro: '#/day1-intro',
     day1_focus: '#/day1-focus',
     day1_pause: '#/day1-pause',
@@ -122,6 +123,10 @@
     if (screenId === 'day1_done' && !day1Done) {
       return state.startedAt ? 'day1_intro' : 'result';
     }
+
+    /* 切り替わりの一枚は、まだ参加を決めていない人にだけ出す（2026-09-11）。
+     * 参加済み・見送り済みの人には、毎回はさむと邪魔になるだけ。 */
+    if (screenId === 'handover' && state.participation !== 'undecided') return 'result';
     if ((screenId === 'day1_intro' || screenId === 'day1_focus' || screenId === 'day1_pause') &&
         !state.startedAt) return 'result';
     return screenId;

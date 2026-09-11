@@ -555,3 +555,45 @@
 /* --- 既読の人だけに出す再読ボタン（§36-2）-------------------------------- */
 .lp-restart { margin: 26px 0 0; text-align: center; }
 .lp-restart__btn { min-height: 40px; font-size: 14px; }
+
+/* 企画の帯（2026-09-11 とーる判断C）。
+   診断のページと同じ見た目のまま続くので、解説の続きに見えていた。
+   いちばん上に置いて、ここから先は企画だと目で伝える。
+   ★色は変えない。別ブランドに見せたいわけではない。 */
+.lp-program {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  max-width: 620px; margin: 0 auto; padding: 18px 20px 0;
+}
+.lp-program__mark {
+  font-size: 12px; font-weight: 700; letter-spacing: .12em;
+  color: #16110a; padding: 4px 10px; border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
+}
+.lp-program__name { font-size: 13px; color: var(--gold-2); letter-spacing: .06em; }
+.lp-program__label {
+  font-size: 12px; color: var(--ink-2);
+  padding-left: 10px; border-left: 1px solid rgba(238, 214, 163, .28);
+}
+
+/* 参加の宣言（2026-09-11 とーる指示）。
+   押すのと、自分で約束するのは別のこと。ひとつだけチェックを置く。 */
+.lp-declare {
+  margin: 22px 0 0; padding: 18px 16px;
+  border: 1px solid rgba(238, 214, 163, .22); border-radius: 16px;
+  background: rgba(238, 214, 163, .05);
+}
+.lp-declare__heading {
+  margin: 0 0 12px; font-size: 13px; color: var(--gold-2);
+  letter-spacing: .1em;
+}
+.lp-declare__row {
+  display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
+}
+.lp-declare__box { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--gold); }
+.lp-declare__text { font-size: 16px; color: #fff; line-height: 1.7; }
+.lp-declare__note { margin: 12px 0 0; font-size: 13px; color: var(--ink-2); line-height: 1.8; }
+.lp-declare__warn { margin: 12px 0 0; font-size: 14px; color: var(--gold-2); }
+
+/* 企画の帯にも企画名を出したので、ヒーローのほうは重ねて見せない（2026-09-11）。
+   ★消さずに残しているのは、読み上げの手がかりとして意味があるため。 */
+.lp-hero__subtitle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

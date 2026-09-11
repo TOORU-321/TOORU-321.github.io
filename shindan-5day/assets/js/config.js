@@ -38,8 +38,11 @@
 
     /* 画面の並び（この順で進み、戻る） */
     screenOrder: [
-      /* 結果 → 参加表明LP（lp.html）→ DAY1。LPは別ページなので画面順に含めない */
+      /* 結果 → 切り替わりの一枚 → 参加表明LP（lp.html）→ DAY1。
+         LPは別ページなので画面順に含めない */
       'result',
+      /* 診断と企画の境目を見せる一枚（2026-09-11 とーる判断C） */
+      'handover',
       /* day1_intro は §41-C で追加した軽量な導入（参加表明 → 導入 → Screen C） */
       'day1_intro', 'day1_focus', 'day1_pause', 'day1_done',
       'day2_intro', 'day2_scene', 'day2_voice', 'day2_hope', 'day2_done',

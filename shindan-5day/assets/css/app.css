@@ -1121,3 +1121,28 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
 }
 .locked__title { margin-bottom: 10px; }
 .locked__body { color: var(--ink-2); }
+
+/* 診断 → 企画 の切り替わりを見せる一枚（2026-09-11 とーる判断C）。
+   ここは説明の場ではないので、余白を多く取って、読むものを少なくする。
+   スクロールさせないこと。1画面で終わらせる。 */
+.screen--handover { min-height: 100vh; display: grid; place-items: center; }
+.handover {
+  width: min(100%, 460px); text-align: center; padding: 32px 4px;
+}
+.handover__done {
+  margin: 0; font-size: 13px; letter-spacing: .14em; text-indent: .14em;
+  color: var(--ink-2);
+}
+/* 区切りの線。ここで場面が変わる、という合図 */
+.handover__rule {
+  width: 44px; height: 1px; margin: 26px auto;
+  background: linear-gradient(90deg, transparent, var(--gold-2), transparent);
+}
+.handover__title {
+  margin: 0; font-family: var(--mincho); font-weight: 700; color: #fff;
+  font-size: clamp(24px, 7vw, 30px); line-height: 1.75;
+}
+.handover__title-line { margin: 0; }
+.handover__body { margin: 24px 0 8px; color: var(--ink-2); font-size: 15px; }
+.handover__body .prose__line { margin: 0 0 6px; }
+.handover__note { margin: 14px 0 0; font-size: 12px; color: var(--ink-3, var(--ink-2)); opacity: .8; }

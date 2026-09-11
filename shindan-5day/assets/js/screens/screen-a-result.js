@@ -36,6 +36,18 @@
         global.location.href = 'lp.html' + (hash || '');
       }
 
+      /* 初めての人は、いきなりLPへ入れない（2026-09-11 とーる判断C）。
+       * 診断の続きに見えてしまうので、あいだに区切りの一枚をはさむ。
+       * 一度決めた人（参加済み・見送り済み）は、そのままLPへ。 */
+      function goNext(via, hash) {
+        if (ctx.state.participation === 'undecided' && !hash) {
+          ctx.track('challenge_cta_click', { cta: via });
+          ctx.go('handover');
+          return;
+        }
+        goToLp(via, hash);
+      }
+
       /* 数字が増える動き＋スクロールで現れる動きは、画面が置かれたあとに始める。
        * 1枚目（スコアとレーダー）は隠さない。中でレーダーと水位が動いているので、
        * ここを隠すと動きが見えないまま終わってしまう。 */
@@ -130,7 +142,7 @@
           SC.ui.primaryCta({
             /* §23-C-5：見送ったあともLPへ戻れる状態を保つ */
             label: ctx.state.participation === 'later' ? c.primaryCtaAgain : c.primaryCta,
-            onClick: function () { goToLp('primary'); }
+            onClick: function () { goNext('primary'); }
           }),
           /* §17-4：商品・講座へは接続しない。5日後の完成図（LPの一本線シート）へ進む補助導線 */
           SC.ui.secondaryCta({

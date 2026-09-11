@@ -57,6 +57,14 @@
   <main id="lp-main" class="lp" hidden>
 
     <!-- 1. ヒーロー｜診断結果の続き -->
+    <!-- 企画の帯（2026-09-11 とーる判断C）。
+         ここから先が診断ではなく企画だと、目で分かるようにする -->
+    <div class="lp-program">
+      <span class="lp-program__mark">5DAY</span>
+      <span class="lp-program__name" data-lp="programName"></span>
+      <span class="lp-program__label" data-lp="programLabel"></span>
+    </div>
+
     <header class="lp-hero">
       <div class="lp-hero__inner">
         <p class="lp-hero__eyebrow" data-lp="heroEyebrow"></p>
@@ -138,6 +146,8 @@
         <h2 class="lp-join__title" data-lp="joinHeading"></h2>
         <p class="lp-join__body" data-lp="joinBody"></p>
         <div class="lp-join__reminder" data-lp="reminderSlot"></div>
+        <!-- 参加の宣言（2026-09-11 とーる指示）。中身は lp.js が組み立てる -->
+        <div class="lp-declare" data-lp="declareSlot"></div>
         <div class="lp-join__cta">
           <button type="button" class="btn btn--primary" id="lp-join-btn"></button>
           <button type="button" class="btn btn--secondary" id="lp-later-btn"></button>
