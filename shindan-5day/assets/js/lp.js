@@ -551,36 +551,15 @@
       revealAfterReady = true;
     }
 
-    var reminderSlot = slot('reminderSlot');
-    var statusEl = doc.getElementById('lp-status');
-
-    function renderReminder() {
-      SC.dom.clear(reminderSlot);
-      reminderSlot.appendChild(h('p', { class: 'lp-join__label', text: lp.join.reminderHeading }));
-      reminderSlot.appendChild(SC.ui.choiceList({
-        name: 'lp-reminder',
-        legend: lp.join.reminderHeading,
-        variant: 'inline',
-        options: SC.config.reminderWindows,
-        value: SC.store.getState().reminderWindow,
-        selectedBadge: '選択中',
-        onSelect: function (value) {
-          SC.store.saveChallengeState({ reminderWindow: value });
-          SC.track.event('reminder_window_selected');
-          renderReminder();
-          var again = doc.getElementById('lp-reminder-' + value);
-          if (again) again.focus();
-          statusEl.textContent = SC.copy.common.saved;
-        }
-      }));
-      /* 2026-09-06（§58｜判断4）：通知時刻の設定だと思われないよう、
-       * 選んだあとに必ず断りを置く。ここは自分で開く目安であって、
-       * LINEのDAY案内（毎日20時）とは連動しない。 */
-      reminderSlot.appendChild(h('p', {
-        class: 'lp-join__note', text: SC.copy.start.reminderCaution
-      }));
-    }
-    if (reminderSlot) renderReminder();
+    /* 2026-09-11 とーる判断：「自分が取り組みやすい時間は？」を廃止した。
+     *
+     * 聞いているだけで、配信には効いていなかった。シナリオのステップは
+     * 時刻が固定で、朝の案内も夜の後押しも全員に届くため、選んでも何も変わらない。
+     * 効かない選択を置いておくより、聞かないほうが誠実という判断。
+     *
+     * ★保存の項目（reminderWindow）は残してある。既定値のまま使う。
+     *   DAY5の「振り返る時間帯」が、未設定のときの土台にしている。
+     * ★§58｜判断4 を更新している。 */
 
     /* 参加の宣言（2026-09-11 とーる指示）。
      *
