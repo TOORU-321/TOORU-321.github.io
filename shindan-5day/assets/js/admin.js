@@ -112,6 +112,8 @@
     return h('section', { class: 'adm-summary' }, [
       h('div', { class: 'adm-stats' }, [
         stat(t.diagnoses, s.diagnoses),
+        /* 受け直した人がいると、回数と人数がずれる。ずれたときだけ出す（2026-09-11） */
+        (s.people && s.people !== s.diagnoses) ? stat(t.people, s.people) : null,
         stat(t.linked, s.linked),
         stat(t.joined, s.joined),
         stat(t.completed, s.completed)
@@ -143,6 +145,12 @@
       h('div', { class: 'adm-row__head' }, [
         h('span', { class: 'adm-row__score', text: String(row.score) + c.row.score }),
         h('span', { class: 'adm-row__band', text: row.band || '' }),
+        /* 同じ方の2回目以降だけ、回数を出す（2026-09-11 とーる指示）。
+         * 受け直した人の行が「別の人」に見えないようにするため。 */
+        row.nth > 1
+          ? h('span', { class: 'adm-row__repeat',
+                        text: c.row.repeat.replace('{n}', String(row.nth)) })
+          : null,
         h('span', { class: 'adm-row__badge', text: badge })
       ]),
       h('div', { class: 'adm-row__mid' }, [

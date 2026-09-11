@@ -25,7 +25,9 @@
 
     /* まとめ */
     summary: {
-      diagnoses: '診断した人',
+      diagnoses: '診断した回数',
+      /* 受け直しを1人として数えた実人数（2026-09-11 とーる指示） */
+      people: 'のべ人数（受け直しを除く）',
       linked: 'LINEとつないだ人',
       joined: '5日間に参加した人',
       completed: '完走した人',
@@ -52,7 +54,9 @@
       lastAt: '最終更新',
       openDetail: '中身を見る',
       uid: 'LINE',
-      noUid: 'LINE未連携'
+      noUid: 'LINE未連携',
+      /* 同じ方が受け直したとき。{n} は回数（2026-09-11 とーる指示） */
+      repeat: '{n}回目'
     },
 
     /* 詳細 */

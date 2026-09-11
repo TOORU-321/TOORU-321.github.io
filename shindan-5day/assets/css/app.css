@@ -1131,7 +1131,11 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
   position: relative;
   min-height: calc(100vh - 190px);
   display: grid;
-  place-items: center;
+  /* 上に写真だけの余白を作るため、真ん中ではなく少し下へ寄せる。
+     safe を付けておくと、はみ出したときに上が隠れない（狭い画面・文字拡大） */
+  align-content: safe center;
+  justify-items: center;
+  padding-top: 62px;
 }
 
 /* 上部の背景写真（2026-09-11 §68）。
@@ -1145,7 +1149,7 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
      上も伸ばさないと、カードの中に四角が浮いて見える */
   top: -14px;
   left: -14px; right: -14px;
-  height: 300px;
+  height: 360px;
   pointer-events: none;
   z-index: 0;
   /* かぶせの層を先に書く。あとの層（写真）より上に乗る。
@@ -1154,9 +1158,9 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
     linear-gradient(180deg,
       rgba(9, 12, 18, .26) 0%,
       rgba(9, 12, 18, .40) 24%,
-      rgba(9, 12, 18, .68) 46%,
-      rgba(9, 12, 18, .88) 70%,
-      rgba(9, 12, 18, .94) 100%),
+      rgba(9, 12, 18, .60) 46%,
+      rgba(9, 12, 18, .82) 72%,
+      rgba(9, 12, 18, .92) 100%),
     url('../images/handover-business-woman-v1.webp');
   background-size: cover, auto 122%;
   /* 顔とスマホが上のほうに来るように寄せる。

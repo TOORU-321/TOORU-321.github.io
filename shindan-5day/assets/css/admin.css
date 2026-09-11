@@ -155,3 +155,11 @@
 .adm-detail__list { margin: 0; padding-left: 1.1em; font-size: 13px; line-height: 1.95; color: var(--ink); }
 .adm-detail__list li { margin-bottom: 4px; }
 .adm-detail__foot { margin-top: 16px; }
+
+/* 同じ方の2回目以降（2026-09-11 とーる指示）。
+   警告ではないので、赤ではなく落ち着いた色にする。 */
+.adm-row__repeat {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px;
+  color: var(--gold-2, #e3c381);
+  border: 1px solid rgba(238, 214, 163, .3);
+}
