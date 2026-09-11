@@ -137,13 +137,22 @@
 .lp-list__item {
   position: relative; padding-left: 24px; font-size: 16px; line-height: 1.95; color: var(--ink-2);
 }
+/* 2026-09-11 とーる指示：文字だけで飽きるので、印で読み分けられるようにする。
+   合う方＝金の丸にチェック／合わない方＝静かな横線。 */
+.lp-list__item { padding-left: 34px; }
 .lp-list__item::before {
-  content: ""; position: absolute; left: 4px; top: 15px;
-  width: 6px; height: 6px; border-radius: 50%; background: var(--gold-2);
+  content: "✓"; position: absolute; left: 0; top: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; line-height: 1; color: #16110a;
+  background: linear-gradient(135deg, var(--gold-2), var(--gold));
 }
 .lp-list--notfor .lp-list__item::before {
-  border-radius: 0; height: 1px; width: 10px; left: 2px; background: var(--ink-soft);
+  content: "−"; color: var(--ink-soft); background: none;
+  border: 1px solid rgba(255, 255, 255, .16);
 }
+/* 文の後半だけを立てる（どこを立てるかは lp.js が文の形から決める） */
+.lp-em { color: var(--ink); font-weight: 700; }
 
 .lp-subtitle {
   margin: 48px 0 0; font-family: var(--mincho); font-size: 16px; font-weight: 700;
@@ -172,16 +181,22 @@
 /* --- 参加前の4項目 -------------------------------------------------------- */
 .lp-before { list-style: none; margin: 28px 0 0; padding: 0; counter-reset: lpb; display: grid; gap: 28px; }
 .lp-before__item {
-  position: relative; padding-left: 38px; counter-increment: lpb;
+  position: relative; padding-left: 44px; counter-increment: lpb;
 }
 .lp-before__item::before {
-  content: counter(lpb); position: absolute; left: 0; top: 2px;
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1px solid var(--line-2); color: var(--gold-2);
+  /* 2026-09-11：01〜04 と2桁で出して、番号として立てる */
+  content: "0" counter(lpb); position: absolute; left: 0; top: 0;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid rgba(238, 214, 163, .34); color: var(--gold-2);
+  letter-spacing: .02em;
   font-family: var(--serif-en); font-size: 15px;
   display: grid; place-items: center;
 }
-.lp-before__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
+/* 2026-09-11：見出しを一段大きくして、本文との差を付ける */
+.lp-before__title {
+  display: block; font-size: 17px; font-weight: 700; color: var(--ink);
+  font-family: var(--mincho); letter-spacing: .02em;
+}
 .lp-before__body { display: block; margin-top: 8px; font-size: 16px; line-height: 1.95; color: var(--ink-2); }
 
 /* --- よくある質問 --------------------------------------------------------- */
@@ -372,7 +387,8 @@
 }
 @media (prefers-reduced-motion: reduce) { .deck__bar-fill { transition: none; } }
 
-.deck__buttons { display: flex; gap: 10px; flex: 1 1 auto; justify-content: flex-end; }
+/* 2026-09-11 とーる指示：「次へ」だけになったので、中央へ寄せる */
+.deck__buttons { display: flex; gap: 10px; flex: 1 1 auto; justify-content: center; }
 .deck__prev, .deck__next { width: auto; min-height: 48px; padding: 10px 22px; }
 .deck__prev { flex: 0 0 auto; }
 .deck__next { flex: 1 1 auto; max-width: 260px; }
@@ -598,3 +614,26 @@
 /* 企画の帯にも企画名を出したので、ヒーローのほうは重ねて見せない（2026-09-11）。
    ★消さずに残しているのは、読み上げの手がかりとして意味があるため。 */
 .lp-hero__subtitle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+/* この5日間を設計した人（2026-09-11 とーる指示）。
+   診断前LPと同じ形にそろえる（丸い写真＋名前）。 */
+.lp-author__head {
+  display: flex; align-items: center; gap: 16px; margin: 0 0 18px;
+}
+.lp-author__photo {
+  flex: none; width: 84px; height: 84px; border-radius: 999px;
+  border: 1px solid rgba(238, 214, 163, .22); object-fit: cover;
+}
+.lp-author__id { flex: 1 1 auto; min-width: 0; }
+.lp-author__head .lp-author__name { margin: 0 0 4px; }
+.lp-author__head .lp-author__role { margin: 0; }
+
+/* 参加費（2026-09-11 とーる指示）。
+   文字が続くので、ひとかたまりとして枠で囲む。 */
+.lp-free__body {
+  padding: 22px 20px;
+  border: 1px solid rgba(238, 214, 163, .18);
+  border-radius: 18px;
+  background: rgba(238, 214, 163, .04);
+}
+.lp-free__lead { margin-top: 20px; }

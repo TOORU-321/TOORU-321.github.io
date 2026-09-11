@@ -340,7 +340,14 @@
         /* 2026-09-03 とーる指示：「まとめて読む」は置かない。
          * 一気に流し読みできると、1枚ずつ読ませる意味がなくなるため。 */
         toggle: false,
-        finalCta: { label: lp.deck.more, onClick: function () { revealAfter(); } },
+        /* 2026-09-11 とーる指示：「戻る」も置かない。
+         * 前へ進むことだけに集中してもらう。読み直したい人には、
+         * 読み切ったあとに「もう一度はじめから読む」を出す。 */
+        prev: false,
+        finalCta: { label: lp.deck.more, onClick: function () {
+          revealAfter();
+          showRestart();
+        } },
         renderAll: function () { return renderCardsFlat(cards); },
         expose: function (api) { deckApi = api; },
         onStep: function (i) {
@@ -348,7 +355,11 @@
           reachedSteps[i] = true;
           SC.track.event('lp_deck_step', { step: i + 1 });
         },
-        onComplete: function () { SC.track.event('lp_deck_completed'); },
+        onComplete: function () {
+          SC.track.event('lp_deck_completed');
+          /* 読み切ったので、読み直す道を出す（2026-09-11） */
+          showRestart();
+        },
         onExpand: function () { SC.track.event('lp_deck_expanded'); revealAfter(); }
       }));
 
@@ -363,16 +374,50 @@
       });
     }
 
+    /* 「〜方」で終わる一文の、最後の読点から後ろを太字にする（2026-09-11）。
+     *
+     * ★どの言葉を強めるかを人が選ばない。文の形から決める。
+     *   本文が変わっても、勝手に追従する（正本を書き換えないため）。
+     * ★読点が無い一文は、そのまま。「合わない方」の側は静かなままになる。 */
+    function emphasizeTail(text) {
+      var t = String(text || '');
+      var cut = t.lastIndexOf('、');
+      if (cut < 0 || cut === t.length - 1) return [t];
+      return [
+        h('span', { text: t.slice(0, cut + 1) }),
+        h('strong', { class: 'lp-em', text: t.slice(cut + 1) })
+      ];
+    }
+
     /* --- 8. 適合性 ------------------------------------------------------ */
     setText('fitHeading', lp.fit.heading);
-    list('fitFor', lp.fit.forItems);
+
+    /* 合う方・合わない方は、印を付けて読み分けられるようにする（2026-09-11） */
+    function fitList(name, items, kind) {
+      var el = slot(name);
+      if (!el) return;
+      items.forEach(function (t) {
+        el.appendChild(h('li', { class: 'lp-list__item lp-list__item--' + kind },
+          emphasizeTail(t)));
+      });
+    }
+    fitList('fitFor', lp.fit.forItems, 'for');
     setText('fitNotForHeading', lp.fit.notForHeading);
-    list('fitNotFor', lp.fit.notForItems);
+    fitList('fitNotFor', lp.fit.notForItems, 'notfor');
     setText('fitNote', lp.fit.note);
 
     /* --- 9. 設計者プロフィール（実績が届くまで思想紹介のみ）-------------- */
     setText('authorHeading', lp.author.heading);
     setProse('authorBody', lp.author.body);
+    /* 写真が読み込めなかったら、そこだけ消す（2026-09-11）。
+     * 名前と肩書きは残るので、内容は成立する。 */
+    var authorPhoto = doc.querySelector('[data-lp-photo="author"]');
+    if (authorPhoto) {
+      authorPhoto.addEventListener('error', function () {
+        if (authorPhoto.parentNode) authorPhoto.parentNode.removeChild(authorPhoto);
+      });
+    }
+
     setText('authorName', lp.author.name);
     setText('authorRole', lp.author.role);
     setText('authorCredential', lp.author.credential);
@@ -408,7 +453,15 @@
     var freeSlot = slot('freeBody');
     if (freeSlot) {
       freeSlot.appendChild(SC.ui.prose(lp.freeReason.body, 'lp-prose__line'));
-      freeSlot.appendChild(SC.ui.prose(lp.freeReason.body2, 'lp-prose__line'));
+      /* 2段落目は、最初の一文だけ太字にする（2026-09-11）。
+       * ここも人が選ばず、文の切れ目（。）で決める。 */
+      var b2 = String(lp.freeReason.body2 || '');
+      var cut2 = b2.indexOf('。');
+      freeSlot.appendChild(h('p', { class: 'lp-prose__line lp-free__lead' },
+        cut2 > -1
+          ? [h('strong', { class: 'lp-em', text: b2.slice(0, cut2 + 1) }),
+             h('span', { text: b2.slice(cut2 + 1) })]
+          : [h('span', { text: b2 })]));
     }
     setText('freeNote', lp.freeReason.note);
 
@@ -609,8 +662,19 @@
      * 表示セッションのあいだだけ後半を閉じ、1枚目へ戻す。
      * 端末に残した既読の印（lpStoryRead）や、参加状態・DAY1〜5の回答は消さない。 */
     var restartSlot = slot('restartSlot');
-    if (restartSlot && state.lpStoryRead) {
+
+    /* 2026-09-11 とーる指示：読み切ったあとにも出す。
+     * それまでは「前に読み切ったことがある人」にしか出ていなかったので、
+     * 初めての人は、読み終えても戻る手段がなかった。 */
+    function showRestart() {
+      var btn = doc.getElementById('lp-restart-btn');
+      if (btn) btn.hidden = false;
+    }
+
+    if (restartSlot) {
       restartSlot.appendChild(h('button', {
+        /* 読み切るまでは隠しておく。すでに読み切った人には最初から出す */
+        hidden: !state.lpStoryRead,
         type: 'button', class: 'btn btn--ghost lp-restart__btn', id: 'lp-restart-btn',
         text: lp.deck.restart,
         on: {

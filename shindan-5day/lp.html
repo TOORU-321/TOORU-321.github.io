@@ -106,8 +106,16 @@
     <!-- 9. 設計者プロフィール -->
     <section class="lp-section lp-author">
       <h2 class="lp-section__title" data-lp="authorHeading"></h2>
-      <p class="lp-author__name" data-lp="authorName"></p>
-      <p class="lp-author__role" data-lp="authorRole"></p>
+      <!-- 写真と名前を横に並べる（2026-09-11 とーる指示。診断前LPと同じ形） -->
+      <div class="lp-author__head">
+        <img class="lp-author__photo" data-lp-photo="author"
+             src="assets/images/author-toru-v2.webp"
+             width="240" height="240" alt="" loading="lazy" decoding="async">
+        <div class="lp-author__id">
+          <p class="lp-author__name" data-lp="authorName"></p>
+          <p class="lp-author__role" data-lp="authorRole"></p>
+        </div>
+      </div>
       <p class="lp-section__body" data-lp="authorBody"></p>
       <p class="lp-author__credential" data-lp="authorCredential"></p>
       <p class="lp-section__note" data-lp="authorCredentialNote"></p>
