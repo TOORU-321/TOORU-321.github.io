@@ -87,7 +87,7 @@
       return Promise.resolve({ ok: true, status: 'saved', anonymousDiagnosisId: id });
     },
 
-    bind: function (uid, transport) {
+    bind: function (uid, transport, name) {   /* name は開発モードでは使わない */
       var db = devRead();
       var ref = keyRefOf(transport);
       if (!uid || !ref) return Promise.resolve(fail('invalid'));
@@ -142,7 +142,7 @@
       });
     },
 
-    restoreByUid: function (uid) {
+    restoreByUid: function (uid, name) {      /* name は開発モードでは使わない */
       var db = devRead();
       var id = uid ? db.bindings[uid] : null;
       if (!id || !db.records[id]) return Promise.resolve(fail('not_found'));
@@ -182,11 +182,11 @@
     saveResult: function (record, transport) {
       return post({ action: 'save', record: record, handoff: transport });
     },
-    bind: function (uid, transport) {
-      return post({ action: 'bind', uid: uid, handoff: transport });
+    bind: function (uid, transport, name) {
+      return post({ action: 'bind', uid: uid, handoff: transport, name: name || null });
     },
-    restoreByUid: function (uid) {
-      return post({ action: 'restore', uid: uid });
+    restoreByUid: function (uid, name) {
+      return post({ action: 'restore', uid: uid, name: name || null });
     }
   };
 
@@ -213,18 +213,19 @@
     },
 
     /* uidと匿名診断IDを結合する。初回だけ成立し、以後は already_bound */
-    bindWithKey: function (uid, key) {
+    bindWithKey: function (uid, key, name) {
       var normalized = SC.handoffKey.normalize(key);
       if (!normalized) return Promise.resolve(fail('handoff_rejected'));
       return SC.handoffKey.forTransport(normalized).then(function (transport) {
-        return driver().bind(uid, transport);
+        return driver().bind(uid, transport, name);
       });
     },
 
-    /* 結合済みなら、uidだけで診断結果を取り出す */
-    restoreByUid: function (uid) {
+    /* 結合済みなら、uidだけで診断結果を取り出す。
+     * 名前は、来ていれば一緒に渡す（記録を新しく保つため・2026-09-11） */
+    restoreByUid: function (uid, name) {
       if (!uid) return Promise.resolve(fail('not_found'));
-      return driver().restoreByUid(uid);
+      return driver().restoreByUid(uid, name);
     },
 
     /* テスト・検証用（開発モードのときだけ効く） */

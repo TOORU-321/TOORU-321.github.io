@@ -23,6 +23,9 @@
 
   /* uidはこの閉じた変数の中だけに置く。DOM・URL・ログへ書かない */
   var uid = null;
+  /* LINEの表示名（2026-09-11）。uidと同じ扱い。
+   * 画面・計測・コンソールへは出さない。渡す先は結合の記録だけ。 */
+  var lineName = null;
   var root = null;
   var clipboardTried = 0;
 
@@ -40,6 +43,25 @@
     /* プロラインのuidは英数字と記号少々。長すぎるものは受け取らない */
     if (v.length > 120) return null;
     return v;
+  }
+
+  /* LINEの表示名を取り出す（2026-09-11）。
+   * プロラインが `&name=%%snsname%%` で入れてくれる。
+   * ★長すぎるもの・制御文字は受け取らない。 */
+  function readNameFromUrl() {
+    var m = /[?&]name=([^&#]*)/.exec(global.location.search);
+    if (!m) return null;
+    var v;
+    try {
+      v = decodeURIComponent(m[1].replace(/\+/g, ' '));
+    } catch (e) {
+      return null;
+    }
+    v = String(v).replace(/[\u0000-\u001f\u007f]/g, '').trim();
+    if (!v) return null;
+    /* 置き換えられなかったとき（変数のまま来たとき）は受け取らない */
+    if (v.indexOf('%%') > -1) return null;
+    return v.slice(0, 60);
   }
 
   /* URLからuidを外す（依頼11）。戻る操作でも復活しないよう置き換える */
@@ -285,7 +307,7 @@
     global.navigator.clipboard.readText().then(function (text) {
       var key = (text || '').trim();
       if (!key) { done(c().restoreSwitchFailed); return; }
-      SC.diagnosisRemote.bindWithKey(uid, key).then(function (res) {
+      SC.diagnosisRemote.bindWithKey(uid, key, lineName).then(function (res) {
         if (res.ok && res.result) {
           track('handoff_switch_succeeded');
           viewResult(res.result);
@@ -302,7 +324,7 @@
   /* --- 7. 結合 ---------------------------------------------------------- */
   function bind(key, from) {
     viewChecking();
-    SC.diagnosisRemote.bindWithKey(uid, key).then(function (res) {
+    SC.diagnosisRemote.bindWithKey(uid, key, lineName).then(function (res) {
       if (res.ok) {
         track('handoff_bind_succeeded', { cta: from });
         stripUidFromUrl();
@@ -351,12 +373,15 @@
     track('handoff_restore_view');
 
     uid = readUidFromUrl();
+    lineName = readNameFromUrl();
+    /* 名前だけでも、URLからはすぐ消す（履歴・共有で漏れないように） */
+    if (lineName && !uid) stripUidFromUrl();
     if (!uid) { viewNoUid(); return; }
 
     viewChecking();
 
     /* 3〜4. まずuidだけで探す。結合済みならクリップボードに触らない */
-    SC.diagnosisRemote.restoreByUid(uid).then(function (res) {
+    SC.diagnosisRemote.restoreByUid(uid, lineName).then(function (res) {
       if (res.ok && res.result) {
         stripUidFromUrl();
         /* 5日間チャレンジの続き。無ければ null のまま */

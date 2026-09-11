@@ -141,15 +141,17 @@
    *
    * 「5日後に残るもの」＝章 takeaway の説明文のあとへ置く。
    * 雰囲気を補うだけの写真なので alt は空にして、読み上げでは飛ばす。
-   * ★実際の参加者・お客様の声・完成した一本線シートではない。
-   *   そう読まれないよう、下に「取り組みのイメージ（AI生成）」と必ず出す。
+   *
+   * 2026-09-11 とーる指示で、下の断り書き（取り組みのイメージ／AI生成）を外した。
+   * 診断前LPでも「強調しすぎる」として出さない判断が先に出ており、そちらへそろえる。
+   * ★写真は実際の参加者・お客様の声・完成した一本線シートではない。
+   *   そう見せる文脈にも置いていない（見出しは章の説明で、写真は雰囲気だけ）。
    *
    * 写真が出せなくても、内容と操作は成立する（読み込みに失敗したら消すだけ）。 */
   var PHOTO = {
     src: 'assets/images/challenge-planning-woman-dark-v1.jpg',
     width: 1536,
-    height: 1024,
-    caption: '取り組みのイメージ（AI生成）'
+    height: 1024
   };
 
   function photoFigure() {
@@ -164,10 +166,7 @@
       loading: 'lazy',
       decoding: 'async'
     });
-    var fig = h('figure', { class: 'lp-photo' }, [
-      img,
-      h('figcaption', { class: 'lp-photo__caption', text: PHOTO.caption })
-    ]);
+    var fig = h('figure', { class: 'lp-photo' }, [img]);
     img.addEventListener('error', function () {
       if (fig.parentNode) fig.parentNode.removeChild(fig);
     });

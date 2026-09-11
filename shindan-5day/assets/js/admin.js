@@ -142,6 +142,12 @@
       class: 'adm-row' + (stalled(row) ? ' adm-row--stalled' : ''),
       on: { click: function () { openDetail(row); } }
     }, [
+      /* LINEの表示名（2026-09-11 とーる指示）。
+       * プロラインの友だち一覧と同じ名前なので、そのまま突き合わせられる。
+       * ★ここ以外には出さない（計測・コンソールへは渡していない）。 */
+      h('div', { class: 'adm-row__name' + (row.name ? '' : ' is-missing'),
+                 text: row.name || c.row.noName }),
+
       h('div', { class: 'adm-row__head' }, [
         h('span', { class: 'adm-row__score', text: String(row.score) + c.row.score }),
         h('span', { class: 'adm-row__band', text: row.band || '' }),
@@ -260,7 +266,8 @@
         })
       ]),
       h('p', { class: 'adm-detail__meta',
-        text: shortTime(row.at) + '／' + (row.uid ? c.row.uid : c.row.noUid) }),
+        text: (row.name ? row.name + '／' : '') +
+              shortTime(row.at) + '／' + (row.uid ? c.row.uid : c.row.noUid) }),
       section(d.blueprint, [bpNode]),
       section(d.diagnosis, diagNodes),
       section(d.answers, answerNodes),

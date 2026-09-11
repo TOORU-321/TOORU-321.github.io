@@ -163,3 +163,13 @@
   color: var(--gold-2, #e3c381);
   border: 1px solid rgba(238, 214, 163, .3);
 }
+
+/* LINEの表示名（2026-09-11 とーる指示）。
+   いちばん上に置く。誰の行かを最初に見せたいため。 */
+.adm-row__name {
+  font-size: 15px; font-weight: 700; color: var(--ink, #f7f4ec);
+  margin: 0 0 8px; overflow-wrap: anywhere;
+}
+.adm-row__name.is-missing {
+  font-size: 12px; font-weight: 400; opacity: .55;
+}
