@@ -442,3 +442,10 @@
    小さな注記では気づかれないので、カードとして出す。 */
 .dg-switch__body .dg-handoff__body { margin: 0 0 6px; }
 .dg-switch__body .dg-handoff__body:last-child { margin-bottom: 16px; }
+
+/* すでに友だちの人への案内（2026-09-11 §68追補2）。
+   ボタンの直下。注意書きとして、本文より一段小さく静かに置く。 */
+.dg-handoff__already { margin: 12px 0 0; }
+.dg-handoff__already-line {
+  margin: 0; font-size: 13px; line-height: 1.85; color: var(--ink-2);
+}

@@ -525,7 +525,14 @@
           href: SC.endpoints.lineAddFriend,
           rel: 'noreferrer',
           on: { click: function () { track('handoff_line_opened'); } }
-        }, c().handoffLineCta)
+        }, c().handoffLineCta),
+
+        /* すでに友だちの人への案内（2026-09-11 §68追補2）。
+         * 友だち追加のシナリオは生涯1回なので、受け直した人には届かない。
+         * ★どちらの人にも当てはまる条件文として、常に出す。
+         *   uidの有無で出し分けると、未登録だと決めつけることになる。 */
+        h('div', { class: 'dg-handoff__already' },
+          SC.dom.lines(c().handoffLineAlreadyFriend, 'dg-handoff__already-line'))
       ]);
       lineBox.hidden = false;
 
