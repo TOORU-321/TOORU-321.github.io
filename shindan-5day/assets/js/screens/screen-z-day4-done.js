@@ -72,12 +72,17 @@
           onOpen: function () { ctx.track('day5_teaser_opened', { day: 5 }); }
         }),
 
+        SC.dayGate.isLocked(5, state) ? SC.ui.lockedNextDay({ day: 5 }) : null,
+
         SC.ui.ctaArea([
-          SC.ui.primaryCta({
-            label: c.nextDayCta,
-            /* DAY5実装済み（§29-C）。Screen AAへ進む */
-            onClick: function () { ctx.go('day5_intro'); }
-          }),
+          /* 次のDAYがまだ開いていなければ、ボタンを出さない（2026-09-11） */
+          SC.dayGate.isLocked(5, state)
+            ? null
+            : SC.ui.primaryCta({
+              label: c.nextDayCta,
+              /* DAY5実装済み（§29-C）。Screen AAへ進む */
+              onClick: function () { ctx.go('day5_intro'); }
+            }),
           SC.ui.secondaryCta({ label: c.backToChange, onClick: function () { ctx.go('day4_entry'); } })
         ])
       ]);

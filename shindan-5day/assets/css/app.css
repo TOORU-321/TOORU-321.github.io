@@ -1111,3 +1111,13 @@ button, input { font: inherit; }
    最初の診断案内は shindan-lp.html 側のフッターが担当する。 */
 .app-footer__legalbox { display: none; }
 body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
+
+/* 次のDAYがまだ開いていないとき（2026-09-11 とーる判断・1日1DAY）。
+   「止められた」ではなく「今日のぶんは終わった」に見えるように、
+   警告色は使わず、完了カードと同じ落ち着いた面にする。 */
+.card--locked {
+  border-style: dashed;
+  background: transparent;
+}
+.locked__title { margin-bottom: 10px; }
+.locked__body { color: var(--ink-2); }

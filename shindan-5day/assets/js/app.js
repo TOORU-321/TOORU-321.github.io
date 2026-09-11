@@ -61,6 +61,21 @@
   function guard(screenId, state) {
     if (!screenId || SC.config.screenOrder.indexOf(screenId) === -1) return 'result';
 
+    /* 1日にひとつだけ（2026-09-11 とーる判断）。
+     * 今日のぶんを終えた人は、明日まで次のDAYへ入れない。
+     * ★戻ってきた先は、その日の完了画面。そこに「明日ひらきます」が出る。
+     * ★?dev=1 のときは通る（判定は day-gate.js 側）。 */
+    if (SC.dayGate) {
+      var want = SC.dayGate.dayOfScreen(screenId);
+      var open = SC.dayGate.openDay(state);
+      /* 戻す先は「その日の完了画面」なので、そこが本当に完了しているときだけ。
+       * まだ始めてもいない人は、この下の順番の決まりに任せる
+       * （でないと、DAY1未完了の人をDAY1完了画面へ送ってしまう）。 */
+      if (want > open && state.completedDays.indexOf(open) !== -1) {
+        return 'day' + open + '_done';
+      }
+    }
+
     var day1Done = state.completedDays.indexOf(1) !== -1;
     var day2Done = state.completedDays.indexOf(2) !== -1;
     var day3Done = state.completedDays.indexOf(3) !== -1;

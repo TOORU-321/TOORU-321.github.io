@@ -550,6 +550,18 @@
 
   ui.ctaArea = function (children) { return h('div', { class: 'cta-area' }, children); };
 
+  /* 次のDAYがまだ開いていないときに、ボタンの代わりに出すもの（2026-09-11）。
+   * ★押せないボタンは置かない。押せるように見えるものを置かないため。 */
+  ui.lockedNextDay = function (opts) {
+    var c = SC.copy.dayGate;
+    return h('div', { class: 'card card--locked' }, [
+      h('h2', { class: 'card__title locked__title',
+                text: c.heading.replace('{day}', opts.day) }),
+      h('div', { class: 'prose locked__body' }, SC.dom.lines(c.body, 'prose__line')),
+      h('p', { class: 'card__note', text: c.note })
+    ]);
+  };
+
   /* --- DayTeaser -------------------------------------------------------- */
   ui.dayTeaser = function (opts) {
     var opened = false;

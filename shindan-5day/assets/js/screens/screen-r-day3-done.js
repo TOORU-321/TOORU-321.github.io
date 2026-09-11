@@ -86,8 +86,13 @@
           onOpen: function () { ctx.track('day4_teaser_opened', { day: 4 }); }
         }),
 
+        SC.dayGate.isLocked(4, state) ? SC.ui.lockedNextDay({ day: 4 }) : null,
+
         SC.ui.ctaArea([
-          SC.ui.primaryCta({ label: c.nextDayCta, onClick: function () { ctx.go('day4_intro'); } }),
+          /* 次のDAYがまだ開いていなければ、ボタンを出さない（2026-09-11） */
+          SC.dayGate.isLocked(4, state)
+            ? null
+            : SC.ui.primaryCta({ label: c.nextDayCta, onClick: function () { ctx.go('day4_intro'); } }),
           SC.ui.secondaryCta({ label: c.backToChange, onClick: function () { ctx.go('day3_current'); } })
         ])
       ]);
