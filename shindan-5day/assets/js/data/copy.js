@@ -1033,6 +1033,8 @@
       back: '戻る',
       saved: '保存しました',
       restored: '前回の続きから再開しました',
+      /* 別の端末で進めた続きに追いついたとき（2026-09-11） */
+      caughtUp: '別の端末で進めた続きに追いつきました。',
       restoredDone: 'DAY1完了の状態から再開しました',
       restoredDayDone: 'DAY{day}完了の状態から再開しました',
       resetDone: '保存内容を消去しました',

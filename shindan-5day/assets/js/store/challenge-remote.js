@@ -95,6 +95,35 @@
       });
     },
 
+    /* サーバーに残っている続きを取りに行く（2026-09-11）。
+     *
+     * それまで index.html は端末の中しか見ていなかったので、
+     * 途中でブラウザが変わると古いほうの画面が出ていた。
+     *
+     * ★取ってくるだけ。採用するかどうかは store が決める
+     *   （手元のほうが新しければ、そのまま）。
+     * ★LINEと結びついている人だけ。uidが無いと誰の続きか分からない。
+     * ★失敗しても null を返す。画面は止めない。 */
+    fetchLatest: function () {
+      if (!SC.challengeRemote.isEnabled()) return Promise.resolve(null);
+      var d = (SC.store && SC.store.loadDiagnosis) ? SC.store.loadDiagnosis() : null;
+      var uid = d && d.lineUid;
+      if (!uid) return Promise.resolve(null);
+
+      return global.fetch(endpoint(), {
+        method: 'POST',
+        /* text/plain にすると事前確認の通信が起きず、GAS側でそのまま受け取れる */
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'restore', uid: uid }),
+        referrerPolicy: 'no-referrer'
+      }).then(function (res) {
+        return res.ok ? res.json() : null;
+      }).then(function (json) {
+        if (!json || !json.ok || !json.challenge) return null;
+        return json.challenge.answers || null;
+      })['catch'](function () { return null; });
+    },
+
     /* 書きかけの文字は、少し待ってから送る。
      * 1文字ごとに通信すると、GASの回数の上限にすぐ届いてしまう */
     saveSoon: function (state) {

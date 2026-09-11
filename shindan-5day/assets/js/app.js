@@ -365,6 +365,26 @@
     ]);
   }
 
+  /* 別の端末で進めた続きに追いつく（2026-09-11 あさこさんの報告）。
+   *
+   * DAY5まで終えた方が、LINEの完了案内から開いたらDAY2の画面が出た。
+   * 途中でブラウザが変わっていて、古いほうの端末には新しい続きが無かった。
+   *
+   * ★描いたあとで取りに行く。開くのを待たせない。
+   * ★新しいほうがあったときだけ描き直す。
+   *   すでに操作を始めていた人は、その保存のほうが新しくなるので動かない。
+   * ★通信できなくても、いつもどおり動く。 */
+  function catchUpFromServer() {
+    if (!SC.challengeRemote || !SC.challengeRemote.fetchLatest) return;
+    SC.challengeRemote.fetchLatest().then(function (incoming) {
+      if (!incoming) return;
+      if (!SC.store.adoptChallengeState(incoming)) return;
+      SC.store.trackEvent('challenge_caught_up');
+      restoreNotice = SC.copy.common.caughtUp;
+      render(SC.store.getState().currentScreen);
+    });
+  }
+
   function boot() {
     captureMonitorId();
     root = doc.getElementById('app');
@@ -417,6 +437,9 @@
     /* 再読み込み時：URLのハッシュ優先、無ければ最後に保存した画面へ復帰 */
     var fromHash = screenFromHash(global.location.hash);
     render(fromHash || state.currentScreen);
+
+    /* 描いてから、別の端末の続きを確かめる（2026-09-11） */
+    catchUpFromServer();
   }
 
   SC.app = { boot: boot, render: render, guard: guard, HASH: HASH };
