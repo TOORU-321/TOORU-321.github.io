@@ -18,6 +18,15 @@
       var state = SC.store.getState();
       var noticeSlot = h('div', { class: 'notice-slot' });
 
+      /* 本人が作り直した／戻した直後だけ、一度きり知らせる */
+      var done = SC.day5.takeExperimentNotice();
+      /* 保存文がいまの回答とずれていて、どうするか選んでもらう必要があるとき。
+         needs-choice       ：本人が手を入れた文章がある
+         needs-choice-stale ：出自の分からない古い保存文 */
+      var ask = (result === 'needs-choice' || result === 'needs-choice-stale') ? c.changed : null;
+      /* 選び終えたあと、まだ回答とずれているときに出す注記 */
+      var behind = ask ? null : SC.day5.experimentBehindKind(state);
+
       ctx.trackView('day5_experiment_view');
 
       return h('div', { class: 'screen screen--day5-experiment' }, [
@@ -29,6 +38,29 @@
         result === 'regenerated'
           ? SC.ui.saveStatus({ text: c.updatedNotice, tone: 'info' })
           : null,
+        /* 本人が押した結果の知らせ。再表示のたびには出さない */
+        done === 'rebuilt' ? SC.ui.saveStatus({ text: c.changed.rebuiltNotice, tone: 'info' }) : null,
+        done === 'restored' ? SC.ui.saveStatus({ text: c.changed.restoredNotice, tone: 'info' }) : null,
+
+        /* 黙って作り直さず、どちらにするか選んでもらう */
+        ask
+          ? SC.ui.card(null, [
+              h('p', { class: 'card__body', text: ask.question }),
+              SC.ui.ctaArea([
+                SC.ui.secondaryCta({
+                  label: ask.keepCta,
+                  onClick: function () { SC.day5.keepEditedExperiment(); ctx.rerender(); }
+                }),
+                SC.ui.secondaryCta({
+                  label: ask.rebuildCta,
+                  onClick: function () { SC.day5.regenerateExperiment(); ctx.rerender(); }
+                })
+              ])
+            ])
+          : null,
+
+        /* 残したままにした人へ。回答とずれていることを隠さない */
+        behind ? SC.ui.saveStatus({ text: c.changed.keptNote, tone: 'info' }) : null,
 
         SC.ui.card(c.cardHeading, [
           SC.ui.recapList({ items: SC.day5.cardItems(state) })
@@ -69,6 +101,13 @@
               ctx.go('day5_done');
             }
           }),
+          /* 作り直したあとでも、前の文章へ戻せるようにしておく */
+          state.day5.experimentPrevDraft
+            ? SC.ui.secondaryCta({
+                label: c.changed.restoreCta,
+                onClick: function () { SC.day5.restorePrevExperiment(); ctx.rerender(); }
+              })
+            : null,
           SC.ui.secondaryCta({
             label: c.secondaryCta,
             onClick: function () { ctx.go('day5_hypothesis'); }

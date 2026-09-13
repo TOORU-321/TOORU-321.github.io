@@ -139,7 +139,10 @@
       reviewWindow: null,          /* 未設定ならLPの通知時間、それも無ければ既定 */
       adjustmentPoint: null, adjustmentPointCustom: '',
       supportMode: null,
-      experimentDraft: '', experimentEdited: false, experimentSourceKey: ''
+      experimentDraft: '', experimentEdited: false, experimentSourceKey: '',
+      /* 30日実験文の保護（2026-09-12）。橋と同じ作り */
+      experimentAckedSourceKey: '',
+      experimentPrevDraft: '', experimentPrevSourceKey: '', experimentPrevEdited: false
     };
   }
 
@@ -221,6 +224,12 @@
           !optionByValue(SC.config.reminderWindows, state.day5.reviewWindow)) {
         state.day5.reviewWindow = null;
       }
+      if (typeof state.day5.experimentDraft !== 'string') state.day5.experimentDraft = '';
+      if (typeof state.day5.experimentEdited !== 'boolean') state.day5.experimentEdited = false;
+      if (typeof state.day5.experimentAckedSourceKey !== 'string') state.day5.experimentAckedSourceKey = '';
+      if (typeof state.day5.experimentPrevDraft !== 'string') state.day5.experimentPrevDraft = '';
+      if (typeof state.day5.experimentPrevSourceKey !== 'string') state.day5.experimentPrevSourceKey = '';
+      if (typeof state.day5.experimentPrevEdited !== 'boolean') state.day5.experimentPrevEdited = false;
     }
     if (!isPlainObject(state.day4)) state.day4 = buildDay4();
     else {

@@ -176,7 +176,7 @@ button, input { font: inherit; }
 }
 
 .card__body { margin: 0; font-size: 15px; color: var(--ink-2); }
-.card__note { margin: 0 0 10px; font-size: 14px; color: var(--ink-soft); }
+.card__note { margin: 0 0 10px; font-size: 0.875rem; color: var(--ink-soft); }
 .card--lead .lead-line { margin: 0 0 8px; font-size: 15px; color: var(--ink-2); }
 .card--lead .lead-line:last-child { margin-bottom: 0; }
 
@@ -303,9 +303,13 @@ button, input { font: inherit; }
   transition: background .18s ease, border-color .18s ease;
 }
 
+/* 2026-09-12：DAY2〜DAY5の選択肢・注記・操作ボタンの文字サイズを相対単位にした。
+ * 画面の文字を大きくする設定に追従させるため（Codex承認・最小修正）。
+ * ルートに font-size の指定は無いので、16px基準で見た目は変わらない。
+ * ★rem にしただけで、すべての端末のOS文字設定に追従すると保証するものではない。 */
 .choice__body { flex: 1 1 auto; min-width: 0; display: block; }
-.choice__title { display: block; font-size: 15px; font-weight: 700; color: var(--ink); }
-.choice__sub { display: block; font-size: 14px; color: var(--ink-soft); font-family: var(--serif-en); }
+.choice__title { display: block; font-size: 0.9375rem; font-weight: 700; color: var(--ink); }
+.choice__sub { display: block; font-size: 0.875rem; color: var(--ink-soft); font-family: var(--serif-en); }
 
 .is-selected > .choice__label {
   border-color: var(--gold-2);
@@ -538,7 +542,7 @@ button, input { font: inherit; }
 .cta-area { display: grid; gap: 10px; margin-top: 22px; }
 
 .btn {
-  appearance: none; font-weight: 700; font-size: 16px;
+  appearance: none; font-weight: 700; font-size: 1rem;
   width: 100%; min-height: 54px; padding: 13px 18px;
   border-radius: 999px; cursor: pointer; border: 1px solid transparent;
   letter-spacing: .06em;
@@ -562,12 +566,12 @@ button, input { font: inherit; }
 .btn--primary:hover { filter: brightness(1.06); }
 .btn--secondary {
   background: transparent; color: var(--ink-soft); border-color: var(--line);
-  min-height: 48px; font-size: 15px; font-weight: 400;
+  min-height: 48px; font-size: 0.9375rem; font-weight: 400;
 }
 .btn--secondary:hover { color: var(--gold-2); border-color: var(--gold-2); }
 .btn--ghost {
   background: transparent; color: var(--ink-soft); border-color: var(--line);
-  min-height: 40px; font-size: 14px; width: auto; padding: 7px 16px; border-radius: 999px;
+  min-height: 40px; font-size: 0.875rem; width: auto; padding: 7px 16px; border-radius: 999px;
   font-weight: 400;
 }
 .btn--ghost:hover { color: var(--gold-2); border-color: var(--line-2); }
@@ -737,7 +741,7 @@ button, input { font: inherit; }
   .choice-list--inline { grid-template-columns: 1fr; }
   .card { padding: 16px 14px; }
   .radar { padding: 26px 34px 30px; }
-  .btn { font-size: 15px; letter-spacing: .04em; }
+  .btn { font-size: 0.9375rem; letter-spacing: .04em; }
 }
 
 

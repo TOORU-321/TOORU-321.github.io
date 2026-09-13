@@ -38,6 +38,9 @@
     return null;
   }
 
+  /* 本人が作り直した／戻したことを、その場で一度だけ知らせるための控え */
+  var notice = null;
+
   SC.day5 = {
     DAY: 5,
     SECTION_KEY: 'thirtyDayPlan',
@@ -137,8 +140,26 @@
       return fill(SC.copy.day5Experiment.templates.experiment, SC.day5.values(state));
     },
 
-    /* 元の回答・曜日・時間帯が変わったかを見分ける鍵（§29-E） */
+    /* 実験文が変わったかを見分ける鍵（§29-E）。
+     *
+     * 2026-09-12：DAY5の内部値だけを見ていたので、DAY4を変えて仮説の言葉が
+     * 変わっても実験文が作り直されず、画面と保存文で別のことを言う状態になっていた。
+     * 「実験文を組み立てるのに実際に使った言葉」と文言の版から鍵を作る。
+     *
+     * ・DAY4を変えれば仮説の言葉が変わるので、ここで拾える
+     * ・選んでいない自由入力の控えは入らないので、むだな作り直しが起きない
+     * ・区切り文字は使わない（自由入力の記号でぶつからないように）。先頭の v2 は形の目印 */
     sourceKey: function (state) {
+      var v = SC.day5.values(state);
+      return 'v2' + JSON.stringify([
+        SC.copyVersion ? SC.copyVersion.of(state) : '',
+        v.hypothesis, v.weeklyAction, v.metric, v.adjustment, v.support,
+        v.reviewDay, v.reviewWindow
+      ]);
+    },
+
+    /* 2026-09-12より前の鍵の形。鍵の形が変わっただけなのかを見分けるために残してある */
+    legacySourceKey: function (state) {
       var a = state.day5 || {};
       return FIELDS.map(function (f) {
         var custom = (f.customKey && a[f.key] === 'custom') ? (a[f.customKey] || '') : '';
@@ -146,27 +167,119 @@
       }).join('|') + '#' + SC.day5.reviewDay(state) + '#' + SC.day5.reviewWindow(state);
     },
 
+    isLegacyKey: function (key) {
+      return String(key || '').slice(0, 2) !== 'v2';
+    },
+
     /* Screen AH を開いたときに実験文を用意する。
      * 戻って回答を変えていたら作り直し、本人の編集フラグを戻す（§29-E）。
-     * 返り値: 'created' | 'regenerated' | 'kept' | 'incomplete' */
+     * ただし本人が手を入れた文章は、黙って作り直さない（2026-09-12）。
+     * 返り値: 'created' | 'regenerated' | 'kept' | 'needs-choice'
+     *         | 'needs-choice-stale' | 'incomplete' | 'unsupported-version' */
     ensureExperiment: function () {
       var state = SC.store.getState();
+      /* 言葉を用意できない版では、作り直しも判定もしない */
+      if (SC.copyVersion && SC.copyVersion.isUnsupported(state)) return 'unsupported-version';
       if (!SC.day5.isAnswersComplete(state)) return 'incomplete';
       var key = SC.day5.sourceKey(state);
       var a = state.day5;
+
       if (!a.experimentDraft) {
         SC.store.setDayAnswer('day5', {
-          experimentDraft: SC.day5.buildExperiment(state), experimentEdited: false, experimentSourceKey: key
+          experimentDraft: SC.day5.buildExperiment(state), experimentEdited: false,
+          experimentSourceKey: key, experimentAckedSourceKey: ''
         });
         return 'created';
       }
-      if (a.experimentSourceKey !== key) {
-        SC.store.setDayAnswer('day5', {
-          experimentDraft: SC.day5.buildExperiment(state), experimentEdited: false, experimentSourceKey: key
-        });
-        return 'regenerated';
+      if (a.experimentSourceKey === key) return 'kept';
+      if (a.experimentAckedSourceKey === key) return 'kept';   /* 本人が「残す」を選んだあと */
+
+      /* 2026-09-12より前に保存された文章。鍵の形が違うだけかもしれない。
+       * いまの回答から作った文と同じなら整合しているので、鍵だけ移す */
+      if (SC.day5.isLegacyKey(a.experimentSourceKey)) {
+        if (String(a.experimentDraft).trim() === SC.day5.buildExperiment(state).trim()) {
+          SC.store.setDayAnswer('day5', { experimentSourceKey: key });
+          return 'kept';
+        }
+        return a.experimentEdited ? 'needs-choice' : 'needs-choice-stale';
       }
-      return 'kept';
+
+      /* 新しい鍵で、実際に変わったと分かったとき */
+      if (a.experimentEdited) return 'needs-choice';
+
+      SC.store.setDayAnswer('day5', {
+        experimentDraft: SC.day5.buildExperiment(state), experimentEdited: false,
+        experimentSourceKey: key, experimentAckedSourceKey: ''
+      });
+      return 'regenerated';
+    },
+
+    /* 「今の文章を残す」を選んだとき。文章は触らず、聞いたことだけ覚える */
+    keepEditedExperiment: function () {
+      var state = SC.store.getState();
+      SC.store.setDayAnswer('day5', { experimentAckedSourceKey: SC.day5.sourceKey(state) });
+      SC.track.event('day5_experiment_kept_edited');
+    },
+
+    /* 「今の回答から作り直す」を選んだとき。前の文章と、その文章の鍵を取っておく */
+    regenerateExperiment: function () {
+      var state = SC.store.getState();
+      var a = state.day5 || {};
+      SC.store.setDayAnswer('day5', {
+        experimentPrevDraft: String(a.experimentDraft || ''),
+        experimentPrevSourceKey: String(a.experimentSourceKey || ''),
+        experimentPrevEdited: !!a.experimentEdited,
+        experimentDraft: SC.day5.buildExperiment(state),
+        experimentEdited: false,
+        experimentSourceKey: SC.day5.sourceKey(state),
+        experimentAckedSourceKey: ''
+      });
+      notice = 'rebuilt';
+      SC.track.event('day5_experiment_regenerated');
+    },
+
+    /* 作り直す前の文章へ戻す。
+     * ★戻した文章はいまの回答ではなく前の回答に対応している。
+     *   鍵も当時のものへ戻し、ずれていることを注記で出せるようにする */
+    restorePrevExperiment: function () {
+      var state = SC.store.getState();
+      var a = state.day5 || {};
+      var prev = String(a.experimentPrevDraft || '');
+      if (!prev) return false;
+      SC.store.setDayAnswer('day5', {
+        experimentDraft: prev,
+        experimentEdited: a.experimentPrevEdited !== false,
+        experimentSourceKey: String(a.experimentPrevSourceKey || ''),
+        experimentAckedSourceKey: SC.day5.sourceKey(state),
+        experimentPrevDraft: '', experimentPrevSourceKey: '', experimentPrevEdited: false
+      });
+      notice = 'restored';
+      SC.track.event('day5_experiment_restored');
+      return true;
+    },
+
+    /* 画面で一度だけ出す知らせ。読んだら消す（再表示のたびには出さない） */
+    takeExperimentNotice: function () {
+      var n = notice;
+      notice = null;
+      return n;
+    },
+
+    /* 保存されている実験文が、いまの回答とずれたままかどうか */
+    isExperimentBehindAnswers: function (state) {
+      var a = state.day5 || {};
+      if (!a.experimentDraft) return false;
+      if (!SC.day5.isAnswersComplete(state)) return false;
+      var key = SC.day5.sourceKey(state);
+      if (a.experimentSourceKey === key) return false;
+      if (a.experimentAckedSourceKey !== key) return false;
+      return String(a.experimentDraft).trim() !== SC.day5.buildExperiment(state).trim();
+    },
+
+    /* 出す注記の種類。'edited'（本人の編集を残した）／'stale'（古い保存文を残した） */
+    experimentBehindKind: function (state) {
+      if (!SC.day5.isExperimentBehindAnswers(state)) return null;
+      return (state.day5 || {}).experimentEdited ? 'edited' : 'stale';
     },
 
     experimentText: function (state) {
