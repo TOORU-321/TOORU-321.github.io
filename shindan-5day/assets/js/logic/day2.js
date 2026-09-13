@@ -33,7 +33,9 @@
     SECTION_KEY: 'customerEmotion',
     FIELDS: FIELDS,
 
-    options: function (key) { return SC.config[fieldDef(key).options]; },
+    options: function (key, state) {
+      return SC.copyVersion.list(fieldDef(key).options, state || SC.store.getState());
+    },
 
     /* いま選ばれている値を文字列で返す。
      * custom を選んだときだけ自由入力を使う（§21-C：既定選択肢へ戻したら入力は使わない） */
@@ -42,7 +44,7 @@
       var answers = state.day2 || {};
       var selected = answers[def.key];
       if (!selected) return '';
-      var option = SC.optionByValue(SC.config[def.options], selected);
+      var option = SC.optionByValue(SC.copyVersion.list(def.options, state), selected);
       if (!option) return '';
       if (option.custom) return String(answers[def.customKey] || '').trim();
       return stripQuotes(option.label);

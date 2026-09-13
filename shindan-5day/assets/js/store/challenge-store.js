@@ -28,8 +28,18 @@
     return out;
   }
 
-  function createInitialState(diagnosis) {
-    return {
+  /* いま読んでいる state の版に、SC.copy と選択肢の言葉をそろえる。
+   * 「すでに回答した人の言葉」を、あとから別の言葉に変えないため（§21-C 2026-09-12） */
+  function useCopyVersion(state) {
+    if (SC.copyVersion) SC.copyVersion.use(state);
+    return state;
+  }
+
+  /* brandNew：本当に何も保存されていないところから始めるときだけ true。
+   * 破損・復元失敗の作り直しでは false。その人は前の版で回答しているかもしれないので、
+   * 新しい版の言葉で上書きしない（§21-C 2026-09-12 保存互換承認追補）。 */
+  function createInitialState(diagnosis, brandNew) {
+    var state = {
       schemaVersion: SCHEMA_VERSION,
       challengeVersion: SC.config.challengeVersion,
       campaignId: diagnosis.campaignId,
@@ -81,6 +91,10 @@
       celebratedDays: [],
       blueprintSections: buildBlueprint()
     };
+    /* 文言の版。本当に新規のときだけ入れる。
+     * 入っていない state は「2026-09-11 までの言葉で回答した人」として読む */
+    if (brandNew && SC.copyVersion) state.copyVersion = SC.copyVersion.CURRENT;
+    return state;
   }
 
   function buildDay2() {
@@ -94,7 +108,13 @@
       firstChange: null, firstChangeCustom: '',
       destination: null, destinationCustom: '',
       productRole: null, productRoleCustom: '',
-      bridgeDraft: '', bridgeEdited: false, bridgeSourceKey: ''
+      bridgeDraft: '', bridgeEdited: false, bridgeSourceKey: '',
+      /* 編集済みの橋を残すと本人が決めたときの鍵。同じ変更で何度も聞かないため */
+      bridgeAckedSourceKey: '',
+      /* 作り直す前の文章。本人が戻せるように取っておく（§21-C 2026-09-12）。
+       * その文章が対応していた鍵と、本人の編集だったかも一緒に残す。
+       * 戻したときに「いまの回答とずれている」と出せるようにするため */
+      bridgePrevDraft: '', bridgePrevSourceKey: '', bridgePrevEdited: false
     };
   }
 
@@ -178,6 +198,10 @@
       });
       if (typeof state.day3.bridgeDraft !== 'string') state.day3.bridgeDraft = '';
       if (typeof state.day3.bridgeEdited !== 'boolean') state.day3.bridgeEdited = false;
+      if (typeof state.day3.bridgeAckedSourceKey !== 'string') state.day3.bridgeAckedSourceKey = '';
+      if (typeof state.day3.bridgePrevDraft !== 'string') state.day3.bridgePrevDraft = '';
+      if (typeof state.day3.bridgePrevSourceKey !== 'string') state.day3.bridgePrevSourceKey = '';
+      if (typeof state.day3.bridgePrevEdited !== 'boolean') state.day3.bridgePrevEdited = false;
     }
 
     if (!isPlainObject(state.day5)) state.day5 = buildDay5();
@@ -397,8 +421,8 @@
       var entry = SC.storage.readEntry(stateKey(d.anonymousDiagnosisId));
       if (entry.status === 'missing') {
         lastLoadStatus = 'new';
-        stateCache = createInitialState(d);
-        return stateCache;
+        stateCache = createInitialState(d, true);
+        return useCopyVersion(stateCache);
       }
       var valid = entry.status === 'ok' ? validate(entry.value, d) : null;
       if (!valid) {
@@ -406,14 +430,14 @@
         lastLoadStatus = 'recovered';
         SC.storage.remove(stateKey(d.anonymousDiagnosisId));
         stateCache = createInitialState(d);
-        return stateCache;
+        return useCopyVersion(stateCache);
       }
       lastLoadStatus = 'restored';
       stateCache = valid;
-      return stateCache;
+      return useCopyVersion(stateCache);
     },
 
-    getState: function () { return stateCache || SC.store.loadChallengeState(); },
+    getState: function () { return useCopyVersion(stateCache || SC.store.loadChallengeState()); },
 
     lastLoadStatus: function () { return lastLoadStatus; },
 
@@ -421,6 +445,12 @@
     saveChallengeState: function (patch) {
       var d = SC.store.loadDiagnosis();
       var state = SC.store.getState();
+
+      /* 保存された文言の版に対応する言葉を用意できないときは、書き込まない。
+       * 推測した言葉で要約を作り直したり、それをシートへ送ったりしないため
+       * （Codex回答 2026-09-12 §5）。回答はそのまま残す */
+      if (SC.copyVersion && SC.copyVersion.isUnsupported(state)) return state;
+
       var beforeDays = state.completedDays ? state.completedDays.slice() : [];
       var beforeJoined = state.participation === 'joined';
 

@@ -33,14 +33,16 @@
     SECTION_KEY: 'journey',
     FIELDS: FIELDS,
 
-    options: function (key) { return SC.config[fieldDef(key).options]; },
+    options: function (key, state) {
+      return SC.copyVersion.list(fieldDef(key).options, state || SC.store.getState());
+    },
 
     value: function (state, key) {
       var def = fieldDef(key);
       var answers = state.day4 || {};
       var selected = answers[def.key];
       if (!selected) return '';
-      var option = SC.optionByValue(SC.config[def.options], selected);
+      var option = SC.optionByValue(SC.copyVersion.list(def.options, state), selected);
       if (!option) return '';
       if (option.custom) return String(answers[def.customKey] || '').trim();
       return stripQuotes(option.label);
@@ -136,7 +138,7 @@
       return FIELDS.map(function (f) {
         return {
           label: c.pointLabels[f.point],
-          items: SC.config[f.options].filter(function (o) {
+          items: SC.copyVersion.list(f.options, state).filter(function (o) {
             return !o.custom && o.value !== answers[f.key];
           }).map(function (o) { return o.label; })
         };

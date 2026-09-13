@@ -46,7 +46,7 @@
     /* 仮説の選択肢は、DAY4で決めた4地点の言葉を入れてから見せる（§29-D Screen AB） */
     options: function (key, state) {
       var def = fieldDef(key);
-      var list = SC.config[def.options];
+      var list = SC.copyVersion.list(def.options, state || SC.store.getState());
       if (!def.templated) return list;
       /* DAY4の4地点を、地点名で引ける形にする（真ん中の順番に左右されない） */
       var points = SC.day5.day4Points(state || SC.store.getState());

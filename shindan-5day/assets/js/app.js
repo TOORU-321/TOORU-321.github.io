@@ -185,6 +185,12 @@
 
   function render(screenId, focusId) {
     var state = SC.store.getState();
+    /* この人がどの版の言葉で回答してきたかに、画面全体をそろえる。
+     * 選択肢・カード・橋・導線・要約を同じ版で出すため（§21-C 2026-09-12） */
+    if (SC.copyVersion) {
+      if (SC.copyVersion.isUnsupported(state)) { renderUnsupportedVersion(); return; }
+      SC.copyVersion.use(state);
+    }
     var target = guard(screenId, state);
     if (target !== screenId) { /* 不正な状態は安全な画面へ戻す */ screenId = target; }
 
@@ -284,6 +290,21 @@
    * それまでは sample-diagnosis.js の47点を本人の結果として見せていた。
    * ★端末に記録が無いだけで「診断していない」と決めつけない。
    *   LINEから引き継ぐ道と、これから受ける道の両方を出す。 */
+  /* 保存された文言の版に対応する表示を用意できないとき（Codex回答 2026-09-12 §5）。
+   * 新旧どちらかの言葉へ推測で当てはめず、回答はそのまま残して手を止める */
+  function renderUnsupportedVersion() {
+    var text = (SC.copy && SC.copy.common && SC.copy.common.unsupportedVersion) || '';
+    if (!root || !text) return;
+    SC.dom.clear(root);
+    SC.dom.append(root, [
+      h('div', { class: 'screen screen--no-diagnosis' }, [
+        h('section', { class: 'card' }, [
+          h('p', { class: 'card__body', role: 'status', text: text })
+        ])
+      ])
+    ]);
+  }
+
   function renderNoDiagnosis() {
     var c = SC.copy && SC.copy.noDiagnosis;
     /* 文言ファイルを読み込めていないときは、ここで組み立てない。

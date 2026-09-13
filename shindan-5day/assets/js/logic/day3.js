@@ -29,12 +29,20 @@
     return null;
   }
 
+  /* 価値の橋の文が引用しているDAY2の回答。ここが変われば橋も変わる */
+  var BRIDGE_DAY2_KEYS = ['scene', 'voice'];
+
+  /* 本人が作り直した／戻したことを、その場で一度だけ知らせるための控え */
+  var notice = null;
+
   SC.day3 = {
     DAY: 3,
     SECTION_KEY: 'valueBridge',
     FIELDS: FIELDS,
 
-    options: function (key) { return SC.config[fieldDef(key).options]; },
+    options: function (key, state) {
+      return SC.copyVersion.list(fieldDef(key).options, state || SC.store.getState());
+    },
 
     /* いま選ばれている値を文字列で返す（custom のときだけ自由入力を使う） */
     value: function (state, key) {
@@ -42,7 +50,7 @@
       var answers = state.day3 || {};
       var selected = answers[def.key];
       if (!selected) return '';
-      var option = SC.optionByValue(SC.config[def.options], selected);
+      var option = SC.optionByValue(SC.copyVersion.list(def.options, state), selected);
       if (!option) return '';
       if (option.custom) return String(answers[def.customKey] || '').trim();
       return stripQuotes(option.label);
@@ -81,35 +89,161 @@
       return fill(SC.copy.day3Done.templates.bridge, SC.day3.values(state));
     },
 
-    /* 元の回答が変わったかを見分けるための鍵（§23-E） */
+    /* 元の回答が変わったかを見分けるための鍵（§23-E）。
+     *
+     * 2026-09-12：DAY3の5問だけを見ていたので、DAY2の場面や心の一言を変えても
+     * 橋が作り直されず、カードと橋で別のことを言う状態になっていた。
+     * 橋が引用しているDAY2の回答と、文言の版まで含めるようにした。
+     *
+     * 区切り文字は使わない。自由入力に記号が入っても鍵がぶつからないよう、
+     * 配列をそのまま JSON にする。先頭の v2 は鍵の形を見分けるための目印。 */
     sourceKey: function (state) {
+      var a = state.day3 || {};
+      var d2 = state.day2 || {};
+      var parts = [SC.copyVersion ? SC.copyVersion.of(state) : ''];
+      /* 橋が引用するDAY2の回答。custom を選んでいるときだけ自由入力も見る
+         （既定選択肢に戻した人の控え入力は、変わったことにしない） */
+      BRIDGE_DAY2_KEYS.forEach(function (k) {
+        parts.push(d2[k] || '');
+        parts.push(d2[k] === 'custom' ? (d2[k + 'Custom'] || '') : '');
+      });
+      FIELDS.forEach(function (f) {
+        parts.push(a[f.key] || '');
+        parts.push(a[f.key] === 'custom' ? (a[f.customKey] || '') : '');
+      });
+      return 'v2' + JSON.stringify(parts);
+    },
+
+    /* 2026-09-12より前の鍵の形。回答が本当に変わったのか、
+     * 鍵の形が変わっただけなのかを見分けるために残してある */
+    legacySourceKey: function (state) {
       var a = state.day3 || {};
       return FIELDS.map(function (f) {
         return (a[f.key] || '') + ':' + (a[f.key] === 'custom' ? (a[f.customKey] || '') : '');
       }).join('|');
     },
 
+    isLegacyKey: function (key) {
+      return String(key || '').slice(0, 2) !== 'v2';
+    },
+
     /* Screen Q を開いたときに橋を用意する。
      * 戻って元回答を変えていたら作り直し、本人の編集フラグを戻す（§23-E）。
-     * 返り値: 'created' | 'regenerated' | 'kept' */
+     * ただし本人が手を入れた文章は、黙って作り直さない（§21-C 2026-09-12）。
+     * 返り値: 'created' | 'regenerated' | 'kept' | 'needs-choice' | 'incomplete' */
     ensureBridge: function () {
       var state = SC.store.getState();
+      /* 言葉を用意できない版では、作り直しも判定もしない */
+      if (SC.copyVersion && SC.copyVersion.isUnsupported(state)) return 'unsupported-version';
       if (!SC.day3.isAnswersComplete(state)) return 'incomplete';
       var key = SC.day3.sourceKey(state);
       var a = state.day3;
+
       if (!a.bridgeDraft) {
         SC.store.setDayAnswer('day3', {
-          bridgeDraft: SC.day3.buildBridge(state), bridgeEdited: false, bridgeSourceKey: key
+          bridgeDraft: SC.day3.buildBridge(state), bridgeEdited: false,
+          bridgeSourceKey: key, bridgeAckedSourceKey: ''
         });
         return 'created';
       }
-      if (a.bridgeSourceKey !== key) {
-        SC.store.setDayAnswer('day3', {
-          bridgeDraft: SC.day3.buildBridge(state), bridgeEdited: false, bridgeSourceKey: key
-        });
-        return 'regenerated';
+      if (a.bridgeSourceKey === key) return 'kept';
+      if (a.bridgeAckedSourceKey === key) return 'kept';   /* 本人が「残す」を選んだあと */
+
+      /* --- B：2026-09-12より前に保存された文章 ---------------------------
+       * 旧形式の鍵はDAY3の5問しか含まない。一致しても、DAY2が変わっていない
+       * 証拠にはならない（Codex回答 2026-09-12 §3）。
+       * いまの回答から作った文と保存文が同じなら整合しているので、鍵だけ移す。
+       * 確かめられないときは、編集の有無にかかわらず本人に選んでもらう。 */
+      if (SC.day3.isLegacyKey(a.bridgeSourceKey)) {
+        if (String(a.bridgeDraft).trim() === SC.day3.buildBridge(state).trim()) {
+          SC.store.setDayAnswer('day3', { bridgeSourceKey: key });
+          return 'kept';
+        }
+        return a.bridgeEdited ? 'needs-choice' : 'needs-choice-stale';
       }
-      return 'kept';
+
+      /* --- A：新しい鍵で、実際に回答が変わったと分かったとき --------------- */
+      if (a.bridgeEdited) return 'needs-choice';
+
+      SC.store.setDayAnswer('day3', {
+        bridgeDraft: SC.day3.buildBridge(state), bridgeEdited: false,
+        bridgeSourceKey: key, bridgeAckedSourceKey: ''
+      });
+      return 'regenerated';
+    },
+
+    /* 「文章を残す」を選んだとき。文章は触らず、聞いたことだけ覚える */
+    keepEditedBridge: function () {
+      var state = SC.store.getState();
+      SC.store.setDayAnswer('day3', { bridgeAckedSourceKey: SC.day3.sourceKey(state) });
+      SC.track.event('day3_bridge_kept_edited');
+    },
+
+    /* 「今の回答から作り直す」を選んだとき。前の文章と、その文章が対応していた鍵を取っておく */
+    regenerateBridge: function () {
+      var state = SC.store.getState();
+      var a = state.day3 || {};
+      SC.store.setDayAnswer('day3', {
+        bridgePrevDraft: String(a.bridgeDraft || ''),
+        bridgePrevSourceKey: String(a.bridgeSourceKey || ''),
+        bridgePrevEdited: !!a.bridgeEdited,
+        bridgeDraft: SC.day3.buildBridge(state),
+        bridgeEdited: false,
+        bridgeSourceKey: SC.day3.sourceKey(state),
+        bridgeAckedSourceKey: ''
+      });
+      notice = 'rebuilt';
+      SC.track.event('day3_bridge_regenerated');
+    },
+
+    /* 作り直す前の文章へ戻す。
+     * ★戻した文章は、いまの回答ではなく「前の回答」に対応している。
+     *   鍵も当時のものへ戻し、ずれていることを注記で出せるようにする
+     *   （Codex回答 2026-09-12 §4）。 */
+    restorePrevBridge: function () {
+      var state = SC.store.getState();
+      var a = state.day3 || {};
+      var prev = String(a.bridgePrevDraft || '');
+      if (!prev) return false;
+      SC.store.setDayAnswer('day3', {
+        bridgeDraft: prev,
+        bridgeEdited: a.bridgePrevEdited !== false,
+        bridgeSourceKey: String(a.bridgePrevSourceKey || ''),
+        bridgeAckedSourceKey: SC.day3.sourceKey(state),
+        bridgePrevDraft: '', bridgePrevSourceKey: '', bridgePrevEdited: false
+      });
+      notice = 'restored';
+      SC.track.event('day3_bridge_restored');
+      return true;
+    },
+
+    /* 画面で一度だけ出す知らせ。読んだら消す（再表示のたびには出さない） */
+    takeBridgeNotice: function () {
+      var n = notice;
+      notice = null;
+      return n;
+    },
+
+    /* 保存されている文章が、いまの回答とずれたままかどうか。注記を出す判断に使う */
+    isBridgeBehindAnswers: function (state) {
+      var a = state.day3 || {};
+      if (!a.bridgeDraft) return false;
+      var key = SC.day3.sourceKey(state);
+      if (a.bridgeSourceKey === key) return false;
+      if (a.bridgeAckedSourceKey !== key) return false;
+      /* 鍵は違っても、文章がいまの回答から作れるものと同じなら、ずれていない */
+      return String(a.bridgeDraft).trim() !== SC.day3.buildBridge(state).trim();
+    },
+
+    /* 出す注記の種類。'edited'（本人の編集を残した）か 'stale'（古い保存文を残した） */
+    bridgeBehindKind: function (state) {
+      if (!SC.day3.isBridgeBehindAnswers(state)) return null;
+      return (state.day3 || {}).bridgeEdited ? 'edited' : 'stale';
+    },
+
+    /* 旧名。本人の編集を残しているときだけ true（既存の呼び出し・テスト用） */
+    isEditedBehindAnswers: function (state) {
+      return SC.day3.bridgeBehindKind(state) === 'edited';
     },
 
     bridgeText: function (state) {

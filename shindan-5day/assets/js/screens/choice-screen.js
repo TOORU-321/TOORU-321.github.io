@@ -33,7 +33,9 @@
           var logic = spec.logic();
           var answers = ctx.state[spec.dayKey] || {};
           var selected = answers[spec.field];
-          var options = spec.optionsFn ? spec.optionsFn(ctx.state) : SC.config[spec.options];
+          var options = spec.optionsFn
+            ? spec.optionsFn(ctx.state)
+            : SC.copyVersion.list(spec.options, ctx.state);
           var option = selected ? SC.optionByValue(options, selected) : null;
           var noticeSlot = h('div', { class: 'notice-slot' });
 

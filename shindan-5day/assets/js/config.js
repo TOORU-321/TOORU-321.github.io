@@ -80,24 +80,24 @@
     /* DAY2の選択肢（§21-B｜2026-08-19 Codex／あかり確定）
        custom: true の項目を選んだときだけ自由入力欄を出す */
     day2Scenes: [
-      { value: 'no_reaction', label: '投稿したのに反応がない' },
-      { value: 'not_selling', label: '商品を案内したが売れない' },
-      { value: 'no_result', label: '学んだ通りにやっても手応えがない' },
-      { value: 'not_suited', label: '自分に向いていない気がする' },
-      { value: 'custom', label: 'その他（自分の場面を書く）', custom: true }
+      { value: 'no_reaction', label: '何度か試したけれど、続かなかった' },
+      { value: 'not_selling', label: '自分に合うやり方が分からない' },
+      { value: 'no_result', label: '調べるほど、かえって迷ってしまう' },
+      { value: 'not_suited', label: '誰にも相談できず、時間が過ぎていた' },
+      { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day2Voices: [
-      { value: 'not_reaching', label: '「また届かなかった」' },
-      { value: 'not_needed', label: '「私の商品って必要ないのかな」' },
-      { value: 'what_to_believe', label: '「結局、何を信じればいいの」' },
-      { value: 'easier_way', label: '「もう簡単な方法へ行こうかな」' },
+      { value: 'not_reaching', label: 'また途中でやめてしまうかも' },
+      { value: 'not_needed', label: '私にもできるやり方はあるのかな' },
+      { value: 'what_to_believe', label: '結局、何から始めればいいんだろう' },
+      { value: 'easier_way', label: 'こんなこと、誰に聞けばいいんだろう' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day2Hopes: [
-      { value: 'confidence', label: '自分の商品に自信を持ちたい' },
-      { value: 'know_what_to_fix', label: '何を直せばよいか分かりたい' },
-      { value: 'stable_sales', label: '売上の波を減らしたい' },
-      { value: 'being_useful', label: '人の役に立っている実感がほしい' },
+      { value: 'confidence', label: 'これなら自分にもできると思いたい' },
+      { value: 'know_what_to_fix', label: '迷わず、まず一つやってみたい' },
+      { value: 'stable_sales', label: '無理なく続けて、少しずつ変わりたい' },
+      { value: 'being_useful', label: '小さな変化を、自分でも喜びたい' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     freeTextMaxLength: 120,
@@ -114,24 +114,24 @@
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day4Relevance: [
-      { value: 'diagnosis', label: '診断やチェックリスト' },
-      { value: 'column', label: 'コラムや詳しい解説記事' },
-      { value: 'video', label: '短い動画やミニ講座' },
-      { value: 'story', label: '事例や変化のストーリー' },
+      { value: 'diagnosis', label: '自分の状態を確かめるチェック' },
+      { value: 'column', label: '悩みの理由が分かる話や解説' },
+      { value: 'video', label: '実際に試せる体験・見学' },
+      { value: 'story', label: '似た悩みを持つ人の体験談' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day4Actions: [
-      { value: 'answer_one', label: '質問に一つ答える' },
-      { value: 'choose_one', label: '自分に合う選択肢を一つ選ぶ' },
-      { value: 'small_work', label: '小さなワークを試す' },
-      { value: 'save_result', label: '結果を保存し、あとで見返す' },
+      { value: 'answer_one', label: '質問・問い合わせ' },
+      { value: 'choose_one', label: '体験・見学の申し込み' },
+      { value: 'small_work', label: '短い体験・小さなお試し' },
+      { value: 'save_result', label: '案内の保存・持ち帰り' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day4Supports: [
-      { value: 'ondemand', label: '自分のペースで進める教材・オンデマンド講座' },
-      { value: 'course', label: '正しい順番を学ぶ講座' },
-      { value: 'consult', label: '状況を一緒に整理する個別相談' },
-      { value: 'companion', label: '実装や改善を続ける伴走サポート' },
+      { value: 'ondemand', label: '自分のペースで取り組む教材' },
+      { value: 'course', label: '順番に学べるレッスンやコース' },
+      { value: 'consult', label: '自分に合わせてもらう個別の支援' },
+      { value: 'companion', label: '続けながら見直せる定期の支援' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     /* 真ん中の順番（§26-B Screen X）。ドラッグ操作は必須にしない */
@@ -146,7 +146,7 @@
        {entry}{relevance}{action}{support} はDAY4の4地点で埋める */
     day5Hypotheses: [
       { value: 'entry_to_relevance', label: '{entry}から{relevance}へ進む人がいるか' },
-      { value: 'relevance_to_action', label: '{relevance}から{action}へ進む人がいるか' },
+      { value: 'relevance_to_action', label: '{relevance}をきっかけに、{action}へ進む人がいるか' },
       { value: 'action_to_support', label: '{action}のあと、{support}を知りたい人がいるか' },
       { value: 'whole_path', label: '入口から支援まで、迷わず進める順番になっているか' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
@@ -159,10 +159,10 @@
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day5Metrics: [
-      { value: 'next_page', label: '入口から次のページへ進んだ数' },
-      { value: 'completed_experience', label: '診断・動画・無料ワークを最後まで体験した数' },
-      { value: 'small_move', label: '回答・保存・返信など、小さく動いた数' },
-      { value: 'chose_support', label: '相談・申込み・購入など、支援を選んだ数' },
+      { value: 'next_page', label: '案内を見て、詳しい内容を確かめた人数' },
+      { value: 'completed_experience', label: 'お試しや体験に参加した人数' },
+      { value: 'small_move', label: '質問や問い合わせをくれた人数' },
+      { value: 'chose_support', label: '申し込みや購入をした人数' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     /* 振り返る曜日・時間帯（Screen AE）。時間帯は reminderWindows と同じ3区分を使う */
@@ -204,31 +204,31 @@
     /* DAY3の選択肢（§23-D｜2026-08-20 Codex／あかり確定）
        custom: true の項目を選んだときだけ自由入力欄を出す */
     day3CurrentStates: [
-      { value: 'no_reaction', label: '発信を続けても反応がなく、何を変えるべきか分からない' },
-      { value: 'no_promise', label: '商品はあるが、誰に何を約束するか整理できていない' },
-      { value: 'no_confidence', label: '案内しても売れず、商品に自信を持てない' },
-      { value: 'no_fit', label: '学んだ方法を試しても、自分の事業につながらない' },
+      { value: 'no_reaction', label: '何を変えればいいか分からない' },
+      { value: 'no_promise', label: 'やりたいことはあるが、始められない' },
+      { value: 'no_confidence', label: 'うまくできる気がせず、ためらっている' },
+      { value: 'no_fit', label: '試しているが、手応えが分からない' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day3Walls: [
-      { value: 'too_many', label: '直す場所が多く、優先順位を決められない' },
-      { value: 'not_linked', label: 'お客様の悩みと商品内容が結びついていない' },
-      { value: 'scattered', label: '発信・LINE・商品が別々で、次の一歩が見えない' },
-      { value: 'no_review', label: '試した結果を、一人では振り返って修正しにくい' },
+      { value: 'too_many', label: '情報が多く、どれを選ぶか決めにくい' },
+      { value: 'not_linked', label: '今の暮らしに合うやり方が見つからない' },
+      { value: 'scattered', label: '一度に変えようとして、負担が大きい' },
+      { value: 'no_review', label: '試したことを一緒に振り返る相手がいない' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day3FirstChanges: [
-      { value: 'one_focus', label: 'まず直す場所が一つに決まる' },
-      { value: 'product_words', label: '誰のどんな悩みを扱う商品か言葉にできる' },
-      { value: 'order_visible', label: '発信から商品までの順番が見える' },
-      { value: 'next_fix', label: '試した結果を見て、次に直す場所を決められる' },
+      { value: 'one_focus', label: '最初に試すことが一つ決まる' },
+      { value: 'product_words', label: '困っていることを言葉にできる' },
+      { value: 'order_visible', label: '自分にもできそうな手順が見える' },
+      { value: 'next_fix', label: '小さく試して、手応えを一つ見つける' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day3Destinations: [
-      { value: 'confident_offer', label: '必要な人へ、自分の商品を自信を持って案内できる' },
-      { value: 'stable', label: '発信と売上の波を小さくし、無理なく続けられる' },
-      { value: 'connected', label: '投稿から相談・購入までが自然につながる' },
-      { value: 'keep_improving', label: '一人で迷い続けず、実行と改善を続けられる' },
+      { value: 'confident_offer', label: '自分に合うやり方を選べる' },
+      { value: 'stable', label: '無理のないペースで続けられる' },
+      { value: 'connected', label: '小さな変化を自分でも確かめられる' },
+      { value: 'keep_improving', label: 'つまずいても、やり方を見直せる' },
       { value: 'custom', label: '自分の言葉で入力する', custom: true }
     ],
     day3Roles: [
