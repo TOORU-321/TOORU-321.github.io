@@ -572,6 +572,26 @@
       return SC.store.saveChallengeState(p);
     },
 
+    /* 鍵の形を新しくするだけの書き込み（2026-09-13 Codex指示）。
+     *
+     * 本人の回答も、できあがった文章も変わっていない。ただの内部の付け替えなので、
+     * ・更新日時を進めない（別の端末にある新しい記録を負かさないため）
+     * ・LINEの知らせを出さない
+     * ・スプレッドシートへ送らない
+     * 手元の保存にだけ、そっと書く。 */
+    migrateSourceKey: function (dayKey, patch) {
+      var state = SC.store.getState();
+      if (SC.copyVersion && SC.copyVersion.isUnsupported(state)) return state;
+      if (!isPlainObject(state[dayKey])) return state;
+      for (var k in patch) {
+        if (Object.prototype.hasOwnProperty.call(patch, k)) state[dayKey][k] = patch[k];
+      }
+      var d = SC.store.loadDiagnosis();
+      SC.storage.write(stateKey(d.anonymousDiagnosisId), state);   /* updatedAt は触らない */
+      stateCache = state;
+      return state;
+    },
+
     completedSectionCount: function () {
       var state = SC.store.getState();
       var n = 0;
@@ -589,6 +609,48 @@
       diagnosisCache = null;
       stateCache = null;
       lastLoadStatus = 'none';
+    },
+
+    /* 5日間の記録だけを消す（2026-09-13 とーる指示・テスト用）。
+     *
+     * 診断結果は残すので、受け直さずにDAY1からやり直せる。
+     * 新しく作り直されるときは「本当に新規」として扱われるので、
+     * いまの文言の版で始まる（＝新しい選択肢になる）。
+     * ★LINEへ送った記録（通知の控え）は消さない。二重送信を避けるため。 */
+    clearChallengeOnly: function () {
+      var pointer = SC.storage.read(SC.config.currentDiagnosisPointerKey());
+      var id = (isPlainObject(pointer) && pointer.anonymousDiagnosisId) || null;
+      if (!id) return false;
+      SC.storage.remove(stateKey(id));
+      stateCache = null;
+      lastLoadStatus = 'none';
+      SC.track.event('preview_reset_challenge');
+      return true;
+    },
+
+    /* 診断結果も5日間も、まとめて消す（2026-09-13 とーる指示・テスト用）。
+     *
+     * clearPreviewState は5日間側の名前空間しか消さないので、
+     * 診断ページ側（lmine-shindan-diagnosis）が残り、
+     * 受け直しても同じ匿名診断IDのままになっていた。
+     * ここでは両方を消すので、次に診断を受けると新しいIDで始まる。 */
+    clearAllForTest: function () {
+      SC.track.event('preview_reset_all');
+      SC.storage.keysOfApp().forEach(function (k) { SC.storage.remove(k); });
+      /* 診断ページ側。ここは別の名前空間なので、前からいちいち消し忘れていた */
+      var dp = 'lmine-shindan-diagnosis:';
+      try {
+        var keys = [];
+        for (var i = 0; i < global.localStorage.length; i++) {
+          var k = global.localStorage.key(i);
+          if (k && k.indexOf(dp) === 0) keys.push(k);
+        }
+        keys.forEach(function (k) { global.localStorage.removeItem(k); });
+      } catch (e) { /* 保存が使えない環境では、何もしない */ }
+      diagnosisCache = null;
+      stateCache = null;
+      lastLoadStatus = 'none';
+      return true;
     },
 
     /* --- 計測 ----------------------------------------------------------- */

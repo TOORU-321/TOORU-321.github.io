@@ -198,7 +198,9 @@
        * いまの回答から作った文と同じなら整合しているので、鍵だけ移す */
       if (SC.day5.isLegacyKey(a.experimentSourceKey)) {
         if (String(a.experimentDraft).trim() === SC.day5.buildExperiment(state).trim()) {
-          SC.store.setDayAnswer('day5', { experimentSourceKey: key });
+          /* 文章は変わっていない。鍵の形を直すだけなので、そっと書く
+             （更新日時を進めない・知らせない・送らない） */
+          SC.store.migrateSourceKey('day5', { experimentSourceKey: key });
           return 'kept';
         }
         return a.experimentEdited ? 'needs-choice' : 'needs-choice-stale';
@@ -207,7 +209,11 @@
       /* 新しい鍵で、実際に変わったと分かったとき */
       if (a.experimentEdited) return 'needs-choice';
 
+      /* 自動で作り直すときも、直前の文章をしまっておく（2026-09-13 Codex指示） */
       SC.store.setDayAnswer('day5', {
+        experimentPrevDraft: String(a.experimentDraft || ''),
+        experimentPrevSourceKey: String(a.experimentSourceKey || ''),
+        experimentPrevEdited: !!a.experimentEdited,
         experimentDraft: SC.day5.buildExperiment(state), experimentEdited: false,
         experimentSourceKey: key, experimentAckedSourceKey: ''
       });

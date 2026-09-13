@@ -156,7 +156,9 @@
        * 確かめられないときは、編集の有無にかかわらず本人に選んでもらう。 */
       if (SC.day3.isLegacyKey(a.bridgeSourceKey)) {
         if (String(a.bridgeDraft).trim() === SC.day3.buildBridge(state).trim()) {
-          SC.store.setDayAnswer('day3', { bridgeSourceKey: key });
+          /* 文章は変わっていない。鍵の形を直すだけなので、そっと書く
+             （更新日時を進めない・知らせない・送らない） */
+          SC.store.migrateSourceKey('day3', { bridgeSourceKey: key });
           return 'kept';
         }
         return a.bridgeEdited ? 'needs-choice' : 'needs-choice-stale';
@@ -165,7 +167,12 @@
       /* --- A：新しい鍵で、実際に回答が変わったと分かったとき --------------- */
       if (a.bridgeEdited) return 'needs-choice';
 
+      /* 自動で作り直すときも、直前の文章をしまっておく（2026-09-13 Codex指示）。
+         本人が編集していなくても、戻したくなることがあるため */
       SC.store.setDayAnswer('day3', {
+        bridgePrevDraft: String(a.bridgeDraft || ''),
+        bridgePrevSourceKey: String(a.bridgeSourceKey || ''),
+        bridgePrevEdited: !!a.bridgeEdited,
         bridgeDraft: SC.day3.buildBridge(state), bridgeEdited: false,
         bridgeSourceKey: key, bridgeAckedSourceKey: ''
       });

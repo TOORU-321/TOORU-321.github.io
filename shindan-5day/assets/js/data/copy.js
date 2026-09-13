@@ -1126,7 +1126,14 @@
       previewMenu: '開発用メニュー',
       previewReset: '保存内容をリセットして最初から見る',
       previewLog: 'イベントログを表示',
-      previewNote: 'この欄は動作確認用です。URLに ?dev=1 を付けたときだけ出ます。'
+      previewNote: 'この欄は動作確認用です。URLに ?dev=1 を付けたときだけ出ます。',
+      /* テスト中のやり直し用（2026-09-13 とーる指示）。
+       * 本番では出ない。押したあとに迷わないよう、行き先まで面倒を見る */
+      previewResetDiagnosis: '診断結果をリセットして、診断からやり直す',
+      previewResetDiagnosisNote: '診断結果も5日間の記録も消して、21問の最初へ移ります。',
+      previewResetChallenge: '5日間の進行だけリセットする',
+      previewResetChallengeNote: '診断結果は残したまま、5日間をDAY1からやり直します。',
+      previewResetChallengeDone: '5日間の記録を消しました。DAY1からやり直せます。'
     },
 
     /* 軸別「この軸に表れている現在地」（§17-3 の正式案） */

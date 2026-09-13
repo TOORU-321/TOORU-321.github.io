@@ -270,6 +270,34 @@
           }
         }, SC.copy.common.previewLog)
       ]),
+
+      /* テスト中のやり直し（2026-09-13 とーる指示）。
+       * 本番では開発用メニューごと出ないので、利用者には見えない */
+      h('div', { class: 'preview__actions' }, [
+        h('button', {
+          type: 'button', class: 'btn btn--ghost', on: {
+            click: function () {
+              SC.store.clearAllForTest();
+              /* サンプルの結果を見せずに、診断の入口へそのまま送る */
+              global.location.href = 'shindan.html';
+            }
+          }
+        }, SC.copy.common.previewResetDiagnosis),
+        h('button', {
+          type: 'button', class: 'btn btn--ghost', on: {
+            click: function () {
+              if (!SC.store.clearChallengeOnly()) return;
+              SC.store.loadChallengeState();
+              restoreNotice = SC.copy.common.previewResetChallengeDone;
+              viewedThisEntry = {};
+              if (global.location.hash === HASH.result) render('result');
+              else global.location.hash = HASH.result;
+            }
+          }
+        }, SC.copy.common.previewResetChallenge)
+      ]),
+      h('p', { class: 'preview__note', text: SC.copy.common.previewResetDiagnosisNote }),
+      h('p', { class: 'preview__note', text: SC.copy.common.previewResetChallengeNote }),
       logBox
     ]);
   }
