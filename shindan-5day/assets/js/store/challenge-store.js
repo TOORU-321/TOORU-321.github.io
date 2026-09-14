@@ -618,8 +618,10 @@
      * いまの文言の版で始まる（＝新しい選択肢になる）。
      * ★LINEへ送った記録（通知の控え）は消さない。二重送信を避けるため。 */
     clearChallengeOnly: function () {
-      var pointer = SC.storage.read(SC.config.currentDiagnosisPointerKey());
-      var id = (isPlainObject(pointer) && pointer.anonymousDiagnosisId) || null;
+      /* いま画面に出している診断を基準にする。
+       * 目印（pointer）だけを見ると、サンプルで見ているときに効かない */
+      var d = SC.store.loadDiagnosis();
+      var id = (d && d.anonymousDiagnosisId) || null;
       if (!id) return false;
       SC.storage.remove(stateKey(id));
       stateCache = null;

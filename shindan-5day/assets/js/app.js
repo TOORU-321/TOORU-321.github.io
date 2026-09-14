@@ -238,7 +238,17 @@
     render(id || SC.store.getState().currentScreen);
   }
 
-  /* --- プレビュー用メニュー（本番では表示しない） ---------------------- */
+  /* 消す前の確認。取り消したら false を返し、呼び出し側は何もしない。
+   * 自動テストから差し替えられるよう、SC.confirmReset として出しておく */
+  function askBeforeReset(message) {
+    if (typeof SC.confirmReset === 'function') return !!SC.confirmReset(message);
+    if (typeof global.confirm !== 'function') return false;
+    return !!global.confirm(message);
+  }
+
+  /* --- プレビュー用メニュー（?dev=1 のときだけ組み立てる） --------------
+   * ★これは表示の切り替えであって、本人確認ではない。
+   *   公開しているURLでも ?dev=1 を付ければ出る。 */
   function buildPreviewMenu() {
     var logBox = h('pre', { class: 'preview__log', hidden: true });
     var showLog = false;
@@ -271,21 +281,17 @@
         }, SC.copy.common.previewLog)
       ]),
 
-      /* テスト中のやり直し（2026-09-13 とーる指示）。
-       * 本番では開発用メニューごと出ないので、利用者には見えない */
-      h('div', { class: 'preview__actions' }, [
+      /* テスト中のやり直し（§21-C 2026-09-14追補）。
+       * ★消す範囲を先に読ませ、押す前に必ず確認を出す。
+       *   取り消したときは保存を一切変えない。
+       * ★?dev=1 は表示の切り替えであって、本人確認ではない。
+       *   パラメータ付きのURLなら公開環境でも出る。実在の利用者へは配らない。 */
+      h('div', { class: 'preview__reset' }, [
+        h('p', { class: 'preview__note', text: SC.copy.common.previewResetChallengeNote }),
         h('button', {
           type: 'button', class: 'btn btn--ghost', on: {
             click: function () {
-              SC.store.clearAllForTest();
-              /* サンプルの結果を見せずに、診断の入口へそのまま送る */
-              global.location.href = 'shindan.html';
-            }
-          }
-        }, SC.copy.common.previewResetDiagnosis),
-        h('button', {
-          type: 'button', class: 'btn btn--ghost', on: {
-            click: function () {
+              if (!askBeforeReset(SC.copy.common.previewResetChallengeConfirm)) return;
               if (!SC.store.clearChallengeOnly()) return;
               SC.store.loadChallengeState();
               restoreNotice = SC.copy.common.previewResetChallengeDone;
@@ -296,8 +302,19 @@
           }
         }, SC.copy.common.previewResetChallenge)
       ]),
-      h('p', { class: 'preview__note', text: SC.copy.common.previewResetDiagnosisNote }),
-      h('p', { class: 'preview__note', text: SC.copy.common.previewResetChallengeNote }),
+      h('div', { class: 'preview__reset' }, [
+        h('p', { class: 'preview__note', text: SC.copy.common.previewResetDiagnosisNote }),
+        h('button', {
+          type: 'button', class: 'btn btn--ghost', on: {
+            click: function () {
+              if (!askBeforeReset(SC.copy.common.previewResetDiagnosisConfirm)) return;
+              SC.store.clearAllForTest();
+              /* サンプルの結果を見せずに、診断の入口へそのまま送る */
+              global.location.href = 'shindan.html';
+            }
+          }
+        }, SC.copy.common.previewResetDiagnosis)
+      ]),
       logBox
     ]);
   }

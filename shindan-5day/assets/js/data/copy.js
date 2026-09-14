@@ -1126,14 +1126,18 @@
       previewMenu: '開発用メニュー',
       previewReset: '保存内容をリセットして最初から見る',
       previewLog: 'イベントログを表示',
-      previewNote: 'この欄は動作確認用です。URLに ?dev=1 を付けたときだけ出ます。',
-      /* テスト中のやり直し用（2026-09-13 とーる指示）。
-       * 本番では出ない。押したあとに迷わないよう、行き先まで面倒を見る */
-      previewResetDiagnosis: '診断結果をリセットして、診断からやり直す',
-      previewResetDiagnosisNote: '診断結果も5日間の記録も消して、21問の最初へ移ります。',
-      previewResetChallenge: '5日間の進行だけリセットする',
-      previewResetChallengeNote: '診断結果は残したまま、5日間をDAY1からやり直します。',
-      previewResetChallengeDone: '5日間の記録を消しました。DAY1からやり直せます。'
+      /* ?dev=1 は表示の切り替えであって、本人確認ではない。
+       * 「本番では見えない」と書かないこと（§21-C 2026-09-14追補）。 */
+      previewNote: 'テスト専用です。?dev=1 で表示されます。このURL設定は本人確認やアクセス制限ではありません。',
+      /* テスト中のやり直し（§21-C 2026-09-14追補・Codex確定文言）。
+       * 消す範囲を先に伝え、押す前に必ず確認を出す。取り消したら何も変えない。 */
+      previewResetChallenge: 'テスト用：5日間の記録を消してやり直す',
+      previewResetChallengeNote: '診断結果は残します。5日間の回答・成果物・進捗・完了日時・再診断予定は消え、割引の起点も失われます。通知の控えは残ります。実際の利用者の記録には使わないでください。',
+      previewResetChallengeConfirm: 'この端末の5日間の記録を削除します。回答・成果物・完了日時・再診断予定も消えます。テスト用の記録であることを確認しましたか？',
+      previewResetChallengeDone: '5日間の記録を消しました。DAY1からやり直せます。',
+      previewResetDiagnosis: 'テスト用：診断と5日間の記録を消す',
+      previewResetDiagnosisNote: 'この端末の診断・5日間の保存を削除し、診断の入口へ移ります。LINEやサーバー側の記録を削除する操作ではありません。',
+      previewResetDiagnosisConfirm: 'この端末の診断と5日間の保存を削除します。必要な内容を控え、テスト用の記録であることを確認しましたか？'
     },
 
     /* 軸別「この軸に表れている現在地」（§17-3 の正式案） */
