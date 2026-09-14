@@ -2190,7 +2190,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.5.3";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.5.4";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2402,6 +2402,7 @@ function renderAcctMenu(){
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="maintenance"><span class="ai-ico">🛠️</span>メンテナンス${MAINTENANCE_ON ? `<span class="acct-tog on">オン</span>` : `<span class="acct-tog off">オフ</span>`}<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="popupcheck"><span class="ai-ico">🔔</span>ポップアップ通知確認<span class="acct-badge">admin</span></button>`;
   if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="shindan5day"><span class="ai-ico">📊</span>5DAYの進み具合<span class="acct-badge">admin</span></button>`;
+  if(isAdmin()) html += `<button class="acct-item acct-vip" data-act="analytics"><span class="ai-ico">📈</span>アクセス解析<span class="acct-badge">admin</span></button>`;
   html += `<a class="acct-item" href="mailto:info@l-mine.com"><span class="ai-ico">✉️</span>お問い合わせ</a>`;
   html += `<button class="acct-item" data-legal="terms"><span class="ai-ico">📄</span>利用規約</button>`;
   html += `<button class="acct-item" data-legal="privacy"><span class="ai-ico">📄</span>プライバシーポリシー</button>`;
@@ -3156,6 +3157,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "maintenance") toggleMaintenance();
   else if(act === "popupcheck") openPopupCheck();
   else if(act === "shindan5day") openShindan5day();
+  else if(act === "analytics") openAnalytics();
   else if(act === "notify") toggleNotify();
   else if(act === "changename") changeName();
   else if(act === "resetpw") resetPassword();
@@ -3475,6 +3477,12 @@ function openTaskApp(){
 // 入口は2級。ページ上部の切り替えから1級・応用コースにも移動できる。
 function openQuizApp(){
   try{ window.open("https://columns.l-mine.com/kiso_quiz.html", "_blank", "noopener"); }catch(e){}
+}
+// アクセス解析ダッシュボード（admin専用・別タブで開く）
+//  ※合言葉（AN_VIEW_KEY）はここに書かない。アプリのHTMLは誰でも見られるため。
+//    端末ごとに初回1回だけ、解析ページ側で合言葉を入れてもらう
+function openAnalytics(){
+  try{ window.open("https://columns.l-mine.com/analytics/", "_blank", "noopener"); }catch(e){}
 }
 // タスクアラーム（ログイン会員向け・別タブで開く）
 function openTaskAlarm(){
