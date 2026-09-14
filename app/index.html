@@ -2236,6 +2236,39 @@ function embedUrl(v){
   if(v.platform === "cloudflare") return cfBase(v) + "/" + v.id + "/iframe" + (v.seek ? "?startTime=" + encodeURIComponent(v.seek) : "");
   return "";
 }
+// Cloudflare動画の「巻き戻し禁止フロア」：v.seek（?startTime=と同じ値）より前には戻れないようにする。
+// Cloudflare Stream自体には長尺の冒頭カット機能が無い（クリップAPIはライブ録画非対応・ライブ瞬間切り抜きは60秒上限）ため、
+// 視聴側でシークバーを強制的に押し戻すことで代用する（データ自体は元のまま）。
+let cfSeekPlayer_ = null;
+function cfSeekToSec_(s){
+  s = String(s || "").trim();
+  if(/^\d+$/.test(s)) return parseInt(s, 10);
+  const m = s.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i);
+  if(!m) return 0;
+  return (parseInt(m[1] || 0, 10) * 3600) + (parseInt(m[2] || 0, 10) * 60) + parseInt(m[3] || 0, 10);
+}
+function cfEnforceSeekFloor_(v){
+  cfSeekPlayer_ = null;
+  if(!(v && v.platform === "cloudflare" && v.seek)) return;
+  const floorSec = cfSeekToSec_(v.seek);
+  if(!floorSec) return;
+  const attach = () => {
+    try{
+      const player = window.Stream(viframe);
+      cfSeekPlayer_ = player;
+      player.addEventListener("seeking", () => {
+        if(cfSeekPlayer_ === player && player.currentTime < floorSec - 1) player.currentTime = floorSec;
+      });
+    }catch(e){}
+  };
+  if(window.Stream){ attach(); }
+  else{
+    const sc = document.createElement("script");
+    sc.src = "https://embed.cloudflarestream.com/embed/sdk.latest.js";
+    sc.onload = attach;
+    document.head.appendChild(sc);
+  }
+}
 /* ===== 公開前サムネイル：動画の初期画面（サムネ）を取得して表示 ===== */
 const _thumbCache = {};   // 同じ動画は1回だけ取りにいく
 async function fetchThumbUrl(v){
@@ -4973,12 +5006,14 @@ function select(ci, vi){
     vkick.textContent  = course.name;                    // コース名のみ（章タイトルは伏せる）
     vtitle.textContent = (v && v.tagOnly) ? "🔒 限定公開" : "🔒 アクセスパスが必要です";   // 本編タイトルは伏せる（タグ限定は"限定公開"表記）
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
+    cfSeekPlayer_ = null;
     if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
   } else {
     hidePwOption();
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
+    cfEnforceSeekFloor_(v);
     scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
     scheduleWatchMark(v);   // 視聴開始 → 30秒見たら「視聴済み」にする
     (() => {
