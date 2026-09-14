@@ -1110,6 +1110,39 @@ input:checked + .toggle-slider::before {
 }
 .btn-social:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
 
+/* SNSフォロー（結果画面） */
+.sns-card {
+  background: var(--ink-surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+.sns-lead {
+  margin: 8px 0 16px;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+.sns-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-sns {
+  flex: 1; min-width: 150px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--hairline-2);
+  background: transparent;
+  color: var(--text-1);
+  font-size: 0.875rem; font-weight: 600;
+  text-decoration: none;
+  font-family: inherit;
+  transition: border-color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+.btn-sns:hover { border-color: var(--hairline-gold); background: var(--gold-softer); }
+.btn-sns svg { flex: 0 0 auto; }
+
 /* Nickname card */
 .nickname-card {
   background: var(--ink-surface);
@@ -1433,8 +1466,8 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(185,148,85,.10),tran
 .next-btn{font-size:16px;min-width:210px}.result-hero{padding:36px}.rank-eyebrow{font-size:14px;letter-spacing:.12em}.rank-display,.score-display,.r-stat-num{font-family:var(--font-number)}.result-msg{font-size:22px}.result-sub{font-size:16px}.r-stat-label{font-size:13px;letter-spacing:.03em}.result-actions{gap:10px}.btn-secondary,.btn-social{border-radius:999px;min-height:48px}.review-q{font-family:var(--font-body);font-size:16px}.review-ans-wrong,.review-ans-correct{font-size:14px}.review-ans-label{font-size:12px;letter-spacing:.02em}.weak-topic{font-size:16px}.weak-count{font-size:14px}
 .nickname-input{min-width:0;font-size:16px}.nickname-note{font-size:13px}.site-footer{border-top:1px solid var(--hairline);padding:28px 20px 32px}.site-footer a{font-size:14px}.site-footer p{font-size:12px}.footer-version{letter-spacing:.1em!important;font-size:12px!important}
 @media(max-width:900px){.hero{gap:20px}.hero-stats{padding-left:20px;gap:16px}.hero-stat-num{font-size:30px}.setup-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}.setup-grid .section-card{padding:22px}.level-card{padding:14px}.level-count{display:none}}
-@media(max-width:720px){.header-inner{padding:14px 20px}.brand-title{font-size:19px}.header-meta{display:block;font-size:12px}.header-meta span{display:none}.container{padding:26px 20px 36px}.hero{display:block;padding:0 0 24px}.hero-title{font-size:28px;margin-bottom:10px}.hero-title span{font-size:20px;margin-left:12px}.hero-eyebrow{font-size:12px;margin-bottom:8px}.hero-lede{font-size:14px}.hero-stats{justify-content:flex-start;border:0;padding:0;margin-top:20px;gap:28px}.hero-stat{display:flex;align-items:baseline;gap:8px}.hero-stat-num{font-size:26px}.hero-stat-label{margin:0;font-size:12px}.hero-stat-num span{display:none}.setup-grid{grid-template-columns:1fr;gap:16px}.setup-grid .section-card{padding:22px}.level-count{display:block}.level-card{min-height:108px}.session-section .timer-toggle-row{margin-top:18px;padding:18px 0}.start-button{margin-top:2px}.level-desc{font-size:13px}.q-card{padding:24px}.q-text{font-size:18px}.choice{font-size:16px;padding:16px 14px;gap:12px}.ranking-card,.review-card,.weak-card,.nickname-card{padding:22px}.section-label{font-size:16px}.nickname-row{flex-wrap:wrap}.nickname-input{flex-basis:180px}.nickname-submit{flex-grow:1}.result-actions{flex-direction:row}.btn-primary,.btn-secondary{flex-basis:calc(50% - 10px)}.btn-social{flex-basis:100%}.review-ans-label{min-width:64px}.weak-bar{max-width:100px}}
-@media(max-width:400px){.container{padding-inline:14px}.header-inner{padding-inline:16px}.brand-mark{width:34px;height:34px}.hero-title{font-size:25px}.hero-title span{font-size:18px;margin-left:10px}.hero-stats{gap:18px}.hero-stat{gap:5px}.hero-stat-label{font-size:12px}.setup-grid .section-card{padding:18px}.level-card{padding:12px}.level-label{font-size:15px}.level-count{display:none}.qc-label{font-size:12px}.q-card,.ranking-card,.review-card{padding:18px}.q-text{font-size:18px}.nickname-card{padding:18px}.ranking-table th,.ranking-table td{padding-inline:5px}.next-btn{width:100%}}
+@media(max-width:720px){.header-inner{padding:14px 20px}.brand-title{font-size:19px}.header-meta{display:block;font-size:12px}.header-meta span{display:none}.container{padding:26px 20px 36px}.hero{display:block;padding:0 0 24px}.hero-title{font-size:28px;margin-bottom:10px}.hero-title span{font-size:20px;margin-left:12px}.hero-eyebrow{font-size:12px;margin-bottom:8px}.hero-lede{font-size:14px}.hero-stats{justify-content:flex-start;border:0;padding:0;margin-top:20px;gap:28px}.hero-stat{display:flex;align-items:baseline;gap:8px}.hero-stat-num{font-size:26px}.hero-stat-label{margin:0;font-size:12px}.hero-stat-num span{display:none}.setup-grid{grid-template-columns:1fr;gap:16px}.setup-grid .section-card{padding:22px}.level-count{display:block}.level-card{min-height:108px}.session-section .timer-toggle-row{margin-top:18px;padding:18px 0}.start-button{margin-top:2px}.level-desc{font-size:13px}.q-card{padding:24px}.q-text{font-size:18px}.choice{font-size:16px;padding:16px 14px;gap:12px}.ranking-card,.review-card,.weak-card,.nickname-card,.sns-card{padding:22px}.section-label{font-size:16px}.nickname-row{flex-wrap:wrap}.nickname-input{flex-basis:180px}.nickname-submit{flex-grow:1}.result-actions{flex-direction:row}.btn-primary,.btn-secondary{flex-basis:calc(50% - 10px)}.btn-social{flex-basis:100%}.btn-sns{min-width:0;flex-basis:100%}.review-ans-label{min-width:64px}.weak-bar{max-width:100px}}
+@media(max-width:400px){.container{padding-inline:14px}.header-inner{padding-inline:16px}.brand-mark{width:34px;height:34px}.hero-title{font-size:25px}.hero-title span{font-size:18px;margin-left:10px}.hero-stats{gap:18px}.hero-stat{gap:5px}.hero-stat-label{font-size:12px}.setup-grid .section-card{padding:18px}.level-card{padding:12px}.level-label{font-size:15px}.level-count{display:none}.qc-label{font-size:12px}.q-card,.ranking-card,.review-card{padding:18px}.q-text{font-size:18px}.nickname-card,.sns-card{padding:18px}.ranking-table th,.ranking-table td{padding-inline:5px}.next-btn{width:100%}}
 
 
 /* Course navigation opens independent question sets. */
@@ -1660,6 +1693,27 @@ body{background:radial-gradient(900px 520px at 88% -8%,rgba(185,148,85,.10),tran
       <button type="button" class="btn-social" onclick="shareX()">𝕏 でシェア</button>
       <button type="button" class="btn-social" onclick="shareThreads()">Threads でシェア</button>
       <button type="button" class="btn-social" onclick="shareChallenge()">同じ問題を友人に送る</button>
+    </div>
+
+    <!-- SNSフォロー導線（クイズを解き終えた直後がいちばん動いてもらいやすい） -->
+    <div class="sns-card">
+      <div class="section-label">とーるをフォローする</div>
+      <p class="sns-lead">行動経済学とマーケティングの話を、ふだんはこちらで発信しています。</p>
+      <div class="sns-row">
+        <a class="btn-sns" href="https://www.instagram.com/tooru_lab" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/>
+          </svg>Instagram
+        </a>
+        <a class="btn-sns" href="https://x.com/LMeta321" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
+            <path d="M17.53 3H20.5l-6.49 7.41L21.75 21h-5.98l-4.68-6.12L5.7 21H2.72l6.94-7.93L2.25 3h6.13l4.23 5.59L17.53 3Zm-1.05 16.2h1.65L7.6 4.71H5.83l10.65 14.49Z"/>
+          </svg>X（旧Twitter）
+        </a>
+      </div>
     </div>
 
     <div id="weak-section" class="weak-card" style="display:none;">
