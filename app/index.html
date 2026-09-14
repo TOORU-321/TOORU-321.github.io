@@ -2232,7 +2232,7 @@ function embedUrl(v){
   if(v.platform === "vimeo")   return "https://player.vimeo.com/video/" + v.id + (v.hash ? "?h=" + v.hash : "");
   if(v.platform === "youtube") return "https://www.youtube.com/embed/" + v.id;
   if(v.platform === "drive")   return "https://drive.google.com/file/d/" + v.id + "/preview";
-  if(v.platform === "cloudflare") return cfBase(v) + "/" + v.id + "/iframe";
+  if(v.platform === "cloudflare") return cfBase(v) + "/" + v.id + "/iframe" + (v.start ? "?startTime=" + encodeURIComponent(v.start) : "");
   return "";
 }
 /* ===== 公開前サムネイル：動画の初期画面（サムネ）を取得して表示 ===== */
@@ -4555,8 +4555,10 @@ function parseVideoUrl(s){
   if((m = s.match(/(?:drive|docs)\.google\.com\/file\/d\/([\w-]{20,})/)))        return { platform:"drive", id:m[1] };
   if(/(?:drive|docs)\.google\.com/.test(s) && (m = s.match(/[?&]id=([\w-]{20,})/))) return { platform:"drive", id:m[1] };
   // Cloudflare Stream（customer-xxxx.cloudflarestream.com/UID/… または videodelivery.net/UID/…）
-  if((m = s.match(/customer-([a-z0-9]+)\.cloudflarestream\.com\/([0-9a-f]{32})/i))) return { platform:"cloudflare", id:m[2], sub:m[1] };
-  if((m = s.match(/(?:iframe\.|watch\.)?(?:videodelivery\.net|cloudflarestream\.com)\/([0-9a-f]{32})/i))) return { platform:"cloudflare", id:m[1] };
+  // 末尾に ?startTime=26m や ?t=1560 を付けると、その位置から再生開始（冒頭カット代わり）
+  const cfStart = (s.match(/[?&](?:startTime|t)=([^&]+)/) || [])[1] || null;
+  if((m = s.match(/customer-([a-z0-9]+)\.cloudflarestream\.com\/([0-9a-f]{32})/i))) return { platform:"cloudflare", id:m[2], sub:m[1], start:cfStart };
+  if((m = s.match(/(?:iframe\.|watch\.)?(?:videodelivery\.net|cloudflarestream\.com)\/([0-9a-f]{32})/i))) return { platform:"cloudflare", id:m[1], start:cfStart };
   if(/^[0-9a-f]{32}$/i.test(s))                         return { platform:"cloudflare", id:s };  // UIDだけ貼った場合
   if(/^\d+$/.test(s))                                   return { platform:"vimeo",   id:s };
   if(/^[\w-]{6,}$/.test(s))                             return { platform:"youtube", id:s };
