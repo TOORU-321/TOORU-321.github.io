@@ -204,6 +204,10 @@ h1{
 .badge.hit{background:rgba(255,143,177,.16);color:var(--pink)}
 .badge.blow{background:rgba(127,220,255,.14);color:var(--cyan)}
 .row.win{border-color:var(--gold);background:rgba(255,212,121,.12)}
+.star{font-size:.74rem;letter-spacing:-1px;flex:none;cursor:help}
+.star.s3{color:var(--gold)}
+.star.s2{color:#b9b089}
+.star.s1{color:#6f7699}
 
 /* メモ */
 .memo-table{width:100%;border-collapse:collapse;font-size:.9rem}
@@ -309,6 +313,22 @@ h1{
 .vsnum .who{font-size:.76rem;color:var(--sub)}
 .vsnum .n{font-size:1.5rem;font-weight:700;letter-spacing:.14em;color:var(--pink)}
 .err{color:var(--red);font-size:.84rem;margin-top:8px;min-height:1.2em}
+
+/* すいりのクセ診断 */
+.diag-type{font-size:1.25rem;font-weight:700;color:var(--gold);text-align:center;margin:2px 0 4px}
+.diag-sub{font-size:.84rem;color:var(--sub);text-align:center;margin-bottom:14px}
+.diag-row{display:flex;align-items:center;gap:9px;margin:9px 0}
+.diag-label{font-size:.8rem;color:var(--sub);width:7.5em;flex:none}
+.diag-bar{flex:1;height:10px;border-radius:6px;background:#161c38;overflow:hidden;border:1px solid var(--line)}
+.diag-bar i{display:block;height:100%;border-radius:6px;transition:width .8s ease}
+.diag-val{font-size:.82rem;font-weight:700;width:3.2em;text-align:right;flex:none;color:var(--text)}
+.diag-note{
+  margin-top:14px;padding:11px 12px;border-radius:11px;font-size:.83rem;line-height:1.7;
+  background:rgba(127,220,255,.07);border:1px solid rgba(127,220,255,.22);color:var(--sub);
+}
+.diag-note b{color:var(--cyan)}
+.diag-tips{margin-top:10px;font-size:.8rem;color:var(--sub);line-height:1.7}
+.diag-tips b{color:var(--gold)}
 
 /* チャット */
 .chat-log{
@@ -568,10 +588,17 @@ h1{
       <div class="rank" id="result-rank"></div>
     </div>
   </div>
+  <div class="diag-slot" id="diag-slot-solo"></div>
   <button class="btn" data-act="start">🔁 もういちど（同じ設定）</button>
   <button class="btn sub" data-act="setup">🎚️ 設定をかえる</button>
   <button class="btn ghost" data-act="title">タイトルへ</button>
 </section>
+
+<!-- ========== すいりのクセ診断（結果画面に移して使う） ========== -->
+<div class="card" id="diag-card" style="display:none">
+  <h2>🧠 あなたの すいり のクセ</h2>
+  <div id="diag-body"></div>
+</div>
 
 <!-- ========== 対戦けっか ========== -->
 <section id="screen-vs" class="screen">
@@ -587,6 +614,7 @@ h1{
       <div class="verify" id="vs-verify"></div>
     </div>
   </div>
+  <div class="diag-slot" id="diag-slot-vs"></div>
   <button class="btn" data-act="rematch" id="rematch-btn">🔁 もういちど たたかう</button>
   <button class="btn ghost" data-act="title">タイトルへ</button>
 </section>
@@ -652,6 +680,61 @@ function allCandidates(digits, allowDup){
     }
   })(0, new Array(10).fill(false));
   return out;
+}
+
+/* =========================================================
+   「その手はどれくらい良かったか」を測る（情報量ベース）
+   ---------------------------------------------------------
+   ヒット＆ブローの上手さ＝「当てる」より「候補をどれだけ削れるか」。
+   ある手を打つと、こたえあわせの結果ごとに候補が分かれる。
+   分かれ方が均等なほど、次に残る候補が少なくなる＝良い手。
+   ここでは「打ったあと平均して何通り残るか」を求め、
+   その局面で打てた"だいたいの最善手"と比べて★をつける。
+   ========================================================= */
+
+// 配列からn個だけ抜き出す（候補が多いときに軽くするため）
+function sampleArr(a, n){
+  if(a.length <= n) return a.slice();
+  const out = [], used = new Set();
+  while(out.length < n){
+    const k = Math.floor(Math.random() * a.length);
+    if(used.has(k)) continue;
+    used.add(k); out.push(a[k]);
+  }
+  return out;
+}
+
+// その手を打つと、平均して何通り残るか（小さいほど良い手）
+function expectedRemaining(guess, cands){
+  const bucket = {};
+  for(let i=0;i<cands.length;i++){
+    const j = judge(cands[i], guess);
+    const k = j.hit * 10 + j.blow;
+    bucket[k] = (bucket[k] || 0) + 1;
+  }
+  let sum = 0;
+  for(const k in bucket) sum += bucket[k] * bucket[k];
+  return sum / cands.length;
+}
+
+// 打つ前の候補に対して、その手の良さを 0〜1 で返す（1に近いほど最善手に近い）
+function rateGuess(cands, guess){
+  const n = cands ? cands.length : 0;
+  if(n <= 1) return { ratio:1, star:3, inCands:true };
+  const pool   = n > 1000 ? sampleArr(cands, 1000) : cands;   // 重くならないよう間引く
+  const mine   = expectedRemaining(guess, pool);
+  const trials = sampleArr(pool, Math.min(40, pool.length));  // 比較用に何手か試す
+  let best = mine;
+  for(let i=0;i<trials.length;i++){
+    const e = expectedRemaining(trials[i], pool);
+    if(e < best) best = e;
+  }
+  const ratio = mine > 0 ? (best / mine) : 1;
+  return {
+    ratio: ratio,
+    star:  ratio >= 0.75 ? 3 : (ratio >= 0.45 ? 2 : 1),
+    inCands: cands.indexOf(guess) >= 0      // その手は「ありえる答え」だったか
+  };
 }
 
 /* ---------- 状態 ---------- */
@@ -873,11 +956,17 @@ function submitGuess(){
     return;
   }
 
+  const before = S.cands.length;
+  const rate = rateGuess(S.cands, guess);      // ★しぼりこむ前に評価する
   const r = judge(S.secret, guess);
-  S.history.unshift({guess, hit:r.hit, blow:r.blow});
   S.cands = S.cands.filter(c=>{
     const j = judge(c, guess);
     return j.hit === r.hit && j.blow === r.blow;
+  });
+  S.history.unshift({
+    guess, hit:r.hit, blow:r.blow,
+    star:rate.star, ratio:rate.ratio, inCands:rate.inCands,
+    before:before, after:S.cands.length, at:Date.now()
   });
   clearInput();
   renderInput();
@@ -898,13 +987,19 @@ function renderHistory(){
   S.history.forEach((x,i)=>{
     const row = document.createElement('div');
     row.className = 'row' + (x.hit === S.digits ? ' win' : '');
+    const st = x.star ? `<span class="star s${x.star}" title="${starTip(x)}">${'★'.repeat(x.star)}</span>` : '';
     row.innerHTML =
       `<span class="no">${total - i}</span>`+
       `<span class="num">${x.guess.split('').join(' ')}</span>`+
+      st+
       `<span class="badge hit">🐾 ${x.hit}</span>`+
       `<span class="badge blow">🐟 ${x.blow}</span>`;
     h.appendChild(row);
   });
+}
+function starTip(x){
+  const t = {3:'ばっちりの手', 2:'まずまずの手', 1:'もっと絞れる手があった'}[x.star] || '';
+  return (x.before && x.after) ? `${t}（${x.before}→${x.after}とおり）` : t;
 }
 function renderCand(){
   document.getElementById('cand-n').textContent = S.cands.length.toLocaleString();
@@ -993,6 +1088,99 @@ function pane(name, btn){
   btn.classList.add('on');
 }
 
+/* =========================================================
+   すいりのクセ診断
+   ---------------------------------------------------------
+   ・しぼりこみ上手度＝打った手の★の元になった数値の平均。
+     「候補をいちばん削れる手」をどれだけ選べていたか。
+   ・思いこみ度＝前の手と同じ数字をどれだけ使い回したか。
+     人は自分の予想が当たっていることを"確かめる"手を選びがち（確証バイアス）。
+     でも早く解くコツは、むしろ予想を"否定しにいく"手を打つこと。
+     ※ただの偶然でも数字は重なるので、けた数に応じた基準（digits/10）を引いて補正する。
+   ========================================================= */
+function diagnose(hist){
+  const h = hist.slice().reverse();                       // 古い順にする
+  const rated = h.filter(x => typeof x.ratio === 'number');
+  if(h.length < 3 || rated.length < 2) return null;       // 短すぎると意味が出ない
+
+  const eff = rated.reduce((a,x)=>a + x.ratio, 0) / rated.length;
+
+  // 最後に当てた手は「結果」なので、打ち方のクセを見るときは外す
+  // （当たりの手はたいてい前の手と大きく違うので、入れると固執が薄まってしまう）
+  const seq = (h.length > 3 && h[h.length-1].hit === S.digits) ? h.slice(0, -1) : h;
+  let stick = 0, pairs = 0;
+  for(let i=1;i<seq.length;i++){
+    const prev = new Set(seq[i-1].guess.split(''));
+    const cur  = seq[i].guess.split('');
+    stick += cur.filter(c=>prev.has(c)).length / cur.length;
+    pairs++;
+  }
+  stick = pairs ? stick / pairs : 0;
+
+  // 偶然でも重なる分を差し引く（4けたなら 0.4 がただの偶然の水準）
+  const base = S.digits / 10;
+  const bias = Math.max(0, Math.min(1, (stick - base) / (1 - base)));
+
+  const effHigh  = eff  >= 0.72;
+  const biasHigh = bias >= 0.45;
+  let type, cat, note;
+  if(effHigh && !biasHigh){
+    cat = '🧠'; type = '理づめの猫';
+    note = '手がかりが出るたびに<b>ちゃんと考えを入れ替えて</b>います。もっとも早く解ける打ち方です。';
+  }else if(effHigh && biasHigh){
+    cat = '🎯'; type = 'ねらい撃ちの猫';
+    note = '予想を立ててから確かめにいくタイプ。<b>読みが鋭いので効率も出ています</b>が、'
+         + '予想が外れたときに立て直すのが少し遅れがちです。';
+  }else if(!effHigh && biasHigh){
+    cat = '🔁'; type = '思いこみの猫';
+    note = '「この数字は入っているはず」と思うと、<b>それを確かめる手ばかり</b>を打っていました。'
+         + 'これが<b>確証バイアス</b>です。思いきって別の数字に替えると、一気に候補が減ります。';
+  }else{
+    cat = '🎲'; type = 'ひらめきの猫';
+    note = '思いきりよく、いろいろな数字を試すタイプ。<b>視野は広い</b>ので、'
+         + 'あとは「いま分かっていること」と矛盾しない手を選べると、ぐっと早くなります。';
+  }
+
+  // いちばんもったいなかった手（★1のうち、いちばん削れなかったもの）
+  let worst = null;
+  rated.forEach(x=>{ if(!worst || x.ratio < worst.ratio) worst = x; });
+
+  return { eff, bias, type, cat, note, worst, turns:h.length };
+}
+
+function showDiagnosis(slotId){
+  const slot = document.getElementById(slotId);
+  const card = document.getElementById('diag-card');
+  const d = diagnose(S.history);
+  if(!d){ card.style.display = 'none'; return; }
+
+  const pct = v => Math.round(v * 100);
+  const barColor = (v, good) => {
+    const ok = good ? v >= .6 : v < .45;
+    return ok ? 'linear-gradient(90deg,#6fd39a,#8be6a8)' : 'linear-gradient(90deg,#e0648c,#ff8fb1)';
+  };
+
+  let html = '';
+  html += `<div class="diag-type">${d.cat} ${d.type}</div>`;
+  html += `<div class="diag-sub">${d.turns}手ぶんの すいり から みました</div>`;
+  html += `<div class="diag-row"><span class="diag-label">しぼりこみ上手度</span>`
+       +  `<span class="diag-bar"><i style="width:${pct(d.eff)}%;background:${barColor(d.eff,true)}"></i></span>`
+       +  `<span class="diag-val">${pct(d.eff)}%</span></div>`;
+  html += `<div class="diag-row"><span class="diag-label">思いこみ度</span>`
+       +  `<span class="diag-bar"><i style="width:${pct(d.bias)}%;background:${barColor(d.bias,false)}"></i></span>`
+       +  `<span class="diag-val">${pct(d.bias)}%</span></div>`;
+  html += `<div class="diag-note">💡 ${d.note}</div>`;
+  if(d.worst && d.worst.star === 1 && d.worst.before){
+    html += `<div class="diag-tips">いちばん もったいなかった手：<b>${d.worst.guess.split('').join(' ')}</b>`
+         +  `（${d.worst.before}→${d.worst.after}とおり）。`
+         +  `ここで別の数字を混ぜていたら、もっと減らせました。</div>`;
+  }
+  document.getElementById('diag-body').innerHTML = html;
+
+  card.style.display = '';
+  slot.appendChild(card);      // 結果画面のなかへ移す
+}
+
 /* ---------- 結果 ---------- */
 function finish(){
   const turns = S.history.length;
@@ -1012,6 +1200,7 @@ function finish(){
   document.getElementById('result-rank').textContent = '🏅 ' + rank;
   document.getElementById('result-cat').textContent  = cat;
   document.getElementById('result-title').textContent = title;
+  showDiagnosis('diag-slot-solo');
   show('screen-result');
 }
 
@@ -1048,7 +1237,7 @@ const N = {
   myDigits:3, mySecret:'', salt:'', allowDup:false,
   oppUid:null, opp:null, room:null,
   sent:false, sentAt:0, tick:null,
-  chatSeen:0, chatRef:null,
+  chatSeen:0, chatRef:null, rates:{},
   oppHistory:[], filtered:null, inBattle:false, roomRef:null, onlRef:null
 };
 
@@ -1334,6 +1523,7 @@ async function setReady(){
 function enterBattle(){
   N.inBattle = true;
   N.filtered = new Set();
+  N.rates = {};
   N.oppHistory = [];
   N.sent = false;
   S.mode = 'online';
@@ -1392,11 +1582,16 @@ function syncBattle(){
     const mg = g[t][N.uid],    mr = res[t] && res[t][N.uid];
     const og = g[t][N.oppUid], or = res[t] && res[t][N.oppUid];
     if(mg && mr){
-      S.history.unshift({guess:mg, hit:mr.hit, blow:mr.blow});
-      if(!N.filtered.has(t)){   // しぼりこみは1ターンにつき1回だけ（重いので）
+      if(!N.filtered.has(t)){   // しぼりこみと評価は1ターンにつき1回だけ（重いので）
         N.filtered.add(t);
+        const before = S.cands.length;
+        const rate = rateGuess(S.cands, mg);
         S.cands = S.cands.filter(c=>{ const j = judge(c, mg); return j.hit===mr.hit && j.blow===mr.blow; });
+        N.rates[t] = { star:rate.star, ratio:rate.ratio, inCands:rate.inCands,
+                       before:before, after:S.cands.length };
       }
+      const rt = N.rates[t] || {};
+      S.history.unshift(Object.assign({guess:mg, hit:mr.hit, blow:mr.blow}, rt));
     }
     if(og && or) N.oppHistory.unshift({guess:og, hit:or.hit, blow:or.blow});
   });
@@ -1588,6 +1783,7 @@ async function showVs(){
     box.className = 'verify';
     box.textContent = '🔒 あいての ばんごうの 開示を まっています…';
   }
+  showDiagnosis('diag-slot-vs');
   const rb = document.getElementById('rematch-btn');
   rb.textContent = N.isHost ? '🔁 もういちど たたかう' : '⏳ 部屋主が はじめるのを まつ';
   rb.disabled = !N.isHost;
