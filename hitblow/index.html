@@ -168,11 +168,20 @@ h1{
 .keypad button.used{opacity:.35}
 /* メモで「どのけたにも入らない」と決めた数字には×を出す */
 .keypad button.ng{opacity:.5}
-.keypad button.ng{color:#8f97c4}
+.keypad button.ng{
+  color:#9aa3cc;
+  background:linear-gradient(180deg,#2e2740,#241f34);
+  border-color:rgba(255,123,123,.35);
+}
+/* 数字は読めるまま、斜めの取り消し線と小さめの×で「使わない」を示す */
+.keypad button.ng::before{
+  content:"";position:absolute;left:18%;right:18%;top:50%;height:2px;
+  background:rgba(255,123,123,.7);transform:rotate(-18deg);pointer-events:none;
+}
 .keypad button.ng::after{
-  content:"×";position:absolute;top:0;right:4px;
-  font-size:1rem;font-weight:700;color:var(--red);line-height:1.2;
-  text-shadow:0 0 6px rgba(255,123,123,.5);
+  content:"×";position:absolute;top:-1px;right:4px;
+  font-size:.95rem;font-weight:700;color:var(--red);line-height:1.3;
+  pointer-events:none;
 }
 .slot{cursor:pointer}
 .slot.cursor{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,143,177,.18)}
@@ -216,8 +225,11 @@ h1{
 }
 .memo-table td{padding:2px}
 .memo-table .dnum{
-  color:var(--gold);font-weight:700;font-size:1rem;text-align:center;width:26px;
+  color:var(--gold);font-weight:700;font-size:1rem;text-align:center;width:30px;
+  cursor:pointer;border-radius:8px;user-select:none;
 }
+.memo-table .dnum:active{background:rgba(255,212,121,.15)}
+.memo-table .dnum.off{color:var(--red);text-decoration:line-through;opacity:.85}
 .mcell{
   width:100%;height:clamp(38px,10.5vw,46px);
   border:1px solid #333c6e;border-radius:8px;
@@ -227,6 +239,18 @@ h1{
 .mcell[data-v="1"]{background:rgba(139,230,168,.16);color:var(--green);border-color:rgba(139,230,168,.4)}
 .mcell[data-v="2"]{background:rgba(255,123,123,.12);color:var(--red);border-color:rgba(255,123,123,.35)}
 .mcell[data-v="3"]{background:rgba(255,212,121,.12);color:var(--gold);border-color:rgba(255,212,121,.35)}
+.pen-bar{display:flex;gap:7px;margin-bottom:11px}
+.pen-bar button{
+  flex:1;padding:11px 0;border-radius:11px;border:1px solid var(--line);
+  background:#1c2342;color:var(--sub);font-family:inherit;
+  font-size:1.15rem;font-weight:700;cursor:pointer;line-height:1.2;
+}
+.pen-bar button small{display:block;font-size:.62rem;font-weight:400;opacity:.8;margin-top:1px}
+.pen-bar button[data-pen="1"]{color:var(--green)}
+.pen-bar button[data-pen="2"]{color:var(--red)}
+.pen-bar button[data-pen="3"]{color:var(--gold)}
+.pen-bar button[data-pen="0"]{color:var(--sub);font-size:.9rem}
+.pen-bar button.on{background:#2b3460;box-shadow:0 0 0 2px currentColor inset}
 .memo-legend{font-size:.75rem;color:var(--sub);margin-top:9px;line-height:1.7}
 .freememo{
   width:100%;min-height:64px;margin-top:10px;padding:9px;font-size:16px;
@@ -559,13 +583,19 @@ h1{
 
       <div class="card pane" data-pane="memo">
         <h2>📝 メモ</h2>
+        <div class="pen-bar" id="pen-bar">
+          <button data-pen="2" class="on">×<small>ちがう</small></button>
+          <button data-pen="1">○<small>ココ</small></button>
+          <button data-pen="3">?<small>あやしい</small></button>
+          <button data-pen="0">けす<small>もどす</small></button>
+        </div>
         <table class="memo-table" id="memo-table"></table>
         <p class="memo-legend">
-          よこ＝なんけた目／たて＝数字。タップで切りかえ：<br>
-          <span style="color:var(--sub)">･</span> みてい
-          <span style="color:var(--green)">○</span> ココで確定
-          <span style="color:var(--red)">×</span> ちがう
-          <span style="color:var(--gold)">?</span> あやしい
+          上で<b style="color:var(--gold)">なにを書くか</b>をえらんで、マスをタップするニャ<br>
+          （同じ印をもう一度タップすると消えるニャ）<br>
+          <b style="color:var(--gold)">左はしの数字をタップ</b>すると、その数字を丸ごと×にできるニャ。<br>
+          ×にした数字は、上のキーにも×が出るニャ<br>
+          <span style="opacity:.8">よこ＝なんけた目／たて＝数字</span>
         </p>
         <textarea class="freememo" id="freememo" placeholder="じゆうメモ（例：1と5のどっちかが入ってる）"></textarea>
       </div>
@@ -742,7 +772,8 @@ const S = {
   mode:'solo',
   digits:3, allowDup:false, showCand:true,
   secret:'', input:'', history:[], memo:{}, cands:[], startAt:0,
-  slots:[], cursor:0          // slots＝けたごとの入力。cursor＝いま入れるところ
+  slots:[], cursor:0,         // slots＝けたごとの入力。cursor＝いま入れるところ
+  pen:2                       // メモに書く印（最初は×）
 };
 
 /* ---------- 入力（けたごと） ---------- */
@@ -1007,27 +1038,47 @@ function renderCand(){
 
 /* ---------- メモ表 ---------- */
 const MEMO_MARK = ['･','○','×','?'];
+
+// メモに「いま何を書くか」（0=けす 1=○ 2=× 3=?）。×がいちばん使うので最初は×
+function setupPen(){
+  const bar = document.getElementById('pen-bar');
+  if(!bar || bar.dataset.ready) return;
+  bar.dataset.ready = '1';
+  bar.addEventListener('click', e=>{
+    const b = e.target.closest('button[data-pen]'); if(!b) return;
+    S.pen = +b.dataset.pen;
+    bar.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x === b));
+  });
+}
 function buildMemoTable(){
   const t = document.getElementById('memo-table');
   let html = '<tr><th></th>';
   for(let p=0;p<S.digits;p++) html += `<th>${p+1}</th>`;
   html += '</tr>';
   for(let d=0;d<10;d++){
-    html += `<tr><td class="dnum">${d}</td>`;
+    html += `<tr><td class="dnum" data-row="${d}" title="タップでこの数字を丸ごと×／もどす">${d}</td>`;
     for(let p=0;p<S.digits;p++){
       html += `<td><button class="mcell" data-v="0" data-d="${d}" data-p="${p}">･</button></td>`;
     }
     html += '</tr>';
   }
   t.innerHTML = html;
+  setupPen();
   t.onclick = e=>{
+    // 左端の数字をタップ → その数字を丸ごと×／もどす（1タップで済むように）
+    const head = e.target.closest('.dnum');
+    if(head){ toggleDigitOff(head.dataset.row); return; }
+
     const b = e.target.closest('.mcell'); if(!b) return;
-    const v = (+b.dataset.v + 1) % 4;
+    // いま選んでいる印を書く。同じ印をもう一度タップしたら消す
+    const v = (+b.dataset.v === S.pen) ? 0 : S.pen;
     b.dataset.v = v;
     b.textContent = MEMO_MARK[v];
     S.memo[b.dataset.d + '-' + b.dataset.p] = v;
+    refreshMemoHeads();
     renderInput();   // 「全部のけたに×」になった数字をキーに反映
   };
+  refreshMemoHeads();
 }
 
 /* ---------- ボタン操作（イベント委譲） ----------
@@ -1179,6 +1230,27 @@ function showDiagnosis(slotId){
 
   card.style.display = '';
   slot.appendChild(card);      // 結果画面のなかへ移す
+}
+
+// その数字を「どのけたにも入らない」にする／もどす
+function toggleDigitOff(d){
+  const off = digitExcluded(d);
+  for(let pos=0; pos<S.digits; pos++){
+    const v = off ? 0 : 2;                       // すでに全部×なら もどす、そうでなければ 全部×
+    S.memo[d + '-' + pos] = v;
+    const cell = document.querySelector(`.mcell[data-d="${d}"][data-p="${pos}"]`);
+    if(cell){ cell.dataset.v = v; cell.textContent = MEMO_MARK[v]; }
+  }
+  refreshMemoHeads();
+  renderInput();
+  toast(off ? `${d} を もどしたニャ` : `${d} は つかわない ニャ`);
+}
+
+// 左端の数字の見た目（×にした数字は取り消し線）
+function refreshMemoHeads(){
+  document.querySelectorAll('.memo-table .dnum').forEach(h=>{
+    h.classList.toggle('off', digitExcluded(h.dataset.row));
+  });
 }
 
 /* ---------- 結果 ---------- */
