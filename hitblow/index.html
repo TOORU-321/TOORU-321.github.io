@@ -159,12 +159,23 @@ h1{
 .slot.cursor{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,143,177,.18)}
 .keypad{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(5px,1.7vw,7px)}
 .keypad button{
+  position:relative;
   padding:clamp(12px,3.6vw,15px) 0;border-radius:11px;border:1px solid var(--line);
   background:linear-gradient(180deg,#2b3460,#222a4d);color:var(--text);
   font-size:1.15rem;font-weight:700;font-family:inherit;cursor:pointer;
 }
 .keypad button:active{transform:translateY(2px)}
 .keypad button.used{opacity:.35}
+/* メモで「どのけたにも入らない」と決めた数字には×を出す */
+.keypad button.ng{opacity:.5}
+.keypad button.ng{color:#8f97c4}
+.keypad button.ng::after{
+  content:"×";position:absolute;top:0;right:4px;
+  font-size:1rem;font-weight:700;color:var(--red);line-height:1.2;
+  text-shadow:0 0 6px rgba(255,123,123,.5);
+}
+.slot{cursor:pointer}
+.slot.cursor{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,143,177,.18)}
 .keypad button.wide{grid-column:span 2;font-size:.92rem;background:#1c2342;color:var(--sub)}
 .keypad button.go{
   grid-column:span 3;
@@ -228,9 +239,9 @@ h1{
 /* スマホ用タブ */
 .ptabs{display:none;gap:8px;margin-bottom:10px}
 .ptabs button{
-  flex:1;padding:11px 4px;border-radius:11px;cursor:pointer;font-weight:700;
+  flex:1;min-width:0;padding:11px 2px;border-radius:11px;cursor:pointer;font-weight:700;
   border:1px solid var(--line);background:#1c2342;color:var(--sub);
-  font-family:inherit;font-size:.92rem;
+  font-family:inherit;font-size:clamp(.72rem,3.1vw,.92rem);white-space:nowrap;
 }
 .ptabs button.on{background:linear-gradient(180deg,var(--panel2),#2b3460);color:var(--gold);border-color:var(--gold)}
 @media(max-width:759px){
@@ -243,6 +254,13 @@ h1{
   .history{max-height:none}
   .row{padding:10px 9px}
   .btn{padding:16px}
+}
+
+/* じぶんの ばんごう をのぞく */
+.peekbar{margin:-4px 0 10px}
+.peek-val{
+  display:inline-block;margin-left:9px;font-size:1.15rem;font-weight:700;
+  letter-spacing:.18em;color:var(--gold);vertical-align:middle;
 }
 
 /* オンライン対戦 */
@@ -291,6 +309,42 @@ h1{
 .vsnum .who{font-size:.76rem;color:var(--sub)}
 .vsnum .n{font-size:1.5rem;font-weight:700;letter-spacing:.14em;color:var(--pink)}
 .err{color:var(--red);font-size:.84rem;margin-top:8px;min-height:1.2em}
+
+/* チャット */
+.chat-log{
+  max-height:230px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;
+  padding:2px;margin-bottom:10px;
+}
+.chat-log:empty::after{
+  content:"まだ なにも話していないニャ";color:var(--sub);font-size:.84rem;
+  text-align:center;padding:22px 0;
+}
+.msg{
+  max-width:82%;padding:8px 12px;border-radius:14px;font-size:.9rem;
+  word-break:break-word;animation:pop .25s ease;
+}
+.msg.me{align-self:flex-end;background:linear-gradient(180deg,var(--pink),var(--pink-d));color:#2b1220}
+.msg.op{align-self:flex-start;background:#2b3460;color:var(--text);border:1px solid var(--line)}
+.msg .who{display:block;font-size:.68rem;opacity:.75;margin-bottom:1px}
+.chat-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.chat-quick button{
+  padding:7px 11px;border-radius:20px;border:1px solid var(--line);
+  background:#1c2342;color:var(--text);font-family:inherit;font-size:.82rem;cursor:pointer;
+}
+.chat-quick button:active{transform:translateY(1px)}
+.chat-send{display:flex;gap:7px}
+.chat-send input{
+  flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:#161c38;color:var(--text);font-family:inherit;font-size:16px;
+}
+.chat-send button{
+  padding:10px 15px;border-radius:10px;border:none;cursor:pointer;font-family:inherit;
+  font-weight:700;background:linear-gradient(180deg,var(--pink),var(--pink-d));color:#2b1220;
+}
+.tab-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--pink);margin-left:5px;vertical-align:1px;
+}
 
 /* 結果 */
 .result-box{text-align:center;padding:20px 10px}
@@ -436,6 +490,11 @@ h1{
     <button class="icon-btn" data-act="quit">やめる</button>
   </div>
 
+  <div class="peekbar" id="peekbar" style="display:none">
+    <button class="icon-btn" data-act="peek" id="peek-btn">🙈 じぶんの ばんごうを みる</button>
+    <span class="peek-val" id="peek-val" hidden></span>
+  </div>
+
   <div class="layout">
     <div>
       <div class="card">
@@ -450,6 +509,7 @@ h1{
       <div class="ptabs" id="ptabs">
         <button class="on" data-act="pane" data-pane-to="history">📜 きろく</button>
         <button data-act="pane" data-pane-to="opp" id="tab-opp" style="display:none">🐈‍⬛ あいて</button>
+        <button data-act="pane" data-pane-to="chat" id="tab-chat" style="display:none">💬 はなす</button>
         <button data-act="pane" data-pane-to="memo">📝 メモ</button>
       </div>
 
@@ -465,6 +525,16 @@ h1{
         <h2>🐈‍⬛ あいて の すいり</h2>
         <div class="oppstate" id="opp-state"></div>
         <div class="history" id="opp-history"></div>
+      </div>
+
+      <div class="card pane" data-pane="chat" id="chat-card" style="display:none">
+        <h2>💬 あいてと はなす</h2>
+        <div class="chat-log" id="chat-log"></div>
+        <div class="chat-quick" id="chat-quick"></div>
+        <div class="chat-send">
+          <input id="chat-input" maxlength="60" placeholder="メッセージ（60文字まで）">
+          <button data-act="chatsend">送る</button>
+        </div>
       </div>
 
       <div class="card pane" data-pane="memo">
@@ -588,8 +658,27 @@ function allCandidates(digits, allowDup){
 const S = {
   mode:'solo',
   digits:3, allowDup:false, showCand:true,
-  secret:'', input:'', history:[], memo:{}, cands:[], startAt:0
+  secret:'', input:'', history:[], memo:{}, cands:[], startAt:0,
+  slots:[], cursor:0          // slots＝けたごとの入力。cursor＝いま入れるところ
 };
+
+/* ---------- 入力（けたごと） ---------- */
+function clearInput(){ S.slots = new Array(S.digits).fill(''); S.cursor = 0; S.input = ''; }
+function setInput(str){
+  S.slots = new Array(S.digits).fill('');
+  String(str).split('').slice(0, S.digits).forEach((c,i)=>{ S.slots[i] = c; });
+  S.cursor = 0; syncInput();
+}
+function syncInput(){ S.input = S.slots.join(''); }
+function inputFilled(){ return S.slots.length === S.digits && S.slots.every(c=>c !== ''); }
+
+// メモで「どのけたにも入らない」と決めた数字か（＝全部のけたが×）
+function digitExcluded(d){
+  for(let pos=0; pos<S.digits; pos++){
+    if(S.memo[d + '-' + pos] !== 2) return false;
+  }
+  return true;
+}
 
 /* ---------- 画面きりかえ ---------- */
 function show(id){
@@ -645,8 +734,11 @@ function startGame(){
   document.getElementById('opp-card').style.display = 'none';
   document.getElementById('tab-opp').style.display  = 'none';
   document.getElementById('waiting').style.display  = 'none';
+  document.getElementById('peekbar').style.display  = 'none';
+  document.getElementById('chat-card').style.display = 'none';
+  document.getElementById('tab-chat').style.display  = 'none';
   S.secret  = makeSecret(S.digits, S.allowDup);
-  S.input   = '';
+  clearInput();
   S.history = [];
   S.memo    = {};
   S.cands   = allCandidates(S.digits, S.allowDup);
@@ -676,9 +768,12 @@ function quitGame(){
 function buildGuessDisplay(){
   const box = document.getElementById('guess-display');
   box.innerHTML = '';
+  if(S.slots.length !== S.digits) clearInput();
   for(let i=0;i<S.digits;i++){
     const d = document.createElement('div');
     d.className = 'slot';
+    d.title = (i+1) + 'けた目';
+    d.onclick = ()=>{ S.cursor = i; renderInput(); };   // 好きなけたから入力できる
     box.appendChild(d);
   }
   renderInput();
@@ -686,15 +781,19 @@ function buildGuessDisplay(){
 function renderInput(){
   const slots = document.querySelectorAll('#guess-display .slot');
   slots.forEach((s,i)=>{
-    s.textContent = S.input[i] || '';
-    s.classList.toggle('filled', i < S.input.length);
-    s.classList.toggle('cursor', i === S.input.length);
+    s.textContent = S.slots[i] || '';
+    s.classList.toggle('filled', S.slots[i] !== '' && S.slots[i] !== undefined);
+    s.classList.toggle('cursor', i === S.cursor);
   });
+  syncInput();
   const go = document.getElementById('go-btn');
-  if(go) go.disabled = S.input.length !== S.digits;
-  // くりかえし無しのとき、使った数字を薄くする
+  if(go) go.disabled = !inputFilled() || (S.mode === 'online' && N.sent);
   document.querySelectorAll('#keypad button[data-d]').forEach(b=>{
-    b.classList.toggle('used', !S.allowDup && S.input.includes(b.dataset.d));
+    const d = b.dataset.d;
+    // くりかえし無しのとき、もう使った数字は薄く
+    b.classList.toggle('used', !S.allowDup && S.slots.includes(d));
+    // メモで全部のけたに×を付けた数字には×を出す
+    b.classList.toggle('ng', digitExcluded(d));
   });
 }
 function buildKeypad(){
@@ -717,23 +816,40 @@ function buildKeypad(){
   kp.appendChild(go);
 }
 function pushDigit(d){
-  if(S.input.length >= S.digits) return;
-  if(!S.allowDup && S.input.includes(d)){ toast('同じ数字は使えないニャ'); return; }
-  S.input += d; renderInput();
+  if(S.slots.length !== S.digits) clearInput();
+  if(!S.allowDup && S.slots.includes(d) && S.slots[S.cursor] !== d){
+    toast('同じ数字は使えないニャ'); return;
+  }
+  S.slots[S.cursor] = d;
+  // つぎの「空いているけた」へ。無ければ右へひとつ
+  let next = -1;
+  for(let i=1;i<=S.digits;i++){
+    const k = (S.cursor + i) % S.digits;
+    if(S.slots[k] === ''){ next = k; break; }
+  }
+  S.cursor = (next >= 0) ? next : Math.min(S.cursor + 1, S.digits - 1);
+  renderInput();
 }
-function popDigit(){ S.input = S.input.slice(0,-1); renderInput(); }
+function popDigit(){
+  if(S.slots.length !== S.digits){ clearInput(); renderInput(); return; }
+  if(S.slots[S.cursor] !== ''){ S.slots[S.cursor] = ''; }       // そのけたを消す
+  else if(S.cursor > 0){ S.cursor--; S.slots[S.cursor] = ''; }  // 空なら左へ戻って消す
+  renderInput();
+}
 
 document.addEventListener('keydown', e=>{
   if(!document.getElementById('screen-game').classList.contains('active')) return;
   if(e.key >= '0' && e.key <= '9') pushDigit(e.key);
   else if(e.key === 'Backspace'){ e.preventDefault(); popDigit(); }
-  else if(e.key === 'Enter' && S.input.length === S.digits) submitGuess();
+  else if(e.key === 'ArrowLeft'){  e.preventDefault(); S.cursor = Math.max(0, S.cursor-1); renderInput(); }
+  else if(e.key === 'ArrowRight'){ e.preventDefault(); S.cursor = Math.min(S.digits-1, S.cursor+1); renderInput(); }
+  else if(e.key === 'Enter' && inputFilled()) submitGuess();
 });
 
 /* ---------- 推理を出す ---------- */
 function submitGuess(){
-  if(S.input.length !== S.digits) return;
-  const guess = S.input;
+  if(!inputFilled()) return;
+  const guess = S.slots.join('');
   if(S.history.some(h=>h.guess === guess)){ toast('もう試した番号だニャ'); return; }
 
   // ---- オンライン対戦：DBへ送って、相手のこたえあわせを待つ
@@ -745,12 +861,12 @@ function submitGuess(){
       N.sent = true; updateWaiting(); return;
     }
     N.sent = true; N.sentAt = Date.now();
-    S.input = ''; renderInput(); updateWaiting();
+    clearInput(); renderInput(); updateWaiting();
     DB().ref('rooms/'+N.code+'/guesses/'+t+'/'+N.uid).set(guess)
       .catch(e=>{
         // 送れなかったら入力を戻して、もう一度おせるようにする（固まらせない）
         console.warn('guess write failed', e);
-        N.sent = false; S.input = guess;
+        N.sent = false; setInput(guess);
         renderInput(); updateWaiting();
         toast('おくれなかったニャ。もう一度おしてニャ');
       });
@@ -763,7 +879,7 @@ function submitGuess(){
     const j = judge(c, guess);
     return j.hit === r.hit && j.blow === r.blow;
   });
-  S.input = '';
+  clearInput();
   renderInput();
   renderHistory();
   renderCand();
@@ -815,6 +931,7 @@ function buildMemoTable(){
     b.dataset.v = v;
     b.textContent = MEMO_MARK[v];
     S.memo[b.dataset.d + '-' + b.dataset.p] = v;
+    renderInput();   // 「全部のけたに×」になった数字をキーに反映
   };
 }
 
@@ -828,6 +945,8 @@ const ACTIONS = {
   title: ()=>show('screen-title'),
   quit:  ()=>quitGame(),
   pane:  (btn)=>pane(btn.dataset.paneTo, btn),
+  peek:  ()=>togglePeek(),
+  chatsend: ()=>sendChat(document.getElementById('chat-input').value),
   online:      ()=>goOnline(),
   createRoom:  ()=>createRoom(),
   joinRoom:    ()=>joinRoom(),
@@ -845,8 +964,30 @@ document.addEventListener('click', e=>{
   if(fn) fn(btn);
 });
 
+/* ---------- じぶんの ばんごうを みる（対戦中のみ） ---------- */
+function togglePeek(){
+  const val = document.getElementById('peek-val');
+  const btn = document.getElementById('peek-btn');
+  const open = val.hidden;
+  if(open){
+    val.textContent = (N.mySecret || '').split('').join(' ');
+    val.hidden = false;
+    btn.textContent = '🙉 かくす';
+  }else{
+    val.hidden = true;
+    btn.textContent = '🙈 じぶんの ばんごうを みる';
+  }
+}
+function resetPeek(){
+  const val = document.getElementById('peek-val');
+  const btn = document.getElementById('peek-btn');
+  if(val){ val.hidden = true; val.textContent = ''; }
+  if(btn){ btn.textContent = '🙈 じぶんの ばんごうを みる'; }
+}
+
 /* ---------- スマホ用：きろく／メモ の切りかえ ---------- */
 function pane(name, btn){
+  if(name === 'chat') markChatTab(false);
   document.querySelectorAll('.pane').forEach(e=>e.classList.toggle('on', e.dataset.pane === name));
   document.querySelectorAll('#ptabs button').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
@@ -907,6 +1048,7 @@ const N = {
   myDigits:3, mySecret:'', salt:'', allowDup:false,
   oppUid:null, opp:null, room:null,
   sent:false, sentAt:0, tick:null,
+  chatSeen:0, chatRef:null,
   oppHistory:[], filtered:null, inBattle:false, roomRef:null, onlRef:null
 };
 
@@ -1082,6 +1224,7 @@ function onRoomUpdate(){
   else if(r.meta.status === 'playing'){
     if(!N.inBattle) enterBattle();
     syncBattle();
+    renderChat();
   }
   else if(r.meta.status === 'done'){
     showVs();
@@ -1197,7 +1340,8 @@ function enterBattle(){
   S.digits = (N.opp && N.opp.digits) || 3;   // 相手が隠したけた数＝自分が当てる数
   S.allowDup = N.allowDup;
   S.showCand = true;
-  S.input = ''; S.history = []; S.memo = {};
+  S.history = []; S.memo = {};
+  clearInput();
   S.cands = allCandidates(S.digits, S.allowDup);
   S.startAt = Date.now();
 
@@ -1207,6 +1351,11 @@ function enterBattle(){
   document.getElementById('cand-box').style.display = '';
   document.getElementById('opp-card').style.display = '';
   document.getElementById('tab-opp').style.display  = '';
+  document.getElementById('peekbar').style.display  = '';
+  document.getElementById('chat-card').style.display = '';
+  document.getElementById('tab-chat').style.display  = '';
+  resetPeek();
+  buildChat();
 
   buildKeypad(); buildGuessDisplay(); buildMemoTable();
   renderHistory(); renderCand();
@@ -1289,7 +1438,12 @@ function updateWaiting(){
   const w = document.getElementById('waiting');
   if(S.mode !== 'online'){ w.style.display = 'none'; return; }
   w.style.display = N.sent ? '' : 'none';
-  document.querySelectorAll('#keypad button').forEach(b=>{ b.disabled = N.sent; });
+  document.querySelectorAll('#keypad button').forEach(b=>{
+    if(b.id === 'go-btn') return;          // 送信ボタンは下で別に決める
+    b.disabled = N.sent;
+  });
+  const go = document.getElementById('go-btn');
+  if(go) go.disabled = N.sent || !inputFilled();
 }
 
 function advanceIfReady(){
@@ -1316,6 +1470,83 @@ function advanceIfReady(){
     DB().ref('rooms/'+N.code+'/meta/turn').set(t + 1)
       .catch(e=>console.warn('turn write failed', e));
   }
+}
+
+/* =========================================================
+   チャット（対戦中に あいてと 話す）
+   rooms/{code}/chat/{id} = { u:だれが, t:なにを, at:いつ }
+   自分のuidの行しか書けない（ルールで制限）
+   ========================================================= */
+const CHAT_QUICK = [
+  'よろしくニャ！', 'むずかしい…', 'おしい！', 'ナイス！',
+  'ちょっとまって', 'まいったニャ', 'ありがとう！', 'またやろう'
+];
+
+function buildChat(){
+  const q = document.getElementById('chat-quick');
+  q.innerHTML = '';
+  CHAT_QUICK.forEach(t=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = t;
+    b.onclick = ()=>sendChat(t);
+    q.appendChild(b);
+  });
+  const inp = document.getElementById('chat-input');
+  inp.onkeydown = e=>{ if(e.key === 'Enter'){ e.preventDefault(); sendChat(inp.value); } };
+  document.getElementById('chat-log').innerHTML = '';
+  N.chatSeen = 0;
+  markChatTab(false);
+}
+
+function sendChat(text){
+  const t = String(text || '').trim().slice(0, 60);
+  if(!t) return;
+  if(!N.code || !DB()){ toast('いま送れないニャ'); return; }
+  document.getElementById('chat-input').value = '';
+  DB().ref('rooms/' + N.code + '/chat').push({ u:N.uid, t:t, at:Date.now() })
+    .catch(e=>{ console.warn('chat send failed', e); toast('送れなかったニャ'); });
+}
+
+function renderChat(){
+  const chat = (N.room && N.room.chat) || {};
+  const ids = Object.keys(chat).sort((a,b)=>(chat[a].at||0)-(chat[b].at||0));
+  const log = document.getElementById('chat-log');
+  if(!log) return;
+  log.innerHTML = '';
+  ids.forEach(id=>{
+    const m = chat[id]; if(!m || !m.t) return;
+    const me = m.u === N.uid;
+    const div = document.createElement('div');
+    div.className = 'msg ' + (me ? 'me' : 'op');
+    const who = me ? 'あなた' : ((N.opp && N.opp.name) || 'あいて');
+    div.innerHTML = '<span class="who">' + escapeHtml(who) + '</span>' + escapeHtml(m.t);
+    log.appendChild(div);
+  });
+  log.scrollTop = log.scrollHeight;
+
+  // あいてから新しいメッセージが来たら、タブに印をつける／気づけるように知らせる
+  const n = ids.length;
+  if(n > N.chatSeen){
+    const fresh = ids.slice(N.chatSeen).map(i=>chat[i]).filter(m=>m && m.u !== N.uid);
+    const chatOpen = document.querySelector('[data-pane="chat"]') &&
+                     document.querySelector('[data-pane="chat"]').classList.contains('on');
+    const wide = innerWidth >= 760;
+    if(fresh.length && !(wide || chatOpen)){
+      markChatTab(true);
+      toast('💬 ' + fresh[fresh.length-1].t);
+    }
+    N.chatSeen = n;
+  }
+}
+
+function markChatTab(on){
+  const tab = document.getElementById('tab-chat');
+  if(!tab) return;
+  const dot = tab.querySelector('.tab-dot');
+  if(on && !dot){
+    const sp = document.createElement('span'); sp.className = 'tab-dot';
+    tab.appendChild(sp);
+  }else if(!on && dot){ dot.remove(); }
 }
 
 /* ---------- 対戦けっか ---------- */
@@ -1372,6 +1603,7 @@ async function rematch(){
     await DB().ref('rooms/'+N.code+'/results').remove();
     await DB().ref('rooms/'+N.code+'/reveal').remove();
     await DB().ref('rooms/'+N.code+'/outcome').remove();
+    await DB().ref('rooms/'+N.code+'/chat').remove();
     await DB().ref('secrets/'+N.code).remove();
     // 回戦番号を進めれば、ふたりとも自動で「じゅんび中」に戻る
     await DB().ref('rooms/'+N.code+'/meta').update({status:'lobby', turn:0, round:next});
