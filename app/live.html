@@ -701,9 +701,10 @@ async function loadArchives(){
     box.innerHTML=arr.map(function(v){
       const mm=Math.floor((v.dur||0)/60), sc=(v.dur||0)%60, d=String(v.created||"").slice(0,10);
       return '<div class="arc"><div class="arc-i"><div class="arc-t">'+esc(v.name||"(無題の録画)")+'</div><div class="arc-m">'+mm+'分'+sc+'秒　'+esc(d)+(v.ready?'':' ・処理中')+'</div></div>'+
-        '<div class="arc-a"><button class="arc-add" data-add="'+esc(v.uid)+'" data-nm="'+esc(v.name||"")+'">📥登録</button><button class="arc-del" data-del="'+esc(v.uid)+'">🗑</button></div></div>';
+        '<div class="arc-a"><button class="arc-add" data-add="'+esc(v.uid)+'" data-nm="'+esc(v.name||"")+'">📥登録</button><button class="arc-dl" data-dl="'+esc(v.uid)+'">⬇MP4</button><button class="arc-del" data-del="'+esc(v.uid)+'">🗑</button></div></div>';
     }).join("");
     box.querySelectorAll("[data-add]").forEach(b=> b.onclick=()=>regArchive(b.dataset.add, b.dataset.nm));
+    box.querySelectorAll("[data-dl]").forEach(b=> b.onclick=()=>dlArchive(b.dataset.dl, b));
     box.querySelectorAll("[data-del]").forEach(b=> b.onclick=()=>delArchive(b.dataset.del));
   }catch(e){ box.innerHTML='<div class="arc-empty">通信エラー</div>'; }
 }
@@ -714,6 +715,21 @@ async function regArchive(uid, nm){
     const r=await fetch(GAS_URL,{method:"POST",body:new URLSearchParams({ action:"archive_add", email:(ME.email||"").toLowerCase(), uid:uid, title:title })}).then(x=>x.json());
     alert(r&&r.ok ? "動画シートに登録しました（まず【非公開】）✓\n中身を確認後、シートで種別を「サブスク」等に変えると公開されます" : "登録に失敗しました（"+((r&&r.error)||"")+"）");
   }catch(e){ alert("通信エラー"); }
+}
+// MP4ダウンロード：手元で編集（冒頭カット等）してから再アップロードしたい時用。
+// Cloudflare側の変換に少し時間がかかるので、準備できるまで数秒おきに確認してから開く。
+async function dlArchive(uid, btn){
+  const orig = btn.textContent; btn.disabled = true;
+  try{
+    for(let i=0; i<60; i++){
+      const r = await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"cf_download", email:(ME.email||"").toLowerCase(), uid }) }).then(x=>x.json());
+      if(!r || !r.ok){ alert("ダウンロード準備に失敗しました（"+((r&&r.error)||"")+"）"); break; }
+      if(r.status === "ready"){ window.open(r.url, "_blank"); break; }
+      btn.textContent = "準備中"+(r.pct!=null ? "("+Math.round(r.pct)+"%)" : "…");
+      await new Promise(res=>setTimeout(res, 3000));
+    }
+  }catch(e){ alert("通信エラー"); }
+  finally{ btn.disabled = false; btn.textContent = orig; }
 }
 async function delArchive(uid){
   if(!confirm("この録画をCloudflareから削除しますか？（元に戻せません）")) return;
