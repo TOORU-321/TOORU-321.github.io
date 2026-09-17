@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>診断結果ビュー | ダイエット迷子診断</title>
+<style>
+  :root {
+    --pink-1: #fef7f8;
+    --pink-2: #fbf0f2;
+    --pink-3: #f3d5da;
+    --brand: #a96874;
+    --brand-dark: #8b4d5a;
+    --text: #4d3a3d;
+    --gray: #8b7a7d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+    background: linear-gradient(180deg, var(--pink-1), #fff);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .container { max-width: 780px; margin: 0 auto; padding: 24px 18px 80px; }
+  .header {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 22px;
+    box-shadow: 0 8px 30px rgba(169,104,116,0.08);
+    border: 1px solid rgba(169,104,116,0.1);
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge {
+    background: var(--pink-2);
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+  }
+  .header h1 {
+    font-size: 22px;
+    color: var(--brand-dark);
+    margin: 0 0 12px;
+    line-height: 1.4;
+  }
+  .header h1 .type-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #f3a5b0, #d97b8a);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .meta { color: var(--gray); font-size: 13px; line-height: 1.8; }
+  .meta strong { color: var(--text); }
+  .status-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .status-pill.pending { background: #fff5e1; color: #b3830a; }
+  .status-pill.done { background: #e6f5ec; color: #2b8a4a; }
+
+  section.card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px;
+    margin-top: 20px;
+    box-shadow: 0 6px 24px rgba(169,104,116,0.06);
+    border: 1px solid rgba(169,104,116,0.08);
+  }
+  section.card h2 {
+    font-size: 17px;
+    margin: 0 0 16px;
+    color: var(--brand-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  section.card h2::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: var(--brand);
+    border-radius: 2px;
+  }
+
+  /* スコアチャート */
+  .score-list { display: grid; gap: 10px; }
+  .score-item { display: grid; grid-template-columns: 100px 1fr 40px; align-items: center; gap: 10px; font-size: 14px; }
+  .score-item .label { font-weight: 700; color: var(--text); }
+  .score-item.primary .label { color: var(--brand-dark); font-weight: 800; }
+  .score-bar { height: 22px; background: var(--pink-2); border-radius: 999px; position: relative; overflow: hidden; }
+  .score-bar .fill { height: 100%; background: linear-gradient(90deg, #f3a5b0, #d97b8a); border-radius: 999px; transition: width 0.8s ease; }
+  .score-item.primary .score-bar .fill { background: linear-gradient(90deg, #d97b8a, #a96874); }
+  .score-count { font-weight: 700; color: var(--brand-dark); text-align: right; font-size: 15px; }
+
+  /* チェック項目 */
+  .checked-group { margin-top: 14px; padding: 14px 16px; background: var(--pink-1); border-radius: 12px; border-left: 4px solid var(--pink-3); }
+  .checked-group.primary { border-left-color: var(--brand); background: var(--pink-2); }
+  .checked-group h3 { margin: 0 0 8px; font-size: 14px; color: var(--brand-dark); }
+  .checked-group h3 .count { color: var(--gray); font-weight: 400; font-size: 12px; margin-left: 6px; }
+  .checked-group ul { margin: 0; padding-left: 20px; color: var(--text); font-size: 13.5px; line-height: 1.9; }
+  .checked-group ul li { margin-bottom: 2px; }
+  .checked-group.empty { opacity: 0.55; }
+  .checked-group.empty ul { display: none; }
+
+  /* エラー・ローディング */
+  .state-msg { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 15px; }
+  .state-msg .big { font-size: 48px; margin-bottom: 12px; }
+
+  /* フッター */
+  .footer-note { text-align: center; color: var(--gray); font-size: 12px; margin-top: 30px; line-height: 1.8; }
+  .footer-note a { color: var(--brand); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 18px; }
+    .header h1 .type-tag { font-size: 15px; }
+    .score-item { grid-template-columns: 80px 1fr 36px; font-size: 13px; }
+    .score-item .label { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="loadingState" class="state-msg">
+    <div class="big">⏳</div>
+    診断結果を読み込んでいます...
+  </div>
+
+  <div id="errorState" class="state-msg" style="display:none;">
+    <div class="big">😢</div>
+    <div id="errorMsg">診断結果を取得できませんでした。</div>
+    <p style="font-size:13px; margin-top:16px;">URLが正しいかご確認ください。</p>
+  </div>
+
+  <div id="resultContent" style="display:none;">
+
+    <!-- ヘッダー -->
+    <div class="header">
+      <div class="header-top">
+        <span class="badge">📊 診断結果ビュー</span>
+        <span class="status-pill pending" id="statusPill">未対応</span>
+      </div>
+      <h1>
+        <span class="type-tag" id="typeTag">-</span>
+        <span id="userNameHead">-</span> さん
+      </h1>
+      <div class="meta">
+        送信日時：<strong id="submittedAt">-</strong><br>
+        LINE UID：<code id="lineUid" style="font-size:11px; color:var(--gray);">-</code>
+      </div>
+    </div>
+
+    <!-- スコアチャート -->
+    <section class="card">
+      <h2>体質スコア（各タイプ最大9点）</h2>
+      <div class="score-list" id="scoreList"></div>
+    </section>
+
+    <!-- チェックした項目 -->
+    <section class="card">
+      <h2>ご本人がチェックした項目</h2>
+      <div id="checkedList"></div>
+    </section>
+
+    <p class="footer-note">
+      このページはともこ先生（＆本人）のみが確認できる診断結果ビューです。<br>
+      ダイエット迷子診断 © 2026
+    </p>
+  </div>
+
+</div>
+
+<script>
+  var DIAGNOSIS_GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDeZXbOEV7_k5OzYN1wr43Sy9q3jFx4MybFjjterJoq1RDFOOr0n-xGxaMP5EEDBA3kA/exec';
+
+  var CATEGORIES = [
+    { name: 'ぐったり',   full: 'ぐったり迷子',   q: ['疲れやすく、体力がない','風邪をひきやすい','朝が苦手、食欲もない','身体を動かすと具合が悪くなる','汗が止まらない','いつも眠気が強い','体重の割に体脂肪が多い','下半身太り','目力、声に気力がない'] },
+    { name: 'もやもや',   full: 'もやもや迷子',   q: ['ストレスを感じる','イライラしやすく怒りっぽい','喉や胸につかえた感じがする','生理前に具合が悪くなる','ため息が多い','ゲップが出やすい','ストレス食いをすることがある','お腹、脇腹、胸がはる','いつも憂鬱だ'] },
+    { name: 'ぽちゃぽちゃ', full: 'ぽちゃぽちゃ迷子', q: ['全身が重だるい','手足がむくみやすい','身体の表面が柔らかい','お腹や下半身が冷たい','雨の日に体調が悪い','胃がむかむかしやすい','甘いものを好む','痰がよく出る','太っている'] },
+    { name: 'ふらふら',   full: 'ふらふら迷子',   q: ['顔色が悪い','めまいや立ちくらみがある','抜け毛が多くパサつく','爪が割れやすい','寝つきが悪い、熟睡できない','しもやけ、あかぎれ','動悸を感じる','足がつる、こむらがえり','目が疲れやすい'] },
+    { name: 'どよ〜ん',   full: 'どよ〜ん迷子',   q: ['生理痛、肩こり、頭痛がある','顔がむくむ','肌荒れ、くすみがある','手足が冷えやすい','生理の経血に塊がある','あざができやすい','炭水化物やお菓子をよく食べる','中性脂肪、コレステロールが高い','歯茎の色が黒い'] },
+    { name: 'からから',   full: 'からから迷子',   q: ['喉が渇きやすい','手のひらや、足の裏が熱い','寝汗をよくかく','動悸がある','めまい、かすみ目','頬が赤くなりやすい','便が硬く便秘になりやすい','耳鳴りがすることがある','ほてりやのぼせを感じる'] }
+  ];
+
+  function q(id){ return document.getElementById(id); }
+
+  function primaryTypeIndex(scores) {
+    var maxIdx = 0, maxVal = -1;
+    for (var i = 0; i < scores.length; i++) {
+      if ((scores[i]||0) > maxVal) { maxVal = scores[i]||0; maxIdx = i; }
+    }
+    return maxIdx;
+  }
+
+  function renderScores(scores, primaryIdx) {
+    var container = q('scoreList');
+    container.innerHTML = '';
+    CATEGORIES.forEach(function(cat, i){
+      var s = Number(scores[i]) || 0;
+      var pct = Math.min(100, Math.round(s / 9 * 100));
+      var isPrimary = (i === primaryIdx);
+      var item = document.createElement('div');
+      item.className = 'score-item' + (isPrimary ? ' primary' : '');
+      item.innerHTML =
+        '<div class="label">' + cat.full + (isPrimary ? ' ⭐' : '') + '</div>' +
+        '<div class="score-bar"><div class="fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="score-count">' + s + '/9</div>';
+      container.appendChild(item);
+    });
+  }
+
+  function renderChecked(checkedItems, scores, primaryIdx) {
+    var container = q('checkedList');
+    container.innerHTML = '';
+    CATEGORIES.forEach(function(cat, i){
+      var items = Array.isArray(checkedItems[i]) ? checkedItems[i] : [];
+      var isPrimary = (i === primaryIdx);
+      var isEmpty = items.length === 0;
+      var group = document.createElement('div');
+      group.className = 'checked-group' + (isPrimary ? ' primary' : '') + (isEmpty ? ' empty' : '');
+      var ul = items.length
+        ? '<ul>' + items.map(function(t){ return '<li>' + escapeHtml(String(t)) + '</li>'; }).join('') + '</ul>'
+        : '<p style="color:var(--gray); font-size:13px; margin:0;">該当なし</p>';
+      group.innerHTML =
+        '<h3>' + cat.full + '<span class="count">（' + items.length + '/9項目）</span></h3>' + ul;
+      container.appendChild(group);
+    });
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function showError(msg) {
+    q('loadingState').style.display = 'none';
+    q('resultContent').style.display = 'none';
+    q('errorState').style.display = 'block';
+    if (msg) q('errorMsg').textContent = msg;
+  }
+
+  async function loadResult() {
+    var id = new URLSearchParams(location.search).get('id');
+    if (!id) { showError('URLに ?id=xxx が付いていません。'); return; }
+
+    try {
+      var res = await fetch(DIAGNOSIS_GAS_ENDPOINT + '?id=' + encodeURIComponent(id));
+      var data = await res.json();
+      if (!data.ok || !data.record) { showError(data.error || '該当する診断結果が見つかりません。'); return; }
+
+      var rec = data.record;
+      var scoresArr = Array.isArray(rec['全スコア(JSON)']) ? rec['全スコア(JSON)'] : [];
+      var checkedArr = Array.isArray(rec['チェック項目(JSON)']) ? rec['チェック項目(JSON)'] : [];
+      var primaryIdx = primaryTypeIndex(scoresArr);
+
+      q('typeTag').textContent = rec['診断タイプ'] || '-';
+      q('userNameHead').textContent = rec['お名前'] || '(お名前未登録)';
+      q('submittedAt').textContent = rec['送信日時'] || '-';
+      q('lineUid').textContent = rec['LINE UID'] || '-';
+      var status = rec['ステータス'] || '未対応';
+      var pill = q('statusPill');
+      pill.textContent = status;
+      pill.className = 'status-pill ' + (status === '対応済' ? 'done' : 'pending');
+
+      renderScores(scoresArr, primaryIdx);
+      renderChecked(checkedArr, scoresArr, primaryIdx);
+
+      q('loadingState').style.display = 'none';
+      q('resultContent').style.display = 'block';
+    } catch (err) {
+      console.error(err);
+      showError('通信エラーが発生しました: ' + err);
+    }
+  }
+
+  loadResult();
+</script>
+</body>
+</html>
