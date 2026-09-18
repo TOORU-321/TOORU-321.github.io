@@ -183,13 +183,20 @@
   var ADMIN_TOKEN = 'tomoko-admin-2026';
   var RESULT_VIEW_URL = 'https://columns.l-mine.com/result_view.html';
 
+  var AUTH_KEY = 'tomoko_admin_auth';
+  var AUTH_EXP_KEY = 'tomoko_admin_auth_exp';
+  var AUTH_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30日間
+
   function checkAuth(){
-    var stored = sessionStorage.getItem('tomoko_admin_auth');
-    if (stored === ADMIN_TOKEN) {
+    var stored = localStorage.getItem(AUTH_KEY);
+    var exp = Number(localStorage.getItem(AUTH_EXP_KEY) || 0);
+    if (stored === ADMIN_TOKEN && Date.now() < exp) {
       document.getElementById('authScreen').style.display = 'none';
       document.getElementById('mainScreen').style.display = 'block';
       loadData();
     } else {
+      localStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(AUTH_EXP_KEY);
       document.getElementById('authScreen').style.display = 'block';
       document.getElementById('mainScreen').style.display = 'none';
     }
@@ -197,7 +204,8 @@
   function tryAuth(){
     var v = document.getElementById('authInput').value.trim();
     if (v === ADMIN_TOKEN) {
-      sessionStorage.setItem('tomoko_admin_auth', ADMIN_TOKEN);
+      localStorage.setItem(AUTH_KEY, ADMIN_TOKEN);
+      localStorage.setItem(AUTH_EXP_KEY, String(Date.now() + AUTH_TTL_MS));
       checkAuth();
     } else {
       document.getElementById('authErr').textContent = '合言葉が違います';
