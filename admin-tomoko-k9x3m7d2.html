@@ -117,6 +117,7 @@
   <header class="main">
     <h1><span class="icon">📊</span> 診断結果ダッシュボード</h1>
     <div class="sub">ダイエット迷子診断を送信したユーザー一覧 / ともこ先生専用</div>
+    <button class="btn-logout" onclick="logout()">🚪 ログアウト</button>
   </header>
 
   <div class="stats">
@@ -211,6 +212,14 @@
       document.getElementById('authErr').textContent = '合言葉が違います';
     }
   }
+  window.logout = function(){
+    if (!confirm('ログアウトしますか？（次回は合言葉の再入力が必要です）')) return;
+    localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(AUTH_EXP_KEY);
+    document.getElementById('authInput').value = '';
+    document.getElementById('authErr').textContent = '';
+    checkAuth();
+  };
   document.addEventListener('keydown', function(e){
     if (e.key === 'Enter' && document.activeElement.id === 'authInput') tryAuth();
   });
