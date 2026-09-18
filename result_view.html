@@ -14,6 +14,7 @@
     --brand-dark: #8b4d5a;
     --text: #4d3a3d;
     --gray: #8b7a7d;
+    --border: rgba(169,104,116,0.15);
   }
   * { box-sizing: border-box; }
   body {
@@ -94,7 +95,6 @@
     border-radius: 2px;
   }
 
-  /* スコアチャート */
   .score-list { display: grid; gap: 10px; }
   .score-item { display: grid; grid-template-columns: 100px 1fr 40px; align-items: center; gap: 10px; font-size: 14px; }
   .score-item .label { font-weight: 700; color: var(--text); }
@@ -104,7 +104,6 @@
   .score-item.primary .score-bar .fill { background: linear-gradient(90deg, #d97b8a, #a96874); }
   .score-count { font-weight: 700; color: var(--brand-dark); text-align: right; font-size: 15px; }
 
-  /* チェック項目 */
   .checked-group { margin-top: 14px; padding: 14px 16px; background: var(--pink-1); border-radius: 12px; border-left: 4px solid var(--pink-3); }
   .checked-group.primary { border-left-color: var(--brand); background: var(--pink-2); }
   .checked-group h3 { margin: 0 0 8px; font-size: 14px; color: var(--brand-dark); }
@@ -114,11 +113,28 @@
   .checked-group.empty { opacity: 0.55; }
   .checked-group.empty ul { display: none; }
 
-  /* エラー・ローディング */
   .state-msg { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 15px; }
   .state-msg .big { font-size: 48px; margin-bottom: 12px; }
 
-  /* フッター */
+  .back-bar { margin-bottom: 14px; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--brand-dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(169,104,116,0.08);
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .back-link:hover { background: var(--pink-2); border-color: var(--brand); }
+
   .footer-note { text-align: center; color: var(--gray); font-size: 12px; margin-top: 30px; line-height: 1.8; }
   .footer-note a { color: var(--brand); text-decoration: none; }
 
@@ -145,8 +161,10 @@
   </div>
 
   <div id="resultContent" style="display:none;">
+    <div class="back-bar">
+      <a href="javascript:void(0)" class="back-link" id="backLink">← ダッシュボードに戻る</a>
+    </div>
 
-    <!-- ヘッダー -->
     <div class="header">
       <div class="header-top">
         <span class="badge">📊 診断結果ビュー</span>
@@ -162,13 +180,11 @@
       </div>
     </div>
 
-    <!-- スコアチャート -->
     <section class="card">
       <h2>体質スコア（各タイプ最大9点）</h2>
       <div class="score-list" id="scoreList"></div>
     </section>
 
-    <!-- チェックした項目 -->
     <section class="card">
       <h2>ご本人がチェックした項目</h2>
       <div id="checkedList"></div>
@@ -179,12 +195,10 @@
       ダイエット迷子診断 © 2026
     </p>
   </div>
-
 </div>
 
 <script>
   var DIAGNOSIS_GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDeZXbOEV7_k5OzYN1wr43Sy9q3jFx4MybFjjterJoq1RDFOOr0n-xGxaMP5EEDBA3kA/exec';
-
   var CATEGORIES = [
     { name: 'ぐったり',   full: 'ぐったり迷子',   q: ['疲れやすく、体力がない','風邪をひきやすい','朝が苦手、食欲もない','身体を動かすと具合が悪くなる','汗が止まらない','いつも眠気が強い','体重の割に体脂肪が多い','下半身太り','目力、声に気力がない'] },
     { name: 'もやもや',   full: 'もやもや迷子',   q: ['ストレスを感じる','イライラしやすく怒りっぽい','喉や胸につかえた感じがする','生理前に具合が悪くなる','ため息が多い','ゲップが出やすい','ストレス食いをすることがある','お腹、脇腹、胸がはる','いつも憂鬱だ'] },
@@ -195,7 +209,6 @@
   ];
 
   function q(id){ return document.getElementById(id); }
-
   function primaryTypeIndex(scores) {
     var maxIdx = 0, maxVal = -1;
     for (var i = 0; i < scores.length; i++) {
@@ -203,7 +216,6 @@
     }
     return maxIdx;
   }
-
   function renderScores(scores, primaryIdx) {
     var container = q('scoreList');
     container.innerHTML = '';
@@ -220,7 +232,6 @@
       container.appendChild(item);
     });
   }
-
   function renderChecked(checkedItems, scores, primaryIdx) {
     var container = q('checkedList');
     container.innerHTML = '';
@@ -238,34 +249,28 @@
       container.appendChild(group);
     });
   }
-
   function escapeHtml(s){
     return s.replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
-
   function showError(msg) {
     q('loadingState').style.display = 'none';
     q('resultContent').style.display = 'none';
     q('errorState').style.display = 'block';
     if (msg) q('errorMsg').textContent = msg;
   }
-
   async function loadResult() {
     var id = new URLSearchParams(location.search).get('id');
     if (!id) { showError('URLに ?id=xxx が付いていません。'); return; }
-
     try {
       var res = await fetch(DIAGNOSIS_GAS_ENDPOINT + '?id=' + encodeURIComponent(id));
       var data = await res.json();
       if (!data.ok || !data.record) { showError(data.error || '該当する診断結果が見つかりません。'); return; }
-
       var rec = data.record;
       var scoresArr = Array.isArray(rec['全スコア(JSON)']) ? rec['全スコア(JSON)'] : [];
       var checkedArr = Array.isArray(rec['チェック項目(JSON)']) ? rec['チェック項目(JSON)'] : [];
       var primaryIdx = primaryTypeIndex(scoresArr);
-
       q('typeTag').textContent = rec['診断タイプ'] || '-';
       q('userNameHead').textContent = rec['お名前'] || '(お名前未登録)';
       q('submittedAt').textContent = rec['送信日時'] || '-';
@@ -274,16 +279,25 @@
       var pill = q('statusPill');
       pill.textContent = status;
       pill.className = 'status-pill ' + (status === '対応済' ? 'done' : 'pending');
-
       renderScores(scoresArr, primaryIdx);
       renderChecked(checkedArr, scoresArr, primaryIdx);
-
       q('loadingState').style.display = 'none';
       q('resultContent').style.display = 'block';
     } catch (err) {
       console.error(err);
       showError('通信エラーが発生しました: ' + err);
     }
+  }
+
+  var backLink = q('backLink');
+  if (backLink) {
+    backLink.onclick = function(){
+      if (document.referrer && document.referrer.indexOf(location.origin) === 0) {
+        history.back();
+      } else {
+        location.href = '/admin-tomoko-k9x3m7d2.html';
+      }
+    };
   }
 
   loadResult();
