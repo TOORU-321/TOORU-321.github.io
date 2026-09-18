@@ -37,6 +37,16 @@
     display: flex; align-items: center; gap: 10px;
   }
   header.main h1 .icon { font-size: 24px; }
+  header.main { position: relative; }
+  .btn-logout {
+    position: absolute; top: 18px; right: 20px;
+    background: #fff; color: var(--gray);
+    border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .btn-logout:hover { background: #fdecee; color: #d64545; border-color: #d64545; }
   header.main .sub { color: var(--gray); font-size: 13px; }
 
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
