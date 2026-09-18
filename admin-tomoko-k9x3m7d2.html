@@ -100,11 +100,12 @@
   .table-wrap {
     background: #fff;
     border-radius: 14px;
-    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: 0 4px 16px rgba(169,104,116,0.06);
     border: 1px solid var(--border);
   }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
   thead th {
     background: var(--pink-2);
     color: var(--brand-dark);
@@ -162,8 +163,46 @@
     font-size: 12px;
     font-weight: 700;
     white-space: nowrap;
+    margin-right: 4px;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
   }
   .btn-open:hover { background: var(--brand-dark); }
+  .btn-done {
+    display: inline-block;
+    background: #fff;
+    color: var(--brand) !important;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid var(--brand);
+    font-family: inherit;
+  }
+  .btn-done:hover { background: var(--pink-2); }
+  .btn-done.completed { background: #e6f5ec; color: #2b8a4a !important; border-color: #2b8a4a; }
+
+  .notif-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .notif-toggle:hover { border-color: var(--brand); }
+  .notif-toggle.on { background: var(--pink-2); border-color: var(--brand); color: var(--brand-dark); font-weight: 700; }
+  .notif-toggle .dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; }
+  .notif-toggle.on .dot { background: var(--brand); }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); }
   .empty-state .big { font-size: 48px; margin-bottom: 12px; }
@@ -205,7 +244,6 @@
   @media (max-width: 720px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
     thead th, tbody td { padding: 8px 10px; font-size: 12.5px; }
-    thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
   }
 </style>
 </head>
@@ -220,7 +258,6 @@
 </div>
 
 <div class="container" id="mainScreen" style="display:none;">
-
   <header class="main">
     <h1><span class="icon">📊</span> 診断結果ダッシュボード</h1>
     <div class="sub">ダイエット迷子診断を送信したユーザー一覧 / ともこ先生専用</div>
@@ -250,6 +287,10 @@
       <option value="対応済">対応済のみ</option>
     </select>
     <button onclick="loadData()">🔄 更新</button>
+    <button class="notif-toggle" id="notifToggle" onclick="toggleNotifications()">
+      <span class="dot"></span>
+      <span id="notifLabel">🔔 通知オフ</span>
+    </button>
     <span class="count" id="countLabel">-</span>
   </div>
 
@@ -266,9 +307,7 @@
         </tr>
       </thead>
       <tbody id="tableBody">
-        <tr><td colspan="6" class="empty-state">
-          <div class="big">⏳</div>読み込み中...
-        </td></tr>
+        <tr><td colspan="6" class="empty-state"><div class="big">⏳</div>読み込み中...</td></tr>
       </tbody>
     </table>
   </div>
@@ -277,8 +316,10 @@
     このページはともこ先生専用です。URLを他人に共有しないでください。<br>
     ダイエット迷子診断 管理画面 © 2026
   </p>
-
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging-compat.js"></script>
 
 <script>
   var DIAGNOSIS_GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzDeZXbOEV7_k5OzYN1wr43Sy9q3jFx4MybFjjterJoq1RDFOOr0n-xGxaMP5EEDBA3kA/exec';
@@ -351,14 +392,12 @@
     var searchQ = document.getElementById('searchBox').value.trim().toLowerCase();
     var typeQ = document.getElementById('typeFilter').value;
     var statusQ = document.getElementById('statusFilter').value;
-
     var filtered = allRecords.filter(function(r){
       if (searchQ && String(r['お名前']||'').toLowerCase().indexOf(searchQ) < 0) return false;
       if (typeQ && r['診断タイプ'] !== typeQ) return false;
       if (statusQ && r['ステータス'] !== statusQ) return false;
       return true;
     });
-
     filtered.sort(function(a, b){
       var av, bv;
       switch(sortKey){
@@ -372,9 +411,7 @@
       if (av > bv) return sortDir === 'asc' ? 1 : -1;
       return 0;
     });
-
     document.getElementById('countLabel').textContent = filtered.length + ' 件';
-
     var body = document.getElementById('tableBody');
     if (filtered.length === 0) {
       body.innerHTML = '<tr><td colspan="6" class="empty-state"><div class="big">📭</div>該当データがありません</td></tr>';
@@ -392,7 +429,12 @@
         '<td><span class="type-chip t-' + escapeHtml(typeName) + '">' + escapeHtml(r['診断タイプ']||'-') + '</span></td>' +
         '<td style="font-family:monospace; font-size:11px; color:var(--gray);" title="' + escapeHtml(uid) + '">' + escapeHtml(shortUid) + '</td>' +
         '<td><span class="status-pill ' + (isPending?'pending':'done') + '">' + escapeHtml(status) + '</span></td>' +
-        '<td><a class="btn-open" target="_blank" href="' + RESULT_VIEW_URL + '?id=' + encodeURIComponent(r['ID']||'') + '">結果を開く</a></td>' +
+        '<td>' +
+          '<a class="btn-open" target="_blank" href="' + RESULT_VIEW_URL + '?id=' + encodeURIComponent(r['ID']||'') + '">結果を開く</a>' +
+          '<button class="btn-done' + (isPending?'':' completed') + '" onclick="toggleStatus(\'' + escapeHtml(r['ID']||'') + '\', \'' + (isPending?'対応済':'未対応') + '\')">' +
+          (isPending ? '✓ 対応済にする' : '↩ 未対応に戻す') +
+          '</button>' +
+        '</td>' +
       '</tr>';
     }).join('');
   }
@@ -416,6 +458,126 @@
       renderTable();
     });
   });
+
+  var FIREBASE_CONFIG = {
+    apiKey: 'AIzaSyBkjmETaws9Wlnv_UtrDlNrXMGuw96ka2E',
+    authDomain: 'tomoko-diagnosis.firebaseapp.com',
+    projectId: 'tomoko-diagnosis',
+    storageBucket: 'tomoko-diagnosis.firebasestorage.app',
+    messagingSenderId: '53605068113',
+    appId: '1:53605068113:web:22dc9cd329cfc76f0eb770'
+  };
+  var VAPID_KEY = 'BNOq1Z7A5X3xPsCN2obzdOwspfB8U5gwNZ6bl8HMiwMGZeJ3MGCo67SCZnd0GjrHRCYtJlHgsIlb2qB5Zpg1aP8';
+
+  var fcmMessaging = null;
+  var fcmCurrentToken = null;
+
+  async function initFirebaseIfReady(){
+    if (FIREBASE_CONFIG.apiKey.indexOf('PASTE_') === 0) return false;
+    if (fcmMessaging) return true;
+    try {
+      if (!window.firebase) return false;
+      firebase.initializeApp(FIREBASE_CONFIG);
+      fcmMessaging = firebase.messaging();
+      fcmMessaging.onMessage(function(payload){
+        console.log('[FCM前景通知]', payload);
+        try {
+          new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: '/favicon.png'
+          });
+        } catch(e) {}
+        loadData();
+      });
+      return true;
+    } catch(e) { console.error('Firebase init失敗:', e); return false; }
+  }
+
+  function updateNotifButton(state){
+    var btn = document.getElementById('notifToggle');
+    var lbl = document.getElementById('notifLabel');
+    if (state === 'on') { btn.classList.add('on'); lbl.textContent = '🔔 通知オン'; }
+    else if (state === 'unsupported') { btn.classList.remove('on'); lbl.textContent = '🔕 通知未対応'; btn.disabled = true; }
+    else if (state === 'not-configured') { btn.classList.remove('on'); lbl.textContent = '⚙️ 通知未設定'; btn.disabled = true; }
+    else { btn.classList.remove('on'); lbl.textContent = '🔔 通知オフ'; }
+  }
+
+  window.toggleNotifications = async function(){
+    var ready = await initFirebaseIfReady();
+    if (!ready) { alert('Firebase未設定です'); return; }
+    if (!('Notification' in window)) { updateNotifButton('unsupported'); return; }
+    var currentlyOn = document.getElementById('notifToggle').classList.contains('on');
+    if (currentlyOn) {
+      if (fcmCurrentToken) {
+        try {
+          await fetch(DIAGNOSIS_GAS_ENDPOINT, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'removeFcmToken', token: fcmCurrentToken, admin: ADMIN_TOKEN }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+        } catch(e) {}
+      }
+      localStorage.removeItem('tomoko_fcm_on');
+      updateNotifButton('off');
+    } else {
+      try {
+        var perm = await Notification.requestPermission();
+        if (perm !== 'granted') { alert('通知を許可してください'); return; }
+        var reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        var token = await fcmMessaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+        if (!token) { alert('トークン取得失敗'); return; }
+        fcmCurrentToken = token;
+        await fetch(DIAGNOSIS_GAS_ENDPOINT, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'saveFcmToken', token: token, admin: ADMIN_TOKEN }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        });
+        localStorage.setItem('tomoko_fcm_on', '1');
+        updateNotifButton('on');
+        alert('✅ 通知をオンにしました！新しい診断結果が届くとブラウザに通知されます');
+      } catch(e){
+        console.error(e);
+        alert('通知オンに失敗しました: ' + e.message);
+      }
+    }
+  };
+
+  async function initNotifState(){
+    if (FIREBASE_CONFIG.apiKey.indexOf('PASTE_') === 0) { updateNotifButton('not-configured'); return; }
+    if (!('Notification' in window)) { updateNotifButton('unsupported'); return; }
+    var savedOn = localStorage.getItem('tomoko_fcm_on') === '1';
+    if (savedOn && Notification.permission === 'granted') {
+      await initFirebaseIfReady();
+      try {
+        var reg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        fcmCurrentToken = await fcmMessaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+        updateNotifButton('on');
+      } catch(e) { updateNotifButton('off'); }
+    } else {
+      updateNotifButton('off');
+    }
+  }
+  setTimeout(initNotifState, 500);
+
+  window.toggleStatus = async function(id, newStatus){
+    if (!id) return;
+    try {
+      var res = await fetch(DIAGNOSIS_GAS_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'updateStatus', id: id, status: newStatus, admin: ADMIN_TOKEN }),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      });
+      var data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'update failed');
+      var rec = allRecords.find(function(r){ return String(r['ID']) === String(id); });
+      if (rec) rec['ステータス'] = newStatus;
+      updateStats();
+      renderTable();
+    } catch(err){
+      console.error(err);
+      alert('ステータス変更に失敗しました: ' + err);
+    }
+  };
 
   checkAuth();
 </script>
