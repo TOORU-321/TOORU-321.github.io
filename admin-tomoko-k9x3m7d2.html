@@ -381,16 +381,46 @@
   function updateNotifButton(state){
     var btn = document.getElementById('notifToggle');
     var lbl = document.getElementById('notifLabel');
+    btn.disabled = false;
     if (state === 'on') { btn.classList.add('on'); lbl.textContent = '🔔 通知オン'; }
-    else if (state === 'unsupported') { btn.classList.remove('on'); lbl.textContent = '🔕 通知未対応'; btn.disabled = true; }
-    else if (state === 'not-configured') { btn.classList.remove('on'); lbl.textContent = '⚙️ 通知未設定'; btn.disabled = true; }
+    else if (state === 'unsupported') { btn.classList.remove('on'); lbl.textContent = '🔕 通知未対応 (?)'; }
+    else if (state === 'not-configured') { btn.classList.remove('on'); lbl.textContent = '⚙️ 通知未設定'; }
     else { btn.classList.remove('on'); lbl.textContent = '🔔 通知オフ'; }
   }
 
+  function isIOS(){
+    return /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+  function isStandalone(){
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true;
+  }
+  function showIosGuide(){
+    alert('📱 iPhoneでの通知セットアップ手順\n\n' +
+      '1️⃣ Safariでこのページを開く（Chromeアプリ✗）\n' +
+      '2️⃣ 下部の共有ボタン(□↑)をタップ\n' +
+      '3️⃣ 「ホーム画面に追加」を選択\n' +
+      '4️⃣ Safariを一度閉じる\n' +
+      '5️⃣ ホーム画面のアイコンから開く ← ここ重要\n' +
+      '6️⃣ 再度この通知ボタンをタップ\n\n' +
+      '※ iOS 16.4 以降が必要です');
+  }
+
   window.toggleNotifications = async function(){
+    if (!('Notification' in window)) {
+      if (isIOS() && !isStandalone()) {
+        showIosGuide();
+      } else if (isIOS()) {
+        alert('iOSのバージョンが古いか、通知が使えない状態です。iOS 16.4以降にアップデートしてお試しください。');
+      } else {
+        alert('お使いのブラウザは通知に対応していません。Chrome / Edge / Safari 最新版でお試しください。');
+      }
+      updateNotifButton('unsupported');
+      return;
+    }
     var ready = await initFirebaseIfReady();
     if (!ready) { alert('Firebase未設定です'); return; }
-    if (!('Notification' in window)) { updateNotifButton('unsupported'); return; }
     var currentlyOn = document.getElementById('notifToggle').classList.contains('on');
     if (currentlyOn) {
       if (fcmCurrentToken) {
