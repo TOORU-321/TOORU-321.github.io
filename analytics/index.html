@@ -293,9 +293,20 @@ function render(d){
 /* ---------- 読み込み ---------- */
 function load(){
   if(!KEY){ gate(); return; }
-  el("app").innerHTML = '<div class="gate">読み込んでいます…</div>';
-  fetch(GAS + "?key=" + encodeURIComponent(KEY) + "&span=" + SPAN, { method:"GET" })
-    .then(function(r){ return r.json(); })
+  el("app").innerHTML = '<div class="gate">読み込んでいます…<br>' +
+    '<small>初回は数秒かかります</small></div>';
+
+  // 応答が返らないまま固まるのを防ぐ（45秒で打ち切ってやり直せるようにする）
+  var ac = (typeof AbortController !== "undefined") ? new AbortController() : null;
+  var timedOut = false;
+  var timer = setTimeout(function(){
+    timedOut = true;
+    if(ac) ac.abort();
+  }, 45000);
+
+  fetch(GAS + "?key=" + encodeURIComponent(KEY) + "&span=" + SPAN,
+        ac ? { method:"GET", signal: ac.signal } : { method:"GET" })
+    .then(function(r){ clearTimeout(timer); return r.json(); })
     .then(function(d){
       if(!d.ok){
         if(d.error === "unauthorized"){ try{ localStorage.removeItem(KEY_STORE); }catch(e){} gate("合言葉が違うようです"); return; }
@@ -306,9 +317,13 @@ function load(){
       render(d);
     })
     .catch(function(e){
-      el("app").innerHTML = '<div class="gate">読み込めませんでした<br><small>' + esc(e) + '</small>' +
+      clearTimeout(timer);
+      var msg = timedOut
+        ? '応答が返ってきませんでした。<br>時間をおいて、もう一度お試しください。'
+        : '読み込めませんでした<br><small>' + esc(e) + '</small>';
+      el("app").innerHTML = '<div class="gate">' + msg +
         '<div class="btns" style="justify-content:center;margin-top:14px">' +
-        '<button onclick="location.reload()">もう一度</button></div></div>';
+        '<button class="primary" onclick="location.reload()">もう一度</button></div></div>';
     });
 }
 
