@@ -696,7 +696,13 @@ def render_index(page_cols, page, pages):
 
 # ---------- サイトマップ（自動生成） ----------
 # ルート直下の主要ページ（集客導線）。実在するものだけ sitemap に含める
+# 文字列を書くと、そのままURLになる。
+# ("ファイルの場所", "公開URL") と2つ書くと、存在チェックは前者、
+# sitemapに載るURLは後者になる（末尾がスラッシュのURL用）。
 FIXED_PAGES = [
+    # SNS事業の現在地診断のショートLP（2026-09-24公開）。
+    # 検索に出る入口はここだけ。診断本体と5DAYは noindex のままなので載せない。
+    ("shindan-entry/index.html", "shindan-entry/"),
     "behavioral-economics-lp.html",   # 行動経済学への想い（LP）
     "elabo-plus-lp.html",             # エルラボ＋案内LP
     "book-intro-dark.html",           # KINDLE小説
@@ -710,8 +716,9 @@ def build_sitemap(cols, pages):
     today = datetime.date.today().isoformat()
     urls = [(BASE_URL, today)]                                   # サイトのTOP（ルート）
     for p in FIXED_PAGES:                                        # 主要ページ（実在チェック）
-        if os.path.exists(os.path.join(ROOT, p)):
-            urls.append((BASE_URL + p, today))
+        path, url = p if isinstance(p, tuple) else (p, p)
+        if os.path.exists(os.path.join(ROOT, path)):
+            urls.append((BASE_URL + url, today))
     for i in range(1, pages + 1):                               # コラム一覧（index + ページ送り）
         urls.append((BASE_URL + "columns/" + page_file(i), today))
     for c in sorted(cols, key=lambda z: z["number"]):          # 各コラム記事（lastmod=投稿日）
