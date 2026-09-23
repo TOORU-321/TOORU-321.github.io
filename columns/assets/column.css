@@ -87,6 +87,11 @@ figure.hero .ph{color:#b9b09a;font-family:var(--serif-en);font-size:15px;letter-
 .optin.optin-quiz .optin-btn{background:none;color:var(--gold);border:1.5px solid var(--gold-2);padding:11.5px 30px}
 .optin.optin-quiz .optin-btn:hover{background:linear-gradient(135deg,var(--gold-2),var(--gold));color:#fff;filter:none}
 .optin.optin-quiz + .optin{margin-top:16px}
+/* 診断の案内（2026-09-24）。クイズと同じ明るいカードだが、ボタンは金で塗って一段強くする */
+.optin.optin-shindan{background:var(--card);color:var(--ink);border:1.5px solid var(--gold-2)}
+.optin.optin-shindan .optin-k{color:var(--gold);font-size:18px}
+.optin.optin-shindan p{color:var(--ink-2)}
+.optin.optin-shindan + .optin{margin-top:16px}
 .body ul{margin:0 0 2.35em;padding-left:1.25em}
 .body li{margin:.25em 0;line-height:1.8}
 .body figure.cimg{margin:2.4em 0;text-align:center}

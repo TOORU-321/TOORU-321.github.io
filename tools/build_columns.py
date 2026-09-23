@@ -46,6 +46,7 @@ X_URL = "https://x.com/LMeta321"
 LP_URL = "https://l-mine.com/business/the-3-2-1-lab"
 APP_URL = "https://columns.l-mine.com/app/"           # 会員制の動画視聴Webアプリ「エルラボ＋」本体
 ELABO_LP = "https://columns.l-mine.com/elabo-plus-lp.html"  # エルラボ＋の案内LP（コラム内の誘導はこちら経由）
+SHINDAN_URL = "https://columns.l-mine.com/shindan-entry/"  # SNS事業の現在地診断（ショートLP＝唯一の入口。診断本体のURLは配らない）
 QUIZ_URL = "https://columns.l-mine.com/kiso_quiz.html"      # 行動経済学クイズ（2級が入口。ページ上部から1級へ移動できる）
 TEMPLATE_FROM = 98                                # この番号以降のコラムに エルラボ＋ の案内を付与（オファーテンプレ）
 ELABO_OPTIN_FROM = 100                            # この番号以降は「エルラボ＋」を主オプトインに（No.100=アプリリリース。99以下はメルマガ主体のまま）
@@ -60,9 +61,20 @@ DEFAULT_OG_IMAGE = BASE_URL + "columns/assets/columns-top.jpg"  # ヒーロー�
 # おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
 RECOMMENDED = [112, 107, 103, 89, 73, 71, 65]
 
-# 記事末尾のクイズ案内（全コラム共通・エルラボ＋の枠の上）。
-# 登録不要ですぐ試せる無料の入口として置き、そのままエルラボ＋の案内へつなぐ。
-# 入口は2級。ページ上部の切り替えから1級・応用コースにも移動できるので、リンクは1本にしている。
+# 記事末尾は、上から 診断 → クイズ → エルラボ＋ の3枠（2026-09-24 とーる判断＝A案）。
+# 前の2つは登録不要・無料で試せる入口。最後にエルラボ＋の案内へつなぐ。
+
+# 診断の案内。読んだ直後に、自分の事業へ当ててみてもらうための入口。
+# リンク先はショートLPに一本化する（診断本体のURLは配らない）。
+def shindan_footer():
+    return f'''    <aside class="optin optin-shindan">
+      <div class="optin-k">約3分で分かる｜SNS事業の現在地診断</div>
+      <p>やることは分かっていても、どれから手をつけるかで迷う。全21問・5択で、お客様・商品・届け方を5つの軸から見て、「いま、最初に整えたい一か所」をお返しします。登録不要・無料です。</p>
+      <a class="optin-btn" href="{SHINDAN_URL}" target="_blank" rel="noopener">無料で診断する（約3分） →</a>
+    </aside>'''
+
+# クイズの案内。入口は2級。ページ上部の切り替えから1級・応用コースにも移動できるので、
+# リンクは1本にしている。
 def quiz_footer():
     return f'''    <aside class="optin optin-quiz">
       <div class="optin-k">無料で腕試し｜行動経済学クイズ</div>
@@ -550,7 +562,7 @@ def render_article(c, cols):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/column.css?v=20260828-note-layout">
+<link rel="stylesheet" href="assets/column.css?v=20260924-shindan">
 </head>
 <body>
 <div class="top-rule"></div>
@@ -578,6 +590,7 @@ def render_article(c, cols):
       {body}{gate_html}{sign_after_gate}
     </div>
 
+{shindan_footer()}
 {quiz_footer()}
 {optin_footer(n)}
 
@@ -651,7 +664,7 @@ def render_index(page_cols, page, pages):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/column.css?v=20260828-note-layout">
+<link rel="stylesheet" href="assets/column.css?v=20260924-shindan">
 </head>
 <body>
 <div class="top-rule"></div>
@@ -700,9 +713,10 @@ def render_index(page_cols, page, pages):
 # ("ファイルの場所", "公開URL") と2つ書くと、存在チェックは前者、
 # sitemapに載るURLは後者になる（末尾がスラッシュのURL用）。
 FIXED_PAGES = [
-    # SNS事業の現在地診断のショートLP（2026-09-24公開）。
-    # 検索に出る入口はここだけ。診断本体と5DAYは noindex のままなので載せない。
-    ("shindan-entry/index.html", "shindan-entry/"),
+    # SNS事業の現在地診断（2026-09-24公開）。検索に出すのはこの2ページだけ。
+    # 設問・5DAY本体・復元・感想フォームは noindex のままなので載せない。
+    ("shindan-entry/index.html", "shindan-entry/"),   # SNS・note・コラムから配る入口
+    "shindan-5day/shindan-lp.html",                   # 詳しく読む人向けの長いLP
     "behavioral-economics-lp.html",   # 行動経済学への想い（LP）
     "elabo-plus-lp.html",             # エルラボ＋案内LP
     "book-intro-dark.html",           # KINDLE小説

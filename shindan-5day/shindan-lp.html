@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
+<!-- 2026-09-24 とーる指示で検索に出すことにした唯一の診断ページ。
+     設問・5DAY本体・復元は noindex のまま（ファネルの中身は検索に出さない）。
+     ここを noindex へ戻すときは build-publish.py の INDEXABLE からも外す -->
+<meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="referrer" content="no-referrer">
 <meta name="description" content="投稿・商品・LINE。全部が気になるときに、最初に整える一か所を見つける無料診断です。21問・約3分で、いまの事業を5つの軸から見える化します。">
 <link rel="canonical" href="https://columns.l-mine.com/shindan-5day/shindan-lp.html">
