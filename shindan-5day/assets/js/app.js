@@ -12,6 +12,7 @@
   var flash = null;          /* 保存直後の一時メッセージ */
   var restoreNotice = null;  /* 再開・破損メッセージ（起動直後に1回だけ） */
   var pendingSection = null; /* 遷移先で見せたいセクション（data-section の値） */
+  var returnToNextStep = new URLSearchParams(global.location.search).get('view') === 'choose-support';
   var viewedThisEntry = {};  /* *_view イベントの二重発火防止 */
 
   var HASH = {
@@ -139,9 +140,15 @@
       diagnosis: SC.store.loadDiagnosis(),
       flash: flash,
       restoreNotice: restoreNotice,
+      choosingNextStep: returnToNextStep && screenId === 'day5_support' && state.completedDays.indexOf(5) !== -1,
 
       /* options.focusSection : 遷移先で最初に見せたいセクション（data-section の値） */
       go: function (nextId, options) {
+        if (ctx.choosingNextStep && nextId === 'day5_experiment') {
+          SC.store.saveChallengeState({ currentScreen: 'day5_done' });
+          global.location.href = 'next-step.html';
+          return;
+        }
         flash = null;
         pendingSection = options && options.focusSection ? options.focusSection : null;
         SC.store.saveChallengeState({ currentScreen: nextId });
@@ -154,6 +161,7 @@
          （完了画面から戻って回答を変えたあとも、戻る先が入れ替わらないようにするため）
          端末の戻る操作は hashchange 経由で従来どおり動く。 */
       back: function () {
+        if (ctx.choosingNextStep) { SC.store.saveChallengeState({ currentScreen: 'day5_done' }); global.location.href = 'next-step.html'; return; }
         flash = null;
         pendingSection = null;
         var i = SC.config.screenOrder.indexOf(screenId);
@@ -203,6 +211,7 @@
 
     var ctx = buildContext(screenId, state);
     var el = screen.render(ctx);
+    if (SC.ui.challengePresentation) SC.ui.challengePresentation(el, screenId, SC.store.getState());
 
     SC.dom.clear(root);
     /* 画面の入れ替わりだけ短くフェードさせる（選択のたびの再描画では出さない） */
@@ -218,6 +227,10 @@
       if (focusTarget) focusTarget.focus();
     } else if (section) {
       /* 補助導線から来たときは、目的のセクションを最初に見せる */
+      /* 見返し対象が任意の詳説に入っている場合も、補助導線からは開いて見せる。 */
+      for (var ancestor = section.parentElement; ancestor && ancestor !== el; ancestor = ancestor.parentElement) {
+        if (ancestor.tagName === 'DETAILS') ancestor.open = true;
+      }
       section.setAttribute('tabindex', '-1');
       section.focus({ preventScroll: true });
       section.scrollIntoView({ block: 'start' });
@@ -471,10 +484,154 @@
     });
   }
 
+  /* ------------------------------------------------------------
+   * 外部保存のお知らせ（2026-09-15 Codex指示）
+   *
+   * 端末の記録と、スプレッドシートへの記録は別のもの。
+   * 外部へ残せたと確認できないとき、それを伝えて、本人が押し直せるようにする。
+   *
+   * ★操作を妨げない。画面の中身は差し替えず、下に1枚だけ出す
+   * ★押していないのに送り直すループは作らない
+   * ★回答や成果物は消さない（この表示は消すことに一切かかわらない）
+   * ★古い要求の失敗で新しい成功の表示を上書きしない
+   *   （判断は challenge-remote.js 側。列が空になってから決める）
+   * ---------------------------------------------------------- */
+  var saveBar = null;
+
+  function ensureSaveBar() {
+    if (saveBar) return saveBar;
+    /* ふだんは .app-shell の中、画面の下・フッターの上に置く。
+     * 自動テストのページには .app-shell が無いので、#app の親を使う */
+    var shell = doc.querySelector('.app-shell') || (root && root.parentNode);
+    if (!shell) return null;
+    var footer = shell.querySelector ? shell.querySelector('.app-footer') : null;
+    saveBar = h('div', {
+      class: 'savebar', role: 'status', 'aria-live': 'polite', hidden: true
+    });
+    if (footer) shell.insertBefore(saveBar, footer);
+    else shell.appendChild(saveBar);
+    return saveBar;
+  }
+
+  /* 保存できなかったときの出し分け（2026-09-19 Codex §3）。
+   *
+   * ★断られた理由を3つに分ける。混ぜない。
+   *     通信できなかった   … もう一度保存する（押せば送り直す）
+   *     確認のやり直しが要る … 確認コードの入力へ案内する
+   *     権限が足りない     … やり直しても変わらないので、そこへは送らない
+   * ★「この端末には保存されています」は、
+   *   端末への保存の成功を**確かめられたときだけ**出す。
+   * ★この表示は画面の中身を差し替えない。入力中の回答には触れない。
+   */
+  function renderSaveBar() {
+    var bar = ensureSaveBar();
+    if (!bar || !SC.challengeRemote) return;
+
+    var st = SC.challengeRemote.status();
+    var remoteFailed = st.needsRetry;
+    var remotePhase = st.phase;
+    var local = SC.store.lastSaveState();      /* 'persisted' | 'memory' | 'failed' | null */
+    /* ★null は「まだ一度も保存していない」。失敗とは決めつけない */
+    var localBad = (local === 'memory' || local === 'failed');
+    var localOk = (local === 'persisted');
+
+    /* 断られた理由。'reauth' / 'forbidden' / 'retry' / null */
+    var kind = remoteFailed && SC.authGate
+      ? SC.authGate.decide(st.failStatus) : null;
+
+    var c = SC.copy.common;
+    var d = SC.diagnosisCopy || {};
+    var lines = [];
+    var cta = null;             /* { label, href } … 押し先がある場合だけ */
+    var showRetry = false;
+
+    if (remoteFailed && kind === 'reauth') {
+      /* 券が無い・期限切れ・失効。確認のやり直しへ */
+      if (SC.authGate) SC.authGate.noteReauthShown();
+      lines.push(d.reauthHeading);
+      lines.push(d.reauthBody);
+      lines.push(d.reauthNote);
+      cta = { label: d.reauthPrimaryCta, href: 'restore.html#reauth' };
+
+    } else if (remoteFailed && kind === 'forbidden') {
+      /* 券は使えるが、この記録への権限が無い。やり直しても変わらない */
+      lines.push(d.recordNotAllowedHeading);
+      lines.push(d.recordNotAllowedBody);
+      lines.push(d.recordNotAllowedNote);
+
+    } else if (remoteFailed) {
+      /* 通信できなかった・一時的に受け付けられない・中身を断られた */
+      lines.push(c.saveFailedHeading);
+      lines.push(c.saveFailedBody);
+      showRetry = true;
+
+    } else if (localBad && remotePhase === 'saved') {
+      /* 外部保存が成功しただけでは、端末側の警告を隠さない */
+      lines.push(c.remoteOkLocalUnconfirmed);
+      lines.push(c.localSaveAdvice);
+      showRetry = true;
+    }
+    /* 外部へまだ何も送っていない状態で端末保存だけが怪しいときの本文は、
+     * 確定本文がまだ無い。勝手な言い回しは作らず、ここでは出さない
+     * （2026-09-16 Codexへ確認中） */
+
+    if (!lines.length) { bar.hidden = true; SC.dom.clear(bar); return; }
+
+    /* 端末側のようす。
+     * ★「この端末には保存されています」は、確かめられたときだけ。
+     * ★確かめられていないとき（null も）は「確認できていません」としか言わない。
+     *   失敗とは決めつけない（2026-09-16 の決まりのまま）。 */
+    if (remoteFailed) {
+      if (localOk) lines.push(c.localSavedNote);
+      else { lines.push(c.localSaveAlsoUnconfirmed); lines.push(c.localSaveAdvice); }
+    }
+
+    SC.dom.clear(bar);
+    bar.appendChild(h('p', { class: 'savebar__title', text: lines[0] }));
+    for (var i = 1; i < lines.length; i++) {
+      if (!lines[i]) continue;
+      /* 確定本文には改行が入っているものがある。
+       * p の入れ子にならないよう、囲みは div にする */
+      bar.appendChild(h('div', { class: 'savebar__note' },
+        SC.dom.lines(lines[i], 'savebar__line')));
+    }
+
+    if (cta) {
+      bar.appendChild(h('a', {
+        class: 'btn btn--secondary savebar__btn', href: cta.href, rel: 'noreferrer',
+        on: { click: function () { SC.store.trackEvent('remote_save_reauth'); } }
+      }, cta.label));
+    }
+
+    if (showRetry) {
+      var btn = h('button', {
+        type: 'button', class: 'btn btn--secondary savebar__btn', text: c.saveFailedCta,
+        on: { click: function () {
+          btn.disabled = true;
+          SC.store.trackEvent('remote_save_retry');
+          /* 端末への保存だけをやり直す専用経路。
+           * 完了日時・通知・割引起点には触れない */
+          SC.store.resaveLocal();
+          /* ★送り直す中身は、いまの回答から作り直す（challenge-remote 側）。
+           *   前に断られた中身をそのまま送り直さない */
+          var next = remoteFailed
+            ? SC.challengeRemote.retry(SC.store.getState())['catch'](function () { return null; })
+            : Promise.resolve(null);
+          next.then(function () { btn.disabled = false; renderSaveBar(); });
+        } }
+      });
+      bar.appendChild(btn);
+    }
+    bar.hidden = false;
+  }
+
   function boot() {
     captureMonitorId();
     root = doc.getElementById('app');
     footerSlot = doc.getElementById('preview-slot');
+    if (SC.challengeRemote && SC.challengeRemote.onChange) {
+      SC.challengeRemote.onChange(renderSaveBar);
+    }
 
     /* ★本人の結果が無いなら、ここで止める（§58｜判断1）。
      * loadDiagnosis() より前に見るので、サンプルを書き込まないし、
@@ -522,6 +679,7 @@
 
     /* 再読み込み時：URLのハッシュ優先、無ければ最後に保存した画面へ復帰 */
     var fromHash = screenFromHash(global.location.hash);
+    if (fromHash === 'day5_done' && new URLSearchParams(global.location.search).get('view') === 'experiment') pendingSection = 'experiment';
     render(fromHash || state.currentScreen);
 
     /* 描いてから、別の端末の続きを確かめる（2026-09-11） */

@@ -108,6 +108,7 @@
        *   だから「本人だけ」「あなただけ」とは表示しない。 */
       {
         id: 'course_product_structure',
+        courseId: 'course_shohin',
         mode: 'learn',
         axis: 'productStructure',
         contentType: 'course',

@@ -48,7 +48,7 @@
                 focusAxisChosenByUser: true
               });
               ctx.track('day1_focus_selected');
-              ctx.setFlash(SC.copy.common.saved);
+              ctx.setFlash(SC.store.saveFlashText());
               ctx.rerender('focus-axis-' + axisKey);
             }
           }),

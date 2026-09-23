@@ -151,6 +151,51 @@
 
     get: function () { return cache || SC.diagnosisStore.load(); },
 
+    /* サーバーが決めた診断IDへ、この端末の保存を移す（2026-09-19）。
+     *
+     * 【この処理がしていること】
+     *   保存の置き場所を移すだけです。**アクセス権は配りません。**
+     *   券は別の入口（SC.credentials）で受け取ります。
+     *
+     * 【守っていること】
+     *   ・移し終えて、読み戻せたことを確かめてから、元を消します
+     *   ・途中で失敗したら、**元をそのまま残します**（回答は消えません）
+     *   ・呼ぶのは「いまサーバーへ送った下書き」と応答が対応しているときだけ。
+     *     別の診断や別の人の保存とは混ぜません
+     *
+     * 戻り値：'moved' / 'same' / 'skipped'（対応しない）/ 'failed'（元は無事） */
+    adoptServerId: function (fromId, toId) {
+      if (!fromId || !toId) return 'skipped';
+      if (fromId === toId) return 'same';
+
+      var state = cache || SC.diagnosisStore.load();
+      /* いま開いている下書きと違うなら、触らない（別の診断を混ぜない） */
+      if (!state || state.anonymousDiagnosisId !== fromId) return 'skipped';
+
+      var fromKey = cfg().storageKey('session', fromId);
+      var toKey = cfg().storageKey('session', toId);
+
+      /* 先に「移した先」を書く。元はまだ残したまま */
+      var moved = JSON.parse(JSON.stringify(state));
+      moved.anonymousDiagnosisId = toId;
+      if (SC.storage.write(toKey, moved) === false) return 'failed';
+
+      /* 書けたものを読み戻して確かめる */
+      var back = SC.storage.readEntry(toKey);
+      if (back.status !== 'ok' || !back.value ||
+          back.value.anonymousDiagnosisId !== toId) return 'failed';
+
+      /* 券と合図も、新しいIDの下へ写す（元は消さない） */
+      if (SC.credentials) SC.credentials.moveTo(fromId, toId);
+
+      /* ここまで来たら、指し先を新しいほうへ。そのあとで元を消す */
+      writePointer(toId);
+      cache = back.value;
+      SC.storage.remove(fromKey);
+      if (SC.credentials) SC.credentials.forget(fromId);
+      return 'moved';
+    },
+
     lastLoadStatus: function () { return lastStatus; },
 
     save: function (patch) {

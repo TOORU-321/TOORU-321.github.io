@@ -10,6 +10,12 @@
   var diagnosisCache = null;
   var stateCache = null;
   var lastLoadStatus = 'none'; /* 'new' | 'restored' | 'recovered' */
+  /* 直近の保存が、どこまで残ったか（2026-09-16 Codex指示）。
+   *  'persisted' … この端末に残った（閉じても残る）
+   *  'memory'    … このページの中だけ。閉じる・再読み込みで消える
+   *  'failed'    … 書けなかった
+   *  null        … まだ一度も保存していない。★失敗とは決めつけない */
+  var lastSaveState = null;
 
   function nowIso() { return new Date().toISOString(); }
 
@@ -450,6 +456,49 @@
 
     lastLoadStatus: function () { return lastLoadStatus; },
 
+    /* 直近の保存がどこまで残ったか。
+     * 'persisted' / 'memory' / 'failed' / null（まだ保存していない） */
+    lastSaveState: function () { return lastSaveState; },
+
+    /* 保存したあとに出す一言（2026-09-19 Codex §3）。
+     *
+     * ★オンライン保存の成功を確かめるまで「保存しました」とは言わない。
+     * ★「この端末には保存されています」は、
+     *   端末への保存の成功を確かめられたときだけ。
+     * ★どちらも言えないときは、空文字を返す（何も言わない）。
+     *
+     * オンライン保存の出番が無いとき（プレビュー・接続先なし）は、
+     * 言っているのは端末保存のことなので、確かめられたなら「保存しました」。 */
+    saveFlashText: function () {
+      var c = SC.copy.common;
+      /* ★ここは公開している入口ごしに見る（画面と同じものを見るため） */
+      var localOk = (SC.store.lastSaveState() === 'persisted');
+      var remote = SC.challengeRemote;
+      /* オンライン保存の出番がないとき。★どこに保存したのかを言う（2026-09-19） */
+      if (!remote || !remote.isEnabled()) return localOk ? c.savedLocalOnly : '';
+      /* ★「最後に送ったものが成功したか」ではなく、
+       *   「**いまの回答**が残ったと確認できているか」で決める（2026-09-19）。
+       *   前の保存が成功したあとに書いた回答は、まだ送っていないので
+       *   「保存しました」とは言わない。 */
+      if (remote.isSaved(SC.store.getState())) return c.saved;
+      return localOk ? c.localSavedNote : '';
+    },
+
+    /* 端末への保存だけ、もう一度試す（2026-09-16 Codex指示）。
+     *
+     * ★完了日時・通知・割引起点には触れない。
+     *   いまの回答をそのまま書き直すだけの専用経路。
+     *   updatedAt も動かさない（外部保存の内容を変えないため）。 */
+    resaveLocal: function () {
+      var d = SC.store.loadDiagnosis();
+      if (!d || !d.anonymousDiagnosisId) return lastSaveState;
+      var state = SC.store.getState();
+      /* 版に対応する言葉を用意できないときは、書き込まない（保存の原則どおり） */
+      if (SC.copyVersion && SC.copyVersion.isUnsupported(state)) return lastSaveState;
+      lastSaveState = SC.storage.writeState(stateKey(d.anonymousDiagnosisId), state);
+      return lastSaveState;
+    },
+
     /* patch をマージして保存。返り値は保存後の状態 */
     saveChallengeState: function (patch) {
       var d = SC.store.loadDiagnosis();
@@ -469,7 +518,11 @@
         }
       }
       state.updatedAt = nowIso();
-      SC.storage.write(stateKey(d.anonymousDiagnosisId), state);
+      /* どこまで残ったかを覚えておく（2026-09-16）。
+       * 「この端末の記録は残っています」と画面で言うには、
+       * localStorage へ書けて読み戻せたことを確かめてからにするため。
+       * 端末保存と外部保存は別のものとして扱う */
+      lastSaveState = SC.storage.writeState(stateKey(d.anonymousDiagnosisId), state);
       stateCache = state;
 
       /* 進み具合をLINEへ知らせる（2026-09-07）。

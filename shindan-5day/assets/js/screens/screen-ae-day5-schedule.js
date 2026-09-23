@@ -27,7 +27,7 @@
         ctx.saveDay('day5', patch);
         /* 内部値だけを送る（曜日・時刻の表示文は送らない） */
         ctx.track('day5_schedule_selected', { screen: 'day5_schedule' });
-        ctx.setFlash(SC.copy.common.saved);
+        ctx.setFlash(SC.store.saveFlashText());
         ctx.rerender(focusId);
       }
 

@@ -48,6 +48,7 @@
 
             SC.ui.card(null, [
               h('p', { class: 'card__note', text: c.note }),
+              ctx.choosingNextStep ? h('p', { class: 'card__note', text: '選ぶと保存されます。完成したシート・完了日時・ご案内の期限は変わりません。' }) : null,
               SC.ui.choiceList({
                 name: spec.id,
                 legend: c.title,
@@ -60,7 +61,7 @@
                   patch[spec.field] = value;
                   ctx.saveDay(spec.dayKey, patch);
                   ctx.track(spec.selectEvent);
-                  ctx.setFlash(SC.copy.common.saved);
+                  ctx.setFlash(SC.store.saveFlashText());
                   ctx.rerender(spec.id + '-' + value);
                 }
               }),
@@ -90,7 +91,7 @@
 
             SC.ui.ctaArea([
               SC.ui.primaryCta({
-                label: c.primaryCta,
+                label: ctx.choosingNextStep ? 'この進み方の案内を見る' : c.primaryCta,
                 onClick: function () {
                   var state = SC.store.getState();
                   var current = state[spec.dayKey] || {};

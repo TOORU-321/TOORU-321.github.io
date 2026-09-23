@@ -57,12 +57,12 @@
     if (after.hidden) {
       after.hidden = false;
       if (SC.motion.allowed()) after.classList.add('is-revealing');
-      SC.store.markStoryRead();
       if (!revealedThisSession) {
         revealedThisSession = true;
         SC.track.event('lp_story_revealed');
       }
     }
+    SC.store.markStoryRead();
     startScrollReveal();
     var first = after.querySelector('.lp-section');
     if (first) first.scrollIntoView({ block: 'start' });
@@ -235,6 +235,74 @@
 
   var revealAfterReady = false;
 
+  /* 要約から参加を判断できる。詳細22カードは任意。参加状態は変更しない。 */
+  function applyScanLayout(lp) {
+    var s = SC.scanCopy.lp;
+    var main = doc.getElementById('lp-main');
+    main.classList.add('scan-lp');
+    doc.getElementById('lp-after').hidden = false;
+    setText('heroTitle', s.title);
+    setText('heroBody', s.body);
+    setText('heroPrimaryCta', s.cta);
+    setText('heroSecondaryCta', s.secondary);
+    setText('joinHeading', s.join);
+    setText('joinBody', s.joinBody);
+    var overview = h('section', { class: 'scan-overview', id: 'blueprint' }, [
+      h('p', { class: 'scan-eyebrow', text: 'YOUR NEXT STEP' }),
+      h('h2', { class: 'scan-title', text: s.outcome }),
+      h('div', { class: 'scan-outcome-grid' }, [
+        photoFigure(),
+        h('div', { class: 'scan-sheet' }, [
+          h('p', { class: 'scan-sheet__caption', text: s.sample }),
+          h('ol', {}, s.rows.map(function (row, i) {
+            return h('li', {}, [h('span', { class: 'scan-sheet__day', text: 'DAY ' + (i + 1) }), h('strong', { text: row })]);
+          })),
+          h('p', { class: 'scan-note', text: s.sampleNote })
+        ])
+      ]),
+      h('h2', { class: 'scan-title scan-how-title', text: s.how }),
+      h('ol', { class: 'scan-rules' }, s.steps.map(function (step, i) {
+        return h('li', {}, [h('span', { class: 'scan-number', text: '0' + (i + 1), 'aria-hidden': 'true' }),
+          h('div', {}, [h('strong', { text: step.title }), h('p', { text: step.body })])]);
+      })),
+      h('ul', { class: 'scan-facts' }, s.facts.map(function (t) { return h('li', { text: t }); })),
+      h('p', { class: 'scan-note', text: s.unlockNote }),
+      h('p', { class: 'scan-note', text: s.outcomeNote })
+    ]);
+    var story = doc.getElementById('story');
+    main.insertBefore(overview, story);
+    var join = doc.getElementById('join');
+    main.insertBefore(join, story);
+    join.querySelector('.lp-join__inner').insertBefore(
+      h('p', { class: 'scan-note', text: s.purchaseNote }), slot('declareSlot'));
+    function wrap(el, title) {
+      if (!el) return;
+      var fold = h('details', { class: 'scan-details scan-lp-fold' }, [h('summary', { text: title })]);
+      el.parentNode.insertBefore(fold, el);
+      fold.appendChild(el);
+      return fold;
+    }
+    var storyFold = wrap(story, s.story);
+    var storyOpened = false;
+    storyFold.addEventListener('toggle', function () {
+      if (storyFold.open && !storyOpened) {
+        storyOpened = true;
+        SC.track.event('lp_deck_step', { step: 1 });
+      }
+    });
+    wrap(slot('fitHeading').closest('section'), s.fit);
+    wrap(slot('authorHeading').closest('section'), s.author);
+    wrap(slot('beforeHeading').closest('section'), s.before);
+    wrap(slot('freeHeading').closest('section'), lp.freeReason.heading);
+    wrap(slot('faqHeading').closest('section'), lp.faq.heading);
+    wrap(doc.getElementById('offer'), s.offer);
+    if (global.location.hash === '#blueprint') {
+      overview.setAttribute('tabindex', '-1');
+      overview.scrollIntoView({ block: 'start' });
+      overview.focus({ preventScroll: true });
+    }
+  }
+
   /* 本人の診断結果が無いときの案内（2026-09-06 §58｜判断1）。
    *
    * それまではゲートの「診断結果へ戻る」から index.html へ送っており、
@@ -351,6 +419,9 @@
         renderAll: function () { return renderCardsFlat(cards); },
         expose: function (api) { deckApi = api; },
         onStep: function (i) {
+          /* 閉じた補足の初期構築を「読んだ」と数えない。1枚目は開いたときに数える。 */
+          var fold = storySlot.closest('details');
+          if (!fold || !fold.open || i === 0) return;
           if (reachedSteps[i]) return;
           reachedSteps[i] = true;
           SC.track.event('lp_deck_step', { step: i + 1 });
@@ -366,10 +437,8 @@
       /* ヒーローの「5日後に残るものを見る」は、成果物の章へ飛ばす */
       [].slice.call(doc.querySelectorAll('[data-lp-chapter]')).forEach(function (btn) {
         btn.addEventListener('click', function () {
-          if (!deckApi) return;
-          deckApi.goToChapter(btn.getAttribute('data-lp-chapter'));
-          var story = doc.getElementById('story');
-          if (story) story.scrollIntoView({ block: 'start' });
+          var target = doc.getElementById('blueprint');
+          if (target) { target.setAttribute('tabindex', '-1'); target.scrollIntoView({ block: 'start' }); target.focus({ preventScroll: true }); }
         });
       });
     }
@@ -631,7 +700,10 @@
     /* --- ヒーロー・中間CTAは参加表明へスクロールするだけ ----------------- */
     /* ヒーロー主CTAは、読み進めるブロックの入口へ運ぶだけ（§36-1-1）*/
     [].slice.call(doc.querySelectorAll('[data-lp-vsl]')).forEach(function (btn) {
-      btn.addEventListener('click', function () { goToStory(); });
+      btn.addEventListener('click', function () {
+        var target = doc.getElementById('blueprint');
+        if (target) { target.setAttribute('tabindex', '-1'); target.scrollIntoView({ block: 'start' }); target.focus({ preventScroll: true }); }
+      });
     });
 
     /* 最初から開いている人にも、行ごとの出現を仕込む */
@@ -660,7 +732,7 @@
           click: function () {
             var after = doc.getElementById('lp-after');
             if (after) {
-              after.hidden = true;
+              after.hidden = false;
               after.classList.remove('is-revealing');
             }
             if (deckApi) deckApi.go(0);
@@ -689,8 +761,12 @@
     }
   }
 
-  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot);
-  else boot();
+  function bootScan() {
+    boot();
+    if (!doc.getElementById('lp-main').hidden) applyScanLayout(SC.copy.lp);
+  }
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', bootScan);
+  else bootScan();
 
-  SC.lp = { boot: boot };
+  SC.lp = { boot: bootScan };
 })(window);

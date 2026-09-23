@@ -443,7 +443,9 @@
           if (opts.onInput) opts.onInput(field.value);
         },
         blur: function () {
-          if (field.value.trim() !== '') status.textContent = SC.copy.common.saved;
+          /* ★オンライン保存の成功を確かめるまで「保存しました」と言わない
+           *   （2026-09-19 Codex §3）。言えることだけを出す */
+          if (field.value.trim() !== '') status.textContent = SC.store.saveFlashText();
         }
       }
     });
@@ -599,6 +601,80 @@
 
   ui.notice = function (text) {
     return h('p', { class: 'notice', role: 'status', 'aria-live': 'polite', text: text });
+  };
+
+  /* 企画の表示だけを整える。回答・入力要素・イベントは作り直さず保持する。 */
+  ui.challengePresentation = function (el, screenId, state) {
+    var match = /^day([1-5])_/.exec(screenId);
+    var copy = SC.challengeViewCopy;
+    if (!match || !copy) return el;
+    var day = Number(match[1]), c = copy.days[day - 1];
+    var intro = /_intro$/.test(screenId), done = /_done$/.test(screenId);
+    var completed = state.completedDays || [];
+    el.classList.add('challenge-view');
+    var header = el.querySelector('.app-header');
+    if (!header) return el;
+    var trail = h('ol', { class: 'challenge-trail', 'aria-label': copy.progressLabel }, copy.days.map(function (item, i) {
+      var finished = completed.indexOf(i + 1) !== -1;
+      return h('li', { class: (i + 1 === day ? 'is-current ' : '') + (finished ? 'is-done' : ''),
+        'aria-current': i + 1 === day ? 'step' : null,
+        'aria-label': 'DAY' + (i + 1) + ' ' + item.short + (finished ? ' 完了' : (i + 1 === day ? ' 表示中' : ' 未完了')) }, [
+        h('span', { class: 'challenge-trail__dot', 'aria-hidden': 'true', text: finished ? '✓' : String(i + 1) }),
+        h('span', { 'aria-hidden': 'true', text: item.short })
+      ]);
+    }));
+    header.appendChild(trail);
+    function fold(node, label) {
+      if (!node || node.parentNode !== el) return;
+      var wrap = h('details', { class: 'challenge-details' }, [h('summary', { text: label })]);
+      el.insertBefore(wrap, node);
+      wrap.appendChild(node);
+    }
+    if (intro) {
+      el.classList.add('challenge-view--intro');
+      var title = header.querySelector('.app-header__title');
+      if (title) title.textContent = c.title;
+      var original = [].slice.call(el.children);
+      var goal = h('section', { class: 'challenge-goal', 'aria-label': copy.today }, [
+        h('p', { class: 'challenge-kicker', text: copy.today }),
+        h('p', { class: 'challenge-goal__main', text: c.goal }),
+        day > 1 && day < 5 ? h('p', { class: 'challenge-note', text: copy.customer }) : null,
+        h('p', { class: 'challenge-output', text: c.output })
+      ]);
+      /* 復元・保存の通知は元の位置を維持。説明カードより前に目標を置く。 */
+      var firstCard = el.querySelector(':scope > .card');
+      el.insertBefore(goal, firstCard || header.nextSibling);
+      original.forEach(function (node) {
+        if (!node.classList.contains('card')) return;
+        if (node.querySelector('.recap-list, .persona-card, .jmap-wrap')) fold(node, copy.recap);
+      });
+      var lessonKey = 'day' + day + 'Intro';
+      var lessonCopy = SC.copy[lessonKey];
+      var explain = original.filter(function (node) {
+        var heading = node.querySelector('.card__title');
+        return node.classList.contains('card--lead') ||
+          (heading && lessonCopy && heading.textContent === lessonCopy.lessonHeading);
+      });
+      if (explain.length) {
+        var details = h('details', { class: 'challenge-details' }, [h('summary', { text: copy.lesson })]);
+        el.insertBefore(details, explain[0]);
+        explain.forEach(function (node) { details.appendChild(node); });
+      }
+      /* 元のCTAを移動するだけ。動画や説明の閲覧を必須にしない。 */
+      var cta = el.querySelector(':scope > .cta-area');
+      if (cta) el.insertBefore(cta, goal.nextSibling);
+    }
+    if (done) {
+      el.classList.add('challenge-view--done');
+      /* 完了していない記録に、見た目だけの達成を足さない。 */
+      if (completed.indexOf(day) !== -1) {
+        var doneTitle = header.querySelector('.app-header__title');
+        if (doneTitle) doneTitle.textContent = c.done;
+      }
+      [].slice.call(el.querySelectorAll(':scope > .before-after')).forEach(function (node) { fold(node, copy.comparison); });
+      [].slice.call(el.querySelectorAll(':scope > .blueprint')).forEach(function (node) { fold(node, copy.progress); });
+    }
+    return el;
   };
 
   SC.ui = ui;

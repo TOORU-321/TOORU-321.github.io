@@ -37,7 +37,7 @@
               /* 選択内容を即時保存 */
               ctx.save({ pausedAction: value, pausedActionChosenByUser: true });
               ctx.track('day1_pause_selected');
-              ctx.setFlash(SC.copy.common.saved);
+              ctx.setFlash(SC.store.saveFlashText());
               ctx.rerender('paused-action-' + value);
             }
           }),

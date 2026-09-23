@@ -122,7 +122,9 @@
       'day_video_completed',
       'day_video_skipped',
       'day_video_transcript_opened',
-      'day_video_replayed'
+      'day_video_replayed',
+      /* 外部保存の「もう一度試す」を押した（2026-09-15）。本文は送らない */
+      'remote_save_retry'
     ],
 
     /* 依頼18：動画のイベントには匿名診断IDを載せない。

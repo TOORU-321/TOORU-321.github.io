@@ -47,7 +47,7 @@
               ctx.saveDay('day4', { middleOrder: value });
               /* 内部値だけを計測へ送る（§26-D） */
               ctx.track('day4_order_selected', { choice: value });
-              ctx.setFlash(SC.copy.common.saved);
+              ctx.setFlash(SC.store.saveFlashText());
               ctx.rerender('day4_order-' + value);
             }
           }),

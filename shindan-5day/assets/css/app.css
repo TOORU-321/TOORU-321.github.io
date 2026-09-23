@@ -1224,3 +1224,204 @@ body[data-screen="day5_done"] .app-footer__legalbox { display: block; }
     border-radius: 30px 30px 0 0;
   }
 }
+
+/* 外部保存のお知らせ（2026-09-15）。
+   画面の操作は妨げない。下に1枚だけ出す */
+.savebar {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line, #3a3a3a);
+  border-radius: 12px;
+  background: rgba(201, 164, 76, 0.08);
+}
+.savebar__title { margin: 0; font-size: 0.875rem; font-weight: 700; }
+.savebar__note { margin: 6px 0 0; font-size: 0.875rem; }
+/* 確定本文の改行を、そのまま1行ずつ出す（2026-09-19） */
+.savebar__line { margin: 0; font-size: 0.875rem; }
+.savebar__line + .savebar__line { margin-top: 2px; }
+.savebar__btn { margin-top: 10px; display: block; width: 100%; box-sizing: border-box; }
+a.savebar__btn { text-align: center; text-decoration: none; }
+
+/* === Codex scan-first preview / 2026-09-16 ===
+ * 導入・結果・参加案内だけ。設問、DAYの作業画面、保存UIには波及させない。
+ * 強調は金色の結論、通常文は白、補足は明るい灰色。固定高は使わない。 */
+.scan-mode, .scan-lp, .scan-intro, .scan-result { --scan-muted: #c0c6d0; }
+.scan-title { font-family: var(--mincho); font-size: clamp(1.45rem, 4.8vw, 2rem); line-height: 1.65; white-space: pre-line; margin: 0 0 1.25rem; color: var(--ink); overflow-wrap: anywhere; }
+.scan-eyebrow { font-size: .8125rem; font-weight: 700; letter-spacing: .12em; color: var(--gold-2); margin: 0 0 .8rem; }
+.scan-note { font-size: .875rem; line-height: 1.9; color: var(--scan-muted, #c0c6d0); margin: .9rem 0; overflow-wrap: anywhere; }
+.scan-details { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 1rem 0; color: var(--ink); }
+.scan-details + .scan-details { border-top: 0; }
+.scan-details > summary { cursor: pointer; padding: 1.15rem .25rem; font-size: 1rem; font-weight: 500; line-height: 1.7; overflow-wrap: anywhere; }
+.scan-details > summary::marker { color: var(--gold-2); }
+.scan-details > summary:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; }
+.scan-details[open] > summary { color: var(--gold-2); }
+.scan-details__body { padding: .5rem .5rem 1.2rem; }
+.scan-details__body p { line-height: 1.95; }
+.scan-rules { list-style: none; padding: 0; margin: 1.5rem 0; }
+.scan-rules li { display: grid; grid-template-columns: 2rem minmax(0,1fr); gap: 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+.scan-rules strong { font-size: 1.0625rem; line-height: 1.75; color: var(--ink); }
+.scan-rules p { font-size: .9375rem; line-height: 1.85; color: var(--scan-muted); margin: .35rem 0 0; }
+.scan-number { color: var(--gold-2); font-family: Georgia, serif; font-size: 1.5rem; line-height: 1.4; }
+.scan-facts { padding: 0; margin: 1rem 0; display: flex; flex-wrap: wrap; gap: .6rem; list-style: none; }
+.scan-facts li { border: 1px solid var(--line); border-radius: 999px; color: var(--gold-2); padding: .45rem .85rem; font-size: .875rem; }
+.scan-intro { padding: 2rem .4rem; max-width: 34rem; margin: 0 auto; }
+.scan-intro > .btn { width: 100%; margin-top: 1rem; }
+.scan-intro > .scan-note { text-align: center; }
+.scan-focus { background: linear-gradient(145deg, #202734, #121924); border: 1px solid rgba(227,195,129,.28); border-radius: 1.25rem; padding: 1.6rem 1.2rem; margin-bottom: 1.25rem; }
+.scan-focus__title { font-size: 1.125rem; font-weight: 500; line-height: 1.8; margin: 0 0 1rem; }
+.scan-focus__title strong { display: block; color: var(--gold-2); font-family: var(--mincho); font-size: 1.8rem; margin-top: .3rem; }
+.scan-subhead { font-size: 1rem; margin: 1.25rem 0 .5rem; color: var(--gold-2); }
+.scan-reason { font-size: 1rem; line-height: 1.95; margin: 0; }
+.scan-next { padding: 2rem 0 1rem; margin-top: 1.25rem; }
+.scan-next > p { font-size: 1rem; line-height: 1.9; }
+.scan-result .card { margin-bottom: 1.25rem; }
+.scan-result .result-type { margin: 1rem 0; }
+.scan-result .strength__example { font-size: 1rem; }
+.scan-result .cta-area { margin-top: 1.5rem; }
+/* 5DAY：今日の一つと成果物に視線を集める。選択・保存の仕様は変えない。 */
+.challenge-view { --cv-note: #c5cad3; }
+.offer-view { margin-top: 2rem; padding: clamp(1.2rem,4vw,2rem); border: 1px solid #ad925b99; background: linear-gradient(150deg,#262b33,#141c28); scroll-margin-top: 1rem; }
+.offer-view__eyebrow { color: #ebcd94; font-size: .8rem; letter-spacing: .12em; margin: 0 0 .8rem; }
+.offer-view__title { font-size: clamp(1.4rem,5.4vw,2rem); line-height: 1.65; color: #fff4dd; white-space: pre-line; margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+.offer-view__reason, .offer-view__next { color: #cbd3df; font-size: .9375rem; line-height: 1.9; }
+.offer-view__product { background: #f0e8d8; color: #282b32; border-radius: .8rem; overflow: hidden; margin: 1.5rem 0; }
+.offer-view__photo { display:block; width:100%; height:10rem; object-fit:cover; object-position:center; }
+.offer-view__name { padding: 1rem 1.2rem .3rem; margin: 0; font-size: 1.1rem; line-height: 1.8; font-weight:700; white-space:pre-line; }
+.offer-view .prose__line { font-size:.9375rem; line-height:1.9; margin:.5rem 0; }
+.offer-view__facts { padding: .5rem 1.2rem 1.2rem 2.3rem; margin:0; font-size:.9375rem; line-height:1.9; }
+.offer-view__detail-heading { font-size:1rem; margin-top:1.3rem; color:#edce96; }
+.offer-view__steps { padding:0; list-style:none; counter-reset:nextstep; margin:1.5rem 0; }
+.offer-view__steps li { counter-increment:nextstep; border-bottom:1px solid #8b96a444; padding:1rem 0; line-height:1.8; }
+.offer-view__steps li::before { content:'0' counter(nextstep) ' '; color:#edce96; font-weight:700; margin-right:.6rem; }
+.offer-view .course-list { margin-top:1.5rem; }
+.offer-view .course-list__item { padding:1rem 0; line-height:1.8; }
+.offer-view--self { border-color:#627b78; }
+.next-step-shell { max-width:48rem; }
+.next-step-header { margin:1.5rem 0 2rem; }
+.next-step-shell .offer-view { margin-top:1rem; }
+.next-step-shell .btn { white-space:normal; height:auto; min-height:3.4rem; line-height:1.8; }
+.next-step-shell .app-footer { font-size:.8rem; line-height:2; }
+.next-step-shell .app-footer a { color:#c2b493; text-underline-offset:.2em; }
+.next-step-entry { background:linear-gradient(135deg,#2d3035,#182331); border-color:#b69b6555; }
+.next-step-entry .btn { margin-top:1rem; }
+.next-step-back { color:#e5c994; display:inline-block; padding:.75rem 0; }
+.challenge-view .app-header { margin-bottom: 1.6rem; }
+.challenge-view .app-header__eyebrow, .challenge-view .app-header__program { display: none; }
+.challenge-view .app-header__title { font-size: clamp(1.45rem, 5.7vw, 2.1rem); line-height: 1.65; margin: 1rem 0 1.3rem; overflow-wrap: anywhere; }
+.challenge-view--intro .app-header__title { white-space: pre-line; }
+.challenge-trail { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: .35rem; margin: 1rem 0; padding: 0; list-style: none; }
+.challenge-trail li { position: relative; display: flex; flex-direction: column; align-items: center; gap: .4rem; color: #aab3c0; text-align: center; font-size: .75rem; line-height: 1.65; overflow-wrap: anywhere; }
+.challenge-trail li::before { content: ''; position: absolute; height: 1px; background: #59606a; left: -50%; width: 100%; top: .9rem; }
+.challenge-trail li:first-child::before { display: none; }
+.challenge-trail__dot { position: relative; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; border: 1px solid #737d8c; background: #172130; font-size: .85rem; }
+.challenge-trail .is-current { color: #f5d99d; font-weight: 700; }
+.challenge-trail .is-current .challenge-trail__dot { border: 2px solid #ebcc90; box-shadow: 0 0 0 3px #ebcc901c; }
+.challenge-trail .is-done .challenge-trail__dot { color: #18202b; background: #e7ca90; border-color: #e7ca90; }
+.challenge-goal { padding: 1.5rem; border: 1px solid #9b835355; border-radius: 1rem; background: linear-gradient(145deg,#2b2c2e,#192535); margin: 1.2rem 0; }
+.challenge-kicker { color: #e7ca90; font-size: .8rem; letter-spacing: .1em; margin: 0 0 .8rem; }
+.challenge-goal__main { font-size: 1.25rem; font-weight: 700; line-height: 1.85; margin: 0; color: #fff5df; }
+.challenge-note { font-size: .9375rem; line-height: 1.85; color: var(--cv-note); }
+.challenge-output { border-top: 1px solid #b8a27644; padding-top: .9rem; margin: 1rem 0 0; color: #e7ca90; font-size: .9375rem; line-height: 1.8; }
+.challenge-details { border-top: 1px solid #52607070; margin: 1rem 0; }
+.challenge-details > summary { padding: 1rem .3rem; cursor: pointer; color: #cbd4df; font-size: .9375rem; line-height: 1.8; }
+.challenge-details > summary:focus-visible { outline: 2px solid #edcc8c; outline-offset: 4px; }
+.challenge-details > .card { margin-top: .3rem; }
+.challenge-view .card__note { color: var(--cv-note); line-height: 1.9; }
+.challenge-view .choice { border-radius: .8rem; margin-bottom: .7rem; }
+.challenge-view .choice__title { font-size: 1.0625rem; line-height: 1.85; }
+.challenge-view .choice__sub { font-size: .9375rem; line-height: 1.85; }
+.challenge-view .btn { font-size: 1rem; white-space: normal; height: auto; min-height: 3.4rem; line-height: 1.7; overflow-wrap: anywhere; }
+.challenge-view .cta-area { margin: 1.3rem 0 1.8rem; }
+.challenge-view textarea { font-size: 1rem; line-height: 1.9; }
+.challenge-view--done .card--project { background: #f0e8d8; color: #252a30; border-color: #d5bf90; }
+.challenge-view--done .card--project .card__title, .challenge-view--done .card--project .kv__value,
+.challenge-view--done .card--project .final-sheet__value { color: #252a30; }
+.challenge-view--done .card--project .kv__key, .challenge-view--done .card--project .final-sheet__label,
+.challenge-view--done .card--project .final-sheet__day { color: #6a5024; }
+.challenge-view--done .card--score-keep { background: transparent; border-color: #536172; }
+@media (prefers-reduced-motion: no-preference) {
+  .challenge-view.is-entering .challenge-goal { animation: sc-screen-in .45s ease-out both; }
+}
+/* とーる選定：詳細結果は改良版＋短い導入演出。本文・CTAを待たせない。 */
+@media (prefers-reduced-motion: no-preference) {
+  .scan-result--intro .scan-focus__title { animation: sc-screen-in .6s ease-out both; }
+  .scan-result--intro .scan-focus .result-type { animation: sc-screen-in .65s ease-out .1s both; }
+}
+
+/* 診断前：写真で区切り、見出しと結論だけでも話を追える。 */
+.dlp.scan-mode { max-width: 48rem; padding: 1.5rem 1.25rem 3rem; }
+.scan-mode .dlp-hero { margin-bottom: 3.5rem; }
+.scan-mode .dlp-hero__title { font-size: clamp(1.65rem, 5.5vw, 2.65rem); line-height: 1.65; }
+.scan-mode .dlp-hero__title-line:last-child { color: var(--gold-2); }
+.scan-mode .dlp-hero__copy { max-width: 39rem; margin-inline: auto; }
+.scan-mode .dlp-section { margin-bottom: 3.5rem; }
+.scan-mode .dlp-heading { font-size: clamp(1.35rem, 4.8vw, 1.9rem); line-height: 1.65; }
+.scan-mode .dlp-body__line, .scan-mode .dlp-lead { font-size: 1rem; line-height: 1.95; margin-bottom: 1rem; }
+.scan-mode .dlp-cta__note, .scan-mode .dlp-note, .scan-mode .dlp-note__line { font-size: .875rem; line-height: 1.8; }
+.scan-mode .dlp-open { padding: 0; }
+.scan-mode .dlp-open__line { font-size: 1rem; margin: 1.7rem 0; line-height: 1.9; }
+.scan-mode .dlp-open__em { display: block; font-size: clamp(1.2rem, 4.5vw, 1.5rem); color: var(--ink); font-weight: 700; margin-top: .35rem; }
+.scan-mode .dlp-open__close { font-size: .9375rem; line-height: 1.9; color: var(--scan-muted); }
+.scan-mode .dlp-pairs { margin: 1.5rem 0; }
+.scan-mode .dlp-pair__lead { font-size: .9375rem; line-height: 1.9; }
+.scan-mode .dlp-pair__point { font-size: 1.25rem; line-height: 1.75; margin-top: .6rem; }
+.scan-mode .dlp-close { font-size: 1.25rem; line-height: 1.8; color: var(--gold-2); margin-top: 1.5rem; }
+.scan-mode .dlp-photo { max-width: 100%; margin: 1.75rem auto; }
+.scan-mode .dlp-photo__img { max-height: 18rem; object-fit: cover; object-position: center 42%; border-radius: 1rem; }
+.scan-mode .dlp-photo--small { max-width: 23rem; }
+.scan-mode .dlp-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .6rem; counter-reset: scan-result; }
+.scan-mode .dlp-list__item { border: 1px solid var(--line); border-radius: .8rem; background: #1a222e; padding: 1rem .7rem; margin: 0; font-size: .9375rem; line-height: 1.7; }
+.scan-mode .dlp-list__item::before { counter-increment: scan-result; content: '0' counter(scan-result); position: static; display: block; color: var(--gold-2); font-size: 1.25rem; margin-bottom: .5rem; }
+.scan-mode .dlp-sample { max-width: 25rem; margin: 1.5rem auto; }
+.scan-mode .dlp-fold { margin-bottom: .75rem; }
+.scan-mode .dlp-fold__summary { min-height: 3rem; }
+.scan-mode .dlp-fold__title { font-size: 1rem; line-height: 1.7; }
+.scan-mode .dlp-fold__more { font-size: .8125rem; }
+.scan-mode .dlp-map__note-line { font-size: 1rem; line-height: 1.95; }
+.scan-mode .dlp-section--author { margin-top: 2.5rem; }
+.scan-mode .dlp-variety { margin: 1.25rem 0; }
+.scan-mode .dlp-variety__heading { font-size: 1.125rem; }
+
+/* 参加案内：成果物の構成見本を先に。任意説明は後ろへ。 */
+.lp.scan-lp { max-width: 48rem; padding-inline: 1.25rem; }
+.scan-lp .lp-hero { margin-bottom: 2.5rem; padding-top: 2rem; padding-bottom: 1.5rem; }
+.scan-lp .lp-hero__title { font-size: clamp(1.7rem, 5.5vw, 2.6rem); line-height: 1.65; white-space: pre-line; }
+.scan-lp .lp-hero__body { font-size: 1rem; line-height: 1.95; white-space: pre-line; }
+.scan-lp .lp-hero__score { margin: 1rem 0; }
+.scan-lp .lp-score__value { font-size: 1rem; }
+.scan-lp .lp-hero__micro { font-size: .875rem; }
+.scan-overview { scroll-margin-top: 1.5rem; }
+.scan-outcome-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.scan-outcome-grid .lp-photo { width: 100%; max-width: none; margin: 0; }
+.scan-outcome-grid .lp-photo__img { width: 100%; max-height: 17rem; object-fit: cover; border-radius: 1rem; }
+.scan-sheet { padding: 1.25rem; border-radius: .9rem; border: 1px solid #d6c6a4; background: #efe9de; color: #272b30; box-shadow: 0 .5rem 2rem rgba(0,0,0,.12); }
+.scan-sheet__caption { margin: 0 0 .9rem; font-size: .8125rem; letter-spacing: .04em; color: #605744; }
+.scan-sheet ol { list-style: none; padding: 0; margin: 0; }
+.scan-sheet li { display: grid; grid-template-columns: 3.5rem minmax(0,1fr); gap: .75rem; padding: .85rem 0; border-bottom: 1px solid #cfc6b6; font-size: .9375rem; line-height: 1.7; }
+.scan-sheet__day { color: #766140; font-size: .8125rem; }
+.scan-sheet .scan-note { color: #5b554d; font-size: .875rem; }
+.scan-how-title { margin-top: 2.5rem; }
+.scan-lp .lp-join { margin: 2.5rem 0; padding: 1.5rem 1.1rem; border: 1px solid rgba(227,195,129,.35); border-radius: 1.1rem; background: #1c2632; }
+.scan-lp .lp-join__title { font-size: 1.65rem; color: var(--gold-2); }
+.scan-lp .lp-join__body { font-size: 1rem; line-height: 1.9; }
+.scan-lp .lp-declare { margin-top: 1.5rem; }
+.scan-lp .lp-declare__text { font-size: 1rem; }
+.scan-lp .lp-join__cta { margin-top: 1.5rem; }
+.scan-lp .lp-section { margin: 0; padding: 1.25rem .5rem; }
+.scan-lp .lp-section__title { font-size: 1.25rem; }
+.scan-lp .lp-prose__line { font-size: 1rem; line-height: 1.95; margin-bottom: 1rem; }
+.scan-lp .sc-reveal, .scan-lp .sc-reveal.is-shown { opacity: 1; animation: none; transform: none; }
+.scan-lp-fold { margin: 0; }
+.scan-lp #lp-after { margin-bottom: 2rem; }
+.scan-lp .lp-program { flex-wrap: wrap; }
+.scan-lp .lp-program__name { white-space: normal; }
+.scan-mode .btn, .scan-lp .btn, .scan-intro .btn, .scan-result .btn { white-space: normal; height: auto; min-height: 3rem; line-height: 1.65; padding: .9rem 1rem; overflow-wrap: anywhere; }
+@media (min-width: 700px) {
+  .scan-outcome-grid { grid-template-columns: .85fr 1.15fr; align-items: stretch; }
+  .scan-outcome-grid .lp-photo__img { height: 100%; max-height: none; }
+}
+@media (max-width: 370px) {
+  .scan-mode .dlp-list { grid-template-columns: 1fr; }
+  .scan-mode .dlp-list__item { display: flex; align-items: center; gap: 1rem; padding: .8rem; }
+  .scan-mode .dlp-list__item::before { margin: 0; }
+}

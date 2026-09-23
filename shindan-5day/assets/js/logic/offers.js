@@ -163,6 +163,19 @@
     },
 
     /* DAY5完了からの経過で、いまどの段階かを返す（§37-9）。
+     * 以下の入口は専用ページから使用。講座未対応→相談は今回の明示的な方針変更。
+     * 期限の欠損は講座未対応とは区別し、自動で有料相談へ切り替えない。 */
+    resolveNextStepRecommendation: function (mode, axis, completedAt) {
+      var rec = SC.offers.resolveSupportRecommendation(mode, axis, completedAt);
+      if (mode !== 'learn' || SC.offers.findOffer('learn', axis)) return rec;
+      var consult = SC.offers.resolveSupportRecommendation('consult', axis, completedAt);
+      if (!consult.isAvailable) return rec;
+      consult.mode = 'learn';
+      consult.fallbackFromCourse = true;
+      return consult;
+    },
+
+    /* DAY5完了からの経過で、いまどの段階かを返す（§37-9）。
      * Phase2初期では通知を送らない。段階の判定だけを用意しておく。 */
     timingFor: function (state, now) {
       if (!state || !state.day5CompletedAt) return null;

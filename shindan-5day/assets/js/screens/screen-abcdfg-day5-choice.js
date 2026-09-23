@@ -40,7 +40,7 @@
       viewEvent: 'day5_adjustment_view', selectEvent: 'day5_adjustment_selected'
     },
     {
-      id: 'day5_support', dayKey: 'day5', logic: day5, copy: 'day5Support',
+      id: 'day5_support', dayKey: 'day5', logic: day5, copy: 'day5SupportChoice',
       field: 'supportMode', customField: null,
       options: 'day5SupportModes',
       next: 'day5_experiment',

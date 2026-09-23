@@ -449,3 +449,29 @@
 .dg-handoff__already-line {
   margin: 0; font-size: 13px; line-height: 1.85; color: var(--ink-2);
 }
+
+/* 確認コードの入力（2026-09-19）。
+   狭い画面でも、欄とボタンが画面の中に収まるようにする */
+.dg-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.dg-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 12px;
+  font-size: 1rem;
+  /* コードは英数字なので、字間を少し空けて読み違いを減らす */
+  letter-spacing: 0.08em;
+  border: 1px solid var(--dg-line, #3a3a3a);
+  border-radius: 10px;
+  background: var(--dg-field, rgba(255, 255, 255, 0.04));
+  color: inherit;
+}
+.dg-input:focus {
+  outline: 2px solid var(--dg-accent, #c9a44c);
+  outline-offset: 2px;
+}

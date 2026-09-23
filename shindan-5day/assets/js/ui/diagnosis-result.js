@@ -1,88 +1,36 @@
-/* diagnosis-result.js : 簡易結果の見た目。診断ページとLINE復元画面で共用する。
- * 表示順は v0.4 §8：総合点 → スコア帯 → 5軸レーダー → 最低軸 → 改善幅 → 補助フラグ。
- * （推奨コラム・はじめてシリーズ・L-MINE2.0の接続は未確定のため出さない）
- */
+/* 簡易結果：結論とイメージ → 点数とチャート → 任意の各軸説明。
+ * 引き継ぎCTAは呼び出し元の既存処理。ここでは結果の表示だけを行う。 */
 (function (global) {
   'use strict';
-  var SC = (global.SC = global.SC || {});
-  var h = SC.dom.h;
-
-  function c() { return SC.diagnosisCopy; }
-
-  function flagCard(heading, body) {
-    return h('section', { class: 'dg-card dg-flag' }, [
-      h('h2', { class: 'dg-flag__title', text: heading }),
-      h('p', { class: 'dg-flag__body', text: body })
-    ]);
+  var SC = global.SC, h = SC.dom.h;
+  function flag(title, text) {
+    return h('section', { class: 'dg-card dg-flag' }, [h('h2', { class: 'dg-flag__title', text: title }), h('p', { class: 'dg-flag__body', text: text })]);
   }
-
-  /* record : SC.diagnosisScore.toDiagnosisRecord() の形
-   * opts   : { animate: bool, withLead: bool } */
   SC.ui.diagnosisResult = function (record, opts) {
-    opts = opts || {};
-    var d = SC.diagnosisData;
-    var scores = record.axisScores;
-    var axisMax = d.scoring.axisMax;
-    var step = SC.config.improvementStep;
-    var improved = SC.ui.improvedScores(scores, record.lowestAxis, step, axisMax);
-    var lowestLabel = SC.axisLabel(record.lowestAxis);
-    var animate = !!opts.animate;
-
-    return h('div', { class: 'dg-result' }, [
-      /* 1. 診断完了（第一声｜v0.4 §8） */
-      opts.withLead === false
-        ? null
-        : h('section', { class: 'dg-card dg-card--lead' }, SC.ui.prose(d.resultLead)),
-
-      /* 2〜3. 現在地スコア → スコア帯 */
+    var c = SC.diagnosisCopy, s = SC.scanCopy.result;
+    var max = SC.diagnosisData.scoring.axisMax;
+    return h('div', { class: 'dg-result scan-result' }, [
+      h('section', { class: 'scan-focus' }, [
+        h('p', { class: 'scan-eyebrow', text: s.eyebrow }),
+        h('h2', { class: 'scan-focus__title' }, [s.title, h('strong', { text: SC.axisLabel(record.lowestAxis) })]),
+        SC.ui.resultTypeImage(record.lowestAxis, { variant: 'compact', caption: false, note: false }),
+        h('p', { class: 'scan-note', text: c.lowestNote }),
+        record.tiedLowestAxes && record.tiedLowestAxes.length > 1 ? h('p', { class: 'scan-note', text: c.tiedNote }) : null
+      ]),
       SC.ui.scoreSummary({
-        caption: c().scoreCaption,
-        totalScore: record.totalScore,
-        max: d.scoring.totalMax,
-        band: record.scoreBand,
-        animate: animate,
-        children: SC.ui.scoreMeter({
-          value: record.totalScore,
-          max: d.scoring.totalMax,
-          marks: SC.config.scoreMarks,
-          animate: animate
-        })
+        caption: c.scoreCaption, totalScore: record.totalScore, max: SC.diagnosisData.scoring.totalMax,
+        band: record.scoreBand, animate: false,
+        children: SC.ui.radarChart({ scores: record.axisScores, max: max, lowestAxis: record.lowestAxis, animate: false })
       }),
-
-      /* 4〜7. 見出し → 一言 → イラスト → 短い現在地説明
-       * （2026-08-24 Codex・あかり確定の並び。レーダーはこの後ろへ移した） */
-      SC.ui.card(c().lowestHeading, [
-        SC.ui.resultTypeImage(record.lowestAxis),
-        SC.ui.axisMeter({
-          label: lowestLabel,
-          value: scores[record.lowestAxis],
-          target: Math.min(axisMax, scores[record.lowestAxis] + step),
-          max: axisMax,
-          nowLabel: '診断時',
-          targetLabel: '改善仮説',
-          animate: animate
-        }),
-        h('p', { class: 'card__note', text: c().lowestNote }),
-        record.tiedLowestAxes && record.tiedLowestAxes.length > 1
-          ? h('p', { class: 'card__note', text: c().tiedNote })
-          : null
+      h('details', { class: 'scan-details' }, [
+        h('summary', { text: s.axes }),
+        h('div', { class: 'scan-details__body' }, [
+          SC.ui.axisList({ scores: record.axisScores, lowestAxis: record.lowestAxis, animate: false })
+        ])
       ]),
-
-      /* 8. 5軸レーダーチャート */
-      SC.ui.card(c().radarHeading, [
-        SC.ui.radarChart({
-          scores: scores,
-          max: axisMax,
-          lowestAxis: record.lowestAxis,
-          improved: improved,
-          animate: animate
-        }),
-        SC.ui.axisList({ scores: scores, lowestAxis: record.lowestAxis, animate: animate })
-      ]),
-
-      record.structuralRiskFlag ? flagCard(c().riskHeading, c().riskNote) : null,
-      record.fatigueFlag ? flagCard(c().fatigueHeading, c().fatigueNote) : null,
-      record.environmentMismatchFlag ? flagCard(c().environmentHeading, c().environmentNote) : null
+      record.structuralRiskFlag ? flag(c.riskHeading, c.riskNote) : null,
+      record.fatigueFlag ? flag(c.fatigueHeading, c.fatigueNote) : null,
+      record.environmentMismatchFlag ? flag(c.environmentHeading, c.environmentNote) : null
     ]);
   };
 })(window);

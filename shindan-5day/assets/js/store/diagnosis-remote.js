@@ -32,6 +32,16 @@
     handoff_rejected: '先ほどの診断結果を確認できませんでした。もう一度貼り付けてお試しください。',
     conflict: 'この画面には、すでに別の診断結果が結びついています。お手数ですが、そのままお問い合わせください。',
     not_found: 'まだ診断結果が結びついていません。',
+    /* 2026-09-19：券まわり。文言は画面側の確定本文を使うので、ここは控えめに。
+     * ★status をそのまま画面へ渡したいので、ここに無い status は
+     *   'invalid' に丸められてしまう。断りの種類は必ずここへ並べる。 */
+    denied: 'この記録を開くための確認が完了していません。',
+    /* 券が無い・期限切れ・失効している */
+    reauth: 'この記録を開くための確認が完了していません。',
+    /* 券は使えるが、その記録への権限が無い */
+    forbidden: 'この記録を開くための確認が完了していません。',
+    code_rejected: 'このコードは使用できません。',
+    busy: 'ただいま確認を受け付けられません。',
     unavailable: '通信が混み合っているようです。少し時間をおいてお試しください。',
     invalid: '内容を確認できませんでした。もう一度お試しください。'
   };
@@ -179,14 +189,28 @@
 
   var remoteDriver = {
     name: 'remote',
-    saveResult: function (record, transport) {
-      return post({ action: 'save', record: record, handoff: transport });
+    /* nonce：応答が届かなかったときに送り直すための合図。
+     * 同じ合図なら、サーバーは同じ診断IDを返す（記録が増えない） */
+    saveResult: function (record, transport, nonce) {
+      return post({ action: 'save', record: record, handoff: transport,
+                    nonce: nonce || null });
     },
-    bind: function (uid, transport, name) {
-      return post({ action: 'bind', uid: uid, handoff: transport, name: name || null });
+    /* token：その診断記録へのアクセス資格 */
+    bind: function (uid, transport, name, token) {
+      return post({ action: 'bind', uid: uid, handoff: transport,
+                    name: name || null, token: token || null });
     },
-    restoreByUid: function (uid, name) {
-      return post({ action: 'restore', uid: uid, name: name || null });
+    restoreByUid: function (uid, name, token) {
+      return post({ action: 'restore', uid: uid, name: name || null,
+                    token: token || null });
+    },
+    /* 券で引く（uid を名乗らない） */
+    restoreByTicket: function (token) {
+      return post({ action: 'restore', token: token });
+    },
+    /* 使い捨てコードを券に引き換える。★uid は名乗らない */
+    redeemCode: function (code) {
+      return post({ action: 'redeem_code', code: code });
     }
   };
 
@@ -201,10 +225,10 @@
 
     /* 採点結果を保存し、引き継ぎキーを1本発行する。
      * 平文キーは呼び出し元へ返すだけで、保存も送信もしない（ハッシュだけ送る）。 */
-    saveResultAndIssueKey: function (record) {
+    saveResultAndIssueKey: function (record, nonce) {
       var key = SC.handoffKey.issue();
       return SC.handoffKey.forTransport(key).then(function (transport) {
-        return driver().saveResult(record, transport).then(function (res) {
+        return driver().saveResult(record, transport, nonce).then(function (res) {
           if (!res.ok) return res;
           res.handoffKey = key;
           return res;
@@ -213,19 +237,38 @@
     },
 
     /* uidと匿名診断IDを結合する。初回だけ成立し、以後は already_bound */
-    bindWithKey: function (uid, key, name) {
+    bindWithKey: function (uid, key, name, token) {
       var normalized = SC.handoffKey.normalize(key);
       if (!normalized) return Promise.resolve(fail('handoff_rejected'));
       return SC.handoffKey.forTransport(normalized).then(function (transport) {
-        return driver().bind(uid, transport, name);
+        return driver().bind(uid, transport, name, token);
       });
     },
 
     /* 結合済みなら、uidだけで診断結果を取り出す。
      * 名前は、来ていれば一緒に渡す（記録を新しく保つため・2026-09-11） */
-    restoreByUid: function (uid, name) {
+    restoreByUid: function (uid, name, token) {
       if (!uid) return Promise.resolve(fail('not_found'));
-      return driver().restoreByUid(uid, name);
+      return driver().restoreByUid(uid, name, token);
+    },
+
+    /* 券だけで引く（uid を名乗らない）。開発モードには無いので、そのときは not_found */
+    restoreByTicket: function (token) {
+      if (!token) return Promise.resolve(fail('not_found'));
+      var d = driver();
+      if (!d.restoreByTicket) return Promise.resolve(fail('not_found'));
+      return d.restoreByTicket(token);
+    },
+
+    /* 使い捨てコードを券に引き換える。
+     * ★成功しただけでは「復元しました」と言わない。
+     *   記録を取り出せたときに、はじめて復元完了。 */
+    redeemCode: function (code) {
+      var c = String(code || '').trim().toUpperCase();
+      if (!c) return Promise.resolve(fail('code_rejected'));
+      var d = driver();
+      if (!d.redeemCode) return Promise.resolve(fail('code_rejected'));
+      return d.redeemCode(c);
     },
 
     /* テスト・検証用（開発モードのときだけ効く） */

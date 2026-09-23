@@ -189,10 +189,13 @@
     return section('empathy', [
       heading(copy.heading),
       opening,
-      groups,
+      /* 入口の気持ちは残し、重複する理由説明は短文を一組だけ見せる。 */
+      h('div', { class: 'dlp-pairs' }, [
+        h('p', { class: 'dlp-pair__lead', text: copy.groups[0].lead }),
+        h('p', { class: 'dlp-pair__point', text: copy.groups[0].point })
+      ]),
       h('p', { class: 'dlp-close', text: copy.close }),
-      photo('reflection'),
-      copy.showCta ? cta('empathy') : null
+      photo('reflection')
     ], 'dlp-section--empathy');
   }
 
@@ -233,11 +236,11 @@
 
     return section('reframe', [
       head,
-      diagram,
       h('div', { class: 'dlp-map__note' }, SC.dom.lines(copy.body, 'dlp-map__note-line')),
       h('p', { class: 'dlp-close' }, SC.dom.lines(copy.close, 'dlp-close__line')),
       h('p', { class: 'dlp-note', text: copy.note }),
-      photo('product')
+      photo('product'),
+      h('details', { class: 'scan-details' }, [h('summary', { text: '5つの軸のつながりを見る' }), diagram])
     ], 'dlp-section--reframe');
   }
 
@@ -289,7 +292,10 @@
       })),
       /* タイプ分けとの違い（2026-09-05 §57）。レーダー見本の直前へ置く。
        * このセクションは折りたたみではないので、compact でもそのまま見える。 */
-      variety(copy.variety),
+      h('details', { class: 'scan-details' }, [
+        h('summary', { text: copy.moreLabel }),
+        variety(copy.variety)
+      ]),
 
       h('div', { class: 'dlp-sample' }, [
         h('p', { class: 'dlp-sample__title', text: copy.sampleHeading }),
@@ -360,8 +366,11 @@
           h('p', { class: 'dlp-author__role', text: src.role })
         ])
       ]),
-      h('div', { class: 'dlp-body' }, SC.dom.lines(src.body, 'dlp-body__line')),
-      h('p', { class: 'dlp-close', text: copy.closing })
+      h('p', { class: 'scan-note', text: copy.closing }),
+      h('details', { class: 'scan-details' }, [
+        h('summary', { text: 'プロフィールを読む' }),
+        h('div', { class: 'dlp-body' }, SC.dom.lines(src.body, 'dlp-body__line'))
+      ])
     ], 'dlp-section--author', copy.alwaysOpen);
   }
 
@@ -413,14 +422,15 @@
     var root = doc.getElementById('dlp');
     if (!root) return;
     SC.dom.clear(root);
+    root.classList.add('scan-mode');
     track('diagnosis_lp_view');
 
     var built = [
       heroSection(),
       empathySection(),
+      resultSection(),
       reframeSection(),
       axesSection(),
-      resultSection(),
       flowSection(),
       fitSection(),
       authorSection(),
@@ -453,7 +463,7 @@
         targets.push(el);
       }
     });
-    SC.ui.scrollReveal(targets, { stagger: 90 });
+    /* 流し見で拾えることを優先し、スクロールするまで本文を隠さない。 */
   }
 
   SC.diagnosisLpApp = { boot: boot };

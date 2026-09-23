@@ -404,7 +404,28 @@
       h('p', { class: 'dg-handoff__status', role: 'status', 'aria-live': 'polite', text: c().handoffSaving })
     ]);
 
-    SC.diagnosisRemote.saveResultAndIssueKey(record).then(function (res) {
+    /* サーバーが決めた診断IDと、その記録へのアクセス資格を受け取る（2026-09-19）。
+     *
+     * ★nonce は「応答が届かなかったときに送り直すための合図」。
+     *   同じ合図なら、サーバーは同じ診断IDを返すので、記録が増えない。
+     * ★nonce も券も、この端末の中だけに置く（URL・計測・回答本文へ出さない）。 */
+    var draftId = SC.diagnosisStore.get().anonymousDiagnosisId;
+    var nonce = SC.credentials ? SC.credentials.nonceFor(draftId) : null;
+
+    SC.diagnosisRemote.saveResultAndIssueKey(record, nonce).then(function (res) {
+      /* 応答が返ったときだけ、読み替えと券の受け取りを行う。
+       * ★送った下書きと応答が対応しているものだけを移す（store 側で確かめる）。
+       * ★失敗しても、元の回答・保存キーはそのまま残る。 */
+      if (res && res.ok && SC.credentials) {
+        var serverId = res.anonymousDiagnosisId;
+        if (serverId) {
+          /* 券は、サーバーが決めたIDの名前でしまう */
+          if (res.token) SC.credentials.saveDiagnosisTicket(serverId, res.token);
+          SC.diagnosisStore.adoptServerId(draftId, serverId);
+        }
+      }
+      return res;
+    }).then(function (res) {
       if (!res.ok || !res.handoffKey) {
         SC.dom.clear(box);
         SC.dom.append(box, [
@@ -450,7 +471,10 @@
   function reboundToNewest(key) {
     var uid = knownLineUid();
     if (!uid || !key) return;
-    SC.diagnosisRemote.bindWithKey(uid, key).then(function (res) {
+    /* その診断記録へのアクセス資格を添える（2026-09-19） */
+    var bindTicket = SC.credentials
+      ? SC.credentials.diagnosisTicket(SC.diagnosisStore.get().anonymousDiagnosisId) : null;
+    SC.diagnosisRemote.bindWithKey(uid, key, null, bindTicket).then(function (res) {
       if (!res || !res.ok) return;
       if (res.status !== 'rebound') return;
       reboundNotice = true;

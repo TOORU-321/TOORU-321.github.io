@@ -84,7 +84,12 @@
         method: 'POST',
         /* text/plain にすると事前確認の通信が起きず、GAS側でそのまま受け取れる */
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'notify', uid: uid, event: event }),
+        body: JSON.stringify({
+          action: 'notify', uid: uid, event: event,
+          /* LINEアカウントの券があれば添える（2026-09-19）。
+           * ★送り先はサーバーが券から決める。申告した uid は使われない */
+          token: (SC.credentials && SC.credentials.lineTicket()) || null
+        }),
         referrerPolicy: 'no-referrer'
       }).then(function (res) {
         return res.ok ? res.json() : { ok: false, status: 'unavailable' };

@@ -42,15 +42,34 @@
 
     read: function (key) { return SC.storage.readEntry(key).value; },
 
-    write: function (key, value) {
+    /* どこへ書けたかまで返す（2026-09-16 Codex指示）。
+     *
+     * これまでの write() は、このページの中だけの仮置き（memory）でも true を返していた。
+     * 「この端末に残っています」と画面で言うには、それでは足りない。
+     *
+     *  'persisted' … localStorage へ書けて、読み戻せた（閉じても残る）
+     *  'memory'    … このページの中だけ。閉じる・再読み込みで消える
+     *  'failed'    … 書けなかった
+     *
+     * ★書いたつもりで消えていることがある（容量いっぱい・プライベート設定）ので、
+     *   localStorage のときは読み戻して確かめる。 */
+    writeState: function (key, value) {
       var raw = JSON.stringify(value);
       try {
-        if (hasLocalStorage) global.localStorage.setItem(key, raw);
-        else memory[key] = raw;
-        return true;
+        if (hasLocalStorage) {
+          global.localStorage.setItem(key, raw);
+          return global.localStorage.getItem(key) === raw ? 'persisted' : 'failed';
+        }
+        memory[key] = raw;
+        return 'memory';
       } catch (e) {
-        return false;
+        return 'failed';
       }
+    },
+
+    /* 以前からの入口。書けたかどうかだけを返す（memory も true のまま） */
+    write: function (key, value) {
+      return SC.storage.writeState(key, value) !== 'failed';
     },
 
     remove: function (key) {

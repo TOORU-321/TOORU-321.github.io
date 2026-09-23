@@ -307,7 +307,7 @@
     global.navigator.clipboard.readText().then(function (text) {
       var key = (text || '').trim();
       if (!key) { done(c().restoreSwitchFailed); return; }
-      SC.diagnosisRemote.bindWithKey(uid, key, lineName).then(function (res) {
+      SC.diagnosisRemote.bindWithKey(uid, key, lineName, ticketForKey()).then(function (res) {
         if (res.ok && res.result) {
           track('handoff_switch_succeeded');
           viewResult(res.result);
@@ -324,7 +324,7 @@
   /* --- 7. 結合 ---------------------------------------------------------- */
   function bind(key, from) {
     viewChecking();
-    SC.diagnosisRemote.bindWithKey(uid, key, lineName).then(function (res) {
+    SC.diagnosisRemote.bindWithKey(uid, key, lineName, ticketForKey()).then(function (res) {
       if (res.ok) {
         track('handoff_bind_succeeded', { cta: from });
         stripUidFromUrl();
@@ -333,8 +333,190 @@
         return;
       }
       track('handoff_bind_failed', { cta: from });
+      /* 券が要る断り方なら、確認のやり直し・権限不足の画面へ（2026-09-19）。
+       * 戻り先は、いま来た貼り付け画面 */
+      if (handleDenied(res, viewPaste)) return;
       viewPaste(res.message);
     });
+  }
+
+  /* --- 4-B. 確認コード（2026-09-19 とーる指示／Codex確定本文）-----------
+   *
+   * ★この画面は「必要になったとき」だけ出す。
+   *   新規の人みんなに、無条件で入力を求めない。
+   * ★自動でコードを送る仕組みは無い。「コードを送りました」とは出さない。
+   * ★コードが通っただけでは「復元しました」と言わない。
+   *   記録を取り出せたときに、はじめて復元完了。
+   * -------------------------------------------------------------------- */
+
+  /* サーバーに断られたときに、どの画面を出すか（2026-09-19 Codex §4）。
+   *
+   * ★通信できなかったこと（unavailable／busy）を、
+   *   確認のやり直しへ誤って誘導しない。
+   * ★券は使えるのに権限が足りないときは、やり直しへ送らない。
+   *   もう一度コードを入れても結果は変わらないため。
+   * ★券の話でないときは false を返し、これまでどおりの画面に任せる。
+   *
+   * 戻り値：この関数が画面を出したら true */
+  function handleDenied(res, backTo) {
+    var kind = SC.authGate ? SC.authGate.decide(res && res.status) : null;
+    if (kind === 'reauth') {
+      viewReauth(backTo);
+      return true;
+    }
+    if (kind === 'forbidden') {
+      track('record_not_allowed');
+      viewRecordNotAllowed();
+      return true;
+    }
+    return false;   /* 'retry'（通信・一時停止）も、これまでどおりの案内に任せる */
+  }
+
+  /* いま持っている、その診断記録の券（あれば） */
+  function ticketForKey() {
+    if (!SC.credentials) return null;
+    var st = SC.diagnosisStore.get();
+    return SC.credentials.diagnosisTicket(st && st.anonymousDiagnosisId);
+  }
+
+  /* 再認証のご案内。ここから入力へ進む。
+   * ★戻れる道（backTo）を必ず残す。行き止まりにしない。 */
+  function viewReauth(backTo) {
+    track('reauth_view');
+    if (SC.authGate) SC.authGate.noteReauthShown();
+    var back = backTo || viewPaste;
+    show([
+      head(c().reauthHeading),
+      h('section', { class: 'dg-card' }, [
+        SC.ui.prose ? SC.ui.prose(c().reauthBody)
+                    : h('p', { class: 'dg-handoff__body', text: c().reauthBody }),
+        h('div', { class: 'dg-nav dg-nav--stack' }, [
+          h('button', {
+            type: 'button', class: 'btn btn--primary',
+            on: { click: function () { viewCode(null, back); } }
+          }, c().reauthPrimaryCta),
+          h('button', {
+            type: 'button', class: 'btn btn--ghost',
+            on: { click: function () { back(null); } }
+          }, c().reauthSecondaryCta)
+        ]),
+        h('p', { class: 'dg-handoff__note', text: c().reauthNote })
+      ])
+    ]);
+  }
+
+  /* コードの入力。エラーは、サーバーが返した区分にそろえる。
+   * backTo …「前の画面に戻る」の行き先（再認証から受け取る） */
+  function viewCode(errorMessage, backTo) {
+    var input = h('input', {
+      type: 'text', id: 'dg-code', class: 'dg-input',
+      autocomplete: 'one-time-code', inputmode: 'latin',
+      autocapitalize: 'characters', spellcheck: 'false',
+      placeholder: c().codePlaceholder, 'aria-describedby': 'dg-code-error'
+    });
+    var errorBox = h('p', {
+      id: 'dg-code-error', class: 'dg-handoff__warn',
+      role: 'status', 'aria-live': 'polite',
+      text: errorMessage || '', hidden: !errorMessage
+    });
+    var button = h('button', {
+      type: 'button', class: 'btn btn--primary',
+      on: { click: function () { submitCode(input, button, errorBox, backTo); } }
+    }, c().codePrimaryCta);
+
+    show([
+      head(c().codeHeading),
+      h('section', { class: 'dg-card' }, [
+        h('p', { class: 'dg-handoff__body', text: c().codeBody }),
+        h('label', { class: 'dg-label', 'for': 'dg-code' }, c().codeInputLabel),
+        input,
+        errorBox,
+        h('div', { class: 'dg-nav dg-nav--stack' }, [
+          button,
+          h('button', {
+            type: 'button', class: 'btn btn--ghost',
+            on: { click: function () { viewReauth(backTo); } }
+          }, c().reauthSecondaryCta)
+        ])
+      ])
+    ]);
+    input.focus();
+  }
+
+  /* サーバーの答えを、画面の言い方へ移す。
+   * ★存在しない・使用済み・期限切れは言い分けない（同じ 'code_rejected'）
+   * ★通信できなかったことを、コードの問題にしない */
+  function codeMessage(status) {
+    if (status === 'unavailable') return c().codeNetworkError;
+    if (status === 'busy') return c().codeTemporarilyUnavailable;
+    return c().codeInvalid;
+  }
+
+  function submitCode(input, button, errorBox, backTo) {
+    var code = String(input.value || '').trim();
+    if (!code) { showCodeError(errorBox, c().codeInvalid); return; }
+
+    button.disabled = true;
+    button.textContent = c().codePending;
+    errorBox.hidden = true;
+    track('code_redeem_attempt');
+
+    SC.diagnosisRemote.redeemCode(code).then(function (res) {
+      if (!res || !res.ok || !res.token) {
+        button.disabled = false;
+        button.textContent = c().codePrimaryCta;
+        showCodeError(errorBox, codeMessage(res && res.status));
+        track('code_redeem_failed', { cta: (res && res.status) || 'unavailable' });
+        return;
+      }
+      /* ★券は受け取れた。でも、まだ「復元しました」とは言わない。
+       *   記録を取り出せたときに、はじめて復元完了。 */
+      if (SC.credentials) SC.credentials.saveLineTicket(res.token);
+      if (SC.authGate) SC.authGate.noteRedeemed();
+      track('code_redeem_succeeded');
+      viewChecking();
+
+      SC.diagnosisRemote.restoreByTicket(res.token).then(function (r2) {
+        if (r2 && r2.ok && r2.result) {
+          stripUidFromUrl();
+          /* 別の端末で進めていた続きも、一緒に受け取る（2026-09-19）。
+           * ★取ってくるだけ。採用するかは store が決める */
+          carriedChallenge = (r2.challenge && r2.challenge.answers) || null;
+          SC.diagnosisStore.setHandoff('bound');
+          viewResult(r2.result);
+          return;
+        }
+        /* 通信できなかっただけなら、コードの入力へ戻して言い直す。
+         * ★「確認できませんでした」を「権限がありません」と言い換えない */
+        var kind = SC.authGate ? SC.authGate.decide(r2 && r2.status) : null;
+        if (kind === 'retry') {
+          viewCode(codeMessage(r2 && r2.status), backTo);
+          return;
+        }
+        /* LINEの確認はできたが、この記録を開く権限が無い。
+         * ★ここで確認のやり直しへ戻さない。同じところを回り続けるため */
+        track('record_not_allowed');
+        viewRecordNotAllowed();
+      });
+    });
+  }
+
+  function showCodeError(box, message) {
+    box.textContent = message;
+    box.hidden = false;
+  }
+
+  /* LINEの確認後、診断記録を開く権限が無いとき。
+   * ★この画面では、記録の削除も結び付けの変更もしない */
+  function viewRecordNotAllowed() {
+    show([
+      head(c().recordNotAllowedHeading),
+      h('section', { class: 'dg-card' }, [
+        SC.ui.prose ? SC.ui.prose(c().recordNotAllowedBody)
+                    : h('p', { class: 'dg-handoff__body', text: c().recordNotAllowedBody }),
+        h('p', { class: 'dg-handoff__note', text: c().recordNotAllowedNote })
+      ])
+    ]);
   }
 
   /* --- 5. クリップボード自動読取 ---------------------------------------- */
@@ -368,6 +550,13 @@
   }
 
   /* --- 起動 -------------------------------------------------------------- */
+
+  /* 5DAY側から「確認のやり直し」で来たとき（restore.html#reauth）。
+   * ★#reauth は画面の指定だけ。コードも券も合図もURLに載せない。 */
+  function wantsReauth() {
+    return String(global.location.hash || '').indexOf('reauth') > -1;
+  }
+
   function boot() {
     root = doc.getElementById('dg-app');
     track('handoff_restore_view');
@@ -376,12 +565,21 @@
     lineName = readNameFromUrl();
     /* 名前だけでも、URLからはすぐ消す（履歴・共有で漏れないように） */
     if (lineName && !uid) stripUidFromUrl();
+
+    /* 5DAYから案内されて来た人。uid が無くてもここから入れる */
+    if (wantsReauth()) {
+      viewReauth(function () { global.location.href = 'index.html'; });
+      return;
+    }
     if (!uid) { viewNoUid(); return; }
 
     viewChecking();
 
-    /* 3〜4. まずuidだけで探す。結合済みならクリップボードに触らない */
-    SC.diagnosisRemote.restoreByUid(uid, lineName).then(function (res) {
+    /* 3〜4. まずuidだけで探す。結合済みならクリップボードに触らない。
+     * ★券を持っていれば添える（uid だけでは返らない段があるため） */
+    SC.diagnosisRemote.restoreByUid(uid, lineName,
+      (SC.credentials && SC.credentials.lineTicket()) || ticketForKey()
+    ).then(function (res) {
       if (res.ok && res.result) {
         stripUidFromUrl();
         /* 5日間チャレンジの続き。無ければ null のまま */
@@ -389,11 +587,21 @@
         viewResult(res.result);
         return;
       }
+      /* 券が要る断り方なら、確認のやり直しへ。
+       * ★ここでは戻り先を貼り付け画面にする（行き止まりにしない） */
+      if (handleDenied(res, viewPaste)) return;
       tryClipboard();
     });
   }
 
-  SC.restoreApp = { boot: boot, _tryClipboard: tryClipboard, viewPaste: viewPaste };
+  SC.restoreApp = {
+    boot: boot, _tryClipboard: tryClipboard, viewPaste: viewPaste,
+    /* 券が要る場面から呼ぶ入口（2026-09-19） */
+    viewReauth: viewReauth, viewCode: viewCode,
+    viewRecordNotAllowed: viewRecordNotAllowed,
+    _codeMessage: codeMessage,
+    _handleDenied: handleDenied
+  };
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', boot);
   else boot();
