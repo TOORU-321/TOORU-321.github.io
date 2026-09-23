@@ -3,7 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://columns.l-mine.com/shindan-entry/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="L-MINE">
+<meta property="og:title" content="頑張ることを増やす前に。｜SNS事業の現在地診断">
+<meta property="og:description" content="SNSで講座・教室・個別指導・サポートを届ける方へ。21問・約3分で、最初に整えたい一か所を探す無料診断です。">
+<meta property="og:url" content="https://columns.l-mine.com/shindan-entry/">
+<meta property="og:image" content="https://columns.l-mine.com/shindan-entry/ogp-v1.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="頑張ることを増やす前に。私、どこから整えよう？　全21問・約3分・無料のSNS事業の現在地診断。">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#1c2928">
 <meta name="description" content="SNSで講座・教室・個別指導・サポートを届ける方へ。21問・約3分で、最初に整えたい一か所を探す無料診断です。">
@@ -23,6 +34,41 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 .sample{padding:24px;background:#fcfcf8;border:1px solid #d5dfd3;border-radius:10px;box-shadow:0 14px 30px #223b3210}.sample-label{font-size:.72rem;color:var(--muted);letter-spacing:.08em}.sample svg{width:100%;height:auto;max-height:225px;display:block;margin:8px auto}.answer{border-top:1px solid var(--line);padding-top:14px}.answer small{display:block;color:var(--muted);font-size:.75rem}.answer strong{font-size:1.2rem}.disclaimer{font-size:.69rem;color:var(--muted);margin-top:10px}
 .author{background:#f1efe6}.author .wrap{display:grid;grid-template-columns:132px 1fr;gap:28px;align-items:start;padding:44px 0}.author img{width:132px;height:132px;border-radius:50%;object-fit:cover}.author h2{font-size:clamp(1.25rem,2.4vw,1.6rem)}.author .name{font-weight:700;margin-top:12px;font-size:1rem}.author .role{color:var(--muted);font-size:.8rem;margin-top:2px}.author p.bio{margin-top:14px;font-size:.86rem;color:var(--muted)}.author p.bio+p.bio{margin-top:10px}.author ul.works{margin:16px 0 0;padding:0;list-style:none}.author ul.works li{position:relative;padding-left:18px;margin-top:8px;font-size:.84rem;color:var(--ink);line-height:1.75}.author ul.works li:before{content:"";position:absolute;left:0;top:.72em;width:7px;height:7px;border-radius:50%;background:var(--gold)}.author .cred{margin-top:16px;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}.last{text-align:center;padding:50px 0}.last>p:not(.kicker){margin:14px auto 22px;font-size:.87rem;color:var(--muted)}.last .receive{color:var(--muted);font-size:.75rem!important}.more{display:block;font-size:.8rem;margin-top:18px;text-underline-offset:5px}footer{border-top:1px solid var(--line);padding:23px 0 30px;font-size:.7rem;color:var(--muted)}.links{display:flex;flex-wrap:wrap;gap:12px 20px;margin-bottom:10px}footer a{text-underline-offset:4px}
 @media(max-width:680px){.wrap{width:calc(100% - 36px)}header{padding:14px 0}.brand{font-size:.72rem}.brand span{display:none}.hero .wrap{padding:38px 0 35px}.hero>img{object-position:64% center}.hero:after{background:linear-gradient(90deg,rgba(16,30,28,.93),rgba(16,30,28,.65))}.eyebrow{font-size:.73rem;margin-bottom:18px}.hero h1{font-size:clamp(1.8rem,7.2vw,2.7rem)}.intro{max-width:24em;font-size:.82rem;margin:18px 0}.hero .cta,.last .cta{display:flex;width:100%;gap:12px}.section{padding:36px 0}.moments{grid-template-columns:1fr;gap:0;margin:20px 0}.moment{padding:15px 4px}.moment span{display:inline;margin-right:10px}.moment strong{display:inline;font-size:1rem}.result-grid{grid-template-columns:1fr;gap:24px}.author .wrap{grid-template-columns:1fr;gap:16px;padding:32px 0;text-align:center}.author img{margin:0 auto;width:110px;height:110px}.author .cred{text-align:left}.sample{padding:20px}.last{padding:36px 0}.receive{font-size:.72rem}}
+/* ---- 動き（2026-09-24 とーる指示）--------------------------------
+   ・JavaScriptは使わない。script要素は0のまま
+   ・スクロール連動は @supports で囲う。未対応の端末では何も起きず、
+     文字が消えたままになることはない
+   ・「動きを減らす」設定の人には出さない（下の no-preference で囲っている） */
+@keyframes sc-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes sc-fade{from{opacity:0}to{opacity:1}}
+@keyframes sc-marker{from{background-size:0 100%}to{background-size:100% 100%}}
+.cta .arrow{transition:transform .25s ease}
+.cta:hover .arrow,.cta:focus-visible .arrow{transform:translateX(7px)}
+.pivot strong{background-repeat:no-repeat;background-size:100% 100%}
+@media(prefers-reduced-motion:no-preference){
+  /* 開いた直後：ヒーローの中身が上から順に立ち上がる */
+  .hero>img{animation:sc-fade 1.5s ease both}
+  .hero .wrap>*{animation:sc-rise .9s cubic-bezier(.2,.7,.3,1) both}
+  .hero .eyebrow{animation-delay:.08s}
+  .hero h1{animation-delay:.2s}
+  .hero .intro{animation-delay:.4s}
+  .hero .facts{animation-delay:.52s}
+  .hero .cta{animation-delay:.64s}
+  .hero .receive{animation-delay:.76s}
+  /* スクロール：画面に入ったところでふわっと出る */
+  @supports(animation-timeline:view()){
+    .section>.kicker,.section h2,.moment,.pivot,
+    .result-grid>div:not(.sample)>*,.sample,.author .wrap>*,.last>*{
+      animation-name:sc-rise;animation-fill-mode:both;
+      animation-timeline:view();animation-range:entry 6% cover 26%}
+    /* 3つ並ぶところは、少しずつ遅らせて順番に出す */
+    .moment:nth-child(2){animation-range:entry 12% cover 32%}
+    .moment:nth-child(3){animation-range:entry 18% cover 38%}
+    /* 太字の下線が、読む速さに合わせて左から引かれる */
+    .pivot strong{animation-name:sc-marker;animation-fill-mode:both;
+      animation-timeline:view();animation-range:entry 34% cover 48%}
+  }
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
