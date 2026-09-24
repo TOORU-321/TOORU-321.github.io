@@ -35,13 +35,15 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 .author{background:#f1efe6}.author .wrap{display:grid;grid-template-columns:132px 1fr;gap:28px;align-items:start;padding:44px 0}.author img{width:132px;height:132px;border-radius:50%;object-fit:cover}.author h2{font-size:clamp(1.25rem,2.4vw,1.6rem)}.author .name{font-weight:700;margin-top:12px;font-size:1rem}.author .role{color:var(--muted);font-size:.8rem;margin-top:2px}.author p.bio{margin-top:14px;font-size:.86rem;color:var(--muted)}.author p.bio+p.bio{margin-top:10px}.author ul.works{margin:16px 0 0;padding:0;list-style:none}.author ul.works li{position:relative;padding-left:18px;margin-top:8px;font-size:.84rem;color:var(--ink);line-height:1.75}.author ul.works li:before{content:"";position:absolute;left:0;top:.72em;width:7px;height:7px;border-radius:50%;background:var(--gold)}.author .cred{margin-top:16px;font-size:.74rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}.last{text-align:center;padding:50px 0}.last>p:not(.kicker){margin:14px auto 22px;font-size:.87rem;color:var(--muted)}.last .receive{color:var(--muted);font-size:.75rem!important}.more{display:block;font-size:.8rem;margin-top:18px;text-underline-offset:5px}footer{border-top:1px solid var(--line);padding:23px 0 30px;font-size:.7rem;color:var(--muted)}.links{display:flex;flex-wrap:wrap;gap:12px 20px;margin-bottom:10px}footer a{text-underline-offset:4px}
 @media(max-width:680px){.wrap{width:calc(100% - 36px)}header{padding:14px 0}.brand{font-size:.72rem}.brand span{display:none}.hero .wrap{padding:38px 0 35px}.hero>img{object-position:64% center}.hero:after{background:linear-gradient(90deg,rgba(16,30,28,.93),rgba(16,30,28,.65))}.eyebrow{font-size:.73rem;margin-bottom:18px}.hero h1{font-size:clamp(1.8rem,7.2vw,2.7rem)}.intro{max-width:24em;font-size:.82rem;margin:18px 0}.hero .cta,.last .cta{display:flex;width:100%;gap:12px}.section{padding:36px 0}.moments{grid-template-columns:1fr;gap:0;margin:20px 0}.moment{padding:15px 4px}.moment span{display:inline;margin-right:10px}.moment strong{display:inline;font-size:1rem}.result-grid{grid-template-columns:1fr;gap:24px}.author .wrap{grid-template-columns:1fr;gap:16px;padding:32px 0;text-align:center}.author img{margin:0 auto;width:110px;height:110px}.author .cred{text-align:left}.sample{padding:20px}.last{padding:36px 0}.receive{font-size:.72rem}}
 /* ---- 動き（2026-09-24 とーる指示）--------------------------------
-   ・JavaScriptは使わない。script要素は0のまま
-   ・スクロール連動は @supports で囲う。未対応の端末では何も起きず、
-     文字が消えたままになることはない
-   ・「動きを減らす」設定の人には出さない（下の no-preference で囲っている） */
+   ・ヒーローは開いた直後に時間で動く（どの端末でも効く）
+   ・それ以降はスクロールで出す。★最初は animation-timeline:view() という
+     CSSだけの仕組みで作ったが、これは新しめのChrome／Edgeにしか無く、
+     iPhoneのSafariやLINE内ブラウザでは何も起きなかった。
+     どこにでもある IntersectionObserver（下のscript）に替えている
+   ・隠すのは html.js が付いているときだけ。JSが動かない人には最初から全部見えている
+   ・「動きを減らす」設定の人には出さない */
 @keyframes sc-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 @keyframes sc-fade{from{opacity:0}to{opacity:1}}
-@keyframes sc-marker{from{background-size:0 100%}to{background-size:100% 100%}}
 .cta .arrow{transition:transform .25s ease}
 .cta:hover .arrow,.cta:focus-visible .arrow{transform:translateX(7px)}
 .pivot strong{background-repeat:no-repeat;background-size:100% 100%}
@@ -55,19 +57,24 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
   .hero .facts{animation-delay:.52s}
   .hero .cta{animation-delay:.64s}
   .hero .receive{animation-delay:.76s}
-  /* スクロール：画面に入ったところでふわっと出る */
-  @supports(animation-timeline:view()){
-    .section>.kicker,.section h2,.moment,.pivot,
-    .result-grid>div:not(.sample)>*,.sample,.author .wrap>*,.last>*{
-      animation-name:sc-rise;animation-fill-mode:both;
-      animation-timeline:view();animation-range:entry 6% cover 26%}
-    /* 3つ並ぶところは、少しずつ遅らせて順番に出す */
-    .moment:nth-child(2){animation-range:entry 12% cover 32%}
-    .moment:nth-child(3){animation-range:entry 18% cover 38%}
-    /* 太字の下線が、読む速さに合わせて左から引かれる */
-    .pivot strong{animation-name:sc-marker;animation-fill-mode:both;
-      animation-timeline:view();animation-range:entry 34% cover 48%}
-  }
+  /* スクロール：画面に入るまで伏せておく。★この並びは下のscriptのSELと同じにする。
+     ★:where() で囲うのには二つ理由がある。
+       1. 囲わずにカンマで並べると、先頭の html.js が最初のひとつにしか掛からない。
+          2番目以降はJSが動かなくても伏せられたままになり、本文が読めなくなる。
+       2. :where() の中は強さを0として数えるので、下の「出す」指定が素直に勝つ。 */
+  html.js :where(.section>.kicker,.section h2,.moment,.pivot,.pivot strong,
+    .result-grid>div:not(.sample)>*,.sample,.author .wrap>*,.last>*){
+    opacity:0;transform:translateY(24px);
+    transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.3,1)}
+  html.js .sc-in{opacity:1;transform:none}
+  /* 3つ並ぶところは、少しずつ遅らせて順番に出す */
+  html.js .moment:nth-child(2){transition-delay:.13s}
+  html.js .moment:nth-child(3){transition-delay:.26s}
+  /* 太字の下線は、線が左から引かれる動きにする（位置はずらさない） */
+  html.js .pivot strong{
+    opacity:1;transform:none;background-size:0 100%;
+    transition:background-size .85s ease .2s}
+  html.js .pivot strong.sc-in{background-size:100% 100%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
@@ -146,6 +153,55 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 </section>
 </main>
 <footer><div class="wrap"><nav class="links" aria-label="規約・運営情報"><a href="../legal/privacy.html">プライバシーポリシー</a><a href="../legal/terms.html">利用規約</a><a href="../legal/mensekizikou.html">免責事項</a><a href="../legal/tokusho.html">特定商取引法に基づく表記</a></nav><p>SNS事業の現在地診断 / L-MINE</p></div></footer>
+<script>
+/* スクロールで出す動き（2026-09-24）。外部への通信・計測はしない。
+   ★隠すのは、この印が付いたときだけ。JSが動かない人には最初から全部見えている。 */
+(function () {
+  var d = document, root = d.documentElement;
+  // 「動きを減らす」設定の人と、見張る仕組みが無い古い端末は、そのまま全部見せる
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still || !('IntersectionObserver' in window)) return;
+
+  root.classList.add('js');                      // ここで初めてCSSが伏せる
+  var SEL = '.section>.kicker,.section h2,.moment,.pivot,.pivot strong,.result-grid>div:not(.sample)>*,.sample,.author .wrap>*,.last>*';                           // ★上のCSSと同じ並びにすること
+  var appeared = false;
+
+  function show() {                              // 伏せているものを全部見せる
+    var all = d.querySelectorAll(SEL);
+    for (var i = 0; i < all.length; i++) all[i].classList.add('sc-in');
+  }
+
+  // 保険。数秒たっても一度も出ていなければ、そのとき全部見せる。
+  // ただし画面が裏なら、誰も見ていないので待ち直す（表に戻ればいつも通り出る）。
+  function guard() {
+    if (appeared) return;
+    if (d.visibilityState === 'hidden') { setTimeout(guard, 2000); return; }
+    show();
+  }
+  setTimeout(guard, 4000);
+
+  function start() {
+    try {
+      var io = new IntersectionObserver(function (rows) {
+        for (var i = 0; i < rows.length; i++) {
+          if (!rows[i].isIntersecting) continue;
+          appeared = true;
+          rows[i].target.classList.add('sc-in'); // 一度出したら戻さない
+          io.unobserve(rows[i].target);
+        }
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.01 });
+
+      var all = d.querySelectorAll(SEL);
+      for (var i = 0; i < all.length; i++) io.observe(all[i]);
+    } catch (e) {
+      show();                                    // 失敗したら隠さない
+    }
+  }
+
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+</script>
 </body>
 </html>
 
