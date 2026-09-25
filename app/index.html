@@ -3213,9 +3213,12 @@ function openLiveHost(){ location.href = "live.html?manage=1"; }
 // 管理者：診断＋5日間チャレンジの進み具合を見る（2026-09-10）
 // ★別のアプリなので、このアプリは閉じずに新しいタブで開く。
 //   向こうでも合言葉を1回だけ入れてもらう（端末が覚える）。
+// ★2026-09-25：向こうのページ名を当てられないものに変えた。
+//   URLを知らないと辿り着けないようにするため。名前を変えるときは
+//   shindan-challenge-app/tools/build-publish.py の PUBLISH_AS も直すこと。
 function openShindan5day(){
   if(!isAdmin()){ showToast("管理者専用です。"); return; }
-  window.open("https://columns.l-mine.com/shindan-5day/admin.html", "_blank", "noopener");
+  window.open("https://columns.l-mine.com/shindan-5day/ops-8vy5c9yyu9.html", "_blank", "noopener");
 }
 // 管理者：メンテナンスモードのオン/オフを切り替える（オンの間、管理者以外は「ただいまメンテナンス中です」画面のみ表示）
 async function toggleMaintenance(){
