@@ -1997,10 +1997,25 @@ a{text-decoration:none}
       <span style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="bcDoPush" checked> アプリ通知</span>
     </label>
     <div class="ps-hint">送信元：とーる｜エルラボ＋ &lt;info@l-mine.com&gt;</div>
+    <label class="ps-label">予約配信（任意・日時を指定すると即時の代わりに予約されます）</label>
+    <input type="datetime-local" class="ps-in" id="bcSchedAt">
     <div class="ps-btns">
       <button class="ps-test" id="bcTest">🧪 自分にテスト</button>
       <button class="ps-send" id="bcSend">この宛先に送信</button>
     </div>
+    <div class="ps-btns" style="margin-top:8px">
+      <button class="ps-test" id="bcSchedBtn">⏰ 予約する</button>
+      <button class="ps-test" id="bcListBtn">📋 予約一覧</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 予約配信 一覧（admin） ===== -->
+<div class="ps-modal" id="bcListModal" hidden role="dialog" aria-modal="true" aria-label="予約配信一覧">
+  <div class="ps-sheet">
+    <button class="ps-x" id="bcListClose" aria-label="閉じる">×</button>
+    <div class="ps-title">📋 予約配信一覧</div>
+    <div id="bcListBody"></div>
   </div>
 </div>
 <style>
@@ -3249,6 +3264,14 @@ async function toggleMaintenance(){
   if(md) md.addEventListener("click", e => { if(e.target === md) closeBroadcast(); });
   const ts = document.getElementById("bcTest"); if(ts) ts.addEventListener("click", () => doBroadcast(true));
   const sd = document.getElementById("bcSend"); if(sd) sd.addEventListener("click", () => doBroadcast(false));
+  const sc = document.getElementById("bcSchedBtn"); if(sc) sc.addEventListener("click", doBroadcastSchedule);
+  const lb = document.getElementById("bcListBtn"); if(lb) lb.addEventListener("click", openBcList);
+})();
+// 予約配信 一覧モーダルのイベント
+(function(){
+  const md = document.getElementById("bcListModal");
+  const cl = document.getElementById("bcListClose"); if(cl) cl.addEventListener("click", closeBcList);
+  if(md) md.addEventListener("click", e => { if(e.target === md) closeBcList(); });
 })();
 // 回答者だけに送信モーダルのイベント
 (function(){
@@ -3948,6 +3971,7 @@ async function openBroadcast(){
   document.getElementById("bcImgPos").checked = false;
   document.getElementById("bcDoMail").checked = true;
   document.getElementById("bcDoPush").checked = true;
+  document.getElementById("bcSchedAt").value = "";
   document.getElementById("broadcastModal").hidden = false;
   bcUpdateCount();
 }
@@ -3982,6 +4006,62 @@ async function doBroadcast(test){
     if(res && res.ok){ showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`); if(!test) closeBroadcast(); }
     else if(res && res.error === "no_audience"){ showToast("対象者がいません。"); }
     else { showToast("送信できませんでした。時間をおいて再度お試しください。"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
+// 管理者：メール案内を予約配信として登録（10分おきのGAS側トリガーが時刻が来たら自動送信）
+async function doBroadcastSchedule(){
+  const subject = (document.getElementById("bcSubject").value||"").trim();
+  const body    = (document.getElementById("bcBody").value||"").trim();
+  const tag     = (document.getElementById("bcTag").value||"").trim();
+  let   image   = (document.getElementById("bcImage").value||"").trim();
+  if(image && document.getElementById("bcImgPos").checked) image = "below|" + image;
+  const doMail  = document.getElementById("bcDoMail").checked;
+  const doPush  = document.getElementById("bcDoPush").checked;
+  const schedAt = document.getElementById("bcSchedAt").value;
+  if(!body){ showToast("本文を入力してください。"); return; }
+  if(!schedAt){ showToast("配信日時を指定してください。"); return; }
+  if(!doMail && !doPush){ showToast("メールか通知のどちらかは選んでください。"); return; }
+  if(_bcSeg === "tag" && !tag){ showToast("タグ名を入力してください。"); return; }
+  const segLabel = _bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」");
+  if(!confirm(`【${segLabel}】へ、${schedAt.replace("T"," ")}に配信予約します。よろしいですか？`)) return;
+  showToast("予約登録中…");
+  try{
+    const b = new URLSearchParams({ action:"broadcast_schedule", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0", scheduledAt:schedAt });
+    const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r=>r.json());
+    if(res && res.ok){ showToast("⏰ 予約しました。"); closeBroadcast(); }
+    else { showToast("予約できませんでした（"+((res&&res.error)||"")+"）"); }
+  }catch(e){ showToast("通信エラーが発生しました。"); }
+}
+// 管理者：予約配信の一覧表示・取消
+async function openBcList(){
+  const md = document.getElementById("bcListModal");
+  const body = document.getElementById("bcListBody");
+  body.innerHTML = COL_LOADING;
+  md.hidden = false;
+  try{
+    const res = await fetch(GAS_URL + "?action=broadcast_scheduled_list&email=" + encodeURIComponent(SESSION.email) + "&_=" + Date.now()).then(r=>r.json());
+    if(!res || !res.ok){ body.innerHTML = `<div class="pv-empty">取得できませんでした。</div>`; return; }
+    const items = res.items || [];
+    if(!items.length){ body.innerHTML = `<div class="pv-empty">予約はありません。</div>`; return; }
+    body.innerHTML = items.map(it => {
+      const segLabel = it.seg==="all" ? "全員" : it.seg==="sub" ? "サブスク会員" : ("タグ「"+escapeHtml(it.tag)+"」");
+      const statusColor = it.status==="予約" ? "#f0d69c" : it.status==="送信済み" ? "#8fd18f" : it.status==="失敗" ? "#e07979" : "#8a8575";
+      const cancelBtn = it.status==="予約" ? `<button class="pc-tog on" data-cancel="${escapeHtml(it.id)}" style="margin-top:6px">取消</button>` : "";
+      return `<div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+        <div class="pc-info"><div class="pc-date">${escapeHtml(it.scheduledAt.replace("T"," ").slice(0,16))} ・ <span style="color:${statusColor}">${escapeHtml(it.status)}</span></div><div class="pc-title">${escapeHtml(it.subject||"(件名なし)")} → ${segLabel}</div></div>
+        ${it.result ? `<div class="ps-hint">${escapeHtml(it.result)}</div>` : ""}
+        ${cancelBtn}
+      </div>`;
+    }).join("");
+    body.querySelectorAll("[data-cancel]").forEach(btn => btn.onclick = () => cancelScheduled(btn.dataset.cancel));
+  }catch(e){ body.innerHTML = `<div class="pv-empty">通信エラーが発生しました。</div>`; }
+}
+function closeBcList(){ const m = document.getElementById("bcListModal"); if(m) m.hidden = true; }
+async function cancelScheduled(id){
+  if(!confirm("この予約を取り消しますか？")) return;
+  try{
+    const res = await fetch(GAS_URL, { method:"POST", body:new URLSearchParams({ action:"broadcast_cancel", email:SESSION.email, id:id }) }).then(r=>r.json());
+    if(res && res.ok){ openBcList(); } else { showToast("取消できませんでした。"); }
   }catch(e){ showToast("通信エラーが発生しました。"); }
 }
 // 管理者：アンケート参加者・人数の一覧を表示（選択肢ごとにグループ化）
