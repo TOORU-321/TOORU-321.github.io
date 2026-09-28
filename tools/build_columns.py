@@ -7,7 +7,7 @@
 本文の変換ルール：
   - 空行            … まとまり（段落）の区切り（約2行ぶんの余白）
   - まとまり内の改行 … <br> で詰める（1〜4行）
-  - ## 見出し       … <h2>
+  - ## 見出し / ### 小見出し … <h2> / <h3>
   - ***             … ✦ セクション区切り
   - 「- 」で始まる行のまとまり … 箇条書き
   - **STEP n：…**   … STEP見出し
@@ -335,7 +335,7 @@ def note_paragraphs(lines, sentence_breaks_only=False):
 def convert_body(body, sign, readable_breaks=False, note_layout=False, sentence_breaks_only=False):
     # 見出し・区切りは、原稿側に空行がなくても独立ブロックとして扱う。
     # note_layout は行数で機械的に切らず、文の終わりを見て意味段落へ整える。
-    body = re.sub(r'(?m)^(\*\*\*|## .+|> .+)$', r'\n\1\n', body)
+    body = re.sub(r'(?m)^(\*\*\*|#{2,3} .+|> .+)$', r'\n\1\n', body)
     blocks = re.split(r'\n[ \t]*\n', body.strip("\n"))
     out = []
     headings = []
@@ -366,6 +366,9 @@ def convert_body(body, sign, readable_breaks=False, note_layout=False, sentence_
                        + (f'<figcaption>{alt}</figcaption>' if alt else '') + '</figure>')
             continue
         # 見出し
+        if len(lines) == 1 and lines[0].startswith("### "):
+            out.append(f'<h3>{inline(lines[0][4:].strip())}</h3>')
+            continue
         if len(lines) == 1 and lines[0].startswith("## "):
             heading_text = lines[0][3:].strip()
             if note_layout:
