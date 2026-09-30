@@ -40,6 +40,9 @@ header .upd{color:var(--dim);font-size:11px;margin-left:auto}
 .note .body{white-space:pre-wrap;font-size:14px}
 .note .at{color:var(--dim);font-size:11px;margin-top:8px}
 .note .empty{color:var(--dim);font-size:13px}
+/* YouTubeのコメント（サイトとは別枠） */
+.note.yt{background:linear-gradient(180deg,#2a1a24,#0e1c2f);border-color:#5a2e3e}
+.note.yt h2{color:#ff9e9e}
 
 /* 数字 */
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -244,6 +247,14 @@ function render(d){
         ? "先月のまとめはまだありません。毎月1日の朝に届きます。"
         : "今週のコメントはまだありません。月曜の朝に届きます。") + '</div>';
 
+  // YouTubeは別枠。GASが古くて ytNote を返さないうちは枠ごと出さない
+  var ytHtml = (d.ytNote === undefined) ? "" :
+    '<div class="card note yt"><h2>' + (isMonthN ? "YouTube 先月のまとめ" : "YouTube 今週のコメント") + '</h2>' +
+    (d.ytNote && d.ytNote.text
+      ? '<div class="body">' + esc(d.ytNote.text) + '</div><div class="at">あかり ' + esc(d.ytNote.at) + '</div>'
+      : '<div class="empty">' + (isMonthN ? "先月のYouTubeのまとめはまだありません。" : "今週のYouTubeのコメントはまだありません。") + '</div>') +
+    '</div>';
+
   var isMonth = (d.span === "month");
   var periodLabel = isMonth ? esc(d.latestWeek) : (esc(d.latestWeek) + " の週");
 
@@ -259,6 +270,8 @@ function render(d){
     '</div>' +
 
     '<div class="card note"><h2>' + (isMonth ? "あかりの先月のまとめ" : "あかりの今週のコメント") + '</h2>' + noteHtml + '</div>' +
+
+    ytHtml +
 
     '<div class="card"><h2>' + (isMonth ? "先月の数字" : "今週の数字") + '</h2><div class="kpis">' + kpis + '</div></div>' +
 
