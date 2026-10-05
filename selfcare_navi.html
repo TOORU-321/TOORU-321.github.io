@@ -1701,20 +1701,45 @@ function showDashError(msg){
   if(c)c.style.display='none';
   if(e){e.textContent=msg;e.style.display='';}
 }
+// 管理ダッシュボードの合言葉。ここには書かない（公開ページなので読まれる）。
+// 入力してもらった値をこの端末にだけ覚えておき、GASへ送って向こうで照合する。
+const DASH_KEY_STORE='selfcare_admin_key';
+function getDashKey(){
+  let k='';
+  try{k=localStorage.getItem(DASH_KEY_STORE)||'';}catch(e){}
+  if(!k){
+    k=window.prompt('管理ダッシュボードの合言葉を入力してください')||'';
+    if(k){try{localStorage.setItem(DASH_KEY_STORE,k);}catch(e){}}
+  }
+  return k;
+}
+function clearDashKey(){
+  try{localStorage.removeItem(DASH_KEY_STORE);}catch(e){}
+}
 function loadDashboardData(){
   if(!ENDPOINT){showDashError('ENDPOINT が未設定のためデータを取得できません。');return;}
+  const key=getDashKey();
+  if(!key){showDashError('合言葉が入力されていないため表示できません。');return;}
   const err=document.getElementById('dashError');
   if(err)err.style.display='none';
   const content=document.getElementById('dashContent');
   const loading=document.getElementById('dashLoading');
   if(loading&&(!content||content.style.display==='none'))loading.style.display='';
-  fetch(ENDPOINT+'?action=summary',{method:'GET'})
+  fetch(ENDPOINT+'?action=summary&key='+encodeURIComponent(key),{method:'GET'})
     .then(function(r){return r.json();})
     .then(function(d){
       if(!d.ok)throw new Error(d.error||'unknown response');
       renderDashboardData(d.rows||[]);
     })
-    .catch(function(err){showDashError('データ取得エラー: '+err.message);});
+    .catch(function(err){
+      // 合言葉が違ったときは覚えた値を捨てて、次に開いたとき入れ直せるようにする
+      if(String(err.message).indexOf('unauthorized')>=0){
+        clearDashKey();
+        showDashError('合言葉が違います。もう一度開いて入力し直してください。');
+        return;
+      }
+      showDashError('データ取得エラー: '+err.message);
+    });
 }
 function renderDashboardData(rows){
   const loading=document.getElementById('dashLoading');
