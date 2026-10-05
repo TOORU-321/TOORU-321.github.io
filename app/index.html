@@ -1984,6 +1984,8 @@ a{text-decoration:none}
       <button class="bc-seg" data-seg="tag">タグ指定</button>
     </div>
     <input type="text" class="ps-in" id="bcTag" placeholder="タグ名（例：VIP／insyoku／無料登録）" style="display:none;margin-top:8px">
+    <label class="ps-label">除外タグ（任意・このタグを持つ人には送りません）</label>
+    <input type="text" class="ps-in" id="bcExclude" placeholder="例：funnel（購入済みの人を外す・カンマ区切りで複数可）">
     <div class="ps-meta" style="margin:8px 0 0"><span id="bcCount">対象：確認中…</span></div>
     <label class="ps-label">件名</label>
     <input type="text" class="ps-in" id="bcSubject" placeholder="例：【期間限定】個別相談のご案内">
@@ -3260,6 +3262,8 @@ async function toggleMaintenance(){
   });
   const tag = document.getElementById("bcTag");
   if(tag){ let t; tag.addEventListener("input", () => { clearTimeout(t); t = setTimeout(bcUpdateCount, 500); }); }
+  const ex = document.getElementById("bcExclude");
+  if(ex){ let t2; ex.addEventListener("input", () => { clearTimeout(t2); t2 = setTimeout(bcUpdateCount, 500); }); }
   const cl = document.getElementById("bcClose"); if(cl) cl.addEventListener("click", closeBroadcast);
   if(md) md.addEventListener("click", e => { if(e.target === md) closeBroadcast(); });
   const ts = document.getElementById("bcTest"); if(ts) ts.addEventListener("click", () => doBroadcast(true));
@@ -3965,6 +3969,7 @@ async function openBroadcast(){
   document.querySelectorAll("#bcSegs .bc-seg").forEach(b => b.classList.toggle("sel", b.getAttribute("data-seg")==="all"));
   document.getElementById("bcTag").style.display = "none";
   document.getElementById("bcTag").value = "";
+  document.getElementById("bcExclude").value = "";
   document.getElementById("bcSubject").value = "";
   document.getElementById("bcBody").value = "";
   document.getElementById("bcImage").value = "";
@@ -3979,9 +3984,10 @@ function closeBroadcast(){ document.getElementById("broadcastModal").hidden = tr
 async function bcUpdateCount(){
   const c = document.getElementById("bcCount"); if(c) c.textContent = "対象：確認中…";
   const tag = (document.getElementById("bcTag").value||"").trim();
+  const exclude = (document.getElementById("bcExclude").value||"").trim();
   if(_bcSeg === "tag" && !tag){ if(c) c.textContent = "対象：タグを入力してください"; return; }
   try{
-    const res = await fetch(GAS_URL + "?action=audience_count&email=" + encodeURIComponent(SESSION.email) + "&seg=" + encodeURIComponent(_bcSeg) + "&tag=" + encodeURIComponent(tag) + "&_=" + Date.now()).then(r=>r.json());
+    const res = await fetch(GAS_URL + "?action=audience_count&email=" + encodeURIComponent(SESSION.email) + "&seg=" + encodeURIComponent(_bcSeg) + "&tag=" + encodeURIComponent(tag) + "&exclude=" + encodeURIComponent(exclude) + "&_=" + Date.now()).then(r=>r.json());
     if(c) c.innerHTML = (res && res.ok) ? `対象：<b style="color:#f0d69c">${res.count}人</b>（配信拒否は除外済み）` : "対象：取得できませんでした";
   }catch(e){ if(c) c.textContent = "対象：通信エラー"; }
 }
@@ -3996,11 +4002,12 @@ async function doBroadcast(test){
   if(!body){ showToast("本文を入力してください。"); return; }
   if(!doMail && !doPush){ showToast("メールか通知のどちらかは選んでください。"); return; }
   if(_bcSeg === "tag" && !tag){ showToast("タグ名を入力してください。"); return; }
-  const segLabel = _bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」");
+  const exclude = (document.getElementById("bcExclude").value||"").trim();
+  const segLabel = (_bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」")) + (exclude ? `（タグ「${exclude}」の人を除く）` : "");
   if(!test && !confirm(`【${segLabel}】に、メール案内を送信します。よろしいですか？`)) return;
   showToast(test ? "自分にテスト送信中…" : "送信中…");
   try{
-    const b = new URLSearchParams({ action:"broadcast", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0" });
+    const b = new URLSearchParams({ action:"broadcast", email:SESSION.email, seg:_bcSeg, tag:tag, exclude:exclude, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0" });
     if(test) b.set("test", "1");
     const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r=>r.json());
     if(res && res.ok){ showToast(`✅ メール${res.mailed}件・通知${res.pushed}件を送信しました。`); if(!test) closeBroadcast(); }
@@ -4022,11 +4029,12 @@ async function doBroadcastSchedule(){
   if(!schedAt){ showToast("配信日時を指定してください。"); return; }
   if(!doMail && !doPush){ showToast("メールか通知のどちらかは選んでください。"); return; }
   if(_bcSeg === "tag" && !tag){ showToast("タグ名を入力してください。"); return; }
-  const segLabel = _bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」");
+  const exclude = (document.getElementById("bcExclude").value||"").trim();
+  const segLabel = (_bcSeg==="all" ? "全員" : _bcSeg==="sub" ? "サブスク会員" : ("タグ「"+tag+"」")) + (exclude ? `（タグ「${exclude}」の人を除く）` : "");
   if(!confirm(`【${segLabel}】へ、${schedAt.replace("T"," ")}に配信予約します。よろしいですか？`)) return;
   showToast("予約登録中…");
   try{
-    const b = new URLSearchParams({ action:"broadcast_schedule", email:SESSION.email, seg:_bcSeg, tag:tag, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0", scheduledAt:schedAt });
+    const b = new URLSearchParams({ action:"broadcast_schedule", email:SESSION.email, seg:_bcSeg, tag:tag, exclude:exclude, subject:subject, body:body, image:image, mail:doMail?"1":"0", push:doPush?"1":"0", scheduledAt:schedAt });
     const res = await fetch(GAS_URL, { method:"POST", body:b }).then(r=>r.json());
     if(res && res.ok){ showToast("⏰ 予約しました。"); closeBroadcast(); }
     else { showToast("予約できませんでした（"+((res&&res.error)||"")+"）"); }
@@ -4044,7 +4052,7 @@ async function openBcList(){
     const items = res.items || [];
     if(!items.length){ body.innerHTML = `<div class="pv-empty">予約はありません。</div>`; return; }
     body.innerHTML = items.map(it => {
-      const segLabel = it.seg==="all" ? "全員" : it.seg==="sub" ? "サブスク会員" : ("タグ「"+escapeHtml(it.tag)+"」");
+      const segLabel = (it.seg==="all" ? "全員" : it.seg==="sub" ? "サブスク会員" : ("タグ「"+escapeHtml(it.tag)+"」")) + (it.exclude ? `（${escapeHtml(it.exclude)}を除く）` : "");
       const statusColor = it.status==="予約" ? "#f0d69c" : it.status==="送信済み" ? "#8fd18f" : it.status==="失敗" ? "#e07979" : "#8a8575";
       const cancelBtn = it.status==="予約" ? `<button class="pc-tog on" data-cancel="${escapeHtml(it.id)}" style="margin-top:6px">取消</button>` : "";
       return `<div class="pc-row" style="flex-direction:column;align-items:flex-start;gap:4px">
@@ -4623,6 +4631,7 @@ function masterFromTable(cols, rows){
         iPrice=find(["価格","値段","料金"]), iPid=find(["Stripe価格ID","価格ID","StripeID","price_id","price id"]),
         iLp=find(["販売LP URL","LP URL","LP","販売ページ"]), iLink=find(["決済リンク","決済URL","購入URL"]),
         iCamp=find(["キャンペーン","セール価格","キャンペーン価格"]), iCampOn=find(["キャンペーンの適用","キャンペーン適用","適用"]),
+        iCampPid=find(["キャンペーン価格ID"]), iCampS=find(["キャンペーン開始"]), iCampE=find(["キャンペーン終了"]),
         iStatus=find(["販売状態","ステータス","状態"]);
   const cell=(r,i)=> (i>=0 && r[i]!=null)? String(r[i]).trim() : "";
   const byTag = {};
@@ -4630,7 +4639,8 @@ function masterFromTable(cols, rows){
     const tagsRaw = cell(r,iTag); if(!tagsRaw || tagsRaw === "必要タグ") return;
     const rec = { kind:cell(r,iKind), price:cell(r,iPrice), priceId:cell(r,iPid),
                   lpUrl:cell(r,iLp), buyUrl:cell(r,iLink), camp:cell(r,iCamp),
-                  campOn:cell(r,iCampOn), status:cell(r,iStatus) };
+                  campOn:cell(r,iCampOn), campPid:cell(r,iCampPid), campStart:cell(r,iCampS), campEnd:cell(r,iCampE),
+                  status:cell(r,iStatus) };
     const tags = tagsRaw.split(/[,、\/]/).map(s=>s.trim()).filter(Boolean);
     const single = tags.length === 1;
     const score = (single?4:0) + (rec.priceId?2:0) + ((rec.buyUrl||rec.lpUrl)?1:0);
@@ -4660,12 +4670,28 @@ function attachMaster(list, master){
     c.lpUrl     = c.lpUrl || m.lpUrl;
     c.buyUrl    = c.buyUrl || m.buyUrl;
     c.campPrice = m.camp;
-    c.campOn    = /有効|オン|on|適用|✓|○/i.test(m.campOn);
+    // キャンペーン：「適用」が有効でも、開始・終了が入っていれば その期間中だけ有効（自動で始まり・終わる）
+    c.campOn    = /有効|オン|on|適用|✓|○/i.test(m.campOn) && campInWindow(m.campStart, m.campEnd);
+    if(c.campOn && m.campPid) c.priceId = m.campPid;   // 期間中はキャンペーン価格で決済
+    if(c.campOn && !c.label) c.label = "期間限定キャンペーン中！";
     // 販売状態：「停止/準備/非売」等が含まれず、かつ「販売/公開/受付/有効」を含む時だけ販売中
     c.saleOpen  = !!st && !/停止|停|準備|非売|非公開|終了|休止/.test(st) && /販売|公開|受付|有効|on/i.test(st);
     c.saleStatusRaw = st;
     c.price     = (c.campOn && m.camp) ? m.camp : (m.price || c.price);
   });
+}
+// "2026-10-08 20:00"（日本時間）→ ms。終了側は その分の59秒まで／日付だけなら その日いっぱい
+function campTime(s, isEnd){
+  const m = String(s || "").trim().match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if(!m) return null;
+  const hasTime = m[4] != null;
+  const t = Date.parse(`${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}T${hasTime ? m[4].padStart(2,"0")+":"+m[5] : "00:00"}:00+09:00`);
+  if(isNaN(t)) return null;
+  return isEnd ? t + (hasTime ? 59000 : 86399000) : t;
+}
+function campInWindow(start, end){
+  const now = Date.now(), s = campTime(start, false), e = campTime(end, true);
+  return (s == null || now >= s) && (e == null || now <= e);
 }
 function parseVideoUrl(s){
   s = String(s).trim(); let m;

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TLV00VTDZL');
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="10月の5日間だけ。ファネル設計完全マスター講座を、通常14,300円→8,800円で。" />
+  <meta name="robots" content="noindex" />
+  <title>【期間限定】ファネル設計完全マスター講座｜L-MINE</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>document.documentElement.className+=' js';</script>
+  <style>
+    :root{
+      --bg:#f6f8fb;--paper:#fff;--ink:#18212b;--muted:#66717f;--line:#e5eaf0;
+      --navy:#132335;--blue:#426f91;--blue2:#6d9db9;--ice:#eef6fa;--cream:#fbf8f1;
+      --gold:#b89555;--gold2:#d6b978;--radius:22px;--max:780px;
+      --shadow:0 18px 55px rgba(29,52,72,.11);--soft:0 10px 30px rgba(29,52,72,.07)
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",sans-serif;line-height:1.9;letter-spacing:.025em;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:70px}
+    img{display:block;width:100%;height:auto} a{color:inherit}
+    .wrap{width:min(calc(100% - 36px),var(--max));margin:auto}
+    .serif{font-family:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP",serif}
+
+    .hero{position:relative;min-height:86vh;display:grid;place-items:center;color:#fff;text-align:center;padding:70px 0 76px;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse 96% 66% at 50% 40%,rgba(6,14,24,.72),rgba(6,14,24,.16) 64%,transparent 100%),linear-gradient(180deg,rgba(10,22,36,.38),rgba(9,20,33,.66)),url("https://drive.google.com/thumbnail?id=1JEZE23IX5xv8g2L3BUUzHf0RHaVDyzYp&sz=w1800") center/cover no-repeat,var(--navy)}
+    .hero:before{content:"";position:absolute;inset:-20%;z-index:-1;background:radial-gradient(circle at 24% 30%,rgba(103,169,204,.28),transparent 26%),radial-gradient(circle at 78% 65%,rgba(214,185,120,.18),transparent 24%);animation:ambient 12s ease-in-out infinite alternate}
+    .hero:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:76px;background:var(--paper);clip-path:polygon(0 72%,100% 0,100% 100%,0 100%)}
+    .hero__inner{width:min(calc(100% - 36px),690px);margin:auto;position:relative;z-index:2}
+    .backlink{display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;color:rgba(255,255,255,.74);font-size:.8rem;text-decoration:none;transition:.25s}.backlink:hover{color:#fff;transform:translateX(-3px)}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;margin:0 0 18px;padding:7px 14px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);color:#f2dfb2;font-size:.72rem;font-weight:800;letter-spacing:.16em}
+    .hero h1{margin:0;font-size:clamp(2.05rem,7.6vw,3.9rem);line-height:1.35;font-weight:600;letter-spacing:.045em;text-shadow:0 4px 26px rgba(0,0,0,.9),0 2px 5px rgba(0,0,0,.8)}
+    .hero__lead{margin:24px auto 20px;max-width:570px;font-size:clamp(1rem,3.8vw,1.28rem);line-height:1.9;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.85),0 1px 3px rgba(0,0,0,.7)}
+    .hero__meta{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin:22px 0}.hero__meta span{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);font-size:.77rem;color:#fff;backdrop-filter:blur(6px)}
+    .price-letter{margin:16px 0 20px;color:#f8f4ea;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+    .price-letter .was{display:block;font-size:.9rem;color:rgba(255,255,255,.68);letter-spacing:.02em;margin-bottom:2px}
+    .price-letter .was s{color:rgba(255,255,255,.6)}
+    .price-letter .now{font-size:1.05rem;color:#f2dfb2;font-weight:700;letter-spacing:.02em}
+    .price-letter .now strong{font-size:2.5rem;letter-spacing:.02em;vertical-align:-2px}
+    .price-letter .now small{font-size:.76rem;color:rgba(255,255,255,.82);font-weight:400}
+    .cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:min(100%,430px);min-height:62px;padding:16px 30px;border:0;border-radius:999px;background:linear-gradient(135deg,#e4c98d,#c3a05c 52%,#a9843f);color:#fff;text-decoration:none;font-family:inherit;font-size:1.02rem;font-weight:700;letter-spacing:.14em;cursor:pointer;box-shadow:0 14px 30px rgba(168,132,63,.32),inset 0 1px 0 rgba(255,255,255,.34);transition:transform .28s,box-shadow .28s,filter .28s}
+    .cta:after{content:"";position:absolute;top:-50%;left:-45%;width:26%;height:200%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:rotate(20deg);pointer-events:none;transition:left .65s ease}
+    .cta:hover:after{left:135%}
+    .cta:hover{transform:translateY(-2px);filter:brightness(1.03);box-shadow:0 20px 40px rgba(168,132,63,.4),inset 0 1px 0 rgba(255,255,255,.36)}
+    .cta--dark{background:linear-gradient(135deg,#22415a,#0f2233);box-shadow:0 12px 28px rgba(13,34,52,.24),inset 0 1px 0 rgba(255,255,255,.08)}
+    .cta--dark:hover{box-shadow:0 18px 36px rgba(13,34,52,.3)}
+    .cta:not(.cta--dark){animation:ctaGlow 2.6s ease-in-out infinite}
+    .cta:not(.cta--dark):after{animation:ctaShine 4s ease-in-out infinite}
+    .cta:hover{animation:none}
+    @keyframes ctaGlow{0%,100%{box-shadow:0 14px 30px rgba(168,132,63,.32),inset 0 1px 0 rgba(255,255,255,.34)}50%{box-shadow:0 16px 44px rgba(214,185,120,.62),0 0 0 4px rgba(214,185,120,.16),inset 0 1px 0 rgba(255,255,255,.44)}}
+    @keyframes ctaShine{0%,58%{left:-45%}100%{left:135%}}
+    .note{margin:12px 0 0;color:rgba(255,255,255,.78);font-size:.73rem;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+    .deadline-hero{display:inline-block;margin:0 0 18px;padding:9px 18px;border:1px solid rgba(242,223,178,.55);border-radius:999px;background:rgba(0,0,0,.30);color:#f2dfb2;font-size:.82rem;font-weight:700;letter-spacing:.02em;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+    .deadline-hero b{color:#fff;font-weight:800;letter-spacing:.04em}
+    .deadline-hero .dh-until{display:block;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.86);margin-top:2px}
+    .offer-badge{display:inline-block;margin:0 0 20px;padding:12px 28px;border:2px solid rgba(242,223,178,.72);border-radius:999px;background:linear-gradient(180deg,rgba(214,185,120,.26),rgba(214,185,120,.06));color:#f7e6bd;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif;font-size:1.06rem;font-weight:800;letter-spacing:.08em;text-shadow:0 2px 10px rgba(0,0,0,.55);box-shadow:0 6px 22px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.16);animation:obGlow 2.8s ease-in-out infinite}
+    .offer-badge b{color:#fff;font-weight:900;letter-spacing:.12em}
+    @keyframes obGlow{0%,100%{box-shadow:0 6px 22px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.16)}50%{box-shadow:0 6px 28px rgba(214,185,120,.52),0 0 0 3px rgba(214,185,120,.15),inset 0 1px 0 rgba(255,255,255,.22)}}
+    @media(max-width:560px){.offer-badge{font-size:.92rem;padding:10px 20px;letter-spacing:.05em}}
+
+    .section{position:relative;padding:82px 0}.section--paper{background:var(--paper)}.section--ice{background:linear-gradient(180deg,#f1f7fa,#f8fbfc)}.section--black{color:#fff;background:linear-gradient(145deg,#101d2a,#1a3042)}
+    .section__label{margin:0 0 13px;color:var(--blue);font-size:.7rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}.section--black .section__label{color:#d8c18d}
+    .section h2{margin:0 0 24px;font-size:clamp(1.65rem,5.8vw,2.55rem);line-height:1.55;font-weight:600;letter-spacing:.04em}.section p{margin:0 0 1.15em}.center{text-align:center}.lead{font-size:1.05rem}
+    .marker{background:linear-gradient(transparent 62%,rgba(109,157,185,.25) 62%);font-weight:800}
+
+    .letter-note{margin:34px 0 0;padding:30px 26px;border:1.6px solid var(--gold);border-radius:var(--radius);background:linear-gradient(145deg,#fffdf6,#f6fafd);box-shadow:0 16px 40px rgba(184,149,85,.12)}
+    .letter-note .ln-tag{display:inline-block;margin-bottom:12px;padding:5px 13px;border-radius:999px;background:var(--navy);color:#f2dfb2;font-size:.68rem;font-weight:800;letter-spacing:.12em}
+    .letter-note p{margin:0 0 .8em}.letter-note p:last-child{margin-bottom:0}
+    .letter-note .ln-price{font-family:"Yu Mincho","YuMincho",serif;font-size:1.24rem;color:#20415a;font-weight:800}
+    .letter-note .ln-price s{color:var(--muted);font-weight:500;font-size:1rem}
+    .letter-note .ln-price b{color:var(--gold);font-size:1.7rem;letter-spacing:.01em}
+
+    .problem-box{position:relative;padding:28px 25px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:var(--soft)}
+    .problem-box:before{content:"“";position:absolute;right:20px;top:-12px;color:#e4edf2;font:700 5rem Georgia,serif;line-height:1}
+    .two-strategies{display:grid;grid-template-columns:1fr;gap:16px;margin:30px 0}
+    .strategy-card{position:relative;padding:27px 23px;border:1px solid #dfe8ee;border-radius:20px;background:linear-gradient(145deg,#fff,#f4f9fb);box-shadow:var(--soft);transition:.3s}
+    .strategy-card:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+    .strategy-card__num{display:grid;place-items:center;width:40px;height:40px;margin-bottom:15px;border-radius:13px;color:#fff;background:linear-gradient(135deg,var(--blue2),var(--blue));font-size:.76rem;font-weight:900;box-shadow:0 8px 18px rgba(66,111,145,.22)}
+    .strategy-card h3{margin:0 0 8px;font-size:1.18rem}.strategy-card p{margin:0;color:var(--muted);font-size:.91rem}
+
+    .flow-map{margin:34px 0 0;padding:28px 18px;border-radius:24px;background:linear-gradient(145deg,#14283b,#203d54);box-shadow:var(--shadow);color:#fff}
+    .flow-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:8px}.flow-node{text-align:center;padding:16px 8px;border:1px solid rgba(255,255,255,.15);border-radius:16px;background:rgba(255,255,255,.07)}.flow-node b{display:block;font-size:.9rem}.flow-node small{color:rgba(255,255,255,.65);font-size:.68rem}.flow-arrow{color:#d8c18d;font-size:1.25rem;animation:pulse 1.8s ease-in-out infinite}
+
+    .content-list{display:grid;gap:14px;margin-top:28px}.content-item{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start;padding:21px 20px;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 8px 24px rgba(29,52,72,.045);transition:.3s}.content-item:hover{transform:translateX(5px);border-color:#cbdde7}.content-item__num{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--ice);color:var(--blue);font:700 1rem Georgia,serif}.content-item h3{margin:0 0 5px;font-size:1.03rem}.content-item p{margin:0;color:var(--muted);font-size:.89rem;line-height:1.8}
+
+    .value-band{margin-top:31px;padding:28px;border-radius:22px;background:linear-gradient(135deg,#edf6fa,#fff);border:1px solid #dceaf1;text-align:center}.value-band strong{display:block;margin-bottom:8px;font-family:"Yu Mincho","YuMincho",serif;font-size:1.3rem;color:#23435a}
+
+    .product-card{overflow:hidden;border-radius:26px;background:#fff;color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1)}
+    .product-card__head{position:relative;padding:34px 26px 28px;text-align:center;background:linear-gradient(145deg,#f5f9fb,#fbf8f1);border-bottom:1px solid var(--line)}
+    .product-card__head:after{content:"全7章・16本";position:absolute;right:18px;top:18px;padding:5px 10px;border-radius:999px;background:#fff;color:var(--blue);font-size:.66rem;font-weight:900;letter-spacing:.08em;box-shadow:var(--soft)}
+    .product-card__head h3{margin:8px 0 0;font-size:clamp(1.35rem,5vw,1.95rem);line-height:1.55;font-weight:600}.product-card__body{padding:29px 24px 34px}.specs{margin:0 0 24px;border-top:1px solid var(--line)}.specs__row{display:grid;grid-template-columns:92px 1fr;gap:15px;padding:15px 0;border-bottom:1px solid var(--line);font-size:.89rem}.specs__row dt{margin:0;color:var(--muted);font-weight:800}.specs__row dd{margin:0}
+    .product-price{margin:0 0 19px;text-align:center;color:var(--muted);font-size:.83rem}
+    .product-price .pp-was{display:block;color:var(--muted);font-size:.92rem;margin-bottom:2px}.product-price .pp-was s{color:#9aa5af}
+    .product-price strong{display:block;color:var(--gold);font-size:2.6rem;line-height:1.3}
+    .product-price .pp-tag{display:inline-block;margin-top:4px;padding:3px 11px;border-radius:999px;background:var(--ice);color:var(--blue);font-size:.72rem;font-weight:800;letter-spacing:.05em}
+    .card-cd{margin:2px 0 16px;text-align:center;color:#b23b2e;font-size:.9rem;font-weight:800;letter-spacing:.02em}.card-cd b{color:#a9843f;font-variant-numeric:tabular-nums}
+    .cd-bar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:center;gap:14px;height:70px;padding:0 16px;background:linear-gradient(90deg,#0f2233,#1e3d58 55%,#0f2233);border-top:3px solid rgba(214,185,120,.9);border-bottom:3px solid rgba(214,185,120,.9);box-shadow:0 6px 22px rgba(0,0,0,.34);white-space:nowrap;overflow:hidden;font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN",sans-serif}
+    .cd-bar-label{font-size:20px;font-weight:800;color:#f2dfb2;letter-spacing:.02em}.cd-bar-label b{color:#fff;font-weight:900}
+    .cd-bar-time{font-size:27px;font-weight:900;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.06em;background:rgba(0,0,0,.3);border:1px solid rgba(214,185,120,.5);border-radius:9px;padding:5px 16px}
+    .cd-bar-time b{color:#ffe6ab}
+    .cd-inline{text-align:center;color:#b23b2e;font-weight:800;font-size:1rem;letter-spacing:.02em}.cd-inline b{color:#a9843f;font-variant-numeric:tabular-nums}
+    @media(max-width:560px){.cd-bar{height:58px;gap:10px;border-top-width:2px;border-bottom-width:2px}.cd-bar-label{font-size:13px}.cd-bar-time{font-size:19px;padding:3px 11px}body{padding-top:58px}}
+
+    .product-card__body .cta{display:flex;margin-left:auto;margin-right:auto}
+
+    .guarantee{display:grid;grid-template-columns:1fr;gap:16px;align-items:center;padding:32px 28px;border:1.6px solid var(--gold);border-radius:24px;background:linear-gradient(145deg,#fffdf6,#f4f9fc);box-shadow:0 16px 40px rgba(184,149,85,.12);text-align:center}
+    .guarantee__icon{font-size:clamp(3.6rem,11vw,5.4rem);line-height:1}
+    .guarantee h2{margin:0 0 10px;font-size:clamp(1.5rem,5.4vw,2.2rem);color:#20415a}
+    .guarantee p{margin:0 0 .55em;color:var(--ink);font-size:.98rem}
+    .guarantee .g-note{color:var(--muted)!important;font-size:.79rem}
+    @media(min-width:700px){.guarantee{grid-template-columns:auto 1fr;text-align:left;gap:28px;padding:34px 42px}}
+
+    .profile{display:grid;gap:24px;align-items:center;padding:26px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:var(--soft)}.profile__photo{overflow:hidden;max-width:190px;margin:auto;border-radius:20px;background:#e7edf0;box-shadow:var(--soft)}.profile__photo img{aspect-ratio:4/5;object-fit:cover}.profile h3{margin:0 0 3px;font-size:1.7rem}.profile p{margin-bottom:.95em;color:var(--muted);font-size:.97rem;line-height:1.9}.profile .prof-job{color:var(--blue);font-weight:800;font-size:.87rem;letter-spacing:.03em;margin-bottom:1.1em}
+    .faq{display:grid;gap:12px;margin-top:25px}details{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 6px 18px rgba(29,52,72,.035)}summary{position:relative;cursor:pointer;list-style:none;padding:18px 46px 18px 19px;font-weight:800;font-size:.94rem}summary:after{content:"＋";position:absolute;right:18px;top:15px;color:var(--blue);font-size:1.2rem;transition:.25s}details[open] summary:after{transform:rotate(45deg)}summary::-webkit-details-marker{display:none}details p{padding:0 19px 19px;margin:0;color:var(--muted);font-size:.89rem}
+
+    .footer{padding:36px 0 105px;color:#9ba6b0;background:#0d1924;text-align:center;font-size:.72rem}.footer a{margin:0 7px;color:#d6dce1;text-decoration:none}
+    .sticky-cta{position:fixed;z-index:30;left:50%;bottom:12px;transform:translateX(-50%);width:min(calc(100% - 22px),530px);padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(12,28,41,.88);backdrop-filter:blur(12px);box-shadow:0 14px 40px rgba(0,0,0,.26)}.sticky-cta a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;border-radius:999px;color:#fff;background:linear-gradient(135deg,#e4c98d,#c3a05c 52%,#a9843f);text-decoration:none;font-weight:700;font-size:1rem;letter-spacing:.08em;box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}.sticky-cta s{font-size:.85rem;font-weight:500;opacity:.72;margin-right:2px}.sticky-cta strong{font-size:1.3rem;font-weight:800;letter-spacing:.01em}
+
+    .reveal{transition:opacity .75s ease,transform .75s ease}html.js .reveal{opacity:0;transform:translateY(28px)}html.js .reveal.is-visible{opacity:1;transform:none}.delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}
+    @keyframes ambient{to{transform:translate3d(2%,1%,0) scale(1.04)}}@keyframes pulse{50%{transform:translateX(4px);opacity:.55}}
+    @media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+    @media (min-width:700px){.two-strategies{grid-template-columns:1fr 1fr}.profile{grid-template-columns:190px 1fr;align-items:stretch}.profile__photo{margin:0;max-width:none;height:100%}.profile__photo img{height:100%;aspect-ratio:auto;min-height:100%}.product-card__body{padding:36px 42px 42px}}
+    @media (max-width:560px){.section{padding:64px 0}.hero{min-height:82vh;padding-top:52px}.hero:after{height:48px}.hero h1{font-size:2rem}.flow-row{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg)}.content-item{grid-template-columns:43px 1fr;padding:18px 15px}.product-card__head:after{position:static;display:inline-block;margin-top:13px}.specs__row{grid-template-columns:74px 1fr}.sticky-cta{bottom:8px}}
+
+    .pay-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(8,18,27,.76);backdrop-filter:blur(7px)}.pay-modal.open{display:flex}.pay-sheet{position:relative;width:100%;max-width:460px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.5);padding:24px 20px 21px}.pay-close{position:absolute;top:9px;right:13px;background:none;border:none;color:#8a96a0;font-size:27px;line-height:1;cursor:pointer}.pay-emailnote{font-size:12px;color:var(--muted);background:var(--ice);border:1px solid #dce8ee;border-radius:11px;padding:11px 12px;margin-bottom:14px;line-height:1.7}.pay-emailnote b{color:var(--ink)}#embedded-checkout{min-height:220px}.pay-msg{text-align:center;color:#89939c;font-size:13px;padding:56px 20px}.pay-msg.err{color:#c0392b}#payDone{display:none;text-align:center;padding:40px 20px}#payDone .mk{width:58px;height:58px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px}#payDone h3{font-size:20px;margin:0 0 12px}#payDone p{color:var(--muted);font-size:13.5px;line-height:1.95;margin:0 0 22px}#payDone .donenote{max-width:380px;margin:20px auto 0;color:#8e98a1;font-size:11px;line-height:1.9}#payDone .donenote b{color:var(--ink)}
+    /* 開始前・終了後の案内 */
+    .offer-closed{margin:26px auto 0;max-width:560px;padding:24px 22px;border:1px solid #e15a43;border-radius:12px;background:rgba(61,18,16,.55);color:#ffd6c8;text-align:center}
+    .offer-closed.soon{border-color:rgba(242,223,178,.7);background:rgba(0,0,0,.38);color:#f7e6bd}
+    .offer-closed .oc-msg{margin:0;font-size:14px;line-height:1.9}
+    .offer-closed .oc-cta{display:inline-block;margin-top:16px;padding:13px 26px;border-radius:6px;background:linear-gradient(180deg,#e8ca7c,#cfa746);color:#11161e;font-weight:900;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="cd-bar" id="cdBar">
+    <span class="cd-bar-label" id="cdBarLabel">🔥 期間限定 <b>8,800円</b> 終了まで</span>
+    <span class="cd-bar-time"><b class="cd-val">──</b></span>
+  </div>
+  <header class="hero">
+    <div class="hero__inner reveal">
+      <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a><br>
+      <div class="offer-badge">🍂 10月の5日間だけの <b>特別価格</b></div>
+      <h1 class="serif">ファネル設計<br>完全マスター講座</h1>
+      <p class="hero__lead">いい投稿なのに売れない。<br>売れても、続かない。<br><strong>その原因は、商品ではなく“設計”にあります。</strong></p>
+      <div class="hero__meta"><span>全7章・16本</span><span>ワーク付き</span><span>買い切り</span></div>
+      <div class="price-letter">
+        <span class="was">通常価格 <s>14,300円</s></span>
+        <span class="now">特別価格 <strong>8,800円</strong><small>（税込・買い切り）</small></span>
+      </div>
+      <div class="deadline-hero"><span id="dhLabel">⏳ この特別価格は残り</span> <b id="cd1" class="cd-val">──</b><span class="dh-until">期間：10月8日（木）20:00〜10月12日（月・祝）23:59</span></div>
+      <a class="cta" href="#purchase">8,800円で講座を見る</a>
+      <p class="note">購入後、アプリですぐに視聴できます。</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="section section--paper">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="section__label">Problem</p>
+          <h2 class="serif">発信はがんばっている。<br>なのに、売上につながらない。</h2>
+          <div class="problem-box"><p>投稿の質を上げても、毎日発信しても、なぜか買ってもらえない。たまに売れても、次につながらない。</p><p style="margin-bottom:0">そのとき足りないのは、<span class="marker">発信の量ではなく、お客さんが「買う」までの“設計”</span>かもしれません。</p></div>
+        </div>
+        <div class="reveal delay-1" style="margin-top:34px">
+          <p>ファネルとは、ただの「購買までの流れ」ではありません。<strong>お客さんの心理を、段階ごとに動かしていく仕組み</strong>です。</p>
+          <div class="two-strategies">
+            <article class="strategy-card"><span class="strategy-card__num">01</span><h3>見せ方と誘導を設計する</h3><p>「知ってもらう」から「買う」まで、どの段階で何を伝えるかを決める。</p></article>
+            <article class="strategy-card"><span class="strategy-card__num">02</span><h3>心理トリガーを置く</h3><p>段階ごとに効く心理の動かし方を、行動経済学の視点で組み込む。</p></article>
+          </div>
+          <p>この設計がないまま発信を続けると、「反応はあるのに売れない」「売れても続かない」が起こります。</p>
+        </div>
+        <div class="flow-map reveal delay-2" aria-label="ファネルの3つの段階">
+          <div class="flow-row"><div class="flow-node"><b>知ってもらう</b><small>TOFU</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>比べて選ぶ</b><small>MOFU</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>決めて買う</b><small>BOFU</small></div></div>
+        </div>
+
+        <div class="letter-note reveal delay-1">
+          <span class="ln-tag">エルラボ＋をご利用のあなたへ</span>
+          <p>いつもエルラボ＋をご利用いただき、ありがとうございます。</p>
+          <p>この講座は、僕が一番大事にしている<strong>「売れる手法より、売れ続ける仕組み」</strong>を、7章かけて体系的にまとめたものです。</p>
+          <p>10月の連休に、じっくり腰を据えて学んでもらえるよう、5日間だけ特別価格でご案内します。</p>
+          <p class="ln-price"><s>14,300円</s> → <b>8,800円</b></p>
+          <p style="color:var(--muted);font-size:.85rem;margin-top:.4em">※10月12日（月・祝）23:59を過ぎると、通常価格に戻ります。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--ice">
+      <div class="wrap">
+        <div class="reveal"><p class="section__label">What You Learn</p><h2 class="serif">7章で学べること</h2></div>
+        <div class="content-list">
+          <article class="content-item reveal"><div class="content-item__num">01</div><div><h3>売れない原因は「設計」にある</h3><p>「いい投稿なのに売れない」の正体を、見せ方と誘導から読み解きます。</p></div></article>
+          <article class="content-item reveal delay-1"><div class="content-item__num">02</div><div><h3>ファネルは「心理を動かす仕組み」</h3><p>ファネル設計がないと、なぜ売れても続かないのかを理解します。</p></div></article>
+          <article class="content-item reveal delay-2"><div class="content-item__num">03</div><div><h3>TOFU・MOFU・BOFUのステージ設計</h3><p>反応率を高める段階の分け方と、各フェーズへの落とし込み方。</p></div></article>
+          <article class="content-item reveal delay-3"><div class="content-item__num">04</div><div><h3>段階ごとに効く心理トリガー</h3><p>TOFU・MOFU・BOFUそれぞれに効く心理の使い方を、活用例つきで。</p></div></article>
+          <article class="content-item reveal"><div class="content-item__num">05</div><div><h3>マスマーケティングとDRMの違い</h3><p>教育・比較・選定を“設計”できるのがDRMである理由。</p></div></article>
+          <article class="content-item reveal delay-1"><div class="content-item__num">06</div><div><h3>商品設計から始まるファネル設計</h3><p>導線マップ設計ワークで、自分のファネル図に落とし込みます。</p></div></article>
+          <article class="content-item reveal delay-2"><div class="content-item__num">07</div><div><h3>復習ワークと「売れる導線」づくり</h3><p>3ステップの復習ワークで、あなたのビジネスに当てはめます。</p></div></article>
+        </div>
+        <div class="value-band reveal"><strong>「次に何を整えればいいか」が見えてくる。</strong>発信・LINE・LP・商品を、バラバラではなく一本の流れとして設計できるようになるための講座です。</div>
+        <p class="cd-inline reveal" style="margin-top:30px">⏳ この特別価格の終了まで <b class="cd-val">──</b></p>
+        <div class="center reveal" style="margin-top:14px"><a class="cta cta--dark" href="#purchase">この講座を見る</a></div>
+      </div>
+    </section>
+
+    <section class="section section--black" id="purchase">
+      <div class="wrap">
+        <p class="section__label center reveal">Course Details</p>
+        <div class="product-card reveal">
+          <div class="product-card__head"><p class="eyebrow" style="color:#856d3c;background:#fff;border-color:#e8dfcc;margin-bottom:10px">10月限定の特別価格</p><h3 class="serif">ファネル設計<br>完全マスター講座</h3></div>
+          <div class="product-card__body">
+            <dl class="specs"><div class="specs__row"><dt>内容</dt><dd>ファネルの考え方／TOFU・MOFU・BOFUの設計／段階別の心理トリガー／DRMの設計／導線マップ設計ワーク</dd></div><div class="specs__row"><dt>動画</dt><dd>全7章・16本</dd></div><div class="specs__row"><dt>視聴</dt><dd>購入後、アプリですぐに視聴</dd></div></dl>
+            <p class="product-price"><span class="pp-was">通常価格 <s>14,300円</s></span>特別価格<strong>8,800円</strong><span class="pp-tag">税込・買い切り・約38%OFF</span></p>
+            <p class="card-cd">⏳ 残り <b id="cd2" class="cd-val">──</b> で通常価格（14,300円）に戻ります</p>
+            <a class="cta" href="#" onclick="openCheckout();return false;">8,800円で講座を見る</a>
+            <p class="note center" style="color:#7d8790;text-shadow:none">決済完了後、アプリで自動的に視聴できるようになります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--ice">
+      <div class="wrap">
+        <div class="guarantee reveal">
+          <div class="guarantee__icon">🛡️</div>
+          <div>
+            <h2 class="serif">3日間の全額返金保証</h2>
+            <p>ご購入後3日以内に「自分には合わないかも」と感じたら、全額返金いたします。だからこそ、リスクなく安心してお試しください。</p>
+            <p class="g-note">※返金額は、カード決済の場合はStripe手数料3.6%を差し引いた額、銀行振込の場合は振込手数料を差し引いた額となります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="section__label center">Instructor</p>
+          <h2 class="serif center" style="margin-bottom:26px">あなたのインストラクター</h2>
+          <div class="profile">
+            <div class="profile__photo"><img src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.style.display='none'"></div>
+            <div>
+              <h3 class="serif">とーる</h3>
+              <p class="prof-job">行動経済アナリスト / デジタルクリエイター</p>
+              <p>1985年、愛知県生まれ。大学でビジネスを学び、コンサルタントを経て、現在はオンライン講座の制作やLINE構築を専門に、コンテンツビジネスの構築支援を行う。</p>
+              <p>第1回 行動経済学検定1級 合格。日本営業科学協会認定「行動経済アナリスト」。電子書籍はAmazon6部門で1位、Udemyオンラインコースでは特別賞を受賞。</p>
+              <p>フォロワー3人から初収益化。SNS運用13日で30万円、3か月で7桁を達成。心理学を活用した独自のファネル（導き）設計を得意とする。</p>
+              <p>数字やバズを追うだけの発信に疑問を持ち、「売れる手法」だけでなく、無理なく“売れ続ける”仕組みづくりを伝えている。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="reveal"><p class="section__label">FAQ</p><h2 class="serif">よくあるご質問</h2></div>
+        <div class="faq reveal"><details><summary>無料の「ファネルのきほん講座」とは何が違いますか？</summary><p>無料講座は「ファネルとは何か」をつかむ入口です。この講座では、TOFU・MOFU・BOFUの設計や段階ごとの心理トリガー、導線マップ設計ワークまで、実際に自分のファネルを組み立てるところまで扱います。</p></details><details><summary>初心者でも受講できますか？</summary><p>はい。専門用語はできるだけかみくだいて解説しています。ワークに沿って進めれば、自分のビジネスに当てはめられるように構成しています。</p></details><details><summary>この8,800円という価格は？</summary><p>10月8日（木）20:00〜10月12日（月・祝）23:59の期間限定の特別価格です。期間を過ぎると通常価格（14,300円）に戻ります。</p></details><details><summary>購入後どう視聴しますか？</summary><p>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます（反映まで少しお時間がかかる場合があります）。</p></details></div>
+        <p class="cd-inline reveal" style="margin-top:32px">⏳ この特別価格の終了まで <b class="cd-val">──</b></p>
+        <div class="center reveal" style="margin-top:14px"><a class="cta cta--dark" href="#" onclick="openCheckout();return false;">8,800円で講座を見る</a></div>
+        <p class="center" style="color:#8a949d;font-size:.72rem;margin-top:14px">※本講座は個別の成果を保証するものではありません。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="wrap"><p><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a><a href="https://columns.l-mine.com/legal/terms.html">利用規約</a><a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a></p><p>© Llabo. All Rights Reserved.</p></div></footer>
+  <div class="sticky-cta"><a href="#purchase"><s>14,300円</s><strong>8,800円</strong>で講座を見る</a></div>
+
+  <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き"><div class="pay-sheet"><button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button><div id="payEmailNote" class="pay-emailnote" style="display:none"></div><div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div><div id="payDone"><div class="mk">✓</div><h3>ご購入ありがとうございます</h3><p>下の「アプリを更新する」を押すと、<br>「ファネル設計完全マスター講座」の視聴権が<br>ご登録のメールに反映されます。</p><button type="button" class="cta" id="syncBtn" onclick="syncPurchase()" style="padding:15px 40px;font-size:15px">アプリを更新する</button><p class="donenote">※反映まで、少しお時間がかかる場合があります。うまくいかない時は、もう一度お試しください。</p><div id="syncOk" style="display:none"><p class="donenote"><b>反映できました。</b>さっそくアプリで学びをはじめましょう。</p><a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px;font-size:15px">アプリを開く</a></div><div id="syncNg" style="display:none"><p class="donenote">まだ反映できていないようです。少し時間をおいて、もう一度「アプリを更新する」をお試しください。<br>それでも視聴できない場合は、下記からお問い合わせください。</p><input type="email" id="inqEmail" placeholder="ご登録のメールアドレス" style="width:100%;max-width:320px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:13px;margin:4px 0 12px;box-sizing:border-box"><br><button type="button" class="cta" id="contactBtn" onclick="sendInquiry()" style="padding:15px 40px;font-size:15px">お問い合わせ</button><div id="inquiryOk" style="display:none"><p class="donenote"><b>お問い合わせを送信しました。</b><br>とーるより折り返しご連絡します。</p></div></div></div></div></div>
+
+  <script>
+    var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
+    var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+    var COURSE_PRICE_ID = "price_1UN94ADffCAQquMF49US0psf";   // ファネル設計完全マスター講座 10月キャンペーン価格 8,800円・単発
+    /* キャンペーン期間（日本時間）。サーバー側（GAS）も動画スプシの同じ期間で決済を止める */
+    var CAMP_START = Date.parse("2026-10-08T20:00:00+09:00");
+    var CAMP_END   = Date.parse("2026-10-12T23:59:59+09:00");
+    var APP_URL    = "https://columns.l-mine.com/app/";
+    var PREFILL_EMAIL = "";
+    try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
+
+    /* 決済フォーム表示中は背後をinertにし、Tabでも外へ出さない（はじめてシリーズの特別価格ページと同じ） */
+    var _inerted = [], _payTrigger = null;
+    function lockBackground(){
+      var modal = document.getElementById('payModal');
+      _inerted = [];
+      [].forEach.call(document.body.children, function (el) {
+        if (el === modal || el.contains(modal)) return;
+        if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+        if (el.hasAttribute('inert')) return;
+        el.setAttribute('inert', '');
+        _inerted.push(el);
+      });
+    }
+    function unlockBackground(){
+      _inerted.forEach(function (el) { el.removeAttribute('inert'); });
+      _inerted = [];
+    }
+    function payFocusables(){
+      var sheet = document.querySelector('#payModal .pay-sheet');
+      if (!sheet) return [];
+      return [].filter.call(sheet.querySelectorAll(
+        'a[href],button:not([disabled]),input:not([disabled]),select,textarea,iframe,[tabindex]:not([tabindex="-1"])'
+      ), function (el) { return el.offsetWidth > 0 || el.offsetHeight > 0; });
+    }
+    function trapTab(e){
+      if (e.key !== 'Tab') return;
+      var sheet = document.querySelector('#payModal .pay-sheet');
+      var f = payFocusables();
+      if (!sheet || !f.length) return;
+      var first = f[0], last = f[f.length - 1], now = document.activeElement;
+      var inside = sheet.contains(now);
+      if (e.shiftKey && (!inside || now === first)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (!inside || now === last)) { e.preventDefault(); first.focus(); }
+    }
+    function returnFocus(){
+      var t = _payTrigger;
+      if (t && document.body.contains(t) && (t.offsetWidth > 0 || t.offsetHeight > 0) &&
+          !t.closest('[inert]')) { t.focus(); return; }
+      var box = document.querySelector('.offer-closed');
+      if (box) { box.setAttribute('tabindex', '-1'); box.focus(); return; }
+      var h = document.querySelector('h1');
+      if (h) { h.setAttribute('tabindex', '-1'); h.focus(); }
+    }
+
+    var _stripe = null, _checkout = null, _lastSessionId = '';
+    async function openCheckout(){
+      var now = Date.now();
+      if (now < CAMP_START || now > CAMP_END) return;   // 期間外は開かない（サーバー側でも止まる）
+      var modal = document.getElementById('payModal');
+      if (modal.classList.contains('open')) return;
+      _payTrigger = (window.event && (window.event.currentTarget || window.event.target)) || null;
+      var cont  = document.getElementById('embedded-checkout');
+      var done  = document.getElementById('payDone');
+      done.style.display = 'none';
+      cont.style.display = 'block';
+      cont.innerHTML = '<div class="pay-msg">決済フォームを読み込んでいます…</div>';
+      var enote = document.getElementById('payEmailNote');
+      if(enote){
+        if(PREFILL_EMAIL){ enote.innerHTML = 'ご登録メール：<b>' + PREFILL_EMAIL + '</b><br>このメールに視聴権が反映されます'; enote.style.display = 'block'; }
+        else { enote.style.display = 'none'; }
+      }
+      modal.classList.add('open');
+      lockBackground();
+      document.addEventListener('keydown', trapTab, true);
+      var closeBtn = modal.querySelector('.pay-close');
+      if (closeBtn) closeBtn.focus();
+      try{
+        if(typeof Stripe === 'undefined'){ cont.innerHTML = '<div class="pay-msg err">決済モジュールを読み込めませんでした。時間をおいて再度お試しください。</div>'; return; }
+        if(!_stripe){ _stripe = Stripe(STRIPE_PK); }
+        var r = await fetch(CHECKOUT_GAS + '?action=create_checkout&mode=payment&price=' + encodeURIComponent(COURSE_PRICE_ID) + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '') + '&_=' + Date.now()).then(function(x){ return x.json(); });
+        if(r && r.error === 'campaign_closed'){ cont.innerHTML = '<div class="pay-msg err">このキャンペーンの受付期間外のため、お手続きできません。</div>'; return; }
+        if(!r || !r.ok || !r.client_secret){ cont.innerHTML = '<div class="pay-msg err">決済の準備に失敗しました。時間をおいて再度お試しください。</div>'; return; }
+        _lastSessionId = r.session_id || '';
+        if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+        cont.innerHTML = '';
+        _checkout = await _stripe.initEmbeddedCheckout({
+          clientSecret: r.client_secret,
+          onComplete: function(){
+            cont.style.display = 'none';
+            done.style.display = 'block';
+            document.getElementById('syncOk').style.display = 'none';
+            document.getElementById('syncNg').style.display = 'none';
+            document.getElementById('inquiryOk').style.display = 'none';
+            document.getElementById('contactBtn').style.display = 'inline-flex';
+            var ie = document.getElementById('inqEmail'); if(ie) ie.value = PREFILL_EMAIL || '';
+          }
+        });
+        _checkout.mount('#embedded-checkout');
+      }catch(e){ cont.innerHTML = '<div class="pay-msg err">通信エラーが発生しました。時間をおいて再度お試しください。</div>'; }
+    }
+    function closeCheckout(){
+      document.getElementById('payModal').classList.remove('open');
+      if(_checkout){ try{ _checkout.destroy(); }catch(e){} _checkout = null; }
+      document.removeEventListener('keydown', trapTab, true);
+      unlockBackground();
+      returnFocus();
+    }
+    async function syncPurchase(){
+      var btn = document.getElementById('syncBtn');
+      var okBox = document.getElementById('syncOk');
+      var ngBox = document.getElementById('syncNg');
+      okBox.style.display = 'none';
+      ngBox.style.display = 'none';
+      if(!_lastSessionId){ ngBox.style.display = 'block'; return; }
+      btn.disabled = true;
+      var orig = btn.textContent;
+      btn.textContent = '確認しています…';
+      try{
+        var r = await fetch(CHECKOUT_GAS + '?action=sync_purchase&session_id=' + encodeURIComponent(_lastSessionId) + '&_=' + Date.now()).then(function(x){ return x.json(); });
+        if(r && r.ok){ okBox.style.display = 'block'; }
+        else { ngBox.style.display = 'block'; }
+      }catch(e){ ngBox.style.display = 'block'; }
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+    async function sendInquiry(){
+      var btn = document.getElementById('contactBtn');
+      var okBox = document.getElementById('inquiryOk');
+      var email = (document.getElementById('inqEmail').value || PREFILL_EMAIL || '').trim();
+      if(!email){ document.getElementById('inqEmail').focus(); return; }
+      btn.disabled = true;
+      btn.textContent = '送信しています…';
+      try{
+        var body = new URLSearchParams();
+        body.set('action', 'contact');
+        body.set('name', email);
+        body.set('email', email);
+        body.set('subject', 'ファネル設計完全マスター講座（10月キャンペーン）：アプリ更新後も視聴できない');
+        body.set('message', '決済後に「アプリを更新する」を押しても視聴できない、とのお問い合わせです。\nセッションID: ' + (_lastSessionId || '不明'));
+        await fetch(CHECKOUT_GAS, { method: 'POST', body: body });
+        okBox.style.display = 'block';
+        btn.style.display = 'none';
+      }catch(e){ btn.textContent = '送信できませんでした。時間をおいて再度お試しください'; btn.disabled = false; }
+    }
+  </script>
+
+  <script>
+    (function(){
+      var targets=document.querySelectorAll('.reveal');
+      function showAll(){targets.forEach(function(el){el.style.transition='none';el.style.opacity='1';el.style.transform='none';el.classList.add('is-visible');});}
+      if(!('IntersectionObserver' in window)){showAll();return;}
+      var alive=false;
+      var io=new IntersectionObserver(function(entries){
+        alive=true;
+        entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}});
+      },{threshold:.08,rootMargin:'0px 0px -12%'});
+      targets.forEach(function(el){io.observe(el)});
+      setTimeout(function(){ if(!alive) showAll(); },3000);
+    })();
+
+    /* ===== キャンペーン期間の表示切り替え（固定期間：10/8 20:00〜10/12 23:59・日本時間） =====
+     * 開始前：購入ボタンを隠し、開始日時とカウントダウンを出す。開始時刻になったら自動で再読み込み。
+     * 期間中：終了までのカウントダウン。
+     * 終了後：特別価格の表示を消し、終了のご案内とアプリへの導線だけを出す。
+     * ★決済そのものはGAS側で期間外を止めている（このページの表示は案内のため） */
+    (function(){
+      var phase = '';
+      function removeOffer(){
+        var bar = document.getElementById('cdBar'); if (bar) bar.remove();
+        document.querySelectorAll('.deadline-hero, .price-letter, .letter-note .ln-price, .cd-inline, .card-cd, .product-price, .sticky-cta, .cta, .hero .note')
+          .forEach(function (n) { n.remove(); });
+        document.body.style.paddingTop = '0';
+      }
+      function showBox(cls, msg, ctaText, ctaHref){
+        var box = document.createElement('div');
+        box.className = 'offer-closed' + (cls ? ' ' + cls : '');
+        box.setAttribute('tabindex', '-1');
+        box.innerHTML = '<p class="oc-msg"></p>' + (ctaText ? '<a class="oc-cta"></a>' : '');
+        box.querySelector('.oc-msg').textContent = msg;
+        if (ctaText) { var a = box.querySelector('.oc-cta'); a.textContent = ctaText; a.setAttribute('href', ctaHref); }
+        var host = document.querySelector('.hero .hero__inner') || document.body;
+        host.appendChild(box);
+      }
+      var els = [].slice.call(document.querySelectorAll('.cd-val'));
+      function pad(n){ return (n<10?'0':'') + n; }
+      function fmt(left){
+        var d=Math.floor(left/86400000), h=Math.floor(left%86400000/3600000), m=Math.floor(left%3600000/60000), s=Math.floor(left%60000/1000);
+        return (d>0?d+'日 ':'') + pad(h) + ':' + pad(m) + ':' + pad(s);
+      }
+      function render(){
+        var now = Date.now();
+        var next = now < CAMP_START ? 'soon' : (now <= CAMP_END ? 'open' : 'closed');
+        if (next === 'closed') {
+          var pm = document.getElementById('payModal');
+          if (pm && pm.classList.contains('open')) return;   // 手続き中は切らない
+        }
+        if (next !== phase) {
+          if (phase === 'soon' && next === 'open') { location.reload(); return; }
+          phase = next;
+          if (phase === 'soon') {
+            document.querySelectorAll('.price-letter, .card-cd, .product-price .pp-tag, .sticky-cta, .cta').forEach(function (n) { n.style.display = 'none'; });
+            var lbl = document.getElementById('dhLabel'); if (lbl) lbl.textContent = '🍂 10月8日（木）20:00スタートまで';
+            var bl = document.getElementById('cdBarLabel'); if (bl) bl.innerHTML = '🍂 特別価格 <b>8,800円</b> スタートまで';
+            showBox('soon', 'このキャンペーンは、10月8日（木）20:00からはじまります。もうしばらくお待ちください。', '', '');
+          } else if (phase === 'closed') {
+            removeOffer();
+            showBox('', 'ファネル設計完全マスター講座の10月キャンペーンは終了しました。ご覧いただき、ありがとうございました。', 'アプリを開く', APP_URL);
+            els = [];
+          }
+        }
+        if (phase === 'soon') { var t = fmt(CAMP_START - now); els.forEach(function (e) { e.textContent = t; }); }
+        else if (phase === 'open') { var t2 = fmt(CAMP_END - now); els.forEach(function (e) { e.textContent = t2; }); }
+      }
+      render(); setInterval(render, 1000);
+    })();
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('payModal').classList.contains('open'))closeCheckout();});
+  </script>
+</body>
+</html>
