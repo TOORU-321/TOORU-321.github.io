@@ -90,6 +90,16 @@
 
     .content-list{display:grid;gap:14px;margin-top:28px}.content-item{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start;padding:21px 20px;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 8px 24px rgba(29,52,72,.045);transition:.3s}.content-item:hover{transform:translateX(5px);border-color:#cbdde7}.content-item__num{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--ice);color:var(--blue);font:700 1rem Georgia,serif}.content-item h3{margin:0 0 5px;font-size:1.03rem}.content-item p{margin:0;color:var(--muted);font-size:.89rem;line-height:1.8}
 
+    .video-frame{position:relative;margin:26px 0 0;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#0d1c28;box-shadow:var(--shadow)}
+    .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .compare{display:grid;grid-template-columns:1fr auto 1.4fr;gap:12px;align-items:center;margin-top:24px}
+    .compare__col{padding:18px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--soft)}
+    .compare__col--main{border-color:var(--gold);background:linear-gradient(145deg,#fffdf6,#f6fafd)}
+    .compare__col p{margin:0;font-size:.9rem;line-height:1.75;color:var(--ink)}
+    .compare__tag{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:999px;background:var(--ice);color:var(--blue);font-size:.7rem;font-weight:800;letter-spacing:.05em}
+    .compare__col--main .compare__tag{background:var(--navy);color:#f2dfb2}
+    .compare__arrow{color:var(--gold);font-size:1.4rem;font-weight:800}
+    @media(max-width:560px){.compare{grid-template-columns:1fr}.compare__arrow{transform:rotate(90deg);text-align:center}}
     .value-band{margin-top:31px;padding:28px;border-radius:22px;background:linear-gradient(135deg,#edf6fa,#fff);border:1px solid #dceaf1;text-align:center}.value-band strong{display:block;margin-bottom:8px;font-family:"Yu Mincho","YuMincho",serif;font-size:1.3rem;color:#23435a}
 
     .product-card{overflow:hidden;border-radius:26px;background:#fff;color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1)}
@@ -183,10 +193,30 @@
           <span class="ln-tag">エルラボ＋をご利用のあなたへ</span>
           <p>いつもエルラボ＋をご利用いただき、ありがとうございます。</p>
           <p>この講座は、僕が一番大事にしている<strong>「売れる手法より、売れ続ける仕組み」</strong>を、7章かけて体系的にまとめたものです。</p>
-          <p>10月の連休に、じっくり腰を据えて学んでもらえるよう、5日間だけ特別価格でご案内します。</p>
+          <p>10月14日（水）10時からのライブ勉強会「売れる導線は“相手の段階”で変わる」は、まさにこの講座の内容とつながっています。勉強会だけでも十分わかる内容ですが、連休中にこの講座を見ておくと、当日の話がぐっと自分ごとになるはずです。</p>
+          <p>そこで、勉強会の予習として、5日間だけ特別価格でご案内します。</p>
           <p class="ln-price"><s>14,300円</s> → <b>8,800円</b></p>
           <p style="color:var(--muted);font-size:.85rem;margin-top:.4em">※10月12日（月・祝）23:59を過ぎると、通常価格に戻ります。</p>
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="reveal">
+          <p class="section__label">Free Preview</p>
+          <h2 class="serif">まずは無料の入門動画で、<br>全体像をのぞいてみてください。</h2>
+          <p>「ファネルってそもそも何？」を約2分でつかめる入門動画です。</p>
+        </div>
+        <div class="video-frame reveal delay-1">
+          <iframe src="https://player.vimeo.com/video/1089456117?title=0&amp;byline=0&amp;portrait=0" title="ファネルを知ろう！（無料の入門動画）" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" allowfullscreen></iframe>
+        </div>
+        <div class="compare reveal delay-2">
+          <div class="compare__col"><span class="compare__tag">無料の入門動画</span><p>ファネルとは何か、全体像をつかむ</p></div>
+          <div class="compare__arrow">→</div>
+          <div class="compare__col compare__col--main"><span class="compare__tag">完全マスター講座</span><p>段階ごとの設計・心理トリガー・導線マップまで、<strong>自分のファネルを組み立てるところまで</strong>深掘りする</p></div>
+        </div>
+        <p class="reveal" style="margin-top:22px">入門動画で「なるほど」と思えたら、その先を7章・16本で、もっと詳しく、もっと具体的に学べるのがこの講座です。</p>
       </div>
     </section>
 
