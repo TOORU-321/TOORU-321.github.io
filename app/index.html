@@ -2208,7 +2208,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.5.5";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.5.6";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2445,6 +2445,7 @@ function renderAcctMenu(){
   const _ns = notifyState();
   const _ntog = _ns==="on" ? `<span class="acct-tog on">オン</span>` : (_ns==="off" ? `<span class="acct-tog off">オフ</span>` : `<span class="acct-tog na">—</span>`);
   html += `<button class="acct-item" data-act="notify"><span class="ai-ico">🔔</span>新着通知${_ntog}</button>`;
+  html += `<button class="acct-item" data-act="refresh"><span class="ai-ico">🔄</span>アプリを最新にする</button>`;
   html += `<button class="acct-item" data-act="site"><span class="ai-ico">🏠</span>L-MINEサイトへ戻る</button>`;
   html += `<div class="acct-div"></div>`;
   html += `<div class="acct-sec">🎮 ゲーム</div>`;
@@ -3206,6 +3207,7 @@ document.getElementById("acctBody").addEventListener("click", (e) => {
   else if(act === "taskalarm") openTaskAlarm();
   else if(act === "quizapp") openQuizApp();
   else if(act === "nyatblow") openNyatBlow();
+  else if(act === "refresh") refreshApp();
   else if(act === "addhome") openAddHome(true);
   else if(act === "broadcast") openBroadcast();
   else if(act === "livehost") openLiveHost();
@@ -3553,6 +3555,25 @@ function openAnalytics(){
   try{ window.open("https://columns.l-mine.com/analytics/", "_blank", "noopener"); }catch(e){}
 }
 // タスクアラーム（ログイン会員向け・別タブで開く）
+// ホーム画面に追加したアプリは古い画面を持ち続けることがあるので、手動で最新版を取り直す。
+// Service Workerは解除しない（解除すると通知の登録が切れるため）。更新確認だけ行う。
+async function refreshApp(){
+  showToast("最新の状態に更新しています…");
+  try{
+    if("serviceWorker" in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update().catch(()=>{})));
+    }
+    if(window.caches){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    await fetch(location.pathname, { cache:"reload" }).catch(()=>{});
+  }catch(e){}
+  const u = new URL(location.href);
+  u.searchParams.set("v", String(Date.now()));
+  location.replace(u.toString());
+}
 function openNyatBlow(){
   try{ window.open("https://columns.l-mine.com/hitblow/", "_blank", "noopener"); }catch(e){}
 }
