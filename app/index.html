@@ -2208,7 +2208,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.5.6";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.5.7";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -3468,8 +3468,9 @@ function openSubJoin(){
 // 各講座LPのマッピング（解放タグ → LPファイル）。LPを作った講座だけ追加していく。
 const COURSE_LP = {
   "VSL": "course-vsl.html",
-  "HU":  "course-hajimete-uriage.html"   // はじめての売上デザイン講座（本編＝要タグHU・2026/8/6再販）
-  // 例）"funnel": "course-funnel.html", "ouyou": "course-ouyou.html" …
+  "HU":  "course-hajimete-uriage.html",  // はじめての売上デザイン講座（本編＝要タグHU・2026/8/6再販）
+  "funnel": "course-funnel.html",   // ファネル設計完全マスター講座（キャンペーン期間中はページ側でキャンペーンLPへ）
+  // 例）"ouyou": "course-ouyou.html" …
 };
 // 講座の販売LPへ（ログインメールを引き継ぐ＝決済メールが揃い、購入後に自動解放）
 function openCourseLP(path){

@@ -2,6 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    /* 10月キャンペーン期間中（日本時間 10/8 20:00〜10/12 23:59）は、特別価格のLPへ（ログインメールなどのクエリは引き継ぐ） */
+    (function(){
+      var now = Date.now();
+      if (now >= Date.parse("2026-10-08T20:00:00+09:00") && now <= Date.parse("2026-10-12T23:59:59+09:00")) location.replace("course-funnel-campaign.html" + location.search);
+    })();
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLV00VTDZL"></script>
   <script>
@@ -11,9 +18,9 @@
     gtag('config', 'G-TLV00VTDZL');
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="10月の5日間だけ。ファネル設計完全マスター講座を、通常14,300円→8,800円で。" />
+  <meta name="description" content="「反応はあるのに買われない」を、自分で直せるようになる講座。お客さんが「買う」までの流れを、心理と設計の両面から組み立てる全7章・16本のファネル設計講座。" />
   <meta name="robots" content="noindex" />
-  <title>【期間限定】ファネル設計完全マスター講座｜L-MINE</title>
+  <title>ファネル設計完全マスター講座｜L-MINE</title>
   <script src="https://js.stripe.com/v3/"></script>
   <script>document.documentElement.className+=' js';</script>
   <style>
@@ -25,7 +32,7 @@
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",sans-serif;line-height:1.9;letter-spacing:.025em;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-top:70px}
+    body{margin:0;color:var(--ink);background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Noto Sans JP",sans-serif;line-height:1.9;letter-spacing:.025em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
     img{display:block;width:100%;height:auto} a{color:inherit}
     .wrap{width:min(calc(100% - 36px),var(--max));margin:auto}
     .serif{font-family:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Noto Serif JP",serif}
@@ -150,24 +157,17 @@
   </style>
 </head>
 <body>
-  <div class="cd-bar" id="cdBar">
-    <span class="cd-bar-label" id="cdBarLabel">🔥 期間限定 <b>8,800円</b> 終了まで</span>
-    <span class="cd-bar-time"><b class="cd-val">──</b></span>
-  </div>
   <header class="hero">
     <div class="hero__inner reveal">
       <a class="backlink" href="https://columns.l-mine.com/app/">← アプリに戻る</a><br>
-      <div class="offer-badge">🍂 10月の5日間だけの <b>特別価格</b></div>
       <h1 class="serif">ファネル設計<br>完全マスター講座</h1>
       <p class="hero__sub">「反応はあるのに買われない」を、<br>自分で直せるようになる講座</p>
       <p class="hero__lead">いい投稿なのに売れない。<br>売れても、続かない。<br><strong>その原因は、商品ではなく“設計”にあります。</strong></p>
       <div class="hero__meta"><span>全7章・16本</span><span>ワーク付き</span><span>買い切り</span></div>
       <div class="price-letter">
-        <span class="was">通常価格 <s>14,300円</s></span>
-        <span class="now">特別価格 <strong>8,800円</strong><small>（税込・買い切り）</small></span>
+        <span class="now">受講料 <strong>14,300円</strong><small>（税込・買い切り）</small></span>
       </div>
-      <div class="deadline-hero"><span id="dhLabel">⏳ この特別価格は残り</span> <b id="cd1" class="cd-val">──</b><span class="dh-until">期間：10月8日（木）20:00〜10月12日（月・祝）23:59</span></div>
-      <a class="cta" href="#purchase">8,800円で講座を見る</a>
+      <a class="cta" href="#purchase">講座の内容と受講方法を見る</a>
       <p class="note">購入後、アプリですぐに視聴できます。</p>
     </div>
   </header>
@@ -192,15 +192,6 @@
           <div class="flow-row"><div class="flow-node"><b>知ってもらう</b><small>TOFU</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>比べて選ぶ</b><small>MOFU</small></div><div class="flow-arrow">→</div><div class="flow-node"><b>決めて買う</b><small>BOFU</small></div></div>
         </div>
 
-        <div class="letter-note reveal delay-1">
-          <span class="ln-tag">エルラボ＋をご利用のあなたへ</span>
-          <p>いつもエルラボ＋をご利用いただき、ありがとうございます。</p>
-          <p>この講座は、僕が一番大事にしている<strong>「売れる手法より、売れ続ける仕組み」</strong>を、7章かけて体系的にまとめたものです。</p>
-          <p>10月14日（水）10時からのライブ勉強会「売れる導線は“相手の段階”で変わる」は、まさにこの講座の内容とつながっています。勉強会だけでも十分わかる内容ですが、連休中にこの講座を見ておくと、当日の話がぐっと自分ごとになるはずです。</p>
-          <p>そこで、勉強会の予習として、5日間だけ特別価格でご案内します。</p>
-          <p class="ln-price"><s>14,300円</s> → <b>8,800円</b></p>
-          <p style="color:var(--muted);font-size:.85rem;margin-top:.4em">※10月12日（月・祝）23:59を過ぎると、通常価格に戻ります。</p>
-        </div>
       </div>
     </section>
 
@@ -236,7 +227,6 @@
           <article class="content-item reveal delay-2"><div class="content-item__num">07</div><div><h3>明日から直す場所が1つ決まる</h3><p>3ステップの復習ワークで、あなたのビジネスのどこから整えるかを決めます。</p></div></article>
         </div>
         <div class="value-band reveal"><strong>「次に何を整えればいいか」が見えてくる。</strong>発信・LINE・LP・商品を、バラバラではなく一本の流れとして設計できるようになるための講座です。</div>
-        <p class="cd-inline reveal" style="margin-top:30px">⏳ この特別価格の終了まで <b class="cd-val">──</b></p>
         <div class="center reveal" style="margin-top:14px"><a class="cta cta--dark" href="#purchase">この講座を見る</a></div>
       </div>
     </section>
@@ -245,12 +235,11 @@
       <div class="wrap">
         <p class="section__label center reveal">Course Details</p>
         <div class="product-card reveal">
-          <div class="product-card__head"><p class="eyebrow" style="color:#856d3c;background:#fff;border-color:#e8dfcc;margin-bottom:10px">10月限定の特別価格</p><h3 class="serif">ファネル設計<br>完全マスター講座</h3><p class="product-card__sub">「反応はあるのに買われない」を、自分で直せるようになる講座</p></div>
+          <div class="product-card__head"><p class="eyebrow" style="color:#856d3c;background:#fff;border-color:#e8dfcc;margin-bottom:10px">買い切り・アプリで視聴</p><h3 class="serif">ファネル設計<br>完全マスター講座</h3><p class="product-card__sub">「反応はあるのに買われない」を、自分で直せるようになる講座</p></div>
           <div class="product-card__body">
             <dl class="specs"><div class="specs__row"><dt>内容</dt><dd>ファネルの考え方／TOFU・MOFU・BOFUの設計／段階別の心理トリガー／DRMの設計／導線マップ設計ワーク</dd></div><div class="specs__row"><dt>動画</dt><dd>全7章・16本</dd></div><div class="specs__row"><dt>視聴</dt><dd>購入後、アプリですぐに視聴</dd></div></dl>
-            <p class="product-price"><span class="pp-was">通常価格 <s>14,300円</s></span>特別価格<strong>8,800円</strong><span class="pp-tag">税込・買い切り・約38%OFF</span></p>
-            <p class="card-cd">⏳ 残り <b id="cd2" class="cd-val">──</b> で通常価格（14,300円）に戻ります</p>
-            <a class="cta" href="#" onclick="openCheckout();return false;">8,800円で講座を見る</a>
+            <p class="product-price">受講料<strong>14,300円</strong><span class="pp-tag">税込・買い切り</span></p>
+            <a class="cta" href="#" onclick="openCheckout();return false;">講座を購入する</a>
             <p class="note center" style="color:#7d8790;text-shadow:none">決済完了後、アプリで自動的に視聴できるようになります。</p>
           </div>
         </div>
@@ -293,26 +282,22 @@
     <section class="section">
       <div class="wrap">
         <div class="reveal"><p class="section__label">FAQ</p><h2 class="serif">よくあるご質問</h2></div>
-        <div class="faq reveal"><details><summary>無料の「ファネルのきほん講座」とは何が違いますか？</summary><p>無料講座は「ファネルとは何か」をつかむ入口です。この講座では、TOFU・MOFU・BOFUの設計や段階ごとの心理トリガー、導線マップ設計ワークまで、実際に自分のファネルを組み立てるところまで扱います。</p></details><details><summary>初心者でも受講できますか？</summary><p>はい。専門用語はできるだけかみくだいて解説しています。ワークに沿って進めれば、自分のビジネスに当てはめられるように構成しています。</p></details><details><summary>この8,800円という価格は？</summary><p>10月8日（木）20:00〜10月12日（月・祝）23:59の期間限定の特別価格です。期間を過ぎると通常価格（14,300円）に戻ります。</p></details><details><summary>購入後どう視聴しますか？</summary><p>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます（反映まで少しお時間がかかる場合があります）。</p></details></div>
-        <p class="cd-inline reveal" style="margin-top:32px">⏳ この特別価格の終了まで <b class="cd-val">──</b></p>
-        <div class="center reveal" style="margin-top:14px"><a class="cta cta--dark" href="#" onclick="openCheckout();return false;">8,800円で講座を見る</a></div>
+        <div class="faq reveal"><details><summary>無料の「ファネルのきほん講座」とは何が違いますか？</summary><p>無料講座は「ファネルとは何か」をつかむ入口です。この講座では、TOFU・MOFU・BOFUの設計や段階ごとの心理トリガー、導線マップ設計ワークまで、実際に自分のファネルを組み立てるところまで扱います。</p></details><details><summary>初心者でも受講できますか？</summary><p>はい。専門用語はできるだけかみくだいて解説しています。ワークに沿って進めれば、自分のビジネスに当てはめられるように構成しています。</p></details><details><summary>購入後どう視聴しますか？</summary><p>決済完了後、ご登録メールに視聴権が反映され、アプリで視聴できます（反映まで少しお時間がかかる場合があります）。</p></details></div>
+        <div class="center reveal" style="margin-top:14px"><a class="cta cta--dark" href="#" onclick="openCheckout();return false;">講座を購入する</a></div>
         <p class="center" style="color:#8a949d;font-size:.72rem;margin-top:14px">※本講座は個別の成果を保証するものではありません。</p>
       </div>
     </section>
   </main>
 
   <footer class="footer"><div class="wrap"><p><a href="https://columns.l-mine.com/legal/tokusho.html">特定商取引法に基づく表記</a><a href="https://columns.l-mine.com/legal/terms.html">利用規約</a><a href="https://columns.l-mine.com/legal/privacy.html">プライバシーポリシー</a></p><p>© Llabo. All Rights Reserved.</p></div></footer>
-  <div class="sticky-cta"><a href="#purchase"><s>14,300円</s><strong>8,800円</strong>で講座を見る</a></div>
+  <div class="sticky-cta"><a href="#purchase"><strong>14,300円</strong>で講座を見る</a></div>
 
   <div id="payModal" class="pay-modal" role="dialog" aria-modal="true" aria-label="購入手続き"><div class="pay-sheet"><button class="pay-close" onclick="closeCheckout()" aria-label="閉じる">×</button><div id="payEmailNote" class="pay-emailnote" style="display:none"></div><div id="embedded-checkout"><div class="pay-msg">決済フォームを読み込んでいます…</div></div><div id="payDone"><div class="mk">✓</div><h3>ご購入ありがとうございます</h3><p>下の「アプリを更新する」を押すと、<br>「ファネル設計完全マスター講座」の視聴権が<br>ご登録のメールに反映されます。</p><button type="button" class="cta" id="syncBtn" onclick="syncPurchase()" style="padding:15px 40px;font-size:15px">アプリを更新する</button><p class="donenote">※反映まで、少しお時間がかかる場合があります。うまくいかない時は、もう一度お試しください。</p><div id="syncOk" style="display:none"><p class="donenote"><b>反映できました。</b>さっそくアプリで学びをはじめましょう。</p><a href="https://columns.l-mine.com/app/" class="cta" style="padding:15px 40px;font-size:15px">アプリを開く</a></div><div id="syncNg" style="display:none"><p class="donenote">まだ反映できていないようです。少し時間をおいて、もう一度「アプリを更新する」をお試しください。<br>それでも視聴できない場合は、下記からお問い合わせください。</p><input type="email" id="inqEmail" placeholder="ご登録のメールアドレス" style="width:100%;max-width:320px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:13px;margin:4px 0 12px;box-sizing:border-box"><br><button type="button" class="cta" id="contactBtn" onclick="sendInquiry()" style="padding:15px 40px;font-size:15px">お問い合わせ</button><div id="inquiryOk" style="display:none"><p class="donenote"><b>お問い合わせを送信しました。</b><br>とーるより折り返しご連絡します。</p></div></div></div></div></div>
 
   <script>
     var STRIPE_PK    = "pk_live_51L19PzDffCAQquMF8wW6tLqKcvIQJsnsX9nYwIY3kzW8oOG3b0sTQIv7fsEY8bYOH0eU8XPNyq2h8HeRCLzmwlBc00zi1SzIzK";
     var CHECKOUT_GAS = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
-    var COURSE_PRICE_ID = "price_1UN94ADffCAQquMF49US0psf";   // ファネル設計完全マスター講座 10月キャンペーン価格 8,800円・単発
-    /* キャンペーン期間（日本時間）。サーバー側（GAS）も動画スプシの同じ期間で決済を止める */
-    var CAMP_START = Date.parse("2026-10-08T20:00:00+09:00");
-    var CAMP_END   = Date.parse("2026-10-12T23:59:59+09:00");
+    var COURSE_PRICE_ID = "price_1TsIR3DffCAQquMFEmvYf1Vf";   // ファネル設計完全マスター講座 通常価格 14,300円・単発
     var APP_URL    = "https://columns.l-mine.com/app/";
     var PREFILL_EMAIL = "";
     try{ PREFILL_EMAIL = (new URLSearchParams(location.search).get('email') || '').trim().toLowerCase(); }catch(e){}
@@ -363,8 +348,6 @@
 
     var _stripe = null, _checkout = null, _lastSessionId = '';
     async function openCheckout(){
-      var now = Date.now();
-      if (now < CAMP_START || now > CAMP_END) return;   // 期間外は開かない（サーバー側でも止まる）
       var modal = document.getElementById('payModal');
       if (modal.classList.contains('open')) return;
       _payTrigger = (window.event && (window.event.currentTarget || window.event.target)) || null;
@@ -444,7 +427,7 @@
         body.set('action', 'contact');
         body.set('name', email);
         body.set('email', email);
-        body.set('subject', 'ファネル設計完全マスター講座（10月キャンペーン）：アプリ更新後も視聴できない');
+        body.set('subject', 'ファネル設計完全マスター講座：アプリ更新後も視聴できない');
         body.set('message', '決済後に「アプリを更新する」を押しても視聴できない、とのお問い合わせです。\nセッションID: ' + (_lastSessionId || '不明'));
         await fetch(CHECKOUT_GAS, { method: 'POST', body: body });
         okBox.style.display = 'block';
@@ -467,61 +450,6 @@
       setTimeout(function(){ if(!alive) showAll(); },3000);
     })();
 
-    /* ===== キャンペーン期間の表示切り替え（固定期間：10/8 20:00〜10/12 23:59・日本時間） =====
-     * 開始前：購入ボタンを隠し、開始日時とカウントダウンを出す。開始時刻になったら自動で再読み込み。
-     * 期間中：終了までのカウントダウン。
-     * 終了後：特別価格の表示を消し、終了のご案内とアプリへの導線だけを出す。
-     * ★決済そのものはGAS側で期間外を止めている（このページの表示は案内のため） */
-    (function(){
-      var phase = '';
-      function removeOffer(){
-        var bar = document.getElementById('cdBar'); if (bar) bar.remove();
-        document.querySelectorAll('.deadline-hero, .price-letter, .letter-note .ln-price, .cd-inline, .card-cd, .product-price, .sticky-cta, .cta, .hero .note')
-          .forEach(function (n) { n.remove(); });
-        document.body.style.paddingTop = '0';
-      }
-      function showBox(cls, msg, ctaText, ctaHref){
-        var box = document.createElement('div');
-        box.className = 'offer-closed' + (cls ? ' ' + cls : '');
-        box.setAttribute('tabindex', '-1');
-        box.innerHTML = '<p class="oc-msg"></p>' + (ctaText ? '<a class="oc-cta"></a>' : '');
-        box.querySelector('.oc-msg').textContent = msg;
-        if (ctaText) { var a = box.querySelector('.oc-cta'); a.textContent = ctaText; a.setAttribute('href', ctaHref); }
-        var host = document.querySelector('.hero .hero__inner') || document.body;
-        host.appendChild(box);
-      }
-      var els = [].slice.call(document.querySelectorAll('.cd-val'));
-      function pad(n){ return (n<10?'0':'') + n; }
-      function fmt(left){
-        var d=Math.floor(left/86400000), h=Math.floor(left%86400000/3600000), m=Math.floor(left%3600000/60000), s=Math.floor(left%60000/1000);
-        return (d>0?d+'日 ':'') + pad(h) + ':' + pad(m) + ':' + pad(s);
-      }
-      function render(){
-        var now = Date.now();
-        var next = now < CAMP_START ? 'soon' : (now <= CAMP_END ? 'open' : 'closed');
-        if (next === 'closed') {
-          var pm = document.getElementById('payModal');
-          if (pm && pm.classList.contains('open')) return;   // 手続き中は切らない
-        }
-        if (next !== phase) {
-          if (phase === 'soon' && next === 'open') { location.reload(); return; }
-          phase = next;
-          if (phase === 'soon') {
-            document.querySelectorAll('.price-letter, .card-cd, .product-price .pp-tag, .sticky-cta, .cta').forEach(function (n) { n.style.display = 'none'; });
-            var lbl = document.getElementById('dhLabel'); if (lbl) lbl.textContent = '🍂 10月8日（木）20:00スタートまで';
-            var bl = document.getElementById('cdBarLabel'); if (bl) bl.innerHTML = '🍂 特別価格 <b>8,800円</b> スタートまで';
-            showBox('soon', 'このキャンペーンは、10月8日（木）20:00からはじまります。もうしばらくお待ちください。', '', '');
-          } else if (phase === 'closed') {
-            removeOffer();
-            showBox('', 'ファネル設計完全マスター講座の10月キャンペーンは終了しました。ご覧いただき、ありがとうございました。', '講座の詳細を見る', 'course-funnel.html' + location.search);
-            els = [];
-          }
-        }
-        if (phase === 'soon') { var t = fmt(CAMP_START - now); els.forEach(function (e) { e.textContent = t; }); }
-        else if (phase === 'open') { var t2 = fmt(CAMP_END - now); els.forEach(function (e) { e.textContent = t2; }); }
-      }
-      render(); setInterval(render, 1000);
-    })();
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.getElementById('payModal').classList.contains('open'))closeCheckout();});
   </script>
 </body>
