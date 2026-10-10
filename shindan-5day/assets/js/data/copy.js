@@ -37,6 +37,30 @@
     scoreNoteCommon: SCORE_NOTE,
     /* ユーザー向けの企画名（§17-5で確定。「チャレンジ」は内部呼称にとどめる） */
     programName: 'SNS事業の一本線 5DAY',
+
+    /* 診断ファネルの動画（2026-10-10 とーる指示）。
+     * ②結果動画：最低軸ごと5本。詳細結果の見出しのすぐ下に出す（結果の話だけ・企画への誘いは入れていない）
+     * ③企画案内：参加表明LPの冒頭、最初のボタンの下に出す
+     * 動画はサイト側 /assets/videos/ に置く（作業フォルダ shindan-videos/）。自動再生はしない */
+    funnelVideo: {
+      base: 'https://columns.l-mine.com/assets/videos/',
+      result: {
+        caption: 'あなたの結果を、動画で（約1分）',
+        label: '診断結果の解説動画（約1分）',
+        files: {
+          customerInsight: 'shindan-result-A-v1',
+          productStructure: 'shindan-result-B-v1',
+          salesJourney: 'shindan-result-C-v1',
+          growthEnvironment: 'shindan-result-D-v1',
+          improvementOperation: 'shindan-result-E-v1'
+        }
+      },
+      kikaku: {
+        caption: '1分半でわかる、この5日間のこと',
+        label: 'SNS事業の一本線 5DAYの案内動画（約1分半）',
+        file: 'shindan-kikaku-v1'
+      }
+    },
     /* 企画の補助説明（§17-5） */
     programTagline: '診断結果を、30日育てられる事業設計へ変える5日間',
 

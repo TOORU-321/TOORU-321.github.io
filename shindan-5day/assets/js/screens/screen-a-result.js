@@ -36,6 +36,13 @@
         h('section', { class: 'scan-focus' }, [
           h('p', { class: 'scan-eyebrow', text: s.eyebrow }),
           h('h2', { class: 'scan-focus__title' }, [s.title, h('strong', { text: label })]),
+          /* ②結果動画（2026-10-10）。最低軸の1本だけ出す */
+          SC.ui.funnelVideo({
+            base: SC.copy.funnelVideo.base,
+            caption: SC.copy.funnelVideo.result.caption, label: SC.copy.funnelVideo.result.label,
+            file: SC.copy.funnelVideo.result.files[d.lowestAxis],
+            onPlay: function () { ctx.track('result_video_played', { axis: d.lowestAxis }); }
+          }),
           SC.ui.resultTypeImage(d.lowestAxis, { variant: 'compact', caption: false, note: false }),
           h('h3', { class: 'scan-subhead', text: s.why }),
           h('p', { class: 'scan-reason', text: SC.copy.axisReason[d.lowestAxis] }),

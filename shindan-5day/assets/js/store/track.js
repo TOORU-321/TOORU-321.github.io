@@ -123,6 +123,9 @@
       'day_video_skipped',
       'day_video_transcript_opened',
       'day_video_replayed',
+      /* 診断ファネルの動画（2026-10-10）：②結果動画／③企画案内を初めて再生した */
+      'result_video_played',
+      'lp_video_played',
       /* 外部保存の「もう一度試す」を押した（2026-09-15）。本文は送らない */
       'remote_save_retry'
     ],
@@ -135,7 +138,9 @@
       'day_video_completed',
       'day_video_skipped',
       'day_video_transcript_opened',
-      'day_video_replayed'
+      'day_video_replayed',
+      'result_video_played',
+      'lp_video_played'
     ],
 
     event: function (name, meta) {

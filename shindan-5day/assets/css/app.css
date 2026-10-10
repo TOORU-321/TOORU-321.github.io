@@ -1425,3 +1425,10 @@ a.savebar__btn { text-align: center; text-decoration: none; }
   .scan-mode .dlp-list__item { display: flex; align-items: center; gap: 1rem; padding: .8rem; }
   .scan-mode .dlp-list__item::before { margin: 0; }
 }
+
+/* 診断ファネルの動画（②結果・③企画案内）2026-10-10 */
+.fvid { margin: 16px auto 4px; max-width: 640px; text-align: center; }
+.fvid__player { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: #090c12;
+  border: 1px solid var(--line, rgba(227, 195, 129, .14)); box-shadow: 0 10px 28px rgba(0, 0, 0, .35); }
+.fvid__caption { margin-top: 8px; font-size: .8rem; line-height: 1.7; opacity: .9; }
+.fvid__note { display: block; font-size: .68rem; opacity: .7; }

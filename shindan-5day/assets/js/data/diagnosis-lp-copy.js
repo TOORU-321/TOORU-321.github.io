@@ -47,7 +47,6 @@
         src: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.mp4',
         poster: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.jpg',
         caption: '1分でわかる、この診断のこと',
-        note: '※本人の声を学習したAI音声で制作しています',
         label: 'この診断の紹介動画（約1分）'
       },
       /* 2026-08-25 とーる指示：画像は前に出さず、背景へうっすら敷く。

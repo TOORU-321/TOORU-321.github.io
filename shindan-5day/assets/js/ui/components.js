@@ -677,5 +677,28 @@
     return el;
   };
 
+  /* 診断ファネルの動画（②結果・③企画案内）。2026-10-10
+   * 自動再生しない・preload none。見なくても先へ進める（完了条件にしない）。
+   * o: { file, caption, label, note, base, onPlay } */
+  ui.funnelVideo = function (o) {
+    if (!o || !o.file) return null;
+    var played = false;
+    var media = h('video', {
+      class: 'fvid__player', controls: true, preload: 'none', playsinline: true,
+      poster: o.base + o.file + '.jpg', src: o.base + o.file + '.mp4', 'aria-label': o.label,
+      on: { play: function () {
+        if (played) return;
+        played = true;
+        if (o.onPlay) o.onPlay();
+      } }
+    });
+    return h('figure', { class: 'fvid' }, [
+      media,
+      h('figcaption', { class: 'fvid__caption' }, [
+        h('span', { text: o.caption })
+      ])
+    ]);
+  };
+
   SC.ui = ui;
 })(window);

@@ -373,6 +373,16 @@
     setText('heroPrimaryCta', lp.hero.primaryCta);
     setText('heroSecondaryCta', lp.hero.secondaryCta);
     setText('heroMicro', lp.hero.micro);
+    /* ③企画案内の動画（2026-10-10）。見なくても読み進められる */
+    var videoSlot = slot('heroVideo');
+    if (videoSlot) {
+      var fv = SC.copy.funnelVideo;
+      var vEl = SC.ui.funnelVideo({
+        base: fv.base, caption: fv.kikaku.caption, label: fv.kikaku.label, file: fv.kikaku.file,
+        onPlay: function () { SC.track.event('lp_video_played'); }
+      });
+      if (vEl) videoSlot.appendChild(vEl);
+    }
 
     var scoreSlot = slot('scoreSlot');
     if (scoreSlot) {

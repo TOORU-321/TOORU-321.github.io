@@ -172,8 +172,7 @@
     return h('figure', { class: 'dlp-video' }, [
       video,
       h('figcaption', { class: 'dlp-video__caption' }, [
-        h('span', { text: v.caption }),
-        h('small', { class: 'dlp-video__note', text: v.note })
+        h('span', { text: v.caption })
       ])
     ]);
   }

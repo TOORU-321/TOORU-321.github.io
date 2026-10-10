@@ -864,7 +864,7 @@ html {
 }
 
 /* 紹介動画（2026-10-10） */
-.dlp-video { margin: 26px 0 0; max-width: 560px; }
+.dlp-video { margin: 26px auto 0; max-width: 560px; text-align: center; }
 .dlp-video__player { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; background: #090c12;
   border: 1px solid rgba(227, 195, 129, .35); box-shadow: 0 10px 30px rgba(0, 0, 0, .45); }
 .dlp-video__caption { margin-top: 9px; font-size: .8rem; line-height: 1.7; opacity: .9; }
