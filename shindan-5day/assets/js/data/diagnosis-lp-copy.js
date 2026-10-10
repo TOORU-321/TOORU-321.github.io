@@ -41,6 +41,15 @@
       body: '講座・教室・個別指導・サポートを届ける方へ。準備中でも大丈夫。\n21問で、最初に見直す場所を探してみませんか。',
       facts: ['全21問・5択', '約3分', '無料', 'スマホで完結'],
       ctaNote: '簡易結果は診断後すぐに表示されます。詳しい結果はLINEで受け取れます。',
+      /* 2026-10-10 とーる指示：紹介動画（①診断紹介・約1分）を冒頭に置く。簡易LP（shindan-entry）と同じ動画。
+       * 動画はサイト側 /assets/videos/ に置いてある（作業フォルダ shindan-videos/v01-shindan）。 */
+      video: {
+        src: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.mp4',
+        poster: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.jpg',
+        caption: '1分でわかる、この診断のこと',
+        note: '※本人の声を学習したAI音声で制作しています',
+        label: 'この診断の紹介動画（約1分）'
+      },
       /* 2026-08-25 とーる指示：画像は前に出さず、背景へうっすら敷く。
        * 装飾として置くので、読み上げ対象からは外す（意味は本文が持つ）。 */
       background: {

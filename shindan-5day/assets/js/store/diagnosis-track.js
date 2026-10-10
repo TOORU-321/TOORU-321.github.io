@@ -41,6 +41,8 @@
     'diagnosis_lp_view',
     'diagnosis_lp_cta_click',
     'diagnosis_lp_faq_opened',
+    /* 紹介動画を再生した（2026-10-10・1回だけ） */
+    'diagnosis_lp_video_play',
     /* 診断のはじめかた（2026-08-24 とーる指示で追加した画面） */
     'diagnosis_intro_view',
     'diagnosis_intro_step',

@@ -28,6 +28,7 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 .hero{background:#1c2928;color:white;position:relative;isolation:isolate;overflow:hidden}.hero>img{position:absolute;inset:0;height:100%;z-index:-2;object-position:70% 40%}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,30,28,.96),rgba(16,30,28,.86) 35%,rgba(16,30,28,.25) 75%);z-index:-1}
 .hero .wrap{padding:66px 0 60px}.eyebrow{font-size:.8rem;letter-spacing:.08em;color:var(--gold);margin-bottom:24px}.hero h1{font-size:clamp(2rem,4.2vw,3.6rem);letter-spacing:.025em}.hero h1 em{font-style:normal;color:var(--gold)}.intro{max-width:31em;font-size:.9rem;margin:24px 0;color:#f0f0e7}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px;padding:0;list-style:none}.facts li{border:1px solid #84968d;border-radius:4px;padding:3px 11px;font-size:.78rem}
+.intro-video{margin:28px 0 0;max-width:560px}.intro-video video{display:block;width:100%;aspect-ratio:16/9;border-radius:10px;background:#0b1210;box-shadow:0 10px 30px #0006;border:1px solid rgba(227,195,129,.35)}.intro-video figcaption{margin-top:9px;font-size:.78rem;color:#e0e7e0;line-height:1.7}.intro-video small{display:block;font-size:.68rem;color:#b9c4bb}
 .cta{display:inline-flex;justify-content:center;align-items:center;gap:24px;min-height:58px;padding:15px 25px;text-decoration:none;background:var(--gold);color:#20352d;font-weight:700;border-radius:5px;font-size:1rem;box-shadow:0 4px 0 #0002;line-height:1.6}.cta:hover{background:#f1dba9}.arrow{font-size:1.3em}.receive{font-size:.75rem;margin-top:15px;line-height:1.8;max-width:34em;color:#e0e7e0}
 .section{padding:55px 0}.kicker{font-size:.7rem;letter-spacing:.16em;color:var(--muted);margin-bottom:10px}.section h2,.last h2{font-size:clamp(1.55rem,3vw,2.15rem)}.empathy{text-align:center}.moments{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:28px 0}.moment{padding:8px 16px 20px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--muted)}.moment span{display:block;color:#8b7560;font-size:.72rem;letter-spacing:.15em;margin-bottom:8px}.moment strong{display:block;color:var(--ink);font-size:1.08rem;margin-top:5px}.pivot{font-size:.95rem}.pivot strong{background:linear-gradient(transparent 60%,#e8dcb4 60%);font-size:1.12rem}
 .result{background:#e9eee7}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}.copy{margin:17px 0;color:var(--muted);font-size:.9rem}.axes{display:flex;gap:7px;flex-wrap:wrap;margin:20px 0;padding:0;list-style:none}.axes li{background:#f9faf5;border:1px solid #d2dccf;padding:4px 10px;border-radius:4px;font-size:.75rem}
@@ -57,6 +58,7 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
   .hero .facts{animation-delay:.52s}
   .hero .cta{animation-delay:.64s}
   .hero .receive{animation-delay:.76s}
+  .hero .intro-video{animation-delay:.88s}
   /* スクロール：画面に入るまで伏せておく。★この並びは下のscriptのSELと同じにする。
      ★:where() で囲うのには二つ理由がある。
        1. 囲わずにカンマで並べると、先頭の html.js が最初のひとつにしか掛からない。
@@ -92,6 +94,12 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 <ul class="facts" aria-label="診断の概要"><li>全21問・5択</li><li>約3分</li><li>無料</li><li>スマホで完結</li></ul>
 <a class="cta" href="../shindan-5day/shindan-intro.html">無料で診断する（約3分）<span class="arrow" aria-hidden="true">→</span></a>
 <p class="receive">簡易結果は診断後すぐに表示。<br>詳しい結果は、LINEで友だち追加して受け取れます。</p>
+<figure class="intro-video">
+<video controls playsinline preload="none" poster="../assets/videos/shindan-intro-v1.jpg" aria-label="この診断の紹介動画（約1分）">
+<source src="../assets/videos/shindan-intro-v1.mp4" type="video/mp4">
+</video>
+<figcaption>1分でわかる、この診断のこと<small>※本人の声を学習したAI音声で制作しています</small></figcaption>
+</figure>
 </div>
 </section>
 <section class="section empathy wrap" aria-labelledby="empathy-heading">

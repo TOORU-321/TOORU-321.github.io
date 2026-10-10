@@ -150,7 +150,30 @@
         h('ul', { class: 'dlp-facts' }, copy.facts.map(function (t) {
           return h('li', { class: 'dlp-facts__item', text: t });
         })),
-        cta('hero', copy.ctaNote)
+        cta('hero', copy.ctaNote),
+        heroVideo(copy.video)
+      ])
+    ]);
+  }
+
+  /* 紹介動画（2026-10-10）。自動再生はしない。押したら再生、の1回だけ計測する */
+  function heroVideo(v) {
+    if (!v || !v.src) return null;
+    var video = h('video', {
+      class: 'dlp-video__player', controls: '', playsinline: '', preload: 'none',
+      poster: v.poster, 'aria-label': v.label
+    }, [h('source', { src: v.src, type: 'video/mp4' })]);
+    var played = false;
+    video.addEventListener('play', function () {
+      if (played) return;
+      played = true;
+      track('diagnosis_lp_video_play');
+    });
+    return h('figure', { class: 'dlp-video' }, [
+      video,
+      h('figcaption', { class: 'dlp-video__caption' }, [
+        h('span', { text: v.caption }),
+        h('small', { class: 'dlp-video__note', text: v.note })
       ])
     ]);
   }
