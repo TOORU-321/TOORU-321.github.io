@@ -1715,8 +1715,8 @@ a{text-decoration:none}
   .ca-date{color:#9a958a;font-size:12px;margin-bottom:8px}
   .ca-title{font-family:var(--mincho,serif);color:#f5efe0;font-size:22px;font-weight:700;line-height:1.55;margin:0 0 18px;letter-spacing:.02em}
   .ca-hero{width:100%;border-radius:12px;margin:0 0 20px}
-  .ca-body{font-size:15px;line-height:1.95;color:#e4e0d5}
-  .ca-body p{margin:0 0 1.4em}
+  .ca-body{font-size:16px;line-height:2.05;letter-spacing:.015em;color:#e4e0d5}
+  .ca-body p{margin:0 0 2.5em}
   .ca-body blockquote{margin:.25em 0 1.5em;padding:14px 15px;border-left:3px solid var(--gold,#b89555);border-radius:0 9px 9px 0;background:rgba(227,195,129,.08);color:#f1eadb}
   .ca-body ul,.ca-body ol{margin:.2em 0 1.5em;padding-left:1.55em}
   .ca-body li{margin:.35em 0;line-height:1.85}
@@ -2208,7 +2208,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.5.7";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.5.8";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
