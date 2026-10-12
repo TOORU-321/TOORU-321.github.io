@@ -919,6 +919,14 @@
       _checkout = await _stripe.initEmbeddedCheckout({
         clientSecret: r.client_secret,
         onComplete: function(){
+          /* 2026-10-12：決済が終わったら、すぐにアップセルのページ（継続サポートのご案内）へ移る。
+           * 会員の反映（sync_purchase）は移った先のページが開いた時点で済ませる。
+           * 「いいえ、一旦大丈夫です」でアプリへ進める。 */
+          if (_lastSessionId) {
+            location.href = 'elabo-plus-oto.html?sid=' + encodeURIComponent(_lastSessionId)
+              + (PREFILL_EMAIL ? ('&email=' + encodeURIComponent(PREFILL_EMAIL)) : '');
+            return;
+          }
           cont.style.display = 'none';
           done.style.display = 'block';
           document.getElementById('syncOk').style.display = 'none';
