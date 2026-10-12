@@ -55,6 +55,13 @@
           improvementOperation: 'shindan-result-E-v2'
         }
       },
+      /* ⑤オファー前（5日間完走後の「次の一歩」ページ）2026-10-12。
+       * ページに出る案内（kind）に合わせて1本だけ出す：course→learn／consult・fallback→consult／それ以外→self */
+      offer: {
+        caption: '5日間を終えたあなたへ（約1分）',
+        label: '5日間完走後のご案内動画（約1分）',
+        files: { learn: 'shindan-offer-learn-v1', consult: 'shindan-offer-consult-v1', self: 'shindan-offer-self-v1' }
+      },
       kikaku: {
         caption: '1分半でわかる、この5日間のこと',
         label: 'SNS事業の一本線 5DAYの案内動画（約1分半）',

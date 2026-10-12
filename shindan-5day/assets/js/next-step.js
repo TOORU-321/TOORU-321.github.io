@@ -89,6 +89,14 @@
       var supportCard = SC.ui.card(null, [
         h('p', { class: 'offer-view__eyebrow', text: view.eyebrow }),
         h('h2', { class: 'offer-view__title', text: offerCopy.title }),
+        /* ⑤オファー前の動画（2026-10-12）。案内の種類に合わせて1本だけ。見なくても先へ進める */
+        (function () {
+          var fv = SC.copy.funnelVideo, which = kind === 'course' ? 'learn' : (kind === 'consult' || kind === 'fallback') ? 'consult' : 'self';
+          return SC.ui.funnelVideo({
+            base: fv.base, caption: fv.offer.caption, label: fv.offer.label, file: fv.offer.files[which],
+            onPlay: function () { SC.track.event('offer_video_played', { mode: rec.mode, contentType: which }); }
+          });
+        })(),
         h('p', { class: 'offer-view__reason', text: offerCopy.reason }),
         offerCopy.name ? h('div', { class: 'offer-view__product' }, [
           h('img', { class: 'offer-view__photo', src: 'assets/images/challenge-planning-woman-dark-v1.jpg', alt: '', width: 1536, height: 1024, loading: 'lazy' }),
