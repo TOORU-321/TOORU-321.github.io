@@ -60,7 +60,10 @@
       offer: {
         caption: '5日間を終えたあなたへ（約1分）',
         label: '5日間完走後のご案内動画（約1分）',
-        files: { learn: 'shindan-offer-learn-v1', consult: 'shindan-offer-consult-v1', self: 'shindan-offer-self-v1' }
+        files: { learn: 'shindan-offer-learn-v1', consult: 'shindan-offer-consult-v1', self: 'shindan-offer-self-v1',
+                 funnel: 'shindan-offer-funnel-v1', member: 'shindan-offer-member-v1' },
+        /* 講座のオファーごとに、どの本編を出すか（無ければ learn＝商品設計講座） */
+        byOffer: { course_sales_journey: 'funnel', sub_growth_environment: 'member', sub_improvement_operation: 'member' }
       },
       kikaku: {
         caption: '1分半でわかる、この5日間のこと',
@@ -1259,6 +1262,21 @@
       reason: '「相談しながら進める」を選んだ方へのご案内です。診断の点数だけで、プランや参加の可否を決めるものではありません。',
       facts: ['有料の継続サポート', '内容・料金を先に確認', '参加前のZoom審査は必須'],
       next: '内容・料金・契約条件を確認し、希望する場合は参加審査の予約へ進みます。文章だけで質問する窓口ではありません。' },
+    /* オファーごとの案内文（2026-10-12）。無ければ kind の案内文を使う */
+    byOffer: {
+      course_sales_journey: { title: '並べた導線を、\n動く順番に設計し直そう。', name: 'ファネル設計\n完全マスター講座',
+        reason: '「講座で学ぶ」を選んだ方へ。診断で最初に整えたい場所が「届ける流れ」だったことをもとに、ご案内しています。',
+        facts: ['オンデマンド', '買い切り', '内容・価格を先に確認'],
+        next: '次のページで講座の内容と価格を確認できます。このボタンだけで購入にはなりません。' },
+      sub_growth_environment: { title: '一人で止まらず、\n学び続けられる場所を。', name: '会員制の学びの場\n（月額）',
+        reason: '「講座で学ぶ」を選んだ方へ。診断で最初に整えたい場所が「学び・相談環境」だったことをもとに、ご案内しています。',
+        facts: ['講義アーカイブ', 'ライブの勉強会', '内容・料金を先に確認'],
+        next: '次のページで内容と料金を確認できます。このボタンだけで申し込みにはなりません。' },
+      sub_improvement_operation: { title: '小さく試して、\n直し続けられる場所を。', name: '会員制の学びの場\n（月額）',
+        reason: '「講座で学ぶ」を選んだ方へ。診断で最初に整えたい場所が「育てる力」だったことをもとに、ご案内しています。',
+        facts: ['講義アーカイブ', 'ライブの勉強会', '内容・料金を先に確認'],
+        next: '次のページで内容と料金を確認できます。このボタンだけで申し込みにはなりません。' }
+    },
     self: { title: 'まずは、この一枚を\n自分のペースで試そう。',
       reason: '「自分で進める」を選んだあなたへ。新しい教材を増やさず、決めた30日実験から始められます。',
       steps: ['決めたことを、一つ試す', '選んだ反応を、確かめる', '振り返る日に、一か所見直す'] },

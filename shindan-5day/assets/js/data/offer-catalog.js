@@ -118,15 +118,63 @@
             + '全6本・約30分のオンデマンドで、内容と価格はページで確認できます。',
         ctaLabel: '講座の内容を見る',
         url: 'https://columns.l-mine.com/course-hajimete-shohin-letter.html'
+      },
+
+      /* --- learn：届ける流れ（salesJourney）→「ファネル設計完全マスター講座」（2026-10-12 とーる決定）
+       * 軸のテーマ「SNSからLINE、商品までの順番」そのものの講座。
+       * 期限は商品設計講座と同じ「DAY5を終えた時刻から72時間」。特別価格8,800円（Stripe price_1UPgCJDffCAQquMFQhxsITlv）。
+       * 期限切れ・期限不明のときは、案内ページが通常価格のページ（course-funnel.html）へ移す。 */
+      {
+        id: 'course_sales_journey',
+        courseId: 'course_funnel',
+        mode: 'learn',
+        axis: 'salesJourney',
+        contentType: 'course',
+        deadlineFromDay5: true,
+        heading: '届ける流れから整えたい方へ',
+        body: '5日間で並べた「知ってもらう入口から必要な支援まで」を、お客様の心が実際に動く順番へ設計し直す講座です。'
+            + '内容と価格はページで確認できます。',
+        ctaLabel: '講座の内容を見る',
+        url: 'https://columns.l-mine.com/course-funnel-letter.html'
+      },
+
+      /* --- learn：学び・相談環境（growthEnvironment）／育てる力（improvementOperation）
+       *   → 会員制の学びの場（月額のサブスク）（2026-10-12 とーる決定）
+       * 軸のテーマ「一人で止まらず継続する環境」「小さく改善を続ける」に合う。
+       * 通常価格・期限なし（割引の演出はしない）。継続サポート（consult）とは別の、手軽な選択肢。 */
+      {
+        id: 'sub_growth_environment',
+        courseId: 'sub_member',
+        mode: 'learn',
+        axis: 'growthEnvironment',
+        contentType: 'course',
+        heading: '一人で止まらず、学び続けたい方へ',
+        body: '講義のアーカイブやライブの勉強会に、月額で参加し続けられる会員制の学びの場です。'
+            + '内容と料金はページで確認できます。',
+        ctaLabel: '会員の内容を見る',
+        url: 'https://columns.l-mine.com/elabo-plus-join.html'
+      },
+      {
+        id: 'sub_improvement_operation',
+        courseId: 'sub_member',
+        mode: 'learn',
+        axis: 'improvementOperation',
+        contentType: 'course',
+        heading: '小さく試して、直し続けたい方へ',
+        body: '講義のアーカイブやライブの勉強会に、月額で参加し続けられる会員制の学びの場です。'
+            + '30日実験で迷ったときに、考え方へ戻れる場所として使えます。内容と料金はページで確認できます。',
+        ctaLabel: '会員の内容を見る',
+        url: 'https://columns.l-mine.com/elabo-plus-join.html'
       }
 
       /* ★お客様理解（customerInsight）は、現ラインナップに対応講座が無い。
        *   「はじめての集客商品デザイン講座」は内容を確認したところ、
        *   商品の分解と発信からの導線設計が主で、顧客の場面・感情の理解では
        *   なかった（§66の調査結果）。タイトルの近さで登録しない。
-       * ★届ける流れ（salesJourney）は対応講座が未完成のため登録しない。
+       * ★届ける流れ（salesJourney）は2026-10-12にファネル講座を登録した（上）。
        * ★学び・相談環境／育てる力は、最低軸を理由にL-MINEへ自動接続しない。
        *   進み方（supportMode）で決まる上の consult がその役割を持つ。
+       *   2026-10-12：「講座で学ぶ」を選んだ人には、会員制の学びの場（上）を案内する。
        */
     ],
 
@@ -144,6 +192,13 @@
         title: 'はじめての商品設計デザイン講座',
         summary: '誰に、どんな価値を届ける商品なのかを組み立て直します。',
         url: 'https://columns.l-mine.com/course-hajimete-shohin.html'
+      },
+      {
+        id: 'course_funnel',
+        axis: 'salesJourney',
+        title: 'ファネル設計完全マスター講座',
+        summary: 'お客様の心が動く順番で、発信から申し込みまでを設計します。',
+        url: 'https://columns.l-mine.com/course-funnel.html'
       },
       {
         id: 'course_shukyaku',

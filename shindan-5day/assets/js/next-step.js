@@ -82,7 +82,7 @@
       var view = SC.offerViewCopy;
       var kind = rec.fallbackFromCourse ? 'fallback' : rec.contentType === 'course' ? 'course' : rec.contentType === 'consultation' ? 'consult' : rec.mode === 'self' ? 'self' :
         (SC.offers.findOffer(rec.mode, d.lowestAxis) ? 'invalid' : 'pending');
-      var offerCopy = view[kind];
+      var offerCopy = (view.byOffer && rec.offerId && view.byOffer[rec.offerId]) || view[kind];
       function backToExperiment() {
         global.location.href = 'index.html?view=experiment#/day5-done';
       }
@@ -91,7 +91,8 @@
         h('h2', { class: 'offer-view__title', text: offerCopy.title }),
         /* ⑤オファー前の動画（2026-10-12）。案内の種類に合わせて1本だけ。見なくても先へ進める */
         (function () {
-          var fv = SC.copy.funnelVideo, which = kind === 'course' ? 'learn' : (kind === 'consult' || kind === 'fallback') ? 'consult' : 'self';
+          var fv = SC.copy.funnelVideo, which = kind === 'course' ? ((fv.offer.byOffer && fv.offer.byOffer[rec.offerId]) || 'learn')
+            : (kind === 'consult' || kind === 'fallback') ? 'consult' : 'self';
           return SC.ui.funnelVideo({
             base: fv.base, caption: fv.offer.caption, label: fv.offer.label, file: fv.offer.files[which],
             onPlay: function () { SC.track.event('offer_video_played', { mode: rec.mode, contentType: which }); }
