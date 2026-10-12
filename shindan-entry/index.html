@@ -172,19 +172,30 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
 
   root.classList.add('js');                      // ここで初めてCSSが伏せる
   var SEL = '.section>.kicker,.section h2,.moment,.pivot,.pivot strong,.result-grid>div:not(.sample)>*,.sample,.author .wrap>*,.last>*';                           // ★上のCSSと同じ並びにすること
-  var appeared = false;
+  var suspect = false;
 
   function show() {                              // 伏せているものを全部見せる
     var all = d.querySelectorAll(SEL);
     for (var i = 0; i < all.length; i++) all[i].classList.add('sc-in');
   }
 
-  // 保険。数秒たっても一度も出ていなければ、そのとき全部見せる。
-  // ただし画面が裏なら、誰も見ていないので待ち直す（表に戻ればいつも通り出る）。
+  // 保険。画面に入っているのに伏せたままの文字が、2回続けて見つかったときだけ全部見せる。
+  // ★以前は「4秒たって一度も出ていなければ全部見せる」だったが、冒頭に動画を置いてからは
+  //   動画を見ている間に4秒たってしまい、スクロールした時にはもう全部出ていた（2026-10-12修正）。
+  // 画面が裏なら、誰も見ていないので待ち直す。
   function guard() {
-    if (appeared) return;
     if (d.visibilityState === 'hidden') { setTimeout(guard, 2000); return; }
-    show();
+    var all = d.querySelectorAll(SEL), h = window.innerHeight || root.clientHeight, left = 0, stuck = false;
+    for (var i = 0; i < all.length; i++) {
+      if (all[i].classList.contains('sc-in')) continue;
+      left++;
+      var r = all[i].getBoundingClientRect();
+      if (r.top < h * 0.8 && r.bottom > 0) stuck = true;
+    }
+    if (!left) return;                           // 全部出たら見張り終わり
+    if (stuck && suspect) { show(); return; }    // 見張りが効いていない
+    suspect = stuck;
+    setTimeout(guard, 1500);
   }
   setTimeout(guard, 4000);
 
@@ -193,7 +204,6 @@ a{color:inherit}a:focus-visible{outline:3px solid #bd791c;outline-offset:5px}h1,
       var io = new IntersectionObserver(function (rows) {
         for (var i = 0; i < rows.length; i++) {
           if (!rows[i].isIntersecting) continue;
-          appeared = true;
           rows[i].target.classList.add('sc-in'); // 一度出したら戻さない
           io.unobserve(rows[i].target);
         }
