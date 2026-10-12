@@ -59,6 +59,8 @@
     'handoff_copy_failed',
     /* 2026-09-01：結果画面からLINEの友だち追加へ進んだ（uidは載せない） */
     'handoff_line_opened',
+    /* 2026-10-12：パソコンの人に、QR・手順・入力する文字を出した */
+    'handoff_pc_guide_shown',
     'handoff_restore_view',
     'handoff_clipboard_attempted',
     'handoff_clipboard_succeeded',

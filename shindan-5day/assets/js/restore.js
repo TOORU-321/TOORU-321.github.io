@@ -167,6 +167,7 @@
 
     var manualArea = h('div', { class: 'dg-handoff__manual', hidden: !errorMessage }, [
       h('label', { class: 'dg-handoff__manual-label', for: 'dg-paste', text: c().restoreInputLabel }),
+      h('p', { class: 'dg-handoff__note dg-handoff__pcnote', text: c().restorePcNote }),
       field,
       status,
       h('div', { class: 'dg-nav dg-nav--single' }, [manualCta])

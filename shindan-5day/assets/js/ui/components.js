@@ -28,6 +28,20 @@
     reset: function () { played = {}; }
   };
 
+  /* --- 端末の判定（2026-10-12 とーる指示）-------------------------------
+   * パソコンで診断すると、詳しい結果（LINE）をスマホで開くときに引き継ぎの手間が増える。
+   * パソコンの人にだけ「スマホがおすすめ」や手順を添えるための判定。
+   * ★スマホ・タブレット・LINEの中は false。判断がつかない端末も false（案内を出さない側へ倒す）。 */
+  SC.device = {
+    isDesktop: function () {
+      var nav = global.navigator || {};
+      var ua = nav.userAgent || '';
+      if (/iPhone|iPad|iPod|Android|Mobile|Line\//i.test(ua)) return false;
+      if (/Macintosh/.test(ua) && nav.maxTouchPoints > 1) return false;   /* iPadOS */
+      return !!(global.matchMedia && global.matchMedia('(hover: hover) and (pointer: fine)').matches);
+    }
+  };
+
   /* 数字が0から目標値まで増える動き。
      最初から最終値を入れておき、動かせるときだけ0から数え上げる。
      （描画が止まる環境でも数字が欠けない） */

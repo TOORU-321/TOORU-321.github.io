@@ -97,6 +97,19 @@
     handoffKeepShort: 'お急ぎください。あと{time}です。',
     handoffCopyFailed: '自動で用意できませんでした。下の内容を長押しでコピーしてから、LINEへ進んでください。',
     handoffManualLabel: '引き継ぐ内容',
+    /* パソコンで診断した人だけに出す手順（2026-10-12 とーる指示）。
+     * パソコンでコピーした内容はスマホから読めないので、文字を見せて手で入れてもらう。 */
+    handoffPcHeading: 'パソコンで診断された方へ',
+    handoffPcSteps: [
+      '① 下のQRコードをスマホのカメラで読み取り、LINEで友だち追加します。',
+      '② 届いたメッセージから、詳しい結果のページを開きます。',
+      '③ スマホで「コピーした内容から結果を開く」を押し、出てきた欄に下の文字を入力します。'
+    ],
+    handoffPcKeyLabel: 'スマホで入力する文字',
+    handoffPcKeyNote: '小文字・ハイフンなしで入力しても大丈夫です。このページは、入力が終わるまで開いたままにしてください。',
+    handoffPcQrAlt: 'LINEの友だち追加を開くQRコード',
+    handoffPcQr: 'assets/images/qr-line-add.png',
+    handoffPcLink: 'QRコードが読み取れない方はこちら',
     handoffExpired: '時間が経ったので、もう一度用意し直します。',
     handoffRetry: 'もう一度用意する',
     handoffSaving: '結果を保存しています…',
@@ -135,6 +148,8 @@
     restoreHeading: '先ほどの診断結果を復元します',
     restoreBody: '自動で見つからない場合は、診断後にコピーした内容をここへ貼り付けてください。',
     restoreInputLabel: '診断結果を貼り付ける',
+    /* パソコンで診断した人向けの一言（2026-10-12）。スマホ側では出どころが分からないので常に出す */
+    restorePcNote: 'パソコンで診断した方は、パソコンの画面に出ている「L5-」から始まる文字を、この欄に入力してください。',
     restoreCta: '先ほどの診断結果を復元する',
     restoreConfirmHeading: '診断結果が見つかりました',
     restoreConfirmBody: 'この診断結果を、こちらへ引き継ぎます。',

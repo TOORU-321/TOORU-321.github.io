@@ -151,7 +151,21 @@
           return h('li', { class: 'dlp-facts__item', text: t });
         })),
         cta('hero', copy.ctaNote),
+        pcNote(copy.pcNote),
         heroVideo(copy.video)
+      ])
+    ]);
+  }
+
+  /* パソコンで開いた人にだけ出す「スマホがおすすめ」（2026-10-12）。スマホ・LINE内では出さない */
+  function pcNote(n) {
+    if (!n || !SC.device || !SC.device.isDesktop()) return null;
+    return h('aside', { class: 'dlp-pcnote', 'aria-label': n.title }, [
+      h('img', { class: 'dlp-pcnote__qr', src: n.qr, alt: n.qrAlt, width: '112', height: '112' }),
+      h('div', { class: 'dlp-pcnote__text' }, [
+        h('strong', { class: 'dlp-pcnote__title', text: n.title }),
+        h('p', { class: 'dlp-pcnote__body', text: n.body }),
+        h('small', { class: 'dlp-pcnote__small', text: n.small })
       ])
     ]);
   }

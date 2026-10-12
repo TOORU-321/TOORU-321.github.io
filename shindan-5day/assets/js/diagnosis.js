@@ -540,6 +540,15 @@
 
     function showLineCta(needsManualCopy) {
       SC.dom.clear(lineBox);
+      /* パソコンの人には、ボタンの代わりにQRと手順と文字を出す（2026-10-12） */
+      if (SC.device && SC.device.isDesktop()) {
+        SC.dom.clear(manual);
+        manual.hidden = true;
+        SC.dom.append(lineBox, pcGuide(key));
+        lineBox.hidden = false;
+        track('handoff_pc_guide_shown');
+        return;
+      }
       SC.dom.append(lineBox, [
         needsManualCopy
           ? h('p', { class: 'dg-handoff__note', text: c().handoffLineAfterCopy })
@@ -640,6 +649,32 @@
       status,
       manual,
       lineBox
+    ]);
+  }
+
+  /* パソコンで診断した人のための手順（2026-10-12 とーる指示）。
+   * パソコンでコピーした内容はスマホのLINEから読めないため、文字を見せて手で入れてもらう。
+   * ★文字（平文）を見せるのは manualBox と同じく画面だけ。URL・ログ・計測へは出さない（依頼8） */
+  function pcGuide(key) {
+    return h('div', { class: 'dg-pcguide' }, [
+      h('p', { class: 'dg-pcguide__title', text: c().handoffPcHeading }),
+      h('ol', { class: 'dg-pcguide__steps' }, c().handoffPcSteps.map(function (t) {
+        return h('li', { text: t });
+      })),
+      h('div', { class: 'dg-pcguide__row' }, [
+        h('img', { class: 'dg-pcguide__qr', src: c().handoffPcQr, alt: c().handoffPcQrAlt, width: '150', height: '150' }),
+        h('div', { class: 'dg-pcguide__keybox' }, [
+          h('p', { class: 'dg-handoff__manual-label', text: c().handoffPcKeyLabel }),
+          h('p', { class: 'dg-pcguide__key', text: key }),
+          h('p', { class: 'dg-pcguide__note', text: c().handoffPcKeyNote })
+        ])
+      ]),
+      h('a', {
+        class: 'dg-pcguide__link', href: SC.endpoints.lineAddFriend, rel: 'noreferrer', target: '_blank',
+        on: { click: function () { track('handoff_line_opened'); } }
+      }, c().handoffPcLink),
+      h('div', { class: 'dg-handoff__already' },
+        SC.dom.lines(c().handoffLineAlreadyFriend, 'dg-handoff__already-line'))
     ]);
   }
 

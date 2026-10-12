@@ -475,3 +475,20 @@
   outline: 2px solid var(--dg-accent, #c9a44c);
   outline-offset: 2px;
 }
+
+/* パソコンで診断した人のための手順（2026-10-12 とーる指示） */
+.dg-pcguide { margin: 4px 0 0; }
+.dg-pcguide__title { margin: 0 0 8px; font-size: 16px; font-weight: 700; color: var(--gold-2); }
+.dg-pcguide__steps { margin: 0 0 14px; padding: 0; list-style: none; font-size: 14px; line-height: 1.85; color: var(--ink); }
+.dg-pcguide__row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.dg-pcguide__qr { flex: none; width: 150px; height: 150px; border-radius: 8px; background: #fff; }
+.dg-pcguide__keybox { flex: 1 1 240px; min-width: 0; }
+.dg-pcguide__key {
+  margin: 0; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 12px;
+  background: var(--lm-surface-3); color: var(--ink);
+  font-family: Consolas, "Courier New", monospace; font-size: 21px; font-weight: 700;
+  letter-spacing: .08em; line-height: 1.5; word-break: break-all; user-select: all;
+}
+.dg-pcguide__note { margin: 8px 0 0; font-size: 13px; line-height: 1.75; color: var(--ink-soft); }
+.dg-pcguide__link { display: inline-block; margin: 14px 0 0; font-size: 13px; color: var(--ink-soft); text-underline-offset: 4px; }
+.dg-handoff__pcnote { margin: 0 0 8px; font-size: 13px; }
