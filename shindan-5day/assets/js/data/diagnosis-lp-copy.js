@@ -44,8 +44,8 @@
       /* 2026-10-10 とーる指示：紹介動画（①診断紹介・約1分）を冒頭に置く。簡易LP（shindan-entry）と同じ動画。
        * 動画はサイト側 /assets/videos/ に置いてある（作業フォルダ shindan-videos/v01-shindan）。 */
       video: {
-        src: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.mp4',
-        poster: 'https://columns.l-mine.com/assets/videos/shindan-intro-v1.jpg',
+        src: 'https://columns.l-mine.com/assets/videos/shindan-intro-v2.mp4',
+        poster: 'https://columns.l-mine.com/assets/videos/shindan-intro-v2.jpg',
         caption: '1分でわかる、この診断のこと',
         label: 'この診断の紹介動画（約1分）'
       },

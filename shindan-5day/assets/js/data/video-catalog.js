@@ -15,7 +15,7 @@
   var SC = (global.SC = global.SC || {});
 
   /* 台本の版。Notionの台本を直したら上げる */
-  var SCRIPT_VERSION = '41-2026-08-23';
+  var SCRIPT_VERSION = '41-2026-10-12';   /* 2026-10-12：DAY4の家電の一言をとーる指示で言い換え */
 
   var videos = {
     day1: {
@@ -24,11 +24,11 @@
       title: '今直す場所を一つ決める',
       /* 想定尺（§41-D）。実素材が届いたら durationLabel を入れる */
       plannedDurationLabel: '1分55秒〜2分05秒',
-      durationLabel: null,
-      videoUrl: null,
-      posterUrl: null,
+      durationLabel: '1分41秒',
+      videoUrl: 'https://columns.l-mine.com/assets/videos/shindan-day1-v1.mp4',
+      posterUrl: 'https://columns.l-mine.com/assets/videos/shindan-day1-v1.jpg',
       captionUrl: null,
-      isAvailable: false,
+      isAvailable: true,   /* 2026-10-12 動画公開（shindan-videos/v04-day1） */
       transcript: [
         { at: 0, label: 'つかみ', text: 'どーも！とーるです！\n今日から5日間、一本線を作っていきます。一本線といっても、書道大会ではありません。字が震えても減点はないので安心してください（笑）。' },
         { at: 10, label: '今日やること', text: 'DAY1でやるのは、今直す場所を一つ決めて、今週はいったん触らないものを一つ選ぶことです。' },
@@ -44,11 +44,11 @@
       scriptVersion: SCRIPT_VERSION,
       title: 'ひとりのお客様を見つける',
       plannedDurationLabel: '1分50秒〜2分',
-      durationLabel: null,
-      videoUrl: null,
-      posterUrl: null,
+      durationLabel: '1分33秒',
+      videoUrl: 'https://columns.l-mine.com/assets/videos/shindan-day2-v1.mp4',
+      posterUrl: 'https://columns.l-mine.com/assets/videos/shindan-day2-v1.jpg',
       captionUrl: null,
-      isAvailable: false,
+      isAvailable: true,   /* 2026-10-12 動画公開（shindan-videos/v04-day2） */
       transcript: [
         { at: 0, label: 'つかみ', text: 'どーも！とーるです！\nDAY2です。今日は「ひとりのお客様」を見つけます。「30代女性」を一人だと思うには、さすがに分身の人数が多すぎます（笑）。' },
         { at: 10, label: '今日やること', text: '今日決めるのは、ひとりのお客様が、どんな場面で、何を感じ、本当はどうなりたいのかです。' },
@@ -64,11 +64,11 @@
       scriptVersion: SCRIPT_VERSION,
       title: '届ける変化を一本の橋にする',
       plannedDurationLabel: '2分〜2分10秒',
-      durationLabel: null,
-      videoUrl: null,
-      posterUrl: null,
+      durationLabel: '1分49秒',
+      videoUrl: 'https://columns.l-mine.com/assets/videos/shindan-day3-v1.mp4',
+      posterUrl: 'https://columns.l-mine.com/assets/videos/shindan-day3-v1.jpg',
       captionUrl: null,
-      isAvailable: false,
+      isAvailable: true,   /* 2026-10-12 動画公開（shindan-videos/v04-day3） */
       /* §41-I：冒頭15秒以内に必ず伝える2点。テストで位置を確認する */
       earlyNotice: {
         withinSeconds: 15,
@@ -89,16 +89,16 @@
       scriptVersion: SCRIPT_VERSION,
       title: 'SNSから支援までを一本道にする',
       plannedDurationLabel: '2分〜2分10秒',
-      durationLabel: null,
-      videoUrl: null,
-      posterUrl: null,
+      durationLabel: '1分47秒',
+      videoUrl: 'https://columns.l-mine.com/assets/videos/shindan-day4-v1.mp4',
+      posterUrl: 'https://columns.l-mine.com/assets/videos/shindan-day4-v1.jpg',
       captionUrl: null,
-      isAvailable: false,
+      isAvailable: true,   /* 2026-10-12 動画公開（shindan-videos/v04-day4） */
       transcript: [
         { at: 0, label: 'つかみ', text: 'どーも！とーるです！\nDAY4です。今日は点を線につなぎます。SNS、LINE、動画、商品を全部並べる日ではありません。全部並べると、導線というより展示会になります（笑）。' },
         { at: 10, label: '今日やること', text: 'お客様があなたを知る入口から、必要な支援までを、迷わない順番で一本につなぎます。' },
         { at: 20, label: 'なぜ要るのか', text: '昨日は、ひとりのお客様へ届ける変化と、あなたの商品・サービスの役割を一文にしました。\n今日は、その人が「ちょっと気になる」と感じてから、「これなら進めそう」と小さく動き、必要な支援へたどり着くまでを考えます。大切なのは、ツールの数ではなく、次に何をすればよいかが見えることです。' },
-        { at: 60, label: '詰まりやすい場所の先回り', text: '途中で「理解してから試す」と「試しながら理解する」が出てきます。少し硬いので、具体例で言い換えます。\n「理解してから試す」は、投稿を見たあと、コラムや動画で考え方を知り、そのあと無料ワークを試す順番です。説明書を読んでから組み立てる人ですね。\n「試しながら理解する」は、投稿を見たあと、診断や一問ワークを先に試し、その結果を見ながら意味を理解する順番です。とりあえず触ってみて、困ってから説明書を探す人です。僕の家電はだいたいこちらです（笑）。\nどちらが正解ではありません。今思い浮かべているお客様が動きやすい方を選びます。' },
+        { at: 60, label: '詰まりやすい場所の先回り', text: '途中で「理解してから試す」と「試しながら理解する」が出てきます。少し硬いので、具体例で言い換えます。\n「理解してから試す」は、投稿を見たあと、コラムや動画で考え方を知り、そのあと無料ワークを試す順番です。説明書を読んでから組み立てる人ですね。\n「試しながら理解する」は、投稿を見たあと、診断や一問ワークを先に試し、その結果を見ながら意味を理解する順番です。とりあえず触ってみて、困ってから説明書を探す人です。僕も家電は、だいたい説明書を読まずに触る派です（笑）。\nどちらが正解ではありません。今思い浮かべているお客様が動きやすい方を選びます。' },
         { at: 105, label: '手を動かす合図', text: 'まず、知ってもらう入口を一つ選びましょう。そのあと、自分ごとになる体験、小さな行動、必要な支援をつなぎます。' },
         { at: 120, label: '終わったら手に入るもの', text: '終わるころには、発信と商品がバラバラではなく、お客様が進める一本の顧客体験として見えるようになります。' }
       ]
@@ -109,11 +109,11 @@
       scriptVersion: SCRIPT_VERSION,
       title: '30日実験を決める',
       plannedDurationLabel: '2分〜2分10秒',
-      durationLabel: null,
-      videoUrl: null,
-      posterUrl: null,
+      durationLabel: '1分45秒',
+      videoUrl: 'https://columns.l-mine.com/assets/videos/shindan-day5-v1.mp4',
+      posterUrl: 'https://columns.l-mine.com/assets/videos/shindan-day5-v1.jpg',
       captionUrl: null,
-      isAvailable: false,
+      isAvailable: true,   /* 2026-10-12 動画公開（shindan-videos/v04-day5） */
       /* §41-I：冒頭15秒以内に必ず伝える2点 */
       earlyNotice: {
         withinSeconds: 15,

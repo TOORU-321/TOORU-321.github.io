@@ -48,17 +48,17 @@
         caption: 'あなたの結果を、動画で（約1分）',
         label: '診断結果の解説動画（約1分）',
         files: {
-          customerInsight: 'shindan-result-A-v1',
-          productStructure: 'shindan-result-B-v1',
-          salesJourney: 'shindan-result-C-v1',
-          growthEnvironment: 'shindan-result-D-v1',
-          improvementOperation: 'shindan-result-E-v1'
+          customerInsight: 'shindan-result-A-v2',
+          productStructure: 'shindan-result-B-v2',
+          salesJourney: 'shindan-result-C-v2',
+          growthEnvironment: 'shindan-result-D-v2',
+          improvementOperation: 'shindan-result-E-v2'
         }
       },
       kikaku: {
         caption: '1分半でわかる、この5日間のこと',
         label: 'SNS事業の一本線 5DAYの案内動画（約1分半）',
-        file: 'shindan-kikaku-v1'
+        file: 'shindan-kikaku-v2'
       }
     },
     /* 企画の補助説明（§17-5） */
