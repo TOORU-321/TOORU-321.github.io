@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>“循環型ビジネス”を考えよう｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです。関連コラムはこちらです ➔ #27：インスタ集客マネーゲームの崩壊 ➔ #28：“便利さ”が生んだ新たな幻想 ➔ #29：SNS集客マネーゲームとAI収益化マネーゲームの共通点">

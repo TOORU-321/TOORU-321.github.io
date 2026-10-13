@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>大衆の場にある「成功法則」は、手に入れた瞬間にゴミに変わる｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="どーも、とーるです‼ 今回は、あの「論破王」ことひろゆきさんの言葉を借りて、SNS界隈に蔓延する「情報弱者の残酷な真実」、 そして背伸びをしすぎた「高額サービスの落とし穴」について、僕なりの視点でメス">

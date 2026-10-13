@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>その「5分」でファンが離れる。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="ZOOMセミナーの「待ち時間」を入り口に、フォロワー数という数字の呪縛を解き、既存顧客を最優先する濃い顧客優先タスクの本質を解説します。">

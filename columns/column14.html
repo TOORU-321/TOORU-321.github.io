@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「燃え尽きる売上」と「続けられる売上」｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="さてさてさーーーて 今回は「継続できる売上と、燃え尽きる売上の違い」についてお話します。同じ売上高でも、実はメンタルとモチベーションへの影響が全然違う って、知ってましたか？">

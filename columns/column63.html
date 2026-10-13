@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「販売」が必要なのは、マーケティングが敗北した証拠｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="ドラッカーの「マーケティングの目的は販売を不要にすること」を解剖。強引なクロージングが鮮度を削る理由と、説得を確認に変える極意を解説します。">

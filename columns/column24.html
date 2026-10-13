@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>どうすれば「正しい失敗」を積み上げられるか｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです。前回は、「リスク×リターンの4象限マップ」で“やっていい失敗”と“やっちゃダメな失敗”の見分け方を話しました。">

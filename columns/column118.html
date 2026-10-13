@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>売れた理由が分からない人は、全部変えすぎです。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="売れないと商品名も価格もLPも一気に変えてしまい、結局何が効いたのか分からなくなります。変数を一つずつ変えて検証する考え方を、ゲーム改造の話から行動経済アナリストが解説します。">

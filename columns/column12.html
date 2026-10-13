@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>僕がSNS疲れから抜け出せた理由。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="いきなりですが、 「SNSこんなに頑張ってるのに、なんで売れないんだろう…」って、思ったことありませんか？SNSを毎日更新して、ストーリーズでも顔出して、リールも編集して、、、、 プライベートまで晒し">

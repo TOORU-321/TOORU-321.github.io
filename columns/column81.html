@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「ゆとり」と「焦り」が、起業の質を決めてしまうという話｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="焦りは双曲割引で意思決定を歪め、文章にも滲む。環境が意思決定を支配するという視点から、生活を整えて余裕から始める起業の順番を解説します。">

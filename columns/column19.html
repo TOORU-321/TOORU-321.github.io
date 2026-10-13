@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>リールをバズらせた実験｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="今回は「リールバズらせる必要性はあるのか？」というテーマを切り口に、もっと大事なことをお伝えしていきます。僕は正直これまで「リールをバズらせる」ことに価値をあまり感じていませんでした。">

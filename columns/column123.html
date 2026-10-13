@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>波じゃなく、海を見る。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="遠くから見ると魅力的だけど近づくとボロが出るタイプと、地味だけど近づくと評価が上がるタイプ。この2つを知っておくと、SNS発信もマンツーマンも、少し見え方が変わります。">

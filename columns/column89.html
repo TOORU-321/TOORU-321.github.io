@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>SNSマーケに「正解」はない。あるのは「あなたがどっちのタイプか」だけ｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="SNSマーケのノウハウが矛盾して見えるのは、源流が Brunson と Hormozi の2つあるから。どちらが正しいかではなく、自分が「話すと伝わる型」か「見せて惹きつける型」か——2つのタイプと2つの戦略を、行動経済アナリストが整理します。">

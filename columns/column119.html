@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>売れている商品を真似しても、同じ商売にはならない。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="売れている商品を真似しても売れないのはなぜか。プロダクトライフサイクルとファッドの考え方から、個人ビジネスでの参入時期の見極めと「降りる力」を行動経済アナリストが解説します。">

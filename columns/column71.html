@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>誰もが断念する『動画講座』に、あなたの勝機が眠っている理由｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="最近、タイムラインを見ていると「デジャブかな？」と思うことがよくあります。2年前に流行ったものが、名前を変え、あるいは少し形を変えて、 また「最新トレンド」として現れる。">

@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>オンライン講座で作る現実的な20万円の仕組み｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="もし、 働かなくても毎月20万円 入ってきたら嬉しいですか？…まぁ、誰だって「はい！」って言いますよね。実際に、こういう甘い言葉に引っかかってしまう人は少なくないです。">

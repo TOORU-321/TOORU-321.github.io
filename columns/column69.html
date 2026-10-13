@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>SNS集客ノウハウの落とし穴について｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです！「言われた通りに投稿しているのに、1ミリも反応がない」 「高額な塾で習ったテンプレを使っているのに、全く集客できない」 「有名なマーケターのアドバイスを実践しても、商品が売れない」 そんな">

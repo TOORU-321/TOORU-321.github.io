@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「私も昔はダメでした」が、ブランドを壊すとき。見込客と顧客が聞きたいことは同じじゃない｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「失敗談を見せると親近感が湧く」——でも、それが逆効果になる相手もいます。見込客と既存顧客では&quot;聞きたいこと&quot;が違う。参照点依存性と期待不一致から、発信・商品・売った後の関係が噛み合うブランドの作り方を整理します。">

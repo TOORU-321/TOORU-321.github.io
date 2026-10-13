@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>テーブル空いてるのに、なんで案内してくれないの？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="テーブルが空いているのに、なぜ飲食店はすぐ案内しないのか。回すのが上手い店の判断から、提供キャパと集客の優先順位を行動経済アナリストが解説します。">

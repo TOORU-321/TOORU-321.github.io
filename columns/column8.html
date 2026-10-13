@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>インスタをガチらなくても収益が出る話｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="今日は「自分に合ったスタイル」についてのお話をします。SNS、特にInstagramを見ていると── 「インスタをちゃんと運用しないと売れないよ」 「ストーリーで毎日発信しないと忘れられるよ」 「リー">

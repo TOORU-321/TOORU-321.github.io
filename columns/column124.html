@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>AIで100投稿作れるようになって、あなたじゃなくてもよくなった。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="AIに頼めば、投稿ネタも本文もキャプションも一瞬で100個出てきます。でも、その100投稿、本当にあなたが書く必要ありますか？量産できる時代に、発信者に残る価値はどこにあるのかを考えます。">

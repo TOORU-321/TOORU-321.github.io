@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>答えは合っている。でも、次は解けない。「答え」ばかり集める人が、問題が変わると手が止まる理由｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「2＋2＝4cm²」は答えは合っても、問題が変われば解けない。SNSで「毎日投稿」「LINE7通」「9,800円」という答えだけを持ち帰る人が止まる理由を、行動経済アナリストが「答えと応え」の違いから解説します。">

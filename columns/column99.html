@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>フォロワーが少ないのに売れてる人は、「率」を上げています。「母数」か「率」か、SNS売り上げの2つの構造｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="SNSの売り上げは「母数 × 率」の2変数。フォロワーを増やす戦略と、率を上げる戦略。どちらを選ぶかで発信内容は全然変わります。専門知識がつくと本質を発信したくなりますが、そこには「知識の呪い」という落とし穴が——行動経済学から発信戦略を設計する話です。">

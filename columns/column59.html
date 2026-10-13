@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>あなたの商品の賞味期限｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「一度作れば寝てても稼げる」は幻想。導線も商品も触れられるほど陳腐化する。ビジネスの賞味期限と鮮度管理の考え方を解説します。">

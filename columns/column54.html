@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>その「謎のケーブル」、何に繋がっているんですか？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="SNS発信は「本体（解決策）」のない行き止まりのケーブルになりがち。小→中→大のチャンクで感情を温める導線設計を解説します。">

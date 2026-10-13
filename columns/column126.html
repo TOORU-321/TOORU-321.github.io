@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>競合が少ない市場は、ブルーオーシャンとは限らない。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="競合が少ない市場を見つけても、それはブルーオーシャンとは限りません。ニッチ戦略とブルーオーシャン戦略の違いを、ダイエット市場と料理教室の実例から考えます。">

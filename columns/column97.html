@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>ニッチすぎるコンセプトは、だいたい短命。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「コンセプトを絞れ」は正しい。でも、その言葉だけを真に受けると、真面目な人ほど“地下室”まで降りて詰みます。チャンクという考え方で、5年後も発信と商品を増やし続けられるコンセプト設計のしかたを解説します。">

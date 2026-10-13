@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>僕はいまだに「iPhone 11」使ってますよ。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="実は、僕のスマホ、いまだに「iPhone 11」なんです。今の最新機種って、16でしたっけ？17？最近のSNS出身起業家さんたちは、こぞって最新の機材やツールなんかで、4Kシネマティックモードで撮影し">

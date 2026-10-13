@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>100人集める前に、3人を満足させられますか？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="100人集める前に、3人を満足させられますか？老舗居酒屋がテレビ取材を断る理由から、集客レベルと運営レベルのギャップ、先行投資と博打の違いを行動経済アナリストが解説します。">

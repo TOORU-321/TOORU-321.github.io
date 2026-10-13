@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「売れるはず」という名のギャンブル｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「私はこれが得意だから売れるはず」という希望的観測の呪いを解き、マーケットインとプロダクトアウトを融合させる商品設計を解説します。">

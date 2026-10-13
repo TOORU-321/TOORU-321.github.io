@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>最強のノウハウを追う人から絶滅する。SNSで絶滅しないための生存戦略｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです！突然ですが、はっきり言わせてください。SNSマーケティングスクールに、わざわざ高いお金を払って入る必要なんてありません 。">

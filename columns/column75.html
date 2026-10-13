@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「LINE導線を自動化します！」ってよく見かけるようになった。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「LINE導線を自動化します」の9割は、ただのフロー自動化。フロー・動線・導線の違いから、本物の導線設計に必要な3つの視点までを行動経済学で解説します。">

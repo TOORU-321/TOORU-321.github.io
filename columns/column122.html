@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>募集期間を長くしても、集まる人数はそれほど変わらない。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="募集期間を長くしても、最終的な申込者数はそれほど変わりません。「決める人はもう決めている」「迷う人は締切まで決めない」という2つの心理から、期間設計のほうが良い理由を行動経済アナリストが解説します。">

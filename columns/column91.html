@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「緊急」と「重要」を混同すると、一生「こなすだけ」で終わる｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="タスクをこなすだけで前に進めない原因は「緊急と重要の混同」。アイゼンハワーマトリクスを使って、SNSビジネスの優先順位を正しく設定する方法を、行動経済アナリストが解説します。前回のKSF（重要成功要因）の続編です。">

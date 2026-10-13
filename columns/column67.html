@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>脳内に住む「ウサギ」と「カメ」｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="衝動買いを生む脳内の「システム1（ウサギ）」と「システム2（カメ）」を行動経済学の基礎から解説し、誘惑をかわす思考法を紹介します。">

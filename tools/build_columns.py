@@ -171,7 +171,8 @@ def ga4_head():
   window.dataLayer = window.dataLayer || [];
   function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
-  gtag('config', '{GA4_ID}');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\\.)l-mine\\.com$/.test(location.hostname)) gtag('config', '{GA4_ID}');
 </script>'''
 
 def _attr(s):

@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>改善しようとして、逆に壊れるSNSスクールの話｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「もっと主体的に動いてください」と言いながら「全部確認してください」。SNSスクールのチーム化で起きる、自由と統制のハイブリッド地獄。制度を増やすほど現場が混乱する構造を解説します。">

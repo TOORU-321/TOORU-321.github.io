@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>強いポケモンを集める前に、トレーナーを育ててください。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="コラム100本目。「なぜ先のことが分かるんですか？」とよく聞かれますが、予知能力ではありません。原理原則から逆算しているだけ。最新テクニックを追う前に、舞台が変わっても使える「考え方の土台」を——強いポケモンより、強いトレーナーを育てる話です。">

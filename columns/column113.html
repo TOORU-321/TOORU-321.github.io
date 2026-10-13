@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「今すぐ客を狙え」は、本当に正しいのか。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「今すぐ客を狙え」は本当に正しいのか。競合が増えたSNSで、売れやすさと選ばれやすさが違う理由を、社会規範・市場規範と40・30・20・10％の実務モデルから、行動経済アナリストが考えます。">

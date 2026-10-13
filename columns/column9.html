@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>エバーグリーンってなに？“自動で売れる仕組み”の誤解と、本当の構築法｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="今回はSNSでもチラホラ見かけるようになった 「エバーグリーンってなに？」というテーマでお話しします。最近、インスタやSNS上で「エバーグリーン」という言葉がよく使われるようになってきました。">

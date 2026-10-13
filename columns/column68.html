@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>感情的評価が支配する時代の生存戦略｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「私好み」という感情的評価が選ばれる時代。移ろいやすい感情に重投資せず、本質はロジックで守り感性で攻める低コスト戦略を解説します。">

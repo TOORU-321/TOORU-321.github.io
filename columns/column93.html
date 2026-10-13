@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>ペルソナ設定、間違えてませんか？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="ペルソナ設定を「販売目的」でやると、集客に追われ続けます。理想の顧客からの“感謝の手紙”を書くことで、やるべきことが逆算でき、顧客満足の再現性が生まれる——長く続くペルソナの作り方を、行動経済アナリストが解説します。">

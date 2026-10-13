@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>&quot;神対応&quot;の店員さんが、僕の財布を鉄壁の守りにした話｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです！昨日、久しぶりに服を買いに行ったんです。某おしゃれセレクトショップに。で、そこにいた店員さんがね、 もう、後光が差すくらい「いい人」だったんですよ。">

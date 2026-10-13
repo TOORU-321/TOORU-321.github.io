@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>値上げをお客様にどう伝えるか。｜公正性の知覚と、伝える順番｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="値上げで揉めるのは金額ではなく、納得です。行動経済学の「公正性の知覚」から、個人事業主が既存のお客様に値上げを伝えるときの順番と、避けたい言い方を行動経済アナリストが解説します。">

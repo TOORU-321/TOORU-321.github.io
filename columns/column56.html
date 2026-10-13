@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「高単価」という名の自爆スイッチ｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="20段の跳び箱を飛ぶ前に、あなたが知るべき「売上の方程式」 どーも、とーるです！今回はちょっとお勉強コラムです。">

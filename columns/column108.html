@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「絶対」って、何％ですか？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「絶対やった方がいい」の絶対って、何％ですか？発信者の80％の自信と、受け手の100％の期待。このズレがSNSマーケティングのトラブルを生みます。プロスペクト理論の確率加重から、期待値の伝え方を行動経済アナリストが解説します。">

@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>売れたときこそ「反省会」をしてください。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="売れなかったときは原因を探すのに、売れたときは「やった」で終わっていませんか。行動経済学の自己奉仕バイアスとKSFから、売れた理由を分解して再現性につなげる見方を解説します。">

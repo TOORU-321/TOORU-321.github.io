@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>ブランディングから考えると、なぜ売れないのか｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="初心者が陥りやすい「ブランディング先行」の罠。選ばれる理由（商品設計）なしに認知活動をしても売上は動きません。「選ばれる理由」と「思い出される理由」の正しい順番を、行動経済アナリストが解説します。">

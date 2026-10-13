@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>AIで売上は増えていない。それでも僕がAIを使い続ける理由｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「AIで稼げる」発信が、また増えています。でも、AIを使うこと自体は売上に直結しないことが多い。それでも僕がAIを手放さない理由と、派手な数字を見たときの見方を書きました。">

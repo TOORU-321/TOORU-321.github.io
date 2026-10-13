@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>問題を“解決する人”と、“問題を見抜く人”｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="最近「コンサルやってます！」っていう人が増えてきましたよね。でも、その中には正直「え？それってただの○○屋さんじゃないの？」と思うこともあります。">

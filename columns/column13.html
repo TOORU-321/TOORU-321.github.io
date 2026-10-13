@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>“売れた”は勝ちじゃない｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="“売れた”は勝ちじゃない。継続こそが本物です どーも、とーるです。今日はね、ちょっとドキッとするテーマから話そうと思っていて…… あ、ちなみに今回のお話の続きは・・・">

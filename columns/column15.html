@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「やる気が出ない」は錯覚｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="今回は「やる気」の正体について、がっつりいきます。というのも・・・ 「やる気が出ないんです」 「モチベーションが続きません」 みたいな相談が、めちゃくちゃ多い でも僕から言わせれば、それって“やる気”">

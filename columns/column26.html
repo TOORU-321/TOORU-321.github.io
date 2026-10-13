@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>失敗を恐れない人生設計｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです。ここまで4回にわたって、“正しい失敗”と“悪い失敗”の違いを見てきました。いよいよ最終回です。テーマは、「失敗を恐れない生き方」。">

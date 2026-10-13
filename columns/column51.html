@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>その「インスタ集客術」が、あなたのファンを殺している。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="とーるです！今回は「インスタ集客の嘘と、本物への回帰」という核心部分に火力を集中させていきます。特に、海外で先行して起こった現象を深掘りすることで、今の日本の「 異常なクオリティ至上主義 」がいかに危">

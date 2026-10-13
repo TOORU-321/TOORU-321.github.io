@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>特典を増やすほど、商品が見えなくなっていませんか？｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="特典を10個つけるほど、なぜか商品の魅力が薄れていく。外発的動機と内発的動機の違いから、割引・特典・期限が「購入」までは強くても「購入後の満足」を作らない理由を行動経済アナリストが解説します。">

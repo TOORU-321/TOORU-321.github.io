@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>「高額商品が売れて初めて0→1」って、誰が決めたんだろう。｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="「高額商品が売れて初めて0→1」は本当か。300円でも0→1は成立する。大事なのは金額ではなく「何が売れたか」。初売上と事業の0→1の違い、1になってからが本番である理由を解説します。">

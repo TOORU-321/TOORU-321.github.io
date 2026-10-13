@@ -9,7 +9,8 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-TLV00VTDZL');
+  // 本番ドメインのときだけ計測する（ローカル確認やテストページを数えない）
+  if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
 </script>
 <title>まずは&quot;お茶&quot;から始める技術｜とーる 猫好きの行動経済アナリスト</title>
 <meta name="description" content="さて、今回は「Act回」です。普段は“学び”や“啓発”などといったようなお話ですが、この「Act」は、“行動”がテーマです。">
