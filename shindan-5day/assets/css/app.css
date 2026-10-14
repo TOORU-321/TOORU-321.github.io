@@ -1338,6 +1338,15 @@ a.savebar__btn { text-align: center; text-decoration: none; }
 .challenge-view--done .card--project .final-sheet__value { color: #252a30; }
 .challenge-view--done .card--project .kv__key, .challenge-view--done .card--project .final-sheet__label,
 .challenge-view--done .card--project .final-sheet__day { color: #6a5024; }
+/* 完了画面の成果物カードは紙色の背景なので、中で使う色の変数も「明るい地」用に置き換える（2026-10-14 とーる指摘）。
+ * 以前は背景だけ明るくして、DAY2お客様カード・DAY3価値の橋・DAY4導線図の文字が明るいまま＝読めなかった。
+ * ★変数で直すので、カードの中に部品を足しても同じ配色になる。 */
+.challenge-view--done .card--project {
+  --ink: #252a30; --ink-2: #4a4f57; --ink-soft: #6b6f76;
+  --gold-2: #7d5a1c; --line: rgba(106, 80, 36, .22); --line-2: rgba(106, 80, 36, .4);
+  --lm-surface: #f8f2e6;
+}
+.challenge-view--done .card--project .persona-card { background: rgba(106, 80, 36, .07); }
 .challenge-view--done .card--score-keep { background: transparent; border-color: #536172; }
 @media (prefers-reduced-motion: no-preference) {
   .challenge-view.is-entering .challenge-goal { animation: sc-screen-in .45s ease-out both; }
