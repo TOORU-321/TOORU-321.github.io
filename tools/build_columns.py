@@ -14,7 +14,7 @@
   - 行に ↓ を含むまとまり … フロー図（↓ は中央・金）
   - **強調** → <strong> / _強調_ → <em>（金）
 """
-import os, re, glob, html, datetime, json
+import os, re, glob, html, datetime, json, math, collections
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
@@ -517,6 +517,74 @@ def recommended_html(n, cols):
       </div>
     </section>'''
 
+# あわせて読みたい（本文の直後・2本）。読み終えた人に「次の1本」を出して回遊を戻す（2026-10-13 週次解析から）。
+# 選び方：題名・要約・本文の言葉の近さ（文字2-gramのTF-IDF）。古い記事のタグは大分類ばかりで近さを測れないため。
+# frontmatter の related: 29, 11 で手動指定もできる（指定分が優先、足りない分を自動で補う）。
+_REL_VEC = {}
+
+def _rel_vectors(cols):
+    key = tuple(sorted(x["number"] for x in cols))
+    if _REL_VEC.get("key") == key:
+        return _REL_VEC["vec"]
+    docs = {}
+    for x in cols:
+        body = re.sub(r'[#*_>\-\[\]()!`]|https?://\S+', ' ', x["body"])
+        text = (x["title"] + " ") * 3 + x.get("excerpt", "") + " " + body
+        grams = collections.Counter()
+        for w in re.findall(r'[一-龥ぁ-んァ-ヶーA-Za-z0-9]+', text):
+            grams.update(w[i:i+2] for i in range(len(w) - 1))
+        docs[x["number"]] = grams
+    df = collections.Counter(g for grams in docs.values() for g in grams)
+    total = len(docs)
+    vec = {}
+    for num, grams in docs.items():
+        v = {g: (1 + math.log(cnt)) * math.log(total / df[g]) for g, cnt in grams.items() if df[g] < total * 0.5}
+        norm = math.sqrt(sum(w * w for w in v.values())) or 1
+        vec[num] = {g: w / norm for g, w in v.items()}
+    _REL_VEC.update(key=key, vec=vec)
+    return vec
+
+def related_picks(c, cols, k=2):
+    n = c["number"]
+    by_num = {x["number"]: x for x in cols}
+    manual = [int(v) for v in re.findall(r'\d+', c.get("related", ""))]
+    picks = [by_num[m] for m in manual if m in by_num and m != n][:k]
+    vec = _rel_vectors(cols)
+    mine = vec[n]
+    taken = {x["number"] for x in picks} | {n}
+    scored = sorted(((sum(w * vec[num].get(g, 0) for g, w in mine.items()), num)
+                     for num in vec if num not in taken), reverse=True)
+    picks += [by_num[num] for _, num in scored[:k - len(picks)]]
+    return picks
+
+def related_html(c, cols):
+    picks = related_picks(c, cols)
+    if not picks:
+        return ''
+    cards = "\n".join(
+        f'''        <a class="rel-card" href="column{x["number"]}.html">
+          {thumb_html(x, "rel-thumb")}
+          <div class="rel-b"><span class="rel-m">{label(x)}</span><span class="rel-t">{html.escape(x["title"])}</span></div>
+        </a>'''
+        for x in picks)
+    return f'''<style>
+.related{{max-width:680px;margin:44px 0 0}}
+.related .rel-k{{font:600 15px/1.4 "Shippori Mincho B1",serif;color:#1c1a16;margin:0 0 14px;display:flex;align-items:center;gap:10px}}
+.related .rel-k::after{{content:"";flex:1;height:1px;background:#e7e2d8}}
+.related .rel-card{{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;background:#fff;border:1px solid #eae5db;padding:10px;margin-bottom:10px;transition:box-shadow .2s ease}}
+.related .rel-card:hover{{box-shadow:0 10px 24px rgba(0,0,0,.07)}}
+.related .rel-thumb{{flex:0 0 120px;aspect-ratio:16/10;overflow:hidden;background:#f2efe8}}
+.related .rel-thumb img{{width:100%;height:100%;object-fit:cover;display:block}}
+.related .rel-thumb .fb{{display:flex;align-items:center;justify-content:center;height:100%;font:500 11px "Cormorant Garamond",serif;letter-spacing:.2em;color:#b3aa98}}
+.related .rel-m{{display:block;font:600 11px/1 "Cormorant Garamond",serif;letter-spacing:.1em;color:#a98b4e}}
+.related .rel-t{{display:-webkit-box;margin-top:6px;font:600 15px/1.55 "Shippori Mincho B1",serif;color:#211f1a;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
+@media(max-width:600px){{.related .rel-thumb{{flex-basis:96px}}.related .rel-t{{font-size:14px}}}}
+</style>
+    <section class="related" aria-label="あわせて読みたい">
+      <h2 class="rel-k">あわせて読みたい</h2>
+{cards}
+    </section>'''
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -594,6 +662,7 @@ def render_article(c, cols):
       {body}{gate_html}{sign_after_gate}
     </div>
 
+{related_html(c, cols)}
 {shindan_footer()}
 {quiz_footer()}
 {optin_footer(n)}
