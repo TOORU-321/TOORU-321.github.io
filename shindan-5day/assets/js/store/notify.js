@@ -90,7 +90,14 @@
            * ★送り先はサーバーが券から決める。申告した uid は使われない */
           token: (SC.credentials && SC.credentials.lineTicket()) || null
         }),
-        referrerPolicy: 'no-referrer'
+        referrerPolicy: 'no-referrer',
+        /* ★タブを閉じられても最後まで飛ばす（2026-10-15）。
+         *
+         *   これが無かったため、DAY完了の直後にアプリを閉じた人の通知が
+         *   送信途中で打ち切られ、LINEの案内が届かないことがあった。
+         *   保存（challenge-remote）と計測（track-remote）には最初から付いていて、
+         *   通知だけ抜けていた。 */
+        keepalive: true
       }).then(function (res) {
         return res.ok ? res.json() : { ok: false, status: 'unavailable' };
       }).then(function (json) {
