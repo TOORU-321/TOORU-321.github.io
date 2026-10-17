@@ -138,6 +138,19 @@
   .admin-sheet .arc-a .arc-del{color:#e07979}
   .admin-sheet .arc-empty{padding:12px;text-align:center;color:var(--ink-soft);font-size:12px}
 
+  /* ゲストのお試し視聴（2026-10-17） */
+  .guest-or{margin:16px 0 8px;text-align:center;font-size:12px;color:var(--ink-soft)}
+  .guest-btn{display:block;width:100%;padding:12px;border-radius:10px;border:1px solid var(--gold-2);background:none;color:var(--gold);font-size:14.5px;font-weight:700;cursor:pointer}
+  .guest-btn:disabled{opacity:.45;cursor:default}
+  .guest-note{margin-top:8px;font-size:12px;line-height:1.7;color:var(--ink-soft);text-align:center}
+  .guest-timer{flex:0 0 auto;font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--gold-2);color:var(--gold);white-space:nowrap}
+  .guest-timer.soon{border-color:var(--live);color:#fff;background:var(--live)}
+  .guest-final{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.62);text-align:center;color:#fff;pointer-events:none}
+  .guest-final .gf-num{font-size:64px;font-weight:800;line-height:1;color:var(--gold)}
+  .guest-final .gf-msg{margin-top:10px;font-size:13.5px;line-height:1.7}
+  .guest-chatnote{flex:0 0 auto;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:var(--panel);border-top:1px solid var(--line);font-size:12.5px;line-height:1.7;color:var(--ink-soft)}
+  .guest-chatnote button{margin-left:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--gold-2);background:none;color:var(--gold);font-size:12px;cursor:pointer}
+
   @media (min-width:860px), (orientation:landscape){
     .room{flex-direction:row}
     .leftcol{flex:1;display:flex;flex-direction:column;min-width:0}
@@ -167,6 +180,13 @@
       <div class="alt">アカウントがない方は <a href="index.html">アプリTOP</a> から登録できます</div>
     </div>
 
+    <!-- ゲストのお試し視聴（2026-10-17 とーる指示）：管理画面で「ゲストも○分だけ視聴可」をONにした会場だけ出る -->
+    <div id="guestBox" class="hidden">
+      <div class="guest-or">または</div>
+      <button type="button" class="guest-btn" id="gGuestBtn">ゲストとして5分だけ見る</button>
+      <div class="guest-note" id="gGuestNote">ログインなしで5分だけ視聴できます（コメントはできません）。<br>同じ会場でのゲスト視聴は1回までです。</div>
+    </div>
+
     <div id="nickBox" class="hidden">
       <label>チャットで表示する名前（ニックネーム）</label>
       <input type="text" id="gNick" maxlength="20" placeholder="例：とーる / ねこ好きA">
@@ -194,12 +214,14 @@
       <span class="live-badge off" id="liveBadge"><span class="dot"></span>LIVE</span>
       <span class="ttl" id="roomTitle">ライブ</span>
       <span class="viewers">👥 <b id="viewCount">0</b></span>
+      <span class="guest-timer hidden" id="guestTimer" title="ゲスト視聴の残り時間">ゲスト <b id="guestLeft">5:00</b></span>
       <button class="iconbtn" id="ovToggle" title="チャットを画面に表示">💬</button>
     </div>
     <div class="stage">
       <div class="video-wrap">
         <iframe id="player" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen></iframe>
         <div class="fx" id="fx"></div>
+        <div class="guest-final hidden" id="guestFinal"><div><div class="gf-num" id="gfNum">10</div><div class="gf-msg">ゲスト視聴はまもなく終了します<br>続きはログインしてご覧ください</div></div></div>
         <div class="ov-chat hidden" id="ovChat"></div>
         <div class="soon-cover hidden" id="soonCover"><div>
           <div class="sc-badge">開始前</div>
@@ -221,6 +243,7 @@
 
   <div class="chat">
     <div class="chat-list" id="chatList"></div>
+    <div class="guest-chatnote hidden" id="guestChatNote">💬 コメントは、アプリ登録者（ログインした方）のみ送れます。<button type="button" id="guestLoginNow">ログインする</button></div>
     <div class="composer" id="composer">
       <button class="qtog" id="qtog" title="質問として送る">質問</button>
       <textarea id="msgInput" rows="1" placeholder="コメントを入力…" maxlength="300"></textarea>
@@ -253,6 +276,12 @@
     <input type="text" id="aAccessTag" placeholder="必要タグ">
     <label>参加表明のお知らせID（承認制の時だけ・例：13）</label>
     <input type="text" id="aRsvpNews" placeholder="参加ボタンのあるお知らせの id">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--ink);cursor:pointer"><input type="checkbox" id="aGuest" style="width:auto;flex:0 0 auto"> 👀 ゲスト（ログインなし）も少しだけ視聴できる</label>
+    <div class="row">
+      <div><label>ゲストの視聴時間（分）</label>
+        <input type="number" id="aGuestMin" min="1" max="30" value="5"></div>
+      <div><label>&nbsp;</label><div class="cap" style="margin:6px 0 0">時間が来るとログイン画面へ。同じ会場のゲスト視聴は1回まで（コメント不可）</div></div>
+    </div>
     <label style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13px;color:var(--ink);cursor:pointer"><input type="checkbox" id="aHidden" style="width:auto;flex:0 0 auto"> 🤫 ひっそり公開（テスト用・🔴LIVEバーを出さない／URLを知る人だけ入れる）</label>
     <div class="row">
       <div><label>人数の底上げ係数（0＝盛らない / 1.8＝推奨）</label>
@@ -313,8 +342,8 @@ const EVENT_ID = (_P.get("e") || "seminar").replace(/[^\w-]/g,"").slice(0,40) ||
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const db   = firebase.database();
-const base = db.ref("live/" + EVENT_ID);
+let db   = firebase.database();        // ゲストのときだけ、ゲスト用の接続に差し替える
+let base = db.ref("live/" + EVENT_ID);
 
 /* iOS：画面回転でズームが残る現象を自動リセット（一瞬だけ固定→戻す） */
 window.addEventListener("orientationchange", function(){
@@ -323,7 +352,7 @@ window.addEventListener("orientationchange", function(){
   setTimeout(function(){ vp.setAttribute("content","width=device-width, initial-scale=1, viewport-fit=cover"); }, 350);
 });
 
-let ME=null, MYNAME="", IS_ADMIN=false, META={}, PRESENCE={}, BANNED_ME=false;
+let ME=null, MYNAME="", IS_ADMIN=false, IS_GUEST=false, META={}, PRESENCE={}, BANNED_ME=false;
 const $ = id => document.getElementById(id);
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function fmtStart(s){ if(!s) return ""; try{ const d=new Date(s); if(isNaN(d.getTime())) return ""; const w=["日","月","火","水","木","金","土"][d.getDay()]; const p=n=>String(n).padStart(2,"0"); return "📅 "+(d.getMonth()+1)+"月"+d.getDate()+"日("+w+") "+p(d.getHours())+":"+p(d.getMinutes())+" 開始予定"; }catch(e){ return ""; } }
@@ -351,13 +380,16 @@ auth.onAuthStateChanged(u=>{
     $("nickBox").classList.add("hidden");
     $("manageBox").classList.add("hidden");
     $("loginBox").classList.remove("hidden");
+    if(!MANAGE && !GUEST.started) guestOffer();
   }
 });
 $("gLoginBtn").onclick = async ()=>{
   const em=($("gEmail").value||"").trim().toLowerCase(), pw=$("gPass").value||"";
   if(!em||!pw){ $("gMsg").textContent="メールとパスワードを入力してください。"; return; }
   $("gMsg").textContent="ログイン中…";
-  try{ await auth.signInWithEmailAndPassword(em,pw); $("gMsg").textContent=""; }
+  try{ await auth.signInWithEmailAndPassword(em,pw); $("gMsg").textContent="";
+    // ゲストで入っていた画面からのログインは、ゲスト用の接続を捨てて最初から入り直す
+    if(GUEST.started){ location.reload(); } }
   catch(e){ $("gMsg").textContent = (e.code==="auth/invalid-credential"||e.code==="auth/wrong-password") ? "メールかパスワードが違います。" : "ログインに失敗しました。"; }
 };
 $("gPass").addEventListener("keydown",e=>{ if(e.key==="Enter") $("gLoginBtn").click(); });
@@ -410,6 +442,91 @@ async function checkAccess(){
 }
 $("gBack").onclick = ()=>{ if(history.length>1){ history.back(); } else { location.href="index.html"; } };
 
+/* ===== ゲストのお試し視聴（2026-10-17 とーる指示） =====
+ * 管理画面で「ゲストも少しだけ視聴できる」をONにした会場だけ。ログインなしで guestMinutes 分（既定5分）見られる。
+ * ・コメント・質問は送れない（入力欄の代わりに「アプリ登録者のみ」の案内を出す）
+ * ・時間が来たら映像を止めてログイン画面へ。同じ会場のゲスト視聴は1回まで
+ *   （開始時刻をこの端末に記録。再読み込みしても時間は戻らない。残り時間があるうちは続きから見られる）
+ * ★本人確認ではない。別のブラウザやシークレットウィンドウなら、もう一度見られてしまう（お試しの目安）
+ * ★ゲストの接続は別のFirebaseアプリ（保存しない匿名ログイン）で行い、アプリ本体のログイン状態には触らない */
+var GUEST = { started:false, app:null, timer:null, ends:0 };
+function guestKey(){ return "live_guest_v1_" + EVENT_ID; }
+function guestRead(){ try{ return JSON.parse(localStorage.getItem(guestKey())||"null"); }catch(e){ return null; } }
+function guestWrite(v){ try{ localStorage.setItem(guestKey(), JSON.stringify(v)); }catch(e){} }
+function fmtLeft(ms){ const s=Math.max(0,Math.ceil(ms/1000)); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); }
+async function guestConnect(){
+  if(GUEST.app) return GUEST.app;
+  const app = firebase.initializeApp(firebaseConfig, "guest");
+  await app.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+  await app.auth().signInAnonymously();
+  GUEST.app = app;
+  return app;
+}
+async function guestOffer(){
+  try{
+    const app = await guestConnect();
+    const m = (await app.database().ref("live/"+EVENT_ID+"/meta").once("value")).val() || {};
+    if(!m.guestPreview || auth.currentUser) return;
+    const min = Math.max(1, Math.min(30, Number(m.guestMinutes)||5));
+    const rec = guestRead();
+    const btn = $("gGuestBtn"), note = $("gGuestNote");
+    $("gateSub").textContent = "ログインして参加できます。ログインなしで少しだけのぞくこともできます。";
+    btn.disabled = false;
+    if(rec && rec.start && (rec.done || rec.start + min*60000 <= Date.now())){
+      btn.disabled = true; btn.textContent = "ゲスト視聴は終了しました";
+      note.innerHTML = "この会場のゲスト視聴は1回までです。<br>続きは、ログイン（アプリの無料登録）してご覧ください。";
+    } else if(rec && rec.start){
+      btn.textContent = "ゲスト視聴を続ける（残り " + fmtLeft(rec.start + min*60000 - Date.now()) + "）";
+      note.innerHTML = "コメントはできません。時間が来るとログイン画面に切り替わります。";
+    } else {
+      btn.textContent = "ゲストとして" + min + "分だけ見る";
+      note.innerHTML = "ログインなしで" + min + "分だけ視聴できます（コメントはできません）。<br>同じ会場でのゲスト視聴は1回までです。";
+    }
+    btn.onclick = ()=> guestEnter(min);
+    $("guestBox").classList.remove("hidden");
+  }catch(e){ /* 匿名ログインが使えない等。ゲスト枠を出さないだけ */ }
+}
+function guestEnter(min){
+  const rec = guestRead() || {};
+  if(rec.done) return;
+  if(!rec.start){ rec.start = Date.now(); guestWrite(rec); }
+  GUEST.ends = rec.start + min*60000;
+  if(GUEST.ends <= Date.now()){ guestOffer(); return; }
+  GUEST.started = true; IS_GUEST = true;
+  db = GUEST.app.database(); base = db.ref("live/"+EVENT_ID);
+  ME = GUEST.app.auth().currentUser; MYNAME = "ゲスト";
+  enterRoom();
+  // コメント欄の代わりに案内を出す
+  $("composer").classList.add("hidden");
+  $("guestChatNote").classList.remove("hidden");
+  $("guestLoginNow").onclick = ()=> guestEnd(true);
+  $("guestTimer").classList.remove("hidden");
+  guestTick();
+  GUEST.timer = setInterval(guestTick, 500);
+}
+function guestTick(){
+  const left = GUEST.ends - Date.now();
+  $("guestLeft").textContent = fmtLeft(left);
+  $("guestTimer").classList.toggle("soon", left <= 60000);
+  if(left <= 10000 && left > 0){ $("guestFinal").classList.remove("hidden"); $("gfNum").textContent = Math.ceil(left/1000); }
+  if(left <= 0) guestEnd(false);
+}
+function guestEnd(byUser){
+  if(GUEST.timer){ clearInterval(GUEST.timer); GUEST.timer=null; }
+  const rec = guestRead() || {}; if(!rec.start) rec.start = Date.now(); rec.done = true; guestWrite(rec);
+  try{ base.child("presence").child(ME.uid).remove().catch(()=>{}); }catch(e){}
+  try{ $("player").setAttribute("src","about:blank"); }catch(e){}
+  try{ GUEST.app.database().goOffline(); }catch(e){}
+  $("guestFinal").classList.add("hidden");
+  $("room").classList.add("hidden");
+  $("gate").classList.remove("hidden");
+  $("guestBox").classList.add("hidden");
+  $("nickBox").classList.add("hidden");
+  $("loginBox").classList.remove("hidden");
+  $("gateTitle").textContent = byUser ? "ログインして参加" : "ゲスト視聴の時間が終わりました";
+  $("gateSub").textContent = "続きは、ログインしてご覧ください。アカウントがない方は、アプリTOPから無料で登録できます（メールアドレスだけ）。";
+}
+
 /* ===== 会場管理（admin：一覧／新規／削除） ===== */
 function randId(){ var a=new Uint8Array(12); (window.crypto).getRandomValues(a); var s=""; for(var i=0;i<a.length;i++){ s+=("0"+a[i].toString(16)).slice(-2);} return "s"+s; }
 function showManager(){
@@ -456,8 +573,8 @@ function enterRoom(){
 
   // プレゼンス（入退室）
   const myPres = base.child("presence").child(ME.uid);
-  myPres.set({ n: MYNAME, ts: firebase.database.ServerValue.TIMESTAMP });
-  myPres.onDisconnect().remove();
+  myPres.set({ n: MYNAME, ts: firebase.database.ServerValue.TIMESTAMP }).catch(()=>{});
+  myPres.onDisconnect().remove().catch(()=>{});
   window.addEventListener("pagehide", ()=>{ try{ myPres.remove(); }catch(e){} });
   // 退室ボタン（誤タップ防止に確認あり）
   $("leaveBtn").onclick = ()=>{ if(confirm("この会場から退室しますか？")){ try{ myPres.remove(); }catch(e){} location.href="index.html"; } };
@@ -521,7 +638,7 @@ let Q_MODE=false;
 $("qtog").onclick = ()=>{ Q_MODE=!Q_MODE; $("qtog").classList.toggle("on",Q_MODE); $("composer").classList.toggle("q-mode",Q_MODE);
   $("msgInput").placeholder = Q_MODE ? "質問を入力（先生が拾います）…" : "コメントを入力…"; };
 function sendMsg(){
-  if(BANNED_ME) return;
+  if(BANNED_ME || IS_GUEST) return;   // ゲストはコメント・質問できない
   const t=($("msgInput").value||"").trim(); if(!t) return;
   base.child("messages").push({ u:ME.uid, n:MYNAME, t:t.slice(0,300), ty:(Q_MODE?"q":"chat"), ts:firebase.database.ServerValue.TIMESTAMP })
     .catch(()=>{ addSys("送信できませんでした（退場中の可能性）"); });
@@ -648,6 +765,8 @@ function setupAdmin(){
       accessTag: ($("aAccessTag").value||"").trim(),
       rsvpNews: ($("aRsvpNews").value||"").trim(),
       hidden: $("aHidden").checked,
+      guestPreview: $("aGuest").checked,
+      guestMinutes: Math.max(1, Math.min(30, Number($("aGuestMin").value)||5)),
       padK: Number($("aPadK").value||0),
       padCap: Number($("aPadCap").value||0),
       updatedBy: (ME.email||"")
@@ -675,6 +794,8 @@ function fillAdminForm(){
   $("aAccessTag").value = META.accessTag||"";
   $("aRsvpNews").value = META.rsvpNews||"";
   $("aHidden").checked = !!META.hidden;
+  $("aGuest").checked = !!META.guestPreview;
+  $("aGuestMin").value = META.guestMinutes || 5;
   $("aPadK").value = META.padK!=null?META.padK:0;
   $("aPadCap").value = META.padCap!=null?META.padCap:15;
   renderViewCount();
