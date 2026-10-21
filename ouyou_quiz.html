@@ -1238,6 +1238,16 @@ input:checked + .toggle-slider::before {
   margin: 0 0 12px;
   letter-spacing: 0.02em;
 }
+/* ランキングの日付。主役は順位と正解数なので控えめに、折り返さないようにする */
+.ranking-table .rank-date { white-space: nowrap; color: var(--text-3); font-size: 0.8125rem; }
+.ranking-table .rank-date .date-short { display: none; }
+/* 正解数・時間は途中で折り返させない。ニックネームだけは長い名前のために折り返す */
+.ranking-table td { white-space: nowrap; }
+.ranking-table td:nth-child(2) { white-space: normal; }
+@media (max-width: 600px) {
+  .ranking-table .rank-date .date-full { display: none; }
+  .ranking-table .rank-date .date-short { display: inline; }
+}
 .score-denom {
   color: var(--text-3);
   font-weight: 500;
@@ -3693,6 +3703,17 @@ function currentLevelLabel(){
 }
 // 表示前に数値へ寄せる（想定外の値が保存されていても表示が壊れないように）
 function safeNum(v){ const n=Number(v); return Number.isFinite(n)?n:0; }
+// 記録した日付。Firestoreのタイムスタンプ以外が入っていても落ちないようにする
+function formatDate(ts){
+  try{
+    const d = (ts && typeof ts.toDate==='function') ? ts.toDate()
+            : (ts instanceof Date ? ts : (typeof ts==='number' ? new Date(ts) : null));
+    if(!d || isNaN(d.getTime())) return '—';
+    const y=d.getFullYear(), m=d.getMonth()+1, dd=d.getDate();
+    // 広い画面は年つき、狭い画面は月日だけ（CSSで切り替え）
+    return '<span class="date-full">'+y+'.'+m+'.'+dd+'</span><span class="date-short">'+m+'/'+dd+'</span>';
+  }catch(e){ return '—'; }
+}
 async function loadTopRanking(){
   const body=document.getElementById('top-ranking-body');
   const filterDiv=document.getElementById('top-ranking-filter');
@@ -3748,11 +3769,12 @@ function renderTopRanking(){
   const rows=ranked.map((r,i)=>{
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
     const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
-    return `<tr><td>${rankDisp}</td><td>${escHtml(String(r.nickname==null?'':r.nickname))}</td><td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td><td>${tDisp}</td></tr>`;
+    const dDisp=formatDate(r.timestamp);
+    return `<tr><td>${rankDisp}</td><td>${escHtml(String(r.nickname==null?'':r.nickname))}</td><td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td><td>${tDisp}</td><td class="rank-date">${dDisp}</td></tr>`;
   }).join('');
   body.innerHTML=`<p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
   <table class="ranking-table">
-    <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
+    <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th><th>日付</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
@@ -3848,17 +3870,19 @@ function renderRanking(all){
     const isMe=currentEntry&&r.id===currentEntry;
     const rankDisp=i<3?'<span class="rank-medal">'+medals[i]+'</span>':''+(i+1);
     const tDisp=r.time!=null?formatTime(safeNum(r.time)):'—';
+    const dDisp=formatDate(r.timestamp);
     return `<tr class="${isMe?'me':''}">
       <td>${rankDisp}</td>
       <td>${escHtml(String(r.nickname==null?'':r.nickname))}${isMe?' <span class="me-tag">YOU</span>':''}</td>
       <td>${safeNum(r.score)}<span class="score-denom">/${safeNum(r.total)}</span></td>
       <td>${tDisp}</td>
+      <td class="rank-date">${dDisp}</td>
     </tr>`;
   }).join('');
   document.getElementById('ranking-body').innerHTML=`
     <p class="ranking-note">各レベルの「正解数」で順位を決定（同数時は所要時間順）</p>
     <table class="ranking-table">
-      <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th></tr></thead>
+      <thead><tr><th>順位</th><th>ニックネーム</th><th>正解数</th><th>時間</th><th>日付</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
