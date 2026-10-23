@@ -58,6 +58,10 @@ SITE_NAME = "L-MINE"                               # og:site_name / publisher �
 AUTHOR_NAME = "とーる"                             # 記事著者（JSON-LD author）
 DEFAULT_OG_IMAGE = BASE_URL + "columns/assets/columns-top.jpg"  # ヒーロー画像が無い記事のOGP代替
 
+# コラム一覧の見出し（2026-10-23 とーる決定）。部屋の名前は「コラム」の上に少し大きく出す。
+ROOM_NAME = "論理のアトリエ"
+ROOM_LEAD = "人はなぜ、そう選んでしまうのか。ビジネスにも、日々の暮らしにも効く考え方を、ひとつずつ形にしていきます。"
+
 # おすすめコラム（全記事の下部に表示・とーる選定）。ここに番号を並べるだけで差し替え可。存在しない番号／自分自身は自動スキップ。
 RECOMMENDED = [112, 107, 103, 89, 73, 71, 65]
 
@@ -229,7 +233,7 @@ def index_seo(page):
     """コラム一覧ページの description / canonical / OGP。"""
     url = BASE_URL + "columns/" + page_file(page)
     title = "コラム｜とーる 猫好きの行動経済アナリスト"
-    base_desc = "行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴るコラム一覧。とーる（行動経済アナリスト）が発信しています。"
+    base_desc = f"{ROOM_NAME}｜{ROOM_LEAD}とーる（行動経済アナリスト）のコラム一覧です。"
     desc = base_desc if page == 1 else f"（{page}ページ目）{base_desc}"
     return f'''<meta name="description" content="{_attr(desc)}">
 <link rel="canonical" href="{url}">
@@ -754,10 +758,11 @@ def render_index(page_cols, page, pages):
 
 <div class="page-head">
   <img class="ph-bg" src="assets/columns-top.jpg" alt="">
+  <style>.page-head .room{{font-family:var(--mincho);font-weight:800;font-size:42px;line-height:1.3;margin-top:10px;letter-spacing:.08em;color:#fff}}.page-head .room + h1{{margin-top:4px}}@media(max-width:600px){{.page-head .room{{font-size:34px}}.page-head .room + h1{{font-size:27px}}}}</style>
   <div class="ph-inner">
     <div class="ey">Column</div>
+    <div class="room">{ROOM_NAME}</div>
     <h1>コラム</h1>
-    <p>行動経済学 × SNSビジネスの視点で、売れる「考え方の型」を綴ります。</p>
     <div class="hr"></div>
   </div>
 </div>
