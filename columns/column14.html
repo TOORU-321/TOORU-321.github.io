@@ -130,6 +130,44 @@
     </div>
 
 <style>
+.share{max-width:680px;margin:40px 0 0;padding:20px 0 0;border-top:1px solid #e7e2d8}
+.share .sh-k{font:600 14px/1.4 "Shippori Mincho B1",serif;color:#1c1a16;margin:0 0 12px}
+.share .sh-row{display:flex;flex-wrap:wrap;gap:8px}
+.share .sh-btn{display:inline-flex;align-items:center;justify-content:center;min-width:92px;padding:9px 14px;border:1px solid #d9d2c3;border-radius:999px;background:#fff;color:#2b2822;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease}
+.share .sh-btn:hover{background:#faf6ee;border-color:#b8923e}
+.share .sh-x{background:#111;color:#fff;border-color:#111}.share .sh-x:hover{background:#333;border-color:#333}
+.share .sh-line{background:#06c755;color:#fff;border-color:#06c755}.share .sh-line:hover{background:#05b04b;border-color:#05b04b}
+.share .sh-more{display:none}
+.share .sh-done{font-size:12px;color:#8a7a55;margin:8px 0 0;min-height:1em}
+</style>
+    <section class="share" aria-label="このコラムをシェアする">
+      <p class="sh-k">このコラムをシェアする</p>
+      <div class="sh-row"><a class="sh-btn sh-x" href="https://twitter.com/intent/tweet?text=%E3%80%8C%E7%87%83%E3%81%88%E5%B0%BD%E3%81%8D%E3%82%8B%E5%A3%B2%E4%B8%8A%E3%80%8D%E3%81%A8%E3%80%8C%E7%B6%9A%E3%81%91%E3%82%89%E3%82%8C%E3%82%8B%E5%A3%B2%E4%B8%8A%E3%80%8D&amp;url=https%3A//columns.l-mine.com/columns/column14.html" target="_blank" rel="noopener" data-m="x">X</a><a class="sh-btn sh-line" href="https://social-plugins.line.me/lineit/share?url=https%3A//columns.l-mine.com/columns/column14.html" target="_blank" rel="noopener" data-m="line">LINE</a><a class="sh-btn sh-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A//columns.l-mine.com/columns/column14.html" target="_blank" rel="noopener" data-m="facebook">Facebook</a><a class="sh-btn sh-threads" href="https://www.threads.net/intent/post?text=%E3%80%8C%E7%87%83%E3%81%88%E5%B0%BD%E3%81%8D%E3%82%8B%E5%A3%B2%E4%B8%8A%E3%80%8D%E3%81%A8%E3%80%8C%E7%B6%9A%E3%81%91%E3%82%89%E3%82%8C%E3%82%8B%E5%A3%B2%E4%B8%8A%E3%80%8D%20https%3A//columns.l-mine.com/columns/column14.html" target="_blank" rel="noopener" data-m="threads">Threads</a><button type="button" class="sh-btn sh-copy" data-m="copy">リンクをコピー</button><button type="button" class="sh-btn sh-more" data-m="native">その他</button></div>
+      <p class="sh-done" aria-live="polite"></p>
+    </section>
+<script>
+(function(){
+  var box=document.currentScript.previousElementSibling, url="https://columns.l-mine.com/columns/column14.html", title="「燃え尽きる売上」と「続けられる売上」";
+  var done=box.querySelector('.sh-done'), more=box.querySelector('.sh-more');
+  function track(m){ try{ if(window.gtag) gtag('event','share',{method:m,content_type:'column',item_id:'column14'}); }catch(e){} }
+  if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) more.style.display='inline-flex';
+  box.addEventListener('click',function(e){
+    var b=e.target.closest('.sh-btn'); if(!b) return; var m=b.getAttribute('data-m'); track(m);
+    if(m==='copy'){ e.preventDefault();
+      var ok=function(){done.textContent='リンクをコピーしました';setTimeout(function(){done.textContent='';},2500);};
+      var legacy=function(){  // クリップボードAPIが使えない環境用
+        var t=document.createElement('textarea'); t.value=url; t.setAttribute('readonly','');
+        t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
+        var r=false; try{ r=document.execCommand('copy'); }catch(x){} document.body.removeChild(t);
+        if(r) ok(); else done.textContent='このURLをコピーしてください：'+url;
+      };
+      if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(ok,legacy);
+      else legacy();
+    } else if(m==='native'){ e.preventDefault(); navigator.share({title:title,url:url}).catch(function(){}); }
+  });
+})();
+</script>
+<style>
 .related{max-width:680px;margin:44px 0 0}
 .related .rel-k{font:600 15px/1.4 "Shippori Mincho B1",serif;color:#1c1a16;margin:0 0 14px;display:flex;align-items:center;gap:10px}
 .related .rel-k::after{content:"";flex:1;height:1px;background:#e7e2d8}

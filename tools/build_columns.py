@@ -14,7 +14,7 @@
   - 行に ↓ を含むまとまり … フロー図（↓ は中央・金）
   - **強調** → <strong> / _強調_ → <em>（金）
 """
-import os, re, glob, html, datetime, json, math, collections
+import os, re, glob, html, datetime, json, math, collections, urllib.parse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC  = os.path.join(ROOT, "src", "columns")
@@ -589,6 +589,62 @@ def related_html(c, cols):
 {cards}
     </section>'''
 
+# シェアボタン（本文の直後・2026-10-24 とーる依頼）。X／LINE／Facebook／Threads／リンクをコピー、
+# スマホは「その他」で端末の共有シート（インスタのDMなど。インスタにはWebのシェアURLが無い）。
+# 押されたボタンは GA4 の share イベントで数える（本番ドメインだけ計測）。
+def share_html(c):
+    n = c["number"]
+    url = BASE_URL + f"columns/column{n}.html"
+    title = c["title"].split("｜")[0]
+    q = urllib.parse.quote
+    links = [
+        ("x", "X", f"https://twitter.com/intent/tweet?text={q(title)}&url={q(url)}"),
+        ("line", "LINE", f"https://social-plugins.line.me/lineit/share?url={q(url)}"),
+        ("facebook", "Facebook", f"https://www.facebook.com/sharer/sharer.php?u={q(url)}"),
+        ("threads", "Threads", f"https://www.threads.net/intent/post?text={q(title + ' ' + url)}"),
+    ]
+    btns = "".join(
+        f'<a class="sh-btn sh-{k}" href="{html.escape(h)}" target="_blank" rel="noopener" data-m="{k}">{lab}</a>'
+        for k, lab, h in links)
+    return f'''<style>
+.share{{max-width:680px;margin:40px 0 0;padding:20px 0 0;border-top:1px solid #e7e2d8}}
+.share .sh-k{{font:600 14px/1.4 "Shippori Mincho B1",serif;color:#1c1a16;margin:0 0 12px}}
+.share .sh-row{{display:flex;flex-wrap:wrap;gap:8px}}
+.share .sh-btn{{display:inline-flex;align-items:center;justify-content:center;min-width:92px;padding:9px 14px;border:1px solid #d9d2c3;border-radius:999px;background:#fff;color:#2b2822;font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;font-family:inherit;transition:background .15s ease,border-color .15s ease}}
+.share .sh-btn:hover{{background:#faf6ee;border-color:#b8923e}}
+.share .sh-x{{background:#111;color:#fff;border-color:#111}}.share .sh-x:hover{{background:#333;border-color:#333}}
+.share .sh-line{{background:#06c755;color:#fff;border-color:#06c755}}.share .sh-line:hover{{background:#05b04b;border-color:#05b04b}}
+.share .sh-more{{display:none}}
+.share .sh-done{{font-size:12px;color:#8a7a55;margin:8px 0 0;min-height:1em}}
+</style>
+    <section class="share" aria-label="このコラムをシェアする">
+      <p class="sh-k">このコラムをシェアする</p>
+      <div class="sh-row">{btns}<button type="button" class="sh-btn sh-copy" data-m="copy">リンクをコピー</button><button type="button" class="sh-btn sh-more" data-m="native">その他</button></div>
+      <p class="sh-done" aria-live="polite"></p>
+    </section>
+<script>
+(function(){{
+  var box=document.currentScript.previousElementSibling, url={json.dumps(url)}, title={json.dumps(title, ensure_ascii=False)};
+  var done=box.querySelector('.sh-done'), more=box.querySelector('.sh-more');
+  function track(m){{ try{{ if(window.gtag) gtag('event','share',{{method:m,content_type:'column',item_id:'column{n}'}}); }}catch(e){{}} }}
+  if(navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) more.style.display='inline-flex';
+  box.addEventListener('click',function(e){{
+    var b=e.target.closest('.sh-btn'); if(!b) return; var m=b.getAttribute('data-m'); track(m);
+    if(m==='copy'){{ e.preventDefault();
+      var ok=function(){{done.textContent='リンクをコピーしました';setTimeout(function(){{done.textContent='';}},2500);}};
+      var legacy=function(){{  // クリップボードAPIが使えない環境用
+        var t=document.createElement('textarea'); t.value=url; t.setAttribute('readonly','');
+        t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select();
+        var r=false; try{{ r=document.execCommand('copy'); }}catch(x){{}} document.body.removeChild(t);
+        if(r) ok(); else done.textContent='このURLをコピーしてください：'+url;
+      }};
+      if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(ok,legacy);
+      else legacy();
+    }} else if(m==='native'){{ e.preventDefault(); navigator.share({{title:title,url:url}}).catch(function(){{}}); }}
+  }});
+}})();
+</script>'''
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -666,6 +722,7 @@ def render_article(c, cols):
       {body}{gate_html}{sign_after_gate}
     </div>
 
+{share_html(c)}
 {related_html(c, cols)}
 {shindan_footer()}
 {quiz_footer()}
