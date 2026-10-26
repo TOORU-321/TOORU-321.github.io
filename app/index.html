@@ -79,6 +79,14 @@
 .freepick .fp-t{font-size:12px;color:#e8e4d8;line-height:1.5;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .vframe{position:relative;aspect-ratio:16/9;background:#0f0f14;border:1px solid var(--line-2);border-radius:7px;overflow:hidden;box-shadow:0 28px 56px -30px rgba(16,16,24,.55),0 6px 16px -10px rgba(16,16,24,.3)}
 .vframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+/* ゲスト試聴（2026-10-25） */
+.trial-badge{position:absolute;top:10px;right:10px;z-index:4;font-size:12px;padding:4px 11px;border-radius:999px;background:rgba(15,15,20,.78);border:1px solid rgba(227,195,129,.6);color:#ecd7aa;pointer-events:none;font-family:var(--gothic)}
+.trial-badge.soon{background:#c8322f;border-color:#c8322f;color:#fff}
+.trial-final{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;text-align:center;background:rgba(0,0,0,.6);color:#fff;pointer-events:none;font-family:var(--gothic)}
+.trial-final .tf-num{font-size:60px;font-weight:800;line-height:1;color:#e3c381}
+.trial-final .tf-msg{margin-top:10px;font-size:13px;line-height:1.7}
+.trial-final[hidden],.vframe.locked .trial-badge,.vframe.locked .trial-final{display:none}
+.ch-item .ch-trialmark{font-size:11px;flex:none;color:#e3c381;border:1px solid rgba(227,195,129,.5);border-radius:999px;padding:1px 7px;white-space:nowrap}
 /* 公開前のサムネイル（ロック画面の下に敷く） */
 .vframe .vthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1}
 .vframe .vthumb[hidden]{display:none}
@@ -1615,6 +1623,8 @@ a{text-decoration:none}
     <div class="vframe" id="vframe">
       <img id="vthumb" class="vthumb" alt="" hidden>
       <iframe id="viframe" src="" title="動画プレイヤー" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      <div class="trial-badge" id="trialBadge" hidden>お試し視聴　残り <b id="trialLeft">3:00</b></div>
+      <div class="trial-final" id="trialFinal" hidden><div><div class="tf-num" id="tfNum">10</div><div class="tf-msg">お試し視聴はまもなく終了します<br>続きは登録してご覧ください</div></div></div>
       <div class="lockscreen">
         <div class="lk-ico">🔒</div>
         <div class="lk-t" id="lkTitle">この講座の視聴には登録が必要です</div>
@@ -2208,7 +2218,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.5.8";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.6.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2712,6 +2722,66 @@ function videoAccessible(v){
   const effNeed = (need >= RANK.support) ? RANK.plus : need;
   return currentRank() >= effNeed;
 }
+/* ===== ゲスト試聴（2026-10-25 とーる指示） =====
+ * 動画スプシの「ゲスト試聴」タブ（特別枠）に載せた動画だけ、未ログイン（ゲスト）でも冒頭○分を見られる。
+ * ・数えるのは「動画の再生位置」。先へ飛ばして見ても、その時点で終わる
+ * ・時間が来たら映像を止めて、登録画面を開く。同じ動画のお試しは1回まで（この端末に記録）
+ * ★本人確認ではない（別ブラウザなら再度見られる）。タグ限定の動画には効かない */
+function trialKey_(v){ return "lmine_trial_v1_" + videoKey_(v); }
+function trialUsed_(v){ try{ return localStorage.getItem(trialKey_(v)) === "done"; }catch(e){ return false; } }
+function guestTrialMin(v){
+  if(currentRank() > RANK.guest) return 0;
+  if(!v || !(v.trial > 0) || v.tagOnly) return 0;
+  if(videoAccessible(v)) return 0;
+  return v.trial;
+}
+let TRIAL_ = { timer:null, player:null, v:null, limit:0, wallStart:0 };
+function cancelGuestTrial(){
+  if(TRIAL_.timer){ clearInterval(TRIAL_.timer); }
+  TRIAL_ = { timer:null, player:null, v:null, limit:0, wallStart:0 };
+  const b = document.getElementById("trialBadge"), f = document.getElementById("trialFinal");
+  if(b) b.hidden = true; if(f) f.hidden = true;
+}
+function fmtTrialLeft_(sec){ sec = Math.max(0, Math.ceil(sec)); return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0"); }
+function startGuestTrial(v, min){
+  cancelGuestTrial();
+  TRIAL_.v = v; TRIAL_.limit = min * 60; TRIAL_.wallStart = Date.now();
+  const floor = (v.platform === "cloudflare" && v.seek) ? cfSeekToSec_(v.seek) : 0;   // 冒頭カット（startTime）がある動画は、そこから数える
+  const attach = () => { try{ if(TRIAL_.v === v && v.platform === "cloudflare") TRIAL_.player = window.Stream(viframe); }catch(e){} };
+  if(v.platform === "cloudflare"){
+    if(window.Stream) attach();
+    else { const sc = document.createElement("script"); sc.src = "https://embed.cloudflarestream.com/embed/sdk.latest.js"; sc.onload = attach; document.head.appendChild(sc); }
+  }
+  document.getElementById("trialLeft").textContent = fmtTrialLeft_(TRIAL_.limit);
+  document.getElementById("trialBadge").hidden = false;
+  TRIAL_.timer = setInterval(() => {
+    if(TRIAL_.v !== v) return;
+    // 再生位置で数える（Cloudflare）。取れない動画は、開いてからの時間で数える
+    let watched = (Date.now() - TRIAL_.wallStart) / 1000;
+    if(TRIAL_.player){ const ct = Number(TRIAL_.player.currentTime); if(!isNaN(ct)) watched = Math.max(0, ct - floor); }
+    const left = TRIAL_.limit - watched;
+    document.getElementById("trialLeft").textContent = fmtTrialLeft_(left);
+    document.getElementById("trialBadge").classList.toggle("soon", left <= 60);
+    const f = document.getElementById("trialFinal");
+    if(left <= 10 && left > 0){ f.hidden = false; document.getElementById("tfNum").textContent = Math.ceil(left); }
+    else f.hidden = true;
+    if(left <= 0) endGuestTrial(v);
+  }, 500);
+}
+function setTrialEndedScreen_(){
+  document.getElementById("lkTitle").textContent = "お試し視聴は終了しました";
+  document.getElementById("lkDesc").textContent  = "続きを見るには、アプリへの登録が必要です（メールアドレスとパスワードだけ・無料）。";
+  const b = document.getElementById("lkbtn");
+  b.hidden = false; b.removeAttribute("target"); b.textContent = "登録する →"; b.setAttribute("href", "#");
+  b.onclick = (ev) => { ev.preventDefault(); openRegister(); };
+}
+function endGuestTrial(v){
+  cancelGuestTrial();
+  try{ localStorage.setItem(trialKey_(v), "done"); }catch(e){}
+  vframe.classList.add("locked"); viframe.src = "about:blank";
+  setTrialEndedScreen_();
+  try{ openRegister(); }catch(e){}   // 登録画面を開く
+}
 // コース内に1本でも視聴できる動画があるか（＝コースに入れるか）
 function hasAnyAccess(course){ return (course.videos || []).some(videoAccessible); }
 // この動画を今見られるか：種別/タグでOK ＝ または＝ 招待パスワードで解除済み
@@ -2982,11 +3052,14 @@ function setLockScreen(v, course){
   // ② サブスク限定 → エルラボ＋加入LPへ（ログイン中はメールを引き継ぐ）
   if(need <= RANK.plus){
     t.textContent = "エルラボ＋の加入が必要です";
-    d.textContent = "エルラボ＋（サブスク）にご加入いただくと、増えていく講義アーカイブが見放題になります。";
+    d.textContent = "講義のアーカイブと、メンバー限定コラム。月に何度か、一緒に考える場所です。";
     if(loggedIn){
       b.textContent = "✨ エルラボ＋に加入する →";
       b.setAttribute("href", "#");
       b.onclick = (ev) => { ev.preventDefault(); openSubJoin(); };
+      // 無料登録だけの方には、ご案内の動画をポップアップで出す（閉じたら7日間は出さない）
+      if(window.LMJoin) LMJoin.arm({ key:"video", delaySec:1.8,
+        email:(SESSION && SESSION.email) || "", onCta:openSubJoin });
     } else {
       b.textContent = "ログインして加入する →";
       b.setAttribute("href", "#");
@@ -4585,7 +4658,9 @@ async function fetchFromGas(){
   const r = await fetch(GAS_URL + "?action=videos&_=" + Date.now(), {cache:"no-store"}).then(x=>{ if(!x.ok) throw new Error("HTTP "+x.status); return x.json(); });
   if(!r || !r.ok || !r.sheet1) throw new Error("videos NG");
   const master = r.sheet2 ? masterFromTable(r.sheet2.cols||[], r.sheet2.rows||[]) : null;
-  return coursesFromTable(r.sheet1.cols||[], r.sheet1.rows||[], master);
+  const list = coursesFromTable(r.sheet1.cols||[], r.sheet1.rows||[], master);
+  if(r.trial) applyTrialTable(list, r.trial.cols||[], r.trial.rows||[]);
+  return list;
 }
 async function fetchFromSheet(){
   const txt  = await fetch(SHEET_URL + "&_=" + Date.now(), {cache:"no-store"}).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.text(); });
@@ -4636,7 +4711,7 @@ function coursesFromTable(cols, rows, master){
     if(buyUrl && !c.buyUrl) c.buyUrl = buyUrl;
     if(lpUrl  && !c.lpUrl)  c.lpUrl  = lpUrl;
     if(plabel && !c.label)  c.label  = plabel;
-    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, sub:pv.sub, seek:pv.seek, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), tagOnly:tagOnly, _order:ord });
+    c.videos.push({ t:(title||chap||cname), chapter:(chap||""), platform:pv.platform, id:pv.id, sub:pv.sub, seek:pv.seek, supp:supp, attach:attach, pw:pw, deadline:deadline, start:start, rank:rk, requiredTag:(tag||null), tagOnly:tagOnly, trial:0, _order:ord });
     if(ord < c._order) c._order = ord;
     if(rk < c.rank) c.rank = rk;   // コースのバッジは最小ランク（入口の入りやすさ）
   });
@@ -4645,6 +4720,19 @@ function coursesFromTable(cols, rows, master){
   list.sort((a,b)=> a._order - b._order);
   if(master) attachMaster(list, master);
   return list;
+}
+// 動画スプシの「ゲスト試聴」タブ（特別枠）：ここに載せた動画だけ、ゲストが冒頭○分を試聴できる（2026-10-25 とーる指示）
+// 列＝動画URL／試聴（分）。動画はURLの中の動画IDで突き合わせる（シート1と同じ動画を指せばOK）。分が空なら3分
+function applyTrialTable(list, cols, rows){
+  const find = (names) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return -1; };
+  const iUrl = Math.max(0, find(["動画URL","URL","動画"])), iMin = find(["試聴（分）","試聴(分)","分","試聴時間","ゲスト試聴（分）"]);
+  const mins = {};
+  (rows || []).forEach(r => {
+    const pv = parseVideoUrl(String((r && r[iUrl]) || "").trim()); if(!pv) return;
+    const m = parseFloat(iMin >= 0 ? r[iMin] : "") || 3;
+    mins[pv.platform + ":" + pv.id] = Math.max(0.5, Math.min(30, m));
+  });
+  list.forEach(c => (c.videos || []).forEach(v => { const m = mins[v.platform + ":" + v.id]; if(m) v.trial = m; }));
 }
 // シート2（管理ページ）→「必要タグ → 販売情報」のマップを作る
 function masterFromTable(cols, rows){
@@ -4766,7 +4854,7 @@ function render(){
     const partiallyFree = (minR <= RANK.free) && (maxR >= RANK.plus);   // 無料〜有料が混在＝一部無料
     const ti = partiallyFree ? `<span class="c-tier tier-partial">一部無料</span>` : tierBadge(minR);
     const cp = courseWatchProgress(course);
-    const stateBadge = (!hasAnyAccess(course)) ? `<span class="c-lock">🔒</span>` : (cp.total > 0 ? `<span class="c-tag">${cp.done}/${cp.total}本</span>` : `<span class="c-tag">${vids.length}本</span>`);
+    const stateBadge = (!hasAnyAccess(course)) ? ((course.videos || []).some(x => guestTrialMin(x) > 0) ? `<span class="c-tag c-trial">▶ お試し視聴あり</span>` : `<span class="c-lock">🔒</span>`) : (cp.total > 0 ? `<span class="c-tag">${cp.done}/${cp.total}本</span>` : `<span class="c-tag">${vids.length}本</span>`);
     head.innerHTML = `<span class="c-tw">${course.name}</span><span class="c-badges">${ti}${stateBadge}</span>`;
     head.addEventListener("click", () => onCourseClick(ci));
     el.appendChild(head);
@@ -4976,7 +5064,9 @@ function firstShowIndex(course){
 }
 // コースをタップ：最初の動画を再生＋動画へスクロール
 function onCourseClick(ci){
-  const vi = firstShowIndex(COURSES[ci]);
+  let vi = firstShowIndex(COURSES[ci]);
+  const cs = COURSES[ci];
+  if(cs && !hasAnyAccess(cs)){ const ti = (cs.videos || []).findIndex(x => guestTrialMin(x) > 0 && !trialUsed_(x)); if(ti >= 0) vi = ti; }
   select(ci, vi);
   closeDrawer();                              // スマホ：選んだらドロワーを閉じて視聴画面へ
   scrollToPlayer();
@@ -5034,12 +5124,13 @@ function renderChapterUI(ci, vi){
     const v = course.videos[i];
     const soon = isUpcoming(v);                       // 公開前：タイトルは隠さず「〇/〇公開」と予告
     const vlock = !soon && !videoAccessible(v);
+    const vtrial = vlock && guestTrialMin(v) > 0 && !trialUsed_(v);
     const watched = !soon && !vlock && WATCHED.has(videoKey_(v));
     const num = rev ? (idxs.length - pos) : (pos + 1);
     const b = document.createElement("button");
     b.className = "ch-item" + (i === vi ? " active" : "") + (vlock ? " ch-locked" : "") + (soon ? " ch-soon" : "") + (watched ? " ch-watched" : "");
     b.innerHTML = `<span class="ch-no">${String(num).padStart(2,"0")}</span><span class="ch-t">${v.t}</span>`
-      + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vlock ? `<span class="ch-lockmark">🔒</span>` : (watched ? `<span class="ch-donemark">✓ 視聴済み</span>` : "")));
+      + (soon ? `<span class="ch-soonmark">🎬 ${fmtDateShort(startTs(v))} 公開</span>` : (vtrial ? `<span class="ch-trialmark">▶ ${v.trial}分お試し</span>` : vlock ? `<span class="ch-lockmark">🔒</span>` : (watched ? `<span class="ch-donemark">✓ 視聴済み</span>` : "")));
     b.addEventListener("click", () => { select(ci, i); scrollToPlayer(); });
     list.appendChild(b);
   });
@@ -5056,6 +5147,7 @@ function select(ci, vi){
   hideThumb();                               // サムネも毎回リセット
   cancelWatchOffer();                        // 予約中のオファーは一旦キャンセル（再生時に再予約）
   cancelWatchMark();                         // 視聴済み判定タイマーも一旦キャンセル（動画を切り替えたので）
+  cancelGuestTrial();                        // ゲスト試聴のタイマーも一旦止める
   document.getElementById("vDoneMark").hidden = true;   // 視聴済みバッジも毎回リセット
 
   // ★ 公開前（視聴開始日がまだ）：ページは見せたまま「〇月〇日より公開！」と予告する
@@ -5104,11 +5196,14 @@ function select(ci, vi){
 
   const courseLocked = !courseWatchable(ci);       // コース全体（1本も見られない：種別/タグ/パスワード全部NG）
   const canWatch     = canWatchVideo(v, ci, vi);   // この動画を今見られるか（種別/タグ or パスワード）
+  const trialMin     = guestTrialMin(v);              // ゲスト試聴の分数（対象外は0）
+  const trialOk      = trialMin > 0 && !trialUsed_(v);
 
-  if(courseLocked){
+  if(courseLocked && !trialOk){
     // ④ コース全体ロック：動画も内容物（章・中身・前後）も出さない
     vmeta.classList.add("meta-locked");
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
+    if(trialMin > 0) setTrialEndedScreen_();
     if(v.pw) showPwOption(v, ci, vi);   // 招待パスワードのサブ導線
     vkick.textContent  = course.name;
     vtitle.textContent = "🔒 " + document.getElementById("lkTitle").textContent;
@@ -5131,21 +5226,24 @@ function select(ci, vi){
   vtitle.textContent = v.t;
   renderVlimit(v);
   vfiled.innerHTML = "";
-  if(!canWatch){
+  if(!canWatch && !trialOk){
     // この動画だけロック：プレイヤーはロック表示、章・中身リストは出したまま。
     // 種別/タグ(=無料登録など)のCTAを主に出し、パスワードがあれば「招待の方はこちら」を添える。
     vkick.textContent  = course.name;                    // コース名のみ（章タイトルは伏せる）
     vtitle.textContent = (v && v.tagOnly) ? "🔒 限定公開" : "🔒 アクセスパスが必要です";   // 本編タイトルは伏せる（タグ限定は"限定公開"表記）
     vframe.classList.add("locked"); viframe.src = "about:blank"; setLockScreen(v, course);
+    if(trialMin > 0) setTrialEndedScreen_();
     cfSeekPlayer_ = null;
     if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
     att.hidden = true;  att.innerHTML = "";
   } else {
     hidePwOption();
+    if(window.LMJoin) LMJoin.cancel();   // 見られる動画に移ったので、ご案内は出さない
     vframe.classList.remove("locked"); viframe.src = embedUrl(v);
     cfEnforceSeekFloor_(v);
-    scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
+    if(trialOk){ startGuestTrial(v, trialMin); }
+    else scheduleWatchOffer();   // 視聴開始 → 少し後にオファー（ゲスト→登録／登録→加入・1日1回）
     scheduleWatchMark(v);   // 視聴開始 → 30秒見たら「視聴済み」にする
     (() => {
       const dm = document.getElementById("vDoneMark");
@@ -5160,6 +5258,7 @@ function select(ci, vi){
     const attHtml = v.attach ? renderAttach(v.attach) : "";
     if(attHtml){ att.innerHTML = `<div class="vattach-h">添付要素</div><div class="vattach-list">${attHtml}</div>`; att.hidden = false; }
     else { att.innerHTML = ""; att.hidden = true; }
+    if(trialOk){ att.innerHTML = ""; att.hidden = true; }   // お試し中は添付（ワーク等）を出さない
   }
   renderChapterUI(ci, vi);  // ② 章選択 ③ 中身（ロック動画は🔒）
   renderVnav(ci, vi);       // コース内 前へ／次へ
@@ -5261,5 +5360,6 @@ function renderVnav(ci, vi){
 })();
 </script>
 <script src="/news-popup.js" defer></script>
+<script src="/join-popup.js" defer></script>
 </body>
 </html>

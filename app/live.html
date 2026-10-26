@@ -566,10 +566,34 @@ async function delRoom(id){
   loadRooms();
 }
 
+/* メンバーのご案内。視聴中は画面下の帯だけ、動画のポップは終わってから。
+   会員かどうか確かめられなかったときは、何も出さない（メンバーに出すほうが失礼なので）。*/
+let JOIN_OK = false;   // ご案内を出してよい人（＝会員でないと確認できた人）
+async function armJoinPop_(){
+  if(IS_ADMIN || IS_GUEST || !window.LMJoin) return;
+  const em = ((ME && ME.email) || "").toLowerCase();
+  if(!em) return;
+  try{
+    const r = await fetch(GAS_URL+"?action=verify&email="+encodeURIComponent(em)+"&_="+Date.now()).then(x=>x.json());
+    const tags = (r && r.tags) || [];
+    if(r && r.ok && (r.active || r.subActive || tags.indexOf("サブスク")>=0 || tags.indexOf("VIP")>=0)) return;
+  }catch(e){ return; }
+  JOIN_OK = true;
+  setTimeout(()=>{ if(JOIN_OK) LMJoin.bar({ key:"live", email:em }); }, 7*60*1000);   // 入場7分後に帯
+}
+/* 動画つきのポップ。終わったとき・退室するときだけ。done は閉じたあとにすること */
+function joinPopEnd_(done){
+  const em = ((ME && ME.email) || "").toLowerCase();
+  if(!JOIN_OK || !window.LMJoin || !LMJoin.show({ key:"live_end", email:em, onClose:done })){
+    if(typeof done === "function") done();
+  }
+}
+
 function enterRoom(){
   $("gate").classList.add("hidden");
   $("room").classList.remove("hidden");
   if(IS_ADMIN) $("adminFab").classList.remove("hidden");
+  armJoinPop_();
 
   // プレゼンス（入退室）
   const myPres = base.child("presence").child(ME.uid);
@@ -577,7 +601,7 @@ function enterRoom(){
   myPres.onDisconnect().remove().catch(()=>{});
   window.addEventListener("pagehide", ()=>{ try{ myPres.remove(); }catch(e){} });
   // 退室ボタン（誤タップ防止に確認あり）
-  $("leaveBtn").onclick = ()=>{ if(confirm("この会場から退室しますか？")){ try{ myPres.remove(); }catch(e){} location.href="index.html"; } };
+  $("leaveBtn").onclick = ()=>{ if(confirm("この会場から退室しますか？")){ try{ myPres.remove(); }catch(e){} joinPopEnd_(()=>{ location.href="index.html"; }); } };
 
   // BAN監視（自分が退場させられたら）
   base.child("banned").child(ME.uid).on("value", s=>{
@@ -604,7 +628,9 @@ function listenMeta(){
     const st = META.status || "soon";
     const badge=$("liveBadge"), sc=$("soonCover"), ft=fmtStart(META.startAt);
     if(st==="live"){ badge.classList.remove("off"); badge.innerHTML='<span class="dot"></span>LIVE'; $("statusHint").textContent=""; sc.classList.add("hidden"); }
-    else if(st==="ended"){ badge.classList.add("off"); badge.textContent="終了"; $("statusHint").textContent="この配信は終了しました（アーカイブは後日）"; sc.classList.add("hidden"); }
+    else if(st==="ended"){ badge.classList.add("off"); badge.textContent="終了"; $("statusHint").textContent="この配信は終了しました（アーカイブは後日）"; sc.classList.add("hidden");
+      joinPopEnd_(null);   // 見終わった直後＝アーカイブの話がいちばん通じるところ
+    }
     else { badge.classList.add("off"); badge.textContent="開始前"; $("statusHint").textContent = ft || "まもなく開始します";
       $("scTtl").textContent = META.title || "オンライン勉強会"; $("scTime").textContent = ft; sc.classList.remove("hidden"); }
     renderViewCount();
@@ -860,5 +886,6 @@ async function delArchive(uid){
   }catch(e){ alert("通信エラー"); }
 }
 </script>
+<script src="/join-popup.js" defer></script>
 </body>
 </html>

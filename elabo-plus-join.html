@@ -11,8 +11,8 @@
     if (/(^|\.)l-mine\.com$/.test(location.hostname)) gtag('config', 'G-TLV00VTDZL');
   </script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>エルラボ＋ シークレットメンバー｜増えていく講義アーカイブが見放題</title>
-<meta name="description" content="行動経済アナリストとーるの講義アーカイブが見放題。月イチの収録・公開ライブを配信し、アーカイブに追加。月額3,300円。">
+<title>エルラボ＋ シークレットメンバー｜月に何度か、一緒に考える場所</title>
+<meta name="description" content="行動経済アナリストとーるの講義アーカイブと、メンバー限定コラム。月に何度かの勉強会。月額3,300円。">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -637,6 +637,9 @@
     #checkout .payment-cta .lock{left:20px}
     #checkout::after{font-size:9.5px;line-height:1.8}
   }
+  .vsl{margin:0 auto 38px;max-width:760px}
+  .vsl video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;border:1px solid var(--line);box-shadow:0 10px 28px rgba(0,0,0,.18)}
+  .vsl .cap{margin:10px 0 0;font-size:13px;opacity:.75;text-align:center}
 </style>
 <script src="https://js.stripe.com/v3/"></script>
 </head>
@@ -648,9 +651,15 @@
   <div class="wrap reveal-group">
     <div class="kicker">Secret Membership</div>
     <div style="font-family:var(--mincho);font-weight:600;font-size:20px;letter-spacing:.08em;color:var(--gold-pale);margin:2px 0 24px">エルラボ＋ シークレットメンバー</div>
+    <div class="vsl">
+      <video controls playsinline preload="metadata" poster="assets/videos/elabo-member-vsl-v1.jpg" aria-label="エルラボ＋ シークレットメンバーのご案内（約3分）">
+        <source src="assets/videos/elabo-member-vsl-v1.mp4" type="video/mp4">
+      </video>
+      <p class="cap">3分ほどの動画です。音声つきでご覧ください。</p>
+    </div>
+    <h1>月に何度か、<br><span class="g">一緒に考える</span>場所です。</h1>
+    <p class="lead">講義のアーカイブと、メンバー限定コラム。<br>派手ではないですが、少しずつ増やしています。</p>
     <img class="hero-img" src="https://drive.google.com/thumbnail?id=1Jdd67kU7iEIsnX7J412PgGC3vMR5q2fX&sz=w1600" alt="エルラボ＋ シークレットメンバー" onerror="this.style.display='none'">
-    <h1>増えていく<wbr>講義アーカイブを、<br><span class="g">見放題</span>。</h1>
-    <p class="lead">月イチの収録・公開ライブを配信。その回はすべてアーカイブに追加され、<br>入るほどに、見返せる講義が増えていきます。</p>
     <div class="rule"></div>
     <div class="priceline">
       <div class="tag">Membership</div>
@@ -695,7 +704,7 @@
     <div class="eyebrow">Instructor</div>
     <h2 class="sec-h">あなたのインストラクター</h2>
     <div class="profile">
-      <img class="ph" src="https://drive.google.com/thumbnail?id=1S0FYngApPPmPLUNPfS8eYhmAldt-Er-B&sz=w800" alt="行動経済アナリスト とーる" onerror="this.onerror=null;this.src='assets/toru.jpg'">
+      <img class="ph" src="assets/toru-yoko.jpg" alt="行動経済アナリスト とーる">
       <div class="pb">
         <div class="prole">Behavioral Economics Analyst</div>
         <div class="pname">行動経済アナリスト「とーる」</div>
