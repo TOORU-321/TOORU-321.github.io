@@ -240,6 +240,16 @@ function render(d){
 
   var ph = d.pages.header, sh2 = d.sources.header, qh = d.queries.header;
 
+  // ページ別流入元は「ページ ← 流入元」の1行にまとめる。GASが古くて pageSources が無いうちは枠ごと出さない
+  var psHtml = "";
+  if(d.pageSources){
+    var pz = d.pageSources.header;
+    var psData = { rows: d.pageSources.rows.map(function(r){
+      return [r[col(pz, "ページ")], "← " + r[col(pz, "流入元")] + " / " + r[col(pz, "メディア")], r[col(pz, "閲覧数")]];
+    }) };
+    psHtml = '<div class="card"><h2>どのページに、どこから来たか TOP10</h2>' + rank(psData, 0, 1, 2, "閲覧") + '</div>';
+  }
+
   var isMonthN = (d.span === "month");
   var noteHtml = d.note && d.note.text
     ? '<div class="body">' + esc(d.note.text) + '</div><div class="at">あかり ' + esc(d.note.at) + '</div>'
@@ -282,6 +292,8 @@ function render(d){
 
     '<div class="card"><h2>流入元 TOP10</h2>' +
       rank(d.sources, col(sh2, "流入元"), col(sh2, "メディア"), col(sh2, "セッション"), "セッション") + '</div>' +
+
+    psHtml +
 
     '<div class="card"><h2>検索キーワード TOP10</h2>' +
       rank(d.queries, col(qh, "検索キーワード"), null, col(qh, "表示回数"), "表示") + '</div>' +
