@@ -1253,6 +1253,8 @@ a{text-decoration:none}
 .vsupp{margin-top:18px;padding-top:16px;border-top:1px solid var(--lm-border);font-family:var(--gothic);font-size:13px;line-height:1.9;color:#c8c3b8;white-space:normal;word-break:break-word}
 .vsupp[hidden]{display:none}
 .vsupp a{color:#e0c685;border-bottom:1px solid rgba(227,195,129,.4);word-break:break-all}
+.vsupp a.trial-cta{display:inline-block;margin-top:12px;padding:11px 22px;border:0;border-radius:999px;background:linear-gradient(135deg,#e6c47f,#caa75f);color:#1c1a14;font-weight:800;font-size:13.5px;letter-spacing:.04em;text-decoration:none;word-break:normal;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.vsupp a.trial-cta:hover{filter:brightness(1.06)}
 .vattach{margin-top:20px}
 .vattach[hidden]{display:none}
 .vattach-h{font-family:var(--serif-en);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#d8b870;margin-bottom:12px;display:flex;align-items:center;gap:9px}
@@ -2221,7 +2223,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.6.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.6.2";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -2777,6 +2779,14 @@ function setTrialEndedScreen_(){
   const b = document.getElementById("lkbtn");
   b.hidden = false; b.removeAttribute("target"); b.textContent = "登録する →"; b.setAttribute("href", "#");
   b.onclick = (ev) => { ev.preventDefault(); openRegister(); };
+}
+// 「ゲスト試聴」タブの補足・ボタンを動画の下（補足欄）へ出す。何も書いてなければ何もしない
+function renderTrialSupp_(v){
+  if(!v || !(v.trialNote || v.trialBtnUrl)) return;
+  const supp = document.getElementById("vsupp");
+  let html = v.trialNote ? `<div>${linkify(v.trialNote)}</div>` : "";
+  if(v.trialBtnUrl) html += `<a class="trial-cta" href="${escapeHtml(v.trialBtnUrl)}" target="_blank" rel="noopener">${escapeHtml(v.trialBtnText || "続きはこちら →")}</a>`;
+  supp.innerHTML = html; supp.hidden = false;
 }
 function endGuestTrial(v){
   cancelGuestTrial();
@@ -4726,16 +4736,24 @@ function coursesFromTable(cols, rows, master){
 }
 // 動画スプシの「ゲスト試聴」タブ（特別枠）：ここに載せた動画だけ、ゲストが冒頭○分を試聴できる（2026-10-25 とーる指示）
 // 列＝動画URL／試聴（分）。動画はURLの中の動画IDで突き合わせる（シート1と同じ動画を指せばOK）。分が空なら3分
+// 任意の列（2026-11-03）：ゲスト向け補足／ボタン文言／ボタンURL → お試し中と終了後に、動画の下へ出す（「メモ」列は出さない）
 function applyTrialTable(list, cols, rows){
   const find = (names) => { for(const n of names){ const i = cols.indexOf(n); if(i >= 0) return i; } return -1; };
   const iUrl = Math.max(0, find(["動画URL","URL","動画"])), iMin = find(["試聴（分）","試聴(分)","分","試聴時間","ゲスト試聴（分）"]);
-  const mins = {};
+  const iNote = find(["ゲスト向け補足","補足","案内文"]), iBtnT = find(["ボタン文言","ボタンの文言","リンク文言"]), iBtnU = find(["ボタンURL","リンクURL","続きURL"]);
+  const cell = (r, i) => (i >= 0 && r[i] != null) ? String(r[i]).trim() : "";
+  const recs = {};
   (rows || []).forEach(r => {
-    const pv = parseVideoUrl(String((r && r[iUrl]) || "").trim()); if(!pv) return;
-    const m = parseFloat(iMin >= 0 ? r[iMin] : "") || 3;
-    mins[pv.platform + ":" + pv.id] = Math.max(0.5, Math.min(30, m));
+    const pv = parseVideoUrl(cell(r, iUrl)); if(!pv) return;
+    const m = parseFloat(cell(r, iMin)) || 3;
+    const url = cell(r, iBtnU);
+    recs[pv.platform + ":" + pv.id] = { min: Math.max(0.5, Math.min(30, m)), note: cell(r, iNote),
+      btnUrl: /^https?:\/\//.test(url) ? url : "", btnText: cell(r, iBtnT) };
   });
-  list.forEach(c => (c.videos || []).forEach(v => { const m = mins[v.platform + ":" + v.id]; if(m) v.trial = m; }));
+  list.forEach(c => (c.videos || []).forEach(v => {
+    const t = recs[v.platform + ":" + v.id]; if(!t) return;
+    v.trial = t.min; v.trialNote = t.note; v.trialBtnUrl = t.btnUrl; v.trialBtnText = t.btnText;
+  }));
 }
 // シート2（管理ページ）→「必要タグ → 販売情報」のマップを作る
 function masterFromTable(cols, rows){
@@ -5216,6 +5234,7 @@ function select(ci, vi){
     renderVlimit(v);
     vfiled.innerHTML   = "";
     supp.hidden = true; supp.innerHTML = "";
+    if(trialMin > 0) renderTrialSupp_(v);   // お試し済みでも「続きはこちら」は出しておく
     att.hidden = true;  att.innerHTML = "";
     document.getElementById("vnav").hidden = true;
     document.getElementById("chapterTabs").hidden = true;
@@ -5242,6 +5261,7 @@ function select(ci, vi){
     cfSeekPlayer_ = null;
     if(v.pw) showPwOption(v, ci, vi);
     supp.hidden = true; supp.innerHTML = "";
+    if(trialMin > 0) renderTrialSupp_(v);
     att.hidden = true;  att.innerHTML = "";
   } else {
     hidePwOption();
@@ -5264,7 +5284,7 @@ function select(ci, vi){
     const attHtml = v.attach ? renderAttach(v.attach) : "";
     if(attHtml){ att.innerHTML = `<div class="vattach-h">添付要素</div><div class="vattach-list">${attHtml}</div>`; att.hidden = false; }
     else { att.innerHTML = ""; att.hidden = true; }
-    if(trialOk){ att.innerHTML = ""; att.hidden = true; }   // お試し中は添付（ワーク等）を出さない
+    if(trialOk){ att.innerHTML = ""; att.hidden = true; renderTrialSupp_(v); }   // お試し中は添付（ワーク等）を出さない・ゲスト向け補足があれば差し替え
   }
   renderChapterUI(ci, vi);  // ② 章選択 ③ 中身（ロック動画は🔒）
   renderVnav(ci, vi);       // コース内 前へ／次へ
