@@ -74,6 +74,9 @@
 .freepick .fp-thumb{position:relative;width:100%;aspect-ratio:16/9;background:#0f0f14 center/cover no-repeat;display:block}
 .freepick .fp-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);background:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.35))}
 .freepick .fp-badge{position:absolute;top:6px;left:6px;font-size:9px;font-weight:800;letter-spacing:.04em;color:#1c1a14;background:linear-gradient(135deg,#e6c47f,#caa75f);border-radius:999px;padding:2px 8px}
+.freepick .fp-badge--trial{z-index:1;color:#fff;background:linear-gradient(135deg,#e2574c,#c0392b);font-size:10px;padding:3px 9px;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.freepick .fp-card--trial{border-color:rgba(226,87,76,.55);box-shadow:0 0 0 1px rgba(226,87,76,.25)}
+.freepick .fp-card--trial:hover{border-color:rgba(226,87,76,.85)}
 .freepick .fp-meta{padding:9px 10px 11px}
 .freepick .fp-cs{font-size:9.5px;color:#8a8575;letter-spacing:.02em;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .freepick .fp-t{font-size:12px;color:#e8e4d8;line-height:1.5;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -2218,7 +2221,7 @@ const platLabel    = { vimeo:"Vimeo", youtube:"YouTube", drive:"動画", cloudfl
 // スプシに貼るURLがフル形式なら各動画から自動取得するので、これは「UIDだけ貼った時」の予備。
 const CF_SUB       = "640z7yea5jqzy33p";
 function cfBase(v){ const s = (v && v.sub) || CF_SUB; return s ? ("https://customer-" + s + ".cloudflarestream.com") : "https://iframe.videodelivery.net"; }
-const APP_VERSION  = "1.6.0";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
+const APP_VERSION  = "1.6.1";   // アプリのバージョン（メジャー.マイナー.パッチ）。大きな更新→左、小さな改善→右を上げる
 
 /* ===== ランク（積み上げ式）：上位は下位の動画も視聴可 ===== */
 const RANK = { guest:0, free:1, plus:2, support:3 };
@@ -4890,9 +4893,11 @@ function renderFreePick(){
   const sec = document.getElementById("freePick"), row = document.getElementById("fpRow");
   if(!sec || !row) return;
   if(currentRank() >= RANK.plus){ sec.hidden = true; return; }   // サブスク会員以上は不要
-  const picks = []; const per = {};
+  const picks = []; const per = {}; const trials = [];
   (COURSES||[]).forEach((c, ci) => {
     (c.videos||[]).forEach((v, vi) => {
+      // ゲスト試聴の動画は、先頭にまとめて目立たせる（使い切ったものは出さない）
+      if(guestTrialMin(v) > 0 && !trialUsed_(v) && !isUpcoming(v) && !isExpired(v)){ trials.push({ ci, vi, v, cname:c.name, trial:guestTrialMin(v) }); return; }
       if(!(videoAccessible(v) && !isUpcoming(v) && !isExpired(v))) return;   // 今すぐ無料で見れるものだけ
       per[ci] = per[ci] || 0;
       if(per[ci] >= 2) return;                                              // 1コース最大2本（多様性）
@@ -4900,16 +4905,17 @@ function renderFreePick(){
       picks.push({ ci, vi, v, cname:c.name });
     });
   });
-  if(!picks.length){ sec.hidden = true; return; }
-  const list = picks.slice(0, 12);
+  if(!picks.length && !trials.length){ sec.hidden = true; return; }
+  const list = trials.concat(picks).slice(0, 12);
   const guest = currentRank() <= RANK.guest;
   document.getElementById("fpTitle").textContent = guest ? "🎁 まずは無料で見てみる" : "🎁 無料で見れる動画";
   document.getElementById("fpSub").textContent   = guest ? "登録不要。気になる動画をタップ！" : "登録者は、こちらも見放題です。";
   row.innerHTML = "";
   list.forEach(p => {
     const cn = String(p.cname||"").replace(/\n/g," ").trim();
-    const card = document.createElement("button"); card.className = "fp-card";
-    card.innerHTML = `<div class="fp-thumb"><span class="fp-badge">無料</span><span class="fp-play">▶</span></div>`
+    const card = document.createElement("button"); card.className = "fp-card" + (p.trial ? " fp-card--trial" : "");
+    const badge = p.trial ? `<span class="fp-badge fp-badge--trial">${p.trial}分お試し</span>` : `<span class="fp-badge">無料</span>`;
+    card.innerHTML = `<div class="fp-thumb">${badge}<span class="fp-play">▶</span></div>`
       + `<div class="fp-meta"><div class="fp-cs">${escapeHtml(cn)}</div><div class="fp-t">${escapeHtml(p.v.t)}</div></div>`;
     card.addEventListener("click", () => { select(p.ci, p.vi); scrollToPlayer(); });
     row.appendChild(card);
