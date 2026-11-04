@@ -645,6 +645,24 @@ def share_html(c):
 }})();
 </script>'''
 
+# note版への導線（シェアボタンの下・2026-11-04 とーる依頼）。frontmatter の note_url がある記事だけ出す。
+# note版は同じテーマを角度を変えて書いたもの（全文転載ではない）。限定コラム（会員ゲートあり）には出さない。
+def note_link_html(c):
+    url = c.get("note_url", "").strip()
+    if not url or c.get("member_gate_id"):
+        return ""
+    n = c["number"]
+    return f'''<style>
+.note-link{{max-width:680px;margin:18px 0 0;padding:16px 18px;background:#fff;border:1px solid #eae5db}}
+.note-link p{{margin:0;font-size:14px;line-height:1.8;color:#3a362e}}
+.note-link a{{display:inline-block;margin-top:8px;font-weight:600;color:#a98b4e;text-decoration:none;border-bottom:1px solid #d9c9a3}}
+.note-link a:hover{{color:#8a6f36;border-bottom-color:#b8923e}}
+</style>
+    <aside class="note-link" aria-label="note版">
+      <p>この記事は、少し角度を変えてnoteにも書いています。<br>スキやフォローで応援してもらえると励みになります。</p>
+      <a href="{html.escape(url)}" target="_blank" rel="noopener" onclick="try{{if(window.gtag)gtag('event','note_click',{{item_id:'column{n}'}})}}catch(e){{}}">noteで読む &rarr;</a>
+    </aside>'''
+
 # ---------- 記事ページ ----------
 def render_article(c, cols):
     n = c["number"]
@@ -723,6 +741,7 @@ def render_article(c, cols):
     </div>
 
 {share_html(c)}
+{note_link_html(c)}
 {related_html(c, cols)}
 {shindan_footer()}
 {quiz_footer()}
