@@ -118,8 +118,8 @@ def optin_footer(n):
     # 全コラム統一：記事末尾は「エルラボ＋」案内に統一（旧『3-2-1ラボ』メルマガ＝停止中のため撤去）。
     # メルマガ（消えないマーケティング 7日間無料レター）の登録は、各コラムの optin-popup.js が担当。
     return f'''    <aside class="optin">
-      <div class="optin-k">動画で学ぶ｜エルラボ＋</div>
-      <p>行動経済学 × SNSビジネスを、体系立てた動画講座で。定期オンライン講義（アーカイブ視聴可）も開催中。まずは、無料の講座から。</p>
+      <div class="optin-k">月2回のオンライン勉強会｜エルラボ＋</div>
+      <p>行動経済学 × SNSマーケティングのオンライン勉強会を、月2回開いています。参加できなかった回はアーカイブで見返せて、体系立てた動画講座もそろっています。まずは、無料の講座から。</p>
       <a class="optin-btn" href="{ELABO_LP}" target="_blank" rel="noopener">エルラボ＋を見てみる →</a>
     </aside>'''
 
@@ -133,7 +133,7 @@ def popup_html(n):
                 f'      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>')
     else:
         txt = 'コラムでは書ききれない話を、SNSとメルマガでも発信しています。気が向いたら、覗いてみてください。'
-        app_btn = (f'\n      <a class="lm-pop-app" href="{ELABO_LP}" target="_blank" rel="noopener">動画で学ぶ｜エルラボ＋</a>'
+        app_btn = (f'\n      <a class="lm-pop-app" href="{ELABO_LP}" target="_blank" rel="noopener">オンライン勉強会｜エルラボ＋</a>'
                    if n >= TEMPLATE_FROM else '')
         btns = (f'      <a class="lm-pop-insta" href="{INSTA}" target="_blank" rel="noopener">Instagramを見てみる</a>\n'
                 f'      <a class="lm-pop-mag" href="{LP_URL}" target="_blank" rel="noopener">メルマガ『3-2-1ラボ』</a>{app_btn}')
