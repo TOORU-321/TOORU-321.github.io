@@ -24,8 +24,8 @@
   "use strict";
 
   var CFG = {
-    video:  "/assets/videos/elabo-member-vsl-v2.mp4",
-    poster: "/assets/videos/elabo-member-vsl-v2.jpg",
+    video:  "/assets/videos/elabo-member-vsl-v3.mp4",
+    poster: "/assets/videos/elabo-member-vsl-v3.jpg",
     joinUrl: "https://columns.l-mine.com/elabo-plus-join.html",
     snoozeDays: 7,        // 「あとで」で閉じたとき
     ctaSnoozeDays: 60,    // 加入ページへ進んだとき（あちらで判断してもらうので長め）
