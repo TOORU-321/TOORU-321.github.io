@@ -2400,6 +2400,36 @@ function fetchJsonRetry(url, opts, timeoutMs, tries){
     send(2);   // 最大3回試行
   }catch(_e){}
 })();
+/* 伝わり方タイプ診断のメールから ?t=トークン で来たとき（2026-11-18）。
+   GASにトークンを照会して、その人のタイプのタグだけ持たせて入場する。
+   ★トークンはURLからすぐ消す。履歴やスクショ、人に送ったURLから拾われないように。 */
+(function(){
+  try{
+    var q = new URLSearchParams(location.search);
+    var t = (q.get("t") || "").trim();
+    if(!/^[a-z2-9]{32}$/.test(t)) return;
+    // URLから消す（この時点で消す＝再読み込みでも二度と出ない）
+    try{
+      var u = new URL(location.href); u.searchParams.delete("t");
+      history.replaceState(null, "", u.pathname + u.search + u.hash);
+    }catch(_e){}
+    var send = function(tries){
+      fetch(GAS_URL + "?action=type_check&t=" + encodeURIComponent(t) + "&_=" + Date.now())
+        .then(function(r){ return r.json(); })
+        .then(function(res){
+          if(res && res.ok && res.email && res.type){
+            try{
+              // すでにパスワードを決めて入っている人は、そちらを優先（降格させない）
+              if(typeof SESSION !== "undefined" && SESSION && SESSION.email && !SESSION.tokenMode) return;
+              applyTokenAndEnter(res.email, res.type, res.name || "");
+            }catch(_x){}
+          } else if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); }
+        })
+        .catch(function(){ if(tries > 0){ setTimeout(function(){ send(tries - 1); }, 1500); } });
+    };
+    send(2);
+  }catch(_e){}
+})();
 let SESSION   = null;
 let MAINTENANCE_ON = false;   // 管理者以外の入室をブロックする（起動時に一度だけ取得）
 let _maintCheckedAt = 0;      // 直近チェック時刻（起動直後の連続呼び出しでの二重通信・応答待ちの固まりを防止）
@@ -2420,12 +2450,19 @@ let curCourse = null, curVideo = null;
 
 function loadSession(){
   try { SESSION = JSON.parse(localStorage.getItem(SESSION_KEY) || "null"); } catch(e){ SESSION = null; }
+  // ★診断トークンでの入場は7日で切る。放っておいても、ふつうの未ログイン状態に戻る
+  try{
+    if(SESSION && SESSION.tokenMode && tokenSessionExpired_()){
+      SESSION = null; localStorage.removeItem(SESSION_KEY);
+    }
+  }catch(_e){}
   updateMemberUI();
 }
 function saveSession(s){ SESSION = s; localStorage.setItem(SESSION_KEY, JSON.stringify(s)); updateMemberUI(); }
 function clearSession(){ SESSION = null; localStorage.removeItem(SESSION_KEY); updateMemberUI(); }
 function accountStatusLabel(){
   if(!SESSION || (!SESSION.email && !SESSION.lineuid)) return "";
+  if(SESSION.tokenMode) return "パスワード未設定";   // 診断トークンでの入場中
   if(SESSION.email && SESSION.active) return hasTag("vip") ? "VIP メンバー" : "エルラボ＋ メンバー";
   return "無料登録";
 }
@@ -2709,6 +2746,7 @@ function initEntry(){
 // 今のユーザーのランク（0:ゲスト 1:無料登録 2:サブスク）。※supportはコース別にタグ照合
 function currentRank(){
   if(!SESSION || (!SESSION.email && !SESSION.lineuid)) return RANK.guest; // 未ログイン＝ゲスト
+  if(SESSION.tokenMode) return RANK.guest;   // ★診断トークンでの入場はゲストのまま（タグ限定の1本だけ通る）
   if(SESSION.email && SESSION.active) return RANK.plus;  // サブスク有効（メール会員）
   return RANK.free;                                 // アカウント有り（無料登録・LINE簡易ログイン含む）
 }
@@ -3041,7 +3079,13 @@ function setLockScreen(v, course){
   if(v && v.tagOnly){
     t.textContent = "🔒 限定公開";
     d.textContent = "この動画は対象の方のみ視聴できます。";
-    if(loggedIn){
+    if(SESSION && SESSION.tokenMode){
+      // 診断トークンの人が、自分あて以外の限定動画を開いたとき
+      b.hidden = false;
+      b.textContent = "パスワードを決める →";
+      b.setAttribute("href", "#");
+      b.onclick = (ev) => { ev.preventDefault(); openRegisterWithEmail(SESSION.email); };
+    } else if(loggedIn){
       b.hidden = true;
     } else {
       b.hidden = false;
@@ -3054,6 +3098,15 @@ function setLockScreen(v, course){
 
   // ① 無料登録が必要
   if(need <= RANK.free){
+    // ★診断トークンで来ている人：メールは確認済みなので、パスワードを決めるだけで開く
+    if(SESSION && SESSION.tokenMode){
+      t.textContent = "パスワードを決めてください";
+      d.textContent = "メールアドレスは確認できています。パスワードを決めると、ほかの動画もご覧いただけます（無料）。";
+      b.textContent = "パスワードを決める →";
+      b.setAttribute("href", "#");
+      b.onclick = (ev) => { ev.preventDefault(); openRegisterWithEmail(SESSION.email); };
+      return;
+    }
     t.textContent = "無料登録が必要です";
     d.textContent = "メールアドレスとパスワードの設定だけ（無料）で視聴できます。";
     b.textContent = "無料で登録する →";
@@ -3159,6 +3212,58 @@ function applyLineAndEnter(uid, name, tags){
   try{ render(); }catch(_e){}
   try{ openNews(); }catch(_e){}
 }
+/* ===== 伝わり方タイプ診断からの「ログイン不要で1本だけ」（2026-11-18） =====
+ * 診断→メール→ ?t=トークン でここに来る。パスワードはまだ決めていない人。
+ * ・タグ（type_rapport など）だけ持たせる → その人向けの動画は「タグ限定」で通る
+ * ・ランクはゲストのまま（currentRank参照）→ ほかの動画は鍵がかかったまま見える
+ * ・鍵を押すと「パスワードを決めてください」（メール欄は埋まっている）
+ * ★本人確認ではない。メールを受け取れた人、という程度の確からしさ。
+ *   だから有料コンテンツやサブスク扱いには絶対に昇格させない。 */
+const TOKEN_LIFE_MS = 7 * 24 * 60 * 60 * 1000;   // この端末でのトークン入場は7日で切れる
+function applyTokenAndEnter(email, type, name){
+  try{ localStorage.removeItem(GUEST_KEY); }catch(_e){}
+  saveSession({
+    email: email, name: (name || String(email).split("@")[0]),
+    tags: ["type_" + type], active:false, subActive:false,
+    registered:false, tokenMode:true, tokenType:type, tokenAt:Date.now(), via:"type"
+  });
+  try{ enterLibrary(true); }catch(_e){}
+  try{ render(); }catch(_e){}
+  try{ showTokenBar(); }catch(_e){}
+}
+// 期限切れのトークン入場は、ふつうの未ログイン状態に戻す
+function tokenSessionExpired_(){
+  if(!SESSION || !SESSION.tokenMode) return false;
+  if(!SESSION.tokenAt) return true;
+  return (Date.now() - SESSION.tokenAt) > TOKEN_LIFE_MS;
+}
+// 画面の上に出す細い帯（この人のための1本です、という案内）
+function showTokenBar(){
+  if(!SESSION || !SESSION.tokenMode) return;
+  if(document.getElementById("tokenBar")) return;
+  const bar = document.createElement("div");
+  bar.id = "tokenBar";
+  bar.innerHTML = '<span>あなたの診断結果にあわせた動画をお届けしています。</span>'
+    + '<button type="button" id="tokenBarBtn">パスワードを決める</button>';
+  bar.style.cssText = "position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;gap:14px;"
+    + "align-items:center;justify-content:center;flex-wrap:wrap;padding:11px 16px;"
+    + "background:rgba(28,41,40,.96);backdrop-filter:blur(8px);border-top:1px solid rgba(227,195,129,.3);"
+    + "color:#e9ece4;font-size:12.5px;line-height:1.7";
+  document.body.appendChild(bar);
+  const btn = document.getElementById("tokenBarBtn");
+  btn.style.cssText = "border:0;border-radius:999px;padding:8px 18px;font-size:12.5px;font-weight:700;"
+    + "background:linear-gradient(135deg,#e8c880,#caa75f);color:#1c1a14;cursor:pointer";
+  btn.onclick = function(){ openRegisterWithEmail(SESSION && SESSION.email); };
+}
+function hideTokenBar(){ const b = document.getElementById("tokenBar"); if(b) b.remove(); }
+// 登録画面を、メール欄を埋めた状態で開く
+function openRegisterWithEmail(em){
+  openRegister();
+  setTimeout(function(){
+    const e = document.getElementById("rgEmail");
+    if(e && em){ e.value = em; try{ document.getElementById("rgPass").focus(); }catch(_x){ } }
+  }, 80);
+}
 async function applyTierAndEnter(email, closeFn){
   let tier = { active:false, subActive:false, tags:[], name: email.split("@")[0] };
   try {
@@ -3167,6 +3272,7 @@ async function applyTierAndEnter(email, closeFn){
   } catch(e){ /* 顧客照合が失敗しても無料登録として続行 */ }
   try{ const ln = localStorage.getItem("lmine_name:" + email); if(ln) tier.name = ln; }catch(_e){}   // 端末で変更した表示名を優先
   saveSession({ email, name: tier.name, tags: tier.tags, active: tier.active, subActive: tier.subActive, mailBlocked: !!tier.mailBlocked, registered:true });
+  try{ hideTokenBar(); }catch(_e){}   // 診断トークンで入っていた人がパスワードを決めたら、案内の帯を消す
   if(isMailGated(tier)){   // ★無料会員でメール配信が停止されている場合は、ここで止めて再開の導線を出す（有料の方は対象外）
     if(closeFn) closeFn();
     hideAuthLoading();

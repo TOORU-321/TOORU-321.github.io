@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://columns.l-mine.com/shindan-type/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="L-MINE">
+<meta property="og:title" content="あなたはどっちのタイプ？｜SNSの伝わり方タイプ診断">
+<meta property="og:description" content="SNSマーケに「正解」はありません。あるのは「あなたがどっちのタイプか」だけ。10問・約1分の無料診断。">
+<meta property="og:url" content="https://columns.l-mine.com/shindan-type/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1c2928">
+<meta name="description" content="SNSマーケに「正解」はありません。あるのは「あなたがどっちのタイプか」だけ。10問・約1分の無料診断。">
+<title>あなたはどっちのタイプ？｜SNSの伝わり方タイプ診断</title>
+<link rel="icon" href="../shindan-5day/assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{
+  color-scheme:light;
+  --ink:#233631; --muted:#53665d; --paper:#f6f4ed; --gold:#e4c686;
+  --line:#d9ded5; --deep:#1c2928; --card:#fcfcf8;
+  --a:#b98a4a; --b:#4a7f86;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.85;
+  -webkit-text-size-adjust:100%}
+h1,h2,h3,p{margin:0}
+h1,h2,h3,.mincho{font-family:"Yu Mincho","Hiragino Mincho ProN",serif;font-weight:600;line-height:1.5}
+a{color:inherit}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid #bd791c;outline-offset:3px}
+.wrap{width:min(680px,calc(100% - 40px));margin:auto}
+
+/* ───── ヘッダー・進み具合 ───── */
+header{position:sticky;top:0;z-index:5;background:rgba(246,244,237,.94);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:14px;height:52px}
+.brand{font-size:.74rem;letter-spacing:.1em;font-weight:700;white-space:nowrap}
+.bar{flex:1;height:4px;background:#e2e5dc;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);
+  border-radius:99px;transition:width .35s cubic-bezier(.2,.7,.3,1)}
+.count{font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+body.done header .bar,body.done header .count{display:none}
+
+/* ───── 入口 ───── */
+.open{text-align:center;padding:52px 0 60px}
+.open .eyebrow{font-size:.76rem;letter-spacing:.1em;color:var(--muted);margin-bottom:18px}
+.open h1{font-size:clamp(1.65rem,5.6vw,2.4rem);letter-spacing:.02em}
+.open h1 em{font-style:normal;color:#9c7430}
+.open .lead{margin:22px auto 0;max-width:27em;font-size:.88rem;color:var(--muted);text-align:left}
+.facts{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:26px 0 30px;padding:0;list-style:none}
+.facts li{border:1px solid #c7cfc4;border-radius:4px;padding:3px 11px;font-size:.76rem;color:var(--muted)}
+.go{display:inline-flex;align-items:center;justify-content:center;gap:18px;
+  min-height:58px;padding:15px 34px;border:0;border-radius:5px;
+  background:var(--gold);color:#20352d;font-weight:700;font-size:1rem;
+  box-shadow:0 4px 0 #0002;transition:background .2s}
+.go:hover{background:#f1dba9}
+.go .arrow{font-size:1.25em;transition:transform .25s ease}
+.go:hover .arrow{transform:translateX(6px)}
+.open .note{font-size:.74rem;color:var(--muted);margin-top:16px;line-height:1.8}
+
+/* ───── LP部分 ───── */
+.lp{text-align:left;padding:10px 0 0}
+.blk{padding:40px 0;border-top:1px solid var(--line)}
+.blk .kicker{font-size:.7rem;letter-spacing:.16em;color:var(--muted);margin-bottom:9px}
+.blk h2{font-size:clamp(1.3rem,4.8vw,1.75rem)}
+.says{margin:22px 0 0;padding:0;list-style:none}
+.says li{position:relative;padding:14px 0 14px 30px;border-bottom:1px solid var(--line);
+  font-size:.9rem;color:var(--muted)}
+.says li:before{content:"”";position:absolute;left:2px;top:.55em;
+  font-family:"Yu Mincho",serif;font-size:1.5rem;color:#c3b48c;line-height:1}
+.pv{margin-top:20px;font-size:.93rem}
+.pv strong{background:linear-gradient(transparent 62%,#e8dcb4 62%);font-weight:600;
+  background-repeat:no-repeat;background-size:100% 100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 0}
+.col{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:17px 16px}
+.col .nm{display:block;font-size:.8rem;font-weight:700;letter-spacing:.04em;margin-bottom:8px}
+.col.a{border-top:3px solid var(--a)} .col.a .nm{color:var(--a)}
+.col.b{border-top:3px solid var(--b)} .col.b .nm{color:var(--b)}
+.col p{font-size:.84rem;color:var(--muted);line-height:1.8}
+.know{margin:20px 0 0;padding:0;list-style:none}
+.know li{position:relative;padding:14px 0 14px 26px;border-bottom:1px solid var(--line)}
+.know li:before{content:"";position:absolute;left:3px;top:1.45em;
+  width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.know b{display:block;font-size:.97rem}
+.know span{display:block;font-size:.84rem;color:var(--muted);margin-top:2px}
+.blk.last{text-align:center;border-bottom:0;padding-bottom:14px}
+.note2{margin:14px auto 22px;font-size:.84rem;color:var(--muted)}
+@media(max-width:680px){ .two{grid-template-columns:1fr} .blk{padding:32px 0} }
+
+/* スクロールで、ふわっと出す */
+@media(prefers-reduced-motion:no-preference){
+  html.js .rv{opacity:0;transform:translateY(22px);
+    transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.3,1)}
+  html.js .rv.in{opacity:1;transform:none}
+}
+
+/* ───── 設問 ───── */
+.quiz{padding:30px 0 70px}
+.qno{font-size:.72rem;letter-spacing:.14em;color:#9c7430;margin-bottom:9px}
+.q{font-size:clamp(1.15rem,4.4vw,1.5rem);letter-spacing:.01em}
+.opts{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:9px}
+.opts button{display:block;width:100%;text-align:left;
+  background:var(--card);border:1px solid var(--line);border-radius:9px;
+  padding:14px 17px;line-height:1.6;font-size:.95rem;
+  transition:border-color .16s,background .16s,transform .1s}
+.opts button:hover{border-color:#b9c3b4;background:#fff}
+.opts button:active{transform:scale(.99)}
+.opts button.on{border-color:var(--gold);background:#fbf5e7;box-shadow:0 0 0 1px var(--gold) inset}
+.opts small{display:block;font-size:.72rem;color:var(--muted);margin-bottom:1px;font-weight:400}
+.opts .mid{color:var(--muted);font-size:.9rem}
+.back{margin-top:26px;background:none;border:0;padding:6px 0;
+  font-size:.8rem;color:var(--muted);text-decoration:underline;text-underline-offset:4px}
+.back[hidden]{display:none}
+
+/* ───── 結果 ───── */
+.result{display:none}
+body.done .result{display:block}
+body.done .quiz,body.done .open{display:none}
+.hero{background:var(--deep);color:#f4f2e9;padding:44px 0 40px;text-align:center}
+.hero .en{font-size:.72rem;letter-spacing:.22em;color:var(--gold);margin-bottom:14px}
+.hero .type{font-size:clamp(1.9rem,7vw,2.9rem);letter-spacing:.04em;color:#fff}
+.hero .jp{font-size:clamp(1rem,3.6vw,1.2rem);margin-top:12px;color:#dfe5dc;font-weight:400}
+.hero .jp b{color:var(--gold);font-weight:600}
+
+/* 割合バー */
+.meter{margin:30px auto 0;width:min(430px,100%)}
+.meter .labs{display:flex;justify-content:space-between;font-size:.72rem;color:#b4bfb5;margin-bottom:7px}
+.meter .track{height:12px;border-radius:99px;overflow:hidden;display:flex;background:#2b3b39}
+.meter .track i{display:block;height:100%;transition:width .9s cubic-bezier(.2,.7,.3,1)}
+.meter .track .ia{background:linear-gradient(90deg,#d7a559,#e8c98a)}
+.meter .track .ib{background:linear-gradient(90deg,#5d9aa2,#8cc3c8)}
+.meter .nums{display:flex;justify-content:space-between;font-size:.8rem;margin-top:8px;
+  font-variant-numeric:tabular-nums;color:#e9ece4}
+.meter .nums b{font-size:1.05rem}
+
+.rbody{padding:44px 0 10px}
+.sec{margin:0 0 34px}
+.sec .kicker{font-size:.7rem;letter-spacing:.16em;color:var(--muted);margin-bottom:8px}
+.sec h2{font-size:clamp(1.25rem,4.4vw,1.6rem)}
+.sec p{margin-top:13px;font-size:.92rem}
+.traits{margin:18px 0 0;padding:0;list-style:none}
+.traits li{position:relative;padding:13px 0 13px 26px;border-bottom:1px solid var(--line);font-size:.92rem}
+.traits li:before{content:"";position:absolute;left:3px;top:1.32em;
+  width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.traits li b{display:block;font-size:1rem}
+.traits li span{display:block;color:var(--muted);font-size:.86rem;margin-top:2px}
+.weak{background:#eceee7;border:1px solid var(--line);border-left:4px solid #b98a4a;
+  border-radius:0 9px 9px 0;padding:20px 22px}
+.weak .kicker{color:#9c7430}
+.weak p{font-size:.92rem}
+.weak p+p{margin-top:11px}
+
+/* 受け取り */
+.catch{background:var(--deep);color:#f4f2e9;padding:40px 0 46px;margin-top:10px}
+.catch h2{font-size:clamp(1.3rem,4.6vw,1.75rem);color:#fff;text-align:center}
+.catch .lead{margin:16px auto 0;max-width:30em;font-size:.88rem;color:#dfe5dc}
+.form{margin:26px auto 0;max-width:430px}
+.form label{display:block;font-size:.78rem;color:#c3cdc6;margin-bottom:7px}
+.form input{width:100%;padding:15px 16px;border:1px solid #42524f;border-radius:7px;
+  background:#131e1d;color:#f4f2e9;font-size:1rem;font-family:inherit}
+.form input::placeholder{color:#7d8c88}
+.form input:focus{border-color:var(--gold);outline:none}
+.form button{margin-top:13px;width:100%;min-height:58px;border:0;border-radius:5px;
+  background:var(--gold);color:#20352d;font-weight:700;font-size:1rem;box-shadow:0 4px 0 #0003}
+.form button:hover{background:#f1dba9}
+.form button:disabled{opacity:.55;box-shadow:none}
+.form .msg{margin-top:12px;font-size:.82rem;min-height:1.4em;color:#ffd9a8}
+.form .fine{margin-top:14px;font-size:.72rem;color:#9fada8;line-height:1.85}
+.again{text-align:center;padding:26px 0 0}
+.again button{background:none;border:0;font-size:.8rem;color:var(--muted);
+  text-decoration:underline;text-underline-offset:4px}
+
+footer{border-top:1px solid var(--line);padding:22px 0 30px;font-size:.7rem;color:var(--muted);margin-top:36px}
+footer .links{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:9px}
+footer a{text-underline-offset:4px}
+
+@media(max-width:680px){
+  .wrap{width:calc(100% - 32px)}
+  .open{padding:36px 0 44px}
+  .go{display:flex;width:100%}
+  .quiz{padding:24px 0 54px}
+  .opts button{padding:13px 15px;font-size:.92rem}
+  .rbody{padding:34px 0 6px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@keyframes qin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:no-preference){
+  .quiz .card{animation:qin .36s cubic-bezier(.2,.7,.3,1) both}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="brand">伝わり方タイプ診断</span>
+    <span class="bar"><i id="barFill"></i></span>
+    <span class="count" id="count">　</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ━━━ 入口（LPを兼ねています） ━━━ -->
+<section class="open" id="open">
+
+  <div class="wrap top">
+    <p class="eyebrow">SNSで講座・教室・サポートを届ける方へ</p>
+    <h1>SNSに「正解」はない。<br>あるのは<em>どっちのタイプか</em>だけ。</h1>
+    <p class="lead">
+      うまくいっている人のやり方を真似して、しっくりこなかったこと、ありませんか。<br>
+      それ、努力が足りないんじゃなくて、タイプが違うだけかもしれません。
+    </p>
+    <ul class="facts">
+      <li>全10問・5択</li><li>約1分</li><li>無料</li><li>登録なしで結果が出ます</li>
+    </ul>
+    <button class="go" data-start>診断をはじめる<span class="arrow" aria-hidden="true">→</span></button>
+    <p class="note">深く考えず、ぱっと思ったほうで大丈夫です。</p>
+  </div>
+
+  <div class="lp wrap">
+
+    <div class="blk rv">
+      <p class="kicker">こんなこと、ありませんか</p>
+      <h2>同じことをやっているのに、<br>うまくいく人と、いかない人がいる。</h2>
+      <ul class="says">
+        <li>毎日投稿がいいと聞いて、半年がんばった。フォロワーは増えた。でも売れない。</li>
+        <li>発信を減らして、会って話すようにしたら売れた。でも、会える人数に限界がある。</li>
+        <li>有名な人のやり方を真似してみたけれど、どうにも自分には合わない気がする。</li>
+      </ul>
+      <p class="pv">これ、やり方が間違っているんじゃありません。<br><strong>やり方と、その人のタイプが噛み合っていないだけ</strong>です。</p>
+    </div>
+
+    <div class="blk rv">
+      <p class="kicker">世界で一番売れている2人も、真逆です</p>
+      <h2>「自分を売る人」と、<br>「オファーを売る人」。</h2>
+      <div class="two">
+        <div class="col a">
+          <span class="nm">自分を売る</span>
+          <p>人柄とストーリーで惹きつける。少人数と深くつながって、一対一で届ける。</p>
+        </div>
+        <div class="col b">
+          <span class="nm">オファーを売る</span>
+          <p>中身と条件で選ばれる。たくさんの人に届けて、仕組みで自然に決まっていく。</p>
+        </div>
+      </div>
+      <p class="pv">どちらも正しい。けれど<strong>混ぜると、どちらも効かなくなります</strong>。</p>
+    </div>
+
+    <div class="blk rv">
+      <p class="kicker">この診断でわかること</p>
+      <h2>自分がどっち側の人なのか。</h2>
+      <ul class="know">
+        <li><b>あなたのタイプ</b><span>ラポール型・シグナル型・両利き型の3つから。割合も出ます。</span></li>
+        <li><b>いま、どこで止まっているか</b><span>タイプによって、つまずく場所は決まっています。</span></li>
+        <li><b>どっちを伸ばすと早いか</b><span>苦手を埋めるのか、得意を伸ばすのか。順番が変わります。</span></li>
+      </ul>
+    </div>
+
+    <div class="blk rv last">
+      <h2>1分で終わります。</h2>
+      <p class="note2">メールアドレスの入力は、結果を見たあとで大丈夫です。<br>登録しなくても、タイプと特徴まではその場で読めます。</p>
+      <button class="go" data-start>診断をはじめる<span class="arrow" aria-hidden="true">→</span></button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ━━━ 設問 ━━━ -->
+<section class="quiz wrap" id="quiz" hidden aria-live="polite">
+  <div class="card" id="card"></div>
+  <button class="back" id="back" hidden>← ひとつ前にもどる</button>
+</section>
+
+<!-- ━━━ 結果 ━━━ -->
+<section class="result" id="result">
+  <div class="hero">
+    <div class="wrap">
+      <p class="en" id="rEn"></p>
+      <h1 class="type" id="rType"></h1>
+      <p class="jp" id="rJp"></p>
+      <div class="meter">
+        <div class="labs"><span>ラポール</span><span>シグナル</span></div>
+        <div class="track"><i class="ia" id="mA"></i><i class="ib" id="mB"></i></div>
+        <div class="nums">
+          <span><b id="nA">—</b>%</span>
+          <span><b id="nB">—</b>%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rbody wrap">
+    <div class="sec">
+      <p class="kicker">あなたは、こういう人です</p>
+      <h2 id="rHead"></h2>
+      <p id="rLead"></p>
+      <ul class="traits" id="rTraits"></ul>
+    </div>
+
+    <div class="sec weak">
+      <p class="kicker">でも、たぶんここでつまずいています</p>
+      <h2 id="rWeakHead"></h2>
+      <p id="rWeak1"></p>
+      <p id="rWeak2"></p>
+    </div>
+  </div>
+
+  <div class="catch">
+    <div class="wrap">
+      <h2 id="rCatchHead"></h2>
+      <p class="lead" id="rCatchLead"></p>
+      <form class="form" id="form" novalidate>
+        <label for="mail">メールアドレス</label>
+        <input type="email" id="mail" name="mail" inputmode="email" autocomplete="email"
+               placeholder="you@example.com" required>
+        <button type="submit" id="send">動画を受け取る</button>
+        <p class="msg" id="msg" role="status"></p>
+        <p class="fine">
+          パスワードの登録はいりません。届いたメールのリンクから、そのまま動画が見られます。<br>
+          いつでも配信を止められます。
+        </p>
+      </form>
+      <p class="again"><button type="button" id="again">もう一度やってみる</button></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="https://columns.l-mine.com/">コラム一覧</a>
+      <a href="https://columns.l-mine.com/column89.html">このタイプの話をくわしく</a>
+      <a href="https://columns.l-mine.com/privacy.html">プライバシーポリシー</a>
+    </div>
+    <div>© L-MINE</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ══════════════════════════════════════════
+   設問　10問・5択
+   score: 左（A＝ラポール）を -2、右（B＝シグナル）を +2
+   ══════════════════════════════════════════ */
+var QS = [
+  { q:"自分の良さが伝わるのは、どっち？",
+    a:"話しはじめてから", b:"見てもらった時点で" },
+  { q:"問い合わせが来るのは、たいてい？",
+    a:"知り合い・紹介から", b:"投稿を見た、知らない人から" },
+  { q:"しんどいのは、どっち？",
+    a:"人が集まらない", b:"人は来るのに、売れない" },
+  { q:"自分のことを語るのは？",
+    a:"わりと平気。むしろ話したい", b:"できれば避けたい。商品の話がしたい" },
+  { q:"いい反応が返ってくるのは？",
+    a:"直接しゃべったとき", b:"出したものを見てもらったとき" },
+  { q:"作るのが苦じゃないのは？",
+    a:"その場で話す言葉", b:"あとに残るコンテンツ" },
+  { q:"決まるときの、決まり方は？",
+    a:"話しているうちに、なんとなく", b:"見て、納得して、そのまま" },
+  { q:"いまの形に近いのは？",
+    a:"少ない人数・単価は高め", b:"多い人数・単価はほどほど" },
+  { q:"「個別に話しませんか」と言われたら？",
+    a:"そのほうが早い", b:"できれば手短に済ませたい" },
+  { q:"いま伸ばすなら、どっちをやりたい？",
+    a:"会って話す機会を増やす", b:"仕組みを整えて、放っておいても売れるように" }
+];
+
+/* ══════════════════════════════════════════
+   結果の中身
+   ══════════════════════════════════════════ */
+var TYPES = {
+  rapport:{
+    en:"Rapport Type", type:"ラポール型", jp:"<b>話すと伝わる</b>人",
+    head:"あなたの価値は、関係のなかで立ち上がります。",
+    lead:"心理学でいうラポール――つまり、相手とのあいだに通う信頼。あなたの良さは、そこで初めて形になります。文章やプロフィールでは、たぶん半分も伝わっていません。",
+    traits:[
+      ["話せば、だいたい伝わる","一度ちゃんと話した人は、そのまま残ってくれる。離脱が少ないのが強みです。"],
+      ["紹介で広がっていく","「あの人に会ってみて」と言ってもらえる。数は多くないけれど、質が高い。"],
+      ["少ない人数で成り立つ","ひとりあたりの関係が濃いので、大量に集めなくてもいい形です。"],
+      ["自分のことを話すのが苦じゃない","これは意外と武器です。語れない人のほうが多いので。"]
+    ],
+    weakHead:"「見つけてもらう」ところで、止まっています。",
+    weak1:"会えば決まるのに、そもそも会う人が増えない。集客がしんどい。たぶん、ずっとここです。",
+    weak2:"そして厄介なのは、ここで「発信が足りないんだ」と思って、得意じゃない発信を増やしてしまうこと。合わないやり方を量でカバーしようとすると、だいたい続きません。",
+    catchHead:"では、どこを増やせばいいのか。",
+    catchLead:"ラポール型の人が、自分を削らずに「会う人」を増やす方法を、動画でお話ししています。"
+  },
+  signal:{
+    en:"Signal Type", type:"シグナル型", jp:"<b>見せて惹きつける</b>人",
+    head:"あなたの価値は、会う前にもう伝わっています。",
+    lead:"経済学にシグナリングという考え方があります。直接話さなくても、出したもので質が伝わる――あなたはそれができる側の人です。人は、あなたを見つけてからやってきます。",
+    traits:[
+      ["放っておいても、人が来る","作ったものが勝手に働いてくれる。これができる人は、実は多くありません。"],
+      ["知らない人に届く","紹介に頼らなくていい。広がり方に上限がないのが強みです。"],
+      ["積み上がる","今日作ったものが、半年後も働いている。時間が味方になる形です。"],
+      ["自分を前に出さなくていい","商品やオファーで勝負できる。これは、ラクであると同時に強さでもあります。"]
+    ],
+    weakHead:"「買ってもらう」ところで、止まっています。",
+    weak1:"人は来る。見てもくれる。なのに、最後の一歩が踏まれない。数字で言えば、入口は広いのに出口が細い状態です。",
+    weak2:"そしてここで「もっと集めなきゃ」と入口を広げにかかると、しんどさだけが増えます。穴の空いたバケツに、水を足している感じになります。",
+    catchHead:"では、どこを締めればいいのか。",
+    catchLead:"シグナル型の人が、集めた人をちゃんと最後まで運ぶ方法を、動画でお話ししています。"
+  },
+  both:{
+    en:"Ambidextrous Type", type:"両利き型", jp:"<b>どちらも持っている</b>人",
+    head:"あなたは、両方の回路を持っています。",
+    lead:"経営学に「両利き」という言葉があります。ふつうは二者択一になるものを、同時に回せる状態のこと。あなたの答えは、どちらかに大きく振れていません。",
+    traits:[
+      ["場面で使い分けられる","話したほうが早いときは話す。見せたほうが早いときは見せる。これができる人は強いです。"],
+      ["どっちのやり方も、ある程度わかる","だから人のアドバイスが、だいたい理解できてしまいます。"],
+      ["伸びしろが、二方向にある","片方に寄せれば尖るし、両方を組めば仕組みになります。選べる位置にいます。"]
+    ],
+    weakHead:"ただ、器用さが足を引っぱることがあります。",
+    weak1:"どっちもできるということは、どっちも中途半端になりうるということでもあります。両方に手を出して、両方が薄くなる。これが両利き型のいちばんの落とし穴です。",
+    weak2:"もうひとつ。アドバイスが全部「わかる」ので、そのたびにやり方を変えてしまいがちです。いちばん必要なのは、新しい知識より「どっちから手をつけるか」を決めることかもしれません。",
+    catchHead:"では、どっちから手をつけるか。",
+    catchLead:"両利き型の人が、器用さを強さに変える順番を、動画でお話ししています。"
+  }
+};
+
+var LABS = ["", "どちらかといえば", "", "どちらかといえば", ""];
+
+/* ══════════════════════════════════════════ */
+var $ = function(id){ return document.getElementById(id); };
+var i = 0, ans = [];
+
+function render(){
+  var item = QS[i];
+  var opt = [
+    { t:item.a, s:-2, sub:"" },
+    { t:item.a, s:-1, sub:"どちらかといえば" },
+    { t:"どちらとも言えない", s:0, sub:"", mid:true },
+    { t:item.b, s:1, sub:"どちらかといえば" },
+    { t:item.b, s:2, sub:"" }
+  ];
+  var h = '<p class="qno">Q' + (i+1) + ' / ' + QS.length + '</p>' +
+          '<h2 class="q">' + item.q + '</h2><ul class="opts">';
+  for(var k=0;k<opt.length;k++){
+    var o = opt[k];
+    h += '<li><button type="button" data-s="' + o.s + '"' +
+         (ans[i] === o.s ? ' class="on"' : '') + '>' +
+         (o.sub ? '<small>' + o.sub + '</small>' : '') +
+         '<span' + (o.mid ? ' class="mid"' : '') + '>' + o.t + '</span></button></li>';
+  }
+  h += '</ul>';
+  $("card").innerHTML = h;
+
+  // アニメを毎問かけ直す
+  var c = $("card");
+  c.style.animation = "none";
+  void c.offsetWidth;
+  c.style.animation = "";
+
+  $("back").hidden = (i === 0);
+  $("count").textContent = (i+1) + " / " + QS.length;
+  $("barFill").style.width = (i / QS.length * 100) + "%";
+
+  var btns = c.querySelectorAll(".opts button");
+  for(var n=0;n<btns.length;n++){
+    btns[n].addEventListener("click", pick);
+  }
+  window.scrollTo({ top:0, behavior:"instant" in document.documentElement.style ? "instant" : "auto" });
+}
+
+function pick(e){
+  var s = parseInt(e.currentTarget.getAttribute("data-s"), 10);
+  ans[i] = s;
+  var btns = $("card").querySelectorAll(".opts button");
+  for(var n=0;n<btns.length;n++){ btns[n].className = ""; }
+  e.currentTarget.className = "on";
+  setTimeout(function(){
+    if(i < QS.length - 1){ i++; render(); }
+    else { finish(); }
+  }, 230);
+}
+
+function finish(){
+  var sum = 0;
+  for(var n=0;n<ans.length;n++){ sum += (ans[n] || 0); }
+  // sum ∈ [-20,+20]　マイナス＝ラポール寄り
+  var bPct = Math.round(((sum + 20) / 40) * 1000) / 10;   // 小数1桁
+  var aPct = Math.round((100 - bPct) * 10) / 10;
+  var key = (aPct >= 55) ? "rapport" : (aPct <= 45) ? "signal" : "both";
+  var T = TYPES[key];
+
+  $("rEn").textContent      = T.en;
+  $("rType").textContent    = T.type;
+  $("rJp").innerHTML        = T.jp;
+  $("rHead").textContent    = T.head;
+  $("rLead").textContent    = T.lead;
+  $("rWeakHead").textContent= T.weakHead;
+  $("rWeak1").textContent   = T.weak1;
+  $("rWeak2").textContent   = T.weak2;
+  $("rCatchHead").textContent = T.catchHead;
+  $("rCatchLead").textContent = T.catchLead;
+
+  var tr = "";
+  for(var m=0;m<T.traits.length;m++){
+    tr += "<li><b>" + T.traits[m][0] + "</b><span>" + T.traits[m][1] + "</span></li>";
+  }
+  $("rTraits").innerHTML = tr;
+
+  $("nA").textContent = aPct;
+  $("nB").textContent = bPct;
+
+  document.body.className = "done";
+  window.scrollTo(0,0);
+  // バーは表示されてから伸ばす
+  setTimeout(function(){
+    $("mA").style.width = aPct + "%";
+    $("mB").style.width = bPct + "%";
+  }, 120);
+
+  try{ history.replaceState(null, "", "#result"); }catch(_e){}
+  window.LM_TYPE = { key:key, a:aPct, b:bPct, raw:ans.join(",") };
+}
+
+/* ── 操作 ── */
+var starts = document.querySelectorAll("[data-start]");
+for(var si=0; si<starts.length; si++){
+  starts[si].addEventListener("click", function(){
+    $("open").hidden = true;
+    $("quiz").hidden = false;
+    i = 0; ans = [];
+    render();
+  });
+}
+
+/* ── スクロールでふわっと出す ──
+   ★CSSだけの animation-timeline:view() は iPhoneのSafariやLINE内ブラウザで効かないので、
+     どこにでもある IntersectionObserver を使う。
+     伏せるのは html.js が付いているときだけ＝JSが動かない人には最初から全部見えている。 */
+document.documentElement.className += " js";
+try{
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ en.target.className += " in"; io.unobserve(en.target); } });
+  }, { rootMargin:"0px 0px -12% 0px", threshold:.08 });
+  var rv = document.querySelectorAll(".rv");
+  for(var ri=0; ri<rv.length; ri++){ io.observe(rv[ri]); }
+}catch(_e){
+  var rv2 = document.querySelectorAll(".rv");
+  for(var r2=0; r2<rv2.length; r2++){ rv2[r2].className += " in"; }
+}
+$("back").addEventListener("click", function(){
+  if(i > 0){ i--; render(); }
+});
+$("again").addEventListener("click", function(){
+  i = 0; ans = [];
+  document.body.className = "";
+  $("quiz").hidden = false;
+  $("open").hidden = true;
+  try{ history.replaceState(null, "", location.pathname); }catch(_e){}
+  render();
+});
+
+/* ══════════════════════════════════════════
+   メールを受け取る
+   ★この合言葉は、ここに書いてある時点で秘密ではありません。
+     既存の lead_add と経路を取り違えないための目印です。
+     実際の守りはGAS側（1日の上限・24時間に1通・本文は固定）でかけています。
+   ══════════════════════════════════════════ */
+var GAS_URL  = "https://script.google.com/macros/s/AKfycbzoOGUIcrH4yOWYyC7MzhvqRdxZqhhh3svfshpSdd0ht2LVUcVQSWyZhJrAG10wVxBT/exec";
+var HOOK_KEY = "vKHGmKWKca45XPUythVyGlsUpPyN";
+
+$("form").addEventListener("submit", function(e){
+  e.preventDefault();
+  var v = $("mail").value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+    $("msg").textContent = "メールアドレスの形を確認してください。";
+    return;
+  }
+  if(!window.LM_TYPE){ $("msg").textContent = "もう一度、診断からお願いします。"; return; }
+
+  $("send").disabled = true;
+  $("send").textContent = "送信しています…";
+  $("msg").textContent = "";
+
+  fetch(GAS_URL, {
+    method: "POST",
+    body: new URLSearchParams({
+      action: "type_lead",
+      key:    HOOK_KEY,
+      email:  v,
+      type:   window.LM_TYPE.key,
+      a:      String(window.LM_TYPE.a),
+      b:      String(window.LM_TYPE.b)
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    if(res && res.ok && res.sent !== false){
+      done("メールをお送りしました。<br>届いていないときは、迷惑メールもご確認ください。");
+    }else if(res && res.ok && res.reason === "recent"){
+      done("すでにお送りしています。<br>さきほどのメールをご確認ください。");
+    }else if(res && res.ok && res.reason === "mail_off"){
+      done("このアドレスは配信を停止されています。<br>アプリからログインしてご覧ください。");
+    }else{
+      fail(res && res.error === "limit"
+        ? "ただいま混み合っています。しばらくしてからお試しください。"
+        : "うまく送れませんでした。もう一度お試しください。");
+    }
+  })
+  .catch(function(){ fail("うまく送れませんでした。通信の状態をご確認ください。"); });
+});
+
+function done(html){
+  var f = $("form");
+  f.innerHTML = '<div style="text-align:center;padding:22px 18px;border:1px solid rgba(227,195,129,.4);' +
+                'border-radius:10px;background:rgba(227,195,129,.07)">' +
+                '<p style="font-size:1.4rem;margin-bottom:10px">✉️</p>' +
+                '<p style="font-size:.92rem;line-height:1.9;color:#f4f2e9">' + html + '</p></div>';
+}
+function fail(msg){
+  $("send").disabled = false;
+  $("send").textContent = "動画を受け取る";
+  $("msg").textContent = msg;
+}
+
+})();
+</script>
+</body>
+</html>
